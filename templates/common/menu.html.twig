@@ -1,0 +1,13 @@
+{% set actions = [{'name':'home', 'icon':'fas fa-list', 'title':'Index'},
+           {'name':'article_set','icon':'far fa-plus-square', 'title':'Ajouter un article'},
+           {'name':'article_set', 'icon':'fas fa-sliders-h', 'title':'Paramètrages'}] %}
+           
+<nav id="nav" class="block">
+    <ul>
+        {% for action in actions %}
+            <li id="{{action.name}}"{% if app.request.attributes.get('_route') matches '/home/'%} class="li-active"{% endif %}>
+            <a href="{{path(action.name)}} " title="{{action.title}}">
+            <i class="{{action.icon}}"></i>{{action.title}}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
