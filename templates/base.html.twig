@@ -14,10 +14,9 @@
             <div  id="title">
                 <h1>{% block body_title %}{% endblock %}</h1>
             </div>
-            {% include('common/menu.html.twig') %}
-            <main id="container" class="index">
-                {% block body %}{% endblock %}
-            </main>
+
+            {% block body %}{% endblock %}
+
             {% block javascripts %}
                 <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
                 <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>

@@ -3,27 +3,35 @@
 {% block title %}{{parent()}} index{% endblock %}
 
 {% block body %}
-    {% if sections is not empty %}
-    <div class="grid">
-        {% for section in sections %}
-        <div class="block">
-            <h2>{{section.title}}</h2>
-            {% for chapter in section.chapters %}
-                <h3>{{chapter.title}}</h3>
-                <ul>
-                    {% for article in chapter.articles %}
-                    <li>{{article.title}}</li>
-                    {% endfor %}
-                </ul>
+    {% include('common/menu.html.twig') %}
+    <main id="container" class="index">
+        {% if sections is not empty %}
+        <div class="grid">
+            {% for section in sections %}
+            <div class="block">
+                <h2>{{section.title}}</h2>
+                {% for chapter in section.chapters %}
+                    <h3>
+                        <i class="fas fa-chevron-down chevron"></i>
+                        <a href="{{ path('chapter_show', {'chapter' : chapter.id}) }}">{{chapter.title}}</a>
+                    </h3>
+                    <ul>
+                        {% for article in chapter.articles %}
+                        <li>
+                            <a href="{{path('chapter_show', {'chapter': chapter.id})}}#{{article.id}}">{{article.title}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Aucun article</p>
+                {% endfor %}
+            </div>
             {% else %}
-                <p>Aucun article</p>
+                <p>Aucun chapitre</p>
             {% endfor %}
         </div>
         {% else %}
-            <p>Aucun chapitre</p>
-        {% endfor %}
-    </div>
-    {% else %}
-        <p>Aucune rubrique</p>
-    {% endif %}
+            <p>Aucune rubrique</p>
+        {% endif %}
+    </main>
 {% endblock %}

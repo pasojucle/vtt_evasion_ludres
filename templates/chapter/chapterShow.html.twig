@@ -1,34 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{parent()}} Article{% endblock %}
+{% block title %}{{parent()}} {{ chapter.title }}{% endblock %}
 
-{% block body_title %}Ajouter un article{% endblock %}
+{% block body_title %}{{ chapter.title }}{% endblock %}
 
 {% block body %}
-    <div>
-        {% if chapter.articles is not empty %}
-            {% for article in chapter.articles %}
-                <div  class="article-container" id="' . $article['article_slug'] ">
+    {% include('common/menu.html.twig') %}
+    <main id="container" class="index">
+        <div>
+            {% if chapter.articles is not empty %}
+                {% for article in chapter.articles %}
+                    <div  class="article-container" id="' . $article['article_slug'] ">
 
-                    <h2>{{article.title}}</h2>
-                    <span class="btn btn-remove">
-                        <a href="{{path('article_delete',{'article':article.id}) }}">
-                            <i class="fas fa-minus-square"></i>
-                        </a>
-                    </span>
-                    <span class="btn btn-edit">
-                        <a href="{{path('article_set',{'article':article.id}) }}">
-                            <i class="far fa-edit"></i>
-                        </a>
-                    </span>
-                    <div class="clear-fix"></div>
-                    <div class="article">{{ article.content }}</p>
+                        <h2>{{article.title}}</h2>
+                        <span class="btn btn-remove">
+                            <a href="{{path('article_delete',{'article':article.id}) }}">
+                                <i class="fas fa-minus-square"></i>
+                            </a>
+                        </span>
+                        <span class="btn btn-edit">
+                            <a href="{{path('article_set',{'article':article.id}) }}">
+                                <i class="far fa-edit"></i>
+                            </a>
+                        </span>
+                        <div class="clear-fix"></div>
+                        <div class="article">{{ article.content|raw }}</div>
                     </div>
-              </div>
-            {% endfor %}
-        {% else %}
-            <p>Aucun article</p>
-        {% endif %}
+                {% endfor %}
+            {% else %}
+                <p>Aucun article</p>
+            {% endif %}
+            </div>
         </div>
-    </div>
+    </main>
+
+
+
 {% endblock %}

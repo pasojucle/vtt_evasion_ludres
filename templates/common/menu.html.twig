@@ -18,6 +18,20 @@
             <input type="text" name="search">
         </form>
     </div>
+
+    {% if chapter is defined and chapter is not empty %}
+        <div class="block">
+            <h2>Sommaire</h2>
+            <ul>
+                {% for article in chapter.articles %}
+                    <li>
+                        <a class="link" href="{{path('chapter_show', {'chapter': chapter.id})}}#{{article.id}}">{{article.title}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     <div id="login" class="block">
         <a href="{{path('app_login')}}"><i class="fas fa-sign-in-alt"></i><span>S'identifier</span></a>
     </div>
