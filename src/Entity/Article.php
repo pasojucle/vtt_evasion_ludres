@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\ArticleRepository;
+use App\Entity\Chapter;
+use App\Entity\Section;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ArticleRepository;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
@@ -32,6 +34,10 @@ class Article
      * @ORM\JoinColumn(nullable=false)
      */
     private $chapter;
+
+    private $chapterTitle;
+    private $section;
+    private $sectionTitle;
 
     public function getId(): ?int
     {
@@ -70,6 +76,43 @@ class Article
     public function setChapter(?Chapter $chapter): self
     {
         $this->chapter = $chapter;
+
+        return $this;
+    }
+
+    public function getChapterTitle(): ?string
+    {
+        return $this->chapterTitle;
+    }
+
+    public function setChapterTitle(string $chapterTitle): self
+    {
+        $this->chapterTitle = $chapterTitle;
+
+        return $this;
+    }
+
+
+    public function getSection(): ?Section
+    {
+        return $this->section;
+    }
+
+    public function setSection(Section $section): self
+    {
+        $this->section = $section;
+
+        return $this;
+    }
+
+    public function getSectionTitle(): ?string
+    {
+        return $this->sectionTitle;
+    }
+
+    public function setSectionTitle(string $sectionTitle): self
+    {
+        $this->sectionTitle = $sectionTitle;
 
         return $this;
     }

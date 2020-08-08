@@ -1,27 +1,11 @@
 let timeoutId = null;
 
-if(navigator.userAgent.indexOf("MSIE") != -1) {
-    document.onreadystatechange = function () {
-        if (document.readyState === "interactive") {
-            initApplication();
-        }
-    }
-} else {
-    window.addEventListener('DOMContentLoaded', initApplication);
-}
 
-function initApplication(e){
-    if (document.getElementById('sceditor')) {
-        var textarea = document.getElementById('sceditor');
-        sceditor.create(textarea, {
-            toolbar: 'bold,italic|bulletlist,orderedlist|table|code|horizontalrule,image|removeformat',
-            format: 'bbcode',
-            width: '74%',
-            height: '400px',
-            style: 'sceditor/themes/content/default.min.css'
-        });
-    }
-    
+
+$(function() {
+    $(document).on('change', '#article_section', setChapterSelect);
+    $(document).on('click', '#article_addSection, #article_addChapter', setChapterSelect);
+
     if (rubricId = document.getElementById('rubricId')) {
         rubricId.addEventListener('change', getChapterList,false);
     }
@@ -35,7 +19,7 @@ function initApplication(e){
         window.addEventListener("scroll", scrolling, false);
     }
     
-}
+});
 function scrolling(e) {
     url = window.location.href;
     destination = getDestination(url.substring(url.indexOf("#")+1));
@@ -184,6 +168,32 @@ function processing(data){
             var responseJson = JSON.parse(this.response);
             console.log(responseJson);
             setChapterSelect(responseJson.chapterList);
+        }
+    });
+}
+
+function setChapterSelect(e) {
+    let form = $(this).closest('form');
+    let data = {};
+    data[$('#article_section').attr('name')] = $('#article_section').val();
+
+    const regex = /article\[([a-zA-Z]+)\]/;
+    let name = $(this).attr('name').match(regex)[1];
+    let addSection = (name == 'addSection') ? Number(!$("#article_addSection").data('value')) : Number($("#article_addSection").data('value'));
+    let addChapter = (name == 'addChapter') ? Number(!$("#article_addChapter").data('value')) : Number($("#article_addChapter").data('value'));
+    let article = form.data('article');
+
+    let route = Routing.generate('article_set', {'addSection': addSection, 'addChapter': addChapter, 'article':article});
+console.log(route);
+console.info(data);
+    $.ajax({
+        url : route,
+        type: form.attr('method'),
+        data : data,
+        success: function(html) {
+        $('#article_selects').replaceWith(
+            $(html).find('#article_selects')
+        );
         }
     });
 }

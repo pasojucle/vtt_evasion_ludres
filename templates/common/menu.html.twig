@@ -1,13 +1,24 @@
 {% set actions = [{'name':'home', 'icon':'fas fa-list', 'title':'Index'},
            {'name':'article_set','icon':'far fa-plus-square', 'title':'Ajouter un article'},
            {'name':'article_set', 'icon':'fas fa-sliders-h', 'title':'Paramètrages'}] %}
-           
-<nav id="nav" class="block">
-    <ul>
-        {% for action in actions %}
-            <li id="{{action.name}}"{% if app.request.attributes.get('_route') matches '/home/'%} class="li-active"{% endif %}>
-            <a href="{{path(action.name)}} " title="{{action.title}}">
-            <i class="{{action.icon}}"></i>{{action.title}}</a></li>
-        {% endfor %}
-    </ul>
-</nav>
+
+<div id="navBar">
+    <nav id="nav" class="block">
+        <ul>
+            {% for action in actions %}
+                <li id="{{action.name}}"{% if app.request.attributes.get('_route') matches '/'~action.name~'/' %} class="li-active"{% endif %}>
+                <a href="{{path(action.name)}} " title="{{action.title}}">
+                <i class="{{action.icon}}"></i>{{action.title}}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+    <div id="searchContainer" class="block">
+        <form action="search.php" method="get">
+            <button type="submit" name="submitSearch" <i class="fas fa-search"></button>
+            <input type="text" name="search">
+        </form>
+    </div>
+    <div id="login" class="block">
+        <a href="{{path('app_login')}}"><i class="fas fa-sign-in-alt"></i><span>S'identifier</span></a>
+    </div>
+</div>

@@ -236,7 +236,6 @@ form {
 }
 .form-group {
     vertical-align: top;
-    box-sizing: border-box;
     margin-bottom: 20px;
 }
 .form-group .far{
@@ -245,14 +244,21 @@ form {
     width: 20px;
     text-align: center
 }
+.w-90 {
+    width: 90%;
+}
 
+.form-item-inline {
+    display: inline-block;
+}
 label {
     width: 25%;
     display: inline-block;
 }
 input[type="text"], textarea, select, input[type="password"], input[type="email"] {
-    width: 60%;
+    width: 74%;
     height: 30px;
+    box-sizing: border-box;
 }
 #searchContainer input[type="text"] {
     height: 25px;
@@ -267,9 +273,6 @@ textarea {
 }
 input[type="submit"] {
     float: right;
-}
-.sceditor-container {
-    display: inline-flex;
 }
 .clear-fix{
     clear: both;

@@ -1,20 +1,29 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DefaultController!{% endblock %}
+{% block title %}{{parent()}} index{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/patrick/Sites/wiki/src/Controller/DefaultController.php'|file_link(0) }}">src/Controller/DefaultController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/patrick/Sites/wiki/templates/default/index.html.twig'|file_link(0) }}">templates/default/index.html.twig</a></code></li>
-    </ul>
-</div>
+    {% if sections is not empty %}
+    <div class="grid">
+        {% for section in sections %}
+        <div class="block">
+            <h2>{{section.title}}</h2>
+            {% for chapter in section.chapters %}
+                <h3>{{chapter.title}}</h3>
+                <ul>
+                    {% for article in chapter.articles %}
+                    <li>{{article.title}}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Aucun article</p>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p>Aucun chapitre</p>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p>Aucune rubrique</p>
+    {% endif %}
 {% endblock %}
