@@ -32,6 +32,7 @@ class Article
     /**
      * @ORM\ManyToOne(targetEntity=Chapter::class, inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
+     * @ORM\OrderBy({"title" = "ASC"})
      */
     private $chapter;
 

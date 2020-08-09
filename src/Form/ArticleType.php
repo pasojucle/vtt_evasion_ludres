@@ -95,7 +95,7 @@ class ArticleType extends AbstractType
                     }
                 );
 
-        $btnAdd = 'btn btn-primary btn-add form-item-inline fas ';
+        $btnAdd = 'btn btn-add form-item-inline fas ';
         $builder
             ->add('title', TextType::class, [
                 'attr' => [
@@ -106,14 +106,14 @@ class ArticleType extends AbstractType
             ->add('content', CKEditorType::class, [])
             ->add('addSection', ButtonType::class, [
                 'attr' =>[
-                    'class' => (!$options['add_section']) ? $btnAdd.'fa-plus-square' : $btnAdd.'fa-minus-square',
+                    'class' => (!$options['add_section']) ? $btnAdd.'fa-plus-square btn-primary' : $btnAdd.'fa-minus-square btn-secondary',
                     'data-value' => (int)$options['add_section'],
                 ],
                 'label' => ' ',
             ])
             ->add('addChapter', ButtonType::class, [
                 'attr' =>[
-                    'class' => (!$options['add_chapter']) ? $btnAdd.'fa-plus-square' : $btnAdd.'fa-minus-square',
+                    'class' => (!$options['add_chapter']) ? $btnAdd.'fa-plus-square btn-primary' : $btnAdd.'fa-minus-square btn-secondary',
                     'data-value' => (int)$options['add_chapter'],
                 ],
                 'label' => ' ',

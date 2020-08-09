@@ -72,7 +72,7 @@ class ArticleController extends AbstractController
             $this->entityManager->persist($article);
             $this->entityManager->flush();
 
-            $this->redirectToRoute('chapter_show', ['chapter' => $chapter->getId(), 'article' => $article->getId()]);
+            return $this->redirectToRoute('chapter_show', ['chapter' => $article->getChapter()->getId(), '_fragment' => $article->getId()]);
         }
 
         return $this->render('article/articleSet.html.twig', [

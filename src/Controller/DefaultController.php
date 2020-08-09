@@ -16,6 +16,7 @@ class DefaultController extends AbstractController
         SectionRepository $sectionRepository
     ):Response
     {
+
         return $this->render('default/home.html.twig', [
             'sections' => $sectionRepository->findAll(),
         ]);

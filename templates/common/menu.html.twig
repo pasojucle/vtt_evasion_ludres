@@ -1,9 +1,9 @@
 {% set actions = [{'name':'home', 'icon':'fas fa-list', 'title':'Index'},
            {'name':'article_set','icon':'far fa-plus-square', 'title':'Ajouter un article'},
-           {'name':'article_set', 'icon':'fas fa-sliders-h', 'title':'Paramètrages'}] %}
+           {'name':'settings', 'icon':'fas fa-sliders-h', 'title':'Paramètrage'}] %}
 
 <div id="navBar">
-    <nav id="nav" class="block">
+    <nav id="nav" class="nav block">
         <ul>
             {% for action in actions %}
                 <li id="{{action.name}}"{% if app.request.attributes.get('_route') matches '/'~action.name~'/' %} class="li-active"{% endif %}>
@@ -12,15 +12,18 @@
             {% endfor %}
         </ul>
     </nav>
-    <div id="searchContainer" class="block">
-        <form action="search.php" method="get">
-            <button type="submit" name="submitSearch" <i class="fas fa-search"></button>
-            <input type="text" name="search">
-        </form>
+    {% if not (app.request.get('_route') matches '/search/') %}
+    <div id="searchContainer" class="nav block">
+        {% set form_search = search_service.getForm.createView()%}
+        {{ form_start(form_search) }}
+        <button type="submit" name="submitSearch" <i class="fas fa-search"></button>
+        {{ form_widget(form_search.term) }}
+        {{ form_end(form_search) }}
     </div>
+    {% endif %}
 
     {% if chapter is defined and chapter is not empty %}
-        <div class="block">
+        <div class="nav block">
             <h2>Sommaire</h2>
             <ul>
                 {% for article in chapter.articles %}
@@ -32,7 +35,11 @@
         </div>
     {% endif %}
 
-    <div id="login" class="block">
-        <a href="{{path('app_login')}}"><i class="fas fa-sign-in-alt"></i><span>S'identifier</span></a>
+    <div id="login" class="nav block">
+        {% if app.user %}
+             <a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></a>
+        {% else %}
+            <a href="{{path('app_login')}}"><i class="fas fa-sign-in-alt"></i><span>S'identifier</span></a>
+        {% endif %}
     </div>
 </div>

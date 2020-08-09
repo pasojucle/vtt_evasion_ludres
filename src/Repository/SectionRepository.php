@@ -29,21 +29,10 @@ class SectionRepository extends ServiceEntityRepository
             ->join('s.chapters', 'c')
             ->join('c.articles', 'a')
             ->orderBy('s.title', 'ASC')
+            ->orderBy('c.title', 'ASC')
+            ->orderBy('a.title', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
-    
-
-    /*
-    public function findOneBySomeField($value): ?Section
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

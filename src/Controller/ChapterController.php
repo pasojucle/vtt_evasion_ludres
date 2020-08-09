@@ -11,15 +11,13 @@ class ChapterController extends AbstractController
 {
     
     /**
-     * @Route("/chapter/show/{chapter}/{article}",
+     * @Route("/chapter/show/{chapter}",
      * name="chapter_show",
-     * requirements={"chapter"="\d+", "article"="\d+"},
-     * defaults={"article"=null}
+     * requirements={"chapter"="\d+"}
      * )
      */
     public function ChapterShow(
-        ?Chapter $chapter,
-        ?int $article
+        ?Chapter $chapter
     ):Response
     {
   

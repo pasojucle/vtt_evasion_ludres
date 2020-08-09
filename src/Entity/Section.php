@@ -26,6 +26,7 @@ class Section
 
     /**
      * @ORM\OneToMany(targetEntity=Chapter::class, mappedBy="section")
+     * @ORM\OrderBy({"title" = "ASC"})
      */
     private $chapters;
 

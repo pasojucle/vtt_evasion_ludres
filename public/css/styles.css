@@ -100,15 +100,31 @@ body > script {display: none !important;}
     --gray-lighter: #2e3136;
     --nav-background: #2e3136;
     --success-color : #4caf50;
+    --secondary-color:#9360ef
+}
+
+.dark-theme {
+    --light-color: #333333;
+    --page-background: #dddddd;
+    --primary-color: #1A92FF;
+    --gray-lighter: #cccccc;
+    --nav-background: #2e3136;
+    --success-color : #4caf50;
+    --secondary-color:#9360ef
 }
 .btn-primary {
     background-color: var(--primary-color);
+    color: var(--light-color);
+}
+.btn-secondary {
+    background-color: var(--secondary-color);
     color: var(--light-color);
 }
 .btn{
     margin: 5px;
     padding: 5px;
     border-radius: 5px;
+    border: none;
 }
 body {
     background-color: var(--page-background);
@@ -169,20 +185,20 @@ a {
 h2:not(:first-child) {
         margin: 40px auto 20px auto;
 }
-h3 {
+.index h3 {
     margin-bottom: 5px;
 }
-h2{
+h2 {
     color: var(--primary-color);
     margin-bottom: 5px;
 }
-.article-container h2{
+.article-container h2 {
     float: left;
 }
-.block h2{
+.block h2 {
     color: var(--light-color);
 }
-.index .block h2{
+.index .block h2 {
     margin-bottom: 20px;
 }
 .index .block h2::after, #navBar .block h2::after {
@@ -193,10 +209,10 @@ h2{
 p {
     margin-bottom: 10px;
 }
-#navBar .block {
+#navBar .block, .search .block {
     margin-bottom: 20px;
 }
-nav .fas, nav .far, #login .fas, #searchContainer .fas {
+.nav .fas, .nav .far {
     margin: 10px;
     background: var(--light-color);
     color: var(--gray-lighter);
@@ -208,10 +224,11 @@ nav .fas, nav .far, #login .fas, #searchContainer .fas {
     font-size: 20px;
     padding: unset;
 }
-nav li a:hover, .li-active a {
+
+.nav li a:hover, .li-active a {
     color: var(--primary-color);
 }
-nav li a:hover .fas, nav li a:hover .far, nav .li-active .fas, nav .li-active .far {
+.nav li a:hover .fas, nav li a:hover .far, nav .li-active .fas, nav .li-active .far {
     background: var(--primary-color);
 }
 nav li::after, .search li::after{
@@ -219,11 +236,15 @@ nav li::after, .search li::after{
     display: block;
     width: 100%;
     border-bottom: 2px solid var(--page-background);
+    margin-top: 5px;
 }
 nav a, #login {
     background: var(--gray-lighter);
     color: var(--light-color);
     font-size: 20px;
+}
+.nav button, .nav input {
+    vertical-align: middle;
 }
 ul {
     margin-bottom: 10px;
@@ -247,7 +268,15 @@ form {
 .w-90 {
     width: 90%;
 }
-
+.w-25 {
+    width: calc(25% - 4px);
+}
+.w-75 {
+    width: calc(75% - 4px);
+}
+.row > div {
+    display: inline-block;
+}
 .form-item-inline {
     display: inline-block;
 }
@@ -261,8 +290,6 @@ input[type="text"], textarea, select, input[type="password"], input[type="email"
     box-sizing: border-box;
 }
 #searchContainer input[type="text"] {
-    height: 25px;
-    vertical-align: text-bottom;
     width: calc(100% - 65px);
     background-color: var(--light-color);
     border-bottom-color: var(--light-color);
@@ -280,20 +307,22 @@ input[type="submit"] {
 .hidden {
     display: none;
 }
-.comments {
-    color: #9360ef;
+.articles h3 {
+    color: var(--secondary-color);
+    margin-top: 10px;
+    font-weight: 500;
 }
-.code {
-    background-color: #6039a7;
+pre {
+    background-color: var(--secondary-color);
     padding: 8px;
 }
 .article-container {
     margin-bottom: 35px;
 }
 .article {
-    /*border: 1px solid var(--light-color);*/
     padding: 15px;
     background: var(--gray-lighter);
+    border-radius: 5px;
 }
 .article li {
     list-style : disc;
@@ -306,19 +335,20 @@ input[type="submit"] {
 .block{
     background: var(--gray-lighter);
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 5px;
 }
 .block:only-child {
     min-height: 250px;
+}
+.block .footer {
+    margin-top: 10px;
+    text-align: right;
 }
 .articles .btn{
     float: right;
 }
 .articles .btn a {
     color: var(--light-color);
-}
-italic {
-    font-style: italic;
 }
 table {
     border-collapse: collapse;
@@ -364,4 +394,8 @@ div#flash .success {
     border-radius: 3px;
     font-size: 15px;
     padding: unset;
+}
+.smiley {
+    text-align: center;
+    font-size: 100px;
 }

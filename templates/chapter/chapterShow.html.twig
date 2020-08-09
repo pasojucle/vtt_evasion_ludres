@@ -6,11 +6,11 @@
 
 {% block body %}
     {% include('common/menu.html.twig') %}
-    <main id="container" class="index">
+    <main id="container" class="articles">
         <div>
             {% if chapter.articles is not empty %}
                 {% for article in chapter.articles %}
-                    <div  class="article-container" id="' . $article['article_slug'] ">
+                    <div  class="article-container" id="{{ article.id }}">
 
                         <h2>{{article.title}}</h2>
                         <span class="btn btn-remove">
@@ -28,6 +28,7 @@
                     </div>
                 {% endfor %}
             {% else %}
+                <div class="smiley">&#128542;</div>
                 <p>Aucun article</p>
             {% endif %}
             </div>
