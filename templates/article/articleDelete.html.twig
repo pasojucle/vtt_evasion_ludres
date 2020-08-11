@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Supprimer un article{% endblock %}
+{% block body %}
+    <p>Etes-vous de supprimer l'article {{ article.chapter.section.title}} / {{ article.chapter.title}} / {{ article.title}} ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_href = path('article_delete', {'article' : article.id}) %}
+    {% set button_text = 'Supprimer' %}
+    {{ parent() }}
+{% endblock %}

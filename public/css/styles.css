@@ -93,42 +93,46 @@ body > script {display: none !important;}
   100% {opacity:0;}
 }
 
-.dark-theme {
-    --light-color: silver;
-    --page-background: #36393e;
+:root {
     --primary-color: #1A92FF;
-    --gray-lighter: #2e3136;
-    --nav-background: #2e3136;
     --success-color : #4caf50;
-    --secondary-color:#9360ef
+    --danger-color : #d9534f;
+    --secondary-color:#9360ef;
+    --light-color: silver;
 }
 
 .dark-theme {
-    --light-color: #333333;
-    --page-background: #dddddd;
-    --primary-color: #1A92FF;
-    --gray-lighter: #cccccc;
-    --nav-background: #2e3136;
-    --success-color : #4caf50;
-    --secondary-color:#9360ef
+    --color-element: silver;
+    --background-color: #36393e;
+    --background-color-element: #2e3136;
+}
+
+.ligth-theme {
+    --color-element: #333333;
+    --background-color: #dddddd;
+    --background-color-element: #cccccc;
 }
 .btn-primary {
     background-color: var(--primary-color);
-    color: var(--light-color);
 }
 .btn-secondary {
     background-color: var(--secondary-color);
+}
+.btn-danger{
+    background-color: var(--danger-color);
+}
+.btn-primary, .btn-secondary, .btn-danger{
     color: var(--light-color);
 }
-.btn{
+.btn {
     margin: 5px;
     padding: 5px;
     border-radius: 5px;
     border: none;
 }
 body {
-    background-color: var(--page-background);
-    color: var(--light-color);
+    background-color: var(--background-color);
+    color: var(--color-element);
     font-family: Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif;
     font-size: 14px;
     margin-top: 20px;
@@ -166,7 +170,7 @@ main {
 
 main::-webkit-scrollbar {
     width: 5px;
-    background: var(--light-color);
+    background: var(--color-element);
 }
 main::-webkit-scrollbar-thumb {
     background: var(--primary-color);
@@ -177,7 +181,7 @@ h1 {
 }
 .index 
 li a, .h4 {
-    color: var(--light-color);
+    color: var(--color-element);
 }
 a {
     color: var(--primary-color);
@@ -196,14 +200,14 @@ h2 {
     float: left;
 }
 .block h2 {
-    color: var(--light-color);
+    color: var(--color-element);
 }
 .index .block h2 {
     margin-bottom: 20px;
 }
 .index .block h2::after, #navBar .block h2::after {
     content: '';
-    border-bottom: 1px solid var(--light-color);
+    border-bottom: 1px solid var(--color-element);
     display: block;
 }
 p {
@@ -214,8 +218,8 @@ p {
 }
 .nav .fas, .nav .far {
     margin: 10px;
-    background: var(--light-color);
-    color: var(--gray-lighter);
+    background: var(--color-element);
+    color: var(--background-color-element);
     height: 30px;
     width: 30px;
     text-align: center;
@@ -235,12 +239,12 @@ nav li::after, .search li::after{
     content: "";
     display: block;
     width: 100%;
-    border-bottom: 2px solid var(--page-background);
+    border-bottom: 2px solid var(--background-color);
     margin-top: 5px;
 }
 nav a, #login {
-    background: var(--gray-lighter);
-    color: var(--light-color);
+    background: var(--background-color-element);
+    color: var(--color-element);
     font-size: 20px;
 }
 .nav button, .nav input {
@@ -291,9 +295,9 @@ input[type="text"], textarea, select, input[type="password"], input[type="email"
 }
 #searchContainer input[type="text"] {
     width: calc(100% - 65px);
-    background-color: var(--light-color);
-    border-bottom-color: var(--light-color);
-    border-right-color: var(--light-color);
+    background-color: var(--color-element);
+    border-bottom-color: var(--color-element);
+    border-right-color: var(--color-element);
 }
 textarea {
     min-height: 400px;
@@ -321,7 +325,7 @@ pre {
 }
 .article {
     padding: 15px;
-    background: var(--gray-lighter);
+    background-color: var(--background-color-element);
     border-radius: 5px;
 }
 .article li {
@@ -333,7 +337,7 @@ pre {
     box-sizing: border-box;
 }
 .block{
-    background: var(--gray-lighter);
+    background-color: var(--background-color-element);
     padding: 15px;
     border-radius: 5px;
 }
@@ -348,25 +352,14 @@ pre {
     float: right;
 }
 .articles .btn a {
-    color: var(--light-color);
+    color: var(--color-element);
 }
 table {
     border-collapse: collapse;
 }
 td {
-    border: 1px solid var(--light-color);
+    border: 1px solid var(--color-element);
     padding: 5px;
-}
-div#popUp {
-    position: absolute;
-    width: 30%;
-    top: 25vh;
-    left: 35%;
-    padding: 15px;
-    background-color: var(--nav-background);
-}
-div#popUp:empty {
-    display: none;
 }
 div#flash {
     position: absolute;
@@ -385,8 +378,8 @@ div#flash .success {
 }
 .chevron {
     margin: auto 10px auto auto;
-    background: var(--light-color);
-    color: var(--gray-lighter);
+    background: var(--color-element);
+    color: var(--background-color-element);
     height: 15px;
     width: 15px;
     text-align: center;

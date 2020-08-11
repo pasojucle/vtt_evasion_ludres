@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ArticleController extends AbstractController
@@ -87,9 +88,31 @@ class ArticleController extends AbstractController
      * )
      */
     public function articleDelete(
+        Request $request,
         ?Article $article
     ):Response
     {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl('article_delete', 
+            [
+                'article'=> $article->getId(),
+            ]
+        ),
+        ]);
 
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->remove($article);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('chapter_show', [
+                'chapter' => $article->getChapter()->getId(),
+            ]);
+        }
+
+        return $this->render('article/articleDelete.html.twig', [
+            'article' => $article,
+            'form' => $form->createView(),
+        ]);
     }
 }

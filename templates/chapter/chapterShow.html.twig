@@ -14,7 +14,7 @@
 
                         <h2>{{article.title}}</h2>
                         <span class="btn btn-remove">
-                            <a href="{{path('article_delete',{'article':article.id}) }}">
+                            <a href="{{path('article_delete',{'article':article.id}) }}" class="modal-trigger" data-toggle="modal" data-type="danger">
                                 <i class="fas fa-minus-square"></i>
                             </a>
                         </span>
@@ -34,6 +34,7 @@
             </div>
         </div>
     </main>
+</div>
 
 
 

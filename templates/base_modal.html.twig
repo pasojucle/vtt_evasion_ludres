@@ -1,0 +1,26 @@
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            {% block form %}{% endblock %}
+            {{ form_start(form)}}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{% block modal_title %}{% endblock %}</h4>
+            </div>
+            <div class="modal-body">
+                {% block body %}{% endblock %}
+            </div>
+            {% block footer %}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default close" data-dismiss="modal">Annuler</button>
+                    <button 
+                    {% if button_href is defined %} href="{{ button_href }}"{% endif %}
+                    type="submit" class="btn btn-primary">
+                    {% if button_text is defined %}{{ button_text }}{% endif %}
+                    </button>
+                </div>
+            {% endblock %}
+            {{ form_end(form)}}
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
