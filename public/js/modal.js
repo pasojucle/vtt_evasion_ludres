@@ -16,6 +16,7 @@ function showModal(event) {
             $('.modal').find('.modal-header').addClass('bg-'+modalType);
             $('.modal').find('button:not(button[data-dismiss="modal"])').addClass('btn-'+modalType);
             setTimeout(function () {
+                //$('.modal-dialog').transition({ top: 100px });
                 $('.modal-dialog').addClass('modal-open');
             }, 100);
         }

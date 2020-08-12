@@ -184,16 +184,15 @@ function setChapterSelect(e) {
     let article = form.data('article');
 
     let route = Routing.generate('article_set', {'addSection': addSection, 'addChapter': addChapter, 'article':article});
-console.log(route);
-console.info(data);
+
     $.ajax({
         url : route,
         type: form.attr('method'),
         data : data,
         success: function(html) {
-        $('#article_selects').replaceWith(
-            $(html).find('#article_selects')
-        );
+            $('#article_selects').replaceWith(
+                $(html).find('#article_selects')
+            );
         }
     });
 }
