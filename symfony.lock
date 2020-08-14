@@ -117,6 +117,18 @@
     "ocramius/proxy-manager": {
         "version": "2.2.3"
     },
+    "paragonie/constant_time_encoding": {
+        "version": "v2.3.0"
+    },
+    "paragonie/halite": {
+        "version": "v4.6.0"
+    },
+    "paragonie/hidden-string": {
+        "version": "v1.0.0"
+    },
+    "paragonie/sodium_compat": {
+        "version": "v1.13.0"
+    },
     "php": {
         "version": "7.3"
     },
