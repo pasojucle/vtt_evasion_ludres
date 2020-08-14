@@ -3,3 +3,4 @@ twig:
 
     globals:
         search_service: '@App\Service\SearchService'
+        parameter_service: '@App\Service\ParameterService'

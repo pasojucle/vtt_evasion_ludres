@@ -10,7 +10,7 @@
             <link href="/css/modal.css" rel="stylesheet">
         {% endblock %}
     </head>
-    <body class="dark-theme">
+    <body class="{{ parameter_service.getParameter('THEME_CSS')}}">
         <div id="bodyContainer">
             <div  id="title">
                 <h1>{% block body_title %}{% endblock %}</h1>
