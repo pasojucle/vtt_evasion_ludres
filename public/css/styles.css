@@ -269,6 +269,9 @@ form {
     width: 20px;
     text-align: center
 }
+.form-group label {
+    vertical-align: middle;
+}
 .w-90 {
     width: 90%;
 }
@@ -338,7 +341,7 @@ pre {
 }
 .block{
     background-color: var(--background-color-element);
-    padding: 15px;
+    padding: 20px;
     border-radius: 5px;
 }
 .block:only-child {

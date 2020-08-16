@@ -39,6 +39,7 @@ class Article
     private $chapterTitle;
     private $section;
     private $sectionTitle;
+    private $encryption;
 
     public function getId(): ?int
     {
@@ -114,6 +115,19 @@ class Article
     public function setSectionTitle(string $sectionTitle): self
     {
         $this->sectionTitle = $sectionTitle;
+
+        return $this;
+    }
+ 
+    public function getEncryption(): bool
+    {
+        return $this->encryption;
+    }
+
+ 
+    public function setEncryption(bool $encryption): self
+    {
+        $this->encryption = $encryption;
 
         return $this;
     }

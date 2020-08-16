@@ -20,20 +20,24 @@ final class Version20200813173118 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE parameter (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(50) NOT NULL, value VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE parameter (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(50) NOT NULL, label VARCHAR(50) NOT NULL, value VARCHAR(50) NOT NULL, type VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE user CHANGE roles roles LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\'');
         $parameters =[
             [
                 'name' => 'THEME_CSS',
+                'label' => 'Thème',
                 'value' => 'dark-theme',
+                'type' => 'choice',
             ],
             [
                 'name' => 'ENCRYPTION',
+                'label' => 'Encrypter les données',
                 'value' => '0',
+                'type' => 'bool',
             ],
         ];
         foreach ($parameters as $parameter) {
-            $this->addSql('INSERT INTO  parameter (name, value) VALUES (:name, :value)', $parameter);
+            $this->addSql('INSERT INTO  parameter (name, label, value, type) VALUES (:name, :label, :value, :type)', $parameter);
         }
     }
 

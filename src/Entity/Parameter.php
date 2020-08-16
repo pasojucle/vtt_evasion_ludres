@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Parameter
 {
+    CONST CHOICES = [
+        'THEME_CSS' => ['dark-theme', 'ligth-theme'],
+    ];
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -26,6 +30,16 @@ class Parameter
      * @ORM\Column(type="string", length=50)
      */
     private $value;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $type;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $label;
 
     public function getId(): ?int
     {
@@ -46,12 +60,36 @@ class Parameter
 
     public function getValue(): ?string
     {
-        return $this->value;
+        return ($this->type === 'bool') ? (bool) $this->value : $this->value;
     }
 
     public function setValue(string $value): self
     {
-        $this->value = $value;
+        $this->value = ($this->type === 'bool' && empty($value)) ? '0' : $value;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
 
         return $this;
     }

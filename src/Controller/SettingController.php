@@ -2,27 +2,50 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Form\ParametersType;
+use App\Service\ParameterService;
+use App\Service\EncryptionService;
+use App\Repository\ParameterRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SettingController extends AbstractController
 {
     /**
      * @Route("/settings", name="settings")
      */
-    public function settings()
+    public function settings(
+        ParameterRepository $parameterRepository,
+        ParameterService $parameterService,
+        EncryptionService $encryptionService,
+        Request $request,
+        EntityManagerInterface $entityManager
+    )
     {
+        $parameters = $parameterRepository->findAll();
+        $parameterEncryption = $parameterService->getEncryptionValue($parameters);
 
-  
-        //$encKey = KeyFactory::generateEncryptionKey();
-        //KeyFactory::save($encKey, '../data/encryption.key');
+        $form = $this->createForm(ParametersType::class, ['parameters' => new ArrayCollection($parameters)]);
 
-        //$encryptionKey = KeyFactory::loadEncryptionKey('../data/encryption.key');
-        
-        //dump($encryptionKey);
+        $form->handleRequest($request);
+    
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $entityManager->flush();
 
-        return $this->render('setting/index.html.twig', [
-            'controller_name' => 'SettingController',
+            if (array_key_exists('parameters', $data) && !empty($data['parameters'])) {
+                $dataParameterEncryption = $parameterService->getEncryptionValue($data['parameters']);
+                if ($dataParameterEncryption !== $parameterEncryption) {
+                    $encryptionService->toggleEncryption($dataParameterEncryption);
+                }
+            }
+        }
+
+        return $this->render('setting/set.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }
