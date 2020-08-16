@@ -1,0 +1,143 @@
+html {
+  overflow-y: scroll;
+}
+body {
+	font-family: 'Roboto', sans-serif;
+	font-weight:300;
+}
+.ajax-file-upload-statusbar {
+	margin-top: 10px;
+	max-width: 685px;
+	min-width: 280px;
+	margin-right: 10px;
+	margin: 5px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	padding: 5px 5px 5px 15px;
+	text-align:center;
+}
+
+.ajax-file-upload-filename {
+	height: auto;
+}
+
+.ajax-file-upload-filesize {
+	width: 50px;
+	height: auto;
+	margin: 0 5px 5px 0px;
+	display: inline-block;
+	vertical-align:middle;
+}
+.ajax-file-upload-progress {
+	margin: 5px 10px 5px 0px;
+	position: relative;
+	width: 175px;
+	border: 1px solid #ddd;
+	padding: 1px;
+	border-radius: 3px;
+	color:#FFFFFF;
+
+}
+.ajax-file-upload-bar {
+	background-color: #0ba1b5;
+	height: 20px;
+	border-radius: 3px;
+	color:#FFFFFF;
+
+}
+.ajax-file-upload-percent {
+	position: absolute;
+	display: inline-block;
+	top: 3px;
+	left: 48%
+}
+
+.ajax-upload-dragdrop
+{
+	font-family: 'Roboto', sans-serif;
+	border:2px dotted #979797;
+	height: 282px;
+	color: #5C5C5C;
+	padding:80px 10px 10px 10px;
+	max-width: 685px;
+	min-width: 280px;
+}
+
+.state-hover
+{
+	border:1px solid #f7ecb5;
+}
+.ajax-file-upload-container
+{
+	margin:20px 0px 20px 0px;
+	text-align:center;
+}
+.upload {
+	width: 100%;
+	text-align: center;
+	display: inline-block;
+	max-width: 685px;
+	min-width: 320px;
+}
+.uploadButtonContainer {
+	margin: 20px auto auto auto;
+	width: 100%;
+	text-align: center;
+	display: inline-block;
+	max-width: 685px;
+	min-width: 280px;
+}
+.table tbody > tr > td{
+	border: 0px;
+}
+.table{
+	max-width:685px;
+	min-width: 280px;
+}
+.container{
+	max-width:685px;
+	min-width: 280px;
+}
+.container-fluid{
+	padding-top: 65px;
+}
+p{
+	font-family: 'Roboto', sans-serif;
+	font-size:12px;
+}
+td{
+	margin: 0 5px 0 10px;
+}
+
+.uploadWait{
+	margin: 20px auto auto auto;
+}
+i{
+	font-size:14px;
+}
+.currentFiles{
+	margin: 20px auto auto auto;
+}
+.installHeader{
+	width:100%;
+	padding: 65px;
+}
+.paddingLeft5{
+	padding-left:5px;
+}
+.notEqualTextfield{
+	border:2px solid #d9534f;
+}
+.equalTextField{
+	border:2px solid #5cb85c;
+}
+.modal-body{
+	overflow-y: auto;
+}
+#addImg{
+	cursor:pointer;
+}
+.btn-sm{
+	margin-top: 10px;
+}

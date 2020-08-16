@@ -89,7 +89,8 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "cp -r ckeditor4/ public/bundles/ckeditor4/"
         ],
         "post-update-cmd": [
             "@auto-scripts"
