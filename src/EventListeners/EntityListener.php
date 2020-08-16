@@ -11,7 +11,7 @@ use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 
 class EntityListener
 {
-    private $parameterEncryption;
+    private $parameterService;
     private $encryptionService;
 
     public function __construct(
@@ -26,7 +26,7 @@ class EntityListener
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-
+        
         if ($entity instanceof Article && $this->parameterEncryption && null === $entity->getEncryption())
         {
             $this->encryptionService->encryptFields($entity);
@@ -36,7 +36,7 @@ class EntityListener
     public function preUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        
+
         if ($entity instanceof Article && $this->parameterEncryption && null === $entity->getEncryption())
         {
             $this->encryptionService->encryptFields($entity);
