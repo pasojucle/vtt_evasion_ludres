@@ -20,7 +20,7 @@
                         <ul>
                         {% for article in articles %}
                             <li>
-                                <a href="{{path('chapter_show', {'chapter': article.chapter.id})}}">
+                                <a href="{{path('chapter_show', {'chapter': article.chapter.id})}}#{{article.id}}">
                                     <h2>{{ article.chapter.section.title }}</h2>
                                     <span class="h3">{{article.chapter.title}}</span> - <span class="h4">{{article.title}}</span>
                                 </a>

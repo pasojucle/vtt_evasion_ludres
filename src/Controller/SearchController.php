@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\SearchService;
+use App\Service\ParameterService;
 use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,8 @@ class SearchController extends AbstractController
     public function search(
         Request $request,
         SearchService $serchService,
-        ArticleRepository $articleRepository
+        ArticleRepository $articleRepository,
+        ParameterService $parameterService
     ):Response
     {
         $form_search = $serchService->getForm();
@@ -30,7 +32,23 @@ class SearchController extends AbstractController
         if ($request->isMethod('post') && $form_search->isSubmitted() && $form_search->isValid()) {
             $data = $form_search->getData();
             $term = $data['term'];
-            $articles = $articleRepository->findByTerm($term);
+            $searchs = preg_split('#\s#', htmlentities($term), PREG_SPLIT_NO_EMPTY);
+
+            if ($parameterService->getParameter('ENCRYPTION')) {
+                $allArticles = $articleRepository->findAll();
+                $articles = [];
+                $pattern = '#'.implode('|', $searchs).'#';
+                if (null !== $allArticles) {
+                    foreach($allArticles as $article) {
+                        if (\preg_match($pattern, $article->getChapter()->getSection()->getTitle()) || \preg_match($pattern, $article->getChapter()->getTitle())
+                        || \preg_match($pattern, $article->getTitle()) || \preg_match($pattern, $article->getContent())) {
+                            $articles[] = $article;
+                        }
+                    }
+                }
+            } else {
+                $articles = $articleRepository->findByTerm($searchs);
+            }
         }
 
         return $this->render('search/show.html.twig', [

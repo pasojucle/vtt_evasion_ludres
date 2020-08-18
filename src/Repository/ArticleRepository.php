@@ -23,18 +23,16 @@ class ArticleRepository extends ServiceEntityRepository
     * @return Article[] Returns an array of Article objects
     */
 
-    public function findByTerm($term):array
+    public function findByTerm($searchs):array
     {
         $excludings = ['à', 'un', 'une', 'le', 'la', 'les', 'et', 'avec', 'de', 'du', 'si'];
         $columns = ['s.title', 'c.title', 'a.title', 'a.content'];
-        $searchs = preg_split('#\s#', $term);
 
         $qb =  $this->createQueryBuilder('a')
             ->join('a.chapter', 'c')
             ->join('c.section', 's');
 
         $orX = $qb->expr()->orX();
-        $termLiteral = $qb->expr()->literal('%'.$term.'%');
 
         $item = 0;
         foreach($columns as $column) {
@@ -45,12 +43,8 @@ class ArticleRepository extends ServiceEntityRepository
                 }
             }
         }
-
+        //&eacute;gale
         return $qb->orWhere(
-                /*$qb->expr()->like('s.title', ),
-                $qb->expr()->like('c.title', $qb->expr()->literal('%'.$term.'%')),
-                $qb->expr()->like('a.title', $qb->expr()->literal('%'.$term.'%')),
-                $qb->expr()->like('a.content', $qb->expr()->literal('%'.$term.'%'))*/
                 $orX
             )
             ->orderBy('s.title', 'ASC')
