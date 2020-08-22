@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% form_theme form 'form/switch_theme.html.twig' %}
+{% form_theme form 'form/custom_theme.html.twig' %}
 
 {% block title %}{{parent()}} Paramètrage{% endblock %}
 
@@ -15,9 +15,16 @@
             <ul>
             {% for parameter in form.parameters %}
                 <li>
-                    <div class='form-group'>
-                        {{ form_errors(parameter) }}
-                        {{ form_widget(parameter) }}
+                    {{ form_errors(parameter) }}
+                    <div class="form-group">
+                        {% if parameter.vars.value.type == 'image' %}
+                            {{ form_label(parameter.children.value) }}
+                            {% for children in parameter.children.value.children %}
+                                {{ form_widget(children) }}
+                            {% endfor %}
+                        {% else %}
+                            {{ form_widget(parameter) }}
+                        {% endif %}
                     </div>
                 </li>
             {% endfor %}

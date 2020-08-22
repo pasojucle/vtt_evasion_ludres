@@ -26,21 +26,22 @@ class SettingController extends AbstractController
     )
     {
         $parameters = $parameterRepository->findAll();
-        $parameterEncryption = $parameterService->getEncryptionValue($parameters);
+        $parameters = new ArrayCollection($parameters);
+        $encryption = $parameterService->getEncryption($parameters);
+        dump($parameters);
 
-        $form = $this->createForm(ParametersType::class, ['parameters' => new ArrayCollection($parameters)]);
-
+        $form = $this->createForm(ParametersType::class, ['parameters' => $parameters]);
         $form->handleRequest($request);
     
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            $files = $request->files->get('parameters');
+            $parameterService->uploadFiles($data['parameters'], $files['parameters']);
             $entityManager->flush();
-
-            if (array_key_exists('parameters', $data) && !empty($data['parameters'])) {
-                $dataParameterEncryption = $parameterService->getEncryptionValue($data['parameters']);
-                if ($dataParameterEncryption !== $parameterEncryption) {
-                    $encryptionService->toggleEncryption($dataParameterEncryption);
-                }
+            
+            $dataEncryption = $parameterService->getEncryption($data['parameters']);
+            if ($dataEncryption !== $encryption) {
+                $encryptionService->toggleEncryption($dataEncryption);
             }
         }
 

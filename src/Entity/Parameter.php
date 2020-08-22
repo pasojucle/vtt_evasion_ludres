@@ -10,10 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Parameter
 {
-    CONST CHOICES = [
-        'THEME_CSS' => ['dark-theme', 'ligth-theme'],
-    ];
-    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -27,7 +23,7 @@ class Parameter
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $value;
 
@@ -40,6 +36,16 @@ class Parameter
      * @ORM\Column(type="string", length=50)
      */
     private $label;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $options = [];
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $orderBy;
 
     public function getId(): ?int
     {
@@ -58,14 +64,17 @@ class Parameter
         return $this;
     }
 
-    public function getValue(): ?string
+    public function getValue()
     {
         return ($this->type === 'bool') ? (bool) $this->value : $this->value;
     }
 
-    public function setValue(string $value): self
+    public function setValue($value): self
     {
-        $this->value = ($this->type === 'bool' && empty($value)) ? '0' : $value;
+        $this->value = $value;
+        if ($this->type === 'bool' && empty($value)) {
+            $this->value = 0;
+        } 
 
         return $this;
     }
@@ -90,6 +99,30 @@ class Parameter
     public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getOptions(): ?array
+    {
+        return $this->options;
+    }
+
+    public function setOptions(?array $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function getOrderBy(): ?int
+    {
+        return $this->orderBy;
+    }
+
+    public function setOrderBy(?int $orderBy): self
+    {
+        $this->orderBy = $orderBy;
 
         return $this;
     }

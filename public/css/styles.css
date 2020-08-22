@@ -395,3 +395,6 @@ div#flash .success {
     text-align: center;
     font-size: 100px;
 }
+img.favicon {
+    height: 32px;
+}

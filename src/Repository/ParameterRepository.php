@@ -26,7 +26,7 @@ class ParameterRepository extends ServiceEntityRepository
     public function findAll()
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.id', 'ASC')
+            ->orderBy('p.orderBy', 'ASC')
             ->getQuery()
             ->getResult()
         ;

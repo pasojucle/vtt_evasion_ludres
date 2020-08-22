@@ -1,10 +1,9 @@
 let timeoutId = null;
 
-
-
 $(function() {
     $(document).on('change', '#article_section', setChapterSelect);
     $(document).on('click', '#article_addSection, #article_addChapter', setChapterSelect);
+    $(document).on('change', 'input[type="file"]', preview_image);
 
     if (rubricId = document.getElementById('rubricId')) {
         rubricId.addEventListener('change', getChapterList,false);
@@ -195,4 +194,14 @@ function setChapterSelect(e) {
             );
         }
     });
+}
+
+function preview_image(e) 
+{
+    var reader = new FileReader();
+    var input = $(this);
+    reader.onload = function(e) {
+        input.next('img').attr('src', e.target.result).removeClass('hidden');
+    }
+    reader.readAsDataURL(input.prop('files')[0]);
 }

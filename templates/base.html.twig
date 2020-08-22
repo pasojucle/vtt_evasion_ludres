@@ -2,8 +2,11 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}wiki{% endblock %}</title>
-        <link rel="icon" type="image/x-icon" href="/images/favicon.jpg">
+        <title>{% block title %}{{ parameter_service.getParameter('PROJECT_NAME')}}{% endblock %}</title>
+        {% set favicon = parameter_service.getParameter('FAVICON') %}
+        {% if favicon is not null %}
+            <link rel="icon" type="image/x-icon" href="/uploads/{{favicon}}">
+        {% endif %}
         {% block stylesheets %}
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
             <link href="/css/styles.css" rel="stylesheet">
