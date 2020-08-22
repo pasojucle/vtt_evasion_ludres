@@ -28,13 +28,13 @@ class SettingController extends AbstractController
         $parameters = $parameterRepository->findAll();
         $parameters = new ArrayCollection($parameters);
         $encryption = $parameterService->getEncryption($parameters);
-        dump($parameters);
 
         $form = $this->createForm(ParametersType::class, ['parameters' => $parameters]);
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            dump($data);
             $files = $request->files->get('parameters');
             $parameterService->uploadFiles($data['parameters'], $files['parameters']);
             $entityManager->flush();

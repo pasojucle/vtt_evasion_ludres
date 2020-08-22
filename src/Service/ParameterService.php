@@ -43,8 +43,12 @@ class ParameterService
         if (!empty($parameters)) {
             foreach ($parameters as $key => $parameter) {
                 if ('image' === $parameter->getType()){
+                    $value = $parameter->getValue();
+                    $filename = $value['filename'];
                     $file = $files[$key]['value']['file'];
-                    $filename = $this->fileUploader->upload($file, null, 32);
+                    if (null !== $file) {
+                        $filename = $this->fileUploader->upload($file, null, 32);
+                    }
                     $parameter->setValue($filename);
                 }
             }
