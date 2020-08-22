@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}{{ parameter_service.getParameter('PROJECT_NAME')}}{% endblock %}</title>
+        <title>{% block title %}{{ parameter_service.getParameter('PROJECT_NAME')}} - {% endblock %}</title>
         {% set favicon = parameter_service.getParameter('FAVICON') %}
         {% if favicon is not null %}
             <link rel="icon" type="image/x-icon" href="/uploads/{{favicon}}">
