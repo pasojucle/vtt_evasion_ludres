@@ -22,14 +22,14 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/article/set/{addSection}/{addChapter}/{article}",
-     * name="article_set",
+     * @Route("/article/edit/{addSection}/{addChapter}/{article}",
+     * name="article_edit",
      * requirements={"addSection"="\d+", "addChapter"="\d+", "article"="\d+"},
      * defaults={"addSection":0, "addChapter":0, "article":null},
      * options={"expose"=true}
      * )
      */
-    public function articleSet(
+    public function articleEdit(
         Request $request,
         bool $addSection,
         bool $addChapter,
@@ -76,7 +76,7 @@ class ArticleController extends AbstractController
             return $this->redirectToRoute('chapter_show', ['chapter' => $article->getChapter()->getId(), '_fragment' => $article->getId()]);
         }
 
-        return $this->render('article/articleSet.html.twig', [
+        return $this->render('article/edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -110,7 +110,7 @@ class ArticleController extends AbstractController
             ]);
         }
 
-        return $this->render('article/articleDelete.html.twig', [
+        return $this->render('article/delete.html.twig', [
             'article' => $article,
             'form' => $form->createView(),
         ]);

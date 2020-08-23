@@ -179,7 +179,14 @@ h1 {
     text-align: center;
     font-size: 48px;
 }
-.index 
+.title {
+    position: relative;
+}
+.title .tools-bar {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
 li a, .h4 {
     color: var(--color-element);
 }
@@ -195,9 +202,6 @@ h2:not(:first-child) {
 h2 {
     color: var(--primary-color);
     margin-bottom: 5px;
-}
-.article-container h2 {
-    float: left;
 }
 .block h2 {
     color: var(--color-element);
@@ -350,9 +354,6 @@ pre {
 .block .footer {
     margin-top: 10px;
     text-align: right;
-}
-.articles .btn{
-    float: right;
 }
 .articles .btn a {
     color: var(--color-element);

@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Modifier la rubrique {{ section.title }}{% endblock %}
+{% block body %}
+    {{ form_row(form.title)}}
+{% endblock %}
+{% block footer %}
+    {% set button_href = path('section_edit', {'section' : section.id}) %}
+    {% set button_text = 'Modifier' %}
+    {{ parent() }}
+{% endblock %}

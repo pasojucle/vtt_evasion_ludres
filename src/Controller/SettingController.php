@@ -45,7 +45,7 @@ class SettingController extends AbstractController
             }
         }
 
-        return $this->render('setting/set.html.twig', [
+        return $this->render('setting/edit.html.twig', [
             'form' => $form->createView(),
         ]);
     }

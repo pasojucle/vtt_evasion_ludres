@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Modifier la rubrique {{ section.title }}{% endblock %}
+{% block body %}
+    <p>Etes-vous de supprimer la rubrique {{ section.title}} ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_href = path('section_delete', {'section' : section.id}) %}
+    {% set button_text = 'Supprimer' %}
+    {{ parent() }}
+{% endblock %}

@@ -160,7 +160,6 @@ function processing(data){
     
     var xhr = new XMLHttpRequest();
     xhr.open('POST', process, true);
-    //xhr.responseType = 'json';
     xhr.send(formData);
     xhr.addEventListener('readystatechange', function() {
         if (this.readyState === XMLHttpRequest.DONE && this.status == 200) {
@@ -182,7 +181,7 @@ function setChapterSelect(e) {
     let addChapter = (name == 'addChapter') ? Number(!$("#article_addChapter").data('value')) : Number($("#article_addChapter").data('value'));
     let article = form.data('article');
 
-    let route = Routing.generate('article_set', {'addSection': addSection, 'addChapter': addChapter, 'article':article});
+    let route = Routing.generate('article_edit', {'addSection': addSection, 'addChapter': addChapter, 'article':article});
 
     $.ajax({
         url : route,
