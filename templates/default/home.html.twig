@@ -15,6 +15,7 @@
             <div class="block">
                 <div id="{{ section.id }}" class="title">
                     <h2>{{ section.title }}</h2>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <div class="tools-bar">
                         <a class="btn btn-edit" href="{{ path('section_edit',{'section':section.id}) }}" class="modal-trigger" data-toggle="modal" data-type="primary">
                             <i class="far fa-edit"></i>
@@ -25,6 +26,7 @@
                             </a>
                         {% endif %}
                     </div>
+                    {% endif %}
                 </div>
                 {% for chapter in section.chapters %}
                     <h3>
