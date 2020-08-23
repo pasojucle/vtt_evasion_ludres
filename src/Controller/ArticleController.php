@@ -70,6 +70,8 @@ class ArticleController extends AbstractController
                 $this->entityManager->flush();
                 $article->setChapter($chapter);
             }
+            $user = ($article->getIsPrivate()) ? $this->getUser() : null;
+            $article->setUser($user);
             $this->entityManager->persist($article);
             $this->entityManager->flush();
 

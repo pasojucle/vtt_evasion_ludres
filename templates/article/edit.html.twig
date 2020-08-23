@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% form_theme form 'form/custom_theme.html.twig' %}
 
 {% block title %}{{parent()}} Article{% endblock %}
 
@@ -24,6 +25,9 @@
                 </div>
                 <div class="form-group w-90">
                     {{ form_row(form.title)}}
+                </div>
+                <div class="form-group w-90">
+                    {{ form_row(form.isPrivate)}}
                 </div>
                 {{ form_widget(form.content)}}
                 <div class="footer">

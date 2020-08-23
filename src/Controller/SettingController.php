@@ -34,7 +34,6 @@ class SettingController extends AbstractController
     
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            dump($data);
             $files = $request->files->get('parameters');
             $parameterService->uploadFiles($data['parameters'], $files['parameters']);
             $entityManager->flush();
@@ -43,6 +42,8 @@ class SettingController extends AbstractController
             if ($dataEncryption !== $encryption) {
                 $encryptionService->toggleEncryption($dataEncryption);
             }
+
+            return $this->redirectToRoute('home');
         }
 
         return $this->render('setting/edit.html.twig', [

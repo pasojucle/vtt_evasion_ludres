@@ -23,7 +23,7 @@ class ArticleRepository extends ServiceEntityRepository
     * @return Article[] Returns an array of Article objects
     */
 
-    public function findByTerm($searchs):array
+    public function findByTerm($searchs, $user = null):array
     {
         $excludings = ['à', 'un', 'une', 'le', 'la', 'les', 'et', 'avec', 'de', 'du', 'si'];
         $columns = ['s.title', 'c.title', 'a.title', 'a.content'];
@@ -43,9 +43,17 @@ class ArticleRepository extends ServiceEntityRepository
                 }
             }
         }
-        //&eacute;gale
-        return $qb->orWhere(
-                $orX
+
+        $userOrX = $qb->expr()->orX();
+        $userOrX->add($qb->expr()->isNull('a.user'));
+        if (null !== $user) {
+            $userOrX->add($qb->expr()->eq('a.user', ':userId'));
+            $qb->setParameter('userId', $user->getId());
+        }
+
+        return $qb->andWhere(
+                $orX,
+                $userOrX
             )
             ->orderBy('s.title', 'ASC')
             ->orderBy('c.title', 'ASC')

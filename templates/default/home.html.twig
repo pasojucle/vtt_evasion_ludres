@@ -35,9 +35,11 @@
                     </h3>
                     <ul>
                         {% for article in chapter.articles %}
-                        <li>
-                            <a href="{{ path('chapter_show', {'chapter': chapter.id})}}#{{article.id}}">{{article.title}}</a>
-                        </li>
+                            {% if article.user == app.user or article.user is null %}
+                                <li>
+                                    <a href="{{ path('chapter_show', {'chapter': chapter.id})}}#{{article.id}}">{{article.title}}</a>
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 {% else %}

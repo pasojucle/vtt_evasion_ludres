@@ -34,6 +34,8 @@ class SearchController extends AbstractController
             $term = $data['term'];
             $searchs = preg_split('#\s#', htmlentities($term), PREG_SPLIT_NO_EMPTY);
 
+            $user = $this->getUser();
+
             if ($parameterService->getParameter('ENCRYPTION')) {
                 $allArticles = $articleRepository->findAll();
                 $articles = [];
@@ -42,12 +44,14 @@ class SearchController extends AbstractController
                     foreach($allArticles as $article) {
                         if (\preg_match($pattern, $article->getChapter()->getSection()->getTitle()) || \preg_match($pattern, $article->getChapter()->getTitle())
                         || \preg_match($pattern, $article->getTitle()) || \preg_match($pattern, $article->getContent())) {
-                            $articles[] = $article;
+                            if (null === $article->getUser() || $user === $article->getUser()) {
+                                $articles[] = $article;
+                            }
                         }
                     }
                 }
             } else {
-                $articles = $articleRepository->findByTerm($searchs);
+                $articles = $articleRepository->findByTerm($searchs, $user);
             }
         }
 

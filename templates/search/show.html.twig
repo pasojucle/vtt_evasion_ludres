@@ -2,7 +2,7 @@
 
 {% block title %}{{parent()}} Recherche{% endblock %}
 
-{% block body_title %}Article contenant "{{ term }}"{% endblock %}
+{% block body_title %}<h1>Article contenant "{{ term }}"</h1>{% endblock %}
 
 {% block body %}
     {% include('common/menu.html.twig') %}

@@ -17,6 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 
 class ArticleType extends AbstractType
@@ -51,7 +52,7 @@ class ArticleType extends AbstractType
                 ])
                 ;
 
-                $formModifier = function (FormInterface $form, Section $section = null) use ($options) {
+                $formModifier = function (FormInterface $form, Section $section = null, bool $isPrivate = false) use ($options) {
                     $chapters = null == $section ? [] : $section->getChapters();
                     $form->add('chapter', EntityType::class, [
                         'class' => Chapter::class,
@@ -74,7 +75,12 @@ class ArticleType extends AbstractType
                         ],
                         'required' => ($options['add_section'] || $options['add_chapter']) ? true : false,
                     ])
-                    ;
+                    ->add('isPrivate', CheckboxType::class, [
+                        'block_prefix' => 'switch',
+                        'required' => false,
+                        'label' => 'Article privé',
+                        'data' => $isPrivate,
+                    ])
                     ;
                 };
         
@@ -83,7 +89,9 @@ class ArticleType extends AbstractType
                     function (FormEvent $event) use ($formModifier) {
                         $data = $event->getData();
                         $section = (null !== $data) ? $data->getSection() : null;
-                        $formModifier($event->getForm(), $section);
+                        $user = (null !== $data) ? $data->getUser() : null;
+                        $isPrivate = (null === $data || null === $user) ? false : true;
+                        $formModifier($event->getForm(), $section, $isPrivate);
                     }
                 );
         
