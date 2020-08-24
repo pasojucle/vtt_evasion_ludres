@@ -27,7 +27,7 @@ class EntityListener
     {
         $entity = $args->getObject();
         
-        if ($entity instanceof Article && $this->parameterEncryption && null === $entity->getEncryption())
+        if ($entity instanceof Article && $this->parameterEncryption && false === $entity->getEncryptionLock())
         {
             $this->encryptionService->encryptFields($entity);
         }
@@ -36,8 +36,8 @@ class EntityListener
     public function preUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-
-        if ($entity instanceof Article && $this->parameterEncryption && null === $entity->getEncryption())
+dump($entity);
+        if ($entity instanceof Article && $this->parameterEncryption && false === $entity->getEncryptionLock())
         {
             $this->encryptionService->encryptFields($entity);
         }

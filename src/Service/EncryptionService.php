@@ -125,7 +125,7 @@ class EncryptionService
         $articles = $this->articleRepository->findAll();
         if (!empty($articles)) {
             foreach($articles as $article) {
-                $article->setEncryption($parameterEncryption);
+                $article->setEncryptionLock(true);
                 if ($parameterEncryption) {
                     $this->encryptFields($article);
                 } 

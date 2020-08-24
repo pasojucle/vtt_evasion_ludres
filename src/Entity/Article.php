@@ -39,7 +39,7 @@ class Article
     private $chapterTitle;
     private $section;
     private $sectionTitle;
-    private $encryption;
+    private $encryptionLock = false;
     private $isPrivate;
 
     /**
@@ -125,15 +125,15 @@ class Article
         return $this;
     }
  
-    public function getEncryption(): bool
+    public function getEncryptionLock(): bool
     {
-        return $this->encryption;
+        return $this->encryptionLock;
     }
 
  
-    public function setEncryption(bool $encryption): self
+    public function setEncryptionLock(bool $encryptionLock): self
     {
-        $this->encryption = $encryption;
+        $this->encryptionLock = $encryptionLock;
 
         return $this;
     }
