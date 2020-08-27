@@ -5,14 +5,14 @@ $(function() {
     $(document).on('click', '#article_addSection, #article_addChapter', setChapterSelect);
     $(document).on('change', 'input[type="file"]', preview_image);
 
-    if (rubricId = document.getElementById('rubricId')) {
+    /*if (rubricId = document.getElementById('rubricId')) {
         rubricId.addEventListener('change', getChapterList,false);
     }
     document.addEventListener('click', function(event) {
         if (event.target.parentElement.classList.contains("btn")) {
             changeInput(event.target);
         }
-    });
+    });*/
     addEventListenerAll(document.querySelectorAll(".link"), "click", snapToSection);
     if (document.querySelectorAll('.articles').length > 0 ) {
         window.addEventListener("scroll", scrolling, false);
@@ -74,7 +74,7 @@ function snap(destination) {
 		window.scrollBy(0, step);
 	}
 }
-function changeInput(target, formGroup = null, select = null) {
+/*function changeInput(target, formGroup = null, select = null) {
     if ( null != target) {
         formGroup = target.parentElement.parentElement;
         select = formGroup.querySelector('select');
@@ -99,18 +99,18 @@ function changeInput(target, formGroup = null, select = null) {
         formGroup = select.parentElement;
         changeInput(null, formGroup, select);
     }
-}
+}*/
 
-function getChapterList(event) {
+/*function getChapterList(event) {
     if (event) {
         var data = {'rubricId': event.target.value}
     } else {
         var data = {'rubricId': 1}
     }
     processing(data);
-}
+}*/
 
-function setChapterSelect(options) {
+/*function setChapterSelect(options) {
     var selectChapter = document.getElementById('chapterId');
     while (selectChapter.firstChild) {
         selectChapter.firstChild.remove();
@@ -121,7 +121,7 @@ function setChapterSelect(options) {
         option.text = options[key].chapter_title;
         selectChapter.add(option);
     }
-}
+}*/
 
 
 function processing(data){
@@ -172,8 +172,6 @@ function processing(data){
 
 function setChapterSelect(e) {
     let form = $(this).closest('form');
-    let data = {};
-    data[$('#article_section').attr('name')] = $('#article_section').val();
 
     const regex = /article\[([a-zA-Z]+)\]/;
     let name = $(this).attr('name').match(regex)[1];
@@ -181,7 +179,12 @@ function setChapterSelect(e) {
     let addChapter = (name == 'addChapter') ? Number(!$("#article_addChapter").data('value')) : Number($("#article_addChapter").data('value'));
     let article = form.data('article');
 
-    let route = Routing.generate('article_edit', {'addSection': addSection, 'addChapter': addChapter, 'article':article});
+    let data = {};
+    data[$('#article_section').attr('name')] = $('#article_section').val();
+    data[$('#article_addSection').attr('name')] = addSection;
+    data[$('#article_addChapter').attr('name')] = addChapter;
+
+    let route = Routing.generate('article_edit', {'article':article});
 
     $.ajax({
         url : route,

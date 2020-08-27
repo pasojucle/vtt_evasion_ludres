@@ -22,34 +22,42 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/article/edit/{addSection}/{addChapter}/{article}",
+     * @Route("/article/edit/{article}/{chapter}",
      * name="article_edit",
-     * requirements={"addSection"="\d+", "addChapter"="\d+", "article"="\d+"},
-     * defaults={"addSection":0, "addChapter":0, "article":null},
+     * requirements={ "article"="\d+", "chapter"="\d+"},
+     * defaults={"article":null, "chapter":null},
      * options={"expose"=true}
      * )
      */
     public function articleEdit(
         Request $request,
-        bool $addSection,
-        bool $addChapter,
-        ?Article $article
+        ?Article $article,
+        ?Chapter $chapter
     ):Response
     {
-        if ($addSection) {
-            $addChapter = true;
+        if (null !== $chapter) {
+            $article = new Article();
+            $article->setChapter($chapter);
+        }
+        if (null === $chapter && null !== $article) {
+            $chapter = $article->getChapter();
+        }
+        if (null !== $chapter) {
+            $article->setSection($chapter->getSection());
         }
 
-        if (null !== $article) {
-            $article->setSection($article->getChapter()->getSection());
+        $data = null;
+        if ($request->isXmlHttpRequest()) {
+            $data = $request->request->get('article');
+            $addChapter = ($data['addSection']) ? true : $data['addChapter'];
         }
 
         $form = $this->createForm(ArticleType::class, $article,[
             'attr' => [
                 'data-article' => (null !== $article) ? $article->getId() : null,
             ],
-            'add_chapter' => $addChapter,
-            'add_section' => $addSection,
+            'add_chapter' => (null !== $data) ? $addChapter : false,
+            'add_section' => (null !== $data) ? $data['addSection'] : false,
         ]);
 
         $form->handleRequest($request);
