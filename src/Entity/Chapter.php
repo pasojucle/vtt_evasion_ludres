@@ -26,13 +26,13 @@ class Chapter
 
     /**
      * @ORM\OneToMany(targetEntity=Article::class, mappedBy="chapter")
+     * @ORM\OrderBy({"title" = "ASC"})
      */
     private $articles;
 
     /**
      * @ORM\ManyToOne(targetEntity=Section::class, inversedBy="chapters")
      * @ORM\JoinColumn(nullable=false)
-     * @ORM\OrderBy({"title" = "ASC"})
      */
     private $section;
 

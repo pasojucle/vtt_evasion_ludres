@@ -29,8 +29,8 @@ class SectionRepository extends ServiceEntityRepository
             ->leftJoin('s.chapters', 'c')
             ->leftJoin('c.articles', 'a')
             ->orderBy('s.title', 'ASC')
-            ->orderBy('c.title', 'ASC')
-            ->orderBy('a.title', 'ASC')
+            //->orderBy('c.title', 'ASC')
+            //->orderBy('a.title', 'ASC')
             ->getQuery()
             ->getResult()
         ;
