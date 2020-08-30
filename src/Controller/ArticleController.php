@@ -67,7 +67,7 @@ class ArticleController extends AbstractController
                 $section = new Section();
                 $section->setTitle($article->getSectionTitle());
                 $this->entityManager->persist($section);
-                $this->entityManager->flush();
+                $this->entityManager->flush($section);
                 $article->setSection($section);
             }
             if (null !== $article->getChapterTitle()) {
@@ -75,7 +75,7 @@ class ArticleController extends AbstractController
                 $chapter->setTitle($article->getChapterTitle())
                     ->setSection($article->getSection());
                 $this->entityManager->persist($chapter);
-                $this->entityManager->flush();
+                $this->entityManager->flush($chapter);
                 $article->setChapter($chapter);
             }
             $user = ($article->getIsPrivate()) ? $this->getUser() : null;
