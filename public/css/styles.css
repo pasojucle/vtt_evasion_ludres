@@ -324,7 +324,7 @@ input[type="submit"] {
     font-weight: 500;
 }
 pre {
-    background-color: var(--secondary-color);
+    background-color: var(--background-color);
     padding: 8px;
 }
 .article-container {
