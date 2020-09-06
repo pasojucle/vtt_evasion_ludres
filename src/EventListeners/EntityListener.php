@@ -5,8 +5,7 @@ namespace App\EventListeners;
 use App\Entity\Article;
 use App\Service\ParameterService;
 use App\Service\EncryptionService;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 
 class EntityListener
