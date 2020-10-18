@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SettingController extends AbstractController
 {
     /**
-     * @Route("/settings", name="settings")
+     * @Route("/admin/settings", name="settings")
      */
     public function settings(
         ParameterRepository $parameterRepository,

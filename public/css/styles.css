@@ -129,6 +129,15 @@ body > script {display: none !important;}
     padding: 5px;
     border-radius: 5px;
     border: none;
+
+}
+.success {
+    color: var(--success-color);
+    font-size: 20px;
+}
+.danger {
+    color: var(--danger-color);
+    font-size: 20px;
 }
 body {
     background-color: var(--background-color);
@@ -239,7 +248,7 @@ p {
 .nav li a:hover .fas, nav li a:hover .far, nav .li-active .fas, nav .li-active .far {
     background: var(--primary-color);
 }
-nav li::after, .search li::after{
+nav li:not(:last-child)::after, .search li:not(:last-child)::after{
     content: "";
     display: block;
     width: 100%;
@@ -260,9 +269,9 @@ ul {
 li {
     list-style: none;
 }
-form {
-    margin: auto;
-}
+/* form {
+    margin: auto; 
+}*/
 .form-group {
     vertical-align: top;
     margin-bottom: 20px;
@@ -343,7 +352,7 @@ pre {
     grid-area: navBar;
     box-sizing: border-box;
 }
-.block{
+.block {
     background-color: var(--background-color-element);
     padding: 20px;
     border-radius: 5px;
@@ -351,7 +360,20 @@ pre {
 .block:only-child {
     min-height: 250px;
 }
-.block .footer {
+.x-row {
+    display: grid;
+    grid-template-areas: "x-content"
+                        "x-footer";
+    grid-template-rows: auto 40px;
+}
+.x-row .x-title:empty {
+    height: 0px;
+}
+.x-row .x-content {
+    grid-area: x-content;
+}
+.x-row .x-footer {
+    grid-area: x-footer;
     margin-top: 10px;
     text-align: right;
 }
@@ -398,4 +420,21 @@ div#flash .success {
 }
 img.favicon {
     height: 32px;
+}
+.table {
+    width: 100%;
+}
+.table > thead > tr {
+    border-bottom: 1px solid var(--light-color);
+
+}
+.table > tbody > tr {
+    border-bottom: 2px solid var(--background-color);
+}
+.table > tbody > tr > td {
+    border: none;
+}
+.table th {
+    text-align: left;
+    line-height: 30px;
 }

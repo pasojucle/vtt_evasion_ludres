@@ -9,31 +9,33 @@
  {% include('common/menu.html.twig') %}
     <main id="container" class="index">
         <div>
-            <div class="block">
             {{ form_start(form)}}
-            {{ form_errors(form.parameters) }}
-            <ul>
-            {% for parameter in form.parameters %}
-                <li>
-                    {{ form_errors(parameter) }}
-                    <div class="form-group">
-                        {% if parameter.vars.value.type == 'image' %}
-                            {{ form_label(parameter.children.value) }}
-                            {% for children in parameter.children.value.children %}
-                                {{ form_widget(children) }}
-                            {% endfor %}
-                        {% else %}
-                            {{ form_widget(parameter) }}
-                        {% endif %}
-                    </div>
-                </li>
-            {% endfor %}
-            </ul>
-            <div class="footer">
-                <button class="btn btn-primary"><i class="fas fa-check"></i> Enregiter</button>
+            <div class="block x-row">
+                <div class="x-content">
+                    {{ form_errors(form.parameters) }}
+                    <ul>
+                    {% for parameter in form.parameters %}
+                        <li>
+                            {{ form_errors(parameter) }}
+                            <div class="form-group">
+                                {% if parameter.vars.value.type == 'image' %}
+                                    {{ form_label(parameter.children.value) }}
+                                    {% for children in parameter.children.value.children %}
+                                        {{ form_widget(children) }}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ form_widget(parameter) }}
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="x-footer">
+                    <button class="btn btn-primary"><i class="fas fa-check"></i> Enregiter</button>
+                </div>
             </div>
             {{ form_end(form)}}
-            </div>
         </div>
     </main>
 {% endblock %}

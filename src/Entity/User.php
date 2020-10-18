@@ -13,6 +13,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+    const ROLES_STR = [
+        'ROLE_ADMIN' => 'administrateur',
+        'ROLE_USEUR' => 'utilisateur',
+    ];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -32,7 +37,7 @@ class User implements UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
@@ -40,6 +45,22 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity=Article::class, mappedBy="user")
      */
     private $articles;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $lastName;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $isActive;
+
 
     public function __construct()
     {
@@ -83,6 +104,11 @@ class User implements UserInterface
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    public function getRole(): string
+    {
+        return self::ROLES_STR[$this->roles[0]];
     }
 
     public function setRoles(array $roles): self
@@ -151,6 +177,42 @@ class User implements UserInterface
                 $article->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function IsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }

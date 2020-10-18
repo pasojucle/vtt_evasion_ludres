@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{parent()}} Liste des utilisateurs{% endblock %}
+
+{% block body_title %}
+    <h1>Liste des utilisateurs</h1>
+{% endblock %}
+
+{% block body %}
+{% include('common/menu.html.twig') %}
+    <main id="container" class="articles">
+        <div class="block x-row">
+        
+            <div class="x-content">
+                {% if users is not empty %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Nom</th>
+                                <th>Adresse mail</th>
+                                <th>Rôle</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    {% if user.isActive %}<td class="success">&#10004;</span>{% else %}<span class="danger">&#x2716;</td>{% endif %}
+                                    <td>{{ user.firstName }} {{ user.lastName }}</td>                      
+                                    <td>{{ user.email }}</td>                      
+                                    <td>{{ user.role }}</td>
+                                    {% if not is_granted('ROLE_ADMIN')%}
+                                        <td><a href="" class="btn btn-edit" title="Modifier"><i class="far fa-edit"></i></a></td>
+                                        <td><a href="" class="btn  btn-remove" title="Supprimer" class="modal-trigger" data-toggle="modal" data-type="danger"><i class="fas fa-minus-square"></i></a></td>
+                                    {% else %}
+                                        <td></td>
+                                        <td></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="article">
+                        <div class="smiley">&#128542;</div>
+                        <p>Aucun autilisateur</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="x-footer">
+                <a href="{{ path('user_edit')}}" class="btn btn-primary"><i class="far fa-plus-square"></i> Ajouter un utilisteur</a>
+            </div>
+        </div>
+    </main>
+{% endblock %}
