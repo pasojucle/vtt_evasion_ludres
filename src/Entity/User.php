@@ -3,19 +3,22 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"email"}, message="Un compte utilisateur existe déja avec cette adresse mail.")
  */
 class User implements UserInterface
 {
     const ROLES_STR = [
         'ROLE_ADMIN' => 'administrateur',
-        'ROLE_USEUR' => 'utilisateur',
+        'ROLE_USER' => 'utilisateur',
     ];
 
     /**
@@ -27,6 +30,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email(message = "L'adresse '{{ value }}' n'est pas valide.")
      */
     private $email;
 
@@ -59,12 +63,19 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean", options={"default" : 0})
      */
-    private $isActive;
+    private $isActive = 0;
 
+    private $sendActiveLink;
+
+    /**
+     * @ORM\Column(type="string", length=13, nullable=true)
+     */
+    private $uuid;
 
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->uuid = uniqid();
     }
 
     public function getId(): ?int
@@ -114,6 +125,13 @@ class User implements UserInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function addRole(string $role): self
+    {
+        $this->roles[] = $role;
 
         return $this;
     }
@@ -213,6 +231,30 @@ class User implements UserInterface
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getSendActiveLink(): ?bool
+    {
+        return $this->sendActiveLink;
+    }
+
+    public function setSendActiveLink(bool $sendActiveLink): self
+    {
+        $this->sendActiveLink = $sendActiveLink;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(?string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }

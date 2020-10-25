@@ -83,12 +83,14 @@ body > script {display: none !important;}
 
 /*styles*/
 @keyframes flash {
-	0% {opacity:1;}
+    0% {opacity:0;}
+	20% {opacity:1;}
     80% {opacity:1;}
   100% {opacity:0;}
 }
 @-webkit-keyframes flash {
-	0% {opacity:1;}
+    0% {opacity:0;}
+	20% {opacity:1;}
     80% {opacity:1;}
   100% {opacity:0;}
 }
@@ -158,6 +160,20 @@ div#title {
     grid-area: title;
     height: 120px;
     grid-column-start: 2;
+    position: relative;
+}
+.flashes {
+    position: absolute;
+    bottom: 0;
+    opacity: 0;
+    -webkit-animation: flash 5s;
+    animation: flash 5s;
+}
+.flash-success {
+    color: var(--primary-color);
+}
+.flash-danger {
+    color: var(--danger-color);
 }
 header {
     position: fixed;
@@ -282,17 +298,29 @@ li {
     width: 20px;
     text-align: center
 }
-.form-group label {
+label {
     vertical-align: middle;
+    width: calc(25% - 4px);
+    display: inline-block;
+}
+.form-errors, .form-link {
+    margin-left: calc(25% + 4px);
+    margin-top: 8px;
+}
+
+.form-errors {
+    color: var(--danger-color);
 }
 .w-90 {
     width: 90%;
 }
 .w-25 {
     width: calc(25% - 4px);
+    vertical-align: middle;
 }
 .w-75 {
     width: calc(75% - 4px);
+    vertical-align: middle;
 }
 .row > div {
     display: inline-block;
@@ -300,12 +328,8 @@ li {
 .form-item-inline {
     display: inline-block;
 }
-label {
-    width: 25%;
-    display: inline-block;
-}
 input[type="text"], textarea, select, input[type="password"], input[type="email"] {
-    width: 74%;
+    width: calc(75% - 4px);
     height: 30px;
     box-sizing: border-box;
 }
@@ -386,21 +410,6 @@ table {
 td {
     border: 1px solid var(--color-element);
     padding: 5px;
-}
-div#flash {
-    position: absolute;
-    left: 20%;
-    top: 30px;
-    z-index: 1;
-}
-
-div#flash .success {
-    padding: 10px;
-    border-radius: 5px;
-	-webkit-animation: flash 10s;
-	animation: flash 10s;
-    background-color: var(--success-color);
-    opacity:0;
 }
 .chevron {
     margin: auto 10px auto auto;

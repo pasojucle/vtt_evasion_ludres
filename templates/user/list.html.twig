@@ -7,10 +7,9 @@
 {% endblock %}
 
 {% block body %}
-{% include('common/menu.html.twig') %}
+    {% include('common/menu.html.twig') %}
     <main id="container" class="articles">
         <div class="block x-row">
-        
             <div class="x-content">
                 {% if users is not empty %}
                     <table class="table">
@@ -27,13 +26,13 @@
                         <tbody>
                             {% for user in users %}
                                 <tr>
-                                    {% if user.isActive %}<td class="success">&#10004;</span>{% else %}<span class="danger">&#x2716;</td>{% endif %}
+                                    <td {% if user.isActive %}class="success">&#10004;</span>{% else %}<span class="danger">&#x2716;{% endif %}</td>
                                     <td>{{ user.firstName }} {{ user.lastName }}</td>                      
                                     <td>{{ user.email }}</td>                      
                                     <td>{{ user.role }}</td>
-                                    {% if not is_granted('ROLE_ADMIN')%}
-                                        <td><a href="" class="btn btn-edit" title="Modifier"><i class="far fa-edit"></i></a></td>
-                                        <td><a href="" class="btn  btn-remove" title="Supprimer" class="modal-trigger" data-toggle="modal" data-type="danger"><i class="fas fa-minus-square"></i></a></td>
+                                    {% if 'ROLE_ADMIN' not in user.roles %}
+                                        <td><a href="{{path('user_edit', {user: user.id})}}" class="btn btn-edit" title="Modifier"><i class="far fa-edit"></i></a></td>
+                                        <td><a href="{{path('user_delete', {user: user.id})}}" class="btn  btn-remove" title="Supprimer" class="modal-trigger" data-toggle="modal" data-type="danger"><i class="fas fa-minus-square"></i></a></td>
                                     {% else %}
                                         <td></td>
                                         <td></td>

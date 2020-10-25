@@ -15,9 +15,11 @@
         {% endblock %}
     </head>
     <body class="{{ parameter_service.getParameter('THEME_CSS')}}">
+
         <div id="bodyContainer">
             <div id="title" class='title'>
                 {% block body_title %}{% endblock %}
+                {% include 'common/flashes.html.twig' %}
             </div>
 
             {% block body %}{% endblock %}
