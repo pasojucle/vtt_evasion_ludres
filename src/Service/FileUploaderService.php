@@ -25,6 +25,10 @@ class FileUploaderService
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $fileName = $this->slugger->slug($originalFilename).'.'.$file->guessExtension();
 
+        if (!file_exists($this->getTargetDirectory())) {
+            mkdir($this->getTargetDirectory());
+        }
+
         if (null === $width && null === $height) {
             try {
                 $file->move($this->getTargetDirectory(), $fileName);
