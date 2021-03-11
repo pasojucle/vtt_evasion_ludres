@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SettingController extends AbstractController
 {
@@ -22,9 +23,11 @@ class SettingController extends AbstractController
         ParameterService $parameterService,
         EncryptionService $encryptionService,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        SessionInterface $session
     )
     {
+        
         $parameters = $parameterRepository->findAll();
         $parameters = new ArrayCollection($parameters);
         $encryption = $parameterService->getEncryption($parameters);
@@ -33,16 +36,17 @@ class SettingController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
+            $session->set('encryptionLock', true);
             $data = $form->getData();
             $files = $request->files->get('parameters');
             $parameterService->uploadFiles($data['parameters'], $files['parameters']);
             $entityManager->flush();
-            
+
             $dataEncryption = $parameterService->getEncryption($data['parameters']);
             if ($dataEncryption !== $encryption) {
                 $encryptionService->toggleEncryption($dataEncryption);
             }
-
+            $session->remove('encryptionLock');
             return $this->redirectToRoute('home');
         }
 

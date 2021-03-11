@@ -41,7 +41,6 @@ class Article
     private $chapterTitle;
     private $section;
     private $sectionTitle;
-    private $encryptionLock = false;
     private $isPrivate;
 
     /**
@@ -123,19 +122,6 @@ class Article
     public function setSectionTitle(?string $sectionTitle): self
     {
         $this->sectionTitle = $sectionTitle;
-
-        return $this;
-    }
- 
-    public function getEncryptionLock(): bool
-    {
-        return $this->encryptionLock;
-    }
-
- 
-    public function setEncryptionLock(bool $encryptionLock): self
-    {
-        $this->encryptionLock = $encryptionLock;
 
         return $this;
     }

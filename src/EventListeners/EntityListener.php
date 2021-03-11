@@ -6,28 +6,30 @@ use App\Entity\Article;
 use App\Service\ParameterService;
 use App\Service\EncryptionService;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class EntityListener
 {
     private ParameterService $parameterService;
     private EncryptionService $encryptionService;
+    private SessionInterface $session;
     private $parameterEncryption;
 
     public function __construct(
         ParameterService $parameterService,
-        EncryptionService $encryptionService
+        EncryptionService $encryptionService,
+        SessionInterface $session
     )
     {
         $this->parameterService = $parameterService;
         $this->parameterEncryption = $this->parameterService->getParameter('ENCRYPTION');
         $this->encryptionService = $encryptionService;
+        $this->session = $session;
     }
 
     public function prePersist(Article $article, LifecycleEventArgs $event)
     {
-        dump($article);
-        if ($this->parameterEncryption && false === $article->getEncryptionLock())
+        if ($this->parameterEncryption && true !== $this->session->get('encryptionLock'))
         {
             $this->encryptionService->encryptFields($article);
         }
@@ -35,8 +37,7 @@ class EntityListener
 
     public function preUpdate(Article $article, LifecycleEventArgs $event)
     {
-        dump($article);
-        if ($this->parameterEncryption && false === $article->getEncryptionLock())
+        if ($this->parameterEncryption && true !== $this->session->get('encryptionLock'))
         {
             $this->encryptionService->encryptFields($article);
         }
@@ -44,9 +45,7 @@ class EntityListener
 
     public function postLoad(Article $article, LifecycleEventArgs $event)
     {
-        dump($article);
-
-        if ($this->parameterEncryption)
+        if ($this->parameterEncryption && true !== $this->session->get('encryptionLock'))
         {
             $this->encryptionService->decryptFields($article);
         }

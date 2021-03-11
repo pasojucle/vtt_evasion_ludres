@@ -35,7 +35,7 @@ class EncryptionService
     )
     {
         $this->params = $params;
-        //$this->parameterEncryption = $parameterService->getParameter('ENCRYPTION');
+        $this->parameterEncryption = $parameterService->getParameter('ENCRYPTION');
         $this->articleRepository = $articleRepository;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -93,13 +93,11 @@ class EncryptionService
 
     public function decryptFields(Article $article)
     {
-        dump('decrypt');
         $key = $this->loadKey();
         $id = $article->getId();
-
         // Decrypt the variables
         $content = $this->decrypt($id, 'content', $article->getContent(), $key);
-        dump($content);
+
         // Set the entity variables
         if (null != $content) {
             $article->setContent($content->getString());
@@ -124,9 +122,9 @@ class EncryptionService
  
     public function toggleEncryption($parameterEncryption) {
         $articles = $this->articleRepository->findAll();
+        $this->session->set('encryptionLock', true);
         if (!empty($articles)) {
             foreach($articles as $article) {
-                $article->setEncryptionLock(true);
                 if ($parameterEncryption) {
                     $this->encryptFields($article);
                 } else {
@@ -138,6 +136,7 @@ class EncryptionService
         }
 
         $this->entityManager->flush();
+
         //$encKey = KeyFactory::generateEncryptionKey();
         //KeyFactory::save($encKey, '../data/encryption.key');
 
