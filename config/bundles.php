@@ -14,4 +14,5 @@ return [
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
     FOS\CKEditorBundle\FOSCKEditorBundle::class => ['all' => true],
     FOS\JsRoutingBundle\FOSJsRoutingBundle::class => ['all' => true],
+    Tetranz\Select2EntityBundle\TetranzSelect2EntityBundle::class => ['all' => true],
 ];

@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Parameter;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Parameter|null find($id, $lockMode = null, $lockVersion = null)
@@ -35,12 +36,17 @@ class ParameterRepository extends ServiceEntityRepository
 
     public function findOneByName($name): ?Parameter
     {
-        return $this->createQueryBuilder('p')
+        try {
+            return $this->createQueryBuilder('p')
             ->andWhere('p.name = :name')
             ->setParameter('name', $name)
             ->getQuery()
             ->getOneOrNullResult()
         ;
+        } catch (QueryException $e) {
+            return null;
+        }
+
     }
     
 }

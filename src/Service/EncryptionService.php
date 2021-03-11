@@ -9,7 +9,7 @@ use ParagonIE\Halite\KeyFactory;
 use App\Service\ParameterService;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use ParagonIE\Halite\HiddenString;
+use ParagonIE\HiddenString\HiddenString;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\Halite\Symmetric\Crypto as Symmetric;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -35,7 +35,7 @@ class EncryptionService
     )
     {
         $this->params = $params;
-        $this->parameterEncryption = $parameterService->getParameter('ENCRYPTION');
+        //$this->parameterEncryption = $parameterService->getParameter('ENCRYPTION');
         $this->articleRepository = $articleRepository;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -93,15 +93,16 @@ class EncryptionService
 
     public function decryptFields(Article $article)
     {
+        dump('decrypt');
         $key = $this->loadKey();
         $id = $article->getId();
 
         // Decrypt the variables
         $content = $this->decrypt($id, 'content', $article->getContent(), $key);
-
+        dump($content);
         // Set the entity variables
         if (null != $content) {
-            $article->setContent($content);
+            $article->setContent($content->getString());
         }
     }
 
@@ -128,7 +129,9 @@ class EncryptionService
                 $article->setEncryptionLock(true);
                 if ($parameterEncryption) {
                     $this->encryptFields($article);
-                } 
+                } else {
+                    $this->decryptFields($article);
+                }
                 
                 $this->entityManager->persist($article);
             }

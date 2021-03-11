@@ -14,20 +14,21 @@ class SearchService
  
     private $formFactory;
  
-    public function __construct(UrlGeneratorInterface $router, FormFactoryInterface $formFactory, $term = null) {
- 
+    public function __construct(UrlGeneratorInterface $router, FormFactoryInterface $formFactory) 
+    {
         $this->router = $router;
  
         $this->formFactory = $formFactory;
 
+    }
+ 
+    public function getForm($term = null) 
+    {
         $this->form = $this->formFactory->create(SearchType::class, $term, [
             'attr' =>[
                 'action' => $this->router->generate('search')
             ]
         ]);
-    }
- 
-    public function getForm() {
         
         return $this->form;
     }

@@ -5,50 +5,50 @@ namespace App\EventListeners;
 use App\Entity\Article;
 use App\Service\ParameterService;
 use App\Service\EncryptionService;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 
 class EntityListener
 {
-    private $parameterService;
-    private $encryptionService;
+    private ParameterService $parameterService;
+    private EncryptionService $encryptionService;
+    private $parameterEncryption;
 
     public function __construct(
         ParameterService $parameterService,
         EncryptionService $encryptionService
     )
     {
-        $this->parameterEncryption = $parameterService->getParameter('ENCRYPTION');
+        $this->parameterService = $parameterService;
+        $this->parameterEncryption = $this->parameterService->getParameter('ENCRYPTION');
         $this->encryptionService = $encryptionService;
     }
 
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(Article $article, LifecycleEventArgs $event)
     {
-        $entity = $args->getObject();
-        
-        if ($entity instanceof Article && $this->parameterEncryption && false === $entity->getEncryptionLock())
+        dump($article);
+        if ($this->parameterEncryption && false === $article->getEncryptionLock())
         {
-            $this->encryptionService->encryptFields($entity);
+            $this->encryptionService->encryptFields($article);
         }
     }
 
-    public function preUpdate(LifecycleEventArgs $args)
+    public function preUpdate(Article $article, LifecycleEventArgs $event)
     {
-        $entity = $args->getObject();
-
-        if ($entity instanceof Article && $this->parameterEncryption && false === $entity->getEncryptionLock())
+        dump($article);
+        if ($this->parameterEncryption && false === $article->getEncryptionLock())
         {
-            $this->encryptionService->encryptFields($entity);
+            $this->encryptionService->encryptFields($article);
         }
     }
 
-    public function postLoad(LifecycleEventArgs $args)
+    public function postLoad(Article $article, LifecycleEventArgs $event)
     {
-        $entity = $args->getObject();
+        dump($article);
 
-        if ($entity instanceof Article && $this->parameterEncryption)
+        if ($this->parameterEncryption)
         {
-            $this->encryptionService->decryptFields($entity);
+            $this->encryptionService->decryptFields($article);
         }
     }
 }

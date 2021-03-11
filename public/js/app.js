@@ -1,5 +1,7 @@
 let timeoutId = null;
 
+
+
 $(function() {
     $(document).on('change', '#article_section', setChapterSelect);
     $(document).on('click', '#article_addSection, #article_addChapter', setChapterSelect);

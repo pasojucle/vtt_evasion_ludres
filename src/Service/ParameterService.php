@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Service\FileUploaderService;
 use App\Repository\ParameterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -13,14 +14,13 @@ class ParameterService
     private $parameterRepository;
     private $fileUploader;
  
-    public function __construct(ParameterRepository $parameterRepository, FileUploader $fileUploader) {
+    public function __construct(ParameterRepository $parameterRepository, FileUploaderService $fileUploader) {
  
         $this->parameterRepository = $parameterRepository;
         $this->fileUploader = $fileUploader;
     }
  
     public function getParameter($name) {
-        
         $parameter =  $this->parameterRepository->findOneByName($name);
 
         return (null!== $parameter) ? $parameter->getValue() : null;

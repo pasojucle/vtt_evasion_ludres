@@ -33,10 +33,9 @@ services:
     # please note that last definitions always *replace* previous ones
     App\EventListeners\EntityListener:
         tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: preUpdate }
-            - { name: doctrine.event_listener, event: postLoad }
+            - { name: doctrine.orm.entity_listener }
 
-    App\Service\FileUploader:
+    App\Service\FileUploaderService:
         arguments:
-            $targetDirectory: '%uploads_directory%'
+            $parameterBagInterface: "@parameter_bag"
+            $slugger: "@slugger"

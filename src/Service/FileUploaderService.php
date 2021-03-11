@@ -2,18 +2,21 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-class FileUploader
+class FileUploaderService
 {
+    private $parameterBagInterface;
     private $targetDirectory;
     private $slugger;
 
-    public function __construct($targetDirectory, SluggerInterface $slugger)
+    public function __construct(SluggerInterface $slugger, ParameterBagInterface $parameterBagInterface)
     {
-        $this->targetDirectory = $targetDirectory;
+        $this->parameterBagInterface = $parameterBagInterface;
+        $this->targetDirectory = $this->parameterBagInterface->get('uploads_directory');
         $this->slugger = $slugger;
     }
 

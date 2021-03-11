@@ -7,8 +7,10 @@ use App\Entity\Section;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ArticleRepository;
 
+
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
+ * @ORM\EntityListeners({"App\EventListeners\EntityListener"})
  */
 class Article
 {
