@@ -1,0 +1,35 @@
+licence:
+  type:
+    ride: Balade
+    hike: Rando
+    sport: Sport
+  coverage:
+    mini_gear: Mini braquet
+    small_gear: Petit braquet
+    high_gear: Grand braquet 
+
+identity:
+  kinship:
+    father: Père
+    mother: Mère
+    guardianship: Tuteur
+
+disease:
+  type:
+    diseases: Maladies
+    allergies: Allergies
+    intolerances: Intolérances
+  label: 
+        enuresis: Enurésie
+        tetany: Tétanie
+        asthma: Asthme
+        hemophilia: Hémophilie
+        pilepsy: Epilepsie
+        diabetes: Diabète
+        other: Autres
+        dietary: Alimentaires
+        medicated: Médicamenteuses
+        pollen_bees: Pollen, Abeilles
+        food: Aux aliments 
+        medicines: Aux médicaments
+
