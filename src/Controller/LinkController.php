@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class LinkController extends AbstractController
 {
     /**
-     * @Route("/link", name="link")
+     * @Route("/liens_partenaires", name="links")
      */
     public function index(): Response
     {

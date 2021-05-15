@@ -1,1 +1,46 @@
-<img src="./images/logo.jpg" alt="vtt évasion ludres">
+{% set menus = header_service.menus() %}
+<nav>
+    <ul>
+        {% for menu in menus %}
+            <li>
+                <a href="{{ path(menu.route) }}">{{ menu.label }}
+                    {% if menu.subMenus is not empty %}
+                        <ul class="sub-menu">
+                            {% for sub_menu in menu.subMenus %}
+                                <li>
+                                    <a href="{{ path(sub_menu.route, sub_menu.params) }}">{{ sub_menu.label }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>
+<div class="header-container">
+    <div class="grayscale-container">
+
+            <img src="/images/clip_image001_0001.jpg" alt="">
+            <img src="/images/compostelle1-(54).jpg" alt="">
+            <img src="/images/vttBallon.jpg" alt="">
+            <img src="/images/vttBussang.jpg" alt="">
+            <img src="/images/vttludresgroupe.jpg" alt="">
+            <img src="/images/clip_image001_0001.jpg" alt="">
+            <img src="/images/compostelle1-(54).jpg" alt="">
+            <img src="/images/vttBallon.jpg" alt="">
+            <img src="/images/vttBussang.jpg" alt="">
+            <img src="/images/vttludresgroupe.jpg" alt="">
+            <img src="/images/clip_image001_0001.jpg" alt="">
+            <img src="/images/compostelle1-(54).jpg" alt="">
+            <img src="/images/vttBallon.jpg" alt="">
+            <img src="/images/vttBussang.jpg" alt="">
+            <img src="/images/vttludresgroupe.jpg" alt="">
+
+
+    </div>
+    <div class="header-text">
+        <img src="/images/logo.png" alt="vtt évasion ludres">
+    </div>
+    
+</div>

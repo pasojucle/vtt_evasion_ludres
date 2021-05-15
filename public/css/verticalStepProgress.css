@@ -1,0 +1,85 @@
+ul.StepProgress {
+    margin-top: 150px;
+    position: relative;
+    padding-left: 45px;
+    list-style: none;
+}
+
+.StepProgress::before {
+    display: inline-block;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: 10px;
+    height: 100%;
+    border-left: 2px solid var(--light-color);
+}
+
+.StepProgress-item {
+    position: relative;
+    counter-increment: list;
+}
+
+.StepProgress-item:not(:last-child) {
+    padding-bottom: 20px;
+}
+
+.StepProgress-item::before {
+    display: inline-block;
+    content: '';
+    position: absolute;
+    left: -30px;
+    height: 100%;
+    width: 12px;
+}
+
+.StepProgress-item::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -37px;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--light-color);
+    border-radius: 50%;
+    background-color: var(--light-color);
+}
+
+.StepProgress-item.is-done::before {
+    border-left: 2px solid var(--primary-color);
+}
+.StepProgress-item.is-done::after {
+    content: "\2714";
+    font-size: 14px;
+    line-height: 14px;
+    color: var(--background-color);
+    text-align: center;
+    border: 2px solid var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.StepProgress-item.current::before {
+    border-left: 2px solid var(--primary-color);
+}
+
+.StepProgress-item.current::after {
+    content: counter(list);
+    /*padding-top: 1px;*/
+    width: 19px;
+    height: 18px;
+    line-height: 18px;
+    top: -4px;
+    left: -40px;
+    font-size: 14px;
+    text-align: center;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    background-color: var(--background-color);
+    font-weight: 700;
+}
+
+.StepProgress strong {
+    display: block;
+}
