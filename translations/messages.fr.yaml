@@ -33,3 +33,8 @@ disease:
         food: Aux aliments 
         medicines: Aux médicaments
 
+registration_step:
+  type:
+    adult: Adulte
+    minor: Mineur
+    testing: 3 séances d'essai gratuites

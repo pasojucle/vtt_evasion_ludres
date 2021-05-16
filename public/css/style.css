@@ -57,6 +57,9 @@ h6{
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
 }
+li {
+    list-style-position: inside;
+}
 li p,
 li ul,
 li ol {
@@ -110,7 +113,10 @@ body > script {display: none !important;}
     border-radius: 5px;
     border: none;
 }
-
+.btn-xs {
+    padding: 1px;
+    border-radius: 2px;
+}
 body {
     background-color: var(--light-color);
     color: var(--light-color);
@@ -199,8 +205,8 @@ h2 {
     margin-top: 25px;
     margin-bottom: 15px;
 }
-.block-body {
-
+.block-body .container:not(:first-child) {
+    margin-top: 15px;
 }
 .block-footer {
     margin-top: 25px;
@@ -228,4 +234,10 @@ h2 {
 }
 .block-right {
     grid-area: block-right;
+}
+
+.ffv-table {
+    /*background-color: #f1eedf;
+    padding: 5px;
+    color: var(--background-color);*/
 }

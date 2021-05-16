@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
+{% endblock %}
+{% block body %}
+    <div class="wrapper col-3">
+        <div class="block-left">
+        </div>
+        <div class="block">
+            <div class="block-title">
+                <h2>{{ registrationStep.title }}</h2>
+            </div>
+            <div class="block-body">
+                {{ form_start(form)}}
+                {{ form_end(form)}}
+            </div>
+        </div>
+    </div>
+{% endblock %}

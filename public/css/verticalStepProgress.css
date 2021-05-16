@@ -66,7 +66,6 @@ ul.StepProgress {
 
 .StepProgress-item.current::after {
     content: counter(list);
-    /*padding-top: 1px;*/
     width: 19px;
     height: 18px;
     line-height: 18px;
@@ -82,4 +81,8 @@ ul.StepProgress {
 
 .StepProgress strong {
     display: block;
+}
+
+.StepProgress a {
+    color: var(--light-color);
 }

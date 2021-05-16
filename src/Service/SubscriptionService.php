@@ -2,98 +2,78 @@
 
 namespace App\Service;
 
+use DateTime;
+use Symfony\Component\Security\Core\Security;
+use App\Repository\RegistrationStepRepository;
+
 class SubscriptionService
 {
-    private array $steps;
+    private RegistrationStepRepository $registrationStepRepository;
+    private $user;
 
-    public function __construct()
+    public function __construct(RegistrationStepRepository $registrationStepRepository, Security $security)
     {
-        $this->steps = [
-            1 => [
-                'title' => 'Tableaux des garanties',
-                'types' => 'all',
-                'filename' => 'Tableau_des_licences_2020.pdf',
-                'form' => null,
-                'template' => null,
-            ],
-            2 => [
-                'title' => 'Cotisation',
-                'types' => 'all',
-                'filename' => null,
-                'form' => null,
-                'template' => null,
-            ],
-            3 => [
-                'title' => 'QS sport',
-                'types' => 'all',
-                'filename' => null,
-                'form' => null,
-                'template' => null,
-            ],
-            4 => [
-                'title' => 'Informations du parent ou tuteur de l\'enfant',
-                'types' => ['mineur'],
-                'filename' => null,
-                'form' => null,
-                'template' => null,
-            ],
-            5 => [
-                'title' => ['adulte' => 'Informations personnelles', 'mineur' => 'Informations de l\'enfant'],
-                'types' => 'all',
-                'filename' => null,
-                'form' => null,
-                'template' => null,
-            ],
-            6 => [
-                'title' => 'Santé de l\'enfant',
-                'types' => ['mineur'],
-                'filename' => null,
-                'form' => null,
-                'template' => null,
-            ],
-            7 => [
-                'title' => 'Licence',
-                'types' => 'all',
-                'filename' => null,
-                'form' => null,
-                'template' => null,
-            ],
-            8 => [
-                'title' => 'Droit à l\'image',
-                'types' => 'all',
-                'filename' => null,
-                'form' => null,
-                'template' => null,
-            ],
-        ];
+        $this->registrationStepRepository = $registrationStepRepository;
+        $user = $security->getUser();
     }
 
     public function getProgress($type, $step)
     {
+        $steps = $this->registrationStepRepository->findByType($type);
+
         $progress = [];
         $progress['prev'] = null;
         $progress['next'] = null;
+        --$step;
 
-        foreach($this->steps as $key => $data) {
-            if ($data['types'] === 'all' || (is_array($data['types']) && in_array($type, $data['types']))) {
-                if ($key < $step) {
-                    $data['class'] = 'is-done';
-                    $progress['prev'] = $key;
-                } elseif ($key === $step) {
-                    $data['class'] = 'current';
-                } else {
-                    $data['class'] = null;
-                    if (null === $progress['next']) {
-                        $progress['next'] = $key;
-                    }
+        foreach($steps as $key => $registrationStep) {
+            if ($key < $step) {
+                $registrationStep->setClass('is-done');
+                $progress['prev'] = $key+1;
+            } elseif ($key === $step) {
+                $registrationStep->setClass('current');
+            } else {
+                if (null === $progress['next']) {
+                    $progress['next'] = $key+1;
                 }
-                if (is_array($data['title'])) {
-                    $data['title'] = $data['title'][$type];
-                }
-                $progress['steps'][$key] = $data;
             }
+            if (null !== $registrationStep->getContent()) {
+                $content = $this->replaceFieds($registrationStep->getContent());
+                $registrationStep->setContent($content);
+            }
+            $progress['steps'][$key+1] = $registrationStep;
         }
 
         return $progress;
+    }
+
+    private function replaceFieds(string $content)
+    {
+        $today = new DateTime();
+        $todayStr = $today->format('d/m/Y');
+        $fullName = 'Prénom et Nom';
+        $bithDate = 'Date de naissance';
+        $fullNameChildren = 'Prénom et Nom de l\'enfant';
+        $bithDateChildren = 'Date de naissance de l\'enfant';
+        $coverage = 'Formule d\'assurance';
+        if ($this->user) {
+
+        }
+
+        $fields = [
+            ['pattern' => '#(.*)( {{ formule_assurance }})(.*)#s', 'replacement' => "$1 $coverage$3",],
+            ['pattern'  => '#(.*)( {{ date }})(.*)#s', 'replacement' => "$1 $todayStr$3",],
+            ['pattern'  => '#(.*)( {{ prenom_nom }})(.*)#s', 'replacement' => "$1 $fullName$3",],
+            ['pattern'  => '#(.*)( {{ date_de_naissance }})(.*)#s', 'replacement' => "$1 $bithDate$3",],
+            ['pattern'  => '#(.*)( {{ prenom_nom_enfant }})(.*)#s', 'replacement' => "$1 $fullNameChildren$3",],
+            ['pattern'  => '#(.*)( {{ date_de_naissance_enfant }})(.*)#s', 'replacement' => "$1 $bithDateChildren$3",],
+        ];
+
+        foreach ($fields as $field) {
+            $content = preg_replace($field['pattern'], $field['replacement'], $content);
+        }
+        
+        
+        return $content;
     }
 }

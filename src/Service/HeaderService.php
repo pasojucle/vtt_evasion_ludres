@@ -20,17 +20,17 @@ class HeaderService
                 'subMenus' => [
                     [
                         'label' => 'Bulletin d\'inscription adulte',
-                        'route' => 'subscription',
+                        'route' => 'register',
                         'params' => ['type' => 'adulte'],
                     ],
                     [
                         'label' => 'Bulletin d\'inscription mineur',
-                        'route' => 'subscription',
+                        'route' => 'register',
                         'params' => ['type' => 'mineur'],
                     ],
                     [
                         'label' => 'Bulletin d\'inscription 3 séances gratuites',
-                        'route' => 'subscription',
+                        'route' => 'register',
                         'params' => ['type' => 'seances_gratuites'],
                     ],
                 ],
@@ -46,7 +46,7 @@ class HeaderService
                 'subMenus' => [
                     [
                         'label' => 'Rando dimanche matin',
-                        'route' => 'subscription',
+                        'route' => 'register',
                         'params' => ['type' => 'seances_gratuites'],
                     ],
                 ],

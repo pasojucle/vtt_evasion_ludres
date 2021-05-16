@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
+{% endblock %}
+{% block body %}
+    <div class="wrapper col-3">
+        <div class="block-left">
+        </div>
+        <div class="block">
+            <div class="block-title">
+                <h2>Etapes des inscriptions</h2>
+            </div>
+            <div class="block-body">
+                <ul>
+                    {% for step in registrationSteps %}
+                        <li>
+                            <span>{{ step.title }}</span>
+                            <span>{{ step.title }}</span>
+                            <span>{{ step.orderBy }}</span>
+                            <span><a class="btn btn-primary btn-xs" href="{{ path('admin_registration_step', {'step' : step.id}) }}">Modifier</a></span>
+                        </li>
+                    {% endfor %}
+                
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
