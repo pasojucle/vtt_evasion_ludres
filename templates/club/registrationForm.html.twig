@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
+{% endblock %}
+{% block body %}
+    {% if steps is not empty %}
+
+        <div class="wrapper col-2">
+            <div class="block-left background-ligth">
+                {% if form is not null %}
+                    {{ form_start(form)}}
+                {% endif %}
+                <div class="block-title">
+                    <h1>{{ current.title }}</h1>
+                </div>
+                <div class="block-body">
+                    {% if current.content is not null %}
+                        <div class="container">{{ current.content | raw}}</div>
+                    {% endif %}
+                    {% if current.filename is not null %}
+                        <div class="container">
+                            <!--<object width="100%" height="1470" type="application/pdf" data="/files/{{current.filename}}#toolbar=0&navpanes=0&scrollbar=0"> -->
+                            <object width="100%" height="500" type="application/pdf" data="/files/{{current.filename}}">
+                            <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
+                            </object>
+                        </div>
+                    {% endif %}
+                    {% if current.form is not null %}
+                        {% set template = 'club/' ~ current.form ~ '.html.twig' %}
+                        {% include template %}
+                    {% endif %}
+                </div>
+                {% set route = 'user_registration_form' %}
+                {% if app.request.user is null and step < 2 %}
+                    {% set route = 'registration_form' %}
+                {% endif %}
+                <div class="block-footer">
+                    {% if prev is not null %}
+                        <a class="btn btn-primary float-left" href="{{ path(route, {'type': type, 'step': prev }) }}">Précedent</a>
+                    {% endif %}
+                    {% if next is not null and form is null %}
+                        <a class="btn btn-primary float-right" href="{{ path(route, {'type': type, 'step': next }) }}">Suivant</a>
+                    {% endif %}
+                    {% if form is not null %}
+                        {{ form_row(form.save)}}
+                    {% endif %}
+                </div>
+                {% if form is not null %}
+                    {{ form_end(form)}}
+                {% endif %}
+            </div>
+            <div class="block-right">
+                <ul class="StepProgress">
+                    {% for key, step in steps %}
+                        {% set route = 'user_registration_form' %}
+                        {% if app.request.user is null and key < 2 %}
+                            {% set route = 'registration_form' %}
+                        {% endif %}
+                        <li class="StepProgress-item {{ step.class }}"><a href="{{ path(route, {'type': type, 'step': loop.index }) }}"><strong>{{ step.title }}</strong></a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% else %}
+            <div class="wrapper">
+                <div class="wrapper-title">
+                    <h1>Inscription</h1>
+                </div>
+                <div class="wrapper-body col-3">
+                    <div class="card">
+                        <img class="card-img-top" src="/images/clip_image001_0001.jpg" alt="Card image cap">
+                        <div class="card-body">
+                            <h3>Je suis un nouvel adhérent</h3>
+                            <a class="btn btn-secondary" href="{{ path('registration_form', {'type': type, 'step': 1 }) }}">Continuer</a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img class="card-img-top" src="/images/compostelle1-(54).jpg" alt="Card image cap">
+                        <div class="card-body">
+                            <h3>Je suis déjà adhérent au club</h3>
+                            <a class="btn btn-secondary"  href="{{ path('user_registration_form', {'type': type, 'step': 1 }) }}">Continuer</a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <img class="card-img-top" src="/images/vttBallon.jpg" alt="Card image cap">
+                        <div class="card-body">
+                            <h3>Je veux compéter une inscription en cours</h3>
+                            <a class="btn btn-secondary"  href="{{ path('user_registration_form', {'type': type, 'step': 1 }) }}">Continuer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="block-right"></div>
+        {% endif %}
+    </div>
+{% endblock %}

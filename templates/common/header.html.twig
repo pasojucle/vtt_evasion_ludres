@@ -3,7 +3,7 @@
     <ul>
         {% for menu in menus %}
             <li>
-                <a href="{{ path(menu.route) }}">{{ menu.label }}
+                <a href="{{ path(menu.route) }}">{{ menu.label }}</a>
                     {% if menu.subMenus is not empty %}
                         <ul class="sub-menu">
                             {% for sub_menu in menu.subMenus %}
@@ -13,7 +13,7 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                </a>
+
             </li>
         {% endfor %}
     </ul>

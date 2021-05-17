@@ -43,39 +43,39 @@ class Licence
     private $number;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $type;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $coverage;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $magazineSubscription;
+    private $magazineSubscription = false;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $subscriptionAmount;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $valid;
+    private $valid = false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $additionalFamilyMember;
+    private $additionalFamilyMember = false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $medicaCertificateRequired;
+    private $medicalCertificateRequired = false;
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="licence", cascade={"persist", "remove"})
@@ -171,14 +171,14 @@ class Licence
         return $this;
     }
 
-    public function getMedicaCertificateRequired(): ?bool
+    public function getMedicalCertificateRequired(): ?bool
     {
-        return $this->medicaCertificateRequired;
+        return $this->medicalCertificateRequired;
     }
 
-    public function setMedicaCertificateRequired(bool $medicaCertificateRequired): self
+    public function setMedicalCertificateRequired(bool $medicalCertificateRequired): self
     {
-        $this->medicaCertificateRequired = $medicaCertificateRequired;
+        $this->medicalCertificateRequired = $medicalCertificateRequired;
 
         return $this;
     }

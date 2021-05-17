@@ -19,18 +19,23 @@ class HeaderService
                 'route' => 'club',
                 'subMenus' => [
                     [
+                        'label' => 'Inscription',
+                        'route' => 'registration',
+                        'params' => [],
+                    ],
+                    [
                         'label' => 'Bulletin d\'inscription adulte',
-                        'route' => 'register',
+                        'route' => 'registration_form',
                         'params' => ['type' => 'adulte'],
                     ],
                     [
                         'label' => 'Bulletin d\'inscription mineur',
-                        'route' => 'register',
+                        'route' => 'registration_form',
                         'params' => ['type' => 'mineur'],
                     ],
                     [
                         'label' => 'Bulletin d\'inscription 3 séances gratuites',
-                        'route' => 'register',
+                        'route' => 'registration_form',
                         'params' => ['type' => 'seances_gratuites'],
                     ],
                 ],
@@ -46,13 +51,13 @@ class HeaderService
                 'subMenus' => [
                     [
                         'label' => 'Rando dimanche matin',
-                        'route' => 'register',
+                        'route' => 'registration_form',
                         'params' => ['type' => 'seances_gratuites'],
                     ],
                 ],
             ],
             [
-                'label' => 'Liens partenaires, institutionnels',
+                'label' => 'Les partenaires',
                 'route' => 'links',
                 'subMenus' => [],
             ],

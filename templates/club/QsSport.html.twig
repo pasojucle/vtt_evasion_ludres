@@ -1,0 +1,82 @@
+<div class="qs-sport">
+    <img src="/images/cerfa_15699-01-header.png" alt="">
+    <h1>Renouvellement de licence d’une fédération sportive</h1>
+    <h2>Questionnaire de santé <span class="alert">« QS – SPORT »</span></h2>
+    <p>Ce questionnaire de santé permet de savoir si vous devez fournir un certificat médical pour renouveler votre licence sportive.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Répondez aux questions suivantes par OUI ou par NON*</th>
+                <th>OUI</th>
+                <th>NON</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="3" class="title center">Durant les 12 derniers mois</td>
+            </tr>
+            <tr>
+                <td>1) Un membre de votre famille est-il décédé subitement d’une cause cardiaque ou inexpliquée ?</td>
+                <td colspan="2">{{ form_widget(form.values[0])}}</td>
+            </tr>
+            <tr>
+                <td>2) Avez-vous ressenti une douleur dans la poitrine, des palpitations, un essoufflement inhabituel ou un malaise ?</td>
+                <td colspan="2">{{ form_widget(form.values[1])}}</td>
+            </tr>
+            <tr>
+                <td>3) Avez-vous eu un épisode de respiration sifflante (asthme) ?</td>
+                <td colspan="2">{{ form_widget(form.values[2])}}</td>
+            </tr>
+            <tr>
+                <td>4) Avez-vous eu une perte de connaissance ?</td>
+                <td colspan="2">{{ form_widget(form.values[3])}}</td>
+            </tr>
+            <tr>
+                <td>5) Si vous avez arrêté le sport pendant 30 jours ou plus pour des raisons de santé, avez-vous repris sans l’accord d’un médecin ?</td>
+                <td colspan="2">{{ form_widget(form.values[4])}}</td>
+            </tr>
+            <tr>
+                <td>6) Avez-vous débuté un traitement médical de longue durée (hors contraception et désensibilisation aux allergies) ?</td>
+                <td colspan="2">{{ form_widget(form.values[5])}}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="title center">A ce jour</td>
+            </tr>
+            <tr>
+                <td>7) Ressentez-vous une douleur, un manque de force ou une raideur suite à un problème osseux, articulaire ou musculaire (fracture, entorse, luxation, déchirure, tendinite, etc…) survenu durant les 12 derniers mois ?</td>
+                <td colspan="2">{{ form_widget(form.values[6])}}</td>
+            </tr>
+            <tr>
+                <td>8) Votre pratique sportive est-elle interrompue pour des raisons de santé ?</td>
+                <td colspan="2">{{ form_widget(form.values[7])}}</td>
+            </tr>
+            <tr>
+                <td>9) Pensez-vous avoir besoin d’un avis médical pour poursuivre votre pratique sportive ?</td>
+                <td colspan="2">{{ form_widget(form.values[8])}}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="alert center">*NB : Les réponses formulées relèvent de la seule responsabilité du licencié.</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+            <tr>
+                <td class="title">Si vous avez répondu NON à toutes les questions :</td>
+            </tr>
+            <tr>
+                <td>Pas de certificat médical à fournir. Simplement attestez, selon les modalités prévues par la fédération, avoir répondu NON à toutes les questions lors de la demande de renouvellement de la licence.</td>
+            </tr>
+        </tbody>
+    </table>
+        <table>
+        <tbody>
+            <tr>
+                <td class="title">Si vous avez répondu OUI à une ou plusieurs questions :</td>
+            </tr>
+            <tr>
+                <td>Certificat médical à fournir. Consultez un médecin et présentez-lui ce questionnaire renseigné.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

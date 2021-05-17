@@ -5,7 +5,7 @@ namespace App\Controller;
 
 use App\Entity\RegistrationStep;
 use App\Form\RegistrationStepType;
-use App\Service\SubscriptionService;
+use App\Service\RegistrationService;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,22 +35,59 @@ class ClubController extends AbstractController
     }
 
     /**
-     * @Route("/club/inscription/{type}/{step}", name="register", defaults={"step":1})
+     * @Route("/club/inscription", name="registration")
      */
-    public function register(
+    public function register(): Response
+    {
+        return $this->render('club/registration.html.twig');
+    }
+
+    /**
+     * @Route("/club/bulletin_inscription/{type}/{step}", name="registration_form", defaults={"step":null})
+     * @Route("/mon_compte/bulletin_inscription/{type}/{step}", name="user_registration_form", defaults={"step":null})
+     */
+    public function registerForm(
         Request $request,
-        SubscriptionService $subscriptionService,
+        registrationService $registrationService,
         string $type,
         ?int $step
     ): Response
     {
-        return $this->render('club/registration.html.twig', [
+        $progress = $registrationService->getProgress($type, $step);
+        $form = $progress['form'];
+
+        return $this->render('club/registrationForm.html.twig', [
             'type' => $type,
             'step' => $step,
-            'progress' => $subscriptionService->getProgress($type, $step),
+            'steps' => $progress['steps'],
+            'form' => (null!== $form) ? $form->createView() : null,
+            'prev' => $progress['prev'],
+            'current' => $progress['current'],
+            'next' => $progress['next'],
         ]);
     }
+    /**
+     * @Route("/club/register_form_validate/{type}/{step}", name="registration_form_validate", methods={"POST"})
+     */
+    public function registerFormValidate(
+        Request $request,
+        registrationService $registrationService,
+        string $type,
+        ?int $step
+    ): Response
+    {
+        $progress = $registrationService->getProgress($type, $step);
+        $form = $progress['form'];
 
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $user = $registrationService->updateUser($form);
+            $this->entityManager->flush();
+        }
+
+        return $this->redirectToRoute('user_registration_form', ['type' => $type, 'step' => $progress['next']]);
+    }
     /**
      * @Route("/admin/inscription/", name="admin_registration_steps")
      */
@@ -81,7 +118,7 @@ class ClubController extends AbstractController
         }
 
         return $this->render('club/admin/registrationStep.html.twig', [
-            'registrationStep' => $this->registrationStepRepository->findOneByStep($step),
+            'registrationStep' => $step,
             'form' => $form->createView(),
         ]);
     }

@@ -5,10 +5,10 @@ namespace App\Form;
 use App\Entity\RegistrationStep;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class RegistrationStepType extends AbstractType
 {
@@ -31,7 +31,7 @@ class RegistrationStepType extends AbstractType
                 'required' => false,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Eregistrer',
+                'label' => 'Enregistrer',
                 'attr' => ['class' => 'btn btn-primary'],
             ])
         ;

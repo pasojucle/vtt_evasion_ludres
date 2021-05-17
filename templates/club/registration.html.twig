@@ -7,42 +7,47 @@
     <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
 {% endblock %}
 {% block body %}
-    {% set current = progress.steps[step] %}
-    <div class="wrapper col-3">
-        <div class="block-left">
-        </div>
+    <div class="wrapper col-1 background-ligth">
         <div class="block">
             <div class="block-title">
-                <h2>{{ current.title }}</h2>
+                <h1>Inscription</h1>
             </div>
-            <div class="block-body">
-                {% if current.content is not null %}
-                    <div class="container">{{ current.content | raw}}</div>
-                {% endif %}
-                {% if current.filename is not null %}
-                    <div class="container">
-                        <!--<object width="100%" height="1470" type="application/pdf" data="/files/{{current.filename}}#toolbar=0&navpanes=0&scrollbar=0"> -->
-                        <object width="100%" height="1525" type="application/pdf" data="/files/{{current.filename}}">
-                        <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
-                        </object>
-                    </div>
-                {% endif %}
-            </div>
-            <div class="block-footer">
-                {% if progress.prev is not null %}
-                    <a class="btn btn-primary float-left" href="{{ path('register', {'type': type, 'step': progress.prev }) }}">Précedent</a>
-                {% endif %}
-                {% if progress.next is not null %}
-                    <a class="btn btn-primary float-right" href="{{ path('register', {'type': type, 'step': progress.next }) }}">Suivant</a>
-                {% endif %}
+            <div class="block-body text-col-3">
+                <h2>Informations importante:</h2>
+                <p>Pour un 1er contact, avant toute inscription en école VTT, nous devons nous rencontrer. Pour ce faire,
+                    venez un samedi à 17h00, après la séance, avec votre enfant et son VTT afin d'effectuer un contrôle sécurité sur ce dernier.
+                    La 1ère séance de votre enfant débutera le samedi suivant (sous réserves des documents fournis et de l'état du VTT).</p>
+                <h2>Saisie des documents: prenez votre temps</h2>
+                <p>L'insription se fait directement en ligne.  Après avoir rempli les formulaires, les imprimer et les transmettre au club avec votre <b>paiement</b>,
+                <b>certificat médical</b> si besoin et <b> photo</b>. Signer les documents avec un stylo après les avoir imprimés. </p>
+                <p>La fédération FFCT exige un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT pour la 1ère prise de licence. Pour les réinscriptions, c'est en fonction du type de licence que vous choisirez (ou chaque année ou tous les 5 ans) et vous devrez renseigner le questionnaire de santé <strong>que vous conserverez</strong> (ne pas le redonner au club, données personnelles). </p>
+                <p>Tout dossier <strong>incomplet</strong> ne sera pas accepté et l'inscription ne sera pas validée</p>
             </div>
         </div>
-        <div class="block-right">
-            <ul class="StepProgress">
-                {% for step in progress.steps %}
-                    <li class="StepProgress-item {{ step.class }}"><a href="{{ path('register', {'type': type, 'step': loop.index }) }}"><strong>{{ step.title }}</strong></a></li>
-                {% endfor %}
-            </ul>
+    </div>
+    <div class="wrapper">
+        <div class="wrapper-body col-3">
+            <div class="card">
+                <img class="card-img-top" src="/images/clip_image001_0001.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h3>Bulletin d'inscription adulte</h3>
+                    <a class="btn btn-secondary" href="{{ path('registration_form', {'type': 'adulte' }) }}">S'inscrire</a>
+                </div>
+            </div>
+            <div class="card">
+                <img class="card-img-top" src="/images/compostelle1-(54).jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h3>Bulletin d'inscription mineur</h3>
+                    <a class="btn btn-secondary" href="{{ path('re_registration_form', {'type': 'mineur' }) }}">S'inscrire</a>
+                </div>
+            </div>
+            <div class="card">
+                <img class="card-img-top" src="/images/vttBallon.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h3>Bulletin d'inscription 3&#160;séances gratuites</h3>
+                    <a class="btn btn-secondary" href="{{ path('re_registration_form', {'type': 'seances_gratuites' }) }}">S'inscrire</a>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

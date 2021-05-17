@@ -47,32 +47,10 @@ class RegistrationStepRepository extends ServiceEntityRepository
     public function findAll(): array
     {
         return $this->createQueryBuilder('r')
-            ->leftJoin('r.type', 't')
+            ->leftJoin('r.types', 't')
             ->orderBy('r.orderBy', 'ASC')
             ->getQuery()
             ->getResult()
         ;
-    }
-
-
-    /**
-    * @return RegistrationStep[] Returns an array of RegistrationStep objects
-    */
-
-    public function findOneByStep($step): ?RegistrationStep
-    {
-        try {
-            return $this->createQueryBuilder('r')
-            ->andWhere(
-                (new Expr())->eq('r', ':step')
-            )
-            ->setParameter('step', $step)
-            ->getQuery()
-            ->getOneOrNullResult()
-            ;
-
-        } catch (QueryException $e) {
-            return null;
-        }
     }
 }
