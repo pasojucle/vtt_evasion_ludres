@@ -56,6 +56,8 @@ class ClubController extends AbstractController
         $progress = $registrationService->getProgress($type, $step);
         $form = $progress['form'];
 
+        dump($form);
+
         return $this->render('club/registrationForm.html.twig', [
             'type' => $type,
             'step' => $step,

@@ -17,6 +17,7 @@
                 <div class="block-title">
                     <h1>{{ current.title }}</h1>
                 </div>
+                {% dump(current) %}
                 <div class="block-body">
                     {% if current.content is not null %}
                         <div class="container">{{ current.content | raw}}</div>
@@ -30,12 +31,12 @@
                         </div>
                     {% endif %}
                     {% if current.form is not null %}
-                        {% set template = 'club/' ~ current.form ~ '.html.twig' %}
+                        {% set template = 'club/' ~ current.form | lower ~ '.html.twig' %}
                         {% include template %}
                     {% endif %}
                 </div>
                 {% set route = 'user_registration_form' %}
-                {% if app.request.user is null and step < 2 %}
+                {% if app.request.user is null and step < 3 %}
                     {% set route = 'registration_form' %}
                 {% endif %}
                 <div class="block-footer">
@@ -57,7 +58,7 @@
                 <ul class="StepProgress">
                     {% for key, step in steps %}
                         {% set route = 'user_registration_form' %}
-                        {% if app.request.user is null and key < 2 %}
+                        {% if app.request.user is null and key < 4 %}
                             {% set route = 'registration_form' %}
                         {% endif %}
                         <li class="StepProgress-item {{ step.class }}"><a href="{{ path(route, {'type': type, 'step': loop.index }) }}"><strong>{{ step.title }}</strong></a></li>

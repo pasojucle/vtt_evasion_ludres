@@ -73,6 +73,11 @@ class Health
     public function __construct()
     {
         $this->healthQuestions = new ArrayCollection();
+        foreach (range(0, 8) as $number) {
+            $healthQuestion = new HealthQuestion();
+            $healthQuestion->setField($number);
+            $this->addHealthQuestion($healthQuestion);
+        }
     }
 
     public function getId(): ?int

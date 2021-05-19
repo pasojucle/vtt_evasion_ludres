@@ -7,6 +7,8 @@
            and uncomment the following Encore helpers to start using Symfony UX #}
         {% block stylesheets %}
             {#{{ encore_entry_link_tags('app') }}#}
+            {#{<link rel="stylesheet" type="text/css" href="/css/select2.min.css">#}
+            <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
             <link rel="stylesheet" type="text/css" href="/css/style.css">
         {% endblock %}
 
@@ -19,6 +21,11 @@
         </main>
     </body>
     {% block javascripts %}
+        <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         {#{{ encore_entry_script_tags('app') }}#}
     {% endblock %}
 </html>
