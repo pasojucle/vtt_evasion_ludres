@@ -91,10 +91,11 @@ body > script {display: none !important;}
     --success-color : #4caf50;
     --danger-color : #d9534f;
     --secondary-color:#FFFF00;
-    --light-color: rgb(12, 10, 10);
     --background-color: #000;
     --light-color: silver;
+    --clear-color: rgba(192,192,192,.75);
     --nav-height: 50px;
+    --gray-color: rgb(100,100,100)
 }
 
 .btn-danger{
@@ -125,17 +126,24 @@ body {
     color: var(--light-color);
     font-family: Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif;
     font-size: 14px;
-    background-color: var(--background-color);
+    background-image: url('../images/background.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
 }
 nav {
     background-color: var(--light-color);
-    position: fixed;
     width: 100%;
     z-index: 2;
-    top: 0;
-    left: 0;
     text-align: center;
     box-shadow: 0 4px 2px gray;
+    position: relative;
+}
+nav.fixed {
+    top: 0;
+    left: 0;
+    position: fixed;
 }
 
 nav > ul > li > a {
@@ -152,6 +160,11 @@ nav > ul> li > a:hover {
 }
 nav > ul> li:hover  ul {
     display: block;
+}
+nav img {
+    position: absolute;
+    left: 25px;
+    top: 15px;
 }
 ul.sub-menu {
     display: none;
@@ -173,16 +186,10 @@ ul.sub-menu a:hover {
 }
 .header-container {
     position: relative;
-    height: 180px;
     overflow: hidden;
-    margin-top: var(--nav-height);
-    margin-bottom: 80px;
-}
-.header-text {
-    position: absolute;
     width: 100%;
-    top: 105px;
     text-align: center;
+    background-color: var(--background-color);
 }
 .header-container .grayscale-container {
     height: 130px;
@@ -208,6 +215,7 @@ h1 {
 h2 {
     color: var(--primary-color);
     margin-bottom: 5px;
+    text-shadow: 2px 2px 2px var(--gray-color);
 }
 h2:not(:first-child) {
     margin-top: 15px;
@@ -253,8 +261,8 @@ p + p {
 }
 .background-ligth {
     padding: 25px;
-    background-color: var(--light-color);
-    border-radius: 3px;
+    background-color: var(--clear-color);
+    border-radius: 5px;
     color: var(--background-color);
 }
 .background-ligth h1 {
@@ -345,4 +353,7 @@ p + p {
     text-align: center;
     font-size: 14px;
     margin-bottom: 25px;
+}
+.hidden {
+    display: none;
 }

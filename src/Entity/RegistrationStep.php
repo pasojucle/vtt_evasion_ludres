@@ -31,7 +31,7 @@ class RegistrationStep
     private $filename;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $form;
 
@@ -89,12 +89,12 @@ class RegistrationStep
         return $this;
     }
 
-    public function getForm(): ?string
+    public function getForm(): ?int
     {
         return $this->form;
     }
 
-    public function setForm(?string $form): self
+    public function setForm(?int $form): self
     {
         $this->form = $form;
 

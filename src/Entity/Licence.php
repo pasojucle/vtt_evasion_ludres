@@ -82,6 +82,11 @@ class Licence
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $newMember = true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -191,6 +196,18 @@ class Licence
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function isNewMember(): ?bool
+    {
+        return $this->newMember;
+    }
+
+    public function setNewMember(bool $newMember): self
+    {
+        $this->newMember = $newMember;
 
         return $this;
     }

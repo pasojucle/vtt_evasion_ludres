@@ -13,7 +13,7 @@ class HealthType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ('Identity' === $options['current']->getForm()) {
+        if (UserType::FORM_IDENTITY === $options['current']->getForm()) {
         $builder
             ->add('socialSecurityNumber')
             ->add('mutualCompany')

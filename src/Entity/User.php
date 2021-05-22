@@ -13,6 +13,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+    public const APPROVAL_RIGHT_TO_THE_IMAGE = 1;
+    public const APPROVAL_GOING_HOME_ALONE = 2;
+
+    public const APPROVALS = [
+        self::APPROVAL_RIGHT_TO_THE_IMAGE => 'approval.right_to_the_image',
+        self::APPROVAL_GOING_HOME_ALONE => 'approval.going_home_alone',
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -39,7 +47,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $active;
+    private $active = true;
 
     /**
      * @ORM\OneToMany(targetEntity=Identity::class, mappedBy="user")
@@ -60,7 +68,6 @@ class User implements UserInterface
      * @ORM\OneToOne(targetEntity=Licence::class, mappedBy="user", cascade={"persist", "remove"})
      */
     private $licence;
-
 
 
     public function __construct()

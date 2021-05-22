@@ -3,24 +3,39 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Entity\Health;
+use App\Form\HealthType;
+use App\Form\IdentityType;
+use App\Form\HealthQuestionType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class UserType extends AbstractType
 {
+    public const FORM_HEALTH_QUESTION = 1;
+    public const FORM_IDENTITY = 2;
+    public const FORM_HEALTH = 3;
+    public const FORM_APPROVAL = 4;
+
+    public const FORMS = [
+        self::FORM_HEALTH_QUESTION => 'form.health_question',
+        self::FORM_IDENTITY => 'form.identity',
+        self::FORM_HEALTH => 'form.health',
+        self::FORM_APPROVAL => 'form.approval_right_image',
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            //->add('password')
-            //->add('health')
-            //->add('licence')
-        ;
-
-        if ('HealthQuestion' === $options['current']->getForm()) {
+        if (self::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
             $builder
                 ->add('health', HealthType::class, [
                     'label' => false,
@@ -28,11 +43,24 @@ class UserType extends AbstractType
                 ]);
         }
         
-        if ('Identity' === $options['current']->getForm()) {
+        if (self::FORM_IDENTITY === $options['current']->getForm()) {
             $builder
                 ->add('identities', CollectionType::class, [
                     'label' => false,
                     'entry_type' => IdentityType::class,
+                    'entry_options' => [
+                        'type' => $options['type'],
+                    ],
+                ]);
+        }
+        if (self::FORM_APPROVAL === $options['current']->getForm()) {
+            $builder
+                ->add('approvals', CollectionType::class, [
+                    'label' => false,
+                    'entry_type' => ApprovalType::class,
+                    'entry_options' => [
+                        'current' => $options['current'],
+                    ],
                 ]);
         }
         $builder
@@ -41,6 +69,31 @@ class UserType extends AbstractType
                 'attr' => ['class' => 'btn btn-primary float-right'],
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            $user = $event->getData();
+            $form = $event->getForm();
+dump($user);
+            if (null === $user->getId() && self::FORM_IDENTITY === $options['current']->getForm()) {
+                $form->add('plainPassword', RepeatedType::class, [
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'Le mot de passe ne correspond pas.',
+                    'options' => ['attr' => ['class' => 'password-field']],
+                    'required' => true,
+                    'first_options'  => ['label' => 'Mot de passe'],
+                    'second_options' => ['label' => 'Confirmation du mot de passe'],
+                    'mapped' => false,
+                    'constraints' => [
+                        new NotBlank(['message' => 'Le mot de passe ne peut pas être vide']),
+                        new Length(['min' => 6, 'minMessage' => 'Votre mot de passe doit faire au moins 6 caractères', 'max' => 10, 'maxMessage' => 'Votre mot de passe doit faire au plus 10 caractères']),
+                    ],
+                ]);
+            } else {
+                $form->add('plainPassword', HiddenType::class, [
+                    'mapped' => false,
+                ]);
+            }
+        });
 
     }
 

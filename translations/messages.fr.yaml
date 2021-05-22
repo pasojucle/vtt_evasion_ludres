@@ -38,3 +38,13 @@ registration_step:
     adult: Adulte
     minor: Mineur
     testing: 3 séances d'essai gratuites
+
+approval: 
+  right_to_the_image: Droit à l'image
+  going_home_alone: Autorisé à rentrer seul
+
+form:
+  health_question: Questionaire QS sport
+  identity: Identité
+  health: Questionnaire santé enfant
+  approval_right_image: Droit à l'image

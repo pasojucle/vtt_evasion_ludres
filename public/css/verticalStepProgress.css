@@ -45,6 +45,7 @@ ul.StepProgress {
     border: 2px solid var(--light-color);
     border-radius: 50%;
     background-color: var(--light-color);
+    box-shadow: 2px 2px 2px var(--background-color);
 }
 
 .StepProgress-item.is-done::before {
@@ -84,5 +85,6 @@ ul.StepProgress {
 }
 
 .StepProgress a {
-    color: var(--light-color);
+    color: var(--ligth-color);
+    text-shadow: 2px 2px 2px var(--background-color);
 }

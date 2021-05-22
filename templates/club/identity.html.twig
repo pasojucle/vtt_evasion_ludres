@@ -1,6 +1,5 @@
 <div>
     {% for identity in form.identities %}
-        {% dump(identity) %}
         {{ form_row(identity.name)}}
         {{ form_row(identity.firstName)}}
         {{ form_row(identity.birthDate)}}
@@ -8,9 +7,12 @@
         {{ form_row(identity.phone)}}
         {{ form_row(identity.mobile)}}
         {{ form_row(identity.profession)}}
-        {% if form.kinship is defined %}
-            {{ form_row(form.kinship)}}
+        {% if identity.kinship is defined %}
+            {{ form_row(identity.kinship)}}
         {% endif %}
-        {{ form_row(form.email)}}
+        {{ form_row(identity.email)}}
     {% endfor %}
+    {% if form.plainPassword is defined %}
+        {{ form_row(form.plainPassword)}}
+    {% endif %}
 </div>

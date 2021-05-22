@@ -85,7 +85,6 @@ class Identity
 
     /**
      * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="identities")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $address;
 

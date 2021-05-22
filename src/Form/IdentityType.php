@@ -49,10 +49,6 @@ class IdentityType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => 'Adresse mail'
             ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => ['class' => 'btn btn-primary float-right'],
-            ])
         ;
         if ('mineur' === $options['type']) {
             $builder

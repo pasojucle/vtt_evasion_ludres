@@ -2,16 +2,20 @@
 
 namespace App\Service;
 
-use App\Entity\Health;
-use App\Entity\Identity;
 use DateTime;
-use App\Entity\Licence;
+use App\DataTransferObject\User as UserDto;
+use App\Entity\Approval;
 use App\Entity\User;
+use App\Entity\Health;
 use App\Form\UserType;
+use App\Entity\Licence;
+use App\Entity\Identity;
+use App\Entity\HealthQuestion;
 use Symfony\Component\Form\Form;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Repository\RegistrationStepRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,8 +26,9 @@ class RegistrationService
     private UrlGeneratorInterface $router;
     private FormFactoryInterface $formFactory;
     private SessionInterface $session;
-    private $user;
+    private ?User $user;
     private EntityManagerInterface $entityManager;
+    private UserRepository $userRepository;
 
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
@@ -31,7 +36,8 @@ class RegistrationService
         UrlGeneratorInterface $router,
         FormFactoryInterface $formFactory,
         SessionInterface $session,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository
     )
     {
         $this->registrationStepRepository = $registrationStepRepository;
@@ -40,6 +46,7 @@ class RegistrationService
         $this->formFactory = $formFactory;
         $this->session = $session;
         $this->entityManager = $entityManager;
+        $this->userRepository = $userRepository;
     }
 
     public function getProgress($type, $step)
@@ -74,8 +81,9 @@ class RegistrationService
                 $progress['steps'][$key+1] = $registrationStep;
             }
             $progress['form'] = $this->getForm($progress['current'], $type, $step);
+            
         }
-
+        $progress['user'] = $this->user;
         return $progress;
     }
 
@@ -84,33 +92,60 @@ class RegistrationService
         $form = null;
         if (null === $this->user) {
             $this->user = new User();
+            $idMax = $this->userRepository->findMaxId();
+            ++$idMax;
+            $this->user->setLicenceNumber('VTTEVASIONLUDRES'.$idMax)
+                ->setRoles(['USER']);
+            $this->entityManager->persist($this->user);
+        } else {
+            if (null !== $this->user->getLicence()) {
+                $this->user->getLicence()->setNewMember(false);
+            }
         }
         if (null === $this->user->getHealth()) {
             $health = new Health();
             $this->user->setHealth($health);
+
+            if ($this->session->get('healthQuestions')) {
+                foreach ($this->session->get('healthQuestions') as $healthQuestion) {
+                    $health->addHealthQuestion($healthQuestion);
+                    $this->entityManager->persist($healthQuestion);
+                }
+            } else {
+                foreach (range(0, 8) as $number) {
+                    $healthQuestion = new HealthQuestion();
+                    $healthQuestion->setField($number);
+                    $health->addHealthQuestion($healthQuestion);
+                    $this->entityManager->persist($healthQuestion);
+                }
+            }
+
+            $this->entityManager->persist($health);
         }
         if ($this->user->getIdentities()->isEmpty()) {
             $identity = new Identity();
             $this->user->addIdentity($identity);
+            $this->entityManager->persist($identity);
+        }
+        if (null === $this->user->getLicence()) {
+            $licence = new Licence();
+            $this->user->setLicence($licence);
+            $this->entityManager->persist($licence);
+        }
+        if ($this->user->getApprovals()->isEmpty()) {
+            $aproval = new Approval();
+            $aproval->setType(User::APPROVAL_RIGHT_TO_THE_IMAGE);
+            $this->user->addApproval($aproval);
+            $this->entityManager->persist($aproval);
+            if ($type === 'mineur') {
+                $aproval = new Approval();
+                $aproval->setType(User::APPROVAL_GOING_HOME_ALONE);
+                $this->user->addApproval($aproval);
+                $this->entityManager->persist($aproval);
+            }
         }
 
         if (null !== $registrationStep->getForm()) {
-            /*if ('qssport' === $registrationStep->getForm()) {
-                if ($this->session->get('qs_sport')) {
-                    $data = $this->session->get('qs_sport');
-                } else {
-                    $values = [];
-                    foreach (range(0, 8) as $number) {
-                        $values[] = null;
-                    }
-                    $data = [
-                        'values' => $values,
-                    ];
-                }
-            } else {
-                $data = null;
-            }*/
-            dump($this->user);
             $form = $this->formFactory->create(UserType::class, $this->user, [
                 'attr' =>[
                     'action' => $this->router->generate('registration_form_validate', ['type' => $type, 'step' => $step]),
@@ -123,30 +158,6 @@ class RegistrationService
         return $form;
     }
 
-    public function updateUser(Form $form)
-    {
-        $data = $form->getData();
-        if ('qs_sport' === $form->getname()) {
-            $medicalCertificateRequired = false;
-            foreach ($data['values'] as $field) {
-                if (true === $field['value']) {
-                    $medicalCertificateRequired = $field['value'];
-                    break;
-                }
-            }
-            $this->session->set('qs_sport', $data);
-            //$licence =  (null !== $this->user->getLicence()) ? $this->user->getLicence() : new Licence();
-            //$licence->setMedicalCertificateRequired($medicalCertificateRequired);
-            //$this->user->setLicence($licence);
-        } else {
-            $method = 'add'.ucfirst($form->getname());
-            $this->entityManager->persist($data);
-            $this->user->$method($data);
-        }
-
-        return $this->user;
-    }
-
     private function replaceFieds(string $content)
     {
         $today = new DateTime();
@@ -157,7 +168,12 @@ class RegistrationService
         $bithDateChildren = 'Date de naissance de l\'enfant';
         $coverage = 'Formule d\'assurance';
         if ($this->user) {
-
+            /**@var UserDto $user */
+            $user = new UserDto($this->user);
+            $fullName = $user->getFullName();
+            $bithDate = $user->getBithDate();
+            $fullNameChildren = $user->getFullNameChildren();
+            $bithDateChildren = $user->getBithDateChildren();
         }
 
         $fields = [
