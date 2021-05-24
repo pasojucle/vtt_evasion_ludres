@@ -4,19 +4,18 @@
 
 {% block body %}
 <form method="post">
-    <div class="wrapper min-content background-ligth">
-        <div class="block">
-            <div class="block-title center">
-                <h1><i class="fas fa-user"></i> Authentification</h1>
+    <div class="wrapper col-1fr-5fr background-gray">
+            <div class="wrapper-title">
+                <h1>Me connecter</h1>
             </div>
-            <div class="block-body">
+            <div class="wrapper-content">
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
 
                 {% if app.user %}
                     <div class="mb-3">
-                        You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                        Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
                     </div>
                 {% endif %}
                 <div class="form-group">
@@ -41,14 +40,14 @@
                         </label>
                     </div>
                 #}
-            </div>
-            <div class="block-footer">
+                <div class="block-footer">
 
-                <button class="btn btn-primary float-right" type="submit">
-                    <i class="fas fa-check-circle"></i> Se connecter
-                </button>
+                    <button class="btn btn-primary float-right" type="submit">
+                        <i class="fas fa-check-circle"></i> Se connecter
+                    </button>
+                </div>
             </div>
-        </div>
+
     </div>
 
     

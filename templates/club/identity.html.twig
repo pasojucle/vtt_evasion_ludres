@@ -1,18 +1,26 @@
 <div>
     {% for identity in form.identities %}
-        {{ form_row(identity.name)}}
-        {{ form_row(identity.firstName)}}
-        {{ form_row(identity.birthDate)}}
-        {{ form_row(identity.birthplace)}}
-        {{ form_row(identity.phone)}}
-        {{ form_row(identity.mobile)}}
-        {{ form_row(identity.profession)}}
-        {% if identity.kinship is defined %}
-            {{ form_row(identity.kinship)}}
+        <div class="form-group">
+            {{ form_row(identity.name)}}
+            {{ form_row(identity.firstName)}}
+        </div>
+        <div class="form-group">
+            {{ form_row(identity.birthDate)}}
+            {{ form_row(identity.birthplace)}}
+        </div>
+        <div class="form-group">
+            {{ form_row(identity.phone)}}
+            {{ form_row(identity.mobile)}}
+        </div>
+        {% if identity.profession is defined %}
+            <div class="form-group">{{ form_row(identity.profession)}}</div>
         {% endif %}
-        {{ form_row(identity.email)}}
+        {% if identity.kinship is defined %}
+            <div class="form-group">{{ form_row(identity.kinship)}}</div>
+        {% endif %}
+        <div class="form-group">{{ form_row(identity.email)}}</div> 
     {% endfor %}
     {% if form.plainPassword is defined %}
-        {{ form_row(form.plainPassword)}}
+        <div class="form-group">{{ form_row(form.plainPassword)}}</div>
     {% endif %}
 </div>

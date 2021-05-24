@@ -8,7 +8,7 @@
 {% endblock %}
 {% block body %}
     {% if steps is not empty %}
-        <div class="wrapper background-ligth col-1fr-3fr">
+        <div class="wrapper background-ligth col-1fr-3fr wrapper-full-width">
             <div class="progress-container">
                 <h1>Bulletin d'inscription {{ type }}</h1>
                 <ul class="StepProgress">
@@ -72,7 +72,7 @@
             </div>
         </div>
     {% else %}
-        <div class="wrapper background-ligth col-4">
+        <div class="wrapper background-ligth wrapper-full-width col-4">
             <div class="wrapper-title">
                 <h2>Bulletin d'inscription {{ type }}</h2>
             </div>

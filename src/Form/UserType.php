@@ -78,7 +78,11 @@ dump($user);
                 $form->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'invalid_message' => 'Le mot de passe ne correspond pas.',
-                    'options' => ['attr' => ['class' => 'password-field']],
+                    'options' => [
+                        'row_attr' => [
+                            'class' => 'form-group-inline'
+                        ],
+                    ],
                     'required' => true,
                     'first_options'  => ['label' => 'Mot de passe'],
                     'second_options' => ['label' => 'Confirmation du mot de passe'],

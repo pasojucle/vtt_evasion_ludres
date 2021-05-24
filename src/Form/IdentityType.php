@@ -19,9 +19,15 @@ class IdentityType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
             ->add('birthDate', DateTimeType::class, [
                 'label' => 'Date de naissance',
@@ -32,22 +38,40 @@ class IdentityType extends AbstractType
                     'class' => 'js-datepicker',
                     'autocomplete' => "off",
                 ],
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
             ->add('birthplace', TextType::class, [
                 'label' => 'Lieux de naissance',
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
             ->add('phone', TextType::class, [
                 'label' => 'Téléphone fixe',
                 'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
             ->add('mobile', TextType::class, [
                 'label' => 'Téléphone mobile',
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
             ->add('profession', TextType::class, [
                 'label' => 'Profession',
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Adresse mail'
+                'label' => 'Adresse mail',
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ],
             ])
         ;
         if ('mineur' === $options['type']) {

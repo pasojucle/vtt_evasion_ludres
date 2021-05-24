@@ -72,6 +72,7 @@ aside, details, figcaption, figure, footer, header, hgroup, nav, section {
 }
 img, table, td, blockquote, code, pre, textarea, input, video {
     max-width: 100%;
+    box-sizing: border-box;
 }
 div, textarea, table, td, th, code, pre, samp {
     word-wrap: break-word;
@@ -230,12 +231,11 @@ p {
 p + p {
     margin-top: 5px;
 }
-.block {
+.wrapper.col-1fr-5fr {
     display: grid;
     grid-template-columns: 1fr 5fr;
-    margin: auto 10%;
     column-gap: 10%;
-    margin-top: 100px;
+    margin: 100px 25%;
 }
 .content-container {
     background-color: var(--white-color);
@@ -275,7 +275,6 @@ p + p {
 }
 .background-ligth {
     padding: 25px;
-    background-color: var(--clear-color);
     border-radius: 5px;
     color: var(--background-color);
 }
@@ -300,14 +299,7 @@ p + p {
     text-align: center;
     max-width: 1000px;
 }
-.wrapper {
-    margin: 80px auto;
-    width: max-content;
-}
-.wrapper-title {
-    text-align: center;
-    margin-bottom: 40px;
-}
+
 .card {
     position: relative;
     word-wrap: break-word;
@@ -373,13 +365,21 @@ p + p {
 .hidden {
     display: none;
 }
-.form-group{
+.form-group {
     margin-bottom: 15px;
 }
-.form-group input {
+.form-group > input, .form-group-inline > input {
     width: 100%;
-    height: 25px;
-    line-height: 25px;
+    height: 30px;
+    line-height: 30px;
+}
+.form-group-inline {
+    display: inline-block;
+    width: calc(50% - 29px);
+    box-sizing: border-box;
+}
+.form-group-inline:not(:first-child) {
+    margin-left: 50px;
 }
 .wrapper.background-primary {
     background-color: var(--primary-color);
@@ -415,6 +415,14 @@ p + p {
 .wrapper.background-ligth {
     background-color: var(--light-color);
     box-sizing: border-box;
+}
+.wrapper.background-gray {
+    background-color: var(--gray-color);
+    box-sizing: border-box;
+    padding: 25px;
+    border-radius: 5px;
+}
+.wrapper-full-width {
     width: 100%;
     margin: unset;
 }
@@ -432,6 +440,9 @@ p + p {
     color: var(--background-color);
     text-shadow: unset;
     font-size: 30px;
+}
+.wrapper-content {
+    /*width: max-content;*/
 }
 button[type="submit"] {
     font-size: 16px;
