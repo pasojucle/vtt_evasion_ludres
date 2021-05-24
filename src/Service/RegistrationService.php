@@ -3,12 +3,11 @@
 namespace App\Service;
 
 use DateTime;
-use App\DataTransferObject\User as UserDto;
-use App\Entity\Approval;
 use App\Entity\User;
 use App\Entity\Health;
 use App\Form\UserType;
 use App\Entity\Licence;
+use App\Entity\Approval;
 use App\Entity\Identity;
 use App\Entity\HealthQuestion;
 use Symfony\Component\Form\Form;
@@ -73,10 +72,6 @@ class RegistrationService
                     if (null === $progress['next']) {
                         $progress['next'] = $key+1;
                     }
-                }
-                if (null !== $registrationStep->getContent()) {
-                    $content = $this->replaceFieds($registrationStep->getContent());
-                    $registrationStep->setContent($content);
                 }
                 $progress['steps'][$key+1] = $registrationStep;
             }
@@ -144,7 +139,7 @@ class RegistrationService
                 $this->entityManager->persist($aproval);
             }
         }
-
+        dump($this->user);
         if (null !== $registrationStep->getForm()) {
             $form = $this->formFactory->create(UserType::class, $this->user, [
                 'attr' =>[
@@ -158,38 +153,5 @@ class RegistrationService
         return $form;
     }
 
-    private function replaceFieds(string $content)
-    {
-        $today = new DateTime();
-        $todayStr = $today->format('d/m/Y');
-        $fullName = 'Prénom et Nom';
-        $bithDate = 'Date de naissance';
-        $fullNameChildren = 'Prénom et Nom de l\'enfant';
-        $bithDateChildren = 'Date de naissance de l\'enfant';
-        $coverage = 'Formule d\'assurance';
-        if ($this->user) {
-            /**@var UserDto $user */
-            $user = new UserDto($this->user);
-            $fullName = $user->getFullName();
-            $bithDate = $user->getBithDate();
-            $fullNameChildren = $user->getFullNameChildren();
-            $bithDateChildren = $user->getBithDateChildren();
-        }
-
-        $fields = [
-            ['pattern' => '#(.*)( {{ formule_assurance }})(.*)#s', 'replacement' => "$1 $coverage$3",],
-            ['pattern'  => '#(.*)( {{ date }})(.*)#s', 'replacement' => "$1 $todayStr$3",],
-            ['pattern'  => '#(.*)( {{ prenom_nom }})(.*)#s', 'replacement' => "$1 $fullName$3",],
-            ['pattern'  => '#(.*)( {{ date_de_naissance }})(.*)#s', 'replacement' => "$1 $bithDate$3",],
-            ['pattern'  => '#(.*)( {{ prenom_nom_enfant }})(.*)#s', 'replacement' => "$1 $fullNameChildren$3",],
-            ['pattern'  => '#(.*)( {{ date_de_naissance_enfant }})(.*)#s', 'replacement' => "$1 $bithDateChildren$3",],
-        ];
-
-        foreach ($fields as $field) {
-            $content = preg_replace($field['pattern'], $field['replacement'], $content);
-        }
-        
-        
-        return $content;
-    }
+    
 }
