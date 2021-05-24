@@ -1,5 +1,5 @@
 ul.StepProgress {
-    margin-top: 150px;
+    margin-top: 50px;
     position: relative;
     padding-left: 45px;
     list-style: none;
@@ -13,7 +13,7 @@ ul.StepProgress {
     left: 15px;
     width: 10px;
     height: 100%;
-    border-left: 2px solid var(--light-color);
+    border-left: 2px solid var(--gray-color);
 }
 
 .StepProgress-item {
@@ -42,10 +42,9 @@ ul.StepProgress {
     left: -37px;
     width: 14px;
     height: 14px;
-    border: 2px solid var(--light-color);
+    border: 2px solid var(--gray-color);
     border-radius: 50%;
-    background-color: var(--light-color);
-    box-shadow: 2px 2px 2px var(--background-color);
+    background-color: var(--white-color);
 }
 
 .StepProgress-item.is-done::before {
@@ -80,11 +79,12 @@ ul.StepProgress {
     font-weight: 700;
 }
 
-.StepProgress strong {
+.StepProgress strong, .StepProgress a {
     display: block;
+    color: var(--gray-color);
 }
 
-.StepProgress a {
-    color: var(--ligth-color);
-    text-shadow: 2px 2px 2px var(--background-color);
+.StepProgress .current strong, .StepProgress .current a {
+    display: block;
+    color: var(--background-color);
 }

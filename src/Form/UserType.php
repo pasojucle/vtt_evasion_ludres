@@ -63,12 +63,12 @@ class UserType extends AbstractType
                     ],
                 ]);
         }
-        $builder
+        /*$builder
             ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
+                'label' => 'messages',
                 'attr' => ['class' => 'btn btn-primary float-right'],
             ])
-        ;
+        ;*/
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $user = $event->getData();

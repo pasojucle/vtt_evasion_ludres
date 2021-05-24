@@ -59,6 +59,10 @@ class ClubController extends AbstractController
         ?int $step
     ): Response
     {
+        if (null !== $this->getUser() && $request->request->get('_route') === 'registration_form') {
+
+        }
+
         if (!$step) {
             $this->session->remove('healthQuestions');
         }
