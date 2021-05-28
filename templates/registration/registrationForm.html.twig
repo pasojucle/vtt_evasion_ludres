@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
+{% endblock %}
+{% block body %}
+    {% if steps is not empty %}
+        <div class="wrapper background-ligth col-1fr-3fr wrapper-full-width">
+            <div class="progress-container">
+                {% set category = season_licence.category %}
+                <h1>Bulletin d'inscription {% if category %}{{ constant('App\\Entity\\Licence::CATEGORIES')[category] }}{% endif %}</h1>
+                <ul class="StepProgress">
+                    {% for step in steps %}
+                        {%  if loop.index < maxStep + 1 %}
+                            {% set route = 'user_registration_form' %}
+                            {% if user.licences | length < 2 and loop.index < 4 %}
+                                {% set route = 'registration_form' %}
+                            {% endif %}
+                            <li class="StepProgress-item {{ step.class }}">
+                                {% if app.user is not null  or loop.index < 4 %}
+                                    <a href="{{ path(route, {'step': loop.index }) }}"><strong>{{ step.title }}</strong></a>
+                                {% else %}
+                                    <span><strong>{{ step.title }}</strong></span>    
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="content-container">
+                {% if form is not null %}
+                    {{ form_start(form)}}
+                {% endif %}
+                <div class="content-title">
+                    <h1>{{ current.title }}</h1>
+                </div>
+                <div class="content-body">
+                    {% if current.content is not null %}
+                        <div class="container">{{ current.content | raw}}</div>
+                    {% endif %}
+                    {% if current.filename is not null %}
+                        <div class="container">
+                            <!--<object width="100%" height="1470" type="application/pdf" data="/files/{{current.filename}}#toolbar=0&navpanes=0&scrollbar=0"> -->
+                            <object width="100%" height="500" type="application/pdf" data="/files/{{current.filename}}">
+                            <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
+                            </object>
+                        </div>
+                    {% endif %}
+                    {% if current.form is not null %}
+                        {% set template = 'registration/' ~ constant('App\\Form\\UserType::FORMS')[current.form] | replace({'form.':''}) ~ '.html.twig' %}
+                        {% include template %}
+                    {% endif %}
+                </div>
+                {% set route = 'user_registration_form' %}
+                {% if user.licences | length < 2 and step < 3 %}
+                    {% set route = 'registration_form' %}
+                {% endif %}
+                <div class="block-footer">
+                    {% if prev is not null %}
+                        <a class="btn btn-primary float-left" href="{{ path(route, {'step': prev }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
+                    {% endif %}
+                    {% if next is not null and form is null %}
+                        <a class="btn btn-primary float-right" href="{{ path(route, {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
+                    {% endif %}
+                    {% if form is not null %}
+                        <button class="btn btn-primary float-right" type="submit"><i class="fas fa-chevron-circle-right"></i> Enregister</button>
+                    {% endif %}
+                </div>
+                {% if form is not null %}
+                    {{ form_end(form)}}
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        
+    {% endif %}
+{% endblock %}

@@ -25,14 +25,23 @@ class RegistrationStepRepository extends ServiceEntityRepository
     * @return RegistrationStep[] Returns an array of RegistrationStep objects
     */
 
-    public function findByType($type): array
+    public function findByCategoryAndTesting(? int $category, bool $testing): array
     {
-        return $this->createQueryBuilder('r')
-            ->leftJoin('r.types', 't')
+        $qb = $this->createQueryBuilder('r');
+        $orX = $qb->expr()->orx();
+        $orX->add($qb->expr()->isNull('r.category'));
+
+        if (null !== $category) {
+            $orX->add($qb->expr()->eq('r.category', ':category'));
+            $qb->setParameter('category', $category);
+        }
+
+        return $qb
+            ->andWhere($orX)
             ->andWhere(
-                (new Expr())->eq('t.title', ':type')
+                $qb->expr()->eq('r.testing', ':testing')
             )
-            ->setParameter('type', $type)
+            ->setParameter('testing', $testing)
             ->orderBy('r.orderBy', 'ASC')
             ->getQuery()
             ->getResult()

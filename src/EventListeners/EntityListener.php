@@ -35,33 +35,35 @@ class EntityListener
 
     private function replaceFieds(string $content)
     {
-        $today = new DateTime();
-        $todayStr = $today->format('d/m/Y');
-        $fullName = 'Prénom et Nom';
-        $bithDate = 'Date de naissance';
-        $fullNameChildren = 'Prénom et Nom de l\'enfant';
-        $bithDateChildren = 'Date de naissance de l\'enfant';
-        $coverage = 'Formule d\'assurance';
-        if ($this->user) {
-            /**@var UserDto $user */
-            $user = new UserDto($this->user);
-            $fullName = $user->getFullName();
-            $bithDate = $user->getBithDate();
-            $fullNameChildren = $user->getFullNameChildren();
-            $bithDateChildren = $user->getBithDateChildren();
-        }
+        if (!empty($content)) {
+            $today = new DateTime();
+            $todayStr = $today->format('d/m/Y');
+            $fullName = 'Prénom et Nom';
+            $bithDate = 'Date de naissance';
+            $fullNameChildren = 'Prénom et Nom de l\'enfant';
+            $bithDateChildren = 'Date de naissance de l\'enfant';
+            $coverage = 'Formule d\'assurance';
+            if ($this->user) {
+                /**@var UserDto $user */
+                $user = new UserDto($this->user);
+                $fullName = $user->getFullName();
+                $bithDate = $user->getBithDate();
+                $fullNameChildren = $user->getFullNameChildren();
+                $bithDateChildren = $user->getBithDateChildren();
+            }
 
-        $fields = [
-            ['pattern' => '#(.*)( {{ formule_assurance }})(.*)#s', 'replacement' => "$1 $coverage$3",],
-            ['pattern'  => '#(.*)( {{ date }})(.*)#s', 'replacement' => "$1 $todayStr$3",],
-            ['pattern'  => '#(.*)( {{ prenom_nom }})(.*)#s', 'replacement' => "$1 $fullName$3",],
-            ['pattern'  => '#(.*)( {{ date_de_naissance }})(.*)#s', 'replacement' => "$1 $bithDate$3",],
-            ['pattern'  => '#(.*)( {{ prenom_nom_enfant }})(.*)#s', 'replacement' => "$1 $fullNameChildren$3",],
-            ['pattern'  => '#(.*)( {{ date_de_naissance_enfant }})(.*)#s', 'replacement' => "$1 $bithDateChildren$3",],
-        ];
+            $fields = [
+                ['pattern' => '#(.*)( {{ formule_assurance }})(.*)#s', 'replacement' => "$1 $coverage$3",],
+                ['pattern'  => '#(.*)( {{ date }})(.*)#s', 'replacement' => "$1 $todayStr$3",],
+                ['pattern'  => '#(.*)( {{ prenom_nom }})(.*)#s', 'replacement' => "$1 $fullName$3",],
+                ['pattern'  => '#(.*)( {{ date_de_naissance }})(.*)#s', 'replacement' => "$1 $bithDate$3",],
+                ['pattern'  => '#(.*)( {{ prenom_nom_enfant }})(.*)#s', 'replacement' => "$1 $fullNameChildren$3",],
+                ['pattern'  => '#(.*)( {{ date_de_naissance_enfant }})(.*)#s', 'replacement' => "$1 $bithDateChildren$3",],
+            ];
 
-        foreach ($fields as $field) {
-            $content = preg_replace($field['pattern'], $field['replacement'], $content);
+            foreach ($fields as $field) {
+                $content = preg_replace($field['pattern'], $field['replacement'], $content);
+            }
         }
         
         

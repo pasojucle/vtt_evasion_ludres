@@ -2,9 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Licence;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Licence|null find($id, $lockMode = null, $lockVersion = null)
@@ -36,15 +39,30 @@ class LicenceRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Licence
+    public function findOneBySeasonForUser(int $season, User $user): ?Licence
     {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
+        try {
+            return $this->createQueryBuilder('l')
+            ->andWhere(
+                (new Expr())->eq('l.user', ':user'),
+                (new Expr())->eq('l.season', ':season')
+            )
+            ->setParameter('user', $user)
+            ->setParameter('season', $season)
             ->getQuery()
             ->getOneOrNullResult()
         ;
+        } catch (NoResultException $e) {
+            return null;
+        }
     }
-    */
+
+    public function hasLicence(int $season): ?Licence
+    {
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq('season', $season))
+            ;
+        $licence = $this->licences->matching($criteria)->first();
+        return ($licence) ? $licence : null;
+    }
 }

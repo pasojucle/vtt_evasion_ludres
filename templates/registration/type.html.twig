@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
+{% endblock %}
+{% block body %}
+    <div class="wrapper background-primary wrapper-full-width col-3">
+        <div class="wrapper-title">
+            <h2>Bulletin d'inscription</h2>
+        </div>
+        <div class="card">
+            <div class="card-img" style="background-image:url(../../images/clip_image001_0001.jpg)"></div>
+            <div class="card-body">
+                <h3>Je suis mineur</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-primary" href="{{ path('registration_form', {'member': member, 'step': 1, 'type': 'mineur'}) }}"><i class="fas fa-chevron-circle-right"></i> Continuer</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-img" style="background-image:url(../../images/compostelle1-\(54\).jpg)"></div>
+            <div class="card-body">
+                <h3>Je suis adulte</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-primary" href="{{ path('registration_form', {'member': member, 'step': 1, 'type': 'adulte'}) }}"><i class="fas fa-chevron-circle-right"></i> Continuer</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Identity
 {
-    private const KINSHIP_FATHER = 1;
-    private const KINSHIP_MOTHER = 2;
-    private const KINSHIP_GUARDIANSHIP = 3;
+    public const KINSHIP_FATHER = 1;
+    public const KINSHIP_MOTHER = 2;
+    public const KINSHIP_GUARDIANSHIP = 3;
 
     public const KINSHIPS = [
         self::KINSHIP_FATHER => 'identity.kinship.father',

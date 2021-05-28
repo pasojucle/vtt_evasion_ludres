@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\HealthType;
 use App\Form\IdentityType;
@@ -49,7 +50,8 @@ class UserType extends AbstractType
                     'label' => false,
                     'entry_type' => IdentityType::class,
                     'entry_options' => [
-                        'type' => $options['type'],
+                        'is_kinship' => $options['is_kinship'],
+                        'category' => $options['category']
                     ],
                 ]);
         }
@@ -105,8 +107,9 @@ dump($user);
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'type' => 'adulte',
             'current' => null,
+            'is_kinship' => false,
+            'category' => Licence::CATEGORY_ADULT,
         ]);
     }
 }

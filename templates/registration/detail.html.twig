@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
+{% endblock %}
+{% block body %}
+    <div class="wrapper background-primary col-2">
+        <div class="wrapper-img" style="background-image:url(../images/background.jpg)"></div>
+        <div class="wrapper-content">
+            <h1>Inscription</h1>
+            <h2>Informations importante:</h2>
+            <p>Pour un 1er contact, avant toute inscription en école VTT, nous devons nous rencontrer. Pour ce faire,
+                venez un samedi à 17h00, après la séance, avec votre enfant et son VTT afin d'effectuer un contrôle sécurité sur ce dernier.
+                La 1ère séance de votre enfant débutera le samedi suivant (sous réserves des documents fournis et de l'état du VTT).</p>
+            <h2>Saisie des documents: prenez votre temps</h2>
+            <p>L'insription se fait directement en ligne.  Après avoir rempli les formulaires, les imprimer et les transmettre au club avec votre <b>paiement</b>,
+            <b>certificat médical</b> si besoin et <b> photo</b>. Signer les documents avec un stylo après les avoir imprimés. </p>
+            <p>La fédération FFCT exige un certificat médical daté <b>DE MOINS DE 12 MOIS</b> de non contre-indication à la pratique du VTT pour la 1ère prise de licence. Pour les réinscriptions, c'est en fonction du type de licence que vous choisirez (ou chaque année ou tous les 5 ans) et vous devrez renseigner le questionnaire de santé <b>que vous conserverez</b> (ne pas le redonner au club, données personnelles). </p>
+            <p>Tout dossier <b>incomplet</b> ne sera pas accepté et l'inscription ne sera pas validée</p>
+            <div class="content-footer">
+                {% if app.user is not null %}
+                    <a class="btn btn-secondary btn-xl" href="{{ path('user_registration_type', {'member': 'adherent'}) }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
+                {% else %}
+                    <a class="btn btn-secondary btn-xl" href="{{ path('registration_member') }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

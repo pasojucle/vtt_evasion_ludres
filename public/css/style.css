@@ -114,6 +114,9 @@ body > script {display: none !important;}
     padding: 1px;
     border-radius: 2px;
 }
+.btn-xl {
+    padding: 15px;
+}
 .btn-primary {
     background-color: var(--primary-color);
     color: var(--background-color);
@@ -293,12 +296,6 @@ p + p {
     column-gap: 50px;
     padding: 5% 10%;
 }
-.col-3 {
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: 10%;
-    text-align: center;
-    max-width: 1000px;
-}
 
 .card {
     position: relative;
@@ -331,7 +328,7 @@ p + p {
     color: var(--background-color);*/
 }
 .qs-sport .value {
-    width: 100px;
+    width: 110px;
 }
 .qs-sport table {
     width: 100%;
@@ -368,7 +365,7 @@ p + p {
 .form-group {
     margin-bottom: 15px;
 }
-.form-group > input, .form-group-inline > input {
+.form-group > input, .form-group-inline > input, .form-group-inline > select {
     width: 100%;
     height: 30px;
     line-height: 30px;
@@ -397,12 +394,15 @@ p + p {
     background-repeat: no-repeat;
     background-size: cover;
 }
-.wrapper.background-primary .wrapper-body {
+.wrapper.background-primary .wrapper-content {
     padding: 10%;
     color: #fff;
 }
 .wrapper.background-primary h1, .wrapper.background-primary h2 {
     color: #fff;
+}
+.wrapper.background-ligth h1, .wrapper.background-ligth h2 {
+    color: var(--background-color);
 }
 .wrapper.background-primary h1 {
     font-size: 50px;
@@ -411,6 +411,10 @@ p + p {
 .wrapper.background-primary h2 {
     font-size: 30px;
     text-shadow: unset;
+}
+.wrapper.background-primary .content-footer {
+    text-align: center;
+    margin-top: 25px;
 }
 .wrapper.background-ligth {
     background-color: var(--light-color);
@@ -426,6 +430,13 @@ p + p {
     width: 100%;
     margin: unset;
 }
+.wrapper.col-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 50px;
+    text-align: center;
+    padding: 5% 20%;
+}
 .wrapper.col-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -437,7 +448,6 @@ p + p {
     text-align: left;
 }
 .wrapper .wrapper-title h2 {
-    color: var(--background-color);
     text-shadow: unset;
     font-size: 30px;
 }

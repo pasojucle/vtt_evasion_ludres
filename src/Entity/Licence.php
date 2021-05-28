@@ -30,17 +30,20 @@ class Licence
         self::COVERAGE_HIGH_GEAR => 'licence.coverage.high_gear',
     ];
 
+    public const CATEGORY_MINOR = 1;
+    public const CATEGORY_ADULT  = 2;
+
+    public const CATEGORIES = [
+        self::CATEGORY_MINOR => 'licence.category.minor',
+        self::CATEGORY_ADULT => 'licence.category.adult',
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="string", length=25, nullable=true)
-     */
-    private $number;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -78,30 +81,28 @@ class Licence
     private $medicalCertificateRequired = false;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, inversedBy="licence", cascade={"persist", "remove"})
+     * @ORM\Column(type="integer")
      */
-    private $user;
+    private $category;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $newMember = true;
+    private $testing;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="licences")
+     */
+    private $user;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $season;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getNumber(): ?string
-    {
-        return $this->number;
-    }
-
-    public function setNumber(?string $number): self
-    {
-        $this->number = $number;
-
-        return $this;
     }
 
     public function getType(): ?int
@@ -188,6 +189,30 @@ class Licence
         return $this;
     }
 
+    public function getCategory(): ?int
+    {
+        return $this->category;
+    }
+
+    public function setCategory(int $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function isTesting(): ?bool
+    {
+        return $this->testing;
+    }
+
+    public function setTesting(bool $testing): self
+    {
+        $this->testing = $testing;
+
+        return $this;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -200,14 +225,14 @@ class Licence
         return $this;
     }
 
-    public function isNewMember(): ?bool
+    public function getSeason(): ?int
     {
-        return $this->newMember;
+        return $this->season;
     }
 
-    public function setNewMember(bool $newMember): self
+    public function setSeason(int $season): self
     {
-        $this->newMember = $newMember;
+        $this->season = $season;
 
         return $this;
     }

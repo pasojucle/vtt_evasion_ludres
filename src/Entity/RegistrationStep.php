@@ -51,9 +51,15 @@ class RegistrationStep
     private $file;
 
     /**
-     * @ORM\ManyToMany(targetEntity=RegistrationType::class, inversedBy="registrationSteps")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $types;
+    private $category;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $testing;
+
 
     public function __construct()
     {
@@ -150,26 +156,26 @@ class RegistrationStep
         return $this;
     }
 
-    /**
-     * @return Collection|RegistrationType[]
-     */
-    public function getTypes(): Collection
+    public function getCategory(): ?int
     {
-        return $this->types;
+        return $this->category;
     }
 
-    public function addType(RegistrationType $type): self
+    public function setCategory(?int $category): self
     {
-        if (!$this->types->contains($type)) {
-            $this->types[] = $type;
-        }
+        $this->category = $category;
 
         return $this;
     }
 
-    public function removeType(RegistrationType $type): self
+    public function getTesting(): ?bool
     {
-        $this->types->removeElement($type);
+        return $this->testing;
+    }
+
+    public function setTesting(bool $testing): self
+    {
+        $this->testing = $testing;
 
         return $this;
     }

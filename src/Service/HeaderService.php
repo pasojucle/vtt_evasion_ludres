@@ -17,28 +17,12 @@ class HeaderService
             [
                 'label' => 'Le club',
                 'route' => 'club',
-                'subMenus' => [
-                    [
-                        'label' => 'Inscription',
-                        'route' => 'registration',
-                        'params' => [],
-                    ],
-                    [
-                        'label' => 'Bulletin d\'inscription adulte',
-                        'route' => 'registration_form',
-                        'params' => ['type' => 'adulte'],
-                    ],
-                    [
-                        'label' => 'Bulletin d\'inscription mineur',
-                        'route' => 'registration_form',
-                        'params' => ['type' => 'mineur'],
-                    ],
-                    [
-                        'label' => 'Bulletin d\'inscription 3 séances gratuites',
-                        'route' => 'registration_form',
-                        'params' => ['type' => 'seances_gratuites'],
-                    ],
-                ],
+                'subMenus' => [],
+            ],
+            [
+                'label' => 'Inscription',
+                'route' => 'registration_detail',
+                'subMenus' => [],
             ],
             [
                 'label' => 'L\'école VTT',
@@ -48,13 +32,7 @@ class HeaderService
             [
                 'label' => 'Rando',
                 'route' => 'bike_rides',
-                'subMenus' => [
-                    [
-                        'label' => 'Rando dimanche matin',
-                        'route' => 'registration_form',
-                        'params' => ['type' => 'seances_gratuites'],
-                    ],
-                ],
+                'subMenus' => [],
             ],
             [
                 'label' => 'Les partenaires',

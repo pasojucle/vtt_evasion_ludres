@@ -1,5 +1,6 @@
 <div>
     {% for identity in form.identities %}
+        {% if identity.children is not empty %}
         <div class="form-group">
             {{ form_row(identity.name)}}
             {{ form_row(identity.firstName)}}
@@ -18,7 +19,8 @@
         {% if identity.kinship is defined %}
             <div class="form-group">{{ form_row(identity.kinship)}}</div>
         {% endif %}
-        <div class="form-group">{{ form_row(identity.email)}}</div> 
+        <div class="form-group">{{ form_row(identity.email)}}</div>
+        {% endif %}
     {% endfor %}
     {% if form.plainPassword is defined %}
         <div class="form-group">{{ form_row(form.plainPassword)}}</div>

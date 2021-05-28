@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -65,15 +66,16 @@ class User implements UserInterface
     private $approvals;
 
     /**
-     * @ORM\OneToOne(targetEntity=Licence::class, mappedBy="user", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity=Licence::class, mappedBy="user")
      */
-    private $licence;
+    private $licences;
 
 
     public function __construct()
     {
         $this->identities = new ArrayCollection();
         $this->approvals = new ArrayCollection();
+        $this->licences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -241,25 +243,47 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getLicence(): ?Licence
+    /**
+     * @return Collection|Licence[]
+     */
+    public function getLicences(): Collection
     {
-        return $this->licence;
+        return $this->licences;
     }
 
-    public function setLicence(?Licence $licence): self
+    public function addLicence(Licence $licence): self
     {
-        // unset the owning side of the relation if necessary
-        if ($licence === null && $this->licence !== null) {
-            $this->licence->setUser(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($licence !== null && $licence->getUser() !== $this) {
+        if (!$this->licences->contains($licence)) {
+            $this->licences[] = $licence;
             $licence->setUser($this);
         }
 
-        $this->licence = $licence;
+        return $this;
+    }
+
+    public function removeLicence(Licence $licence): self
+    {
+        if ($this->licences->removeElement($licence)) {
+            // set the owning side to null (unless already changed)
+            if ($licence->getUser() === $this) {
+                $licence->setUser(null);
+            }
+        }
 
         return $this;
     }
+
+    public function getSeasonLicence(int $season): ?licence
+    {
+        if (!$this->licences->isEmpty()) {
+            foreach ($this->licences as $licence) {
+                if ($season === $licence->getSeason()) {
+                    return $licence; 
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

@@ -8,12 +8,14 @@ use App\Entity\User as UserEntity;
 class User
 {
     private UserEntity $user;
-    private Identity $memberIdentity;
+    private ?Identity $memberIdentity;
     private ?Identity $kinshipIdentity;
 
     public function __construct(UserEntity $user)
     {
         $this->user = $user;
+        $this->memberIdentity = null;
+        $this->kinshipIdentity = null;
         $this->setIdentities();
     }
 
@@ -65,22 +67,22 @@ class User
         return '';
     }
 
-    public function getBithDate(): string
+    public function getBithDate(): ?string
     {
         if ($this->memberIdentity) {
             $bithDate = ($this->kinshipIdentity)
                 ? $this->kinshipIdentity->getBirthDate()
                 : $this->memberIdentity->getBirthDate();
-            return $bithDate->format('d/m/Y');
+            return ($bithDate) ? $bithDate->format('d/m/Y') : null;
         }
         return '';
     }
 
-    public function getBithDateChildren(): string
+    public function getBithDateChildren(): ?string
     {
         if ($this->kinshipIdentity && $this->memberIdentity) {
             $bithDate = $this->memberIdentity->getBirthDate();
-            return $bithDate->format('d/m/Y');
+            return ($bithDate) ? $bithDate->format('d/m/Y') : null;
         }
         return '';
     }
