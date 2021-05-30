@@ -38,31 +38,4 @@ class LicenceRepository extends ServiceEntityRepository
         ;
     }
     */
-
-    public function findOneBySeasonForUser(int $season, User $user): ?Licence
-    {
-        try {
-            return $this->createQueryBuilder('l')
-            ->andWhere(
-                (new Expr())->eq('l.user', ':user'),
-                (new Expr())->eq('l.season', ':season')
-            )
-            ->setParameter('user', $user)
-            ->setParameter('season', $season)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-        } catch (NoResultException $e) {
-            return null;
-        }
-    }
-
-    public function hasLicence(int $season): ?Licence
-    {
-        $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->eq('season', $season))
-            ;
-        $licence = $this->licences->matching($criteria)->first();
-        return ($licence) ? $licence : null;
-    }
 }

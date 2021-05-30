@@ -154,7 +154,7 @@ class RegistrationController extends AbstractController
         Request $request
     ): Response
     {
-        return $this->render('club/admin/registrationTypes.html.twig', [
+        return $this->render('registration/admin/registrationTypes.html.twig', [
             'registrationSteps' => $this->registrationStepRepository->findAll(),
         ]);
     }
@@ -176,7 +176,7 @@ class RegistrationController extends AbstractController
             $this->entityManager->flush();
         }
 
-        return $this->render('club/admin/registrationStep.html.twig', [
+        return $this->render('registration/admin/registrationStep.html.twig', [
             'registrationStep' => $step,
             'form' => $form->createView(),
         ]);

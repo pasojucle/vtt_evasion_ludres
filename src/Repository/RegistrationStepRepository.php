@@ -56,7 +56,6 @@ class RegistrationStepRepository extends ServiceEntityRepository
     public function findAll(): array
     {
         return $this->createQueryBuilder('r')
-            ->leftJoin('r.types', 't')
             ->orderBy('r.orderBy', 'ASC')
             ->getQuery()
             ->getResult()

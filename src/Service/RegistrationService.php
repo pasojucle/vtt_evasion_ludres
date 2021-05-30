@@ -87,7 +87,7 @@ class RegistrationService
             }
             $progress['steps'][$key+1] = $registrationStep;
         }
-        dump($progress['prev']-1, $steps[$progress['prev']-1]->getForm());
+
         if (null !== $progress['prev'] && $steps[$progress['prev']-1]->getForm() === UserType::FORM_IDENTITY) {
             $isKinship = true;
         }

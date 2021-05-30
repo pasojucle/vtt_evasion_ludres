@@ -1,3 +1,16 @@
 {% set approval = form.children.approvals %}
-{{ form_widget(approval[0].value) }}
-{{ form_widget(approval[0].type) }}
+
+{% for content in current.contents %}
+    <div class="container">{{ content.content | raw}}</div>
+    {% if content.formChildren == constant('App\\form\\UserType::FORM_CHILDREN_RIGHT_IMAGE') %}
+        {{ form_widget(approval[0].value) }}
+        {{ form_widget(approval[0].type) }}
+    {% endif %}
+
+    {% if content.formChildren == constant('App\\form\\UserType::FORM_CHILDREN_GOING_HOME_ALONE') %}
+        {{ form_widget(approval[1].value) }}
+        {{ form_widget(approval[1].type) }}
+    {% endif %}
+    <br>
+{% endfor %}
+

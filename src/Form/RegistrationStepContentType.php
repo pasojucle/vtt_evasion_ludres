@@ -2,20 +2,15 @@
 
 namespace App\Form;
 
-use App\Entity\RegistrationStep;
+use App\Entity\RegistrationStepContent;
 use Symfony\Component\Form\AbstractType;
-use App\Form\RegistrationStepContentType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
-
-class RegistrationStepType extends AbstractType
+class RegistrationStepContentType extends AbstractType
 {
     private TranslatorInterface $translator;
 
@@ -27,14 +22,11 @@ class RegistrationStepType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', TextType::class, [
-                'label' => 'Titre',
-            ])
-            ->add('filename', TextType::class, [
-                'label' => 'Fichier pdf',
+            ->add('content', CKEditorType::class, [
+                'label' => 'Contenu',
                 'required' => false,
             ])
-            ->add('form', ChoiceType::class, [
+            ->add('formChildren', ChoiceType::class, [
                 'label' => 'Nom du formulaire',
                 'placeholder' => 'Aucun',
                 'choices' => array_flip(UserType::FORMS),
@@ -43,24 +35,13 @@ class RegistrationStepType extends AbstractType
                 },
                 'required' => false,
             ])
-            ->add('contents', CollectionType::class, [
-                'label' => false,
-                'entry_type' => RegistrationStepContentType::class,
-                'entry_options' => [
-                    'label' => false,
-                ],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => ['class' => 'btn btn-primary'],
-            ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => RegistrationStep::class,
+            'data_class' => RegistrationStepContent::class,
         ]);
     }
 }

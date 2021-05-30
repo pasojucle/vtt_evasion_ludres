@@ -5,6 +5,7 @@ namespace App\EventListeners;
 use DateTime;
 use App\Entity\User;
 use App\Entity\RegistrationStep;
+use App\Entity\RegistrationStepContent;
 use App\DataTransferObject\User as UserDto;
 use Symfony\Component\Security\Core\Security;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -24,12 +25,12 @@ class EntityListener
         $this->user = $security->getUser();
     }
 
-    public function postLoad(RegistrationStep $registrationStep, LifecycleEventArgs $event)
+    public function postLoad(RegistrationStepContent $registrationStepContent, LifecycleEventArgs $event)
     {
-        if (in_array($this->route, ['registration_form', 'user_registration_form']) && null !== $registrationStep->getContent())
+        if (in_array($this->route, ['registration_form', 'user_registration_form']) && null !== $registrationStepContent->getContent())
         {
-            $content = $this->replaceFieds($registrationStep->getContent());
-            $registrationStep->setContent($content);
+            $content = $this->replaceFieds($registrationStepContent->getContent());
+            $registrationStepContent->setContent($content);
         }
     }
 

@@ -34,6 +34,15 @@ class UserType extends AbstractType
         self::FORM_APPROVAL => 'form.approval_right_image',
     ];
 
+    public const FORM_CHILDREN_RIGHT_IMAGE = 1;
+    public const FORM_CHILDREN_GOING_HOME_ALONE = 2;
+
+    public const FORMS_CHILDREN = [
+        self::FORM_CHILDREN_RIGHT_IMAGE => 'form_children.right_image',
+        self::FORM_CHILDREN_GOING_HOME_ALONE => 'form_children.going_home_alone',
+
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (self::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
@@ -50,6 +59,7 @@ class UserType extends AbstractType
                     'label' => false,
                     'entry_type' => IdentityType::class,
                     'entry_options' => [
+                        'label' => false,
                         'is_kinship' => $options['is_kinship'],
                         'category' => $options['category']
                     ],
@@ -61,6 +71,7 @@ class UserType extends AbstractType
                     'label' => false,
                     'entry_type' => ApprovalType::class,
                     'entry_options' => [
+                        'label' => false,
                         'current' => $options['current'],
                     ],
                 ]);
