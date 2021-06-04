@@ -2,21 +2,23 @@
 
 namespace App\Controller;
 
-use App\DataTransferObject\User;
-use App\Entity\User as UserEntity;
 use DateTime;
+use Dompdf\Dompdf;
 use App\Entity\Licence;
 use mikehaertl\pdftk\Pdf;
+use App\Service\LicenceService;
+use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
+use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
 use App\Service\RegistrationService;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
-use App\Service\LicenceService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -217,16 +219,31 @@ class RegistrationController extends AbstractController
                     $pdf->addFile('./files/'.$step->getFilename());
                     dump($step->getFilename());
                 }
+                if (!$step->getContents()->isEmpty() && null === $step->getForm()) {
+                    $html = '';
+                    foreach ($step->getContents() as $content) {
+                        $html .= $content->getContent();
+                    }
+                    $dompdf = new Dompdf();
+                    $dompdf->loadHtml($html);
+                    $dompdf->setPaper('A4', 'portrait');
+                    $dompdf->render();
+                    $output = $dompdf->output();
+                    $publicDirectory = '../data/licences';
+                    $pdfFilepath =  $publicDirectory .$step->getTitle().'.pdf';
+                    file_put_contents($pdfFilepath, $output);
+                    $pdf->addFile($pdfFilepath);
+                }
             }
-
-            
         }
-        $result = $pdf->saveAs($pdfFilename);
+        $result = $pdf->execute();
 
         if ($result === false) {
             $error = $pdf->getError();
             dump($error);
         }
+
+        $fileContent = file_get_contents( (string) $pdf->getTmpFile() );
             /*$pdf = new Pdf('../public/files/'.$progress['current']->getFilename());
             $data = $pdf->getDataFields();
             if ($data === false) {
@@ -249,7 +266,15 @@ class RegistrationController extends AbstractController
             ->needAppearances()
             ->saveAs('../public/files/'.$progress['current']->getFilename().'2');*/
         
-            dd();
+            $response = new Response($fileContent);
 
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                'foo.pdf'
+            );
+            
+            $response->headers->set('Content-Disposition', $disposition);
+
+            return $response;
     }
 }
