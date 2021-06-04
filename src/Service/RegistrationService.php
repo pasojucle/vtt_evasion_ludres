@@ -32,6 +32,8 @@ class RegistrationService
     private UserRepository $userRepository;
     private int $season;
     private LicenceRepository $licenceRepository;
+    private ?Licence $seasonLicence;
+    private LicenceService $licenceService;
 
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
@@ -41,20 +43,22 @@ class RegistrationService
         SessionInterface $session,
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        LicenceRepository $licenceRepository
+        LicenceRepository $licenceRepository,
+        LicenceService $licenceService
     )
     {
         $this->registrationStepRepository = $registrationStepRepository;
         $this->user = $security->getUser();
+        $this->seasonLicence = null;
+        $this->licenceService = $licenceService;
+        $this->season = $this->licenceService->getCurrentSeason();
         $this->router = $router;
         $this->formFactory = $formFactory;
         $this->session = $session;
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->licenceRepository = $licenceRepository;
-        $today = new DateTime();
-        dump((int) $today->format('m'));
-        $this->season = (8 < (int) $today->format('m')) ? (int) $today->format('Y') + 1 :  (int) $today->format('Y');
+        $this->setUser();
     }
 
     public function getProgress(int $step)
@@ -66,11 +70,9 @@ class RegistrationService
         $progress['current'] = null;
         $progress['steps'] = null;
         $isKinship = false;
-        $this->setUser();
-        $licence = $this->user->getSeasonLicence($this->season);
-        dump($licence);
-        $category = $licence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $licence->isTesting());
+
+        $category = $this->seasonLicence->getCategory();
+        $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $this->seasonLicence->isTesting());
         $stepIndex = $step -1;
 
         foreach($steps as $key => $registrationStep) {
@@ -94,7 +96,7 @@ class RegistrationService
 
         $progress['form'] = $this->getForm($progress['current'], $isKinship, $category, $step);
         $progress['user'] = $this->user;
-        $progress['seasonLicence'] = $licence;
+        $progress['seasonLicence'] = $this->seasonLicence;
 
         return $progress;
     }
@@ -112,6 +114,7 @@ class RegistrationService
                 'current' => $registrationStep,
                 'is_kinship' => $isKinshiph,
                 'category' => $category,
+                'season_licence' => $this->seasonLicence,
             ]);
         }
 
@@ -129,15 +132,15 @@ class RegistrationService
                 ->setRoles(['USER']);
             $this->entityManager->persist($this->user);
         } 
-        $licence = $this->user->getSeasonLicence($this->season);
-        if (null === $licence) {
-            $licence = new Licence();
-            $licence->setSeason($this->season);
+        $this->seasonLicence = $this->user->getSeasonLicence($this->season);
+        if (null === $this->seasonLicence) {
+            $this->seasonLicence = new Licence();
+            $this->seasonLicence->setSeason($this->season);
             if ($this->user->getLicences()->isEmpty()) {
-                $licence->setTesting(true);
+                $this->seasonLicence->setTesting(true);
             }
-            $this->entityManager->persist($licence);
-            $this->user->addLicence($licence);
+            $this->entityManager->persist($this->seasonLicence);
+            $this->user->addLicence($this->seasonLicence);
         }
         if (null === $this->user->getHealth()) {
             $health = new Health();
@@ -162,7 +165,7 @@ class RegistrationService
             $this->user->addApproval($aproval);
             $this->entityManager->persist($aproval);
         }
-        if (Licence::CATEGORY_MINOR === $licence->getCategory()) {
+        if (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) {
             if ($this->user->getIdentities()->count() < 2) {
                 $identity = new Identity();
                 $identity->setKinship(Identity::KINSHIP_FATHER);

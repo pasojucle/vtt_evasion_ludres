@@ -55,6 +55,19 @@ class IdentityType extends AbstractType
                             'class' => 'form-group-inline'
                         ],
                     ])
+                    ->add('birthDate', DateTimeType::class, [
+                        'label' => 'Date de naissance',
+                        'widget' => 'single_text',
+                        'html5' => false,
+                        'format' => 'dd/MM/yyyy',
+                        'attr' => [
+                            'class' => 'js-datepicker',
+                            'autocomplete' => "off",
+                        ],
+                        'row_attr' => [
+                            'class' => 'form-group-inline'
+                        ],
+                    ])
                 ;
                 if (Licence::CATEGORY_ADULT === $options['category']) {
                     $form
@@ -79,19 +92,6 @@ class IdentityType extends AbstractType
                         ;
                 } else {
                     $form
-                        ->add('birthDate', DateTimeType::class, [
-                            'label' => 'Date de naissance',
-                            'widget' => 'single_text',
-                            'html5' => false,
-                            'format' => 'dd/MM/yyyy',
-                            'attr' => [
-                                'class' => 'js-datepicker',
-                                'autocomplete' => "off",
-                            ],
-                            'row_attr' => [
-                                'class' => 'form-group-inline'
-                            ],
-                        ])
                         ->add('birthplace', TextType::class, [
                             'label' => 'Lieux de naissance',
                             'row_attr' => [

@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\DataTransferObject\User;
+use App\Entity\User as UserEntity;
+use DateTime;
 use App\Entity\Licence;
+use mikehaertl\pdftk\Pdf;
 use App\Entity\RegistrationStep;
 use App\Form\RegistrationStepType;
 use App\Service\RegistrationService;
@@ -10,7 +14,7 @@ use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
-use DateTime;
+use App\Service\LicenceService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -72,6 +76,9 @@ class RegistrationController extends AbstractController
         }
         $progress = $registrationService->getProgress($step);
         $form = $progress['form'];
+
+        $user = $progress['user'];
+
 
         return $this->render('registration/registrationForm.html.twig', [
             'step' => $step,
@@ -180,5 +187,69 @@ class RegistrationController extends AbstractController
             'registrationStep' => $step,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/inscription/file/{user}", name="registration_file")
+     */
+    public function registrationFile(
+        Request $request,
+        LicenceService $licenceService,
+        UserEntity $user
+    ): Response
+    {
+        $season = $licenceService->getCurrentSeason();
+        $seasonLicence = $user->getSeasonLicence($season);
+        $category = $seasonLicence->getCategory();
+        $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $seasonLicence->isTesting());
+
+        
+
+
+        if (!is_dir('../data/licences')) {
+            mkdir('../data/licences');
+        }
+        $pdfFilename = '../data/licences/'.$user->getlicenceNumber().'.pdf';
+        $pdf = new Pdf();
+        if (!empty($steps)) {
+            foreach($steps as $step) {
+                if (null !== $step->getFilename()) {
+                    $pdf->addFile('./files/'.$step->getFilename());
+                    dump($step->getFilename());
+                }
+            }
+
+            
+        }
+        $result = $pdf->saveAs($pdfFilename);
+
+        if ($result === false) {
+            $error = $pdf->getError();
+            dump($error);
+        }
+            /*$pdf = new Pdf('../public/files/'.$progress['current']->getFilename());
+            $data = $pdf->getDataFields();
+            if ($data === false) {
+                $error = $pdf->getError();
+                dump($error);
+            }
+            dump($data->__toArray());
+
+            $pdf2 = new Pdf('../public/files/'.$progress['current']->getFilename());
+        $fields = [
+            'Nom et prénom'=> $user->getIdentities()[0]->getName(),
+            'née le' => '10/10/2010',
+            'Je soussigné Père mère ou représentant légal 1' => $user->getIdentities()[1]->getName(),
+            'Date de naissance'=> '9/9/1971',
+            'Fait à'=> 'Ludres',
+            'le' => '2/05/2021'
+        ];
+
+        $pdf2->fillForm($fields)
+            ->needAppearances()
+            ->saveAs('../public/files/'.$progress['current']->getFilename().'2');*/
+        
+            dd();
+
     }
 }

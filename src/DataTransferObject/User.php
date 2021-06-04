@@ -4,12 +4,9 @@ namespace App\DataTransferObject;
 
 use App\Entity\Identity;
 use App\Entity\User as UserEntity;
+use Symfony\Component\Form\DataTransformerInterface;
 
-class User
-{
-    private UserEntity $user;
-    private ?Identity $memberIdentity;
-    private ?Identity $kinshipIdentity;
+class User {
 
     public function __construct(UserEntity $user)
     {
@@ -85,5 +82,11 @@ class User
             return ($bithDate) ? $bithDate->format('d/m/Y') : null;
         }
         return '';
+    }
+
+    public function getCoverage(string $season): ?int
+    {
+        $seasonLicence = $this->user->getSeasonLicence($season);
+        return (null !== $seasonLicence) ? $seasonLicence->getCoverage() : null;
     }
 }

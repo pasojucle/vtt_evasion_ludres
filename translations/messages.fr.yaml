@@ -7,6 +7,9 @@ licence:
     mini_gear: Mini braquet
     small_gear: Petit braquet
     high_gear: Grand braquet 
+  category:
+    minor: mineur
+    adult: adulte
 
 identity:
   kinship:
@@ -48,3 +51,4 @@ form:
   identity: Identité
   health: Questionnaire santé enfant
   approval_right_image: Droit à l'image
+  licence: Formule de licence

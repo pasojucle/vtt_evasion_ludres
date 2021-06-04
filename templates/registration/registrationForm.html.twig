@@ -55,6 +55,9 @@
                         {% set template = 'registration/' ~ constant('App\\Form\\UserType::FORMS')[current.form] | replace({'form.':''}) ~ '.html.twig' %}
                         {% include template %}
                     {% endif %}
+                    {% if current == steps | last %}
+                        <a class="btn btn-primary float-right" href="{{ path('registration_file', {'user': user.id }) }}"><i class="fas fa-file-pdf"></i> Télécharger le dossier d'inscription</a>
+                    {% endif %}
                 </div>
                 {% set route = 'user_registration_form' %}
                 {% if user.licences | length < 2 and step < 3 %}

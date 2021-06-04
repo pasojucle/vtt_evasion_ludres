@@ -4,25 +4,39 @@ namespace App\EventListeners;
 
 use DateTime;
 use App\Entity\User;
+use App\Entity\Licence;
+use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepContent;
 use App\DataTransferObject\User as UserDto;
 use Symfony\Component\Security\Core\Security;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+
 
 class EntityListener
 {
     private string $route;
     private ?User $user;
+    private LicenceService $licenceService;
+    private TranslatorInterface $translator;
+    private string $currentseason;
 
     public function __construct(
         RequestStack $requestStack,
-        Security $security
+        Security $security, 
+        LicenceService $licenceService,
+        TranslatorInterface $translator
     )
     {
         $this->route = $requestStack->getCurrentRequest()->get('_route');
         $this->user = $security->getUser();
+        $this->licenceService = $licenceService;
+        $this->currentseason = $this->licenceService->getCurrentSeason();
+        $this->translator = $translator;
     }
 
     public function postLoad(RegistrationStepContent $registrationStepContent, LifecycleEventArgs $event)
@@ -51,6 +65,7 @@ class EntityListener
                 $bithDate = $user->getBithDate();
                 $fullNameChildren = $user->getFullNameChildren();
                 $bithDateChildren = $user->getBithDateChildren();
+                $coverage = $this->translator->trans(Licence::COVERAGES[$user->getCoverage($this->currentseason)]);
             }
 
             $fields = [

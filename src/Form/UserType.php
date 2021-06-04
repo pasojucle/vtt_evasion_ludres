@@ -26,12 +26,14 @@ class UserType extends AbstractType
     public const FORM_IDENTITY = 2;
     public const FORM_HEALTH = 3;
     public const FORM_APPROVAL = 4;
+    public const FORM_LICENCE = 5;
 
     public const FORMS = [
         self::FORM_HEALTH_QUESTION => 'form.health_question',
         self::FORM_IDENTITY => 'form.identity',
         self::FORM_HEALTH => 'form.health',
         self::FORM_APPROVAL => 'form.approval_right_image',
+        self::FORM_LICENCE => 'form.licence',
     ];
 
     public const FORM_CHILDREN_RIGHT_IMAGE = 1;
@@ -73,6 +75,18 @@ class UserType extends AbstractType
                     'entry_options' => [
                         'label' => false,
                         'current' => $options['current'],
+                    ],
+                ]);
+        }
+        if (self::FORM_LICENCE === $options['current']->getForm()) {
+            $builder
+                ->add('licences', CollectionType::class, [
+                    'label' => false,
+                    'entry_type' => LicenceType::class,
+                    'entry_options' => [
+                        'label' => false,
+                        'season_licence' => $options['season_licence'],
+                        'category' => $options['category']
                     ],
                 ]);
         }
@@ -121,6 +135,7 @@ dump($user);
             'current' => null,
             'is_kinship' => false,
             'category' => Licence::CATEGORY_ADULT,
+            'season_licence' => null,
         ]);
     }
 }
