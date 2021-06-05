@@ -20,9 +20,9 @@ class Licence
         self::TYPE_SPORT => 'licence.type.sport',
     ];
 
-    private const COVERAGE_MINI_GEAR = 1;
-    private const COVERAGE_SMALL_GEAR  = 2;
-    private const COVERAGE_HIGH_GEAR  = 3;
+    public const COVERAGE_MINI_GEAR = 1;
+    public const COVERAGE_SMALL_GEAR  = 2;
+    public const COVERAGE_HIGH_GEAR  = 3;
 
     public const COVERAGES = [
         self::COVERAGE_MINI_GEAR => 'licence.coverage.mini_gear',

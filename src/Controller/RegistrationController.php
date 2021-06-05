@@ -3,11 +3,8 @@
 namespace App\Controller;
 
 use DateTime;
-use Dompdf\Dompdf;
 use App\Entity\Licence;
-use mikehaertl\pdftk\Pdf;
 use App\Service\LicenceService;
-use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
@@ -16,7 +13,6 @@ use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
-use App\Service\FilenameService;
 use App\Service\PdfService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -197,9 +193,7 @@ class RegistrationController extends AbstractController
      * @Route("/inscription/file/{user}", name="registration_file")
      */
     public function registrationFile(
-        Request $request,
         LicenceService $licenceService,
-        FilenameService $filenameService,
         PdfService $pdfService,
         UserEntity $user
     ): Response
@@ -209,12 +203,13 @@ class RegistrationController extends AbstractController
         $category = $seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $seasonLicence->isTesting());
 
-        $filesToAdd = [];
+        $files = [];
         if (!empty($steps)) {
             foreach($steps as $step) {
                 if (null !== $step->getFilename()) {
                     $filename = './files/'.$step->getFilename();
-                    $filesToAdd[] = $filename;
+                    
+                    $files[] = ['filename' => $filename, 'form' => $step->getForm()];
                 }
                 if (!$step->getContents()->isEmpty() && null === $step->getForm()) {
                     $html = '';
@@ -222,15 +217,14 @@ class RegistrationController extends AbstractController
                         $html .= $content->getContent();
                     }
                     $pdfFilepath = $pdfService->makePdf($html, $step->getTitle());
-                    $filesToAdd[] = $pdfFilepath;
+                    $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
                 }
             }
         }
 
-        $pdf = $pdfService->joinPdf($filesToAdd);
-        $pdf = $pdfService->setFillFormData($pdf, $user);
+        $filename = $pdfService->joinPdf($files, $user);
 
-        $fileContent = file_get_contents( (string) $pdf->getTmpFile() );
+        $fileContent = file_get_contents($filename);
 
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(
