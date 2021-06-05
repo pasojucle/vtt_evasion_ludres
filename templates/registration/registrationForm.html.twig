@@ -56,7 +56,7 @@
                         {% include template %}
                     {% endif %}
                     {% if current == steps | last %}
-                        <a class="btn btn-primary float-right" href="{{ path('registration_file', {'user': user.id }) }}"><i class="fas fa-file-pdf"></i> Télécharger le dossier d'inscription</a>
+                        <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user.id }) }}"><i class="fas fa-download"></i></i> Télécharger le dossier d'inscription</a>
                     {% endif %}
                 </div>
                 {% set route = 'user_registration_form' %}

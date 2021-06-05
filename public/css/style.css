@@ -117,6 +117,12 @@ body > script {display: none !important;}
 .btn-xl {
     padding: 15px;
 }
+.btn-xxl {
+    margin: 40px auto;
+    display: block;
+    width: max-content;
+    padding: 20px;
+}
 .btn-primary {
     background-color: var(--primary-color);
     color: var(--background-color);

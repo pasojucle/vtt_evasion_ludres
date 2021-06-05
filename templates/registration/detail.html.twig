@@ -22,7 +22,7 @@
             <p>Tout dossier <b>incomplet</b> ne sera pas accepté et l'inscription ne sera pas validée</p>
             <div class="content-footer">
                 {% if app.user is not null %}
-                    <a class="btn btn-secondary btn-xl" href="{{ path('user_registration_type', {'member': 'adherent'}) }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
+                    <a class="btn btn-secondary btn-xl" href="{{ path('user_registration_form', {'step': 1}) }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
                 {% else %}
                     <a class="btn btn-secondary btn-xl" href="{{ path('registration_member') }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
                 {% endif %}

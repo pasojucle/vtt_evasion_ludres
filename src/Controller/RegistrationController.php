@@ -16,6 +16,8 @@ use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
+use App\Service\FilenameService;
+use App\Service\PdfService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -197,6 +199,8 @@ class RegistrationController extends AbstractController
     public function registrationFile(
         Request $request,
         LicenceService $licenceService,
+        FilenameService $filenameService,
+        PdfService $pdfService,
         UserEntity $user
     ): Response
     {
@@ -205,76 +209,37 @@ class RegistrationController extends AbstractController
         $category = $seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $seasonLicence->isTesting());
 
-        
-
-
-        if (!is_dir('../data/licences')) {
-            mkdir('../data/licences');
-        }
-        $pdfFilename = '../data/licences/'.$user->getlicenceNumber().'.pdf';
-        $pdf = new Pdf();
+        $filesToAdd = [];
         if (!empty($steps)) {
             foreach($steps as $step) {
                 if (null !== $step->getFilename()) {
-                    $pdf->addFile('./files/'.$step->getFilename());
-                    dump($step->getFilename());
+                    $filename = './files/'.$step->getFilename();
+                    $filesToAdd[] = $filename;
                 }
                 if (!$step->getContents()->isEmpty() && null === $step->getForm()) {
                     $html = '';
                     foreach ($step->getContents() as $content) {
                         $html .= $content->getContent();
                     }
-                    $dompdf = new Dompdf();
-                    $dompdf->loadHtml($html);
-                    $dompdf->setPaper('A4', 'portrait');
-                    $dompdf->render();
-                    $output = $dompdf->output();
-                    $publicDirectory = '../data/licences';
-                    $pdfFilepath =  $publicDirectory .$step->getTitle().'.pdf';
-                    file_put_contents($pdfFilepath, $output);
-                    $pdf->addFile($pdfFilepath);
+                    $pdfFilepath = $pdfService->makePdf($html, $step->getTitle());
+                    $filesToAdd[] = $pdfFilepath;
                 }
             }
         }
-        $result = $pdf->execute();
 
-        if ($result === false) {
-            $error = $pdf->getError();
-            dump($error);
-        }
+        $pdf = $pdfService->joinPdf($filesToAdd);
+        $pdf = $pdfService->setFillFormData($pdf, $user);
 
         $fileContent = file_get_contents( (string) $pdf->getTmpFile() );
-            /*$pdf = new Pdf('../public/files/'.$progress['current']->getFilename());
-            $data = $pdf->getDataFields();
-            if ($data === false) {
-                $error = $pdf->getError();
-                dump($error);
-            }
-            dump($data->__toArray());
 
-            $pdf2 = new Pdf('../public/files/'.$progress['current']->getFilename());
-        $fields = [
-            'Nom et prénom'=> $user->getIdentities()[0]->getName(),
-            'née le' => '10/10/2010',
-            'Je soussigné Père mère ou représentant légal 1' => $user->getIdentities()[1]->getName(),
-            'Date de naissance'=> '9/9/1971',
-            'Fait à'=> 'Ludres',
-            'le' => '2/05/2021'
-        ];
-
-        $pdf2->fillForm($fields)
-            ->needAppearances()
-            ->saveAs('../public/files/'.$progress['current']->getFilename().'2');*/
+        $response = new Response($fileContent);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            'inscription_vtt_evasion_ludres.pdf'
+        );
         
-            $response = new Response($fileContent);
+        $response->headers->set('Content-Disposition', $disposition);
 
-            $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_ATTACHMENT,
-                'foo.pdf'
-            );
-            
-            $response->headers->set('Content-Disposition', $disposition);
-
-            return $response;
+        return $response;
     }
 }

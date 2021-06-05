@@ -16,3 +16,4 @@
 ###< symfony/phpunit-bridge ###
 
 /sources/
+/data/

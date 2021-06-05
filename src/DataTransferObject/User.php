@@ -49,17 +49,15 @@ class User {
     public function getFullName(): string
     {
         if ($this->memberIdentity) {
-            return ($this->kinshipIdentity)
-                ? $this->kinshipIdentity->getFirstName().' '.$this->kinshipIdentity->getName()
-                : $this->memberIdentity->getFirstName().' '.$this->memberIdentity->getName();
+            return $this->memberIdentity->getFirstName().' '.$this->memberIdentity->getName();
         }
         return '';
     }
 
-    public function getFullNameChildren()
+    public function getFullNameKinShip()
     {
         if ($this->kinshipIdentity && $this->memberIdentity) {
-            return $this->memberIdentity->getFirstName().' '.$this->memberIdentity->getName();
+            return $this->kinshipIdentity->getFirstName().' '.$this->kinshipIdentity->getName();
         }
         return '';
     }
@@ -67,18 +65,16 @@ class User {
     public function getBithDate(): ?string
     {
         if ($this->memberIdentity) {
-            $bithDate = ($this->kinshipIdentity)
-                ? $this->kinshipIdentity->getBirthDate()
-                : $this->memberIdentity->getBirthDate();
+            $bithDate = $this->memberIdentity->getBirthDate();
             return ($bithDate) ? $bithDate->format('d/m/Y') : null;
         }
         return '';
     }
 
-    public function getBithDateChildren(): ?string
+    public function getBithDateKinShip(): ?string
     {
         if ($this->kinshipIdentity && $this->memberIdentity) {
-            $bithDate = $this->memberIdentity->getBirthDate();
+            $bithDate = $this->kinshipIdentity->getBirthDate();
             return ($bithDate) ? $bithDate->format('d/m/Y') : null;
         }
         return '';
