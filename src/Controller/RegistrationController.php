@@ -200,10 +200,14 @@ class RegistrationController extends AbstractController
                 if (!$step->getContents()->isEmpty() && null === $step->getForm()) {
                     $html = '';
                     foreach ($step->getContents() as $content) {
-                        $html .= $content->getContent();
+                        if ($content->isToPdf()) {
+                            $html .= $content->getContent();
+                        }
                     }
-                    $pdfFilepath = $pdfService->makePdf($html, $step->getTitle());
-                    $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
+                    if (!empty($html)) {
+                        $pdfFilepath = $pdfService->makePdf($html, $step->getTitle());
+                        $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
+                    }
                 }
             }
         }

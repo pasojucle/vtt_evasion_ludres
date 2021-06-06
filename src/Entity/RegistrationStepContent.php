@@ -35,6 +35,11 @@ class RegistrationStepContent
      */
     private $registrationStep;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default":1})
+     */
+    private $toPdf = 1;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -72,6 +77,18 @@ class RegistrationStepContent
     public function setRegistrationStep(?RegistrationStep $registrationStep): self
     {
         $this->registrationStep = $registrationStep;
+
+        return $this;
+    }
+
+    public function isToPdf(): ?bool
+    {
+        return $this->toPdf;
+    }
+
+    public function setToPdf(bool $toPdf): self
+    {
+        $this->toPdf = $toPdf;
 
         return $this;
     }
