@@ -19,4 +19,19 @@ $(document).ready(function(){
         }
         $('ul.StepProgress').css('margin-top', marginTop+'px');
       });
+      $(document).on('change', '#user_identities_1_otherAddress', updateIdentity);
   });
+
+  function updateIdentity() {
+    let required = $(this).is(':checked');
+    $('#address_container .form-group-inline').each(function() {
+        $(this).toggleClass('hidden');
+    });
+    $('#address_container input').each(function() {
+        if (required) {
+            $(this).attr('required', 'required');
+        } else {
+            $(this).removeAttr('required');
+        }
+    });
+  }

@@ -75,6 +75,7 @@
                     {% endif %}
                 </div>
                 {% if form is not null %}
+                    {{ form_errors(form) }}
                     {{ form_end(form)}}
                 {% endif %}
             </div>

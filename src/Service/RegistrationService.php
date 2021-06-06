@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Address;
 use DateTime;
 use App\Entity\User;
 use App\Entity\Health;
@@ -109,7 +110,8 @@ class RegistrationService
         if (null !== $registrationStep->getForm()) {
             $form = $this->formFactory->create(UserType::class, $this->user, [
                 'attr' =>[
-                    'action' => $this->router->generate('registration_form_validate', ['step' => $step]),
+                    // 'action' => $this->router->generate('registration_form_validate', ['step' => $step]),
+                    'action' => $this->router->generate('registration_form', ['step' => $step]),
                 ],
                 'current' => $registrationStep,
                 'is_kinship' => $isKinshiph,
@@ -156,6 +158,9 @@ class RegistrationService
         if ($this->user->getIdentities()->isEmpty()) {
             $identity = new Identity();
             $this->user->addIdentity($identity);
+            $address = new Address();
+            $this->entityManager->persist($address);
+            $identity->setAddress($address);
             $this->entityManager->persist($identity);
         }
 

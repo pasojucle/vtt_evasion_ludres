@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="./css/exportPdf.css">
+
+    </head>
+    <body>
+        <main>
+            <div id="header">
+                <img src="./images/logo-pdf.jpg" alt="vvt évasion Ludres" style="height:110px;  width: 120px">
+                <h1> FICHE DE PRE-INSCRIPTION POUR 3 SEANCES CONSECUTIVES D'ESSAI GRATUITES - {{ licence_service.currentSeason }}</h1>
+                <img src="./images/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
+            </div>
+            <div>
+                <h2>Renseignements concernant l'adhérent</h2>
+                <table>
+                    <tr>
+                        <td>Non et prénom :</td>
+                        <td>{{ user.member.fullName }}</td>
+                    </tr>
+                    <tr>
+                        <td>Date et lieu de naissance :</td>
+                        <td>{{ user.member.birthDateAndPlace }}</td>
+                    </tr>
+                    <tr>
+                        <td>Adresse :</td>
+                        <td>
+                            {{ user.member.address.street }}<br>
+                            {{ user.member.address.postalCode }} {{ user.member.address.town }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Courriel :</td>
+                        <td>{{ user.member.email }}</td>
+                    </tr>
+                    <tr>
+                        <td>Téléphone :</td>
+                        <td>{{ user.member.phone}}</td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <p><b>DROIT A L'IMAGE : </b>Dans le cadre de nos activités, nous sommes amenés à prendre des photos, des films ou des enregistrements
+            sonores des membres du club pratiquant le VTT seul ou en groupe lors de nos sorties ou de diverses manifestations sportives. C'est
+            dans cet objectif que nous vous demandons l’autorisation pour être photographié, filmé ou enregistré, et ce uniquement pour la
+            communication de notre club. L'association s'interdit expressément de procéder à une exploitation des photographies, films et/ou
+            interviews susceptibles de porter atteinte à la vie privée ou à la réputation de ses adhérents.<br>J’autorise les moniteurs fédéraux ainsi que les initiateurs fédéraux ou tout autre futur moniteur et/ou initiateur, à prendre toute
+            décision concernant les soins d’urgences qui s’avéreraient nécessaires lors des activités organisées par le club.</p>
+            {% if user.kinShip %}
+            <div class="block">
+                <h2>Autorisation parentale pour mineur</h2>
+                <table>
+                    <tr>
+                        <td>Non et prénom :</td>
+                        <td>{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
+                    </tr>
+                    <tr>
+                        <td>Adresse :</td>
+                        <td>
+                            {{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Courriel :</td>
+                        <td>{{ user.kinShip.email }}</td>
+                    </tr>
+                    <tr>
+                        <td>Téléphone :</td>
+                        <td>{{ user.kinShip.phone}}</td>
+                    </tr>
+                </table>
+
+                <p>Inscrit et autorise l'enfant {{ user.member.fullName }} à participer aux séances pédagogiques et à vélo du VTT Evasion Ludres. 
+                Je soussigné {{ user.kinShip.fullName }} ({{ user.kinShip.type | trans }}) autorise le club VTT Evasion Ludres à utiliser ou faire utiliser ou reproduire ou
+                faire reproduire l'image et la voix de l'enfant ci-dessus nommé. Je me reconnais entièrement rempli de mes droits et je ne pourrai
+                prétendre à aucune rémunération pour l'exploitation des droits visés à la présente.<br>Je déclare sur l’honneur l’exactitude des renseignements fournis, m’engage à signaler toute modification concernant l’état de santé
+                de mon enfant.</p>
+            </div>
+            {% endif %}
+            {% if user.seasonLicence(licence_service.currentSeason).isTesting %}
+                <p>Je fournis un certificat médical daté de moins de 12 mois de non contre-indication à la pratique du VTT
+                et j'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site
+                www.vttevasionludres.fr</p>
+                <br>
+                <p>IL EST IMPERATIF DE REMPLIR ET SIGNER L'INFORMATION D'ASSURANCE GRATUITE JOINTE A CE DOCUMENT</p>
+            {% endif %}
+            <br>
+            <p>Fait à ___________________________le ______________ Signature : (précédée de la mention ‘’Lu et approuvé’’)</p>
+        </main>
+    </body>
+</html>

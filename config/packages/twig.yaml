@@ -5,3 +5,4 @@ twig:
 
     globals:
         header_service: '@App\Service\HeaderService'
+        licence_service: '@App\Service\LicenceService'

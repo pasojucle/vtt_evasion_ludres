@@ -2,9 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\Licence;
 use App\Entity\User;
+use App\Entity\Licence;
 use App\Form\HealthType;
+use App\Form\AddressType;
 use App\Form\IdentityType;
 use App\Form\HealthQuestionType;
 use Symfony\Component\Form\FormEvent;
@@ -65,7 +66,8 @@ class UserType extends AbstractType
                         'is_kinship' => $options['is_kinship'],
                         'category' => $options['category']
                     ],
-                ]);
+                ])
+                ;
         }
         if (self::FORM_APPROVAL === $options['current']->getForm()) {
             $builder

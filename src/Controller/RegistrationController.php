@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use DateTime;
+use App\DataTransferObject\User;
 use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
@@ -61,58 +62,28 @@ class RegistrationController extends AbstractController
     public function registerForm(
         Request $request,
         registrationService $registrationService,
+        UserPasswordEncoderInterface $passwordEncoder,
+        LoginFormAuthenticator $authenticator,
+        GuardAuthenticatorHandler $guardHandler,
         int $step
     ): Response
     {
         if ((int) $this->session->get('registrationMaxStep') < $step) {
             $this->session->set('registrationMaxStep', $step);
         }
-        if (null !== $this->getUser() && $request->request->get('_route') === 'registration_form') {
-
-        }
-
         if (!$step) {
             $this->session->remove('healthQuestions');
         }
         $progress = $registrationService->getProgress($step);
         $form = $progress['form'];
 
-        $user = $progress['user'];
-
-
-        return $this->render('registration/registrationForm.html.twig', [
-            'step' => $step,
-            'steps' => $progress['steps'],
-            'form' => (null!== $form) ? $form->createView() : null,
-            'prev' => $progress['prev'],
-            'current' => $progress['current'],
-            'next' => $progress['next'],
-            'user' => $progress['user'],
-            'season_licence' => $progress['seasonLicence'],
-            'maxStep' => $this->session->get('registrationMaxStep'),
-        ]);
-    }
-    /**
-     * @Route("/register_form_validate/{step}", name="registration_form_validate", methods={"POST"})
-     */
-    public function registerFormValidate(
-        Request $request,
-        registrationService $registrationService,
-        UserPasswordEncoderInterface $passwordEncoder,
-        LoginFormAuthenticator $authenticator,
-        GuardAuthenticatorHandler $guardHandler,
-        ?int $step
-    ): Response
-    {
-        $progress = $registrationService->getProgress($step);
-        $form = $progress['form'];
-        $route = (4 > $step) ? 'registration_form': 'user_registration_form';
-
-        $form->handleRequest($request);
+        if (null !== $form) {
+            $form->handleRequest($request);
+        }
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $route = (4 > $step) ? 'registration_form': 'user_registration_form';
             $user = $form->getData();
-            dump($form);
             $manualAuthenticating = false;
             if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
                 // encode the plain password
@@ -129,9 +100,13 @@ class RegistrationController extends AbstractController
                 $today = new DateTime();
                 $age = $today->diff($user->getIdentities()->first()->getBirthDate());
                 $category =  (18 > (int) $age->format('%y')) ? Licence::CATEGORY_MINOR : Licence::CATEGORY_ADULT;
-                dump($category);
                 $season = $registrationService->getSeason();
                 $user->getSeasonLicence($season)->setCategory($category);
+            }
+
+            if (!$user->getIdentities()->last()->hasOtherAddress()) {
+                $address = $user->getIdentities()->first()->getAddress();
+                $user->getIdentities()->last()->setAddress($address);
             }
 
             $this->entityManager->persist($user);
@@ -149,9 +124,20 @@ class RegistrationController extends AbstractController
                     'main'          // the name of your firewall in security.yaml
                 );
             }
+            return $this->redirectToRoute($route, ['step' => $progress['next']]);
         }
 
-        return $this->redirectToRoute($route, ['step' => $progress['next']]);
+        return $this->render('registration/registrationForm.html.twig', [
+            'step' => $step,
+            'steps' => $progress['steps'],
+            'form' => (null!== $form) ? $form->createView() : null,
+            'prev' => $progress['prev'],
+            'current' => $progress['current'],
+            'next' => $progress['next'],
+            'user' => $progress['user'],
+            'season_licence' => $progress['seasonLicence'],
+            'maxStep' => $this->session->get('registrationMaxStep'),
+        ]);
     }
 
     /**
@@ -221,6 +207,11 @@ class RegistrationController extends AbstractController
                 }
             }
         }
+        $registration = $this->renderView('registration/registrationPdf.html.twig', [
+            'user' => new User($user),
+        ]);
+        $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
+        $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
 
         $filename = $pdfService->joinPdf($files, $user);
 

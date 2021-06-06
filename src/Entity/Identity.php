@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\IdentityRepository;
+
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\IdentityRepository;
 
 /**
  * @ORM\Entity(repositoryClass=IdentityRepository::class)
@@ -84,9 +85,11 @@ class Identity
     private $picture;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="identities")
+     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="identities", cascade={"persist"})
      */
     private $address;
+
+    private $otherAddress = false;
 
 
     public function getId(): ?int
@@ -99,7 +102,7 @@ class Identity
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -111,7 +114,7 @@ class Identity
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -123,7 +126,7 @@ class Identity
         return $this->birthDate;
     }
 
-    public function setBirthDate(\DateTimeInterface $birthDate): self
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
 
@@ -135,7 +138,7 @@ class Identity
         return $this->birthplace;
     }
 
-    public function setBirthplace(string $birthplace): self
+    public function setBirthplace(?string $birthplace): self
     {
         $this->birthplace = $birthplace;
 
@@ -234,6 +237,18 @@ class Identity
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function hasOtherAddress(): bool
+    {
+        return $this->otherAddress;
+    }
+
+    public function setOtherAddress(bool $otherAddress): self
+    {
+        $this->address = $otherAddress;
 
         return $this;
     }

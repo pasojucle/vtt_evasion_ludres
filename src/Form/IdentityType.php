@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Identity;
 use App\Entity\Licence;
+use App\Entity\Identity;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class IdentityType extends AbstractType
@@ -89,7 +90,12 @@ class IdentityType extends AbstractType
                                 'class' => 'form-group-inline'
                             ],
                         ])
+                        ->add('otherAddress', CheckboxType::class, [
+                            'label' => 'Réside à une autre adresse que l\'enfant',
+                            'required' => false,
+                        ])
                         ;
+                    $addressClass = ' hidden';
                 } else {
                     $form
                         ->add('birthplace', TextType::class, [
@@ -99,7 +105,11 @@ class IdentityType extends AbstractType
                             ],
                         ])
                         ;
+                    $addressClass = '';
                 }
+                $form->add('address', AddressType::class, [
+                    'row_class' => $addressClass,
+                ]);
             }
             dump($form);
         });

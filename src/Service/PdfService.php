@@ -4,29 +4,38 @@ namespace App\Service;
 
 use DateTime;
 use Dompdf\Dompdf;
+use Dompdf\Options;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Licence;
 use setasign\Fpdi\Fpdi;
 use App\DataTransferObject\User as UserDto;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class PdfService
 {
     private FilenameService $filenameService;
     private LicenceService $licenceService;
+    private KernelInterface $kernel;
 
     public function __construct(
         FilenameService $filenameService,
-        LicenceService $licenceService
+        LicenceService $licenceService,
+        KernelInterface $kernel
     )
     {
         $this->filenameService = $filenameService;
         $this->licenceService = $licenceService;
+        $this->kernel = $kernel;
     }
 
     public function makePdf(string $html, string $filename)
     {
-        $dompdf = new Dompdf();
+        $options = new Options();
+        $options->setIsHtml5ParserEnabled(true);
+        $dompdf = new Dompdf($options);
+        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir().'/public');
+        dump($dompdf->getOptions());
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
@@ -52,9 +61,9 @@ class PdfService
 
         $fields = [
             ['value' => $userDto->getFullName(), 'x' => 35, 'y' => 208],
-            ['value' => $userDto->getBithDate(), 'x' => 165, 'y' => 208],
+            ['value' => $userDto->getBirthDate(), 'x' => 165, 'y' => 208],
             ['value' => $userDto->getFullNameChildren(), 'x' => 60, 'y' => 213],
-            ['value' => $userDto->getBithDateChildren(), 'x' => 165, 'y' => 213],
+            ['value' => $userDto->getBirthDateChildren(), 'x' => 165, 'y' => 213],
             ['value' => 'VTT EVASION LUDRES', 'x' => 65, 'y' => 219],
             ['value' => 'X', 'x' => $coverage[$userDto->getCoverage($this->licenceService->getCurrentSeason())], 'y' => 247.5],
             ['value' => 'X', 'x' => 81, 'y' => 257.5],

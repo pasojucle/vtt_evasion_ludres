@@ -15,7 +15,7 @@ identity:
   kinship:
     father: Père
     mother: Mère
-    guardianship: Tuteur
+    guardianship: Réprésentant légal
 
 disease:
   type:
