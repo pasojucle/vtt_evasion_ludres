@@ -8,7 +8,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -77,6 +79,7 @@ class IdentityType extends AbstractType
                         'row_attr' => [
                             'class' => 'form-group-inline'
                         ],
+                        'required' => false,
                     ])
                     ;
                 }
@@ -102,6 +105,22 @@ class IdentityType extends AbstractType
                             'label' => 'Lieux de naissance',
                             'row_attr' => [
                                 'class' => 'form-group-inline'
+                            ],
+                        ])
+                        ->add('pictureFile', FileType::class, [
+                            'label' => 'Photo',
+                            'mapped' => false,
+                            'required' => false,
+                            'constraints' => [
+                                new File([
+                                    'maxSize' => '1024k',
+                                    'mimeTypes' => [
+                                        'image/bmp',
+                                        'image/jpeg',
+                                        'image/png',
+                                    ],
+                                    'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
+                                ])
                             ],
                         ])
                         ;

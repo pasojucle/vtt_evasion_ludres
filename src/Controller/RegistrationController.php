@@ -3,9 +3,10 @@
 namespace App\Controller;
 
 use DateTime;
-use App\DataTransferObject\User;
 use App\Entity\Licence;
+use App\Service\PdfService;
 use App\Service\LicenceService;
+use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
@@ -14,13 +15,14 @@ use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
-use App\Service\PdfService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class RegistrationController extends AbstractController
@@ -65,6 +67,7 @@ class RegistrationController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
+        SluggerInterface $slugger,
         int $step
     ): Response
     {
@@ -84,6 +87,7 @@ class RegistrationController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $route = (4 > $step) ? 'registration_form': 'user_registration_form';
             $user = $form->getData();
+            dump($user);
             $manualAuthenticating = false;
             if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
                 // encode the plain password
@@ -108,6 +112,27 @@ class RegistrationController extends AbstractController
                 $address = $user->getIdentities()->first()->getAddress();
                 $user->getIdentities()->last()->setAddress($address);
             }
+            dump($request->files);
+            dump($request->files->get('user'));
+            $pictureFile = $request->files->get('user')['identities'][0]['pictureFile'];
+            if ($pictureFile) {
+                $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
+                if (!is_dir($this->getParameter('uploads_directory'))) {
+                    mkdir($this->getParameter('uploads_directory'));
+                }
+                try {
+                    $pictureFile->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+                $user->getIdentities()->first()->setPicture($newFilename);
+            }
+
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();

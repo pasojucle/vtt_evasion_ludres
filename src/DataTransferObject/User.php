@@ -128,6 +128,7 @@ class User {
                 'address' => $this->memberIdentity->getAddress(),
                 'email' => $this->memberIdentity->getEmail(),
                 'phone' => implode(' - ', array_filter([$this->memberIdentity->getMobile(), $this->memberIdentity->getPhone()])),
+                'picture' => $this->memberIdentity->getPicture(),
             ];
             
         }

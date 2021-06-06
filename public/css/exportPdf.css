@@ -116,3 +116,8 @@ h2 {
 p {
     text-align: justify;
 }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+ }
