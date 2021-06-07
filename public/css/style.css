@@ -278,6 +278,10 @@ p + p {
     max-width: 1000px;
     box-sizing: border-box;
 }
+.col-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+}
 .wrapper.min-content {
     width: min-content;
     min-width: 400px;
@@ -465,4 +469,11 @@ p + p {
 }
 button[type="submit"] {
     font-size: 16px;
+}
+.user-picture {
+    max-height: 200px;
+    margin: 10px;
+}
+.align-center {
+    text-align: center;
 }

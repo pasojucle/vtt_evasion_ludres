@@ -1,20 +1,37 @@
 <div>
     {% for identity in form.identities %}
+
         {% if identity.children is not empty %}
-            <div class="form-group">
-                {{ form_row(identity.name) }}
-                {{ form_row(identity.firstName) }}
-            </div>
-            <div class="form-group">
-                {{ form_row(identity.birthDate)}}
-                {% if identity.birthplace is defined %}
-                    {{ form_row(identity.birthplace) }}
-                {% endif %}
-            </div>
+            {% set first_block %}
+                <div class="form-group">
+                    {{ form_row(identity.name) }}
+                    {{ form_row(identity.firstName) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(identity.birthDate)}}
+                    {% if identity.birthplace is defined %}
+                        {{ form_row(identity.birthplace) }}
+                    {% endif %}
+                </div>
+            {% endset %}
+            {% if identity.pictureFile is defined %}
+                <div class="col-2">
+                    <div>
+                        {{ first_block}}
+                    </div>
+                    <div class="align-center">
+                        {% set picture = identity.vars.value.picture %}
+                        <img class="user-picture" src="/uploads/{{ picture }}" alt="{{ picture }}">            
+                        {{ form_row(identity.pictureFile) }}
+                    </div>
+                </div>
+            {% else %}
+                {{ first_block }}
+            {% endif %}
             <div class="form-group">
                 {{ form_row(identity.phone) }}
                 {{ form_row(identity.mobile) }}
-            </div>
+            </div>  
             {% if identity.profession is defined %}
                 <div class="form-group">{{ form_row(identity.profession) }}</div>
             {% endif %}
@@ -33,9 +50,6 @@
                         {{ form_row(identity.address.town) }}
                     </div>
                 </div>
-            {% endif %}
-            {% if identity.pictureFile is defined %}
-                <div class="form-group">{{ form_row(identity.pictureFile)}}</div>
             {% endif %}
         {% endif %}
     {% endfor %}

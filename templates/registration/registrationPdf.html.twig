@@ -16,11 +16,12 @@
             </div>
             <div>
                 <h2>Renseignements concernant l'adhérent</h2>
-                <table>
+
+                <table {% if user.member.picture %}class="table-fixed"{% endif %}>
                     <tr>
-                        <td>Non et prénom :</td>
+                        {% if user.member.picture %}<td rowspan="5"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+                        <td style="width: 150px">Non et prénom :</td>
                         <td>{{ user.member.fullName }}</td>
-                        <td rowspan="5" width="150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px; display: block"></td>
                     </tr>
                     <tr>
                         <td>Date et lieu de naissance :</td>
@@ -55,7 +56,7 @@
                 <h2>Autorisation parentale pour mineur</h2>
                 <table>
                     <tr>
-                        <td>Non et prénom :</td>
+                        <td style="width: 150px">Non et prénom :</td>
                         <td>{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
                     </tr>
                     <tr>

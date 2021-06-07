@@ -111,28 +111,30 @@ class RegistrationController extends AbstractController
             if (!$user->getIdentities()->last()->hasOtherAddress()) {
                 $address = $user->getIdentities()->first()->getAddress();
                 $user->getIdentities()->last()->setAddress($address);
-            }
-            dump($request->files);
-            dump($request->files->get('user'));
-            $pictureFile = $request->files->get('user')['identities'][0]['pictureFile'];
-            if ($pictureFile) {
-                $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
-                if (!is_dir($this->getParameter('uploads_directory'))) {
-                    mkdir($this->getParameter('uploads_directory'));
-                }
-                try {
-                    $pictureFile->move(
-                        $this->getParameter('uploads_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
-                }
-                $user->getIdentities()->first()->setPicture($newFilename);
+            } else {
+                $address = $user->getIdentities()->last()->getAddress();
             }
 
+            if ($request->files->get('user')) {
+                $pictureFile = $request->files->get('user')['identities'][0]['pictureFile'];
+                if ($pictureFile) {
+                    $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
+                    if (!is_dir($this->getParameter('uploads_directory'))) {
+                        mkdir($this->getParameter('uploads_directory'));
+                    }
+                    try {
+                        $pictureFile->move(
+                            $this->getParameter('uploads_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+                    $user->getIdentities()->first()->setPicture($newFilename);
+                }
+            }
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();

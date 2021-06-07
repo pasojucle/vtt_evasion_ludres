@@ -25,31 +25,32 @@ class IdentityType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $identity = $event->getData();
             $form = $event->getForm();
+            $row_class =  ($options['is_kinship']) ? 'form-group-inline' : 'form-group';
             if ((!$options['is_kinship'] && $form->getName() === "0") || ($options['is_kinship'] && $form->getName() === "1")) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
                         'row_attr' => [
-                            'class' => 'form-group-inline'
+                            'class' => $row_class
                         ],
                     ])
                     ->add('firstName', TextType::class, [
                         'label' => 'Prénom',
                         'row_attr' => [
-                            'class' => 'form-group-inline'
+                            'class' => $row_class,
                         ],
                     ])
                     ->add('phone', TextType::class, [
                         'label' => 'Téléphone fixe',
                         'required' => false,
                         'row_attr' => [
-                            'class' => 'form-group-inline'
+                            'class' => 'form-group-inline',
                         ],
                     ])
                     ->add('mobile', TextType::class, [
                         'label' => 'Téléphone mobile',
                         'row_attr' => [
-                            'class' => 'form-group-inline'
+                            'class' => 'form-group-inline',
                         ],
                     ])
                     ->add('email', EmailType::class, [
@@ -68,7 +69,7 @@ class IdentityType extends AbstractType
                             'autocomplete' => "off",
                         ],
                         'row_attr' => [
-                            'class' => 'form-group-inline'
+                            'class' => $row_class,
                         ],
                     ])
                 ;
@@ -104,13 +105,16 @@ class IdentityType extends AbstractType
                         ->add('birthplace', TextType::class, [
                             'label' => 'Lieux de naissance',
                             'row_attr' => [
-                                'class' => 'form-group-inline'
+                                'class' => $row_class,
                             ],
                         ])
                         ->add('pictureFile', FileType::class, [
-                            'label' => 'Photo',
+                            'label' => false,
                             'mapped' => false,
                             'required' => false,
+                            'attr' => [
+                                'accept' => '.bmp,.jpeg,.jpg,.png'
+                            ],
                             'constraints' => [
                                 new File([
                                     'maxSize' => '1024k',

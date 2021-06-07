@@ -20,6 +20,7 @@ $(document).ready(function(){
         $('ul.StepProgress').css('margin-top', marginTop+'px');
       });
       $(document).on('change', '#user_identities_1_otherAddress', updateIdentity);
+      $(document).on('change', 'input[type="file"]', previewFile);
   });
 
   function updateIdentity() {
@@ -34,4 +35,14 @@ $(document).ready(function(){
             $(this).removeAttr('required');
         }
     });
+  }
+
+  function previewFile() {
+    const preview = $(this).parent().parent().find('img')[0];
+    const [file] = this.files;
+
+    if (file) {
+        console.log(URL.createObjectURL(file))
+        preview.src = URL.createObjectURL(file)
+    }
   }

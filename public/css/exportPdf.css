@@ -119,5 +119,9 @@ p {
 table {
     border-collapse: collapse;
     width: 100%;
+}
+
+.table-fixed {
     table-layout: fixed;
+    width: 450px;
  }
