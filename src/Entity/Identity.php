@@ -89,7 +89,7 @@ class Identity
      */
     private $address;
 
-    private $otherAddress = false;
+    private $otherAddress;
 
 
     public function getId(): ?int
@@ -229,26 +229,28 @@ class Identity
         return $this;
     }
 
-    public function getAddress(): ?Address
+    public function getOtherAddress(): ?bool
     {
+        return $this->otherAddress;
+    }
+
+    public function setOtherAddress(?bool $otherAddress): self
+    {
+        $this->address = $otherAddress;
+
+        return $this;
+    }
+
+
+    public function getAddress()
+    {
+        dump($this->address);
         return $this->address;
     }
 
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
-
-        return $this;
-    }
-
-    public function hasOtherAddress(): bool
-    {
-        return $this->otherAddress;
-    }
-
-    public function setOtherAddress(bool $otherAddress): self
-    {
-        $this->address = $otherAddress;
 
         return $this;
     }

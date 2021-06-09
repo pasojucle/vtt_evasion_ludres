@@ -79,7 +79,7 @@ class RegistrationController extends AbstractController
         }
         $progress = $registrationService->getProgress($step);
         $form = $progress['form'];
-
+        dump($form);
         if (null !== $form) {
             $form->handleRequest($request);
         }
@@ -108,11 +108,9 @@ class RegistrationController extends AbstractController
                 $user->getSeasonLicence($season)->setCategory($category);
             }
 
-            if (!$user->getIdentities()->last()->hasOtherAddress()) {
-                $address = $user->getIdentities()->first()->getAddress();
-                $user->getIdentities()->last()->setAddress($address);
-            } else {
-                $address = $user->getIdentities()->last()->getAddress();
+            $otherAddress = $user->getIdentities()->last()->getOtherAddress();
+            if (false === $otherAddress) {
+                $user->getIdentities()->last()->setAddress(null);
             }
 
             if ($request->files->get('user')) {

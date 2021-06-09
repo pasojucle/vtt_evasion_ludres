@@ -125,7 +125,6 @@ class RegistrationService
 
     public function setUser()
     {
-
         if (null === $this->user) {
             $this->user = new User();
             $idMax = $this->userRepository->findMaxId();
@@ -176,6 +175,12 @@ class RegistrationService
                 $identity->setKinship(Identity::KINSHIP_FATHER);
                 $this->user->addIdentity($identity);
                 $this->entityManager->persist($identity);
+            }
+            if ($this->user->getIdentities()->count() === 2 && null === $this->user->getIdentities()->last()->getAddress()) {
+                $address = new Address();
+                $this->entityManager->persist($address);
+                $this->user->getIdentities()->last()->setAddress($address);
+                $this->entityManager->persist($this->user->getIdentities()->last());
             }
             if ($this->user->getApprovals()->count() < 2) {
                 $aproval = new Approval();
