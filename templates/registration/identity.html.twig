@@ -40,7 +40,13 @@
             {% endif %}
             <div class="form-group">{{ form_row(identity.email) }}</div>
             {% if identity.otherAddress is defined %}
-                <div class="form-group">{{ form_row(identity.otherAddress) }}</div>
+                <div class="form-group">
+                {# {{ form_row(identity.otherAddress) }} #}
+                    <div class="inputGroup long check">
+                        {{ form_widget(identity.otherAddress)}}
+                        {{ form_label(identity.otherAddress)}}
+                    </div>
+                </div>
             {% endif %}
             {% if identity.address is defined %}
                 <div id="address_container">

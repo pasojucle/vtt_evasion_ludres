@@ -105,17 +105,16 @@ body > script {display: none !important;}
     background-color: var(--danger-color);
 }
 .btn {
-    padding: 8px;
-    border-radius: 5px;
+    padding: 12px 20px;
     border: none;
     display: inline-block;
+    color: var(--white-color);
 }
 .btn-xs {
-    padding: 1px;
-    border-radius: 2px;
+    padding: 1px 2px;
 }
 .btn-xl {
-    padding: 15px;
+    padding: 15px 20px;
 }
 .btn-xxl {
     margin: 40px auto;
@@ -125,11 +124,9 @@ body > script {display: none !important;}
 }
 .btn-primary {
     background-color: var(--primary-color);
-    color: var(--background-color);
 }
 .btn-secondary {
     background-color: var(--background-color);
-    color: var(--primary-color);
     border: 1px solid var(--primary-color);
 }
 body {
@@ -254,8 +251,8 @@ p + p {
     margin-bottom: 15px;
     display: none;
 }
-.block-body .container:not(:first-child) {
-    margin-top: 15px;
+.block-body .container:not(:last-child), .content-container .container:not(:last-child) {
+    margin-bottom: 15px;
 }
 .block-footer {
     margin-top: 25px;
@@ -476,4 +473,90 @@ button[type="submit"] {
 }
 .align-center {
     text-align: center;
+}
+.inputGroup {
+    background-color: var(--white-color);
+    display: inline-block;
+    width: 30%;
+    margin: 10px 0;
+    position: relative;
+}
+.inputGroup label {
+    padding: 12px 30px;
+    width: 70%;
+    display: block;
+    text-align: left;
+    color: var(--gray-color);
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    transition: color 200ms ease-in;
+    overflow: hidden;
+    border: 2px solid var(--light-color);
+}
+.inputGroup.long {
+    width: 100%;
+}
+.inputGroup label:before {
+    width: 12px;
+    height: 10px;
+    border-radius: 50%;
+    content: '';
+    background-color: var(--primary-color-darker);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale3d(1, 1, 1);
+    transition: all 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    opacity: 0;
+    z-index: -1;
+}
+.inputGroup.check label:after {
+    content: '\2714';
+}
+.inputGroup.ballot label:after {
+    content: '\2718';
+}
+.inputGroup label:after {
+    width: 32px;
+    height: 32px;
+
+    border: 2px solid var(--light-color);
+    background-position: 2px 3px;
+    border-radius: 50%;
+    z-index: 2;
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: all 200ms ease-in;
+    font-size: 32px;
+    line-height: 32px;
+    text-align: center;
+    color: var(--white-color);
+}
+
+.inputGroup input:checked ~ label {
+      color: #fff;
+}
+.inputGroup input:checked ~ label:before {
+    transform: translate(-50%, -50%) scale3d(56, 56, 1);
+    opacity: 1;
+}
+.inputGroup input:checked ~ label:after {
+    background-color: var(--background-color);
+    border-color: var(--background-color);
+}
+.inputGroup input {
+    width: 32px;
+    height: 32px;
+    order: 1;
+    z-index: 2;
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    visibility: hidden;
 }
