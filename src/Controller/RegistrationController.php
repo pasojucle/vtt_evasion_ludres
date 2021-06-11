@@ -79,7 +79,6 @@ class RegistrationController extends AbstractController
         }
         $progress = $registrationService->getProgress($step);
         $form = $progress['form'];
-        dump($form);
         if (null !== $form) {
             $form->handleRequest($request);
         }
@@ -87,7 +86,6 @@ class RegistrationController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $route = (4 > $step) ? 'registration_form': 'user_registration_form';
             $user = $form->getData();
-            dump($user);
             $manualAuthenticating = false;
             if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
                 // encode the plain password
@@ -106,11 +104,14 @@ class RegistrationController extends AbstractController
                 $category =  (18 > (int) $age->format('%y')) ? Licence::CATEGORY_MINOR : Licence::CATEGORY_ADULT;
                 $season = $registrationService->getSeason();
                 $user->getSeasonLicence($season)->setCategory($category);
-            }
-
-            $otherAddress = $user->getIdentities()->last()->getOtherAddress();
-            if (false === $otherAddress) {
-                $user->getIdentities()->last()->setAddress(null);
+                if (Licence::CATEGORY_MINOR === $category) {
+                    $identityKinShip = $user->getIdentities()->last();
+                    $addressKinShip = $identityKinShip->getAddress();
+                    if (!$identityKinShip->hasAddress() && null !== $addressKinShip) {
+                        $identityKinShip->setAddress(null);
+                        $this->entityManager->remove($addressKinShip);
+                    }
+                }
             }
 
             if ($request->files->get('user')) {

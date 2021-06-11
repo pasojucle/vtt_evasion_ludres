@@ -74,7 +74,8 @@ class PdfService
         $pdf->SetFont('Helvetica');
         foreach ($fields as $field) {
             $pdf->SetXY($field['x'], $field['y']);
-            $pdf->Write(8, iconv('UTF-8', 'cp1250', $field['value']));
+            dump($field['value']);
+            $pdf->Write(8, iconv('UTF-8', 'ISO-8859-1', $field['value']));
         }
 
         return $pdf;

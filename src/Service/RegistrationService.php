@@ -106,7 +106,6 @@ class RegistrationService
     {
         $form = null;
         
-        dump($this->user);
         if (null !== $registrationStep->getForm()) {
             $form = $this->formFactory->create(UserType::class, $this->user, [
                 'attr' =>[

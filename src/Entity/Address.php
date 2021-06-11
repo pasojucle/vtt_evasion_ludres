@@ -55,7 +55,7 @@ class Address
         return $this->street;
     }
 
-    public function setStreet(string $street): self
+    public function setStreet(?string $street): self
     {
         $this->street = $street;
 
@@ -67,7 +67,7 @@ class Address
         return $this->postalCode;
     }
 
-    public function setPostalCode(string $postalCode): self
+    public function setPostalCode(?string $postalCode): self
     {
         $this->postalCode = $postalCode;
 
@@ -79,7 +79,7 @@ class Address
         return $this->town;
     }
 
-    public function setTown(string $town): self
+    public function setTown(?string $town): self
     {
         $this->town = $town;
 
@@ -114,5 +114,10 @@ class Address
         }
 
         return $this;
+    }
+
+    public function isEmpty(): bool
+    {
+        return null === $this->getStreet() && null === $this->getPostalCode() && null === $this->getTown();
     }
 }

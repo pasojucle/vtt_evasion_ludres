@@ -86,6 +86,7 @@ class IdentityType extends AbstractType
                 }
 
                 if ($options['is_kinship']) {
+
                     $form
                         ->add('kinship', ChoiceType::class, [
                             'label' => 'Parenté',
@@ -97,10 +98,11 @@ class IdentityType extends AbstractType
                         ->add('otherAddress', CheckboxType::class, [
                             'label' => 'Réside à une autre adresse que l\'enfant',
                             'required' => false,
-                            'data' => (null !== $identity->getAddress()) ? true : false,
+                            'mapped' => false,
+                            'data' => ($identity->hasAddress()) ? true : false,
                         ])
                         ;
-                    $addressClass = (null !== $identity->getAddress()) ? '': ' hidden';
+                    $addressClass = ($identity->hasAddress()) ? '': ' hidden';
                 } else {
                     $form
                         ->add('birthplace', TextType::class, [
@@ -134,8 +136,8 @@ class IdentityType extends AbstractType
                 $form->add('address', AddressType::class, [
                     'row_class' => $addressClass,
                 ]);
+                dump($form);
             }
-            dump($form);
         });
 
     }

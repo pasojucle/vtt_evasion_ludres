@@ -33,6 +33,7 @@ $(document).ready(function(){
             $(this).attr('required', 'required');
         } else {
             $(this).removeAttr('required');
+            $(this).val('');
         }
     });
   }

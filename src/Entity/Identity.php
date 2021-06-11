@@ -89,8 +89,6 @@ class Identity
      */
     private $address;
 
-    private $otherAddress;
-
 
     public function getId(): ?int
     {
@@ -229,22 +227,8 @@ class Identity
         return $this;
     }
 
-    public function getOtherAddress(): ?bool
-    {
-        return $this->otherAddress;
-    }
-
-    public function setOtherAddress(?bool $otherAddress): self
-    {
-        $this->address = $otherAddress;
-
-        return $this;
-    }
-
-
     public function getAddress()
     {
-        dump($this->address);
         return $this->address;
     }
 
@@ -253,5 +237,10 @@ class Identity
         $this->address = $address;
 
         return $this;
+    }
+
+    public function hasAddress(): bool
+    {
+        return (null !== $this->address) ? !$this->address->isEmpty() : false;
     }
 }
