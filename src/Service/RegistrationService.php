@@ -75,6 +75,8 @@ class RegistrationService
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $this->seasonLicence->isTesting());
         $stepIndex = $step -1;
+        
+        $progress['max_step'] = count($steps);
 
         foreach($steps as $key => $registrationStep) {
             if ($key < $stepIndex) {

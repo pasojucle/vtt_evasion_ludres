@@ -79,6 +79,9 @@ class RegistrationController extends AbstractController
         }
         $progress = $registrationService->getProgress($step);
         $form = $progress['form'];
+        if (null !== $progress['user'] && 1 === $step) {
+            $this->session->set('registrationMaxStep',  $progress['max_step'] );
+        }
         if (null !== $form) {
             $form->handleRequest($request);
         }
