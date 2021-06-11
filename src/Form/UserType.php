@@ -67,6 +67,15 @@ class UserType extends AbstractType
                         'category' => $options['category']
                     ],
                 ])
+                ->add('licences', CollectionType::class, [
+                    'label' => false,
+                    'entry_type' => AdditionalFamilyMemberType::class,
+                    'entry_options' => [
+                        'label' => false,
+                        'season_licence' => $options['season_licence'],
+                        'is_kinship' => $options['is_kinship']
+                    ],
+                ]);
                 ;
         }
         if (self::FORM_APPROVAL === $options['current']->getForm()) {

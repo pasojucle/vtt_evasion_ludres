@@ -63,6 +63,17 @@
                 {% if user.licences | length < 2 and step < 3 %}
                     {% set route = 'registration_form' %}
                 {% endif %}
+                {% if form.children.licences is defined and form.children.identities is defined %}
+                    {% set additional_family_member = form.children.licences.children[0] %}
+                    {% if additional_family_member.additionalFamilyMember is defined %}
+                    <div class="form-group">
+                        <div class="inputGroup long check">
+                            {{ form_widget(additional_family_member.additionalFamilyMember )}}
+                            {{ form_label(additional_family_member.additionalFamilyMember )}}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
                 <div class="block-footer">
                     {% if prev is not null %}
                         <a class="btn btn-primary float-left" href="{{ path(route, {'step': prev }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
