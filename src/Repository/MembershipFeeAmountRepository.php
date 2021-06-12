@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use Doctrine\ORM\Query\Expr;
 use App\Entity\MembershipFeeAmount;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method MembershipFeeAmount|null find($id, $lockMode = null, $lockVersion = null)
@@ -36,15 +38,24 @@ class MembershipFeeAmountRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?MembershipFeeAmount
+    public function findOneByLicence(int $coverage, bool $isNewMember, bool $hasFamilyMember): ?MembershipFeeAmount
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        try {
+            return $this->createQueryBuilder('mfa')
+                ->join('mfa.membershipFee', 'mf')
+                ->andWhere(
+                    (new Expr)->eq('mf.newMember', ':isNewMember'),
+                    (new Expr)->eq('mfa.coverage', ':coverage'),
+                    (new Expr)->eq('mf.additionalFamilyMember', ':hasFamilyMember'),
+                )
+                ->setParameter('isNewMember', $isNewMember)
+                ->setParameter('coverage', $coverage)
+                ->setParameter('hasFamilyMember', $hasFamilyMember)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NoResultException $e) {
+            return null;
+        }
     }
-    */
 }

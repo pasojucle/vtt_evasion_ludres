@@ -91,14 +91,18 @@ class User {
         return (null !== $seasonLicence) ? $seasonLicence->getCoverage() : null;
     }
 
-    public function getSeasonLicence(string $season): ?Licence
+    public function getSeasonLicence(string $season): array
     {
         $seasonLicence = [];
         $licence = $this->user->getSeasonLicence($season);
-        if (null !== $licence) [
-            'isTesting' => $licence->isTesting(),
-        ];
-        return $this->user->getSeasonLicence($season);
+        if (null !== $licence) {
+            $seasonLicence = [
+                'isTesting' => $licence->isTesting(),
+                'coverage' => $licence->getCoverage(),
+                'hasFamilyMember' => $licence->getAdditionalFamilyMember(),
+            ];  
+        } 
+        return $seasonLicence;
     }
 
     public function getKinShip(): array
@@ -133,5 +137,10 @@ class User {
             
         }
         return $member;
+    }
+
+    public function isNewMember(): bool
+    {
+        return 1 < $this->user->getLicences()->count();
     }
 }

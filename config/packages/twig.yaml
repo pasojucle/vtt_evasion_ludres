@@ -6,3 +6,4 @@ twig:
     globals:
         header_service: '@App\Service\HeaderService'
         licence_service: '@App\Service\LicenceService'
+        membership_fee_service: '@App\Service\MembershipFeeService'

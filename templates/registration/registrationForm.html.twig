@@ -16,7 +16,7 @@
                     {% for step in steps %}
                         {%  if loop.index < maxStep + 1 %}
                             {% set route = 'user_registration_form' %}
-                            {% if user.licences | length < 2 and loop.index < 4 %}
+                            {% if user_entity.licences | length < 2 and loop.index < 4 %}
                                 {% set route = 'registration_form' %}
                             {% endif %}
                             <li class="StepProgress-item {{ step.class }}">
@@ -55,12 +55,9 @@
                         {% set template = 'registration/' ~ constant('App\\Form\\UserType::FORMS')[current.form] | replace({'form.':''}) ~ '.html.twig' %}
                         {% include template %}
                     {% endif %}
-                    {% if current == steps | last %}
-                        <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user.id }) }}"><i class="fas fa-download"></i></i> Télécharger le dossier d'inscription</a>
-                    {% endif %}
                 </div>
                 {% set route = 'user_registration_form' %}
-                {% if user.licences | length < 2 and step < 3 %}
+                {% if user_entity.licences | length < 2 and step < 3 %}
                     {% set route = 'registration_form' %}
                 {% endif %}
                 {% if form.children.licences is defined and form.children.identities is defined %}

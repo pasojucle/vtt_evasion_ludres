@@ -165,10 +165,11 @@ class RegistrationController extends AbstractController
             'prev' => $progress['prev'],
             'current' => $progress['current'],
             'next' => $progress['next'],
-            'user' => $progress['user'],
+            'user_entity' => $progress['user'],
             'season_licence' => $progress['seasonLicence'],
             'maxStep' => $this->session->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
+            'user' => new User($progress['user']),
         ]);
     }
 

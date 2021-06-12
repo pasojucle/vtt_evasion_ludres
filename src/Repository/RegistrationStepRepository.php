@@ -35,13 +35,16 @@ class RegistrationStepRepository extends ServiceEntityRepository
             $orX->add($qb->expr()->eq('r.category', ':category'));
             $qb->setParameter('category', $category);
         }
+        if ($testing) {
+            $qb->            
+                andWhere(
+                    $qb->expr()->eq('r.testing', ':testing')
+                )
+                ->setParameter('testing', $testing);
+        }
 
         return $qb
             ->andWhere($orX)
-            ->andWhere(
-                $qb->expr()->eq('r.testing', ':testing')
-            )
-            ->setParameter('testing', $testing)
             ->orderBy('r.orderBy', 'ASC')
             ->getQuery()
             ->getResult()
