@@ -70,9 +70,15 @@ class Health
      */
     private $healthQuestions;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Disease::class, mappedBy="health")
+     */
+    private $diseases;
+
     public function __construct()
     {
         $this->healthQuestions = new ArrayCollection();
+        $this->diseases = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -212,6 +218,36 @@ class Health
             // set the owning side to null (unless already changed)
             if ($healthQuestion->getHealth() === $this) {
                 $healthQuestion->setHealth(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Disease[]
+     */
+    public function getDiseases(): Collection
+    {
+        return $this->diseases;
+    }
+
+    public function addDisease(Disease $disease): self
+    {
+        if (!$this->diseases->contains($disease)) {
+            $this->diseases[] = $disease;
+            $disease->setHealth($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDisease(Disease $disease): self
+    {
+        if ($this->diseases->removeElement($disease)) {
+            // set the owning side to null (unless already changed)
+            if ($disease->getHealth() === $this) {
+                $disease->setHealth(null);
             }
         }
 

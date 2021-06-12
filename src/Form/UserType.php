@@ -105,6 +105,9 @@ class UserType extends AbstractType
                     ],
                 ]);
         }
+        if (self::FORM_HEALTH === $options['current']->getForm()) {
+            $builder->add('health', HealthType::class);
+        }
         /*$builder
             ->add('save', SubmitType::class, [
                 'label' => 'messages',

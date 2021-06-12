@@ -377,6 +377,20 @@ p + p {
     height: 30px;
     line-height: 30px;
 }
+.form-group > .widget-inline {
+    display: inline-block;
+    width: 25%;
+}
+.form-group > .widget-inline.disease-active {
+    width: 20px;
+}
+.form-group > .widget-inline.disease-label {
+    width: calc(25% + 60px);
+    margin-left: 20px;
+}
+.form-group > .widget-inline.disease-label.disease-label-other {
+    width: 56px;
+}
 .form-group-inline {
     display: inline-block;
     width: calc(50% - 29px);

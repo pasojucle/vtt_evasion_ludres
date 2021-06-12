@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Disease
 {
-    private const TYPE_DISEASE = 1;
-    private const TYPE_ALLERGY = 2;
-    private const TYPE_INTOLERANCE = 3;
+    public const TYPE_DISEASE = 1;
+    public const TYPE_ALLERGY = 2;
+    public const TYPE_INTOLERANCE = 3;
 
     public const TYPES = [
         self::TYPE_DISEASE => 'disease.type.diseases',
@@ -26,10 +26,10 @@ class Disease
     private const LABEL_HEMOPHILIA = 4;
     private const LABEL_EPILEPSY = 5;
     private const LABEL_DIABETES = 6;
-    private const LABEL_OTHER = 7;
+    public const LABEL_OTHER = 7;
     private const LABEL_DIETARY = 8;
     private const LABEL_MEDICATED = 9;
-    private const LABEL_POLLEN_BEES = 10;
+    public const LABEL_POLLEN_BEES = 10;
     private const LABEL_FOOD = 11;
     private const LABEL_MEDICINES = 12;
 
@@ -61,7 +61,7 @@ class Disease
     private $type;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $title;
 
@@ -75,16 +75,17 @@ class Disease
      */
     private $emergencyTreatment;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Health::class, inversedBy="diseases")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $health;
 
     /**
      * @ORM\Column(type="integer")
      */
     private $label;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Health::class, inversedBy="diseases")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $health;
 
     public function getId(): ?int
     {
@@ -139,18 +140,6 @@ class Disease
         return $this;
     }
 
-    public function getHealth(): ?Health
-    {
-        return $this->health;
-    }
-
-    public function setHealth(?Health $health): self
-    {
-        $this->health = $health;
-
-        return $this;
-    }
-
     public function getLabel(): ?int
     {
         return $this->label;
@@ -159,6 +148,18 @@ class Disease
     public function setLabel(int $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getHealth(): ?Health
+    {
+        return $this->health;
+    }
+
+    public function setHealth(?Health $health): self
+    {
+        $this->health = $health;
 
         return $this;
     }

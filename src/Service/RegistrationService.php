@@ -2,19 +2,20 @@
 
 namespace App\Service;
 
-use App\Entity\Address;
 use DateTime;
 use App\Entity\User;
 use App\Entity\Health;
 use App\Form\UserType;
+use App\Entity\Address;
+use App\Entity\Disease;
 use App\Entity\Licence;
 use App\Entity\Approval;
 use App\Entity\Identity;
 use App\Entity\HealthQuestion;
 use App\Entity\RegistrationStep;
-use App\Repository\LicenceRepository;
 use Symfony\Component\Form\Form;
 use App\Repository\UserRepository;
+use App\Repository\LicenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Repository\RegistrationStepRepository;
@@ -187,6 +188,22 @@ class RegistrationService
                 $aproval->setType(User::APPROVAL_GOING_HOME_ALONE);
                 $this->user->addApproval($aproval);
                 $this->entityManager->persist($aproval);
+            }
+            if ($this->user->getHealth()->getDiseases()->isEmpty()) {
+                foreach (array_keys(Disease::LABELS) as $label) {
+                    $type = Disease::TYPE_DISEASE;
+                    if (Disease::LABEL_OTHER < $label) {
+                        $type = Disease::TYPE_ALLERGY;
+                    }
+                    if (Disease::LABEL_POLLEN_BEES < $label) {
+                        $type = Disease::TYPE_INTOLERANCE;
+                    }
+                    $disease = new Disease();
+                    $disease->setType($type)
+                        ->setLabel($label);
+                    $this->entityManager->persist($disease);
+                    $this->user->getHealth()->addDisease($disease);
+                }
             }
         }
     }

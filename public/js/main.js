@@ -21,9 +21,39 @@ $(document).ready(function(){
       });
       $(document).on('change', '#user_identities_1_otherAddress', updateIdentity);
       $(document).on('change', 'input[type="file"]', previewFile);
-  });
+      $('.js-datepicker').datepicker({
+        format: 'yyyy-mm-dd'
+    });
+});
 
-  function updateIdentity() {
+jQuery(function($){
+	$.datepicker.regional['fr'] = {
+		closeText: 'Fermer',
+		prevText: '&#x3c;Préc',
+		nextText: 'Suiv&#x3e;',
+		currentText: 'Aujourd\'hui',
+		monthNames: ['Janvier','Fevrier','Mars','Avril','Mai','Juin',
+		'Juillet','Aout','Septembre','Octobre','Novembre','Decembre'],
+		monthNamesShort: ['Jan','Fev','Mar','Avr','Mai','Jun',
+		'Jul','Aou','Sep','Oct','Nov','Dec'],
+		dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+		dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+		dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
+		weekHeader: 'Sm',
+		dateFormat: 'dd/mm/yy',
+		firstDay: 1,
+		isRTL: false,
+		showMonthAfterYear: false,
+		yearSuffix: '',
+		minDate: '-12M +0D',
+		maxDate: '+12M +0D',
+		numberOfMonths: 1,
+		showButtonPanel: false
+	};
+	$.datepicker.setDefaults($.datepicker.regional['fr']);
+});
+
+function updateIdentity() {
     let required = $(this).is(':checked');
     $('#address_container .form-group-inline').each(function() {
         $(this).toggleClass('hidden');
@@ -36,9 +66,9 @@ $(document).ready(function(){
             $(this).val('');
         }
     });
-  }
+}
 
-  function previewFile() {
+function previewFile() {
     const preview = $(this).parent().parent().find('img')[0];
     const [file] = this.files;
 
@@ -46,4 +76,4 @@ $(document).ready(function(){
         console.log(URL.createObjectURL(file))
         preview.src = URL.createObjectURL(file)
     }
-  }
+}
