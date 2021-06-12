@@ -75,11 +75,12 @@
                     {% if prev is not null %}
                         <a class="btn btn-primary float-left" href="{{ path(route, {'step': prev }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
                     {% endif %}
-                    {% if next is not null and form is null %}
-                        <a class="btn btn-primary float-right" href="{{ path(route, {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
-                    {% endif %}
-                    {% if form is not null %}
-                        <button class="btn btn-primary float-right" type="submit"><i class="fas fa-chevron-circle-right"></i> Enregister</button>
+                    {% if next is not null %}
+                        {% if form is not null and current.form not in [constant('App\\Form\\UserType::FORM_REGISTRATION_FILE'), constant('App\\Form\\UserType::FORM_MEMBERSHIP_FEE')] %}
+                            <button class="btn btn-primary float-right" type="submit"><i class="fas fa-chevron-circle-right"></i> Enregister</button>
+                        {% else %}
+                            <a class="btn btn-primary float-right" href="{{ path(route, {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
+                        {% endif %}
                     {% endif %}
                 </div>
                 {% if form is not null %}
