@@ -1,0 +1,37 @@
+<table class="table-border">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Mini Braquet<br>(Sauf école VTT)</th>
+            <th>Petit Braquet</th>
+            <th>Grand Braquet</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for membership_fee in all_membership_fee %}
+            <tr>
+                {% if membership_fee.membershipFeeAmounts | length > 1 %}
+                    <td>
+                        <b>{{ membership_fee.title }}</b><br>
+                        {{ membership_fee.content }}
+                    </td>
+                    {% for membershipFeeAmount in membership_fee.membershipFeeAmounts %}
+                        {% if membershipFeeAmount.coverage == constant('App\\entity\\Licence::COVERAGE_MINI_GEAR') %}
+                            <td>{{ membershipFeeAmount.amount }} €</td>
+                        {% elseif membershipFeeAmount.coverage == constant('App\\entity\\Licence::COVERAGE_SMALL_GEAR') %}
+                            <td>{{ membershipFeeAmount.amount }} €</td>
+                        {% elseif membershipFeeAmount.coverage == constant('App\\entity\\Licence::COVERAGE_HIGH_GEAR') %}
+                            <td>{{ membershipFeeAmount.amount }} €</td>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <td colspan="4">{{ membership_fee.title }} : {{ membership_fee.membershipFeeAmounts[0].amount }} €/an</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% for content in current.contents %}
+    <div class="container">{{ content.content | raw}}</div>
+{% endfor %}

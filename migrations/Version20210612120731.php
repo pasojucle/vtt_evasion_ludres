@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20210612120731 extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return '';
+    }
+
+    public function up(Schema $schema): void
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TABLE membership_fee (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(100) NOT NULL, content LONGTEXT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE membership_fee_amount (id INT AUTO_INCREMENT NOT NULL, membership_fee_id INT NOT NULL, amount DOUBLE PRECISION NOT NULL, coverage INT NOT NULL, additional_family_member TINYINT(1) NOT NULL, new_member TINYINT(1) NOT NULL, INDEX IDX_B970880DD5F81F53 (membership_fee_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE membership_fee_amount ADD CONSTRAINT FK_B970880DD5F81F53 FOREIGN KEY (membership_fee_id) REFERENCES membership_fee (id)');
+    }
+
+    public function down(Schema $schema): void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE membership_fee_amount DROP FOREIGN KEY FK_B970880DD5F81F53');
+        $this->addSql('DROP TABLE membership_fee');
+        $this->addSql('DROP TABLE membership_fee_amount');
+    }
+}

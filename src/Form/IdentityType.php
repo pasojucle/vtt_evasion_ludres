@@ -136,7 +136,6 @@ class IdentityType extends AbstractType
                 $form->add('address', AddressType::class, [
                     'row_class' => $addressClass,
                 ]);
-                dump($form);
             }
         });
 

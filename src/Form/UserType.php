@@ -28,6 +28,7 @@ class UserType extends AbstractType
     public const FORM_HEALTH = 3;
     public const FORM_APPROVAL = 4;
     public const FORM_LICENCE = 5;
+    public const FORM_MEMBERSHIP_FEE = 6;
 
     public const FORMS = [
         self::FORM_HEALTH_QUESTION => 'form.health_question',
@@ -35,6 +36,7 @@ class UserType extends AbstractType
         self::FORM_HEALTH => 'form.health',
         self::FORM_APPROVAL => 'form.approval_right_image',
         self::FORM_LICENCE => 'form.licence',
+        self::FORM_MEMBERSHIP_FEE => 'form.membership_fee',
     ];
 
     public const FORM_CHILDREN_RIGHT_IMAGE = 1;
@@ -111,7 +113,7 @@ class UserType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $user = $event->getData();
             $form = $event->getForm();
-dump($user);
+
             if (null === $user->getId() && self::FORM_IDENTITY === $options['current']->getForm()) {
                 $form->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,

@@ -111,7 +111,6 @@ class RegistrationService
         if (null !== $registrationStep->getForm()) {
             $form = $this->formFactory->create(UserType::class, $this->user, [
                 'attr' =>[
-                    // 'action' => $this->router->generate('registration_form_validate', ['step' => $step]),
                     'action' => $this->router->generate('registration_form', ['step' => $step]),
                 ],
                 'current' => $registrationStep,

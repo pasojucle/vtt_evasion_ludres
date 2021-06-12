@@ -10,6 +10,7 @@ use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
+use App\Repository\MembershipFeeRepository;
 use App\Service\RegistrationService;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -68,6 +69,7 @@ class RegistrationController extends AbstractController
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
         SluggerInterface $slugger,
+        MembershipFeeRepository $membershipFeeRepository,
         int $step
     ): Response
     {
@@ -166,6 +168,7 @@ class RegistrationController extends AbstractController
             'user' => $progress['user'],
             'season_licence' => $progress['seasonLicence'],
             'maxStep' => $this->session->get('registrationMaxStep'),
+            'all_membership_fee' => $membershipFeeRepository->findAll(),
         ]);
     }
 

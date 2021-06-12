@@ -560,3 +560,13 @@ button[type="submit"] {
     cursor: pointer;
     visibility: hidden;
 }
+.table-border {
+    border: 2px solid var(--background-color);
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.table-border th, .table-border td {
+    border: 2px solid var(--background-color);
+    padding: 5px;
+}
