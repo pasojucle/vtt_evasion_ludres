@@ -52,7 +52,7 @@ class UserType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (self::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
+        if (in_array($options['current']->getForm(), [self::FORM_HEALTH_QUESTION, self::FORM_HEALTH])) {
             $builder
                 ->add('health', HealthType::class, [
                     'label' => false,
@@ -90,7 +90,9 @@ class UserType extends AbstractType
                     'entry_options' => [
                         'label' => false,
                         'current' => $options['current'],
+                        'block_prefix' => 'customcheck',
                     ],
+                    
                 ]);
         }
         if (self::FORM_LICENCE === $options['current']->getForm()) {
@@ -105,9 +107,11 @@ class UserType extends AbstractType
                     ],
                 ]);
         }
-        if (self::FORM_HEALTH === $options['current']->getForm()) {
-            $builder->add('health', HealthType::class);
-        }
+        // if (self::FORM_HEALTH === $options['current']->getForm()) {
+        //     $builder->add('health', HealthType::class, [
+        //         'current' => $options['current'],
+        //     ]);
+        // }
         /*$builder
             ->add('save', SubmitType::class, [
                 'label' => 'messages',

@@ -15,34 +15,74 @@
                 <img src="./images/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
             </div>
             <div>
+                {% set licence = user.seasonLicence(licence_service.currentSeason) %}
                 <h2>Renseignements concernant l'adhérent</h2>
 
                 <table {% if user.member.picture %}class="table-fixed"{% endif %}>
                     <tr>
-                        {% if user.member.picture %}<td rowspan="5"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
-                        <td style="width: 150px">Non et prénom :</td>
-                        <td>{{ user.member.fullName }}</td>
+                        {% if user.member.picture %}<td rowspan="5" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+                        <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
                     </tr>
                     <tr>
-                        <td>Date et lieu de naissance :</td>
-                        <td>{{ user.member.birthDateAndPlace }}</td>
+                        <td colspan="3" ><b>Date et lieu de naissance : </b>{{ user.member.birthDateAndPlace }}</td>
                     </tr>
                     <tr>
-                        <td>Adresse :</td>
-                        <td>
-                            {{ user.member.address.street }}<br>
-                            {{ user.member.address.postalCode }} {{ user.member.address.town }}
-                        </td>
+                        <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
                     </tr>
                     <tr>
-                        <td>Courriel :</td>
-                        <td>{{ user.member.email }}</td>
+                        <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
                     </tr>
                     <tr>
-                        <td>Téléphone :</td>
-                        <td>{{ user.member.phone}}</td>
+                        <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
                     </tr>
                 </table>
+                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting %}
+                    <table>
+                        <tr>
+                            <td colspan="2"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
+                            <td></td>
+                            <td><b>Groupe sanguin : </b>{{ user.health.bloodGroup }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
+                            <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
+                            <td></td>
+                            <td colspan="2"><b>Date du dernier rappel antitétanique : </b>{{ user.health.tetanusBooster }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                <b>Médecin traitant : </b>{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}
+                                <img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}
+                            </td>
+                        </tr>
+                    </table>
+                    {% if user.health.diseases is not empty %}
+                        <table class="table-border">
+                            {% for type, diseases in user.health.diseases %}
+                                <tr>
+                                    <td colspan="3"><b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b></td>
+                                    <td colspan="2"><b>Lesquelles</b></td>
+                                </tr>
+                                {% for disease in diseases %}
+                                    <tr>
+                                        <td></td>
+                                        {% if disease.title is not null %}
+                                            <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}/td>
+                                            <td>{{ disease.title }}</td>
+                                        {% else %}
+                                            <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                                        {% endif %}
+                                        <td>{{ disease.curentTreatment }}</td>
+                                        <td>{{ disease.emergencyTreatment }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        </table>
+                        <br>
+                    {% endif %}
+
+                {% endif %}
             </div>
             <p>{{ membership_fee_service.amount(user) }}</p>
             <br>
@@ -84,7 +124,7 @@
                 de mon enfant.</p>
             </div>
             {% endif %}
-            {% if user.seasonLicence(licence_service.currentSeason).isTesting %}
+            {% if licence.isTesting %}
                 <p>Je fournis un certificat médical daté de moins de 12 mois de non contre-indication à la pratique du VTT
                 et j'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site
                 www.vttevasionludres.fr</p>

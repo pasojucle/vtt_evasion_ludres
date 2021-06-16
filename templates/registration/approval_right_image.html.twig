@@ -1,24 +1,10 @@
 {% set approval = form.children.approvals %}
+{% set replaces =
+    {
+        '{{ bouton_retour_domicile }}': form_widget(approval[1]),
+        '{{ bouton_droit_image }}': form_widget(approval[0])
+    }
+%}
 
-{% for content in current.contents %}
-    <div class="container">{{ content.content | raw}}</div>
-    {% if content.formChildren == constant('App\\form\\UserType::FORM_CHILDREN_RIGHT_IMAGE') %}
-        {% set key = 0 %}
-    {% endif %}
 
-    {% if content.formChildren == constant('App\\form\\UserType::FORM_CHILDREN_GOING_HOME_ALONE') %}
-        {% set key = 1 %}
-    {% endif %}
-    {% if key is defined %}
-    <div class="form-group">
-        {% for  child in approval[key].value.children %}
-            <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
-                {{ form_widget(child)}}
-                {{ form_label(child)}}
-            </div>
-        {% endfor %}
-        {{ form_widget(approval[key].type) }}
-    </div>
-    {% endif %}
-{% endfor %}
-
+<div class="container">{{ current.content |replace(replaces) | raw}}</div>

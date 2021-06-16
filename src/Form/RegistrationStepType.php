@@ -43,12 +43,16 @@ class RegistrationStepType extends AbstractType
                 },
                 'required' => false,
             ])
-            ->add('contents', CollectionType::class, [
-                'label' => false,
-                'entry_type' => RegistrationStepContentType::class,
-                'entry_options' => [
-                    'label' => false,
-                ],
+            // ->add('contents', CollectionType::class, [
+            //     'label' => false,
+            //     'entry_type' => RegistrationStepContentType::class,
+            //     'entry_options' => [
+            //         'label' => false,
+            //     ],
+            // ])
+            ->add('content', CKEditorType::class, [
+                'label' => 'Contenu',
+                'required' => false,
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Entity(repositoryClass=RegistrationStepRepository::class)
+ * @ORM\EntityListeners({"App\EventListeners\EntityListener"})
  */
 class RegistrationStep
 {

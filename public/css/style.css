@@ -388,6 +388,9 @@ p + p {
     width: calc(25% + 60px);
     margin-left: 20px;
 }
+.form-group > .widget-inline.widget-curent-treatment {
+    width: calc(50% + 4px);
+}
 .form-group > .widget-inline.disease-label.disease-label-other {
     width: 56px;
 }

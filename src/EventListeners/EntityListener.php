@@ -4,10 +4,9 @@ namespace App\EventListeners;
 
 use DateTime;
 use App\Entity\User;
-use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
-use App\Entity\RegistrationStepContent;
+
 use App\DataTransferObject\User as UserDto;
 use Symfony\Component\Security\Core\Security;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -39,12 +38,11 @@ class EntityListener
         $this->translator = $translator;
     }
 
-    public function postLoad(RegistrationStepContent $registrationStepContent, LifecycleEventArgs $event)
+    public function postLoad(RegistrationStep $registrationStep, LifecycleEventArgs $event)
     {
-        if (in_array($this->route, ['registration_form', 'user_registration_form']) && null !== $registrationStepContent->getContent())
-        {
-            $content = $this->replaceFieds($registrationStepContent->getContent());
-            $registrationStepContent->setContent($content);
+        if (in_array($this->route, ['registration_form', 'user_registration_form']) && null !== $registrationStep->getContent()) {
+            $content = $this->replaceFieds($registrationStep->getContent());
+            $registrationStep->setContent($content);
         }
     }
 
@@ -71,6 +69,7 @@ class EntityListener
             $fields = [
                 // ['pattern' => '#(.*)( {{ formule_assurance }})(.*)#s', 'replacement' => "$1 $coverage$3",],
                 // ['pattern'  => '#(.*)( {{ date }})(.*)#s', 'replacement' => "$1 $todayStr$3",],
+                ['pattern'  => '#(.*)( {{ prenom_nom }})(.*)#s', 'replacement' => "$1 $fullName$3",],
                 ['pattern'  => '#(.*)( {{ prenom_nom }})(.*)#s', 'replacement' => "$1 $fullName$3",],
                 // ['pattern'  => '#(.*)( {{ date_de_naissance }})(.*)#s', 'replacement' => "$1 $bithDate$3",],
                 ['pattern'  => '#(.*)( {{ prenom_nom_enfant }})(.*)#s', 'replacement' => "$1 $fullNameChildren$3",],

@@ -19,7 +19,7 @@ identity:
 
 disease:
   type:
-    diseases: Maladies
+    diseases: Souffre t'il ou t'elle de
     allergies: Allergies
     intolerances: Intolérances
   label: 

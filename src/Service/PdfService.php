@@ -35,7 +35,6 @@ class PdfService
         $options->setIsHtml5ParserEnabled(true);
         $dompdf = new Dompdf($options);
         $dompdf->getOptions()->setChroot($this->kernel->getProjectDir().'/public');
-        dump($dompdf->getOptions());
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
@@ -74,7 +73,6 @@ class PdfService
         $pdf->SetFont('Helvetica');
         foreach ($fields as $field) {
             $pdf->SetXY($field['x'], $field['y']);
-            dump($field['value']);
             $pdf->Write(8, iconv('UTF-8', 'ISO-8859-1', $field['value']));
         }
 

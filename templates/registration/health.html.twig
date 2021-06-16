@@ -32,6 +32,9 @@
             {{ form_widget(disease.children.title) }}
         {% endif %}
         {{ form_widget(disease.children.curentTreatment) }}
-        {{ form_widget(disease.children.emergencyTreatment) }}
+
+        {% if disease.children.emergencyTreatment is defined %}
+            {{ form_widget(disease.children.emergencyTreatment) }}
+        {% endif %}
     </div>
 {% endfor %}

@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=RegistrationStepContentRepository::class)
- * @ORM\EntityListeners({"App\EventListeners\EntityListener"})
  */
 class RegistrationStepContent
 {

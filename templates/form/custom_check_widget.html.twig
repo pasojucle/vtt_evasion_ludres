@@ -1,0 +1,12 @@
+{% block customcheck_widget %}
+    {% dump(form) %}
+    <div class="form-group">
+        {% for  child in form.value.children %}
+            <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
+                {{ form_widget(child)}}
+                {{ form_label(child)}}
+            </div>
+        {% endfor %}
+        {{ form_widget(form.type) }}
+    </div>
+{% endblock %}

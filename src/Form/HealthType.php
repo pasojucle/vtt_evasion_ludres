@@ -17,90 +17,94 @@ class HealthType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // if (UserType::FORM_IDENTITY === $options['current']->getForm()) {
-        $builder
-            ->add('socialSecurityNumber', TextType::class, [
-                'label' => 'Numéro de sécurité sociale',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('mutualCompany', TextType::class, [
-                'label' => 'Mutuelle',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('mutualNumber', TextType::class, [
-                'label' => 'Numéro',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('bloodGroup', TextType::class, [
-                'label' => 'Groupe sanguin',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('tetanusBooster', DateType::class, [
-                'label' => 'Date du dernier rappel antitétanique',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => "off",
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('doctorName', TextType::class, [
-                'label' => 'Nom du médecin traitant',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('doctorAddress', TextType::class, [
-                'label' => 'Adresse',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('doctorTown', TextType::class, [
-                'label' => 'Ville',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ]
-            ])
-            ->add('doctorPhone', TextType::class, [
-                'label' => 'Télephone',
-                'row_attr' => [
-                    'class' => 'form-group-inline'
-                ],
-                'constraints' => [
-                    new Length(['min' => 10, 'max' => 10]),
-                ],
-            ])
-            ;
-        // }
+        if (UserType::FORM_HEALTH === $options['current']->getForm()) {
+            $builder
+                ->add('socialSecurityNumber', TextType::class, [
+                    'label' => 'Numéro de sécurité sociale',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('mutualCompany', TextType::class, [
+                    'label' => 'Mutuelle',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('mutualNumber', TextType::class, [
+                    'label' => 'Numéro',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('bloodGroup', TextType::class, [
+                    'label' => 'Groupe sanguin',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('tetanusBooster', DateType::class, [
+                    'label' => 'Date du dernier rappel antitétanique',
+                    'widget' => 'single_text',
+                    'html5' => false,
+                    'format' => 'dd/MM/yyyy',
+                    'attr' => [
+                        'class' => 'js-datepicker',
+                        'autocomplete' => "off",
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('doctorName', TextType::class, [
+                    'label' => 'Nom du médecin traitant',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('doctorAddress', TextType::class, [
+                    'label' => 'Adresse',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('doctorTown', TextType::class, [
+                    'label' => 'Ville',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ]
+                ])
+                ->add('doctorPhone', TextType::class, [
+                    'label' => 'Télephone',
+                    'row_attr' => [
+                        'class' => 'form-group-inline'
+                    ],
+                    'constraints' => [
+                        new Length(['min' => 10, 'max' => 10]),
+                    ],
+                ])
+                ;
 
-        $builder
-            ->add('diseases', CollectionType::class, [
-                'label' => false,
-                'entry_type' => DiseaseType::class,
-                'entry_options' => [
+
+            $builder
+                ->add('diseases', CollectionType::class, [
                     'label' => false,
-                ],
-            ])
-        ;
-        // $builder
-        //     ->add('healthQuestions', CollectionType::class, [
-        //         'label' => false,
-        //         'entry_type' => HealthQuestionType::class,
-        //     ]);
-        // ;
+                    'entry_type' => DiseaseType::class,
+                    'entry_options' => [
+                        'label' => false,
+                        'current' => $options['current'],
+                    ],
+                ])
+            ;
+        }
+        if (UserType::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
+            $builder
+                ->add('healthQuestions', CollectionType::class, [
+                    'label' => false,
+                    'entry_type' => HealthQuestionType::class,
+                ]);
+            ;
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -158,6 +158,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute($route, ['step' => $progress['next']]);
         }
 
+
         return $this->render('registration/registrationForm.html.twig', [
             'step' => $step,
             'steps' => $progress['steps'],
