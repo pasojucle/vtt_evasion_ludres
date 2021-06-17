@@ -1,138 +1,133 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="./css/exportPdf.css">
+{% extends 'base_pdf.html.twig' %}
 
-    </head>
-    <body>
-        <main>
-            <div id="header">
-                <img src="./images/logo-pdf.jpg" alt="vvt évasion Ludres" style="height:110px;  width: 120px">
-                <h1> FICHE DE PRE-INSCRIPTION POUR 3 SEANCES CONSECUTIVES D'ESSAI GRATUITES - {{ licence_service.currentSeason }}</h1>
-                <img src="./images/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
-            </div>
-            <div>
-                {% set licence = user.seasonLicence(licence_service.currentSeason) %}
-                <h2>Renseignements concernant l'adhérent</h2>
+{% block body %}
 
-                <table {% if user.member.picture %}class="table-fixed"{% endif %}>
-                    <tr>
-                        {% if user.member.picture %}<td rowspan="5" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
-                        <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" ><b>Date et lieu de naissance : </b>{{ user.member.birthDateAndPlace }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
-                    </tr>
-                </table>
-                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting %}
-                    <table>
-                        <tr>
-                            <td colspan="2"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
-                            <td></td>
-                            <td><b>Groupe sanguin : </b>{{ user.health.bloodGroup }}</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
-                            <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
-                            <td></td>
-                            <td colspan="2"><b>Date du dernier rappel antitétanique : </b>{{ user.health.tetanusBooster }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="5">
-                                <b>Médecin traitant : </b>{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}
-                                <img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}
-                            </td>
-                        </tr>
-                    </table>
-                    {% if user.health.diseases is not empty %}
-                        <table class="table-border">
-                            {% for type, diseases in user.health.diseases %}
-                                <tr>
-                                    <td colspan="3"><b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b></td>
-                                    <td colspan="2"><b>Lesquelles</b></td>
-                                </tr>
-                                {% for disease in diseases %}
-                                    <tr>
-                                        <td></td>
-                                        {% if disease.title is not null %}
-                                            <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}/td>
-                                            <td>{{ disease.title }}</td>
-                                        {% else %}
-                                            <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
-                                        {% endif %}
-                                        <td>{{ disease.curentTreatment }}</td>
-                                        <td>{{ disease.emergencyTreatment }}</td>
-                                    </tr>
-                                {% endfor %}
-                            {% endfor %}
-                        </table>
-                        <br>
-                    {% endif %}
+    {% if template is not defined %}
+        <div id="header">
+            <img src="./images/logo-pdf.jpg" alt="vvt évasion Ludres" style="height:110px;  width: 120px">
+            <h1> FICHE DE PRE-INSCRIPTION POUR 3 SEANCES CONSECUTIVES D'ESSAI GRATUITES - {{ licence_service.currentSeason }}</h1>
+            <img src="./images/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
+        </div>
+        <div>
+            {% set licence = user.seasonLicence(licence_service.currentSeason) %}
+            <h2>Renseignements concernant l'adhérent</h2>
 
-                {% endif %}
-            </div>
-            <p>{{ membership_fee_service.amount(user) }}</p>
-            <br>
-            <br>
-            <p><b>DROIT A L'IMAGE : </b>Dans le cadre de nos activités, nous sommes amenés à prendre des photos, des films ou des enregistrements
-            sonores des membres du club pratiquant le VTT seul ou en groupe lors de nos sorties ou de diverses manifestations sportives. C'est
-            dans cet objectif que nous vous demandons l’autorisation pour être photographié, filmé ou enregistré, et ce uniquement pour la
-            communication de notre club. L'association s'interdit expressément de procéder à une exploitation des photographies, films et/ou
-            interviews susceptibles de porter atteinte à la vie privée ou à la réputation de ses adhérents.<br>J’autorise les moniteurs fédéraux ainsi que les initiateurs fédéraux ou tout autre futur moniteur et/ou initiateur, à prendre toute
-            décision concernant les soins d’urgences qui s’avéreraient nécessaires lors des activités organisées par le club.</p>
-            {% if user.kinShip %}
-            <div class="block">
-                <h2>Autorisation parentale pour mineur</h2>
+            <table {% if user.member.picture %}class="table-fixed"{% endif %}>
+                <tr>
+                    {% if user.member.picture %}<td rowspan="5" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+                    <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Date et lieu de naissance : </b>{{ user.member.birthDateAndPlace }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
+                </tr>
+            </table>
+            {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting %}
                 <table>
                     <tr>
-                        <td style="width: 150px">Non et prénom :</td>
-                        <td>{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
+                        <td colspan="2"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
+                        <td></td>
+                        <td><b>Groupe sanguin : </b>{{ user.health.bloodGroup }}</td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td>Adresse :</td>
-                        <td>
-                            {{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
+                        <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
+                        <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
+                        <td></td>
+                        <td colspan="2"><b>Date du dernier rappel antitétanique : </b>{{ user.health.tetanusBooster }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <b>Médecin traitant : </b>{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}
+                            <img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}
                         </td>
                     </tr>
-                    <tr>
-                        <td>Courriel :</td>
-                        <td>{{ user.kinShip.email }}</td>
-                    </tr>
-                    <tr>
-                        <td>Téléphone :</td>
-                        <td>{{ user.kinShip.phone}}</td>
-                    </tr>
                 </table>
+                {% if user.health.diseases is not empty %}
+                    <table class="table-border">
+                        {% for type, diseases in user.health.diseases %}
+                            <tr>
+                                <td colspan="3"><b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b></td>
+                                <td colspan="2"><b>Lesquelles</b></td>
+                            </tr>
+                            {% for disease in diseases %}
+                                <tr>
+                                    <td></td>
+                                    {% if disease.title is not null %}
+                                        <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}/td>
+                                        <td>{{ disease.title }}</td>
+                                    {% else %}
+                                        <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                                    {% endif %}
+                                    <td>{{ disease.curentTreatment }}</td>
+                                    <td>{{ disease.emergencyTreatment }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                    <br>
+                {% endif %}
 
-                <p>Inscrit et autorise l'enfant {{ user.member.fullName }} à participer aux séances pédagogiques et à vélo du VTT Evasion Ludres. 
-                Je soussigné {{ user.kinShip.fullName }} ({{ user.kinShip.type | trans }}) autorise le club VTT Evasion Ludres à utiliser ou faire utiliser ou reproduire ou
-                faire reproduire l'image et la voix de l'enfant ci-dessus nommé. Je me reconnais entièrement rempli de mes droits et je ne pourrai
-                prétendre à aucune rémunération pour l'exploitation des droits visés à la présente.<br>Je déclare sur l’honneur l’exactitude des renseignements fournis, m’engage à signaler toute modification concernant l’état de santé
-                de mon enfant.</p>
-            </div>
             {% endif %}
-            {% if licence.isTesting %}
-                <p>Je fournis un certificat médical daté de moins de 12 mois de non contre-indication à la pratique du VTT
-                et j'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site
-                www.vttevasionludres.fr</p>
-                <br>
-                <p>IL EST IMPERATIF DE REMPLIR ET SIGNER L'INFORMATION D'ASSURANCE GRATUITE JOINTE A CE DOCUMENT</p>
-            {% endif %}
+        </div>
+        <p>{{ membership_fee_service.amount(user) }}</p>
+        <br>
+        <br>
+        <p><b>DROIT A L'IMAGE : </b>Dans le cadre de nos activités, nous sommes amenés à prendre des photos, des films ou des enregistrements
+        sonores des membres du club pratiquant le VTT seul ou en groupe lors de nos sorties ou de diverses manifestations sportives. C'est
+        dans cet objectif que nous vous demandons l’autorisation pour être photographié, filmé ou enregistré, et ce uniquement pour la
+        communication de notre club. L'association s'interdit expressément de procéder à une exploitation des photographies, films et/ou
+        interviews susceptibles de porter atteinte à la vie privée ou à la réputation de ses adhérents.<br>J’autorise les moniteurs fédéraux ainsi que les initiateurs fédéraux ou tout autre futur moniteur et/ou initiateur, à prendre toute
+        décision concernant les soins d’urgences qui s’avéreraient nécessaires lors des activités organisées par le club.</p>
+        {% if user.kinShip %}
+        <div class="block">
+            <h2>Autorisation parentale pour mineur</h2>
+            <table>
+                <tr>
+                    <td style="width: 150px">Non et prénom :</td>
+                    <td>{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
+                </tr>
+                <tr>
+                    <td>Adresse :</td>
+                    <td>
+                        {{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Courriel :</td>
+                    <td>{{ user.kinShip.email }}</td>
+                </tr>
+                <tr>
+                    <td>Téléphone :</td>
+                    <td>{{ user.kinShip.phone}}</td>
+                </tr>
+            </table>
+
+            <p>Inscrit et autorise l'enfant {{ user.member.fullName }} à participer aux séances pédagogiques et à vélo du VTT Evasion Ludres. 
+            Je soussigné {{ user.kinShip.fullName }} ({{ user.kinShip.type | trans }}) autorise le club VTT Evasion Ludres à utiliser ou faire utiliser ou reproduire ou
+            faire reproduire l'image et la voix de l'enfant ci-dessus nommé. Je me reconnais entièrement rempli de mes droits et je ne pourrai
+            prétendre à aucune rémunération pour l'exploitation des droits visés à la présente.<br>Je déclare sur l’honneur l’exactitude des renseignements fournis, m’engage à signaler toute modification concernant l’état de santé
+            de mon enfant.</p>
+        </div>
+        {% endif %}
+        {% if licence.isTesting %}
+            <p>Je fournis un certificat médical daté de moins de 12 mois de non contre-indication à la pratique du VTT
+            et j'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site
+            www.vttevasionludres.fr</p>
             <br>
-            <p>Fait à ___________________________le ______________ Signature : (précédée de la mention ‘’Lu et approuvé’’)</p>
-        </main>
-    </body>
-</html>
+            <p>IL EST IMPERATIF DE REMPLIR ET SIGNER L'INFORMATION D'ASSURANCE GRATUITE JOINTE A CE DOCUMENT</p>
+        {% endif %}
+        <br>
+        <p>Fait à ___________________________le ______________ Signature : (précédée de la mention ‘’Lu et approuvé’’)</p>
+    {% else %}
+        {% include(template) %}
+    {% endif %}
+{% endblock %}

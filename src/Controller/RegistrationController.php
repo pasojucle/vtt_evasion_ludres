@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use DateTime;
+use App\Form\UserType;
 use App\Entity\Licence;
 use App\Service\PdfService;
 use App\Service\LicenceService;
@@ -10,10 +11,10 @@ use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
-use App\Repository\MembershipFeeRepository;
 use App\Service\RegistrationService;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +29,9 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class RegistrationController extends AbstractController
 {
+    public const OUT_PDF = 1;
+    public const OUT_SCREEN = 2;
+    
     private RegistrationStepRepository $registrationStepRepository;
     private EntityManagerInterface $entityManager;
     private SessionInterface $session;
@@ -171,6 +175,7 @@ class RegistrationController extends AbstractController
             'maxStep' => $this->session->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
             'user' => new User($progress['user']),
+            'media' => self::OUT_SCREEN,
         ]);
     }
 
@@ -214,6 +219,7 @@ class RegistrationController extends AbstractController
      */
     public function registrationFile(
         LicenceService $licenceService,
+        MembershipFeeRepository $membershipFeeRepository,
         PdfService $pdfService,
         UserEntity $user
     ): Response
@@ -222,23 +228,51 @@ class RegistrationController extends AbstractController
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $seasonLicence->isTesting());
+        $allmembershipFee = $membershipFeeRepository->findAll();
 
         $files = [];
         if (!empty($steps)) {
-            foreach($steps as $step) {
-                if (null !== $step->getFilename()) {
-                    $filename = './files/'.$step->getFilename();
-                    
-                    $files[] = ['filename' => $filename, 'form' => $step->getForm()];
+            foreach($steps as $key => $step) {
+                $isKinship = false;
+                if ($steps[$key]->getForm() === UserType::FORM_IDENTITY && null !== $steps[$key + 1]) {
+                    $isKinship = true;
                 }
-                if (!$step->getContents()->isEmpty() && null === $step->getForm()) {
-                    $html = '';
-                    foreach ($step->getContents() as $content) {
-                        if ($content->isToPdf()) {
-                            $html .= $content->getContent();
+
+                if ($step->isToPdf()) {
+                    if (null !== $step->getFilename()) {
+                        $filename = './files/'.$step->getFilename();
+                        
+                        $files[] = ['filename' => $filename, 'form' => $step->getForm()];
+                    }
+                    $html = null;
+                    if (null !== $step->getContent()) {
+                        if (null !== $step->getForm()) {
+                            $form = $this->createForm(UserType::class, $user, [
+                                'attr' =>[
+                                    'action' => $this->generateUrl('registration_form', ['step' => $step->getId()]),
+                                ],
+                                'current' => $step,
+                                'is_kinship' => $isKinship,
+                                'category' => $category,
+                                'season_licence' => $seasonLicence,
+                            ]);
+                            $formName = str_replace('form.', '', UserType::FORMS[$step->getForm()]);
+
+                            $template = 'registration/'.$formName.'.html.twig';
+
+                            $html = $this->renderView('registration/registrationPdf.html.twig', [
+                                'user' => new User($user),
+                                'all_membership_fee' => $allmembershipFee,
+                                'current' => $step,
+                                'form' => $form->createView(),
+                                'media' => self::OUT_PDF,
+                                'template' => $template,
+                            ]);
+                        } else {
+                            $html = $step->getContent();
                         }
                     }
-                    if (!empty($html)) {
+                    if (null !== $html) {
                         $pdfFilepath = $pdfService->makePdf($html, $step->getTitle());
                         $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
                     }

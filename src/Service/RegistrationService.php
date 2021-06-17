@@ -105,7 +105,7 @@ class RegistrationService
         return $progress;
     }
 
-    private function getForm(RegistrationStep $registrationStep, bool $isKinshiph, ?int $category, int $step): ?Form
+    private function getForm(RegistrationStep $registrationStep, bool $isKinship, ?int $category, int $step): ?Form
     {
         $form = null;
         
@@ -115,7 +115,7 @@ class RegistrationService
                     'action' => $this->router->generate('registration_form', ['step' => $step]),
                 ],
                 'current' => $registrationStep,
-                'is_kinship' => $isKinshiph,
+                'is_kinship' => $isKinship,
                 'category' => $category,
                 'season_licence' => $this->seasonLicence,
             ]);

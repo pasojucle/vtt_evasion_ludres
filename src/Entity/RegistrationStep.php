@@ -65,6 +65,11 @@ class RegistrationStep
      */
     private $contents;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $toPdf;
+
 
     public function __construct()
     {
@@ -212,6 +217,18 @@ class RegistrationStep
                 $content->setRegistrationStep(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isToPdf(): ?bool
+    {
+        return $this->toPdf;
+    }
+
+    public function setToPdf(bool $toPdf): self
+    {
+        $this->toPdf = $toPdf;
 
         return $this;
     }

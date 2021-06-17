@@ -13,5 +13,4 @@
     }
 %}
 
-
-<div class="container">{{ current.content |replace(replaces) | raw}}</div>
+<div class="container">{{ current.content |replace(replaces)|imgPath(media)|raw}}</div>

@@ -98,8 +98,12 @@ main {
 h1 {
     font-size: 20px;
     display: inline-block;
-    width: 530px;
+    width: 100%;
     text-align: center;
+    margin-bottom: 15px;
+}
+#header h1 {
+    width: 530px;
 }
 h2 {
     text-align: center;
