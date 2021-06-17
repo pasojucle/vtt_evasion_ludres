@@ -1,11 +1,6 @@
-{% for content in current.contents %}
-    <div class="container">{{ content.content | raw}}</div>
-    {% if loop.index == 1 %}
-        <p>{{ membership_fee_service.amount(user) }}</p>
-        <br>
-    {% endif %}
-{% endfor %}
+<div class="container">{{ current.content | raw}}</div>
 
-
+<p>{{ membership_fee_service.amount(user) }}</p>
+<br>
 
 <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_entity.id }) }}"><i class="fas fa-download"></i></i> Télécharger le dossier d'inscription</a>

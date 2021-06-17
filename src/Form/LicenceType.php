@@ -30,6 +30,7 @@ class LicenceType extends AbstractType
                         'choices' => $choices,
                         'expanded' => true,
                         'multiple' => false,
+                        'block_prefix' => 'customcheck',
                     ])
                 ;
             }

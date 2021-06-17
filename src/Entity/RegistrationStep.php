@@ -61,11 +61,6 @@ class RegistrationStep
     private $testing;
 
     /**
-     * @ORM\OneToMany(targetEntity=RegistrationStepContent::class, mappedBy="registrationStep")
-     */
-    private $contents;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     private $toPdf;
@@ -74,9 +69,7 @@ class RegistrationStep
     public function __construct()
     {
         $this->types = new ArrayCollection();
-        $this->contents = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -187,36 +180,6 @@ class RegistrationStep
     public function setTesting(bool $testing): self
     {
         $this->testing = $testing;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|RegistrationStepContent[]
-     */
-    public function getContents(): Collection
-    {
-        return $this->contents;
-    }
-
-    public function addContent(RegistrationStepContent $content): self
-    {
-        if (!$this->contents->contains($content)) {
-            $this->contents[] = $content;
-            $content->setRegistrationStep($this);
-        }
-
-        return $this;
-    }
-
-    public function removeContent(RegistrationStepContent $content): self
-    {
-        if ($this->contents->removeElement($content)) {
-            // set the owning side to null (unless already changed)
-            if ($content->getRegistrationStep() === $this) {
-                $content->setRegistrationStep(null);
-            }
-        }
 
         return $this;
     }

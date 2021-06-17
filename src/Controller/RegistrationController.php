@@ -237,13 +237,12 @@ class RegistrationController extends AbstractController
                 if ($steps[$key]->getForm() === UserType::FORM_IDENTITY && null !== $steps[$key + 1]) {
                     $isKinship = true;
                 }
-
+                if (null !== $step->getFilename()) {
+                    $filename = './files/'.$step->getFilename();
+                    
+                    $files[] = ['filename' => $filename, 'form' => $step->getForm()];
+                }
                 if ($step->isToPdf()) {
-                    if (null !== $step->getFilename()) {
-                        $filename = './files/'.$step->getFilename();
-                        
-                        $files[] = ['filename' => $filename, 'form' => $step->getForm()];
-                    }
                     $html = null;
                     if (null !== $step->getContent()) {
                         if (null !== $step->getForm()) {
