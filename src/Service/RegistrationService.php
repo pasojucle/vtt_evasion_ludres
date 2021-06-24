@@ -141,6 +141,10 @@ class RegistrationService
             if ($this->user->getLicences()->isEmpty()) {
                 $this->seasonLicence->setTesting(true);
             }
+            if (!$this->user->getIdentities()->isEmpty()) {
+                $category = $this->licenceService->getCategory($this->user);
+                $this->seasonLicence->setCategory($category);
+            }
             $this->entityManager->persist($this->seasonLicence);
             $this->user->addLicence($this->seasonLicence);
         }
