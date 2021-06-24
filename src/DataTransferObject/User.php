@@ -199,12 +199,12 @@ class User {
         $approvals = [];
         if (!$this->user->getApprovals()->isEmpty()) {
             foreach ($this->user->getApprovals() as $approval) {
-                $value = ($approval->getValue()) ? 'J\'autorise' : 'Je n\'autorise pas';
+                $string = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
                 if (UserEntity::APPROVAL_GOING_HOME_ALONE == $approval->getType()) {
-                    $approvals['goingHomeAlone'] = $value;
+                    $approvals['goingHomeAlone'] = ['value' => $approval->getValue(), 'string' => $string];
                 }
                 if (UserEntity::APPROVAL_RIGHT_TO_THE_IMAGE == $approval->getType()) {
-                    $approvals['rightToImage'] = $value;
+                    $approvals['rightToImage'] =  ['value' => $approval->getValue(), 'string' => $string];
                 }
             }
         }
