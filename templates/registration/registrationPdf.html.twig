@@ -5,7 +5,7 @@
     {% if template is not defined %}
         <div id="header">
             <img src="./images/logo-pdf.jpg" alt="vvt évasion Ludres" style="height:110px;  width: 120px">
-            <h1> FICHE DE PRE-INSCRIPTION POUR 3 SEANCES CONSECUTIVES D'ESSAI GRATUITES - {{ licence_service.currentSeason }}</h1>
+            <h1> {{ licence_service.registrationTitle(user_entity) }} - {{ licence_service.currentSeason }}</h1>
             <img src="./images/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
         </div>
         <div>
@@ -117,6 +117,12 @@
             faire reproduire l'image et la voix de l'enfant ci-dessus nommé. Je me reconnais entièrement rempli de mes droits et je ne pourrai
             prétendre à aucune rémunération pour l'exploitation des droits visés à la présente.<br>Je déclare sur l’honneur l’exactitude des renseignements fournis, m’engage à signaler toute modification concernant l’état de santé
             de mon enfant.</p>
+            {% if user.approvals.goingHomeAlone is defined %}
+            <p>
+                <b>{{ user.approvals.goingHomeAlone }}</b> mon enfant à rejoindre seul le domicile à l’issue de la séance. Pour ce faire je m’engage à lui fournir un gilet jaune fluo ainsi qu’un dispositif d’éclairage avant (blanc) et arrière (rouge)
+            </p>
+            {% endif %}
+
         </div>
         {% endif %}
         {% if licence.isTesting %}

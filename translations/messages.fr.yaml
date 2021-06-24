@@ -38,9 +38,10 @@ disease:
 
 registration_step:
   type:
-    adult: Adulte
-    minor: Mineur
-    testing: 3 séances d'essai gratuites
+    default: Bulletin d'inscription
+    adult: Bulletin d'inscription Adulte
+    minor: Bulletin d'inscription Mineur
+    testing: Bulletin de pré-inscription pour 3 séances concécutives d'essai gratuites
 
 approval: 
   right_to_the_image: Droit à l'image

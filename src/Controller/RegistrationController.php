@@ -68,7 +68,8 @@ class RegistrationController extends AbstractController
      */
     public function registerForm(
         Request $request,
-        registrationService $registrationService,
+        RegistrationService $registrationService,
+        LicenceService $licenceService,
         UserPasswordEncoderInterface $passwordEncoder,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
@@ -80,13 +81,14 @@ class RegistrationController extends AbstractController
         if ((int) $this->session->get('registrationMaxStep') < $step) {
             $this->session->set('registrationMaxStep', $step);
         }
-        if (!$step) {
-            $this->session->remove('healthQuestions');
-        }
+
         $progress = $registrationService->getProgress($step);
         $form = $progress['form'];
-        if (null !== $progress['user'] && 1 === $step) {
+
+        if (null !== $progress['seasonLicence'] && null !== $progress['seasonLicence']->getType() && 1 === $step) {
             $this->session->set('registrationMaxStep',  $progress['max_step'] );
+        } else {
+            $this->session->set('registrationMaxStep',  $step );
         }
         if (null !== $form) {
             $form->handleRequest($request);
@@ -109,9 +111,7 @@ class RegistrationController extends AbstractController
             }
 
             if (null !== $user->getIdentities()->first()->getBirthDate()) {
-                $today = new DateTime();
-                $age = $today->diff($user->getIdentities()->first()->getBirthDate());
-                $category =  (18 > (int) $age->format('%y')) ? Licence::CATEGORY_MINOR : Licence::CATEGORY_ADULT;
+                $category = $licenceService->getCategory($user);
                 $user->getSeasonLicence($season)->setCategory($category);
                 if (Licence::CATEGORY_MINOR === $category) {
                     $identityKinShip = $user->getIdentities()->last();
@@ -286,6 +286,7 @@ class RegistrationController extends AbstractController
         }
         $registration = $this->renderView('registration/registrationPdf.html.twig', [
             'user' => new User($user),
+            'user_entity' => $user,
         ]);
         $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
         $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
