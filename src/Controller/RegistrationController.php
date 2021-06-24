@@ -210,6 +210,7 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $step = $form->getData();
+            $this->entityManager->clear();
             $this->entityManager->persist($step);
             $this->entityManager->flush();
         }

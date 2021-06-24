@@ -4,6 +4,7 @@ namespace App\Service;
 
 use DateTime;
 use App\Entity\User;
+use App\DataTransferObject\User as UserDto;
 use App\Entity\Health;
 use App\Form\UserType;
 use App\Entity\Address;
@@ -215,5 +216,16 @@ class RegistrationService
     public function getSeason(): int
     {
         return $this->season;
+    }
+
+    public function getReplaces(User $user)
+    {
+        /**@var UserDto $userDto */
+        $user = new UserDto($user);
+
+        return [
+            '{{ prenom_nom }}' => $user->getFullName(),
+            '{{ prenom_nom_enfant }}' => $user->getFullNameChildren(),
+        ];
     }
 }
