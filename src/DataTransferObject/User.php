@@ -5,6 +5,7 @@ namespace App\DataTransferObject;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User as UserEntity;
+use App\Form\UserType;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class User {
@@ -110,10 +111,11 @@ class User {
     {
         $kinShip = [];
         if ($this->kinshipIdentity) {
+            $address = (null !== $this->kinshipIdentity->getAddress()) ? $this->kinshipIdentity->getAddress() : $this->memberIdentity->getAddress();
             $kinShip = [
                 'fullName' => $this->kinshipIdentity->getName().' '.$this->kinshipIdentity->getFirstName(),
                 'type' => Identity::KINSHIPS[$this->kinshipIdentity->getKinShip()] ,
-                'address' => $this->kinshipIdentity->getAddress(),
+                'address' => $address,
                 'email' => $this->kinshipIdentity->getEmail(),
                 'phone' => implode(' - ', array_filter([$this->kinshipIdentity->getMobile(), $this->kinshipIdentity->getPhone()])),
             ];
@@ -190,5 +192,23 @@ class User {
             $message = 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
         }
         return $message;
+    }
+
+    public function getApprovals()
+    {
+        $approvals = [];
+        if (!$this->user->getApprovals()->isEmpty()) {
+            foreach ($this->user->getApprovals() as $approval) {
+                $value = ($approval->getValue()) ? 'J\'autorise' : 'Je n\'autorise pas';
+                if (UserEntity::APPROVAL_GOING_HOME_ALONE == $approval->getType()) {
+                    $approvals['goingHomeAlone'] = $value;
+                }
+                if (UserEntity::APPROVAL_RIGHT_TO_THE_IMAGE == $approval->getType()) {
+                    $approvals['rightToImage'] = $value;
+                }
+            }
+        }
+
+        return $approvals;
     }
 }
