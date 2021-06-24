@@ -177,7 +177,7 @@ class Licence
         return $this;
     }
 
-    public function getMedicalCertificateRequired(): ?bool
+    public function isMedicalCertificateRequired(): ?bool
     {
         return $this->medicalCertificateRequired;
     }

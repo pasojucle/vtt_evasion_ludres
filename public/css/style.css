@@ -120,14 +120,32 @@ body > script {display: none !important;}
     margin: 40px auto;
     display: block;
     width: max-content;
-    padding: 20px;
+    padding: 20px 85px 20px 20px;
+    position: relative;
+}
+.btn-xxl::after {
+    content: '\f56d';
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 28px;
+    position: absolute;
+    display: block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-color: var(--background-color);
+    color: var(--white-color);
+    border-radius: 50%;
+    text-align: center;
+    top: 5px;
+    right: 25px;
 }
 .btn-primary {
     background-color: var(--primary-color);
 }
 .btn-secondary {
-    background-color: var(--background-color);
-    border: 1px solid var(--primary-color);
+    color: var(--primary-color-darker);
+    background-color: var(--white-color);
 }
 body {
     background-color: var(--light-color);
@@ -329,11 +347,7 @@ p + p {
     column-count: 2;
     column-gap: 50px;
 }
-.ffv-table {
-    /*background-color: #f1eedf;
-    padding: 5px;
-    color: var(--background-color);*/
-}
+
 .qs-sport .value {
     width: 110px;
 }
@@ -575,7 +589,8 @@ button[type="submit"] {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    visibility: hidden;
+    opacity: 0;
+    z-index: -1;
 }
 .table-border {
     border: 2px solid var(--background-color);
@@ -586,4 +601,14 @@ button[type="submit"] {
 .table-border th, .table-border td {
     border: 2px solid var(--background-color);
     padding: 5px;
+}
+.alert-warning {
+    color: var(--primary-color-darker);
+}
+.alert-warning::before {
+    content: '\f06a';
+    color: var(--primary-color-darker);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
 }

@@ -2,5 +2,7 @@
 
 <p>{{ membership_fee_service.amount(user) }}</p>
 <br>
+<p>{{ user.isMedicalCertificateRequired(licence_service.currentSeason) }}</p>
+<br>
 
-<a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_entity.id }) }}"><i class="fas fa-download"></i></i> Télécharger le dossier d'inscription</a>
+<a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_entity.id }) }}">Télécharger le dossier d'inscription</a>

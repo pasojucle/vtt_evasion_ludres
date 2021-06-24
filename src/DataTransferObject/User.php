@@ -180,4 +180,15 @@ class User {
         }
         return $health;
     }
+
+    public function isMedicalCertificateRequired($season): string
+    {
+        $message = '';
+        $licence = $this->user->getSeasonLicence($season);
+
+        if (null !== $licence && $licence->isMedicalCertificateRequired()) {
+            $message = 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
+        }
+        return $message;
+    }
 }

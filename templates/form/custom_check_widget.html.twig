@@ -1,5 +1,4 @@
 {% block customcheck_widget %}
-    {% dump(form) %}
     <div class="form-group">
         {% if form.parent.vars.name == 'approvals' %}
             {% set children = form.value.children %}
@@ -14,6 +13,5 @@
                 {{ form_label(child)}}
             </div>
         {% endfor %}
-        {# {{ form_widget(form.type) }} #}
     </div>
 {% endblock %}

@@ -95,6 +95,7 @@ class RegistrationController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $route = (4 > $step) ? 'registration_form': 'user_registration_form';
             $user = $form->getData();
+            $season = $registrationService->getSeason();
             $manualAuthenticating = false;
             if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
                 // encode the plain password
@@ -111,7 +112,6 @@ class RegistrationController extends AbstractController
                 $today = new DateTime();
                 $age = $today->diff($user->getIdentities()->first()->getBirthDate());
                 $category =  (18 > (int) $age->format('%y')) ? Licence::CATEGORY_MINOR : Licence::CATEGORY_ADULT;
-                $season = $registrationService->getSeason();
                 $user->getSeasonLicence($season)->setCategory($category);
                 if (Licence::CATEGORY_MINOR === $category) {
                     $identityKinShip = $user->getIdentities()->last();
@@ -143,6 +143,12 @@ class RegistrationController extends AbstractController
                     $user->getIdentities()->first()->setPicture($newFilename);
                 }
             }
+
+            $isMedicalCertificateRequired = $user->getHealth()->isMedicalCertificateRequired();
+            if (2 > $user->getLicences()->count()) {
+                $isMedicalCertificateRequired = true;
+            }
+            $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();

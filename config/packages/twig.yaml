@@ -3,6 +3,7 @@ twig:
     form_themes:
         - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
         - 'form/custom_check_widget.html.twig'
+        - 'form/custom_errors_widget.html.twig'
 
     globals:
         header_service: '@App\Service\HeaderService'
