@@ -70,12 +70,18 @@ class User implements UserInterface
      */
     private $licences;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="user")
+     */
+    private $sessions;
+
 
     public function __construct()
     {
         $this->identities = new ArrayCollection();
         $this->approvals = new ArrayCollection();
         $this->licences = new ArrayCollection();
+        $this->sessions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -284,6 +290,36 @@ class User implements UserInterface
         }
 
         return null;
+    }
+
+    /**
+     * @return Collection|Session[]
+     */
+    public function getSessions(): Collection
+    {
+        return $this->sessions;
+    }
+
+    public function addSession(Session $session): self
+    {
+        if (!$this->sessions->contains($session)) {
+            $this->sessions[] = $session;
+            $session->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSession(Session $session): self
+    {
+        if ($this->sessions->removeElement($session)) {
+            // set the owning side to null (unless already changed)
+            if ($session->getUser() === $this) {
+                $session->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
 }
