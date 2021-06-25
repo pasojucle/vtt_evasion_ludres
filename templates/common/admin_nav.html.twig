@@ -1,9 +1,5 @@
-<div class="header-container">
-    <img src="/images/logo.jpg" alt="vtt évasion ludres">
-</div>
-{% set menus = header_service.menus() %}
-<nav>
-    <img class="hidden" src="/images/logo.png" alt="vtt évasion ludres">
+{% set menus = header_service.menusAdmin() %}
+<nav class="admin">
     <ul>
         {% for menu in menus %}
             <li>

@@ -85,10 +85,12 @@ class RegistrationController extends AbstractController
         $progress = $registrationService->getProgress($step);
         $form = $progress['form'];
 
-        if (null !== $progress['seasonLicence'] && null !== $progress['seasonLicence']->getType() && 1 === $step) {
-            $this->session->set('registrationMaxStep',  $progress['max_step'] );
-        } else {
-            $this->session->set('registrationMaxStep',  $step );
+        if (1 === $step) {
+            $maxStep = $step;
+            if (null !== $progress['seasonLicence'] && null !== $progress['seasonLicence']->getType()) {
+                $maxStep = $progress['max_step'];
+            } 
+            $this->session->set('registrationMaxStep',  $maxStep);
         }
         if (null !== $form) {
             $form->handleRequest($request);

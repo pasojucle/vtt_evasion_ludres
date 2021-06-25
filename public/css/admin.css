@@ -1,0 +1,33 @@
+main {
+    display: grid;
+    grid-template-areas: "header header"
+                         "nav wrapper";
+    grid-template-rows: 50px 1fr;
+    grid-template-columns: 300px 1fr;
+    gap: 50px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.wrapper {
+    grid-area: wrapper;
+    padding: 20px;
+    background-color: var(--white-color);
+}
+nav {
+    grid-area: nav;
+}
+.header {
+    grid-area: header;
+    text-align: center;
+}
+nav > ul > li > a {
+    padding: 15px;
+    display: block;
+    color: var(--background-color);
+    background-color: var(--white-color);
+}
+nav > ul> li > a:hover, nav > ul> li > a.active {
+    color: var(--white-color);
+    background-color: var(--primary-color);
+}

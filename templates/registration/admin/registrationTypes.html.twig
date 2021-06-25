@@ -7,9 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
 {% endblock %}
 {% block body %}
-    <div class="wrapper col-3">
-        <div class="block-left">
-        </div>
+    <div class="wrapper">
         <div class="block">
             <div class="block-title">
                 <h2>Etapes des inscriptions</h2>
@@ -18,9 +16,8 @@
                 <ul>
                     {% for step in registrationSteps %}
                         <li>
-                            <span>{{ step.title }}</span>
-                            <span>{{ step.title }}</span>
                             <span>{{ step.orderBy }}</span>
+                            <span>{{ step.title }}</span>
                             <span><a class="btn btn-primary btn-xs" href="{{ path('admin_registration_step', {'step' : step.id}) }}">Modifier</a></span>
                         </li>
                     {% endfor %}

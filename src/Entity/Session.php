@@ -24,10 +24,10 @@ class Session
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Schedule::class, inversedBy="sessions")
+     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="sessions")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $schedule;
+    private $event;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class Session
         return $this;
     }
 
-    public function getSchedule(): ?Schedule
+    public function getEvent(): ?Event
     {
-        return $this->schedule;
+        return $this->event;
     }
 
-    public function setSchedule(?Schedule $schedule): self
+    public function setEvent(?Event $event): self
     {
-        $this->schedule = $schedule;
+        $this->event = $event;
 
         return $this;
     }

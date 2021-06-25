@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\ScheduleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\EventRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity(repositoryClass=ScheduleRepository::class)
+ * @ORM\Entity(repositoryClass=EventRepository::class)
  */
-class Schedule
+class Event
 {
     /**
      * @ORM\Id
@@ -55,7 +55,7 @@ class Schedule
     private $minAge;
 
     /**
-     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="schedule")
+     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="event")
      */
     private $sessions;
 
@@ -63,6 +63,7 @@ class Schedule
     {
         $this->sessions = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -165,7 +166,7 @@ class Schedule
     {
         if (!$this->sessions->contains($session)) {
             $this->sessions[] = $session;
-            $session->setSchedule($this);
+            $session->setEvent($this);
         }
 
         return $this;
@@ -175,8 +176,8 @@ class Schedule
     {
         if ($this->sessions->removeElement($session)) {
             // set the owning side to null (unless already changed)
-            if ($session->getSchedule() === $this) {
-                $session->setSchedule(null);
+            if ($session->getEvent() === $this) {
+                $session->setEvent(null);
             }
         }
 

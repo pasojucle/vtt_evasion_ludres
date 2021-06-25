@@ -1,3 +1,4 @@
+{% set isAdmin = app.request.get('_route') matches '/admin/' %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,14 +11,23 @@
             {#{<link rel="stylesheet" type="text/css" href="/css/select2.min.css">#}
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
             <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-            <link rel="stylesheet" type="text/css" href="/css/style.css">
+            <link rel="stylesheet" type="text/css" href="/css/common.css">
+            {% if isAdmin %}
+                <link rel="stylesheet" type="text/css" href="/css/admin.css">
+            {% else %}
+                <link rel="stylesheet" type="text/css" href="/css/style.css">
+            {% endif %}
         {% endblock %}
-
-
     </head>
     <body>
-        {% include 'common/header.html.twig' %}
+        {% if not isAdmin %}
+            {% include 'common/header.html.twig' %}
+        {% endif %}
         <main>
+            {% if isAdmin %}
+                <div class="header"><h1>Administration du site</h1></div>
+                {% include 'common/admin_nav.html.twig' %}
+            {% endif %}
             {% block body %}{% endblock %}
         </main>
     </body>

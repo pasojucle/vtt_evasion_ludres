@@ -111,7 +111,7 @@ class User {
     {
         $kinShip = [];
         if ($this->kinshipIdentity) {
-            $address = (!$this->kinshipIdentity->getAddress()->isEmpty()) ? $this->kinshipIdentity->getAddress() : $this->getMemberIdentity()->getAddress();
+            $address = (null !== $this->kinshipIdentity->getAddress() && !$this->kinshipIdentity->getAddress()->isEmpty()) ? $this->kinshipIdentity->getAddress() : $this->getMemberIdentity()->getAddress();
             $kinShip = [
                 'fullName' => $this->kinshipIdentity->getName().' '.$this->kinshipIdentity->getFirstName(),
                 'type' => Identity::KINSHIPS[$this->kinshipIdentity->getKinShip()] ,
