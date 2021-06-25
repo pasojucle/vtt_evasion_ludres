@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\RegistrationStep;
 use Symfony\Component\Form\AbstractType;
-use App\Form\RegistrationStepContentType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,7 +11,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 
 class RegistrationStepType extends AbstractType
@@ -43,13 +41,6 @@ class RegistrationStepType extends AbstractType
                 },
                 'required' => false,
             ])
-            // ->add('contents', CollectionType::class, [
-            //     'label' => false,
-            //     'entry_type' => RegistrationStepContentType::class,
-            //     'entry_options' => [
-            //         'label' => false,
-            //     ],
-            // ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
                 'required' => false,
