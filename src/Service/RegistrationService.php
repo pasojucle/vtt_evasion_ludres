@@ -61,7 +61,6 @@ class RegistrationService
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->licenceRepository = $licenceRepository;
-        $this->setUser();
     }
 
     public function getProgress(int $step)
@@ -73,6 +72,8 @@ class RegistrationService
         $progress['current'] = null;
         $progress['steps'] = null;
         $isKinship = false;
+
+        $this->setUser();
 
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $this->seasonLicence->isTesting());

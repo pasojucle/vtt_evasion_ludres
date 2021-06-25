@@ -13,8 +13,13 @@
                 <h2>{{ registrationStep.title }}</h2>
             </div>
             <div class="block-body">
-                {{ form_start(form)}}
-                {{ form_end(form)}}
+                {{ form_start(form) }}
+                {{ form_row(form.title) }}
+                {{ form_row(form.filename) }}
+                {{ form_row(form.form) }}
+                {{ form_row(form.content) }}
+                {{ form_row(form.save) }}
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
