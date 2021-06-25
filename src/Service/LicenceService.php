@@ -34,16 +34,21 @@ class LicenceService
     {
         $title = $this->translator->trans('registration_step.type.default');
         $licence = $user->getSeasonLicence($this->getCurrentSeason());
+        $title = 'registration_step.type.';
         if (null !== $licence) {
             if ($licence->isTesting()) {
-                $title = $this->translator->trans('registration_step.type.testing');
+                $title .= 'testing';
             } else {
                 $category = $licence->getCategory();
                 if (null !== $category) {
-                    $title = $this->translator->trans(Licence::CATEGORIES[$category]);
+                    $categories = [
+                        Licence::CATEGORY_MINOR => 'minor',
+                        Licence::CATEGORY_ADULT => 'adult',
+                    ];
+                    $title .= $categories[$category];
                 } 
             }
         }
-        return $title;
+        return $this->translator->trans($title);;
     }
 }
