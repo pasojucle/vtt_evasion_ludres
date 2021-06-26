@@ -1,20 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ScheduleController!{% endblock %}
+{% block title %}Calendrier des sorties{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/patrick/Sites/vtt_evasion_ludres/src/Controller/ScheduleController.php'|file_link(0) }}">src/Controller/ScheduleController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/patrick/Sites/vtt_evasion_ludres/templates/schedule/index.html.twig'|file_link(0) }}">templates/schedule/index.html.twig</a></code></li>
-    </ul>
-</div>
+ <div class="wrapper">
+        <div class="block">
+            <div class="block-title">
+                <h2>Calendrier des sorties</h2>
+                <span class="tools">
+                    <a href="{{ path('admin_event_edit') }}" class="btn btn-secondary"><i class="fas fa-plus"></i> Ajouter une sortie</a>
+                </span>
+            </div>
+            <div class="block-body">
+                <ul>
+                    {% for event in events %}                      
+                        <li>
+                            <div class="row">
+                                <div class="col-4">{{ event.title }}</div>
+                                <div class="col-4">{{ event.startAt | date('d/m/Y') }}</div>
+                                <div class="col-4"><a class="btn btn-primary btn-xs" href="{{ path('admin_event_edit', {'event' : event.id}) }}"><i class="fas fa-pencil-alt"></i> Modifier</a></div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% include('common/pagination.html.twig') %}
+    </div>
 {% endblock %}

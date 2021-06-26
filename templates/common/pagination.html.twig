@@ -1,0 +1,30 @@
+{% set _currentPage = app.request.query.get('p') ?: 1 %}
+{% set _currentRoute = app.request.attributes.get('_route') %}
+{% set _currentParams = app.request.query.all %}
+{% if lastPage > 1 %}
+    <nav>
+        <ul class="paginator">
+            {% if _currentPage > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path(_currentRoute, _currentParams|merge({p: _currentPage - 1})) }}" aria-label="Previous">
+                        <span aria-hidden="true"><i class="fas fa-angle-left"></i></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for i in 1..lastPage %}
+                <li class="page-item">
+                    <a class="page-link{% if i == _currentPage %} active{% endif %}" href="{{ path(_currentRoute, _currentParams|merge({p: i})) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+            {% if _currentPage < lastPage %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path(_currentRoute, _currentParams|merge({p: _currentPage + 1})) }}" aria-label="Next">
+                        <span aria-hidden="true"><i class="fas fa-angle-right"></i></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

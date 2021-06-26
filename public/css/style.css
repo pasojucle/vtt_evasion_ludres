@@ -126,12 +126,6 @@ p + p {
     content: '';
     clear: both;
 }
-.float-left {
-    float: left;
-}
-.float-right {
-    float: right;
-}
 .col-3, .col-2 {
     display: grid;
 }
@@ -228,42 +222,7 @@ p + p {
 .hidden , .form-group-inline.hidden {
     display: none;
 }
-.form-group {
-    margin-bottom: 15px;
-}
-.form-group > input, .form-group-inline > input, .form-group-inline > select {
-    width: 100%;
-    height: 30px;
-    line-height: 30px;
-}
-.form-group > .widget-inline {
-    display: inline-block;
-    width: 25%;
-}
-.form-group > .widget-inline.disease-active {
-    width: 20px;
-}
-.form-group > .widget-inline.disease-label {
-    width: calc(25% + 60px);
-    margin-left: 20px;
-}
-.form-group > .widget-inline.widget-curent-treatment {
-    width: calc(50% + 4px);
-}
-.form-group > .widget-inline.disease-label.disease-label-other {
-    width: 56px;
-}
-.form-group-inline {
-    display: inline-block;
-    width: calc(50% - 29px);
-    box-sizing: border-box;
-}
-.form-group-inline.full-width {
-    width: 100%;
-}
-.form-group-inline:not(:first-child) {
-    margin-left: 50px;
-}
+
 .wrapper.background-primary {
     background-color: var(--primary-color);
     margin: unset;

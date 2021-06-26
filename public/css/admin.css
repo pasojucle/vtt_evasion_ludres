@@ -31,3 +31,57 @@ nav > ul> li > a:hover, nav > ul> li > a.active {
     color: var(--white-color);
     background-color: var(--primary-color);
 }
+.block-title {
+    position: relative;
+    margin-bottom: 20px;
+}
+.block-title .tools {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.block-body > ul > li:not(:last-of-type)::after {
+    content: '';
+    height: 1px;
+    display: block;
+    background-color: var(--clear-color);
+    margin: 3px 0;
+}
+
+.row {
+    display: flex;
+    width: 100%;
+}
+.row .col-2 {
+    width: 16.6666%;
+}
+.row .col-3 {
+    width: 25%;
+}
+.row .col-4 {
+    width: 33%;
+}
+.row .col-5 {
+    width: 41.6666%;
+}
+.row .col-6 {
+    width: 50%;
+}
+.row .col-7 {
+    width: 58.3333%;
+}
+.row .col-8 {
+    width: 66.6666%;
+}
+.row .col-9 {
+    width: 75%;
+}
+.row .col-10 {
+    width: 83.3333%;
+}
+.row .col-11 {
+    width: 91.6666%;
+}
+.row .col-12 {
+    width: 100%;
+}

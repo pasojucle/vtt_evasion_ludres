@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Event;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
+
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @method Event|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,27 +17,41 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EventRepository extends ServiceEntityRepository
 {
+    public const PAGINATOR_PER_PAGE = 2;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);
     }
 
-    // /**
-    //  * @return Event[] Returns an array of Event objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Event[] Returns an array of Event objects
+     */
+
+    public function findAllDesc(int $offset): Paginator
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
+
+        $qb = $this->createQueryBuilder('e')
+            ->orderBy('e.startAt', 'DESC')
+            ->setMaxResults(Self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($offset)
             ->getQuery()
-            ->getResult()
+        ;
+
+        return new Paginator($qb);
+    }
+
+    /**
+     * @return Event[] Returns an array of Event objects
+     */
+
+    public function findAllQuery()
+    {
+
+        return $this->createQueryBuilder('e')
+            ->orderBy('e.startAt', 'DESC')
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Event
