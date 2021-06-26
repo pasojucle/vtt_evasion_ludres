@@ -13,4 +13,5 @@ return [
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
     FOS\CKEditorBundle\FOSCKEditorBundle::class => ['all' => true],
+    FM\ElfinderBundle\FMElfinderBundle::class => ['all' => true],
 ];

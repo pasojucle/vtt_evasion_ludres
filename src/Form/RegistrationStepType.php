@@ -43,6 +43,7 @@ class RegistrationStepType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
+                'config_name' => 'full_config',
                 'required' => false,
             ])
             ->add('save', SubmitType::class, [

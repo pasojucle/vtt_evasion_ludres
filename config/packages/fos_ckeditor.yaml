@@ -3,3 +3,25 @@
 twig:
     form_themes:
         - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
+
+fos_ck_editor:
+    configs:
+        minimum_config:
+            toolbar: "minimum_toolbar"
+        full_config:
+            toolbar: "full_toolbar"
+            filebrowserBrowseRoute: elfinder
+            filebrowserBrowseRouteParameters: []
+
+    toolbars:
+        configs:
+            minimum_toolbar: [ "@styles", "@align", "@link"]
+            full_toolbar: [ "@styles", "@advanced_styles", "@align", "@table", "@image", "@link", "@document",]
+        items:
+            document: [ "Source"]
+            styles: ['Bold', 'Italic', 'Underline', 'Strike']
+            align: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']
+            link: ['Link', "Anchor"]
+            table: ['Table']
+            advanced_styles: ['Styles', 'Format','Font','FontSize', '-', 'TextColor', 'BGColor']
+            image: ['Image']
