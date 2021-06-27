@@ -85,3 +85,14 @@ nav > ul> li > a:hover, nav > ul> li > a.active {
 .row .col-12 {
     width: 100%;
 }
+ul.filters {
+    margin-bottom: 15px;
+    height: 41px;
+}
+ul.filters > li {
+    display: inline-block;
+    line-height: 41px;
+}
+ul.filters > li:not(:first-child) {
+    margin-left: 10px;
+}
