@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SessionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,6 +31,12 @@ class Session
      */
     private $event;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Cluster::class, inversedBy="sessions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $cluster;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -54,6 +62,18 @@ class Session
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function getCluster(): ?Cluster
+    {
+        return $this->cluster;
+    }
+
+    public function setCluster(?Cluster $cluster): self
+    {
+        $this->cluster = $cluster;
 
         return $this;
     }

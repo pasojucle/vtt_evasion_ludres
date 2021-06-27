@@ -12,6 +12,21 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Event
 {
+    public const PERIOD_DAY = 'jour';
+    public const PERIOD_WEEK = 'semaine';
+    public const PERIOD_MONTH = 'mois';
+    public const PERIOD_ALL = 'tous';
+
+    public const DIRECTION_PREV = 1;
+    public const DIRECTION_NEXT = 2;
+
+    public const PERIODS = [
+        self::PERIOD_DAY => 'event.period.day',
+        self::PERIOD_WEEK=> 'event.period.week',
+        self::PERIOD_MONTH => 'event.period.month',
+        self::PERIOD_ALL => 'event.period.all',
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -58,6 +73,11 @@ class Event
      * @ORM\OneToMany(targetEntity=Session::class, mappedBy="event")
      */
     private $sessions;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $usersPerCluster;
 
     public function __construct()
     {
@@ -180,6 +200,18 @@ class Event
                 $session->setEvent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUsersPerCluster(): ?int
+    {
+        return $this->usersPerCluster;
+    }
+
+    public function setUsersPerCluster(?int $usersPerCluster): self
+    {
+        $this->usersPerCluster = $usersPerCluster;
 
         return $this;
     }
