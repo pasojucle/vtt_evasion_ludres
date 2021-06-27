@@ -109,6 +109,7 @@ body > script {display: none !important;}
     border: none;
     display: inline-block;
     color: var(--background-color);
+    border-radius: unset;
 }
 .btn-xs {
     padding: 2px 3px;

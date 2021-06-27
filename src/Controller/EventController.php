@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use DateTime;
+use DateInterval;
 use App\Entity\Event;
 use App\Form\EventType;
+use App\Form\EventFilterType;
+use App\Service\EventService;
 use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,19 +31,49 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/admin/calendrier", name="admin_events")
+     * @Route(
+     *  "/admin/calendrier/{period}/{year}/{month}/{day}",
+     *  name="admin_events",
+     *  defaults={"period"=null, "year"=null, "month"=null, "day"=null})
      */
     public function adminList(
         PaginatorService $paginator,
-        Request $request
+        EventService $eventService,
+        Request $request,
+        ?string $period,
+        ?int $year,
+        ?int $month,
+        ?int $day
     ): Response
     {
-        $query =  $this->eventRepository->findAllQuery();
+        $filters = $eventService->getFiltersByParam($period, $year, $month, $day);
+        $form = $this->createForm(EventFilterType::class, $filters);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            if ($form->get('next')->isClicked()) {
+                $data['direction'] = Event::DIRECTION_NEXT;
+            }
+            if ($form->get('prev')->isClicked()) {
+                $data['direction'] = Event::DIRECTION_PREV;
+            }
+            if ($form->get('today')->isClicked()) {
+                $today = new DateTime();
+                $data['date'] = $today->format('Y-m-d');
+            }
+            $filters = $eventService->getFiltersByData($data);
+            $form = $this->createForm(EventFilterType::class, $filters);
+        }
+
+        $query =  $this->eventRepository->findAllQuery($filters);
         $events =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('event/list.html.twig', [
+            'form' => $form->createView(),
             'events' => $events,
-            'lastPage' => $paginator->lastPage($events)
+            'lastPage' => $paginator->lastPage($events),
+            'filters' => $filters,
         ]);
     }
 

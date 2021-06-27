@@ -55,3 +55,10 @@ form:
   licence: Formule de licence
   membership_fee: Cotisation
   registration_file: Téléchargement du pdf
+
+event:
+  period:
+    day: Jour
+    week: Semaine
+    month: Mois
+    all: Tous

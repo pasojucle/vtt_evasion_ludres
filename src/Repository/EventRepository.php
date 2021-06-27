@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Query\QueryBuilder as QueryQueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
@@ -45,10 +46,20 @@ class EventRepository extends ServiceEntityRepository
      * @return Event[] Returns an array of Event objects
      */
 
-    public function findAllQuery()
+    public function findAllQuery(array $filters): QueryBuilder
     {
 
-        return $this->createQueryBuilder('e')
+        $qb = $this->createQueryBuilder('e');
+        if (null !== $filters['startAt'] && null !== $filters['endAt']) {
+            $qb->andWhere(
+                $qb->expr()->gte('e.startAt', ':startAt'),
+                $qb->expr()->lte('e.startAt', ':endAt')
+            )
+            ->setParameter('startAt', $filters['startAt'])
+            ->setParameter('endAt', $filters['endAt'])
+            ;
+        }
+        return $qb
             ->orderBy('e.startAt', 'DESC')
         ;
     }
