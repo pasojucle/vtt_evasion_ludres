@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+    <div class="block">
+        <div class="block-title">
+            <h2>{{ event.title }}</h2>
+            <span class="tools">
+                <a href="{{ path('admin_events') }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour à la liste des sorties</a>
+            </span>
+        </div>
+        <div class="block-body">
+            {% for cluster in event.clusters %}
+                {% set hasGroups = event.clusters| length > 1 %}
+                {% if hasGroups %}
+                    <h3>{{ cluster.title }}</h3>
+                {% endif %}      
+                <ul>
+                    {% for session in cluster.sessions %}                
+                        <li>
+                            <div class="row">
+                                <div class="col-1">
+                                    {% if session.isPresent %}
+                                        <span class="success"><i class="fas fa-check-circle"></i></span>
+                                    {% else %}
+                                        <span class="alert-danger "><i class="fas fa-times-circle"></i></span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-5">{{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}</div>
+                                <div class="col-2">
+                                    {% if session.isPresent %}
+                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-danger">Absent</a>
+                                    {% else %}
+                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success">Présent</a>
+                                    {% endif %}
+                                </div>
+                                <div class="col-4">{% if hasGroups %}<a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary">Changer de groupe</a>{% endif %}</div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

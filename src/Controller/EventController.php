@@ -98,4 +98,17 @@ class EventController extends AbstractController
             'event' => $event,
         ]);
     }
+
+    /**
+     * @Route("/admin/sortie/groupe/{event}", name="admin_event_cluster_show")
+     */
+    public function adminClusterShow(
+        Request $request,
+        Event $event
+    ): Response
+    {
+        return $this->render('event/cluster_show.html.twig', [
+            'event' => $event,
+        ]);
+    }
 }

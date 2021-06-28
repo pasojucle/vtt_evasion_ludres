@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Changement de groupe' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+    <div class="block">
+        <div class="block-title">
+            <h2>{{ title }}</h2>
+            <span class="tools">
+                <a href="{{ path('admin_event_cluster_show', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour aux participants</a>
+            </span>
+        </div>
+        {{ form_start(form) }}
+        <div class="block-body">
+            <p>{{ event.title }}</p>
+            <p>{{ session.user.firstIdentity.name }}</p>
+            {{ form_row(form.cluster) }}
+        </div>
+        <div class="block-footer">
+            {{ form_row(form.save) }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

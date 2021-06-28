@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Identity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Criteria;
@@ -205,6 +206,14 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getFirstIdentity(): ?Identity
+    {
+        if (!$this->identities->isEmpty()) {
+            return $this->identities->first();
+        }
+        return null;
     }
 
     public function getHealth(): ?Health

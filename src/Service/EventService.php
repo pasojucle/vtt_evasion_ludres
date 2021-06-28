@@ -21,7 +21,7 @@ class EventService
         $period = $data['period'];
         $date = new DateTime($data['date']);
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
-dump($date);
+
         return $this->getFilters($period, $date, $direction);
     }
 

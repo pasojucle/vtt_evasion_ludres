@@ -26,16 +26,15 @@ class Session
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="sessions")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $event;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Cluster::class, inversedBy="sessions")
      * @ORM\JoinColumn(nullable=false)
      */
     private $cluster;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPresent = false;
 
     public function getId(): ?int
     {
@@ -54,18 +53,6 @@ class Session
         return $this;
     }
 
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): self
-    {
-        $this->event = $event;
-
-        return $this;
-    }
-
     public function getCluster(): ?Cluster
     {
         return $this->cluster;
@@ -74,6 +61,18 @@ class Session
     public function setCluster(?Cluster $cluster): self
     {
         $this->cluster = $cluster;
+
+        return $this;
+    }
+
+    public function isPresent(): ?bool
+    {
+        return $this->isPresent;
+    }
+
+    public function setIsPresent(bool $isPresent): self
+    {
+        $this->isPresent = $isPresent;
 
         return $this;
     }

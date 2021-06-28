@@ -70,20 +70,19 @@ class Event
     private $minAge;
 
     /**
-     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="event")
-     */
-    private $sessions;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $usersPerCluster;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="event")
+     */
+    private $clusters;
+
     public function __construct()
     {
-        $this->sessions = new ArrayCollection();
+        $this->clusters = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -174,36 +173,6 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection|Session[]
-     */
-    public function getSessions(): Collection
-    {
-        return $this->sessions;
-    }
-
-    public function addSession(Session $session): self
-    {
-        if (!$this->sessions->contains($session)) {
-            $this->sessions[] = $session;
-            $session->setEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSession(Session $session): self
-    {
-        if ($this->sessions->removeElement($session)) {
-            // set the owning side to null (unless already changed)
-            if ($session->getEvent() === $this) {
-                $session->setEvent(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getUsersPerCluster(): ?int
     {
         return $this->usersPerCluster;
@@ -212,6 +181,36 @@ class Event
     public function setUsersPerCluster(?int $usersPerCluster): self
     {
         $this->usersPerCluster = $usersPerCluster;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cluster[]
+     */
+    public function getClusters(): Collection
+    {
+        return $this->clusters;
+    }
+
+    public function addCluster(Cluster $cluster): self
+    {
+        if (!$this->clusters->contains($cluster)) {
+            $this->clusters[] = $cluster;
+            $cluster->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCluster(Cluster $cluster): self
+    {
+        if ($this->clusters->removeElement($cluster)) {
+            // set the owning side to null (unless already changed)
+            if ($cluster->getEvent() === $this) {
+                $cluster->setEvent(null);
+            }
+        }
 
         return $this;
     }

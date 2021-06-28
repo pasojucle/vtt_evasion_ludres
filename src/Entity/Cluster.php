@@ -29,9 +29,20 @@ class Cluster
      */
     private $sessions;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="clusters")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $event;
+
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->title;
     }
 
     public function getId(): ?int
@@ -77,6 +88,18 @@ class Cluster
                 $session->setCluster(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
 
         return $this;
     }

@@ -43,9 +43,10 @@
                     {% for event in events %}                      
                         <li>
                             <div class="row">
-                                <div class="col-4">{{ event.title }}</div>
-                                <div class="col-4">{{ event.startAt | date('d/m/Y') }}</div>
-                                <div class="col-4"><a class="btn btn-primary btn-xs" href="{{ path('admin_event_edit', {'event' : event.id}) }}"><i class="fas fa-pencil-alt"></i> Modifier</a></div>
+                                <div class="col-3">{{ event.title }}</div>
+                                <div class="col-2">{{ event.startAt | date('d/m/Y') }}</div>
+                                <div class="col-3"><a class="btn btn-primary" href="{{ path('admin_event_edit', {'event' : event.id}) }}"><i class="fas fa-pencil-alt"></i> Modifier</a></div>
+                                <div class="col-34"><a class="btn btn-success" href="{{ path('admin_event_cluster_show', {'event' : event.id}) }}"><i class="fas fa-eye"></i> Voir les participants</a></div>
                             </div>
                         </li>
                     {% endfor %}

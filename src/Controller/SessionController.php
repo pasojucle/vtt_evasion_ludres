@@ -2,31 +2,63 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Session;
+use App\Form\SessionType;
+use App\Repository\ClusterRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
-    /**
-     * @Route("/admin/seances", name="admin_sessions")
-     */
-    public function adminList(): Response
-    {
+    private EntityManagerInterface $entityManager;
 
-        return $this->render('session/list.html.twig', [
-            'controller_name' => 'SessionController',
-        ]);
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+    /**
+     * @Route("/admin/seance/{session}", name="admin_session_present")
+     */
+    public function adminPresent(
+        Session $session
+    ): Response
+    {
+        $isPresent = !$session->isPresent();
+
+        $session->setIsPresent($isPresent);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('admin_event_cluster_show', ['event' => $session->getCluster()->getEvent()->getId()]);
     }
 
-    /**
-     * @Route("/admin/seance", name="admin_session_edit")
+        /**
+     * @Route("/admin/groupe/change/{session}", name="admin_event_switch_cluster")
      */
-    public function adminEdit(): Response
+    public function adminClusterSwitch(
+        ClusterRepository $clusterRepository,
+        Request $request,
+        Session $session
+    ): Response
     {
+
+        $event = $session->getCluster()->getEvent();
+        $form = $this->createForm(SessionType::class, $session);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $session = $form->getData();
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_event_cluster_show', ['event' => $event->getId()]);
+        }
         
-        return $this->render('session/edit.html.twig', [
-            'controller_name' => 'SessionController',
+        return $this->render('session/switch.html.twig', [
+            'event' => $event,
+            'session' => $session,
+            'form' => $form->createView(),
         ]);
     }
 }

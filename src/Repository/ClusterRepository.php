@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Event;
 use App\Entity\Cluster;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * @method Cluster|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,22 +21,22 @@ class ClusterRepository extends ServiceEntityRepository
         parent::__construct($registry, Cluster::class);
     }
 
-    // /**
-    //  * @return Cluster[] Returns an array of Cluster objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Cluster[] Returns an array of Cluster objects
+     */
+
+    public function findByEvent(Event $event)
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere(
+                (new Expr)->eq('c.event', ':event')
+            )
+            ->setParameter('event', $event)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?Cluster
