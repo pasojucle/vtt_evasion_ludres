@@ -29,23 +29,6 @@ class EventRepository extends ServiceEntityRepository
      * @return Event[] Returns an array of Event objects
      */
 
-    public function findAllDesc(int $offset): Paginator
-    {
-
-        $qb = $this->createQueryBuilder('e')
-            ->orderBy('e.startAt', 'DESC')
-            ->setMaxResults(Self::PAGINATOR_PER_PAGE)
-            ->setFirstResult($offset)
-            ->getQuery()
-        ;
-
-        return new Paginator($qb);
-    }
-
-    /**
-     * @return Event[] Returns an array of Event objects
-     */
-
     public function findAllQuery(array $filters): QueryBuilder
     {
 

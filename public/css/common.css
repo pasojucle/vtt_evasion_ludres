@@ -162,6 +162,13 @@ body > script {display: none !important;}
     background-color: var(--danger-color);
     color: var(--white-color);
 }
+.btn-ico {
+    font-size: 28px;
+    padding: 5px 8px;
+    min-width: 45px;
+    text-align: center;
+    margin-right: 15px;
+}
 body {
     background-color: var(--light-color);
     color: var(--background-color);

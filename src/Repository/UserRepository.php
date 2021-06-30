@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -37,22 +38,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+        /**
+     * @return Event[] Returns an array of Event objects
+     */
+
+    public function findMemberQuery(array $filters): QueryBuilder
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
+
+        $qb = $this->createQueryBuilder('u')
+            ->innerJoin('u.identities', 'i')
+            ;
+        // if (null !== $filters['startAt'] && null !== $filters['endAt']) {
+        //     $qb->andWhere(
+        //         $qb->expr()->gte('e.startAt', ':startAt'),
+        //         $qb->expr()->lte('e.startAt', ':endAt')
+        //     )
+        //     ->setParameter('startAt', $filters['startAt'])
+        //     ->setParameter('endAt', $filters['endAt'])
+        //     ;
+        // }
+        return $qb
+            ->andWhere(
+                $qb->expr()->isNull('i.kinship')
+            )
+            ->orderBy('i.name', 'ASC')
         ;
     }
-    */
 
 
     public function findMaxId(): int

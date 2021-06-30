@@ -68,6 +68,18 @@ class HeaderService
             ],
             [
                 'label' => 'Gestion des adhérents',
+                 'route' => 'admin_users',
+                 'pattern' => '/user/',
+                 'subMenus' => [],
+            ],
+            [
+                'label' => 'Gestion des accompagnateurs',
+                 'route' => 'admin_events',
+                 'pattern' => '/session/',
+                 'subMenus' => [],
+            ],
+            [
+                'label' => 'Gestion des niveaux',
                  'route' => 'admin_events',
                  'pattern' => '/session/',
                  'subMenus' => [],

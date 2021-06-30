@@ -8,7 +8,7 @@
         <div class="block-title">
             <h2>{{ event.title }}</h2>
             <span class="tools">
-                <a href="{{ path('admin_events') }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour à la liste des sorties</a>
+                <a href="{{ path('admin_events') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
         <div class="block-body">
@@ -29,14 +29,15 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-5">{{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}</div>
-                                <div class="col-2">
+                                <div class="col-4">
                                     {% if session.isPresent %}
-                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-danger">Absent</a>
+                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-danger btn-ico" title="Absent"><i class="fas fa-check-circle"></i></a>
                                     {% else %}
-                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success">Présent</a>
+                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico" title="Présent"><i class="fas fa-times-circle"></i></a>
                                     {% endif %}
+                                    {% if hasGroups %}<a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe"><i class="fas fa-exchange-alt"></i></a>{% endif %}
+                                    <a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Informatons sur l'adhérent"><i class="fas fa-user"></i></a>
                                 </div>
-                                <div class="col-4">{% if hasGroups %}<a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary">Changer de groupe</a>{% endif %}</div>
                             </div>
                         </li>
                     {% endfor %}

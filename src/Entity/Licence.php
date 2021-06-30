@@ -153,7 +153,7 @@ class Licence
         return $this;
     }
 
-    public function getValid(): ?bool
+    public function isValid(): ?bool
     {
         return $this->valid;
     }

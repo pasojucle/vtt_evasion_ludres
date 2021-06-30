@@ -3,6 +3,7 @@
 namespace App\DataTransferObject;
 
 use App\Entity\Identity;
+use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User as UserEntity;
 use App\Form\UserType;
@@ -102,6 +103,7 @@ class User {
                 'coverage' => $licence->getCoverage(),
                 'hasFamilyMember' => $licence->getAdditionalFamilyMember(),
                 'category' => $licence->getCategory(),
+                'isValid' => $licence->isValid(),
             ];  
         } 
         return $seasonLicence;
@@ -210,5 +212,10 @@ class User {
         }
 
         return $approvals;
+    }
+
+    public function getLevel(): Level
+    {
+        return $this->user->getLevel();
     }
 }

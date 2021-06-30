@@ -76,6 +76,11 @@ class User implements UserInterface
      */
     private $sessions;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Level::class, inversedBy="users")
+     */
+    private $level;
+
 
     public function __construct()
     {
@@ -327,6 +332,18 @@ class User implements UserInterface
                 $session->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLevel(): ?Level
+    {
+        return $this->level;
+    }
+
+    public function setLevel(?Level $level): self
+    {
+        $this->level = $level;
 
         return $this;
     }
