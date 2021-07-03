@@ -69,7 +69,7 @@
                                 <tr>
                                     <td></td>
                                     {% if disease.title is not null %}
-                                        <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}/td>
+                                        <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
                                         <td>{{ disease.title }}</td>
                                     {% else %}
                                         <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>

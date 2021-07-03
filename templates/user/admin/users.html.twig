@@ -10,9 +10,9 @@
             </div>
             <div class="block-body">
                 {{ form_start(form) }}
-                <ul class="filters">
+                <ul class="filters row">
                     <li>
-                        {{ form_widget(form.fullName)}}
+                        {{ form_widget(form.fullName)}} {{ form_widget(form.submit)}}
                     </li>
                     <li>
                         {{ form_widget(form.category)}}
@@ -27,22 +27,20 @@
                     {% for user in users %}     
                         {% set licence = user.seasonLicence(licence_service.currentSeason) %}           
                         <li>
-                            <div class="row">
-                                <div class="col-1">
-                                    {% if licence %}
-                                        <span class="success"><i class="fas fa-check-circle"></i></span>
-                                    {% else %}
-                                        <span class="alert-danger "><i class="fas fa-times-circle"></i></span>
-                                    {% endif %}
+                            <div>
+                            <a href="{{ path('admin_user', {'user': user.id})}}" class="btn btn-list" title="Informatons sur l'adhérent" style="background-color: {{ user.level.color }}">
+                                <div class="row row-list">
+                                    <div class="col-1 col-xs-1">
+                                        {% if licence %}
+                                            <span class="success"><i class="fas fa-check-circle"></i></span>
+                                        {% else %}
+                                            <span class="alert-danger "><i class="fas fa-times-circle"></i></span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-9 col-xs-8">{{ user.member.fullName }}</div>
+                                    <div class="col-2 col-xs-3">{{ constant('App\\Entity\\Licence::CATEGORIES')[licence.category]  | trans}}</div>
                                 </div>
-                                <div class="col-4">{{ user.fullName }}</div>
-                                <div class="col-2">{{ constant('App\\Entity\\Licence::CATEGORIES')[licence.category]  | trans}}</div>
-
-                                <div class="col-3">{{ user.level.title }}</div>
-                                <div class="col-2">
-                                    <a href="" class="btn btn-primary btn-ico" title="Informatons sur l'adhérent"><i class="fas fa-user"></i></a>
-                                </div>
-                            </div>
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>

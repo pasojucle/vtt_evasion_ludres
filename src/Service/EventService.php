@@ -65,6 +65,6 @@ class EventService
             $endAt =  DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d').' 23:59:59');
         }
 
-        return ['startAt' => $stardAt, 'endAt' => $endAt, 'period' => $period, 'date' => $date->format('Y-m-d')];
+        return ['startAt' => $stardAt, 'endAt' => $endAt, 'period' => $period, 'year' => $date->format('Y'), 'month' => $date->format('m'), 'day' => $date->format('d')];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Service\LicenceService;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,9 +20,12 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private LicenceService $licenceService;
+
+    public function __construct(ManagerRegistry $registry, LicenceService $licenceService)
     {
         parent::__construct($registry, User::class);
+        $this->licenceService = $licenceService;
     }
 
     /**
@@ -44,19 +48,40 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findMemberQuery(array $filters): QueryBuilder
     {
-
+        $currentSeason = $this->licenceService->getCurrentSeason();
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i')
             ;
-        // if (null !== $filters['startAt'] && null !== $filters['endAt']) {
-        //     $qb->andWhere(
-        //         $qb->expr()->gte('e.startAt', ':startAt'),
-        //         $qb->expr()->lte('e.startAt', ':endAt')
-        //     )
-        //     ->setParameter('startAt', $filters['startAt'])
-        //     ->setParameter('endAt', $filters['endAt'])
-        //     ;
-        // }
+        dump($filters);
+        if (!empty($filters)) {
+            if (null !== $filters['fullName']) {
+                $qb->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->like('i.name', $qb->expr()->literal('%'.$filters['fullName'].'%')),
+                            $qb->expr()->like('i.firstName', $qb->expr()->literal('%'.$filters['fullName'].'%')),
+                        )
+                    )
+                    ;
+            }
+            if (null !== $filters['category']) {
+                $qb->innerJoin('u.licences', 'li')
+                    ->andWhere(
+                        $qb->expr()->eq('li.season', ':season'),
+                        $qb->expr()->eq('li.category', ':category'),
+                    )
+                    ->setParameter('season', $currentSeason)
+                    ->setParameter('category', $filters['category'])
+                    ;
+            }
+            if (null !== $filters['level']) {
+                $qb
+                    ->andWhere(
+                        $qb->expr()->eq('u.level', ':level'),
+                    )
+                    ->setParameter('level', $filters['level'])
+                    ;
+            }
+        }
         return $qb
             ->andWhere(
                 $qb->expr()->isNull('i.kinship')

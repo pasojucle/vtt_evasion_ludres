@@ -34,6 +34,16 @@ class Level
      */
     private $users;
 
+    /**
+     * @ORM\Column(type="string", length=7, nullable=true)
+     */
+    private $color;
+
+    /**
+     * @ORM\Column(type="string", length=3, nullable=true)
+     */
+    private $monogram;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -99,6 +109,30 @@ class Level
                 $user->setLevel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): self
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    public function getMonogram(): ?string
+    {
+        return $this->monogram;
+    }
+
+    public function setMonogram(?string $monogram): self
+    {
+        $this->monogram = $monogram;
 
         return $this;
     }

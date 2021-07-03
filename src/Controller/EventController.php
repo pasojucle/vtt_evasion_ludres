@@ -15,19 +15,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class EventController extends AbstractController
 {
     private EventRepository $eventRepository;
     private EntityManagerInterface $entityManager;
+    private SessionInterface $session;
 
     public function __construct(
         EventRepository $eventRepository,
+        SessionInterface $session,
         EntityManagerInterface $entityManager
     )
     {
         $this->eventRepository = $eventRepository;
         $this->entityManager = $entityManager;
+        $this->session = $session;
     }
 
     /**
@@ -52,18 +56,19 @@ class EventController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            if ($form->get('next')->isClicked()) {
+            if ($form->has('next') && $form->get('next')->isClicked()) {
                 $data['direction'] = Event::DIRECTION_NEXT;
             }
-            if ($form->get('prev')->isClicked()) {
+            if ($form->has('prev') && $form->get('prev')->isClicked()) {
                 $data['direction'] = Event::DIRECTION_PREV;
             }
-            if ($form->get('today')->isClicked()) {
+            if ($form->has('today') && $form->get('today')->isClicked()) {
                 $today = new DateTime();
                 $data['date'] = $today->format('Y-m-d');
             }
             $filters = $eventService->getFiltersByData($data);
-            $form = $this->createForm(EventFilterType::class, $filters);
+            $this->session->set('admin_events_filters', $filters);
+            return $this->redirectToRoute('admin_events', $filters);
         }
 
         $query =  $this->eventRepository->findAllQuery($filters);
@@ -96,6 +101,7 @@ class EventController extends AbstractController
         return $this->render('event/edit.html.twig', [
             'form' => $form->createView(),
             'event' => $event,
+            'events_filters' => $this->session->get('admin_events_filters'),
         ]);
     }
 
@@ -109,6 +115,7 @@ class EventController extends AbstractController
     {
         return $this->render('event/cluster_show.html.twig', [
             'event' => $event,
+            'events_filters' => $this->session->get('admin_evnts_filters'),
         ]);
     }
 }

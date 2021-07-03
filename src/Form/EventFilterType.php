@@ -34,16 +34,27 @@ class EventFilterType extends AbstractType
             if (Event::PERIOD_ALL !== $filters['period']) {
                 $form
                 ->add('prev', SubmitType::class, [
-                    'label' => 'Précedent',
-                    'attr' => ['class' => 'btn btn-default'],
+                    'label' => '<i class="fas fa-angle-left"></i>',
+                    'label_html' => true,
+                    'attr' => [
+                        'class' => 'btn btn-default',
+                        'title' => 'Précedent',
+                    ],
                 ])
                 ->add('next', SubmitType::class, [
-                    'label' => 'Suivant',
-                    'attr' => ['class' => 'btn btn-default'],
+                    'label' => '<i class="fas fa-angle-right"></i>',
+                    'label_html' => true,
+                    'attr' => [
+                            'class' => 'btn btn-default',
+                        'title' => 'Suivant',
+                    ],
                 ])
                 ->add('today', SubmitType::class, [
                     'label' => 'Aujourd\'hui',
-                    'attr' => ['class' => 'btn btn-default'],
+                    'attr' => [
+                        'class' => 'btn btn-default',
+                        'title' => 'Aujourd\'hui',
+                    ],
                 ])
                 ;
             }

@@ -162,12 +162,21 @@ body > script {display: none !important;}
     background-color: var(--danger-color);
     color: var(--white-color);
 }
+.btn-light {
+    background-color: var(--light-color);
+    color: var(--backgroud-color);
+}
 .btn-ico {
     font-size: 28px;
     padding: 5px 8px;
     min-width: 45px;
     text-align: center;
     margin-right: 15px;
+}
+.btn-list {
+    display: block;
+    padding: 5px;
+    color: var(--background-color);
 }
 body {
     background-color: var(--light-color);
@@ -319,4 +328,16 @@ body {
     cursor: pointer;
     opacity: 0;
     z-index: -1;
+}
+.badge {
+    display: inline-block;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    box-sizing: border-box;
+    font-weight: 700;
+    color: var(--gray-color);
+    line-height: 45px;
+    font-size: 18px;
 }

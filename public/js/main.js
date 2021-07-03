@@ -27,6 +27,8 @@ $(document).ready(function(){
         format: 'yyyy-mm-dd'
     });
     $(document).on('change', '#event_filter_period', submitFom);
+    $(document).on('click', '.nav-bar .btn', toggleMenu);
+
 });
 
 jQuery(function($){
@@ -84,4 +86,10 @@ function previewFile() {
 function submitFom() {
     console.log($(this).closest('form'));
     $(this).closest('form').submit()
+}
+
+function toggleMenu(e) {
+    e.preventDefault();
+    $('nav').toggleClass('nav-active');
+    $('.nav-bar .btn').toggleClass('nav-hide');
 }

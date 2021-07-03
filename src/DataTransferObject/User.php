@@ -39,6 +39,11 @@ class User {
         return $this;
     }
 
+    public function getId(): int
+    {
+        return $this->user->getId();
+    }
+
     public function getMemberIdentity(): ?Identity
     {
         return $this->memberIdentity;

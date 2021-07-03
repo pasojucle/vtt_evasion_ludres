@@ -51,8 +51,15 @@ nav > ul> li > a:hover, nav > ul> li > a.active {
 .row {
     display: flex;
     width: 100%;
-    line-height: 45px;
+    line-height: 25px;
+    flex-wrap: wrap;
+    margin-left: -5px;
+    margin-right: -5px;
 }
+.row .col-1, .row .col-2, .row .col-3, .row .col-4, .row .col-5, .row .col-6, .row .col-7, .row .col-8, .row .col-9, .row .col-10, .row .col-11, .row .col-12 {
+    padding: 5px;
+    box-sizing: border-box;
+} 
 .row .col-1 {
     width: 8.33333%;
 }
@@ -91,12 +98,123 @@ nav > ul> li > a:hover, nav > ul> li > a.active {
 }
 ul.filters {
     margin-bottom: 15px;
-    height: 41px;
+}
+ul.filters input {
+    padding: 10px;
 }
 ul.filters > li {
     display: inline-block;
     line-height: 41px;
 }
-ul.filters > li:not(:first-child) {
-    margin-left: 10px;
+ul.filters > li {
+    padding: 5px;
+}
+ul.filters > li > * {
+    vertical-align: middle;
+}
+.nav-bar {
+    display: none;
+}
+
+@media screen and (max-width: 800px) {
+    .nav-bar {
+        display: block;
+        background-color: var(--background-color);
+        text-align: center;
+        position: relative;
+    }
+    .nav-bar > * {
+        vertical-align: middle;
+    }
+    .nav-bar .btn {
+        margin-right: unset;
+        position: absolute;
+        left: 0;
+    }
+    .nav-bar .btn::before {
+        content: '\f0c9';
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        font-size: 28px;
+        position: absolute;
+        display: block;
+        width: 45px;
+        height: 45px;
+        line-height: 45px;
+        color: var(--white-color);
+        text-align: center;
+        top: 0px;
+        left: 0px;
+    }
+    .nav-bar .btn.nav-hide::before {
+        content: '\f00d';
+    }
+    .nav-bar img {
+        height: 45px;
+    }
+    .header {
+        display: none;
+    }
+    main {
+        display: block;
+        max-width: 100%;
+    }
+    nav {
+        position: absolute;
+        top: 50px;
+        left: -100vw;
+        transition: all 1s ease;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--white-color);
+        z-index: 3;
+    }
+    nav.nav-active {
+        left: 0;
+    }
+    .row .col-1, .row .col-2, .row .col-3, .row .col-4, .row .col-5, .row .col-6, .row .col-7, .row .col-8, .row .col-9, .row .col-10, .row .col-11, .row .col-12 {
+        width: unset;
+    } 
+    .row .col-xs-1 {
+        width: 8.333%;
+    }
+    .row .col-xs-2 {
+        width: 16.666%;
+    }
+    .row .col-xs-3 {
+        width: 25%;
+    }
+    .row .col-xs-4 {
+        width: 33.333%;
+    }
+    .row .col-xs-5 {
+        width: 41.666%;
+    }
+    .row .col-xs-6 {
+        width: 50%;
+    }
+    .row .col-xs-7 {
+        width: 66.666%;
+    }
+    .row .col-xs-8 {
+        width: 66.666%;
+    }
+    .row .col-xs-9 {
+        width: 75%;
+    }
+    .row .col-xs-10 {
+        width: 83.333%;
+    }
+    .row .col-xs-11 {
+        width: 91.666%;
+    }
+    .row .col-xs-12 {
+        width: 100%;
+    }
+    ul.filters .btn:not(.btn-ico){
+        padding: 12px 15px;
+    }
+    .wrapper {
+        min-height: calc(100vh - 45px);
+    }
 }

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.member.fullName }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="block">
+            <div class="block-title">
+                <h2>
+                    {{ user.member.fullName }}
+                    <span class="badge" title="{{ user.level.title }}" style="background-color: {{ user.level.color }}">{{ user.level.monogram }}</span>
+                </h2>
+                <span class="tools">
+                    <a href="{{ path('admin_users', {'filtered': 1}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des adhérents"><i class="fas fa-chevron-left"></i></a>
+                </span>
+            </div>
+            <div class="block-body row">
+                {% set licence = user.seasonLicence(licence_service.currentSeason) %}
+                {% if user.member.picture %}
+                    <div class="col-2 col-xs-4">
+                        <img src="{{ '/uploads/' ~ user.member.picture }}" style="width: 100px;">
+                    </div>
+                {% endif %}
+                <div class="col-5 col-xs-8">
+                    <ul>
+                        <li><b>Né(e) le : </b>{{ user.member.birthDateAndPlace }}</li>
+                        <li><i class="fas fa-map-marker-alt"></i> {{ user.member.address.street }}</li>
+                        <li>{{ user.member.address.postalCode }} {{ user.member.address.town }}</li>
+                        <li><i class="fas fa-at"></i> {{ user.member.email }}</li>
+                        <li><i class="fas fa-phone-square"></i> {{ user.member.phone }}</li>
+                    </ul>
+                </div>
+                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+                    <div class="col-5 col-xs-12">
+                        <ul>
+                            <li><b>{{ user.kinShip.type | trans  }}</b> : {{ user.kinShip.fullName }} </li>
+                            <li><i class="fas fa-map-marker-alt"></i> {{ user.kinShip.address.street }}</li>
+                            <li>{{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}</li>
+                            <li><i class="fas fa-at"></i> {{ user.kinShip.email }}</li>
+                            <li><i class="fas fa-phone-square"></i> {{ user.kinShip.phone }}</li>
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting %}
+                    <div class="col-5 col-xs-12">
+                        <ul>
+                            <li><b>N° de sécurité sociale : </b> {{ user.health.socialSecurityNumber }} </li>
+                            <li><b>Groupe sanguin : </b> {{ user.health.bloodGroup }}</li>
+                            <li><b>Mutuelle : </b>{{ user.health.mutualCompany }} - N° : </b>{{ user.health.mutualNumber }}</li>
+                            <li><b><i class="fas fa-syringe"></i> antitétanique : </b>{{ user.health.tetanusBooster }}</li>
+                            <li><b>Médecin traitant : </b>{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}</li>
+                            <li>{{ user.health.doctorAddress }} {{ user.health.doctorTown }} <i class="fas fa-phone-square"></i> {{ user.health.doctorPhone }}</li>
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if user.health.diseases is not empty %}
+                    <div class="col-7 col-xs-12">
+                        {% for type, diseases in user.health.diseases %}
+                            <h3>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</h3>
+                            <ul class="with-list-style">
+                                {% for disease in diseases %}
+                                    <li>
+                                        {{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}
+                                        {% if disease.title is not null %} : {{ disease.title }}{% endif %}
+                                        <i class="fas fa-file-medical"></i> {{ disease.curentTreatment }} <i class="fas fa-ambulance"></i> {{ disease.emergencyTreatment }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
