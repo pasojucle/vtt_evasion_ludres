@@ -26,9 +26,8 @@ $(document).ready(function(){
     $('.js-datepicker').datepicker({
         format: 'yyyy-mm-dd'
     });
-    $(document).on('change', '#event_filter_period', submitFom);
+    $(document).on('change', '#event_filter_period, #user_filter_category, #user_filter_level', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
-
 });
 
 jQuery(function($){

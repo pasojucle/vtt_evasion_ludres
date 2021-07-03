@@ -52,7 +52,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i')
             ;
-        dump($filters);
+
         if (!empty($filters)) {
             if (null !== $filters['fullName']) {
                 $qb->andWhere(
