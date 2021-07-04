@@ -42,11 +42,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-        /**
-     * @return Event[] Returns an array of Event objects
+    /**
+     * @return User[] Returns an array of Userobjects
      */
 
-    public function findMemberQuery(array $filters): QueryBuilder
+    public function findMemberQuery(?array $filters): QueryBuilder
     {
         $currentSeason = $this->licenceService->getCurrentSeason();
         $qb = $this->createQueryBuilder('u')
@@ -89,7 +89,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->orderBy('i.name', 'ASC')
         ;
     }
-
 
     public function findMaxId(): int
     {

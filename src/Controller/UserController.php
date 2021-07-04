@@ -43,14 +43,14 @@ class UserController extends AbstractController
         bool $filtered
     ): Response
     {
-        $filters = ($filtered) ? $this->session->get('admin_users_filters'): [];
+        $filters = ($filtered) ? $this->session->get('admin_users_filters'): null;
+
         $form = $this->createForm(UserFilterType::class, $filters);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $this->session->set('admin_users_filters', $filters);
-
         }
 
         $query =  $this->userRepository->findMemberQuery($filters);

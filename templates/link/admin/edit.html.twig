@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% set title = (link is null) ? 'Ajouter un lien' : 'Modifier un lien' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        {{ form_start(form) }}
+        <div class="block">
+            <div class="block-title">
+                <h2>{{ title }}</h2>
+                <span class="tools">
+                    <a href="{{ path('admin_links') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>
+                </span>
+            </div>
+            <div class="block-body">
+
+                <div class="form-group">
+                    {{ form_row(form.url) }}
+                </div>
+                {% if link is not null %}
+                    <div class="form-group">
+                        {{ form_row(form.title) }}
+                    </div>
+                    {{ form_row(form.description) }}
+                    <div class="form-group">
+                        {{ form_row(form.image) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.imageFile) }}
+                        <div class="form-group-inline">
+                            {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '/uploads/' ~ link.image %}
+                            <img class="user-picture" src="{{ src }}" alt="{{ src }}">   
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.isDisplayHome) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="block-footer">
+                {{ form_row(form.save) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -170,8 +170,11 @@ p + p {
     border: 1px solid rgba(0,0,0,.125);
     border-radius: .25rem;
 }
+.card a {
+    color: var(--white-color);
+}
 .card-img {
-    height: 210px;
+    height: 150px;
     width: 100%;
     display: block;
     border-style: none;
@@ -181,6 +184,8 @@ p + p {
 }
 .card-body {
     padding: 15px;
+    background-color: var(--primary-color);
+    height: calc(100% - 150px);
 }
 .text-col-2 {
     column-count: 2;
@@ -237,7 +242,8 @@ p + p {
     width: 100%;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
+    /* background-size: cover; */
+    background-size: 90% auto;
 }
 .wrapper.background-primary .wrapper-content {
     padding: 10%;
@@ -278,14 +284,14 @@ p + p {
 .wrapper.col-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    column-gap: 50px;
+    gap: 50px;
     text-align: center;
-    padding: 5% 20%;
+    padding: 5% 15%;
 }
 .wrapper.col-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    column-gap: 50px;
+    gap: 50px;
     text-align: center;
     padding: 5% 10%;
 }

@@ -41,9 +41,9 @@ class HeaderService
                 'subMenus' => [],
             ],
             [
-                'label' => 'Les partenaires',
+                'label' => 'Liens',
                 'route' => 'links',
-                'pattern' => '/home/',
+                'pattern' => '/links/',
                 'subMenus' => [],
             ],
             [
@@ -91,9 +91,9 @@ class HeaderService
                  'subMenus' => [],
             ],
             [
-                'label' => 'Gestion des partenaires',
-                 'route' => 'admin_events',
-                 'pattern' => '/session/',
+                'label' => 'Gestion des liens',
+                 'route' => 'admin_links',
+                 'pattern' => '/link/',
                  'subMenus' => [],
             ],
             [

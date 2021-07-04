@@ -201,10 +201,14 @@ body {
 .form-group {
     margin-bottom: 15px;
 }
-.form-group > input, .form-group-inline > input, .form-group-inline > select {
+.form-group > input, .form-group-inline > input, .form-group-inline > select, .form-group > textarea {
     width: 100%;
     height: 30px;
     line-height: 30px;
+}
+
+.form-group > textarea {
+    height: 100px;
 }
 .form-group > .widget-inline {
     display: inline-block;

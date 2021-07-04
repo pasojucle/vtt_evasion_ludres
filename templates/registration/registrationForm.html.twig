@@ -39,9 +39,7 @@
                 </div>
                 <div class="content-body">
                     {% if current is not empty and current.form is null %}
-                        {# {% for content in current.contents %} #}
-                            <div class="container">{{ current.content | raw}}</div>
-                        {# {% endfor %} #}
+                        <div class="container">{{ current.content | raw}}</div>
                     {% endif %}
                     {% if current.filename is not null %}
                         <div class="container">

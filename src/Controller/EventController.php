@@ -34,6 +34,17 @@ class EventController extends AbstractController
         $this->session = $session;
     }
 
+    
+    /**
+     * @Route(
+     *  "/admin/",
+     *  name="admin_home")
+     */
+    public function adminHome()
+    {
+        $this->redirectToRoute('admin_events');
+    }
+
     /**
      * @Route(
      *  "/admin/calendrier/{period}/{year}/{month}/{day}",
