@@ -112,66 +112,8 @@ ul.filters > li {
 ul.filters > li > * {
     vertical-align: middle;
 }
-.nav-bar {
-    display: none;
-}
 
 @media screen and (max-width: 800px) {
-    .nav-bar {
-        display: block;
-        background-color: var(--background-color);
-        text-align: center;
-        position: relative;
-    }
-    .nav-bar > * {
-        vertical-align: middle;
-    }
-    .nav-bar .btn {
-        margin-right: unset;
-        position: absolute;
-        left: 0;
-    }
-    .nav-bar .btn::before {
-        content: '\f0c9';
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        font-size: 28px;
-        position: absolute;
-        display: block;
-        width: 45px;
-        height: 45px;
-        line-height: 45px;
-        color: var(--white-color);
-        text-align: center;
-        top: 0px;
-        left: 0px;
-    }
-    .nav-bar .btn.nav-hide::before {
-        content: '\f00d';
-    }
-    .nav-bar img {
-        height: 45px;
-    }
-    .header {
-        display: none;
-    }
-    main {
-        display: block;
-        max-width: 100%;
-    }
-    nav {
-        position: absolute;
-        top: 50px;
-        left: -100vw;
-        transition: all 1s ease;
-        width: 100vw;
-        height: 100vh;
-        background-color: var(--white-color);
-        z-index: 3;
-    }
-    nav.nav-active {
-        left: 0;
-    }
     .row .col-1, .row .col-2, .row .col-3, .row .col-4, .row .col-5, .row .col-6, .row .col-7, .row .col-8, .row .col-9, .row .col-10, .row .col-11, .row .col-12 {
         width: unset;
     } 

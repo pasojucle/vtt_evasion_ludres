@@ -60,14 +60,14 @@ ul.sub-menu a {
 ul.sub-menu a:hover {
     font-weight: 700;
 }
-.header-container {
+.header {
     position: relative;
     overflow: hidden;
     width: 100%;
     text-align: center;
     background-color: var(--background-color);
 }
-.header-container .grayscale-container {
+.header .grayscale-container {
     height: 130px;
     width: max-content;
     position: absolute;
@@ -81,7 +81,7 @@ ul.sub-menu a:hover {
     -o-filter: grayscale(100%);
 
 }
-.header-container .grayscale-container img {
+.header .grayscale-container img {
     margin: auto -2.5px;
     height: 100%;
 }
@@ -143,7 +143,6 @@ p + p {
 }
 .background-ligth {
     padding: 25px;
-    border-radius: 5px;
     color: var(--background-color);
 }
 .background-ligth h1 {
@@ -164,28 +163,39 @@ p + p {
 .card {
     position: relative;
     word-wrap: break-word;
-    background-color: var(--white-color);
     color: var(--background-color);
     background-clip: border-box;
-    border: 1px solid rgba(0,0,0,.125);
     border-radius: .25rem;
+    background-color: var(--white-color);
 }
-.card a {
+.card.card-link {
+    background-color: var(--primary-color);
+}
+.card.card-link a {
     color: var(--white-color);
 }
 .card-img {
-    height: 150px;
     width: 100%;
     display: block;
     border-style: none;
+    background-color: var(--white-color);
+}
+.card-link .card-img {
+    height: 150px;
+    background-size: 90% auto;
+}
+.card-event .card-img {
+    height: 200px;
 }
 .card-footer {
     margin-bottom: 15px;
 }
 .card-body {
     padding: 15px;
-    background-color: var(--primary-color);
-    height: calc(100% - 150px);
+    /* height: calc(100% - 150px); */
+}
+.card h3 {
+    font-weight: normal;
 }
 .text-col-2 {
     column-count: 2;
@@ -242,8 +252,7 @@ p + p {
     width: 100%;
     background-position: center;
     background-repeat: no-repeat;
-    /* background-size: cover; */
-    background-size: 90% auto;
+    background-size: cover;
 }
 .wrapper.background-primary .wrapper-content {
     padding: 10%;
@@ -255,15 +264,15 @@ p + p {
 .wrapper.background-ligth h1, .wrapper.background-ligth h2 {
     color: var(--background-color);
 }
-.wrapper.background-primary h1 {
-    font-size: 50px;
+.wrapper h1 {
+    font-size: 30px;
     margin-bottom: 50px;
 }
-.wrapper.background-primary h2 {
+.wrapper h2 {
     font-size: 30px;
     text-shadow: unset;
 }
-.wrapper.background-primary .content-footer {
+.wrapper .content-footer {
     text-align: center;
     margin-top: 25px;
 }
@@ -334,4 +343,55 @@ button[type="submit"] {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
+}
+@media screen and (max-width: 800px) {
+    .wrapper.col-4, .wrapper.col-2, .wrapper.col-1fr-3fr, .wrapper.col-3 {
+        grid-template-columns: 1fr;
+        padding: unset;
+        gap: 20px;
+    }
+    .background-ligth {
+        padding: unset;
+    }
+    .card-link .card-img {
+        height: 100px;
+        background-size: 50% auto;
+    }
+    .wrapper-content h1 {
+        font-size: 40px;
+    }
+    .content-container form {
+        width: calc(100VW - 50px);
+    }
+    .content-container table {
+        font-size: 12px;
+    }
+    .wrapper-img {
+        height: 150px;
+    }
+    nav > ul > li > a {
+        padding: 15px;
+        display: block;
+        color: var(--background-color);
+        background-color: var(--white-color);
+    }
+    nav > ul> li > a:hover, nav > ul> li > a.active {
+        color: var(--white-color);
+        background-color: var(--primary-color);
+    }
+    nav > ul > li {
+        display: block;
+        margin: unset;
+    }
+    nav {
+        text-align: left;
+    }
+    .progress-container {
+        display: none;
+    }
+    nav.fixed {
+        position: absolute;
+        top: 50px;
+        left: -100vh;
+    }
 }
