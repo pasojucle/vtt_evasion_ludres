@@ -21,15 +21,15 @@
                     {% for session in cluster.sessions %}                
                         <li>
                             <div class="row row-list">
-                                <div class="col-1">
+                                <div class="col-md-1">
                                     {% if session.isPresent %}
                                         <span class="success"><i class="fas fa-check-circle"></i></span>
                                     {% else %}
                                         <span class="alert-danger "><i class="fas fa-times-circle"></i></span>
                                     {% endif %}
                                 </div>
-                                <div class="col-5">{{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}</div>
-                                <div class="col-4">
+                                <div class="col-md-5">{{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}</div>
+                                <div class="col-md-4">
                                     {% if session.isPresent %}
                                         <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-danger btn-ico" title="Absent"><i class="fas fa-check-circle"></i></a>
                                     {% else %}

@@ -1,20 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Accueil{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    
+    <div class="wrapper background-ligth wrapper-home wrapper-full-width ">
+        <div class="news-container">
+        
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/patrick/Sites/vtt_evasion_ludres/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/patrick/Sites/vtt_evasion_ludres/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
-</div>
+        <div class="events-container col-1">
+            {% for event in events %}
+                <div class="card card-event">
+                    <div class="card-img" style="background-image:url('../../images/vttludresgroupe.jpg'"></div>
+                    <div class="card-body">
+                        <h2>{{ event.title }}</h2>
+                        <h3>
+                            {% if event.endAt is null %}
+                                {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y')  | capitalize}}
+                            {% else %}
+                                du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y')}}} | capitalize} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                            {% endif %}
+                        </h3>
+                        {# {% if event.content is not null %}
+                            <p>{{ event.content|raw }}</p>
+                        {% endif %} #}
+                        
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary" class="modal-trigger" data-toggle="modal" data-type="danger">S'incrire</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="links-container col-4">
+            {% for link in links %}
+            <div class="card card-link">
+                <a href="{{ link.url }}" target="_blank">
+                    {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
+                    <div class="card-img" style="background-image:url({{ src }}"></div>
+                    <div class="card-body">
+                        <h3>{{ link.title }}</h3>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+    </div>
 {% endblock %}

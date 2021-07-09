@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EventRepository;
+use DateInterval;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -213,5 +215,35 @@ class Event
         }
 
         return $this;
+    }
+
+    public function isRegistrable(): bool
+    {
+        $today = new DateTime();
+        $interval = new DateInterval('P'.$this->displayDuration.'D');
+        $displayAt = clone $this->startAt;
+        $displayAt =  DateTime::createFromFormat('Y-m-d H:i:s', $displayAt->format('Y-m-d').' 00:00:00');
+        $closingAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->closingAt->format('Y-m-d').' 23:59:59');
+
+        return $displayAt->sub($interval) <= $today && $today <= $closingAt;
+    }
+
+    public function isOver(): bool
+    {
+        $today = new DateTime();
+        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+
+        return $this->startAt < $today;
+    }
+
+    public function isNext(): bool
+    {
+        $today = new DateTime();
+        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+        $startAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
+        $interval = new DateInterval('P'.$this->displayDuration.'D');
+        $displayAt = clone $this->startAt;
+
+        return  $displayAt->sub($interval) <= $today && $today < $startAt;
     }
 }

@@ -4,15 +4,14 @@
 
 {% block body %}
     
-    <div class="wrapper background-ligth col-3 wrapper-full-width ">
+    <div class="wrapper background-ligth col-4 wrapper-full-width ">
         {% for link in links %}
-        <div class="card">
+        <div class="card card-link">
             <a href="{{ link.url }}" target="_blank">
                 {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
                 <div class="card-img" style="background-image:url({{ src }}"></div>
                 <div class="card-body">
                     <h3>{{ link.title }}</h3>
-                    <p>{{ link.description }}</p>
                 </div>
             </a>
         </div>

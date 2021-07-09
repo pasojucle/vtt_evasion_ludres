@@ -17,11 +17,11 @@
             <div class="block-body row">
                 {% set licence = user.seasonLicence(licence_service.currentSeason) %}
                 {% if user.member.picture %}
-                    <div class="col-2 col-xs-4">
+                    <div class="col-md-2 col-xs-4">
                         <img src="{{ '/uploads/' ~ user.member.picture }}" style="width: 100px;">
                     </div>
                 {% endif %}
-                <div class="col-5 col-xs-8">
+                <div class="col-md-5 col-xs-8">
                     <ul>
                         <li><b>Né(e) le : </b>{{ user.member.birthDateAndPlace }}</li>
                         <li><i class="fas fa-map-marker-alt"></i> {{ user.member.address.street }}</li>
@@ -31,7 +31,7 @@
                     </ul>
                 </div>
                 {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
-                    <div class="col-5 col-xs-12">
+                    <div class="col-md-5 col-xs-12">
                         <ul>
                             <li><b>{{ user.kinShip.type | trans  }}</b> : {{ user.kinShip.fullName }} </li>
                             <li><i class="fas fa-map-marker-alt"></i> {{ user.kinShip.address.street }}</li>
@@ -42,7 +42,7 @@
                     </div>
                 {% endif %}
                 {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting %}
-                    <div class="col-5 col-xs-12">
+                    <div class="col-md-5 col-xs-12">
                         <ul>
                             <li><b>N° de sécurité sociale : </b> {{ user.health.socialSecurityNumber }} </li>
                             <li><b>Groupe sanguin : </b> {{ user.health.bloodGroup }}</li>
@@ -54,7 +54,7 @@
                     </div>
                 {% endif %}
                 {% if user.health.diseases is not empty %}
-                    <div class="col-7 col-xs-12">
+                    <div class="col-md-7 col-xs-12">
                         {% for type, diseases in user.health.diseases %}
                             <h3>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</h3>
                             <ul class="with-list-style">

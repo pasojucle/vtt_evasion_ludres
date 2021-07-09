@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Event;
 use App\Entity\Session;
 use App\Form\SessionType;
 use App\Repository\ClusterRepository;
@@ -34,7 +35,7 @@ class SessionController extends AbstractController
         return $this->redirectToRoute('admin_event_cluster_show', ['event' => $session->getCluster()->getEvent()->getId()]);
     }
 
-        /**
+    /**
      * @Route("/admin/groupe/change/{session}", name="admin_event_switch_cluster")
      */
     public function adminClusterSwitch(
@@ -61,4 +62,21 @@ class SessionController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+
+    /**
+     * @Route("/mon-compte/sortie/inscription/{event}", name="session_add")
+     */
+    public function sessionAdd(
+        Request $request,
+        Event $event
+    ): Response
+    {
+        
+
+        $referer = $request->headers->get('referer');
+        
+        return $this->render('user/add.session.modal.html.twig');
+    }
+
 }

@@ -3,12 +3,14 @@
 namespace App\Repository;
 
 use App\Entity\Event;
-use Doctrine\ORM\QueryBuilder;
+use DateTime;
+use Doctrine\ORM\Query\Expr;
 
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Query\QueryBuilder as QueryQueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\DBAL\Query\QueryBuilder as QueryQueryBuilder;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Event|null find($id, $lockMode = null, $lockVersion = null)
@@ -43,19 +45,30 @@ class EventRepository extends ServiceEntityRepository
             ;
         }
         return $qb
-            ->orderBy('e.startAt', 'DESC')
+            ->orderBy('e.startAt', 'ASC')
         ;
     }
 
-    /*
-    public function findOneBySomeField($value): ?Event
+
+    /**
+     * @return User[] Returns an array of enent objects
+     */
+
+    public function findEnableView(): array
     {
+        $today = new DateTime();
+        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+
         return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere(
+                (new Expr)->gte('e.startAt', ':today'),
+
+            )
+            ->setParameter('today', $today)
+            ->orderBy('e.startAt', 'ASC')
+            ->andHaving("DATE_SUB(e.startAt, e.displayDuration, 'DAY') <= :today")
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult();
         ;
     }
-    */
 }

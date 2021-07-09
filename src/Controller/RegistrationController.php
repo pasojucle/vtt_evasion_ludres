@@ -64,7 +64,7 @@ class RegistrationController extends AbstractController
 
     /**
      * @Route("/inscription/{step}", name="registration_form")
-     * @Route("/mon_compte/inscription/{step}", name="user_registration_form")
+     * @Route("/mon-compte/inscription/{step}", name="user_registration_form")
      */
     public function registerForm(
         Request $request,

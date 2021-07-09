@@ -37,7 +37,7 @@ class HeaderService
             [
                 'label' => 'Rando',
                 'route' => 'bike_rides',
-                'pattern' => '/home/',
+                'pattern' => '/bike_ride/',
                 'subMenus' => [],
             ],
             [

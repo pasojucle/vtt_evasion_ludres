@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Link;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -20,10 +21,6 @@ class LinkRepository extends ServiceEntityRepository
         parent::__construct($registry, Link::class);
     }
 
-    /**
-     * @return User[] Returns an array of Userobjects
-     */
-
     public function findMemberQuery(?array $filters = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('l')
@@ -34,6 +31,22 @@ class LinkRepository extends ServiceEntityRepository
         }
         return $qb
             ->orderBy('l.title', 'ASC')
+        ;
+    }
+
+    /**
+     * @return User[] Returns an array of link objects
+     */
+
+    public function findHomePageView(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere(
+                (new Expr)->eq('l.isDisplayHome', true)
+            )
+            ->orderBy('l.title', 'ASC')
+            ->getQuery()
+            ->getResult();
         ;
     }
 }

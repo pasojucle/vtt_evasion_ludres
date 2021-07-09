@@ -24,7 +24,7 @@ $(document).ready(function(){
     $(document).on('change', '#user_identities_1_otherAddress', updateIdentity);
     $(document).on('change', 'input[type="file"]', previewFile);
     $('.js-datepicker').datepicker({
-        format: 'yyyy-mm-dd'
+        format: 'yyyy-mm-dd hh:ii',
     });
     $(document).on('change', '#event_filter_period, #user_filter_category, #user_filter_level', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
@@ -45,6 +45,7 @@ jQuery(function($){
 		dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
 		weekHeader: 'Sm',
 		dateFormat: 'dd/mm/yy',
+        timeFormat:  "HH:mm",
 		firstDay: 1,
 		isRTL: false,
 		showMonthAfterYear: false,
@@ -83,7 +84,6 @@ function previewFile() {
 }
 
 function submitFom() {
-    console.log($(this).closest('form'));
     $(this).closest('form').submit()
 }
 
