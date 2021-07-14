@@ -3,42 +3,48 @@
 {% block title %}Calendrier des sorties{% endblock %}
 
 {% block body %}
-    <div class="wrapper background-ligth wrapper-full-width">
-        <div class="block">
-            <div class="block-title">
-                <h2>Calendrier des randonnées</h2>
-            </div>
-            <div class="block-body">
-                {% include('bike_ride/filter.html.twig') %}
-                <div class="bike-rides"> 
-                    {% for bikeRide in bikeRides %}
-                        {% set class = '' %}    
-                        {% if bikeRide.isNext %}
-                            {% set class = 'active' %}  
-                        {% elseif bikeRide.over %}
-                            {% set class = 'disable' %}  
-                        {% endif %}                               
-                        <div class="bike-ride-date item-center align-center {{ class }}">
-                            <div>
-                                {% if bikeRide.endAt is null %}
-                                    {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
-                                {% else %}
-                                    du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
-                                {% endif %}
-                                {% if bikeRide.isRegistrable %}
-                                    <a href="" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> S'incrire</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="bike-ride-detail {{ class }}">
-                            <h3>{{ bikeRide.title }}</h3>
-                            {% if bikeRide.minAge is not null %}
-                                <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
+    <div class="wrapper wrapper-full-width full-background">
+        <div class="wrapper-title">
+            <h1>Randonnées</h1>
+        </div>
+        <div class="wrapper-body">
+            {% include('bike_ride/filter.html.twig') %}
+            <div class="bike-rides"> 
+                {% for bikeRide in bikeRides %}
+                    {% set class = '' %}    
+                    {% if bikeRide.isNext %}
+                        {% set class = 'active' %}  
+                    {% elseif bikeRide.over %}
+                        {% set class = 'disable' %}  
+                    {% endif %}                               
+                    <div class="bike-ride-date item-center align-center {{ class }}">
+                        <div>
+                            {% if bikeRide.endAt is null %}
+                                {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                            {% else %}
+                                du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
                             {% endif %}
-                            <p>{{ bikeRide.content |raw }}</p>
+                            {% if bikeRide.isRegistrable %}
+                                <div class="bike-ride-date-btn">
+                                    <br>
+                                    <a href="{{ path('session_add', {'event': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> S'incrire</a>
+                                </div>
+                            {% endif %}
                         </div>
-                    {% endfor %}
-                </div>
+                    </div>
+                    <div class="bike-ride-detail {{ class }}">
+                        <h3>{{ bikeRide.title }}</h3>
+                        {% if bikeRide.minAge is not null %}
+                            <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
+                        {% endif %}
+                        <p>{{ bikeRide.content |raw }}</p>
+                    </div>
+                    {% if bikeRide.isRegistrable %}
+                        <div class="bike-ride-btn item-center align-center {{ class }}">
+                            <a href="{{ path('session_add', {'event': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> S'incrire</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
         {% include('common/pagination.html.twig') %}

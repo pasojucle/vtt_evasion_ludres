@@ -4,14 +4,6 @@ $(document).ready(function(){
         const offsetTop = $('ul.StepProgress').offset().top-100;
         let marginTop = stepProgressMargingTop;
         $( window ).scroll(function() {
-            if ($(window).scrollTop() > 150) {
-                $('nav').addClass('fixed');
-                $('nav img').removeClass('hidden');
-            } else {
-                $('nav').removeClass('fixed');
-                $('nav img').addClass('hidden');
-            }
-
             if ($(window).scrollTop() >= offsetTop) {
                 console.log($(window).scrollTop() - offsetTop);
                 marginTop = $(window).scrollTop() - 200;
@@ -21,6 +13,16 @@ $(document).ready(function(){
             $('ul.StepProgress').css('margin-top', marginTop+'px');
         });
     }
+    $( window ).scroll(function() {
+        if ($(window).scrollTop() > 150) {
+            console.log('fixed');
+            $('nav').addClass('fixed');
+            $('nav img').removeClass('hidden');
+        } else {
+            $('nav').removeClass('fixed');
+            $('nav img').addClass('hidden');
+        }
+    });
     $(document).on('change', '#user_identities_1_otherAddress', updateIdentity);
     $(document).on('change', 'input[type="file"]', previewFile);
     $('.js-datepicker').datepicker({

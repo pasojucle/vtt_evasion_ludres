@@ -19,12 +19,22 @@
                 <link rel="stylesheet" type="text/css" href="/css/style.css">
             {% endif %}
             <link rel="stylesheet" type="text/css" href="/css/common.css">
+            <link rel="stylesheet" type="text/css" href="/css/modal.css">
         {% endblock %}
     </head>
     <body>
         {% if not isAdmin %}
             {% include 'common/header.html.twig' %}
         {% endif %}
+        <div class="flashes">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
         <main>
             {% if isAdmin %}
                 <div class="header"><h1>Administration du site</h1></div>
@@ -40,6 +50,7 @@
             crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="/js/main.js"></script>
+        <script src="/js/modal.js"></script>
         {#{{ encore_entry_script_tags('app') }}#}
     {% endblock %}
 </html>

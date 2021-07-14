@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -81,12 +83,18 @@ class EventType extends AbstractType
             ])
             ->add('minAge', IntegerType::class, [
                 'label' => 'Age minimum (optionnel)',
-                'required' => false,
                 'attr' => [
                     'min' => 10,
                     'max' => 90,
                 ],
                 'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+            ])
+            ->add('type', ChoiceType::class, [
+                'label' => 'Type de randonnée',
+                'choices' => array_flip(Event::TYPES),
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],

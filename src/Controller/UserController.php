@@ -62,7 +62,8 @@ class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-        /**
+
+    /**
      * @Route("/admin/adherent/{user}", name="admin_user")
      */
     public function adminUser(
@@ -71,6 +72,19 @@ class UserController extends AbstractController
     ): Response
     {
         return $this->render('user/admin/user.html.twig', [
+            'user' => new User($user),
+        ]);
+    }
+
+    /**
+     * @Route("/mon-compte/{user}", name="user_account")
+     */
+    public function userAccount(
+        Request $request,
+        UserEntity $user
+    ): Response
+    {
+        return $this->render('user/account.html.twig', [
             'user' => new User($user),
         ]);
     }

@@ -2,16 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\ClusterRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ClusterRepository;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=ClusterRepository::class)
  */
 class Cluster
 {
+    public const SCHOOL_MAX_MEMEBERS = 6;
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -34,6 +36,16 @@ class Cluster
      * @ORM\JoinColumn(nullable=false)
      */
     private $event;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $maxUsers;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Level::class, inversedBy="clusters")
+     */
+    private $level;
 
     public function __construct()
     {
@@ -92,6 +104,19 @@ class Cluster
         return $this;
     }
 
+    public function getMemberSessions(): ArrayCollection
+    {
+        $memberSessions = [];
+        foreach ($this->sessions as $session) {
+            $roles = $session->getUser()->getRoles();
+            if (in_array('USER', $roles)) {
+                $memberSessions[] = $session->getUser();
+            }
+        }
+
+        return new ArrayCollection($memberSessions);
+    }
+
     public function getEvent(): ?Event
     {
         return $this->event;
@@ -104,4 +129,27 @@ class Cluster
         return $this;
     }
 
+    public function getMaxUsers(): ?int
+    {
+        return $this->maxUsers;
+    }
+
+    public function setMaxUsers(?int $maxUsers): self
+    {
+        $this->maxUsers = $maxUsers;
+
+        return $this;
+    }
+
+    public function getLevel(): ?Level
+    {
+        return $this->level;
+    }
+
+    public function setLevel(?Level $level): self
+    {
+        $this->level = $level;
+
+        return $this;
+    }
 }

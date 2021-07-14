@@ -41,7 +41,7 @@ registration_step:
     default: Bulletin d'inscription
     adult: Bulletin d'inscription Adulte
     minor: Bulletin d'inscription Mineur
-    testing: Bulletin de pré-inscription pour 3 séances concécutives d'essai gratuites
+    testing: Bulletin de pré-inscription pour 3 séances concécutives d'essai gratuites
 
 approval: 
   right_to_the_image: Droit à l'image
@@ -62,3 +62,7 @@ event:
     week: Semaine
     month: Mois
     all: Tous
+  type:
+    casual: Randonnée occasionnelle
+    school: Randonnée école VTT
+    adult: Randonnée adultes et ados

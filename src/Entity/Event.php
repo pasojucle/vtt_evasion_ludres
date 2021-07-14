@@ -24,9 +24,18 @@ class Event
 
     public const PERIODS = [
         self::PERIOD_DAY => 'event.period.day',
-        self::PERIOD_WEEK=> 'event.period.week',
+        self::PERIOD_WEEK => 'event.period.week',
         self::PERIOD_MONTH => 'event.period.month',
         self::PERIOD_ALL => 'event.period.all',
+    ];
+
+    public const TYPE_CASUAL = 1;
+    public const TYPE_SCHOOL = 2;
+    public const TYPE_ADULT = 3;
+    public const TYPES = [
+        self::TYPE_CASUAL => 'event.type.casual',
+        self::TYPE_SCHOOL => 'event.type.school',
+        self::TYPE_ADULT => 'event.type.adult',
     ];
 
     /**
@@ -72,14 +81,14 @@ class Event
     private $minAge;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $usersPerCluster;
-
-    /**
      * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="event")
      */
     private $clusters;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $type = self::TYPE_CASUAL;
 
     public function __construct()
     {
@@ -175,18 +184,6 @@ class Event
         return $this;
     }
 
-    public function getUsersPerCluster(): ?int
-    {
-        return $this->usersPerCluster;
-    }
-
-    public function setUsersPerCluster(?int $usersPerCluster): self
-    {
-        $this->usersPerCluster = $usersPerCluster;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Cluster[]
      */
@@ -245,5 +242,17 @@ class Event
         $displayAt = clone $this->startAt;
 
         return  $displayAt->sub($interval) <= $today && $today < $startAt;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 }

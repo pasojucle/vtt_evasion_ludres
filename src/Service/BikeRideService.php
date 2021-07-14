@@ -58,21 +58,22 @@ class BikeRideService
                 $date->add(new DateInterval($intervals[$period]));
             }
         }
-
+        $stardAt = clone $date;
+        $endAt = clone $date;
         switch ($period) {
             case Event::PERIOD_DAY:
-                $stardAt = $date;
-                $endAt = $date;
+                $stardAt = $stardAt;
+                $endAt = $endAt;
                 break;
             
             case Event::PERIOD_WEEK:
-                $stardAt =  clone $date->modify('monday this week');
-                $endAt = clone $date->modify('sunday this week');
+                $stardAt =  $stardAt->modify('monday this week');
+                $endAt = $endAt->modify('sunday this week');
                 break;
             
             case Event::PERIOD_MONTH:
-                $stardAt =  clone $date->modify('first day of this month');
-                $endAt = clone $date->modify('last day of this month');
+                $stardAt =  $stardAt->modify('first day of this month');
+                $endAt = $endAt->modify('last day of this month');
                 break;
             
             default:

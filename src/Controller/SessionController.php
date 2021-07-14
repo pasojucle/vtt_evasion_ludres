@@ -3,22 +3,28 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\Cluster;
 use App\Entity\Session;
+use App\Form\SessionAddType;
 use App\Form\SessionType;
 use App\Repository\ClusterRepository;
+use App\Repository\SessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+    private SessionInterface $session;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session)
     {
         $this->entityManager = $entityManager;
+        $this->session = $session;
     }
     /**
      * @Route("/admin/seance/{session}", name="admin_session_present")
@@ -65,18 +71,75 @@ class SessionController extends AbstractController
 
 
     /**
-     * @Route("/mon-compte/sortie/inscription/{event}", name="session_add")
+     * @Route("/mon-compte/rando/inscription/{event}",
+     * name="session_add")
      */
     public function sessionAdd(
         Request $request,
-        Event $event
+        Event $event,
+        SessionRepository $sessionRepository
     ): Response
     {
-        
+        $user = $this->getUser();
+        $clusters = $event->getClusters();
+        $session = $sessionRepository->findByUserAndClusters($user, $clusters);
+        $message = 'Vous êtes déjà inscription à cette rando';
 
-        $referer = $request->headers->get('referer');
+        if (null === $session) {
+            $userCluster = null;
+            if ($event->getType() === Event::TYPE_SCHOOL && null !== $user->getLevel()) {
+                $clustersLevelAsUser = [];
+                foreach($event->getClusters() as $cluster) {
+                    if ($cluster->getLevel() === $user->getLevel()) {
+                        $clustersLevelAsUser[] = $cluster;
+                        if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {
+                            $userCluster = $cluster;
+                        }
+                    }
+                }
+                if (null === $userCluster) {
+                    $cluster = new Cluster();
+                    $count = count($clustersLevelAsUser) + 1;
+                    $cluster->setTitle($user->getLevel()->getTitle().' '.$count)
+                        ->setLevel($user->getLevel())
+                        ->setEvent($event)
+                        ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS);
+                }
+            }
+            
+            if (null === $userCluster && 1 === $clusters->count()) {
+                $userCluster = $clusters->first();
+            }
+
+            $session = new Session();
+            $session->setUser($user)
+                ->setCluster($userCluster);
+        }
+
+        $form = $this->createForm(SessionAddType::class, $session, [
+            'clusters' => $clusters,
+        ]);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $session = $form->getData();
+            $message = 'Votre inscription a bien été prise en compte';
+        }
+
+        if (null === $session->getCluster()) {
+
+            return $this->render('session/add.html.twig', [
+                'form' => $form->createView(),
+                'event' => $event,
+            ]);
+        }
+
+        $this->entityManager->persist($session);
+        $this->entityManager->flush();
         
-        return $this->render('user/add.session.modal.html.twig');
+        $this->addFlash('success', $message);
+
+        return $this->redirectToRoute('user_account', ['user' => $user->getId()]);
     }
 
 }

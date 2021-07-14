@@ -2,9 +2,13 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
+use App\Entity\Event;
 use App\Entity\Session;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * @method Session|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +23,19 @@ class SessionRepository extends ServiceEntityRepository
         parent::__construct($registry, Session::class);
     }
 
-    // /**
-    //  * @return Session[] Returns an array of Session objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findByUserAndClusters(User $user, Collection $clusers)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Session
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
+            ->leftJoin('s.cluster', 'c')
+            ->andWhere(
+                (new Expr)->in('s.cluster', ':clusers'),
+                (new Expr)->eq('s.user', ':user'),
+            )
+            ->setParameter('clusers', $clusers)
+            ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }

@@ -88,6 +88,9 @@ ul.sub-menu a:hover {
 h1 {
     color: var(--light-color);
 }
+.wrapper .progress-container h1 {
+    font-size: 24px;
+}
 h2 {
     color: var(--primary-color);
     margin-bottom: 5px;
@@ -126,13 +129,16 @@ p + p {
     content: '';
     clear: both;
 }
-.col-1, .col-2, .col-3, .col-4, .col-1fr-3fr {
+.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1fr-3fr {
     display: grid;
-    gap: 50px;
+    gap: 5%;
 }
 .wrapper-full.col-1 {
     max-width: 1000px;
     box-sizing: border-box;
+}
+.events-container.col-1 {
+    gap: 25px;
 }
 .col-1 {
     grid-template-columns: 1fr;
@@ -148,9 +154,11 @@ p + p {
     grid-template-columns: repeat(4, 1fr);
     text-align: center;
 }
+.col-2-1 {
+    grid-template-columns: 2fr 1fr;
+}
 .col-1fr-3fr {
-    display: grid;
-    grid-template-columns: 1fr 3fr ;
+    grid-template-columns: 1fr 3fr;
 }
 .wrapper.min-content {
     width: min-content;
@@ -194,8 +202,13 @@ p + p {
     height: 150px;
     background-size: 90% auto;
 }
-.card-event .card-img {
-    height: 200px;
+.card-img {
+    height: 220px;
+}
+.card .card-title h2 {
+    font-size: 17px;
+    color: var(--primary-color-darker);
+    margin-top: 15px;
 }
 .card-footer {
     margin-bottom: 15px;
@@ -203,6 +216,9 @@ p + p {
 .card-body {
     padding: 15px;
     /* height: calc(100% - 150px); */
+}
+.card-event .card-body p {
+    text-align: center;
 }
 .card h3 {
     font-weight: normal;
@@ -248,30 +264,30 @@ p + p {
     display: none;
 }
 
-.wrapper.background-primary {
+.background-primary {
     background-color: var(--primary-color);
     margin: unset;
     width: 100%;
     box-sizing: border-box;
 }
-.wrapper.background-primary .wrapper-img, .card-img {
+.background-primary .wrapper-img, .card-img {
     width: 100%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
 }
-.wrapper.background-primary .wrapper-content {
+.background-primary .wrapper-content {
     padding: 10%;
     color: var(--white-color);
 }
-.wrapper.background-primary h1, .wrapper.background-primary h2 {
+.background-primary h1, .background-primary h2 {
     color: var(--white-color);
 }
-.wrapper.background-ligth h1, .wrapper.background-ligth h2 {
+.background-ligth h1, .background-ligth h2 {
     color: var(--background-color);
 }
 .wrapper h1 {
-    font-size: 30px;
+    font-size: 50px;
     margin-bottom: 50px;
 }
 .wrapper h2 {
@@ -282,27 +298,32 @@ p + p {
     text-align: center;
     margin-top: 25px;
 }
-.wrapper.background-ligth {
+.background-ligth {
     background-color: var(--light-color);
     box-sizing: border-box;
 }
-.wrapper.background-gray {
+.background-gray {
     background-color: var(--gray-color);
     box-sizing: border-box;
     padding: 25px;
-    border-radius: 5px;
 }
 .wrapper-full-width {
     width: 100%;
     margin: unset;
     padding: 5% 10%;
+    box-sizing: border-box;
+}
+.wrapper-medium-width {
+    width: 100%;
+    margin: unset;
+    padding: 5% 20%;
+    box-sizing: border-box;
 }
 
 .wrapper-home {
     display: grid;
     grid-template-areas: "news events"
                          "links links";
-    grid-template-rows: 1fr 250px;
     grid-template-columns: 1fr 250px;
     gap: 50px;
 }
@@ -369,20 +390,28 @@ button[type="submit"] {
 .bike-rides .bike-ride-detail {
     background-color: var(--white-color);
 }
-.bike-rides .bike-ride-date {
+.bike-rides .bike-ride-date, .bike-rides .bike-ride-btn{
     background-color: var(--gray-color);
     color: var(--white-color);
     font-weight: 700;
     font-size: 18px;
 }
-.bike-rides .item-center > div,  .bike-rides .item-center > div::after {
+.bike-rides .item-center > div, .bike-rides .item-center > div::after {
     vertical-align: middle;
     display: inline-block;
     content: '';
     height: 100%;
 }
-.bike-rides .bike-ride-date.active {
+.bike-rides .bike-ride-date.active, .bike-rides .bike-ride-btn, .block-title.bike-ride-date.active {
     background-color: var(--primary-color);
+}
+.block-title.bike-ride-date.active {
+    color: var(--white-color);
+    padding: 25px;
+    margin: -25px -25px 20px -25px;
+}
+.block-title.bike-ride-date.active h2 {
+    color: var(--white-color);
 }
 .bike-rides .bike-ride-date.disable {
     background-color: var(--clear-color);
@@ -390,14 +419,30 @@ button[type="submit"] {
 .bike-rides .bike-ride-detail.disable, .bike-rides .bike-ride-detail.disable .info {
     color: var(--clear-color);
 }
+.bike-rides .bike-ride-btn {
+    display: none;
+}
+.full-background {
+    background-image: url(../images/background.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    /* background-blend-mode: soft-light;
+    background-color: rgba(255,255 ,255, 0.3); */
+}
+.full-background h1 {
+    margin-bottom: 200px;
+    color: var(--primary-color-darker);
+    text-align: center;
+    font-size: 100px;
+}
 @media screen and (max-width: 800px) {
     .wrapper.col-4, .wrapper.col-2, .wrapper.col-1fr-3fr, .wrapper.col-3 {
         grid-template-columns: 1fr;
         padding: unset;
         gap: 20px;
     }
-    .background-ligth {
-        padding: unset;
+    .wrapper-medium-width {
+        padding: 5%;
     }
     .card-link .card-img {
         height: 100px;
@@ -439,5 +484,14 @@ button[type="submit"] {
         position: absolute;
         top: 50px;
         left: -100vh;
+    }
+    .full-background h1 {
+    font-size: 30px;
+    }
+    .bike-rides .bike-ride-btn {
+        display: block;
+    }
+    .bike-rides .bike-ride-date-btn {
+        display: none;
     }
 }

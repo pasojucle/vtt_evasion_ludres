@@ -31,22 +31,6 @@ nav > ul> li > a:hover, nav > ul> li > a.active {
     color: var(--white-color);
     background-color: var(--primary-color);
 }
-.block-title {
-    position: relative;
-    margin-bottom: 20px;
-}
-.block-title .tools {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-.block-body > ul > li:not(:last-of-type)::after {
-    content: '';
-    height: 1px;
-    display: block;
-    background-color: var(--clear-color);
-    margin: 3px 0;
-}
 
 
 

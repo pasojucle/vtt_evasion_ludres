@@ -44,9 +44,15 @@ class Level
      */
     private $monogram;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="level")
+     */
+    private $clusters;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->clusters = new ArrayCollection();
     }
     
     public function __toString()
@@ -133,6 +139,36 @@ class Level
     public function setMonogram(?string $monogram): self
     {
         $this->monogram = $monogram;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cluster[]
+     */
+    public function getClusters(): Collection
+    {
+        return $this->clusters;
+    }
+
+    public function addCluster(Cluster $cluster): self
+    {
+        if (!$this->clusters->contains($cluster)) {
+            $this->clusters[] = $cluster;
+            $cluster->setLevel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCluster(Cluster $cluster): self
+    {
+        if ($this->clusters->removeElement($cluster)) {
+            // set the owning side to null (unless already changed)
+            if ($cluster->getLevel() === $this) {
+                $cluster->setLevel(null);
+            }
+        }
 
         return $this;
     }

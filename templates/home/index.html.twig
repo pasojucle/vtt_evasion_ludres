@@ -4,35 +4,37 @@
 
 {% block body %}
     
-    <div class="wrapper background-ligth wrapper-home wrapper-full-width ">
+    <div class="wrapper wrapper-home wrapper-full-width full-background">
         <div class="news-container">
         
 
         </div>
 
-        <div class="events-container col-1">
-            {% for event in events %}
-                <div class="card card-event">
-                    <div class="card-img" style="background-image:url('../../images/vttludresgroupe.jpg'"></div>
-                    <div class="card-body">
-                        <h2>{{ event.title }}</h2>
-                        <h3>
+        <div class="block background-ligth">
+            <div class="block-title">
+                <h2>Randos</h2>
+            </div>
+            <div class="block-body">
+                <ul>
+                {% for event in events %}
+                    <li>
+                        <h2>
                             {% if event.endAt is null %}
                                 {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y')  | capitalize}}
                             {% else %}
                                 du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y')}}} | capitalize} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
                             {% endif %}
-                        </h3>
-                        {# {% if event.content is not null %}
-                            <p>{{ event.content|raw }}</p>
-                        {% endif %} #}
-                        
-                    </div>
-                    <div class="card-footer">
-                        <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary" class="modal-trigger" data-toggle="modal" data-type="danger">S'incrire</a>
-                    </div>
-                </div>
-            {% endfor %}
+                        </h2>
+                        <p>{{ event.title }}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="block-footer">
+                <a href="{{ path('bike_rides', {'period': 'mois'}) }}" class="btn btn-secondary align-center"><i class="fas fa-chevron-circle-right"></i> Voir les toutes randos</a>
+            </div>
+
+ 
         </div>
         <div class="links-container col-4">
             {% for link in links %}

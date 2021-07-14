@@ -87,6 +87,19 @@ a {text-decoration: none;}
 body > script {display: none !important;}
 
 /*styles*/
+@keyframes flash {
+    0% {opacity:0;}
+	20% {opacity:1;}
+    80% {opacity:1;}
+  100% {opacity:0;}
+}
+@-webkit-keyframes flash {
+    0% {opacity:0;}
+	20% {opacity:1;}
+    80% {opacity:1;}
+  100% {opacity:0;}
+}
+
 :root {
     --primary-color: #f89c37;
     --primary-color-darker: #e6841b;
@@ -178,6 +191,26 @@ body > script {display: none !important;}
     padding: 5px;
     color: var(--background-color);
 }
+.flashes {
+    position: absolute;
+    top: 33vh;
+    right: 25px;
+    width: 200px;
+    color: var(--white-color);
+    opacity: 0;
+    font-size: 18px;
+    -webkit-animation: flash 5s;
+    animation: flash 5s;
+}
+.flashes > div {
+    padding: 12px 20px;
+}
+.flash-success {
+    background-color: var(--primary-color);
+}
+.flash-danger {
+    color: var(--danger-color);
+}
 body {
     background-color: var(--light-color);
     color: var(--background-color);
@@ -255,7 +288,7 @@ body {
 }
 .inputGroup label {
     padding: 12px 30px;
-    width: 70%;
+    /* width: 70%; */
     display: block;
     text-align: left;
     color: var(--gray-color);
@@ -268,6 +301,9 @@ body {
 }
 .inputGroup.long {
     width: 100%;
+}
+.inputGroup.long label {
+    width: 70%;
 }
 .inputGroup label:before {
     width: 12px;
@@ -348,22 +384,30 @@ body {
 .nav-bar {
     display: none;
 }
+.filters {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+}
 
-ul.filters {
+.filters {
     margin-bottom: 15px;
 }
-ul.filters input {
+.filters input {
     padding: 10px;
 }
-ul.filters > li {
+.filters ul > li {
     display: inline-block;
     line-height: 41px;
 }
-ul.filters > li {
+.filters ul > li {
     padding: 5px;
 }
-ul.filters > li > * {
+.filters ul > li > * {
     vertical-align: middle;
+}
+.filters span b {
+    color: var(--primary-color-darker);
 }
 .row {
     display: flex;
@@ -419,6 +463,28 @@ ul.filters > li > * {
     font-style: oblique;
     font-weight: 700;
 }
+
+.block-title {
+    position: relative;
+    margin-bottom: 20px;
+}
+.block .block-body h2 {
+    font-size: 18px;
+    color: var(--primary-color-darker);
+}
+.block-title .tools {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.block-body > ul > li:not(:last-of-type)::after {
+    content: '';
+    height: 2px;
+    display: block;
+    background-color: var(--clear-color);
+    margin: 5px 0;
+}
+
 @media screen and (max-width: 800px) {
     .nav-bar {
         display: block;
@@ -530,5 +596,20 @@ ul.filters > li > * {
     }
     .row .col-xs-12 {
         width: 100%;
+    }
+    .bike-rides, .filters, .wrapper-home {
+        display: block;
+    }
+    .bike-rides .bike-ride-date:not(:first-child) {
+        margin-top: 25px;
+    }
+    .btn {
+        padding: 8px 12px;
+    }
+    .filters ul > li {
+        padding: unset;
+    }
+    .filters span > b {
+        letter-spacing: -0.5px;
     }
 }

@@ -10,18 +10,20 @@
             </div>
             <div class="block-body">
                 {{ form_start(form) }}
-                <ul class="filters row">
-                    <li>
-                        {{ form_widget(form.fullName)}} {{ form_widget(form.submit)}}
-                    </li>
-                    <li>
-                        {{ form_widget(form.category)}}
-                    </li>
-                    <li>
-                        {{ form_widget(form.level)}}
-                    </li>
-
-                </ul>
+                <div class="filters">
+                    <ul>
+                        <li>{{ form_widget(form.fullName)}}</li>
+                        <li>{{ form_widget(form.submit)}}</li>
+                    </ul>
+                    <ul>
+                        <li>
+                            {{ form_widget(form.category)}}
+                        </li>
+                        <li>
+                            {{ form_widget(form.level)}}
+                        </li>
+                    </ul>
+                </div>
                 {{ form_end(form) }}
                 <ul>
                     {% for user in users %}     

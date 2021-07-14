@@ -5,11 +5,13 @@ namespace App\Controller;
 use DateTime;
 use DateInterval;
 use App\Entity\Event;
+use App\Entity\Cluster;
 use App\Form\EventType;
 use App\Form\EventFilterType;
 use App\Service\BikeRideService;
 use App\Service\PaginatorService;
 use App\Repository\EventRepository;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,6 +78,7 @@ class EventController extends AbstractController
      */
     public function adminEdit(
         Request $request,
+        LevelRepository $levelRepository,
         ?Event $event
     ): Response
     {
@@ -84,6 +87,39 @@ class EventController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $event = $form->getData();
+            $clusters = $event->getClusters();
+            if ($clusters->isEmpty()) {
+                switch ($event->getType()) {
+                    case Event::TYPE_SCHOOL:
+                        $levels = $levelRepository->findAll();
+                        if (null !== $levels) {
+                            foreach ($levels as $level) {
+                                $cluster = new Cluster();
+                                $cluster->setTitle($level->getTitle())
+                                    ->setLevel($level)
+                                    ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS);
+                                $event->addCluster($cluster);
+                                $this->entityManager->persist($cluster);
+                            }
+                        }
+                        break;
+                    case Event::TYPE_ADULT:
+                        $clusterTitles = ['1er groupe', '2e groupe', '3e groupe'];
+                        foreach ($clusterTitles as $titles) {
+                            $cluster = new Cluster();
+                            $cluster->setTitle($titles);
+                            $event->addCluster($cluster);
+                            $this->entityManager->persist($cluster);
+                        }
+                        break;
+                    default:
+                        $cluster = new Cluster();
+                        $cluster->setTitle('1er Groupe');
+                        $event->addCluster($cluster);
+                        $this->entityManager->persist($cluster);
+                }
+            }
+
             $this->entityManager->persist($event);
             $this->entityManager->flush();
         }
@@ -103,9 +139,11 @@ class EventController extends AbstractController
         Event $event
     ): Response
     {
+        $filters = $this->session->get('admin_events_filters');
+
         return $this->render('event/cluster_show.html.twig', [
             'event' => $event,
-            'events_filters' => $this->session->get('admin_events_filters'),
+            'events_filters' =>  ($filters) ? $filters : [],
         ]);
     }
 
@@ -129,6 +167,7 @@ class EventController extends AbstractController
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);
         }
+
         return $this->render('bike_ride/list.html.twig', $response['parameters']);
     }
 }
