@@ -477,7 +477,7 @@ body {
     top: 0;
     right: 0;
 }
-.block-body > ul > li:not(:last-of-type)::after {
+.block-body > ul > li:not(:last-child)::after {
     content: '';
     height: 2px;
     display: block;
