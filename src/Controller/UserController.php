@@ -77,13 +77,14 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/mon-compte/{user}", name="user_account")
+     * @Route("/mon-compte", name="user_account")
      */
     public function userAccount(
-        Request $request,
-        UserEntity $user
+        Request $request
     ): Response
     {
+        $user = $this->getUser();
+        
         return $this->render('user/account.html.twig', [
             'user' => new User($user),
         ]);

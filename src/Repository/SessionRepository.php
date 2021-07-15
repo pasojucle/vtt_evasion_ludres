@@ -26,7 +26,6 @@ class SessionRepository extends ServiceEntityRepository
     public function findByUserAndClusters(User $user, Collection $clusers)
     {
         return $this->createQueryBuilder('s')
-            ->leftJoin('s.cluster', 'c')
             ->andWhere(
                 (new Expr)->in('s.cluster', ':clusers'),
                 (new Expr)->eq('s.user', ':user'),
@@ -37,5 +36,4 @@ class SessionRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
-
 }

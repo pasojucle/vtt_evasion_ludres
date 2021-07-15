@@ -223,4 +223,22 @@ class User {
     {
         return $this->user->getLevel();
     }
+
+    public function getLicenceNumber(): string
+    {
+        return $this->user->getLicenceNumber();
+    }
+
+    public function getBikeRides(): array
+    {
+        $bikeRides = [];
+        $sessions = $this->user->getSessions();
+        if (!$sessions->isEmpty()) {
+            foreach ($sessions as $session) {
+                $bikeRides[] = $session->getCluster()->getEvent();
+            }
+        }
+
+        return $bikeRides;
+    }
 }

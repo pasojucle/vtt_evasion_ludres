@@ -7,9 +7,46 @@
         <div class="wrapper-title">
             <h1>Mon compte</h1>
         </div>
-        <div class="wrapper-body">
-            <div class=""> 
-
+        <div class="wrapper-body col-2">
+            <div class="block background-white">
+                <div class="block-title">
+                    <h2>Mes infos</h2>
+                </div>
+                <div class="block-body">
+                    <ul>
+                        <li><div class="row"><div class="col-md-3">Nom</div><div class="col-md-9">{{ user.member.fullName }}</div></div></li>
+                        <li><div  class="row"><div class="col-md-3">Adresse</div><div class="col-md-9">{{ user.member.address.street }}{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
+                        <li><div  class="row"><div class="col-md-3">Téléphone</div><div class="col-md-9">{{ user.member.phone }}</div></div></li>
+                        <li><div  class="row"><div class="col-md-3">Mail</div><div class="col-md-9">{{ user.member.email }}</div></div></li>
+                        <li><div  class="row"><div class="col-md-3">N° licence</div><div class="col-md-9">{{ user.licenceNumber }}</div></div></li>
+                        <li><div  class="row"><div class="col-md-3">Niveau</div><div class="col-md-9">{{ user.level }}</div></div></li>
+                    </ul>
+                </div>    
+            </div>
+            <div class="block background-white">
+                <div class="block-title">
+                    <h2>Mes Randos</h2>
+                </div>
+                <div class="block-body">
+                    <ul>
+                        {% for bikeRide in user.bikeRides %}
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {% if bikeRide.endAt is null %}
+                                            {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                                        {% else %}
+                                            du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ bikeRide.title }}
+                                    </div
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul> 
+                </div>  
             </div>
         </div>
     </div>

@@ -4,11 +4,12 @@
 
 {% block body %}
 <form method="post">
-    <div class="wrapper col-1fr-5fr background-gray">
+    <div class="wrapper wrapper wrapper-small-width full-background">
             <div class="wrapper-title">
                 <h1>Me connecter</h1>
             </div>
-            <div class="wrapper-content">
+            <div class="wrapper-body">
+                <div class="block background-gray">
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
@@ -47,7 +48,7 @@
                     </button>
                 </div>
             </div>
-
+        </div>
     </div>
 
     

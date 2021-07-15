@@ -58,6 +58,12 @@ class HeaderService
                 'pattern' => '/home/',
                 'subMenus' => [],
             ],
+            [
+                'label' => 'Mon compte',
+                'route' => 'user_account',
+                'pattern' => '/user/',
+                'subMenus' => [],
+            ],
         ];
         $this->menusAdmin = [
             [

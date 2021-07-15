@@ -139,7 +139,7 @@ class SessionController extends AbstractController
         
         $this->addFlash('success', $message);
 
-        return $this->redirectToRoute('user_account', ['user' => $user->getId()]);
+        return $this->redirectToRoute('user_account');
     }
 
 }

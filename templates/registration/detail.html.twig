@@ -24,8 +24,29 @@
                 {% if app.user is not null %}
                     <a class="btn btn-secondary btn-xl" href="{{ path('user_registration_form', {'step': 1}) }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
                 {% else %}
-                    <a class="btn btn-secondary btn-xl" href="{{ path('registration_member') }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
+                    {# <a class="btn btn-secondary btn-xl" href="{{ path('registration_member') }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a> #}
+                    <a class="btn btn-secondary btn-xl" href="#btn-wrapper"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+     <div id="btn-wrapper" class="wrapper background-ligth wrapper-small-width col-2">
+        <div class="card card-event">
+            <div class="card-img" style="background-image:url(../../images/clip_image001_0001.jpg)"></div>
+            <div class="card-body">
+                <h3>Je suis un nouvel adhérent</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-secondary" href="{{ path('registration_form', {'step': 1}) }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
+            </div>
+        </div>
+        <div class="card card-event">
+            <div class="card-img" style="background-image:url(../../images/compostelle1-\(54\).jpg)"></div>
+            <div class="card-body">
+                <h3>Je suis déjà adhérent au club</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-secondary" href="{{ path('user_registration_form', {'step': 1}) }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
             </div>
         </div>
     </div>

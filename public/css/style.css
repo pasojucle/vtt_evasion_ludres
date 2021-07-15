@@ -129,7 +129,7 @@ p + p {
     content: '';
     clear: both;
 }
-.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1fr-3fr {
+.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3 {
     display: grid;
     gap: 5%;
 }
@@ -148,7 +148,6 @@ p + p {
 }
 .col-3 {
     grid-template-columns: repeat(3, 1fr);
-    text-align: center;
 }
 .col-4 {
     grid-template-columns: repeat(4, 1fr);
@@ -157,16 +156,15 @@ p + p {
 .col-2-1 {
     grid-template-columns: 2fr 1fr;
 }
-.col-1fr-3fr {
+.col-1-3 {
     grid-template-columns: 1fr 3fr;
+}
+.col-2-3 {
+    grid-template-columns: 2fr 3fr;
 }
 .wrapper.min-content {
     width: min-content;
     min-width: 400px;
-}
-.background-ligth {
-    padding: 25px;
-    color: var(--background-color);
 }
 .background-ligth h1 {
     color: var(--background-color);
@@ -301,6 +299,14 @@ p + p {
 .background-ligth {
     background-color: var(--light-color);
     box-sizing: border-box;
+    padding: 25px;
+    color: var(--background-color);
+}
+.background-white {
+    background-color: var(--white-color);
+    box-sizing: border-box;
+    padding: 25px;
+    color: var(--background-color);
 }
 .background-gray {
     background-color: var(--gray-color);
@@ -317,6 +323,12 @@ p + p {
     width: 100%;
     margin: unset;
     padding: 5% 20%;
+    box-sizing: border-box;
+}
+.wrapper-small-width {
+    width: 100%;
+    margin: unset;
+    padding: 5% 25%;
     box-sizing: border-box;
 }
 
@@ -431,17 +443,18 @@ button[type="submit"] {
 }
 .full-background h1 {
     margin-bottom: 200px;
-    color: var(--primary-color-darker);
-    text-align: center;
-    font-size: 100px;
+    color: rgba(255,255,255,0.4);
+    text-align: left;
+    font-size: 80px;
+    font-style: oblique;
 }
 @media screen and (max-width: 800px) {
-    .wrapper.col-4, .wrapper.col-2, .wrapper.col-1fr-3fr, .wrapper.col-3 {
+    .col-4, .col-2, .col-1fr-3fr, .col-3 {
         grid-template-columns: 1fr;
         padding: unset;
         gap: 20px;
     }
-    .wrapper-medium-width {
+    .wrapper-medium-width, .wrapper-small-width {
         padding: 5%;
     }
     .card-link .card-img {
@@ -486,7 +499,8 @@ button[type="submit"] {
         left: -100vh;
     }
     .full-background h1 {
-    font-size: 30px;
+        font-size: 30px;
+        margin-bottom: 30px;
     }
     .bike-rides .bike-ride-btn {
         display: block;
