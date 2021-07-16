@@ -484,6 +484,10 @@ body {
     background-color: var(--clear-color);
     margin: 5px 0;
 }
+.block-small {
+    max-width: 400px;
+    margin: auto;
+}
 
 @media screen and (max-width: 800px) {
     .nav-bar {

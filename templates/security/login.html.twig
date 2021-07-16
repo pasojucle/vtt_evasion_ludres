@@ -4,12 +4,12 @@
 
 {% block body %}
 <form method="post">
-    <div class="wrapper wrapper wrapper-small-width full-background">
-            <div class="wrapper-title">
-                <h1>Me connecter</h1>
-            </div>
-            <div class="wrapper-body">
-                <div class="block background-gray">
+    <div class="wrapper wrapper wrapper-medium-width full-background">
+        <div class="wrapper-title">
+            <h1>Me connecter</h1>
+        </div>
+        <div class="block background-gray block-small">
+            <div class="block-body">
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
