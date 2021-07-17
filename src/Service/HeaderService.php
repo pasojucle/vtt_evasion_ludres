@@ -11,12 +11,6 @@ class HeaderService
     {
         $this->menus = [
             [
-                'label' => 'Accueil',
-                 'route' => 'home',
-                 'pattern' => '/home/',
-                 'subMenus' => [],
-            ],
-            [
                 'label' => 'Le club',
                 'route' => 'club',
                 'pattern' => '/club/',
@@ -31,13 +25,13 @@ class HeaderService
             [
                 'label' => 'L\'école VTT',
                 'route' => 'school',
-                'pattern' => '/home/',
+                'pattern' => '/school/',
                 'subMenus' => [],
             ],
             [
-                'label' => 'Rando',
-                'route' => 'bike_rides',
-                'pattern' => '/bike_ride/',
+                'label' => 'Programe du club',
+                'route' => 'schedule',
+                'pattern' => '/schedule/',
                 'subMenus' => [],
             ],
             [
@@ -47,15 +41,9 @@ class HeaderService
                 'subMenus' => [],
             ],
             [
-                'label' => 'Programe du club',
-                'route' => 'program',
-                'pattern' => '/home/',
-                'subMenus' => [],
-            ],
-            [
                 'label' => 'Contacts',
                 'route' => 'contact',
-                'pattern' => '/home/',
+                'pattern' => '/contact/',
                 'subMenus' => [],
             ],
             [

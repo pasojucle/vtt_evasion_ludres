@@ -1,4 +1,7 @@
 <div class="header">
+    <a class="logo" href="{{ path('home')}}">
+        <img src="/images/logo.png" alt="vtt évasion ludres">
+    </a>
     <img src="/images/logo.jpg" alt="vtt évasion ludres">
 </div>
 {% set menus = header_service.menus() %}
@@ -7,7 +10,9 @@
     <img src="/images/logo.jpg" alt="VTT EVASION LUDRES">
 </div>
 <nav>
-    <img class="hidden" src="/images/logo.png" alt="vtt évasion ludres">
+    <a class="logo" href="{{ path('home')}}">
+        <img class="hidden" src="/images/logo.png" alt="vtt évasion ludres">
+    </a>
     <ul>
         {% for menu in menus %}
             <li>
@@ -23,5 +28,10 @@
                 {% endif %}
             </li>
         {% endfor %}
+        {% if app.user is not null %}
+            <li>
+                <a class="btn-logout" href="{{ path('app_logout') }}" title="Se déconnecter"><i class="fas fa-power-off"></i></a>
+            </li>
+        {% endif %}
     </ul>
 </nav>

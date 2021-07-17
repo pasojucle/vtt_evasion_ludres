@@ -37,10 +37,21 @@ nav > ul> li > a:hover, nav > ul> li > a.active {
 nav > ul> li:hover  ul {
     display: block;
 }
-nav:not(.admin) img {
+.header:not(.admin) > a.logo {
     position: absolute;
     left: 25px;
     top: 15px;
+}
+.header:not(.admin) > a.logo img {
+    height: 100px;
+}
+nav:not(.admin) > a.logo {
+    position: absolute;
+    left: 25px;
+    top: 3px;
+}
+nav:not(.admin) > a.logo img {
+    height: 40px;
 }
 ul.sub-menu {
     display: none;
@@ -336,7 +347,7 @@ p + p {
     display: grid;
     grid-template-areas: "news events"
                          "links links";
-    grid-template-columns: 1fr 250px;
+    grid-template-columns: 1fr 280px;
     gap: 50px;
 }
 .news-container {
@@ -442,7 +453,7 @@ button[type="submit"] {
     background-color: rgba(255,255 ,255, 0.3); */
 }
 .full-background h1 {
-    margin-bottom: 200px;
+    margin-bottom: 100px;
     color: rgba(255,255,255,0.4);
     text-align: left;
     font-size: 80px;

@@ -7,11 +7,10 @@ use DateInterval;
 use App\Entity\Event;
 use App\Entity\Cluster;
 use App\Form\EventType;
-use App\Form\EventFilterType;
-use App\Service\BikeRideService;
 use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
+use App\Service\EventService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,19 +23,19 @@ class EventController extends AbstractController
     private EventRepository $eventRepository;
     private EntityManagerInterface $entityManager;
     private SessionInterface $session;
-    private BikeRideService $bikeRideService;
+    private EventService $eventService;
 
     public function __construct(
         EventRepository $eventRepository,
         SessionInterface $session,
         EntityManagerInterface $entityManager,
-        BikeRideService $bikeRideService
+        EventService $eventService
     )
     {
         $this->eventRepository = $eventRepository;
         $this->entityManager = $entityManager;
         $this->session = $session;
-        $this->bikeRideService = $bikeRideService;
+        $this->bikeRideService = $eventService;
     }
 
     
@@ -65,7 +64,7 @@ class EventController extends AbstractController
         ?int $day
     ): Response
     {
-        $response = $this->bikeRideService->getBikeRideList($request, $period, $year, $month, $day);
+        $response = $this->eventService->getSchedule($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);
@@ -149,8 +148,8 @@ class EventController extends AbstractController
 
     /**
      * @Route(
-     *  "/randonnees/{period}/{year}/{month}/{day}",
-     *  name="bike_rides",
+     *  "/programme/{period}/{year}/{month}/{day}",
+     *  name="schedule",
      *  defaults={"period"=null, "year"=null, "month"=null, "day"=null})
      */
     public function list(
@@ -162,7 +161,7 @@ class EventController extends AbstractController
         ?int $day
     ): Response
     {
-        $response = $this->bikeRideService->getBikeRideList($request, $period, $year, $month, $day);
+        $response = $this->eventService->getSchedule($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);

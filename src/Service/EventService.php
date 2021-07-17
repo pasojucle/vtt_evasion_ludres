@@ -11,7 +11,7 @@ use App\Service\PaginatorService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class BikeRideService
+class EventService
 {
     private PaginatorService $paginator;
     private SessionInterface $session;
@@ -95,7 +95,7 @@ class BikeRideService
         ];
     }
 
-    public function getBikeRideList($request, $period, $year, $month, $day): array
+    public function getSchedule($request, $period, $year, $month, $day): array
     {
         $route = $request->get('_route');
         $filters = $this->getFiltersByParam($period, $year, $month, $day, $route);
