@@ -35,7 +35,7 @@ class EventController extends AbstractController
         $this->eventRepository = $eventRepository;
         $this->entityManager = $entityManager;
         $this->session = $session;
-        $this->bikeRideService = $eventService;
+        $this->eventService = $eventService;
     }
 
     
@@ -73,7 +73,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/admin/randonnee/{event}", name="admin_event_edit", defaults={"event"=null})
+     * @Route("/admin/sortie/{event}", name="admin_event_edit", defaults={"event"=null})
      */
     public function adminEdit(
         Request $request,
@@ -81,6 +81,7 @@ class EventController extends AbstractController
         ?Event $event
     ): Response
     {
+        $filters = $this->session->get('admin_events_filters');
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
@@ -121,8 +122,13 @@ class EventController extends AbstractController
 
             $this->entityManager->persist($event);
             $this->entityManager->flush();
+            $this->addFlash('success', 'La sortie à bien été enregistrée');
+
+            $filters = $this->eventService->getFilters(Event::PERIOD_MONTH, $event->getStartAt());
+
+            return $this->redirectToRoute('admin_events', $filters);
         }
-        $filters = $this->session->get('admin_events_filters');
+
         return $this->render('event/edit.html.twig', [
             'form' => $form->createView(),
             'event' => $event,
@@ -131,7 +137,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/admin/randonnee/groupe/{event}", name="admin_event_cluster_show")
+     * @Route("/admin/sortie/groupe/{event}", name="admin_event_cluster_show")
      */
     public function adminClusterShow(
         Request $request,

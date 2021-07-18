@@ -10,40 +10,45 @@
         <div class="wrapper-body">
             {% include('bike_ride/filter.html.twig') %}
             <div class="bike-rides"> 
-                {% for bikeRide in bikeRides %}
+                {% for event in events %}
                     {% set class = '' %}    
-                    {% if bikeRide.isNext %}
+                    {% if event.isNext %}
                         {% set class = 'active' %}  
-                    {% elseif bikeRide.over %}
+                    {% elseif event.over %}
                         {% set class = 'disable' %}  
-                    {% endif %}                               
+                    {% endif %}
+                    {% set btn_label = 'S\'incrire' %}
+                    {% if event.accessAvailabity(is_granted('ROLE_ACCOMPANIST')) %}
+                        {% set btn_label = 'Disponibilité' %}
+                    {% endif %}
+                           
                     <div class="bike-ride-date item-center align-center {{ class }}">
                         <div>
-                            {% if bikeRide.endAt is null %}
-                                {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                            {% if event.endAt is null %}
+                                {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
                             {% else %}
-                                du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                                du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
                             {% endif %}
-                            {% if bikeRide.isRegistrable %}
+                            {% if event.isRegistrable or event.accessAvailabity(is_granted('ROLE_ACCOMPANIST')) %}
                                 <div class="bike-ride-date-btn">
                                     <br>
-                                    <a href="{{ path('session_add', {'event': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> S'incrire</a>
+                                    <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                     <div class="bike-ride-detail {{ class }}">
-                        <h3>{{ bikeRide.title }}</h3>
-                        {% if bikeRide.minAge is not null %}
-                            <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
+                        <h3>{{ event.title }}</h3>
+                        {% if event.minAge is not null %}
+                            <p class='info'>A partir de {{ event.minAge }} ans</p>
                         {% endif %}
-                        <p>{{ bikeRide.content |raw }}</p>
+                        <p>{{ event.content |raw }}</p>
                     </div>
-                    {% if bikeRide.isRegistrable %}
+                    {# {% if event.isRegistrable or event.accessAvailabity(is_granted('ROLE_ACCOMPANIST')) %}
                         <div class="bike-ride-btn item-center align-center {{ class }}">
-                            <a href="{{ path('session_add', {'event': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> S'incrire</a>
+                            <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
                         </div>
-                    {% endif %}
+                    {% endif %} #}
                 {% endfor %}
             </div>
         </div>

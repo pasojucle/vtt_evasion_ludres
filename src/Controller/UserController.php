@@ -71,8 +71,10 @@ class UserController extends AbstractController
         UserEntity $user
     ): Response
     {
+
         return $this->render('user/admin/user.html.twig', [
             'user' => new User($user),
+            'referer' => $request->headers->get('referer'),
         ]);
     }
 

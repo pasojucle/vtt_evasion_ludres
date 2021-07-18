@@ -55,7 +55,7 @@ class HeaderService
         ];
         $this->menusAdmin = [
             [
-                'label' => 'Gestion du calendrier',
+                'label' => 'Gestion du programme',
                  'route' => 'admin_events',
                  'pattern' => '/event/',
                  'subMenus' => [],

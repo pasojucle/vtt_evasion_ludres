@@ -27,18 +27,32 @@
                     {% endif %}
                     <p>{{ bikeRide.content |raw }}</p>
                     <div class="form-group">
-                        {% for  child in form.cluster.children %}
-                            <div class="inputGroup {{ child.vars.value == form.cluster.vars.value ? 'check' : 'ballot' }}">
-                                {{ form_widget(child)}}
-                                {{ form_label(child)}}
-                            </div>
-                        {% endfor %}
-
+                        {% if form.cluster is defined %}
+                            {% set field = form.cluster %}
+                        {% endif %}
+                        {% if form.availability is defined %}
+                            {% set field = form.availability %}
+                        {% endif %}
+                        {% if field is defined %}
+                            {% for  child in field.children %}
+                                <div class="inputGroup {{ child.vars.value == field.vars.value ? 'check' : 'ballot' }}">
+                                    {{ form_widget(child)}}
+                                    {{ form_label(child)}}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        {% if form.submit is not defined %}
+                            <div class="alert-warning">Votre inscription a déjà été prise en compte !</div>
+                        {% endif %}
                     </div>
                     {{ form_row(form.user)}}
                 </div>
                 <div class="block-footer">
-                    {{ form_row(form.submit)}}
+                    {% if form.submit is defined %}
+                        {{ form_row(form.submit)}}
+                    {% else %}
+                        <a href="{{ path('user_account') }}" class="btn btn-primary float-right">Voir toutes mes sorties</a>
+                    {% endif %}
                 </div>
             {{ form_end(form) }}
     

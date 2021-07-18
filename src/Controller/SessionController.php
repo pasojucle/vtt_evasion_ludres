@@ -83,7 +83,6 @@ class SessionController extends AbstractController
         $user = $this->getUser();
         $clusters = $event->getClusters();
         $session = $sessionRepository->findByUserAndClusters($user, $clusters);
-        $message = 'Vous êtes déjà inscription à cette rando';
 
         if (null === $session) {
             $userCluster = null;
@@ -123,23 +122,19 @@ class SessionController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $session = $form->getData();
-            $message = 'Votre inscription a bien été prise en compte';
+
+            $this->entityManager->persist($session);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Votre inscription a bien été prise en compte');
+
+            return $this->redirectToRoute('user_account');
         }
 
-        if (null === $session->getCluster()) {
 
-            return $this->render('session/add.html.twig', [
-                'form' => $form->createView(),
-                'event' => $event,
-            ]);
-        }
 
-        $this->entityManager->persist($session);
-        $this->entityManager->flush();
-        
-        $this->addFlash('success', $message);
-
-        return $this->redirectToRoute('user_account');
+        return $this->render('session/add.html.twig', [
+            'form' => $form->createView(),
+            'event' => $event,
+        ]);
     }
-
 }

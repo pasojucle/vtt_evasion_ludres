@@ -389,16 +389,6 @@ button[type="submit"] {
     border: 2px solid var(--background-color);
     padding: 5px;
 }
-.alert-warning {
-    color: var(--primary-color-darker);
-}
-.alert-warning::before {
-    content: '\f06a';
-    color: var(--primary-color-darker);
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    margin-right: 10px;
-}
 .bike-rides {
     display: grid;
     grid-template-columns: 2fr 5fr ;

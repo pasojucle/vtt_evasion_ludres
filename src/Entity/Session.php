@@ -12,6 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Session
 {
+    public const AVAILABILITY_PRESENT = 1;
+    public const AVAILABILITY_AVAILABLE = 2;
+    public const AVAILABILITY_UNAVAILABLE = 3;
+
+    public const AVAILABILITIES = [
+        self::AVAILABILITY_PRESENT => 'session.availability.present',
+        self::AVAILABILITY_AVAILABLE => 'session.availability.available',
+        self::AVAILABILITY_UNAVAILABLE => 'session.availability.unavailable',
+    ];
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -35,6 +44,12 @@ class Session
      * @ORM\Column(type="boolean")
      */
     private $isPresent = false;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $availability;
+
 
     public function getId(): ?int
     {
@@ -73,6 +88,18 @@ class Session
     public function setIsPresent(bool $isPresent): self
     {
         $this->isPresent = $isPresent;
+
+        return $this;
+    }
+
+    public function getAvailability(): ?int
+    {
+        return $this->availability;
+    }
+
+    public function setAvailability(?int $availability): self
+    {
+        $this->availability = $availability;
 
         return $this;
     }

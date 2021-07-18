@@ -5,20 +5,31 @@
 </div>
 
 <nav class="admin">
+    {% if is_granted('ROLE_ADMIN') %}
+        <ul>
+            {% for menu in menus %}
+                <li>
+                    <a href="{{ path(menu.route) }}"{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
+                    {% if menu.subMenus is not empty %}
+                        <ul class="sub-menu">
+                            {% for sub_menu in menu.subMenus %}
+                                <li>
+                                    <a href="{{ path(sub_menu.route, sub_menu.params) }}">{{ sub_menu.label }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <br>
+    {% endif %}
     <ul>
-        {% for menu in menus %}
-            <li>
-                <a href="{{ path(menu.route) }}"{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
-                {% if menu.subMenus is not empty %}
-                    <ul class="sub-menu">
-                        {% for sub_menu in menu.subMenus %}
-                            <li>
-                                <a href="{{ path(sub_menu.route, sub_menu.params) }}">{{ sub_menu.label }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
-        {% endfor %}
+        <li>
+            <a  href="{{ path('app_logout') }}">Se déconnecter</a>
+        </li>
+        <li>
+            <a href="{{ path('home') }}">Retour au site</a>
+        </li>
     </ul>
 </nav>

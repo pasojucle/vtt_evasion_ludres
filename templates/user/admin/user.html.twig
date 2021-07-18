@@ -11,7 +11,10 @@
                     <span class="badge" title="{{ user.level.title }}" style="background-color: {{ user.level.color }}">{{ user.level.monogram }}</span>
                 </h2>
                 <span class="tools">
-                    <a href="{{ path('admin_users', {'filtered': 1}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des adhérents"><i class="fas fa-chevron-left"></i></a>
+                    <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
+                        class="btn btn-secondary btn-ico" title="Retour à la liste des adhérents">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
                 </span>
             </div>
             <div class="block-body row">

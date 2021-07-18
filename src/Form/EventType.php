@@ -68,14 +68,12 @@ class EventType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('closingAt', DateTimeType::class, [
-                'label' => 'Date de fin d\'inscription',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
+            ->add('closingDuration', IntegerType::class, [
+                'label' => 'Fin d\'inscription (nbr de jours avant)',
+                'required' => false,
                 'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => "off",
+                    'min' => 0,
+                    'max' => 90,
                 ],
                 'row_attr' => [
                     'class' => 'form-group-inline',

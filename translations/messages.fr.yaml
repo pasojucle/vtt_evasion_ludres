@@ -66,3 +66,9 @@ event:
     casual: Randonnée occasionnelle
     school: Randonnée école VTT
     adult: Randonnée adultes et ados
+
+session:
+  availability:
+    present: Sera présent
+    available: Disponible
+    unavailable: Non disponible

@@ -71,11 +71,6 @@ class Event
     private $displayDuration;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    private $closingAt;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $minAge;
@@ -89,6 +84,11 @@ class Event
      * @ORM\Column(type="integer")
      */
     private $type = self::TYPE_CASUAL;
+
+    /**
+     * @ORM\Column(type="integer", options={"default":1})
+     */
+    private $closingDuration;
 
     public function __construct()
     {
@@ -160,18 +160,6 @@ class Event
         return $this;
     }
 
-    public function getClosingAt(): ?\DateTimeInterface
-    {
-        return $this->closingAt;
-    }
-
-    public function setClosingAt(\DateTimeInterface $closingAt): self
-    {
-        $this->closingAt = $closingAt;
-
-        return $this;
-    }
-
     public function getMinAge(): ?int
     {
         return $this->minAge;
@@ -217,12 +205,19 @@ class Event
     public function isRegistrable(): bool
     {
         $today = new DateTime();
-        $interval = new DateInterval('P'.$this->displayDuration.'D');
-        $displayAt = clone $this->startAt;
-        $displayAt =  DateTime::createFromFormat('Y-m-d H:i:s', $displayAt->format('Y-m-d').' 00:00:00');
-        $closingAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->closingAt->format('Y-m-d').' 23:59:59');
+        $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
+        $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
+        $displayAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
+        $closingAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
 
-        return $displayAt->sub($interval) <= $today && $today <= $closingAt;
+        return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
+    }
+
+    public function getAccessAvailabity(bool $isGranted): bool
+    {
+        $today = new DateTime();
+
+        return $isGranted && $this->type === self::TYPE_SCHOOL && $today < $this->startAt;
     }
 
     public function isOver(): bool
@@ -238,10 +233,10 @@ class Event
         $today = new DateTime();
         $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
         $startAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
+        $displayAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
         $interval = new DateInterval('P'.$this->displayDuration.'D');
-        $displayAt = clone $this->startAt;
 
-        return  $displayAt->sub($interval) <= $today && $today < $startAt;
+        return  $displayAt->sub($interval) <= $today && $today <= $startAt;
     }
 
     public function getType(): ?int
@@ -252,6 +247,18 @@ class Event
     public function setType(int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getClosingDuration(): ?int
+    {
+        return $this->closingDuration;
+    }
+
+    public function setClosingDuration(int $closingDuration): self
+    {
+        $this->closingDuration = $closingDuration;
 
         return $this;
     }

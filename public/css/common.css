@@ -116,6 +116,17 @@ body > script {display: none !important;}
 .alert-danger {
     color: var(--danger-color);
 }
+.alert-warning {
+    color: var(--primary-color-darker);
+}
+.alert-warning::before {
+    content: '\f06a';
+    color: var(--primary-color-darker);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
+
 .success {
     color: var(--success-color);
 }

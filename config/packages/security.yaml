@@ -11,6 +11,12 @@ security:
             entity:
                 class: App\Entity\User
                 property: licenceNumber
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER, ROLE_ACCOMPANIST, ROLE_FRAME]
+        ROLE_FRAME: [ROLE_USER, ROLE_ACCOMPANIST]
+        ROLE_ACCOMPANIST: ROLE_USER
+        ROLE_USER:
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -36,5 +42,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/admin/groupe, roles: ROLE_FRAME }
+        - { path: ^/admin/seance, roles: ROLE_FRAME }
+        - { path: ^/admin/calendrier, roles: ROLE_FRAME }
+        - { path: ^/admin/sortie, roles: ROLE_FRAME }
+        - { path: ^/admin/adherent, roles: ROLE_FRAME }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/mon-compte, roles: ROLE_USER }

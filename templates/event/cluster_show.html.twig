@@ -31,9 +31,9 @@
                                 <div class="col-md-5">{{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}</div>
                                 <div class="col-md-4">
                                     {% if session.isPresent %}
-                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-danger btn-ico" title="Absent"><i class="fas fa-check-circle"></i></a>
+                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-danger btn-ico" title="Absent"><i class="fas fa-times-circle"></i></a>
                                     {% else %}
-                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico" title="Présent"><i class="fas fa-times-circle"></i></a>
+                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico" title="Présent"><i class="fas fa-check-circle"></i></a>
                                     {% endif %}
                                     {% if hasGroups %}<a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe"><i class="fas fa-exchange-alt"></i></a>{% endif %}
                                     <a href="{{ path('admin_user', {'user': session.user.id}) }}" class="btn btn-primary btn-ico" title="Informatons sur l'adhérent"><i class="fas fa-user"></i></a>

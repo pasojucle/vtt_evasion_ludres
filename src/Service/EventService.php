@@ -44,7 +44,7 @@ class EventService
         return $this->getFilters($period, $date, $direction);
     }
 
-    private function getFilters(string $period, DateTime $date, ?int $direction = null) {
+    public function getFilters(string $period, DateTime $date, ?int $direction = null) {
         if (null !== $direction && Event::PERIOD_ALL !== $period) {
             $intervals = [
                 Event::PERIOD_DAY => "P1D",
@@ -58,34 +58,34 @@ class EventService
                 $date->add(new DateInterval($intervals[$period]));
             }
         }
-        $stardAt = clone $date;
+        $startAt = clone $date;
         $endAt = clone $date;
         switch ($period) {
             case Event::PERIOD_DAY:
-                $stardAt = $stardAt;
+                $startAt = $startAt;
                 $endAt = $endAt;
                 break;
             
             case Event::PERIOD_WEEK:
-                $stardAt =  $stardAt->modify('monday this week');
+                $startAt =  $startAt->modify('monday this week');
                 $endAt = $endAt->modify('sunday this week');
                 break;
             
             case Event::PERIOD_MONTH:
-                $stardAt =  $stardAt->modify('first day of this month');
+                $startAt =  $startAt->modify('first day of this month');
                 $endAt = $endAt->modify('last day of this month');
                 break;
             
             default:
-                $stardAt = null;
+                $startAt = null;
                 $endAt = null;
         }
-        if (null !== $stardAt && null !== $endAt) {
-            $stardAt =  DateTime::createFromFormat('Y-m-d H:i:s', $stardAt->format('Y-m-d').' 00:00:00');
+        if (null !== $startAt && null !== $endAt) {
+            $startAt =  DateTime::createFromFormat('Y-m-d H:i:s', $startAt->format('Y-m-d').' 00:00:00');
             $endAt =  DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d').' 23:59:59');
         }
 
-        return ['startAt' => $stardAt,
+        return ['startAt' => $startAt,
             'endAt' => $endAt, 
             'period' => $period, 
             'year' => $date->format('Y'), 
@@ -121,12 +121,12 @@ class EventService
         }
 
         $query =  $this->eventRepository->findAllQuery($filters);
-        $bikeRides =  $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $events =  $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $parameters = [
             'form' => $form->createView(),
-            'bikeRides' => $bikeRides,
-            'lastPage' => $this->paginator->lastPage($bikeRides),
+            'events' => $events,
+            'lastPage' => $this->paginator->lastPage($events),
             'filters' => $filters,
         ];
 
