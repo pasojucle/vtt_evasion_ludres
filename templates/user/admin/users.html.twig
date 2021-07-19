@@ -30,7 +30,7 @@
                         {% set licence = user.seasonLicence(licence_service.currentSeason) %}           
                         <li>
                             <div>
-                            <a href="{{ path('admin_user', {'user': user.id})}}" class="btn btn-list" title="Informatons sur l'adhérent" style="background-color: {{ user.level.color }}">
+                            <a href="{{ path('admin_user', {'user': user.id})}}" class="btn btn-list" title="Informatons sur l'adhérent" {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% endif %}>
                                 <div class="row row-list">
                                     <div class="col-md-1 col-xs-1">
                                         {% if licence %}
