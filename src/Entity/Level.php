@@ -29,7 +29,7 @@ class Level
      */
     private $content;
 
-    /**
+        /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="level")
      */
     private $users;
@@ -48,6 +48,11 @@ class Level
      * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="level")
      */
     private $clusters;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $orderBy;
 
     public function __construct()
     {
@@ -169,6 +174,18 @@ class Level
                 $cluster->setLevel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOrderBy(): ?int
+    {
+        return $this->orderBy;
+    }
+
+    public function setOrderBy(int $orderBy): self
+    {
+        $this->orderBy = $orderBy;
 
         return $this;
     }

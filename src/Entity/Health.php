@@ -75,6 +75,11 @@ class Health
      */
     private $diseases;
 
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $medical_certificate_date;
+
     public function __construct()
     {
         $this->healthQuestions = new ArrayCollection();
@@ -265,5 +270,17 @@ class Health
             }
         }
         return $isMedicalCertificateRequired;
+    }
+
+    public function getMedicalCertificateDate(): ?\DateTimeInterface
+    {
+        return $this->medical_certificate_date;
+    }
+
+    public function setMedicalCertificateDate(?\DateTimeInterface $medical_certificate_date): self
+    {
+        $this->medical_certificate_date = $medical_certificate_date;
+
+        return $this;
     }
 }

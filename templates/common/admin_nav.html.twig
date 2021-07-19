@@ -24,6 +24,14 @@
         </ul>
         <br>
     {% endif %}
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <ul>
+            <li>
+                <a  href="{{ path('admin_import_users') }}">Importer la liste des utilisateurs</a>
+            </li>
+        </ul>
+        <br>
+    {% endif %}
     <ul>
         <li>
             <a  href="{{ path('app_logout') }}">Se déconnecter</a>

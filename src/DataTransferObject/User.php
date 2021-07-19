@@ -219,7 +219,7 @@ class User {
         return $approvals;
     }
 
-    public function getLevel(): Level
+    public function getLevel(): ?Level
     {
         return $this->user->getLevel();
     }

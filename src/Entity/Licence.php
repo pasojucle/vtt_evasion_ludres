@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Licence
 {
-    private const TYPE_RIDE = 1;
-    private const TYPE_HIKE = 2;
-    private const TYPE_SPORT = 3;
+    public const TYPE_RIDE = 1;
+    public const TYPE_HIKE = 2;
+    public const TYPE_SPORT = 3;
 
     public const TYPES = [
         self::TYPE_RIDE => 'licence.type.ride',
@@ -99,6 +99,11 @@ class Licence
      * @ORM\Column(type="integer")
      */
     private $season;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $createdAt;
 
     public function getId(): ?int
     {
@@ -233,6 +238,18 @@ class Licence
     public function setSeason(int $season): self
     {
         $this->season = $season;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

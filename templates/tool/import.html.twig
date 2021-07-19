@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des sorties{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        {{ form_start(form) }}
+        <div class="block">
+            <div class="block-title">
+                <h2>Importer la liste de adhérents</h2>
+            </div>
+            <div class="block-body">
+                <div class="form-group">
+                    {{ form_row(form.userList) }}
+                </div>
+                {% if count is not null %}
+                    <p>Importation terminée : {{ count }} adhérents importés</p>
+                {% endif %}
+            </div>
+            <div class="block-footer">
+                {{ form_row(form.submit) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

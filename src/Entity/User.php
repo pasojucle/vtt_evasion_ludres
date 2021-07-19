@@ -79,8 +79,7 @@ class User implements UserInterface
     /**
      * @ORM\ManyToOne(targetEntity=Level::class, inversedBy="users")
      */
-    private $level;
-
+    private $Level;
 
     public function __construct()
     {
@@ -338,14 +337,13 @@ class User implements UserInterface
 
     public function getLevel(): ?Level
     {
-        return $this->level;
+        return $this->Level;
     }
 
-    public function setLevel(?Level $level): self
+    public function setLevel(?Level $Level): self
     {
-        $this->level = $level;
+        $this->Level = $Level;
 
         return $this;
     }
-
 }

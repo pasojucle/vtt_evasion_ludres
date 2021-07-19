@@ -202,7 +202,7 @@ body > script {display: none !important;}
     padding: 5px;
     color: var(--background-color);
 }
-.btn-logout {
+.btn-logger {
     background-color: var(--background-color);
     color: var(--primary-color);
 }
