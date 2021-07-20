@@ -51,6 +51,8 @@ class UserController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $this->session->set('admin_users_filters', $filters);
+            $filtered = true;
+            $request->query->set('p', 1);
         }
 
         $query =  $this->userRepository->findMemberQuery($filters);
@@ -60,6 +62,7 @@ class UserController extends AbstractController
             'users' => $this->userService->convertUsers($users),
             'lastPage' => $paginator->lastPage($users),
             'form' => $form->createView(),
+            'current_filters' => ['filtered' => $filtered],
         ]);
     }
 
