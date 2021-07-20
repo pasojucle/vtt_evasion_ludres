@@ -8,7 +8,9 @@
             <div class="block-title">
                 <h2>
                     {{ user.member.fullName }}
-                    <span class="badge" title="{{ user.level.title }}" style="background-color: {{ user.level.color }}">{{ user.level.monogram }}</span>
+                    {% if user.level is not null %}
+                        <span class="badge" title="{{ user.level.title }}" style="background-color: {{ user.level.color }}">{{ user.level.monogram }}</span>
+                    {% endif %}
                 </h2>
                 <span class="tools">
                     <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
@@ -33,7 +35,7 @@
                         <li><i class="fas fa-phone-square"></i> {{ user.member.phone }}</li>
                     </ul>
                 </div>
-                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and user.kinShip is not empty %}
                     <div class="col-md-5 col-xs-12">
                         <ul>
                             <li><b>{{ user.kinShip.type | trans  }}</b> : {{ user.kinShip.fullName }} </li>
@@ -44,7 +46,7 @@
                         </ul>
                     </div>
                 {% endif %}
-                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting %}
+                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting and user.health is not empty %}
                     <div class="col-md-5 col-xs-12">
                         <ul>
                             <li><b>N° de sécurité sociale : </b> {{ user.health.socialSecurityNumber }} </li>
