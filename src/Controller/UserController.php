@@ -62,7 +62,7 @@ class UserController extends AbstractController
             'users' => $this->userService->convertPaginatorToUsers($users),
             'lastPage' => $paginator->lastPage($users),
             'form' => $form->createView(),
-            'current_filters' => ['filtered' => $filtered],
+            'current_filters' => ['filtered' => (int) $filtered],
         ]);
     }
 
