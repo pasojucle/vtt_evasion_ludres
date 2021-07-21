@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DataTransferObject\User;
 use App\Entity\Event;
 use App\Entity\Cluster;
 use App\Entity\Session;
@@ -9,6 +10,9 @@ use App\Form\SessionAddType;
 use App\Form\SessionType;
 use App\Repository\ClusterRepository;
 use App\Repository\SessionRepository;
+use App\Repository\UserRepository;
+use App\Service\EventService;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,25 +81,62 @@ class SessionController extends AbstractController
     public function sessionAdd(
         Request $request,
         Event $event,
-        SessionRepository $sessionRepository
+        SessionRepository $sessionRepository,
+        UserRepository $userRepository,
+        EventService $eventService,
+        UserService $userService
     ): Response
     {
         $user = $this->getUser();
-        $clusters = $event->getClusters();
-        $session = $sessionRepository->findByUserAndClusters($user, $clusters);
 
-        if (null === $session) {
+        $clusters = $event->getClusters();
+        if ($clusters->isEmpty()) {
+            $eventService->createClusters($event);
+            $this->entityManager->flush();
+            $clusters = $event->getClusters();
+        }
+        $userSession = $sessionRepository->findByUserAndClusters($user, $clusters);
+        $isAlreadyRegistered = ($userSession) ? true : false;
+
+        $members = [];
+        $framers = [];
+        $sessions = $sessionRepository->findByEvent($event);
+ 
+        if (null !== $sessions) {
+            foreach($sessions as $session) {
+                if (null === $session->getAvailability()) {
+                    $level = $session->getUser()->getLevel();
+                    $levelId = (null !== $level) ? $level->getId() : 0;
+                    $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';
+                    $members[$levelId]['users'] = $session->getUser();
+                    $members[$levelId]['title'] = $levelTitle;
+                } else {
+                    $framers[] = [
+                        'user' => new User($session->getUser()),
+                        'availability' => Session::AVAILABILITIES[$session->getAvailability()],
+                    ];
+                }
+            }
+        }
+
+        
+
+        if (null === $userSession) {
             $userCluster = null;
-            if ($event->getType() === Event::TYPE_SCHOOL && null !== $user->getLevel()) {
+            if ($event->getType() === Event::TYPE_SCHOOL) {
                 $clustersLevelAsUser = [];
                 foreach($event->getClusters() as $cluster) {
-                    if ($cluster->getLevel() === $user->getLevel()) {
+                    if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
                         $clustersLevelAsUser[] = $cluster;
                         if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {
                             $userCluster = $cluster;
                         }
                     }
+                    if (null !== $cluster->getRole() && $this->isGranted($cluster->getRole())) {
+                        $userCluster = $cluster;
+                    }
                 }
+
                 if (null === $userCluster) {
                     $cluster = new Cluster();
                     $count = count($clustersLevelAsUser) + 1;
@@ -110,31 +151,33 @@ class SessionController extends AbstractController
                 $userCluster = $clusters->first();
             }
 
-            $session = new Session();
-            $session->setUser($user)
+            $userSession = new Session();
+            $userSession->setUser($user)
                 ->setCluster($userCluster);
         }
 
-        $form = $this->createForm(SessionAddType::class, $session, [
+        $form = $this->createForm(SessionAddType::class, $userSession, [
             'clusters' => $clusters,
+            'event' => $event,
+            'is_already_registered' => $isAlreadyRegistered,
         ]);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $session = $form->getData();
-
-            $this->entityManager->persist($session);
+            $userSession = $form->getData();
+            
+            $this->entityManager->persist($userSession);
             $this->entityManager->flush();
             $this->addFlash('success', 'Votre inscription a bien été prise en compte');
 
             return $this->redirectToRoute('user_account');
         }
 
-
-
         return $this->render('session/add.html.twig', [
             'form' => $form->createView(),
             'event' => $event,
+            'framers' => $framers,
+            'members' => $members,
         ]);
     }
 }

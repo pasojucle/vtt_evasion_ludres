@@ -5,9 +5,12 @@ namespace App\Service;
 use DateTime;
 use DateInterval;
 use App\Entity\Event;
+use App\Entity\Cluster;
 use App\Form\EventFilterType;
-use App\Repository\EventRepository;
 use App\Service\PaginatorService;
+use App\Repository\EventRepository;
+use App\Repository\LevelRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -17,13 +20,24 @@ class EventService
     private SessionInterface $session;
     private FormFactoryInterface $formFactory;
     private EventRepository $eventRepository;
+    private LevelRepository $levelRepository;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(PaginatorService $paginator, SessionInterface $session, FormFactoryInterface $formFactory, EventRepository $eventRepository)
+    public function __construct(
+        PaginatorService $paginator,
+        SessionInterface $session, 
+        FormFactoryInterface $formFactory, 
+        EventRepository $eventRepository,
+        LevelRepository $levelRepository,
+        EntityManagerInterface $entityManager
+    )
     {
         $this->paginator = $paginator;
         $this->session = $session;
         $this->formFactory = $formFactory;
         $this->eventRepository = $eventRepository;
+        $this->levelRepository = $levelRepository;
+        $this->entityManager = $entityManager;
     }
     
     
@@ -131,5 +145,45 @@ class EventService
         ];
 
         return ['parameters' => $parameters];
+    }
+
+    public function createClusters($event)
+    {
+        switch ($event->getType()) {
+            case Event::TYPE_SCHOOL:
+                $cluster = new Cluster();
+                $cluster->setTitle("Encadrement")
+                    ->setRole('ROLE_ACCOMPANIST');
+                $event->addCluster($cluster);
+                $this->entityManager->persist($cluster);
+                $levels = $this->levelRepository->findAll();
+                if (null !== $levels) {
+                    foreach ($levels as $level) {
+                        $cluster = new Cluster();
+                        $cluster->setTitle($level->getTitle())
+                            ->setLevel($level)
+                            ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS);
+                        $event->addCluster($cluster);
+                        $this->entityManager->persist($cluster);
+                    }
+                }
+                break;
+            case Event::TYPE_ADULT:
+                $clusterTitles = ['1er groupe', '2e groupe', '3e groupe'];
+                foreach ($clusterTitles as $titles) {
+                    $cluster = new Cluster();
+                    $cluster->setTitle($titles);
+                    $event->addCluster($cluster);
+                    $this->entityManager->persist($cluster);
+                }
+                break;
+            default:
+                $cluster = new Cluster();
+                $cluster->setTitle('1er Groupe');
+                $event->addCluster($cluster);
+                $this->entityManager->persist($cluster);
+        }
+            
+            // $this->entityManager->flush();
     }
 }

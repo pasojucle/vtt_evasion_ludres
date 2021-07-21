@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Service\LicenceService;
+use App\Entity\Event;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use App\Service\LicenceService;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;

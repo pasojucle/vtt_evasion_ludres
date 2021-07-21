@@ -68,7 +68,7 @@ class Event
     /**
      * @ORM\Column(type="integer")
      */
-    private $displayDuration;
+    private $displayDuration = 8;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -88,7 +88,7 @@ class Event
     /**
      * @ORM\Column(type="integer", options={"default":1})
      */
-    private $closingDuration;
+    private $closingDuration = 1;
 
     public function __construct()
     {

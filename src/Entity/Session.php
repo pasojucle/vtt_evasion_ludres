@@ -50,7 +50,6 @@ class Session
      */
     private $availability;
 
-
     public function getId(): ?int
     {
         return $this->id;

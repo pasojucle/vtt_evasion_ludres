@@ -59,7 +59,7 @@ class UserController extends AbstractController
         $users =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('user/admin/users.html.twig', [
-            'users' => $this->userService->convertUsers($users),
+            'users' => $this->userService->convertPaginatorToUsers($users),
             'lastPage' => $paginator->lastPage($users),
             'form' => $form->createView(),
             'current_filters' => ['filtered' => $filtered],

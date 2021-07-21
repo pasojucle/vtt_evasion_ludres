@@ -23,7 +23,7 @@ class SessionRepository extends ServiceEntityRepository
         parent::__construct($registry, Session::class);
     }
 
-    public function findByUserAndClusters(User $user, Collection $clusers)
+    public function findByUserAndClusters(User $user, Collection $clusers): ?Session
     {
         return $this->createQueryBuilder('s')
             ->andWhere(
@@ -34,6 +34,19 @@ class SessionRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult()
+        ;
+    }
+
+    public function findByEvent(Event $event): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.cluster', 'c')
+            ->andWhere(
+                (new Expr)->eq('c.event', ':event'),
+            )
+            ->setParameter('event', $event)
+            ->getQuery()
+            ->getResult()
         ;
     }
 }

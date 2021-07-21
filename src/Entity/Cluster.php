@@ -47,6 +47,11 @@ class Cluster
      */
     private $level;
 
+    /**
+     * @ORM\Column(type="string", length=25, nullable=true)
+     */
+    private $role;
+
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
@@ -149,6 +154,18 @@ class Cluster
     public function setLevel(?Level $level): self
     {
         $this->level = $level;
+
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(?string $role): self
+    {
+        $this->role = $role;
 
         return $this;
     }

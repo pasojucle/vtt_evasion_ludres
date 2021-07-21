@@ -9,7 +9,19 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class UserService
 {
-    public function convertUsers(Paginator $users): array
+    public function convertPaginatorToUsers(Paginator $users): array
+    {
+
+        return $this->convertUsers($users);
+    }
+
+    public function convertArrayToUsers(Array $users): array
+    {
+
+        return $this->convertUsers($users);
+    }
+
+    private function convertUsers($users): array
     {
         $usersDto = [];
         if (!empty($users)) {
