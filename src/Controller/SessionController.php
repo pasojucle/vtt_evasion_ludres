@@ -108,7 +108,7 @@ class SessionController extends AbstractController
                     $level = $session->getUser()->getLevel();
                     $levelId = (null !== $level) ? $level->getId() : 0;
                     $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';
-                    $members[$levelId]['users'] = $session->getUser();
+                    $members[$levelId]['members'] = $session->getUser();
                     $members[$levelId]['title'] = $levelTitle;
                 } else {
                     $framers[] = [
