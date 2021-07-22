@@ -22,8 +22,8 @@
                                 <div class="col-md-10 col-xs-10">
                                     <a class="btn btn-list btn-light" href="{{ path('admin_event_cluster_show', {'event' : event.id}) }}" title="Voir les participants">
                                         <div class="row">
-                                            <div class="col-md-3 col-xs-6">{{ event.startAt | date('d/m/Y') }}</div>
-                                            <div class="col-md-9 col-xs-6">{{ event.title }}</div>
+                                            <div class="col-md-3 col-xs-5">{{ event.startAt | date('d/m/y') }}</div>
+                                            <div class="col-md-9 col-xs-7">{{ event.title }}</div>
                                         </div>
                                     </a>
                                 </div>

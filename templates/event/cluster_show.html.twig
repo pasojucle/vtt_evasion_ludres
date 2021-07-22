@@ -16,33 +16,45 @@
                 {% set hasGroups = event.clusters| length > 1 %}
                 {% if hasGroups %}
                     <h3>{{ cluster.title }}</h3>
-                {% endif %}      
+                {% endif %} 
+                {% if cluster.sessions | length > 0 %}
                 <ul>
                     {% for session in cluster.sessions %}                
                         <li>
                             <div class="row row-list">
-                                <div class="col-md-1">
-                                    {% if session.isPresent %}
-                                        <span class="success"><i class="fas fa-check-circle"></i></span>
-                                    {% else %}
-                                        <span class="alert-danger "><i class="fas fa-times-circle"></i></span>
+                                <div class="col-md-9 col-xs-7">
+                                    {% set btn_color = '' %}
+                                    {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') and not session.user.isFramer and session.user.level is not null %}
+                                        {% set btn_color = ' style = background-color:' ~ session.user.level.color ~ ';' %}
                                     {% endif %}
+                                    <a href="{{ path('admin_user', {'user': session.user.id}) }}" class="btn btn-list btn-light"{{ btn_color }} title="Informatons sur l'adhérent">
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-12">
+                                                {{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
-                                <div class="col-md-5">{{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}</div>
-                                <div class="col-md-4">
-                                    {% if session.isPresent %}
-                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-danger btn-ico" title="Absent"><i class="fas fa-times-circle"></i></a>
-                                    {% else %}
-                                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico" title="Présent"><i class="fas fa-check-circle"></i></a>
+                                <div class="col-md-3 col-xs-5">
+                                    {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') %}
+                                        {% if not session.isPresent %}
+                                            <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-light btn-ico" title="Absent"><i class="fas fa-times-circle"></i></a>
+                                        {% else %}
+                                            <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico" title="Présent"><i class="fas fa-check-circle"></i></a>
+                                        {% endif %}
                                     {% endif %}
                                     {% if hasGroups %}<a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe"><i class="fas fa-exchange-alt"></i></a>{% endif %}
-                                    <a href="{{ path('admin_user', {'user': session.user.id}) }}" class="btn btn-primary btn-ico" title="Informatons sur l'adhérent"><i class="fas fa-user"></i></a>
                                 </div>
                             </div>
                         </li>
                     {% endfor %}
                 </ul>
+                {% else %}
+                    <p>Auncun inscrit</p>
+                {% endif %}
+                <br>
             {% endfor %}
+            
         </div>
     </div>
 {% endblock %}

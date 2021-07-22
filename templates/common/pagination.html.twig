@@ -6,8 +6,8 @@
 {% endif %}
 
 {% if lastPage > 1 %}
-    <nav>
-        <ul class="paginator">
+    <nav class="paginator">
+        <ul>
             {% if _currentPage > 1 %}
                 <li class="page-item">
                     <a class="page-link" href="{{ path(_currentRoute, _currentParams|merge({p: _currentPage - 1})) }}" aria-label="Previous">
