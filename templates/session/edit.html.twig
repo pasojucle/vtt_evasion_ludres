@@ -44,24 +44,26 @@
                     </div>
                     {% if form.availability is defined %}
                         <div class="row">
-                            <div class="col-md-6 col-xs-12">
+                            <div class="col-md-6 col-xs-12 background-white">
+                                <h2>Encrants déjà inscrits</h2>
                                 {% if framers is not empty %}
-                                    <h2>Encrants déjà inscrits</h2>
                                     <ul>
                                         {% for framer in framers %}
                                             <li> 
                                                 <div class="row row-list">
-                                                    <div class="col-md-8 col-xs-6">{{ framer.user.member.fullName }}</div>
-                                                    <div class="col-md-4 col-xs-6">{{ framer.availability | trans }}</div>
+                                                    <div class="col-md-6 col-xs-6"><span class="{{ framer.availability.class }}">{{ framer.availability.text|trans }}</span></div>
+                                                    <div class="col-md-6 col-xs-6">{{ framer.user.member.fullName }}</div>
+                                                    
                                                 </div>
                                             </li>
                                         {% endfor %}
                                     </ul>
                                 {% else %}
-                                    <p>Aucun encrant inscrit</p>
+                                    <p>Aucun encadrant inscrit</p>
                                 {% endif %}
                             </div>
-                            <div class="col-md-6 col-xs-12">
+                            <div class="col-md-1 col-xs-12"></div>
+                            <div class="col-md-5 col-xs-12 background-white">
                             {% if members is not empty %}
                                     <h2>Participants</h2>
                                     <ul>

@@ -13,7 +13,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-class SessionType extends AbstractType
+class SessionSwitchType extends AbstractType
 {
     private ClusterRepository $clusterRepository;
     public function __construct(ClusterRepository $clusterRepository)

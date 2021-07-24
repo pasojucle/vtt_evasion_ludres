@@ -169,4 +169,12 @@ class Cluster
 
         return $this;
     }
+
+    public function getSessionAvailable()
+    {
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->neq('availability', Session::AVAILABILITY_UNAVAILABLE))
+        ;
+        return $this->sessions->matching($criteria);
+    }
 }

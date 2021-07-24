@@ -2,12 +2,11 @@
 
 namespace App\Form;
 
-use App\Entity\Event;
+
 use App\Entity\Cluster;
 use App\Entity\Session;
 use App\Form\HiddenUserType;
 use App\Form\HiddenClusterType;
-use Error;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
@@ -19,7 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
 
-class SessionAddType extends AbstractType
+class SessionEditType extends AbstractType
 {
     private Security $security;
 

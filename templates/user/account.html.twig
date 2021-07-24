@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Calendrier des sorties{% endblock %}
+{% block title %}Mon compte{% endblock %}
 
 {% block body %}
     <div class="wrapper wrapper-full-width full-background">
@@ -15,12 +15,17 @@
                     </div>
                     <div class="block-body">
                         <ul>
-                            <li><div class="row"><div class="col-md-3">Nom</div><div class="col-md-9">{{ user.member.fullName }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3">Adresse</div><div class="col-md-9">{{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3">Téléphone</div><div class="col-md-9">{{ user.member.phone }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3">Mail</div><div class="col-md-9">{{ user.member.email }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3">N° licence</div><div class="col-md-9">{{ user.licenceNumber }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3">Niveau</div><div class="col-md-9">{{ user.level }}</div></div></li>
+                            <li><div class="row"><div class="col-md-3"><b>Nom</b></div><div class="col-md-9">{{ user.member.fullName }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-3"><b>Adresse</b></div><div class="col-md-9">{{ user.member.address.street }}<br>{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-3"><b>Téléphone</b></div><div class="col-md-9">{{ user.member.phone }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-3"><b>Mail</b></div><div class="col-md-9">{{ user.member.email }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-3"><b>N° licence</b></div><div class="col-md-9">{{ user.licenceNumber }}</div></div></li>
+                            {% if user.level is not null %}
+                                <li><div  class="row"><div class="col-md-3"><b>Niveau</b></div><div class="col-md-9">{{ user.level }}</div></div></li>
+                            {% endif %}
+                            {% if user.schoolRole is not null %}
+                                <li><div  class="row"><div class="col-md-3"><b>Role</b></div><div class="col-md-9">{{ user.schoolRole|trans }}</div></div></li>
+                            {% endif %}
                         </ul>
                     </div>    
                 </div>
@@ -34,16 +39,28 @@
                         {% for bikeRide in user.bikeRides %}
                             <li>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        {% if bikeRide.endAt is null %}
-                                            {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                                    <div class="col-md-5">
+                                        <b>
+                                        {% if bikeRide.event.endAt is null %}
+                                            {{ bikeRide.event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
                                         {% else %}
-                                            du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                                            du {{ bikeRide.event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                                        {% endif %}
+                                        </b>
+                                    </div>
+                                    <div class="col-md-5">
+                                        {{ bikeRide.event.title }}
+                                        {% if bikeRide.availability is not empty %}
+                                            <br><span class="{{ bikeRide.availability.class }}">{{ bikeRide.availability.text|trans }}</span>
                                         {% endif %}
                                     </div>
-                                    <div class="col-md-6">
-                                        {{ bikeRide.title }}
-                                    </div
+                                    <div class="col-md-2">
+                                        {% if bikeRide.availability is empty %}
+                                            <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-primary btn-ico" title="Annuler"><i class="fas fa-times-circle"></i></a>
+                                        {% else %}
+                                            <a href="{{ path('session_availability_edit',{'session': bikeRide.sessionId}) }}" class="btn btn-primary btn-ico" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i></a>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </li>
                         {% endfor %}

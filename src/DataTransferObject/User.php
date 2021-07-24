@@ -2,12 +2,10 @@
 
 namespace App\DataTransferObject;
 
-use App\Entity\Identity;
 use App\Entity\Level;
-use App\Entity\Licence;
+use App\Entity\Session;
+use App\Entity\Identity;
 use App\Entity\User as UserEntity;
-use App\Form\UserType;
-use Symfony\Component\Form\DataTransformerInterface;
 
 class User {
 
@@ -232,13 +230,30 @@ class User {
     public function getBikeRides(): array
     {
         $bikeRides = [];
+
         $sessions = $this->user->getSessions();
         if (!$sessions->isEmpty()) {
             foreach ($sessions as $session) {
-                $bikeRides[] = $session->getCluster()->getEvent();
+                
+                $bikeRides[] = [
+                    'event' => $session->getCluster()->getEvent(),
+                    'availability' => $session->getAvailabilityToView(),
+                    'sessionId' => $session->getId(),
+                ];
             }
         }
 
         return $bikeRides;
+    }
+
+    public function getSchoolRole()
+    {
+        foreach($this->user->getRoles() as $role) {
+            if (in_array($role, ['ROLE_FRAME', 'ROLE_ACCOMPANIST'])) {
+                return 'role.'.$role;
+            }
+        }
+
+        return null;
     }
 }

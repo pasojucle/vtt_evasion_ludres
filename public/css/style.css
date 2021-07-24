@@ -347,7 +347,7 @@ p + p {
     display: grid;
     grid-template-areas: "news events"
                          "links links";
-    grid-template-columns: 1fr 280px;
+    grid-template-columns: 1fr 270px;
     gap: 50px;
 }
 .news-container {

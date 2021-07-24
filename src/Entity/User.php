@@ -346,17 +346,4 @@ class User implements UserInterface
 
         return $this;
     }
-
-    public function isFramer(): bool
-    {
-        $isFramer = false;
-
-        foreach(['ROLE_ACCOMPANIST', 'ROLE_FRAME', 'ROLE_ADMIN'] as $role) {
-            if (in_array($role, $this->roles)) {
-                $isFramer = true;
-            }
-        }
-
-        return $isFramer;
-    }
 }

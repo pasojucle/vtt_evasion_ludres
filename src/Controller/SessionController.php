@@ -2,33 +2,38 @@
 
 namespace App\Controller;
 
-use App\DataTransferObject\User;
 use App\Entity\Event;
 use App\Entity\Cluster;
 use App\Entity\Session;
-use App\Form\SessionAddType;
-use App\Form\SessionType;
+use App\Service\UserService;
+use App\Form\SessionEditType;
+use App\Service\EventService;
+use App\Form\SessionSwitchType;
+use App\DataTransferObject\User;
+use App\Repository\UserRepository;
+use App\Form\SessionAvailabilityType;
 use App\Repository\ClusterRepository;
 use App\Repository\SessionRepository;
-use App\Repository\UserRepository;
-use App\Service\EventService;
-use App\Service\UserService;
+use App\Service\SessionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private SessionInterface $session;
+    private SessionService $sessionService;
 
-    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session)
+    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session, SessionService $sessionService)
     {
         $this->entityManager = $entityManager;
         $this->session = $session;
+        $this->sessionService = $sessionService;
     }
     /**
      * @Route("/admin/seance/{session}", name="admin_session_present")
@@ -56,7 +61,7 @@ class SessionController extends AbstractController
     {
 
         $event = $session->getCluster()->getEvent();
-        $form = $this->createForm(SessionType::class, $session);
+        $form = $this->createForm(SessionSwitchType::class, $session);
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -72,7 +77,6 @@ class SessionController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
 
     /**
      * @Route("/mon-compte/rando/inscription/{event}",
@@ -98,28 +102,7 @@ class SessionController extends AbstractController
         $userSession = $sessionRepository->findByUserAndClusters($user, $clusters);
         $isAlreadyRegistered = ($userSession) ? true : false;
 
-        $members = [];
-        $framers = [];
-        $sessions = $sessionRepository->findByEvent($event);
- 
-        if (null !== $sessions) {
-            foreach($sessions as $session) {
-                if (null === $session->getAvailability()) {
-                    $level = $session->getUser()->getLevel();
-                    $levelId = (null !== $level) ? $level->getId() : 0;
-                    $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';
-                    $members[$levelId]['members'] = $session->getUser();
-                    $members[$levelId]['title'] = $levelTitle;
-                } else {
-                    $framers[] = [
-                        'user' => new User($session->getUser()),
-                        'availability' => Session::AVAILABILITIES[$session->getAvailability()],
-                    ];
-                }
-            }
-        }
-
-        
+        list($framers, $members) = $this->sessionService->getSessionsBytype($event);
 
         if (null === $userSession) {
             $userCluster = null;
@@ -156,7 +139,7 @@ class SessionController extends AbstractController
                 ->setCluster($userCluster);
         }
 
-        $form = $this->createForm(SessionAddType::class, $userSession, [
+        $form = $this->createForm(SessionEditType::class, $userSession, [
             'clusters' => $clusters,
             'event' => $event,
             'is_already_registered' => $isAlreadyRegistered,
@@ -178,6 +161,68 @@ class SessionController extends AbstractController
             'event' => $event,
             'framers' => $framers,
             'members' => $members,
+        ]);
+    }
+
+    /**
+     * @Route("/mon-compte/rando/disponibilte/{session}",
+     * name="session_availability_edit")
+     */
+    public function sessionAvailabilityEdit(
+        Request $request,
+        Session $session
+    )
+    {
+        $event = $session->getCluster()->getEvent();
+        $form = $this->createForm(SessionAvailabilityType::class, $session);
+        $form->handleRequest($request);
+
+        list($framers, $members) = $this->sessionService->getSessionsBytype($event, $session->getUser());
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $session = $form->getData();
+
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Votre disponiblité à bien été modifiée');
+
+            return $this->redirectToRoute('user_account');
+        }
+
+        return $this->render('session/edit.html.twig', [
+            'form' => $form->createView(),
+            'event' => $event,
+            'framers' => $framers,
+            'members' => $members,
+        ]);
+    }
+
+        
+    /**
+     * @Route("/mon-compte/rando/supprime/{session}",
+     * name="session_delete")
+     */
+    public function sessionDelete(
+        FormFactoryInterface $formFactory,
+        Request $request,
+        Session $session
+    )
+    {
+        $form = $formFactory->create();
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->remove($session);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Votre désinscrition à bien été prise en compte');
+
+            return $this->redirectToRoute('user_account');
+        }
+
+        return $this->render('session/delete.html.twig', [
+            'form' => $form->createView(),
+            'session' => $session,
         ]);
     }
 }

@@ -21,6 +21,12 @@ class UserService
         return $this->convertUsers($users);
     }
 
+    public function convertToUser(EntityUser $user): User
+    {
+
+        return $usersDto[] = new User($user);
+    }
+
     private function convertUsers($users): array
     {
         $usersDto = [];

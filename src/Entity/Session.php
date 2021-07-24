@@ -12,12 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Session
 {
-    public const AVAILABILITY_PRESENT = 1;
+    public const AVAILABILITY_REGISTERED = 1;
     public const AVAILABILITY_AVAILABLE = 2;
     public const AVAILABILITY_UNAVAILABLE = 3;
 
     public const AVAILABILITIES = [
-        self::AVAILABILITY_PRESENT => 'session.availability.present',
+        self::AVAILABILITY_REGISTERED => 'session.availability.registered',
         self::AVAILABILITY_AVAILABLE => 'session.availability.available',
         self::AVAILABILITY_UNAVAILABLE => 'session.availability.unavailable',
     ];
@@ -101,5 +101,24 @@ class Session
         $this->availability = $availability;
 
         return $this;
+    }
+
+    public function getAvailabilityToView(): array
+    {
+        $availbilityColors = [
+            1 => 'success',
+            2 => 'alert-warning',
+            3 => 'alert-danger',
+        ];
+
+        $availability = [];
+        if (null !== $this->availability) {
+            $availability = [
+                'class' => $availbilityColors[$this->availability],
+                'text' => Session::AVAILABILITIES[$this->availability],
+            ];
+        }
+        
+        return $availability;
     }
 }

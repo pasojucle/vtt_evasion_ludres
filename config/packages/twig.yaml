@@ -11,3 +11,4 @@ twig:
         licence_service: '@App\Service\LicenceService'
         membership_fee_service: '@App\Service\MembershipFeeService'
         registration_service: '@App\Service\RegistrationService'
+        user_service: '@App\Service\UserService'

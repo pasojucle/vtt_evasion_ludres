@@ -89,7 +89,7 @@ class UserController extends AbstractController
     ): Response
     {
         $user = $this->getUser();
-        
+
         return $this->render('user/account.html.twig', [
             'user' => new User($user),
         ]);

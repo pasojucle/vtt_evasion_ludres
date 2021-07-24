@@ -69,6 +69,11 @@ event:
 
 session:
   availability:
-    present: Sera présent
+    registered: Inscrit
     available: Disponible
     unavailable: Non disponible
+
+role:
+   ROLE_ACCOMPANIST: Accompagateur
+   ROLE_FRAME: Encadrant
+   ROLE_ADMIN: Administrateur

@@ -116,6 +116,13 @@ body > script {display: none !important;}
 .alert-danger {
     color: var(--danger-color);
 }
+.alert-danger::before {
+    content: '\f057';
+    color: var(--danger-color);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
 .alert-warning {
     color: var(--primary-color-darker);
 }
@@ -129,6 +136,13 @@ body > script {display: none !important;}
 
 .success {
     color: var(--success-color);
+}
+.success::before {
+    content: '\f058';
+    color: var(--success-color);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
 }
 .btn {
     padding: 12px 20px;
@@ -172,6 +186,7 @@ body > script {display: none !important;}
 .btn-primary {
     background-color: var(--primary-color);
     color: var(--white-color);
+    border: 2px solid var(--primary-color);
 }
 .btn-secondary {
     color: var(--primary-color-darker);
@@ -181,14 +196,17 @@ body > script {display: none !important;}
 .btn-success {
     color: var(--white-color);
     background-color: var(--success-color);
+    border: 2px solid var(--success-color);
 }
 .btn-danger{
     background-color: var(--danger-color);
     color: var(--white-color);
+    border: 2px solid var(--danger-color);
 }
 .btn-light {
     background-color: var(--light-color);
     color: var(--backgroud-color);
+    border: 2px solid var(--light-color);
 }
 .btn-ico {
     font-size: 28px;
@@ -210,6 +228,9 @@ body > script {display: none !important;}
 }
 .btn-full-width {
     width: 100%;
+}
+.float-right.btn + .float-right.btn {
+    margin-right: 25px;
 }
 .flashes {
     position: absolute;

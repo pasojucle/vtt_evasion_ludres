@@ -19,18 +19,29 @@
                 {% endif %} 
                 {% if cluster.sessions | length > 0 %}
                 <ul>
-                    {% for session in cluster.sessions %}                
+                    {% for session in cluster.sessionAvailable %}   
+                        {% set user = user_service.converttoUser(session.user)%}             
                         <li>
                             <div class="row row-list">
                                 <div class="col-md-9 col-xs-7">
                                     {% set btn_color = '' %}
-                                    {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') and not session.user.isFramer and session.user.level is not null %}
+                                    {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') and session.availability is null and session.user.level is not null %}
                                         {% set btn_color = ' style = background-color:' ~ session.user.level.color ~ ';' %}
                                     {% endif %}
                                     <a href="{{ path('admin_user', {'user': session.user.id}) }}" class="btn btn-list btn-light"{{ btn_color }} title="Informatons sur l'adhérent">
                                         <div class="row">
-                                            <div class="col-md-12 col-xs-12">
-                                                {{ session.user.firstIdentity.name }} {{ session.user.firstIdentity.firstName }}
+                                            <div class="col-md-6 col-xs-12">
+                                                {{ user.member.fullName }}
+                                            </div>
+                                            <div class="col-md-3 col-xs-6">
+                                                {% if session.availability is not empty %}
+                                                    <span class="{{ session.availabilityToView.class }}">{{ session.availabilityToView.text|trans }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-3 col-xs-6">
+                                                {% if user.schoolRole is not null %}
+                                                   {{ user.schoolRole|trans }}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </a>
@@ -43,7 +54,11 @@
                                             <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico" title="Présent"><i class="fas fa-check-circle"></i></a>
                                         {% endif %}
                                     {% endif %}
-                                    {% if hasGroups %}<a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe"><i class="fas fa-exchange-alt"></i></a>{% endif %}
+                                    {% if hasGroups and (user.schoolRole is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+                                        <a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
+                                            <i class="fas fa-exchange-alt"></i>
+                                        </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </li>

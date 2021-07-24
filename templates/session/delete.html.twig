@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des sorties{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width full-background">
+        <div class="wrapper-title">
+            <h1>Désinscription</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="block background-ligth">
+            {{ form_start(form) }}
+                {% set bikeRide = session.cluster.event %}
+                <div class="block-title bike-ride-date active">
+                    <h2>
+                        {% if bikeRide.endAt is null %}
+                            {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
+                        {% else %}
+                            du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                        {% endif %}
+                    </h2>
+                </div>
+                <div class="block-body">
+                    <h3>{{ bikeRide.title }}</h3>
+                </div>
+                <div class="block-footer">
+                    <button type="submit" class="btn btn btn-primary float-right">Je confirme ma désincrire</button>
+                    <a href="{{ path('user_account') }}" class="btn btn-secondary float-right">Retour à mon compte</a>
+                </div>
+            {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
