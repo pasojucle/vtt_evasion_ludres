@@ -6,6 +6,7 @@ use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\Identity;
 use App\Entity\User as UserEntity;
+use DateTime;
 
 class User {
 
@@ -231,16 +232,20 @@ class User {
     public function getBikeRides(): array
     {
         $bikeRides = [];
+        $today = new DateTime();
 
         $sessions = $this->user->getSessions();
         if (!$sessions->isEmpty()) {
             foreach ($sessions as $session) {
-                
-                $bikeRides[] = [
-                    'event' => $session->getCluster()->getEvent(),
-                    'availability' => $session->getAvailabilityToView(),
-                    'sessionId' => $session->getId(),
-                ];
+                $event = $session->getCluster()->getEvent();
+                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $event->getStartAt()->format('Y-m-d').' 00:00:00');
+                if ($today <= $startAt) {
+                    $bikeRides[] = [
+                        'event' => $session->getCluster()->getEvent(),
+                        'availability' => $session->getAvailabilityToView(),
+                        'sessionId' => $session->getId(),
+                    ];
+                }
             }
         }
 
