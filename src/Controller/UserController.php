@@ -62,6 +62,8 @@ class UserController extends AbstractController
         $query =  $this->userRepository->findMemberQuery($filters);
         $users =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
+        $this->session->set('user_return', $this->generateUrl('admin_users', ['filtered' => true, 'p' => $request->query->get('p')]));
+
         return $this->render('user/admin/users.html.twig', [
             'users' => $this->userService->convertPaginatorToUsers($users),
             'lastPage' => $paginator->lastPage($users),
@@ -74,18 +76,13 @@ class UserController extends AbstractController
      * @Route("/admin/adherent/{user}", name="admin_user")
      */
     public function adminUser(
-        Request $request,
         UserEntity $user
     ): Response
     {
-        $referer = $request->headers->get('referer');
-        if (preg_match('#^(http:\/\/vtt-evasion-ludres\/admin\/adherents)([\?p=]*)(\d*)$#', $referer, $matches)) {
-            $referer = $this->generateUrl('admin_users', ['filtered' => true, 'p' => $matches[3]]);
-        }
 
         return $this->render('user/admin/user.html.twig', [
             'user' => new User($user),
-            'referer' => $referer,
+            'referer' => $this->session->get('user_return'),
         ]);
     }
 

@@ -119,7 +119,8 @@ class EventController extends AbstractController
     ): Response
     {
         $filters = $this->session->get('admin_events_filters');
-
+        $this->session->set('user_return', $this->generateUrl('admin_event_cluster_show', ['event' => $event->getId()]));
+        
         return $this->render('event/cluster_show.html.twig', [
             'event' => $event,
             'events_filters' =>  ($filters) ? $filters : [],
