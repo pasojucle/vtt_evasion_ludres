@@ -30,7 +30,7 @@
                                     {% endif %}
                                     <a href="{{ path('admin_user', {'user': session.user.id}) }}" class="btn btn-list btn-light"{{ btn_color }} title="Informatons sur l'adhérent">
                                         <div class="row">
-                                            <div class="col-md-6 col-xs-12">
+                                            <div class="col-md-5 col-xs-12">
                                                 {{ user.member.fullName }}
                                             </div>
                                             <div class="col-md-3 col-xs-6">
@@ -38,7 +38,7 @@
                                                     <span class="{{ session.availabilityToView.class }}">{{ session.availabilityToView.text|trans }}</span>
                                                 {% endif %}
                                             </div>
-                                            <div class="col-md-3 col-xs-6">
+                                            <div class="col-md-4 col-xs-6">
                                                 {% if user.level is not null %}
                                                    {{ user.level|trans }}
                                                 {% endif %}

@@ -34,7 +34,7 @@ class SessionEditType extends AbstractType
             $submitLabel = null;
 
             if (!$options['is_already_registered']) {
-                if (null !== $options['event'] && $options['event']->getAccessAvailabity($this->security->isGranted('ROLE_FRAME'))) {
+                if (null !== $options['event'] && $options['event']->getAccessAvailabity($this->security->getUser())) {
                     $submitLabel = 'Enregister';
                     $form
                         ->add('availability', ChoiceType::class, [

@@ -1,0 +1,40 @@
+{% if form.availability is defined %}
+    <div class="row">
+        <div class="col-md-6 col-xs-12 background-white">
+            <h2>Encrants déjà inscrits</h2>
+            {% if framers is not empty %}
+                <ul>
+                    {% for framer in framers %}
+                        <li> 
+                            <div class="row row-list">
+                                <div class="col-md-6 col-xs-6"><span class="{{ framer.availability.class }}">{{ framer.availability.text|trans }}</span></div>
+                                <div class="col-md-6 col-xs-6">{{ framer.user.member.fullName }}</div>
+                                
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Aucun encadrant inscrit</p>
+            {% endif %}
+        </div>
+        <div class="col-md-1 col-xs-12"></div>
+        <div class="col-md-5 col-xs-12 background-white">
+            <h2>Participants</h2>
+            {% if members is not empty %}
+                <ul>
+                    {% for membersPerLevel in members %}
+                        <li> 
+                            <div class="row row-list">
+                                <div class="col-md-6 col-xs-6">{{ membersPerLevel.title }}</div>
+                                <div class="col-md-6 col-xs-6">{{ membersPerLevel.members | length }}</div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Aucun particpant inscrit</p>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

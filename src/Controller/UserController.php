@@ -2,15 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Level;
+use App\Form\IdentityType;
+use App\Form\Admin\UserType;
 use App\Form\UserFilterType;
 use App\Service\UserService;
+use App\Service\LicenceService;
 use App\DataTransferObject\User;
 use App\Service\PaginatorService;
 use App\Repository\UserRepository;
 use App\Entity\User as  UserEntity;
-use App\Form\Admin\UserType;
-use App\Form\IdentityType;
-use App\Service\LicenceService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -107,7 +108,13 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            
+
+            if (null !== $user->getLevel() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
+                $user->addRole('ROLE_FRAME');
+            } else {
+                $user->removeRole('ROLE_FRAME');
+            }
+
             $this->entityManager->flush();
             return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
         }

@@ -2,13 +2,11 @@
 
 namespace App\Form;
 
-use App\Entity\Event;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Repository\LevelRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -66,7 +64,8 @@ class UserFilterType extends AbstractType
         $levels = $this->levelRepository->findAll();
         if (!empty($levels)) {
             foreach($levels as $level) {
-                $levelChoices[$level->getTitle()] = $level->getId();
+                $type = ($level->getType() === Level::TYPE_MEMBER) ? 'Adhérent' : 'Encadrement';
+                $levelChoices[$type][$level->getTitle()] = $level->getId();
             }
         }
 

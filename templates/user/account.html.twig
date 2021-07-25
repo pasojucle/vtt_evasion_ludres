@@ -15,16 +15,17 @@
                     </div>
                     <div class="block-body">
                         <ul>
-                            <li><div class="row"><div class="col-md-3"><b>Nom</b></div><div class="col-md-9">{{ user.member.fullName }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3"><b>Adresse</b></div><div class="col-md-9">{{ user.member.address.street }}<br>{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3"><b>Téléphone</b></div><div class="col-md-9">{{ user.member.phone }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3"><b>Mail</b></div><div class="col-md-9">{{ user.member.email }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-3"><b>N° licence</b></div><div class="col-md-9">{{ user.licenceNumber }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4"><b>Nom</b></div><div class="col-md-8">{{ user.member.fullName }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-4"><b>Adresse</b></div><div class="col-md-8">{{ user.member.address.street }}<br>{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-4"><b>Téléphone</b></div><div class="col-md-8">{{ user.member.phone }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-4"><b>Mail</b></div><div class="col-md-8">{{ user.member.email }}</div></div></li>
+                            <li><div  class="row"><div class="col-md-4"><b>N° licence</b></div><div class="col-md-8">{{ user.licenceNumber }}</div></div></li>
                             {% if user.level is not null %}
                                 <li>
                                     <div  class="row">
-                                        <div class="col-md-3"><b{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</b></div>
-                                        <div class="col-md-9">{{ user.level }}</div>
+                                        {% dump(constant('App\\Entity\\Level::TYPES')[user.level.type]) %}
+                                        <div class="col-md-4"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</b></div>
+                                        <div class="col-md-8">{{ user.level }}</div>
                                     </div>
                                 </li>
                             {% endif %}
