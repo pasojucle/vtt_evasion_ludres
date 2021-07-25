@@ -213,11 +213,11 @@ class Event
         return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
     }
 
-    public function getAccessAvailabity(User $user): bool
+    public function getAccessAvailabity(?User $user): bool
     {
         $today = new DateTime();
         
-        $level = $user->getLevel();
+        $level = (null !== $user) ? $user->getLevel() : null;
         $type =  (null !== $level) ? $level->getType() : null;
 
         return $type == Level::TYPE_FRAME && $this->type === self::TYPE_SCHOOL && $today < $this->startAt;
