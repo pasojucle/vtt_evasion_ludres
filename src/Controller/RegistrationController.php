@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
+use App\Service\UserService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -73,7 +74,7 @@ class RegistrationController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
-        SluggerInterface $slugger,
+        UserService $userService,
         MembershipFeeRepository $membershipFeeRepository,
         int $step
     ): Response
@@ -127,21 +128,8 @@ class RegistrationController extends AbstractController
 
             if ($request->files->get('user')) {
                 $pictureFile = $request->files->get('user')['identities'][0]['pictureFile'];
-                if ($pictureFile) {
-                    $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
-                    if (!is_dir($this->getParameter('uploads_directory'))) {
-                        mkdir($this->getParameter('uploads_directory'));
-                    }
-                    try {
-                        $pictureFile->move(
-                            $this->getParameter('uploads_directory'),
-                            $newFilename
-                        );
-                    } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
-                    }
+                $newFilename = $userService->uploadFile($pictureFile);
+                if (null !== $newFilename) {
                     $user->getIdentities()->first()->setPicture($newFilename);
                 }
             }

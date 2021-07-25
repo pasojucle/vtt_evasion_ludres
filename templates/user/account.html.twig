@@ -23,7 +23,6 @@
                             {% if user.level is not null %}
                                 <li>
                                     <div  class="row">
-                                        {% dump(constant('App\\Entity\\Level::TYPES')[user.level.type]) %}
                                         <div class="col-md-4"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</b></div>
                                         <div class="col-md-8">{{ user.level }}</div>
                                     </div>

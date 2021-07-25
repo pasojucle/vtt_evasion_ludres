@@ -111,7 +111,7 @@ class UserController extends AbstractController
             } else {
                 $user->removeRole('ROLE_FRAME');
             }
-
+            
             $this->entityManager->flush();
             return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
         }
@@ -127,6 +127,7 @@ class UserController extends AbstractController
     public function adminIdentityEdit(
         Request $request,
         LicenceService $licenceService,
+        UserService $userService,
         UserEntity $user
     ): Response
     {
@@ -140,6 +141,13 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $identity = $form->getData();
+            if ($request->files->get('identity')) {
+                $pictureFile = $request->files->get('identity')['pictureFile'];
+                $newFilename = $userService->uploadFile($pictureFile);
+                if (null !== $newFilename) {
+                    $identity->setPicture($newFilename);
+                }
+            }
             $this->entityManager->flush();
             return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
         }

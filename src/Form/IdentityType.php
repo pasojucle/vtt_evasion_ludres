@@ -117,6 +117,7 @@ class IdentityType extends AbstractType
                             'row_attr' => [
                                 'class' => $row_class,
                             ],
+                            'required' => false,
                         ])
                         ->add('pictureFile', FileType::class, [
                             'label' => false,
