@@ -135,6 +135,26 @@ class User implements UserInterface
         return $this;
     }
 
+    public function addRole(string $role): self
+    {
+        if (in_array($role, $this->roles)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(string $role): self
+    {
+        $key = array_search($role, $this->roles);
+
+        if (false !== $key) {
+            unset($this->roles[$key]);
+        }
+
+        return $this;
+    }
+
     /**
      * @see UserInterface
      */

@@ -153,7 +153,7 @@ class EventService
             case Event::TYPE_SCHOOL:
                 $cluster = new Cluster();
                 $cluster->setTitle("Encadrement")
-                    ->setRole('ROLE_ACCOMPANIST');
+                    ->setRole('ROLE_FRAME');
                 $event->addCluster($cluster);
                 $this->entityManager->persist($cluster);
                 $levels = $this->levelRepository->findAll();

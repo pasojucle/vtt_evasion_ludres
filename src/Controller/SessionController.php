@@ -9,7 +9,6 @@ use App\Service\UserService;
 use App\Form\SessionEditType;
 use App\Service\EventService;
 use App\Form\SessionSwitchType;
-use App\DataTransferObject\User;
 use App\Repository\UserRepository;
 use App\Form\SessionAvailabilityType;
 use App\Repository\ClusterRepository;

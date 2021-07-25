@@ -45,7 +45,7 @@ class ToolController extends AbstractController
             if ($request->files->get('tool_import')) {
                 $userListFile = $request->files->get('tool_import')['userList'];
 
-                $allLevel = $levelRepository->findAll();
+                $allLevel = $levelRepository->findAllTypeMember();
                 $levels = [];
 
                 foreach ($allLevel as $level) {
@@ -109,7 +109,7 @@ class ToolController extends AbstractController
                         $licence->setCreatedAt(DateTime::createFromFormat('d/m/Y', $createdAt))
                             ->setType($licenceType)
                             ->setCategory($category)
-                            ->setTesting(false)
+                            ->setFinal(true)
                             ->setSeason('2021')
                             ;
                         $address->setStreet($street)

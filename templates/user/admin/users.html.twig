@@ -34,13 +34,13 @@
                                 <div class="row row-list">
                                     <div class="col-md-1 col-xs-1">
                                         {% if licence %}
-                                            <span class="success"><i class="fas fa-check-circle"></i></span>
+                                            <span class="success"></span>
                                         {% else %}
                                             <span class="alert-danger "><i class="fas fa-times-circle"></i></span>
                                         {% endif %}
                                     </div>
-                                    <div class="col-md-9 col-xs-8">{{ user.member.fullName }}</div>
-                                    <div class="col-md-2 col-xs-3">{{ constant('App\\Entity\\Licence::CATEGORIES')[licence.category]  | trans}}</div>
+                                    <div class="col-md-8 col-xs-6">{{ user.member.fullName }}</div>
+                                    <div class="col-md-3 col-xs-5">{{ user.level }}</div>
                                 </div>
                             </a>
                         </li>

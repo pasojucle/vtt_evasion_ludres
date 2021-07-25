@@ -27,7 +27,7 @@ class IdentityType extends AbstractType
             $identity = $event->getData();
             $form = $event->getForm();
             $row_class =  ($options['is_kinship']) ? 'form-group-inline' : 'form-group';
-            if ((!$options['is_kinship'] && $form->getName() === "0") || ($options['is_kinship'] && $form->getName() === "1")) {
+            if ((!$options['is_kinship'] && $form->getName() === "0") || ($options['is_kinship'] && $form->getName() === "1") || 'identity' === $form->getName()) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
@@ -143,9 +143,15 @@ class IdentityType extends AbstractType
                 $form->add('address', AddressType::class, [
                     'row_class' => $addressClass,
                 ]);
+                if ('identity' === $form->getName()) {
+                    $form
+                        ->add('save', SubmitType::class, [
+                            'label' => 'Modifier',
+                            'attr' => ['class' => 'btn btn-primary float-right'],
+                        ]);
+                }
             }
         });
-
     }
 
     public function configureOptions(OptionsResolver $resolver)

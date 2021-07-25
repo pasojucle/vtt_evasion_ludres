@@ -74,6 +74,10 @@ session:
     unavailable: Non disponible
 
 role:
-   ROLE_ACCOMPANIST: Accompagateur
    ROLE_FRAME: Encadrant
    ROLE_ADMIN: Administrateur
+
+level:
+  type:
+    member: Niveau
+    frame: Encradrement

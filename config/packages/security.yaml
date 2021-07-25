@@ -12,10 +12,9 @@ security:
                 class: App\Entity\User
                 property: licenceNumber
     role_hierarchy:
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ACCOMPANIST, ROLE_FRAME, ROLE_ADMIN]
-        ROLE_ADMIN: [ROLE_USER, ROLE_ACCOMPANIST, ROLE_FRAME]
-        ROLE_FRAME: [ROLE_USER, ROLE_ACCOMPANIST]
-        ROLE_ACCOMPANIST: ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_ADMIN]
+        ROLE_ADMIN: [ROLE_USER, ROLE_FRAME]
+        ROLE_FRAME: [ROLE_USER]
         ROLE_USER:
 
     firewalls:

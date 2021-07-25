@@ -39,8 +39,8 @@
                                                 {% endif %}
                                             </div>
                                             <div class="col-md-3 col-xs-6">
-                                                {% if user.schoolRole is not null %}
-                                                   {{ user.schoolRole|trans }}
+                                                {% if user.level is not null %}
+                                                   {{ user.level|trans }}
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -54,7 +54,7 @@
                                             <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico" title="Présent"><i class="fas fa-check-circle"></i></a>
                                         {% endif %}
                                     {% endif %}
-                                    {% if hasGroups and (user.schoolRole is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+                                    {% if hasGroups and (user.isMember or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
                                         <a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
                                             <i class="fas fa-exchange-alt"></i>
                                         </a>

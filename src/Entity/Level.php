@@ -12,6 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Level
 {
+    public const TYPE_MEMBER = 1;
+    public const TYPE_FRAME = 2;
+
+    public const TYPES = [
+        self::TYPE_MEMBER => 'level.type.member',
+        self::TYPE_FRAME => 'level.type.frame',
+    ];
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -39,10 +46,6 @@ class Level
      */
     private $color;
 
-    /**
-     * @ORM\Column(type="string", length=3, nullable=true)
-     */
-    private $monogram;
 
     /**
      * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="level")
@@ -53,6 +56,11 @@ class Level
      * @ORM\Column(type="integer")
      */
     private $orderBy;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $type;
 
     public function __construct()
     {
@@ -136,18 +144,6 @@ class Level
         return $this;
     }
 
-    public function getMonogram(): ?string
-    {
-        return $this->monogram;
-    }
-
-    public function setMonogram(?string $monogram): self
-    {
-        $this->monogram = $monogram;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Cluster[]
      */
@@ -186,6 +182,18 @@ class Level
     public function setOrderBy(int $orderBy): self
     {
         $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

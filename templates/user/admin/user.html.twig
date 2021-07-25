@@ -5,13 +5,8 @@
 {% block body %}
  <div class="wrapper">
         <div class="block">
-            <div class="block-title">
-                <h2>
-                    {{ user.member.fullName }}
-                    {% if user.level is not null %}
-                        <span class="badge" title="{{ user.level.title }}" style="background-color: {{ user.level.color }}">{{ user.level.monogram }}</span>
-                    {% endif %}
-                </h2>
+            <div class="block-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+                <h2>{{ user.member.fullName }}</h2>
                 <span class="tools">
                     <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
                         class="btn btn-secondary btn-ico" title="Retour à la liste des adhérents">
@@ -19,7 +14,7 @@
                     </a>
                 </span>
             </div>
-            <div class="block-body row">
+            <div class="block-body row" style="align-items: flex-start;">
                 {% set licence = user.seasonLicence(licence_service.currentSeason) %}
                 {% if user.member.picture %}
                     <div class="col-md-2 col-xs-4">
@@ -28,15 +23,46 @@
                 {% endif %}
                 <div class="col-md-5 col-xs-8">
                     <ul>
-                        <li><b>Né(e) le : </b>{{ user.member.birthDateAndPlace }}</li>
+                        <li><b>Né(e) le : </b>{{ user.member.birthDate }}</li>
                         <li><i class="fas fa-map-marker-alt"></i> {{ user.member.address.street }}</li>
                         <li>{{ user.member.address.postalCode }} {{ user.member.address.town }}</li>
                         <li><i class="fas fa-at"></i> {{ user.member.email }}</li>
                         <li><i class="fas fa-phone-square"></i> {{ user.member.phone }}</li>
                     </ul>
+                  {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('admin_identity_edit', {'user': user.id}) }}"
+                            class="btn btn-secondary" title="Modifier">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <br>
+                    {% endif %}
+                </div>
+                <div class="col-md-5 col-xs-12">
+                    <ul>
+                        <li><b>Licence:</b> {{ user.licenceNumber }}</li>
+                        {% set season_licence = user.seasonLicence(licence_service.currentSeason) %}
+                        {% if season_licence is not empty %}
+                            {% if not season_licence.isValid %}
+                                <li>Dossier d'insription en cours</li>
+                            {% endif %}
+                            {% if not season_licence.isFinal %}
+                                <li>Période de test en cours</li>
+                            {% endif %}
+                        {% endif %}
+                        {% if user.level is not null %}
+                            <li><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b> {{ user.level }}</li>
+                        {% endif %}
+                    </ul>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
+                            class="btn btn-secondary" title="Modifier">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <br>
+                    {% endif %}
                 </div>
                 {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and user.kinShip is not empty %}
-                    <div class="col-md-5 col-xs-12">
+                    <div class="col-md-6 col-xs-12">
                         <ul>
                             <li><b>{{ user.kinShip.type | trans  }}</b> : {{ user.kinShip.fullName }} </li>
                             <li><i class="fas fa-map-marker-alt"></i> {{ user.kinShip.address.street }}</li>
@@ -46,8 +72,8 @@
                         </ul>
                     </div>
                 {% endif %}
-                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting and user.health is not empty %}
-                    <div class="col-md-5 col-xs-12">
+                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and  licence.isFinal and user.health is not empty %}
+                    <div class="col-md-6 col-xs-12">
                         <ul>
                             <li><b>N° de sécurité sociale : </b> {{ user.health.socialSecurityNumber }} </li>
                             <li><b>Groupe sanguin : </b> {{ user.health.bloodGroup }}</li>

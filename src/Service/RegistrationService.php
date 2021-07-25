@@ -76,7 +76,7 @@ class RegistrationService
         $this->setUser();
 
         $category = $this->seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $this->seasonLicence->isTesting());
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal());
         $stepIndex = $step -1;
         
         $progress['max_step'] = count($steps);
@@ -140,8 +140,8 @@ class RegistrationService
         if (null === $this->seasonLicence) {
             $this->seasonLicence = new Licence();
             $this->seasonLicence->setSeason($this->season);
-            if ($this->user->getLicences()->isEmpty()) {
-                $this->seasonLicence->setTesting(true);
+            if (!$this->user->getLicences()->isEmpty()) {
+                $this->seasonLicence->setFinal(true);
             }
             if (!$this->user->getIdentities()->isEmpty()) {
                 $category = $this->licenceService->getCategory($this->user);

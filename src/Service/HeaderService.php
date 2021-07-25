@@ -67,12 +67,6 @@ class HeaderService
                  'subMenus' => [],
             ],
             [
-                'label' => 'Gestion des accompagnateurs',
-                 'route' => 'admin_events',
-                 'pattern' => '/session/',
-                 'subMenus' => [],
-            ],
-            [
                 'label' => 'Gestion des niveaux',
                  'route' => 'admin_events',
                  'pattern' => '/session/',

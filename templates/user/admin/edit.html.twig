@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.member.fullName }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="block">
+            <div class="block-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+                <h2>{{ user.member.fullName }}</h2>
+                <span class="tools">
+                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.id}) }}"
+                        class="btn btn-secondary btn-ico" title="Retour à la fiche de l'adhérents">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </span>
+            </div>
+            {{ form_start(form) }}
+            <div class="block-body">
+                <div class="form-group">{{ form_row(form.licenceNumber) }}</div>
+                <div class="form-group">{{ form_row(form.level) }}</div>
+                {% set licence = form.children.licences.children[0].children %}
+                {% if licence.valid is defined %}
+                    <div class="form-group">
+                        <div class="inputGroup long check">
+                            {{ form_widget(licence.valid) }}
+                            {{ form_label(licence.valid) }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if licence.final is defined %}
+                    <div class="form-group">
+                        <div class="inputGroup long check">
+                            {{ form_widget(licence.final) }}
+                            {{ form_label(licence.final) }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="block-footer">
+                {{ form_row(form.save) }}
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

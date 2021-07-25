@@ -8,6 +8,9 @@ use App\DataTransferObject\User;
 use App\Service\PaginatorService;
 use App\Repository\UserRepository;
 use App\Entity\User as  UserEntity;
+use App\Form\Admin\UserType;
+use App\Form\IdentityType;
+use App\Service\LicenceService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,13 +77,73 @@ class UserController extends AbstractController
         UserEntity $user
     ): Response
     {
+        $referer = $request->headers->get('referer');
+        if (preg_match('#^(http:\/\/vtt-evasion-ludres\/admin\/adherents)([\?p=]*)(\d*)$#', $referer, $matches)) {
+            $referer = $this->generateUrl('admin_users', ['filtered' => true, 'p' => $matches[3]]);
+        }
 
         return $this->render('user/admin/user.html.twig', [
             'user' => new User($user),
-            'referer' => $request->headers->get('referer'),
+            'referer' => $referer,
         ]);
     }
 
+    /**
+     * @Route("/admin/adherent/edit/{user}", name="admin_user_edit")
+     */
+    public function adminUserEdit(
+        Request $request,
+        LicenceService $licenceService,
+        UserEntity $user
+    ): Response
+    {
+        $currentSeason = $licenceService->getCurrentSeason();
+        $seasonLicence = $user->getSeasonLicence($currentSeason);
+        $form = $this->createForm(UserType::class, $user, [
+            'category' => $seasonLicence->getCategory(),
+            'season_licence' => $seasonLicence,
+        ]);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            
+            $this->entityManager->flush();
+            return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
+        }
+        return $this->render('user/admin/edit.html.twig', [
+            'user' => new User($user),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/identité/edit/{user}", name="admin_identity_edit")
+     */
+    public function adminIdentityEdit(
+        Request $request,
+        LicenceService $licenceService,
+        UserEntity $user
+    ): Response
+    {
+        $currentSeason = $licenceService->getCurrentSeason();
+        $seasonLicence = $user->getSeasonLicence($currentSeason);
+        $identity = $user->getFirstIdentity();
+        $form = $this->createForm(IdentityType::class, $identity, [
+            'category' => $seasonLicence->getCategory(),
+        ]);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $identity = $form->getData();
+            $this->entityManager->flush();
+            return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
+        }
+        return $this->render('identity/edit.html.twig', [
+            'user' => new User($user),
+            'form' => $form->createView(),
+        ]);
+    }
     /**
      * @Route("/mon-compte", name="user_account")
      */

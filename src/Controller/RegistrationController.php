@@ -236,7 +236,7 @@ class RegistrationController extends AbstractController
         $season = $licenceService->getCurrentSeason();
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndTesting($category, $seasonLicence->isTesting());
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal());
         $allmembershipFee = $membershipFeeRepository->findAll();
 
         $files = [];

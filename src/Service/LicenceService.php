@@ -36,7 +36,7 @@ class LicenceService
         $licence = $user->getSeasonLicence($this->getCurrentSeason());
         $title = 'registration_step.type.';
         if (null !== $licence) {
-            if ($licence->isTesting()) {
+            if (!$licence->isFinal()) {
                 $title .= 'testing';
             } else {
                 $category = $licence->getCategory();

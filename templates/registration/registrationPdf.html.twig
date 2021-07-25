@@ -37,7 +37,7 @@
                     <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
                 </tr>
             </table>
-            {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and not licence.isTesting %}
+            {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal %}
                 <table>
                     <tr>
                         <td colspan="2"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
@@ -147,7 +147,7 @@
 
         </div>
         {% endif %}
-        {% if licence.isTesting %}
+        {% if not licence.isFinal %}
             <br>
             <p>Je fournis un certificat médical daté de moins de 12 mois de non contre-indication à la pratique du VTT
             et j'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site

@@ -102,7 +102,7 @@ class User {
         $licence = $this->user->getSeasonLicence($season);
         if (null !== $licence) {
             $seasonLicence = [
-                'isTesting' => $licence->isTesting(),
+                'isFinal' => $licence->isFinal(),
                 'coverage' => $licence->getCoverage(),
                 'hasFamilyMember' => $licence->getAdditionalFamilyMember(),
                 'category' => $licence->getCategory(),
@@ -136,6 +136,7 @@ class User {
             $bithDate = $this->memberIdentity->getBirthDate();
             $member = [
                 'fullName' => $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName(),
+                'birthDate' => ($bithDate) ? $bithDate->format('d/m/Y'): null,
                 'birthDateAndPlace' => ($bithDate) ? $bithDate->format('d/m/Y').' à '.$this->memberIdentity->getBirthPlace() : null,
                 'address' => $this->memberIdentity->getAddress(),
                 'email' => $this->memberIdentity->getEmail(),
@@ -246,14 +247,15 @@ class User {
         return $bikeRides;
     }
 
-    public function getSchoolRole()
+    public function isMember(): bool
     {
-        foreach($this->user->getRoles() as $role) {
-            if (in_array($role, ['ROLE_FRAME', 'ROLE_ACCOMPANIST'])) {
-                return 'role.'.$role;
-            }
-        }
+        $type = (null !== $this->user->getLevel()) ? $this->user->getLevel()->getType() : null;
+        return $type === Level::TYPE_MEMBER;
+    }
 
-        return null;
+    public function isFramer(): bool
+    {
+        $type = (null !== $this->user->getLevel()) ? $this->user->getLevel()->getType() : null;
+        return $type === Level::TYPE_FRAME;
     }
 }

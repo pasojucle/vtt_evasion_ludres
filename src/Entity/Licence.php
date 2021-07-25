@@ -86,11 +86,6 @@ class Licence
     private $category;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $testing;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="licences")
      */
     private $user;
@@ -105,6 +100,11 @@ class Licence
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default":true})
+     */
+    private $final = false;
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -206,18 +206,6 @@ class Licence
         return $this;
     }
 
-    public function isTesting(): ?bool
-    {
-        return $this->testing;
-    }
-
-    public function setTesting(bool $testing): self
-    {
-        $this->testing = $testing;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -250,6 +238,18 @@ class Licence
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isFinal(): ?bool
+    {
+        return $this->final;
+    }
+
+    public function setFinal(bool $final): self
+    {
+        $this->final = $final;
 
         return $this;
     }

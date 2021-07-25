@@ -228,6 +228,7 @@ body > script {display: none !important;}
 }
 .btn-full-width {
     width: 100%;
+    text-align: center;
 }
 .float-right.btn + .float-right.btn {
     margin-right: 25px;
@@ -275,7 +276,7 @@ body {
 .form-group {
     margin-bottom: 15px;
 }
-.form-group > input, .form-group-inline > input, .form-group-inline > select, .form-group > textarea {
+.form-group > input, .form-group-inline > input, .form-group-inline > select, .form-group > textarea, .form-group > select {
     width: 100%;
     height: 30px;
     line-height: 30px;
@@ -450,6 +451,39 @@ body {
 .filters span b {
     color: var(--primary-color-darker);
 }
+.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3 {
+    display: grid;
+    gap: 5%;
+}
+.wrapper-full.col-1 {
+    max-width: 1000px;
+    box-sizing: border-box;
+}
+.events-container.col-1 {
+    gap: 25px;
+}
+.col-1 {
+    grid-template-columns: 1fr;
+}
+.col-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+.col-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+.col-4 {
+    grid-template-columns: repeat(4, 1fr);
+    text-align: center;
+}
+.col-2-1 {
+    grid-template-columns: 2fr 1fr;
+}
+.col-1-3 {
+    grid-template-columns: 1fr 3fr;
+}
+.col-2-3 {
+    grid-template-columns: 2fr 3fr;
+}
 .row {
     display: flex;
     width: 100%;
@@ -507,7 +541,8 @@ body {
 
 .block-title {
     position: relative;
-    margin-bottom: 20px;
+    margin: -20px -20px 20px -20px;
+    padding: 10px 20px;
 }
 .block .block-body h2 {
     font-size: 18px;
@@ -602,6 +637,11 @@ body {
     }
     .btn-xxl {
         width: 100%;
+    }
+    .col-4, .col-2, .col-1fr-3fr, .col-3 {
+        grid-template-columns: 1fr;
+        padding: unset;
+        gap: 20px;
     }
     .row .col-md-1, .row .col-md-2, .row .col-md-3, .row .col-md-4, .row .col-md-5, .row .col-md-6, .row .col-md-7, .row .col-md-8, .row .col-md-9, .row .col-md-10, .row .col-md-11, .row .col-md-12 {
         width: unset;

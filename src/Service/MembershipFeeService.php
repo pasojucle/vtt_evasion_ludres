@@ -34,7 +34,7 @@ class MembershipFeeService
         $season = $this->licenceService->getCurrentSeason();
         $seasonLicence = $user->getSeasonLicence($season);
 
-        if (!$seasonLicence['isTesting']) {
+        if ($seasonLicence['isFinal']) {
             $coverage = $seasonLicence['coverage'];
             $hasFamilyMember = $seasonLicence['hasFamilyMember'];
             $isNewMember = $user->isNewMember();

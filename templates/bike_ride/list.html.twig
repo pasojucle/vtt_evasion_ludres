@@ -18,7 +18,7 @@
                         {% set class = 'disable' %}  
                     {% endif %}
                     {% set btn_label = 'S\'incrire' %}
-                    {% if event.accessAvailabity(is_granted('ROLE_ACCOMPANIST')) %}
+                    {% if event.accessAvailabity(app.user) %}
                         {% set btn_label = 'Disponibilité' %}
                     {% endif %}
                            
@@ -29,7 +29,7 @@
                             {% else %}
                                 du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
                             {% endif %}
-                            {% if event.isRegistrable or event.accessAvailabity(is_granted('ROLE_ACCOMPANIST')) %}
+                            {% if event.isRegistrable or event.accessAvailabity(app.user) %}
                                 <div class="bike-ride-date-btn">
                                     <br>
                                     <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
@@ -44,11 +44,11 @@
                         {% endif %}
                         <p>{{ event.content |raw }}</p>
                     </div>
-                    {# {% if event.isRegistrable or event.accessAvailabity(is_granted('ROLE_ACCOMPANIST')) %}
+                    {% if event.isRegistrable or event.accessAvailabity(app.user) %}
                         <div class="bike-ride-btn item-center align-center {{ class }}">
                             <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
                         </div>
-                    {% endif %} #}
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

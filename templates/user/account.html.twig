@@ -21,10 +21,12 @@
                             <li><div  class="row"><div class="col-md-3"><b>Mail</b></div><div class="col-md-9">{{ user.member.email }}</div></div></li>
                             <li><div  class="row"><div class="col-md-3"><b>N° licence</b></div><div class="col-md-9">{{ user.licenceNumber }}</div></div></li>
                             {% if user.level is not null %}
-                                <li><div  class="row"><div class="col-md-3"><b>Niveau</b></div><div class="col-md-9">{{ user.level }}</div></div></li>
-                            {% endif %}
-                            {% if user.schoolRole is not null %}
-                                <li><div  class="row"><div class="col-md-3"><b>Role</b></div><div class="col-md-9">{{ user.schoolRole|trans }}</div></div></li>
+                                <li>
+                                    <div  class="row">
+                                        <div class="col-md-3"><b{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</b></div>
+                                        <div class="col-md-9">{{ user.level }}</div>
+                                    </div>
+                                </li>
                             {% endif %}
                         </ul>
                     </div>    
@@ -39,7 +41,7 @@
                         {% for bikeRide in user.bikeRides %}
                             <li>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-5 col-xs-12">
                                         <b>
                                         {% if bikeRide.event.endAt is null %}
                                             {{ bikeRide.event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
@@ -48,13 +50,13 @@
                                         {% endif %}
                                         </b>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-5 col-xs-8">
                                         {{ bikeRide.event.title }}
                                         {% if bikeRide.availability is not empty %}
                                             <br><span class="{{ bikeRide.availability.class }}">{{ bikeRide.availability.text|trans }}</span>
                                         {% endif %}
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-2 col-xs-4">
                                         {% if bikeRide.availability is empty %}
                                             <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-primary btn-ico" title="Annuler"><i class="fas fa-times-circle"></i></a>
                                         {% else %}

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Level;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,25 +24,44 @@ class LevelRepository extends ServiceEntityRepository
      * @return Level[] Returns an array of Level objects
      */
 
-    public function findAll():array
+    public function findAllTypeMember():array
     {
         return $this->createQueryBuilder('l')
+            ->andWhere(
+                (new Expr)->eq('l.type', Level::TYPE_MEMBER)
+            )
             ->orderBy('l.orderBy', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
-    
 
-    /*
-    public function findOneBySomeField($value): ?Level
+    /**
+     * @return Level[] Returns an array of Level objects
+     */
+
+    public function findAllTypeFramer():array
     {
         return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere(
+                (new Expr)->eq('l.type', Level::TYPE_FRAME)
+            )
+            ->orderBy('l.orderBy', 'ASC')
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
-    */
+    /**
+     * @return Level[] Returns an array of Level objects
+     */
+
+    public function findAll():array
+    {
+        return $this->createQueryBuilder('l')
+            ->addOrderBy('l.type', 'ASC')
+            ->addOrderBy('l.orderBy', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
