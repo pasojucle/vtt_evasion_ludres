@@ -58,6 +58,9 @@ class UserType extends AbstractType
                 ],
                 'required' => false,
             ])
+            ->add('health', HealthType::class, [
+                'label' => false,
+            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Modifier',
                 'attr' => ['class' => 'btn btn-primary float-right'],

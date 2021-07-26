@@ -141,7 +141,8 @@ class RegistrationService
             $this->seasonLicence = new Licence();
             $this->seasonLicence->setSeason($this->season);
             if (!$this->user->getLicences()->isEmpty()) {
-                $this->seasonLicence->setFinal(true);
+                $this->seasonLicence->setFinal(true)
+                    ->setType(Licence::TYPE_HIKE);
             }
             if (!$this->user->getIdentities()->isEmpty()) {
                 $category = $this->licenceService->getCategory($this->user);
@@ -211,6 +212,7 @@ class RegistrationService
                     $this->user->getHealth()->addDisease($disease);
                 }
             }
+            $this->seasonLicence->setType(Licence::TYPE_HIKE);
         }
     }
 

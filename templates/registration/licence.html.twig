@@ -1,7 +1,9 @@
 {% set licences = form.children.licences %}
+{% set boutons_radio_type = (licences[0].children.type is defined) ? form_widget(licences[0].children.type) : '' %}
 {% set replaces =
     {
-        '{{ boutons_radio_assurance }}': form_widget(licences[0]),
+        '{{ boutons_radio_type }}': boutons_radio_type,
+        '{{ boutons_radio_assurance }}': form_widget(licences[0].children.coverage),
     }
 %}
 

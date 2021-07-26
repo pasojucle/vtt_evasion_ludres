@@ -48,6 +48,13 @@
                             {% if not season_licence.isFinal %}
                                 <li>Période de test en cours</li>
                             {% endif %}
+
+                            {% if season_licence.type is not null %}
+                                <li><b>Type : </b>{{ season_licence.type|trans }}</li>
+                            {% endif %}
+                            {% if season_licence.coverage is not null %}
+                                <li><b>Assurance</b>{{ season_licence.coverage|trans }}</li>
+                            {% endif %}
                         {% endif %}
                         {% if user.level is not null %}
                             <li><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b> {{ user.level }}</li>

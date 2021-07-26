@@ -2,11 +2,12 @@
 
 namespace App\DataTransferObject;
 
+use DateTime;
 use App\Entity\Level;
+use App\Entity\Licence;
 use App\Entity\Session;
 use App\Entity\Identity;
 use App\Entity\User as UserEntity;
-use DateTime;
 
 class User {
 
@@ -100,14 +101,16 @@ class User {
     public function getSeasonLicence(string $season): array
     {
         $seasonLicence = [];
+
         $licence = $this->user->getSeasonLicence($season);
         if (null !== $licence) {
             $seasonLicence = [
                 'isFinal' => $licence->isFinal(),
-                'coverage' => $licence->getCoverage(),
+                'coverage' => (null !== $licence->getCoverage()) ? Licence::COVERAGES[$licence->getCoverage()] : null,
                 'hasFamilyMember' => $licence->getAdditionalFamilyMember(),
                 'category' => $licence->getCategory(),
                 'isValid' => $licence->isValid(),
+                'type' => (null !== $licence->getType()) ? Licence::TYPES[$licence->getType()] : null,
             ];  
         } 
         return $seasonLicence;

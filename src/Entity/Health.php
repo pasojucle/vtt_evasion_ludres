@@ -78,7 +78,7 @@ class Health
     /**
      * @ORM\Column(type="date", nullable=true)
      */
-    private $medical_certificate_date;
+    private $medicalCertificateDate;
 
     public function __construct()
     {
@@ -274,12 +274,12 @@ class Health
 
     public function getMedicalCertificateDate(): ?\DateTimeInterface
     {
-        return $this->medical_certificate_date;
+        return $this->medicalCertificateDate;
     }
 
-    public function setMedicalCertificateDate(?\DateTimeInterface $medical_certificate_date): self
+    public function setMedicalCertificateDate(?\DateTimeInterface $medicalCertificateDate): self
     {
-        $this->medical_certificate_date = $medical_certificate_date;
+        $this->medicalCertificateDate = $medicalCertificateDate;
 
         return $this;
     }

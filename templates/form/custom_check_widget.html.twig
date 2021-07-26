@@ -3,8 +3,8 @@
         {% if form.parent.vars.name == 'approvals' %}
             {% set children = form.value.children %}
             {{ form_widget(form.type) }}
-        {% elseif form.vars.name == 'coverage' %}
-            {% set children = form %}
+        {% elseif form.vars.name in ['coverage', 'type'] %}
+            {% set children = form.value.children  %}
         {% elseif form.vars.name == 'cluster' %}
             {% set children = form %}
         {% endif %}    

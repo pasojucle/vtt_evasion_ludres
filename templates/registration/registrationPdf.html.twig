@@ -147,6 +147,9 @@
 
         </div>
         {% endif %}
+        <br>
+        <p><b>Type de licence : </b>{{ licence.type|trans}}</p>
+        <p><b>Type d'assurance : </b>{{ licence.coverage|trans}}</p>
         {% if not licence.isFinal %}
             <br>
             <p>Je fournis un certificat médical daté de moins de 12 mois de non contre-indication à la pratique du VTT

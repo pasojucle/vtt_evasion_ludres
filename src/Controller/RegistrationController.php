@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use DateTime;
+use DateInterval;
 use App\Form\UserType;
 use App\Entity\Licence;
 use App\Service\PdfService;
+use App\Service\UserService;
 use App\Service\LicenceService;
 use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
@@ -17,7 +19,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
-use App\Service\UserService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -133,11 +134,17 @@ class RegistrationController extends AbstractController
                     $user->getIdentities()->first()->setPicture($newFilename);
                 }
             }
-
-            $isMedicalCertificateRequired = $user->getHealth()->isMedicalCertificateRequired();
-            if (2 > $user->getLicences()->count()) {
-                $isMedicalCertificateRequired = true;
+            $isMedicalCertificateRequired = false;
+            if ($user->getSeasonLicence($season)->getType() !== Licence::TYPE_RIDE) {
+                $medicalCertificateDate = $user->getHealth()->getMedicalCertificateDate();
+                $medicalCertificateDuration = ($user->getSeasonLicence($season)->getType() === Licence::TYPE_HIKE) ? 5 : 3;
+                $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
+                $today = new DateTime();
+                if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->getHealth()->isMedicalCertificateRequired()) {
+                    $isMedicalCertificateRequired = true;
+                }
             }
+
             $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
             $this->entityManager->persist($user);

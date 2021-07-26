@@ -23,6 +23,16 @@ class LicenceType extends AbstractType
                 $choices = array_flip(Licence::COVERAGES);
                 if ($options['category'] === Licence::CATEGORY_MINOR) {
                     array_shift($choices);
+                } 
+                if ($options['category'] === Licence::CATEGORY_ADULT && $licence->isFinal()) {
+                    $form
+                    ->add('type', ChoiceType::class, [
+                        'label' => false,
+                        'choices' => array_flip(Licence::TYPES),
+                        'expanded' => true,
+                        'multiple' => false,
+                        'block_prefix' => 'customcheck',
+                    ]);
                 }
                 $form
                     ->add('coverage', ChoiceType::class, [

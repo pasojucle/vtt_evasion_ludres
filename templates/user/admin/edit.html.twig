@@ -16,26 +16,35 @@
             </div>
             {{ form_start(form) }}
             <div class="block-body">
+            {% dump(form) %}
                 <div class="form-group">{{ form_row(form.licenceNumber) }}</div>
                 <div class="form-group">{{ form_row(form.level) }}</div>
-                {% set licence = form.children.licences.children[0].children %}
+                <div class="form-group">{{ form_row(form.licences[0].valid) }}</div>
+                <div class="form-group">{{ form_row(form.licences[0].final) }}</div>
+                {# {% set licence = form.children.licences.children[0].children %}
                 {% if licence.valid is defined %}
-                    <div class="form-group">
-                        <div class="inputGroup long check">
-                            {{ form_widget(licence.valid) }}
-                            {{ form_label(licence.valid) }}
-                        </div>
+                    {{ form_label(licence.valid) }}
+                     <div class="form-group">
+                        {% for  child in licence.valid.children %}
+                            <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
+                                {{ form_widget(child)}}
+                                {{ form_label(child)}}
+                            </div>
+                        {% endfor %}
                     </div>
                 {% endif %}
 
                 {% if licence.final is defined %}
-                    <div class="form-group">
-                        <div class="inputGroup long check">
-                            {{ form_widget(licence.final) }}
-                            {{ form_label(licence.final) }}
-                        </div>
+                    {{ form_label(licence.final) }}
+                     <div class="form-group">
+                        {% for  child in licence.final.children %}
+                            <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
+                                {{ form_widget(child)}}
+                                {{ form_label(child)}}
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endif %}
+                {% endif %} #}
             </div>
             <div class="block-footer">
                 {{ form_row(form.save) }}
