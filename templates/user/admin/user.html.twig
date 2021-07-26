@@ -39,7 +39,7 @@
                 </div>
                 <div class="col-md-5 col-xs-12">
                     <ul>
-                        <li><b>Licence:</b> {{ user.licenceNumber }}</li>
+                        <li><b>Licence :</b> {{ user.licenceNumber }}</li>
                         {% set season_licence = user.seasonLicence(licence_service.currentSeason) %}
                         {% if season_licence is not empty %}
                             {% if not season_licence.isValid %}
@@ -53,7 +53,7 @@
                                 <li><b>Type : </b>{{ season_licence.type|trans }}</li>
                             {% endif %}
                             {% if season_licence.coverage is not null %}
-                                <li><b>Assurance</b>{{ season_licence.coverage|trans }}</li>
+                                <li><b>Assurance : </b>{{ season_licence.coverage|trans }}</li>
                             {% endif %}
                         {% endif %}
                         {% if user.level is not null %}
