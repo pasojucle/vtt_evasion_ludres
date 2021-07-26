@@ -643,8 +643,12 @@ body {
         padding: unset;
         gap: 20px;
     }
+    .row {
+        line-height: unset;
+    }
     .row .col-md-1, .row .col-md-2, .row .col-md-3, .row .col-md-4, .row .col-md-5, .row .col-md-6, .row .col-md-7, .row .col-md-8, .row .col-md-9, .row .col-md-10, .row .col-md-11, .row .col-md-12 {
         width: unset;
+        padding: 1px;
     } 
     .row .col-xs-1 {
         width: 8.333%;
@@ -689,7 +693,7 @@ body {
         margin-top: 25px;
     }
     .btn {
-        padding: 8px 12px;
+        padding: 8px;
     }
     .filters ul > li {
         padding: unset;
