@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use App\Entity\Event;
+use App\Entity\Licence;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use App\Service\LicenceService;
@@ -65,16 +66,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     )
                     ;
             }
-            if (null !== $filters['category']) {
-                $qb->innerJoin('u.licences', 'li')
-                    ->andWhere(
-                        $qb->expr()->eq('li.season', ':season'),
-                        $qb->expr()->eq('li.category', ':category'),
-                    )
-                    ->setParameter('season', $currentSeason)
-                    ->setParameter('category', $filters['category'])
-                    ;
-            }
+            // if (null !== $filters['category']) {
+            //     $qb->andWhere(
+            //             $qb->expr()->eq('li.category', ':category'),
+            //         )
+            //         ->setParameter('category', $filters['category'])
+            //         ;
+            // }
             if (null !== $filters['level']) {
                 $qb
                     ->andWhere(
@@ -82,6 +80,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     )
                     ->setParameter('level', $filters['level'])
                     ;
+            }
+            if (null !== $filters['status']) {
+
+                $qb->innerJoin('u.licences', 'li');
+                if ($filters['status'] < Licence::STATUS_NONE) {
+                    $qb
+                        ->andWhere(
+                            $qb->expr()->eq('li.season', ':season'),
+                            $qb->expr()->eq('li.valid', ':valid'),
+                        )
+                    
+                        ->setParameter('valid', $filters['status'])
+                    ;
+                } else {
+                    $qb
+                        ->groupBy('u.id')
+                        ->having('MAX(li.season) != :season');
+                }
+                $qb->setParameter('season', $currentSeason);
             }
         }
         return $qb

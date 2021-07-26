@@ -30,15 +30,24 @@ class UserFilterType extends AbstractType
                 ],
                 'required' => false,
             ])
-            ->add('category', ChoiceType::class, [
+            ->add('status', ChoiceType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
-                'choices' => array_flip(Licence::CATEGORIES),
+                'choices' => ['Licence' => array_flip(Licence::STATUS)],
                 'attr' => [
                     'class' => 'btn',
                 ],
                 'required' => false,
             ])
+            // ->add('category', ChoiceType::class, [
+            //     'label' => false,
+            //     'placeholder' => 'Tous',
+            //     'choices' => array_flip(Licence::CATEGORIES),
+            //     'attr' => [
+            //         'class' => 'btn',
+            //     ],
+            //     'required' => false,
+            // ])
             ->add('level', ChoiceType::class, [
                 'label' => false,
                 'choices' => $this->getLevelChoices(),

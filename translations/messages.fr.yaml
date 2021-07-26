@@ -10,6 +10,10 @@ licence:
   category:
     minor: mineur
     adult: adulte
+  status:
+    none: Non renouvelées
+    in_progress: En cours
+    valid: Valide
 
 identity:
   kinship:

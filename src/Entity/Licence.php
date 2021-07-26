@@ -38,6 +38,15 @@ class Licence
         self::CATEGORY_ADULT => 'licence.category.adult',
     ];
 
+    public const STATUS_NONE = 2;
+    public const STATUS_IN_PROGRESS  = 0;
+    public const STATUS_VALID  = 1;
+
+    public const STATUS = [
+        self::STATUS_NONE => 'licence.status.none',
+        self::STATUS_IN_PROGRESS => 'licence.status.in_progress',
+        self::STATUS_VALID => 'licence.status.valid',
+    ];
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
