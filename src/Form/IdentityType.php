@@ -27,7 +27,7 @@ class IdentityType extends AbstractType
             $identity = $event->getData();
             $form = $event->getForm();
             $row_class =  ($options['is_kinship']) ? 'form-group-inline' : 'form-group';
-            if ((!$options['is_kinship'] && $form->getName() === "0") || ($options['is_kinship'] && $form->getName() === "1") || 'identity' === $form->getName()) {
+            if ((!$options['is_kinship'] && $form->getName() === "0") || ($options['is_kinship'] && in_array($form->getName(),[1,2])) || 'identity' === $form->getName()) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
@@ -41,16 +41,6 @@ class IdentityType extends AbstractType
                             'class' => $row_class,
                         ],
                     ])
-                    ->add('phone', TextType::class, [
-                        'label' => 'Téléphone fixe',
-                        'required' => false,
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                        'constraints' => [
-                            new Length(['min' => 10, 'max' => 10]),
-                        ],
-                    ])
                     ->add('mobile', TextType::class, [
                         'label' => 'Téléphone mobile',
                         'row_attr' => [
@@ -59,27 +49,42 @@ class IdentityType extends AbstractType
                         'constraints' => [
                             new Length(['min' => 10, 'max' => 10]),
                         ],
-                    ])
-                    ->add('email', EmailType::class, [
-                        'label' => 'Adresse mail',
-                        'row_attr' => [
-                            'class' => 'form-group-inline'
-                        ],
-                    ])
-                    ->add('birthDate', DateTimeType::class, [
-                        'label' => 'Date de naissance',
-                        'widget' => 'single_text',
-                        'html5' => false,
-                        'format' => 'dd/MM/yyyy',
-                        'attr' => [
-                            'class' => 'js-datepicker',
-                            'autocomplete' => "off",
-                        ],
-                        'row_attr' => [
-                            'class' => $row_class,
-                        ],
-                    ])
-                ;
+                    ]);
+                    
+                    if ((int) $form->getName() !== 2 ) {
+                        $form
+                            ->add('phone', TextType::class, [
+                                'label' => 'Téléphone fixe',
+                                'required' => false,
+                                'row_attr' => [
+                                    'class' => 'form-group-inline',
+                                ],
+                                'constraints' => [
+                                    new Length(['min' => 10, 'max' => 10]),
+                                ],
+                            ])
+                            ->add('email', EmailType::class, [
+                                'label' => 'Adresse mail',
+                                'row_attr' => [
+                                    'class' => 'form-group-inline'
+                                ],
+                            ])
+                            ->add('birthDate', DateTimeType::class, [
+                                'label' => 'Date de naissance',
+                                'widget' => 'single_text',
+                                'html5' => false,
+                                'format' => 'dd/MM/yyyy',
+                                'attr' => [
+                                    'class' => 'js-datepicker',
+                                    'autocomplete' => "off",
+                                ],
+                                'row_attr' => [
+                                    'class' => $row_class,
+                                ],
+                            ])
+                        ;
+                    }
+
                 if (Licence::CATEGORY_ADULT === $options['category']) {
                     $form
                     ->add('profession', TextType::class, [
@@ -93,7 +98,6 @@ class IdentityType extends AbstractType
                 }
 
                 if ($options['is_kinship']) {
-
                     $form
                         ->add('kinship', ChoiceType::class, [
                             'label' => 'Parenté',
@@ -101,14 +105,17 @@ class IdentityType extends AbstractType
                             'row_attr' => [
                                 'class' => 'form-group-inline'
                             ],
-                        ])
-                        ->add('otherAddress', CheckboxType::class, [
-                            'label' => 'Réside à une autre adresse que l\'enfant',
-                            'required' => false,
-                            'mapped' => false,
-                            'data' => ($identity->hasAddress()) ? true : false,
-                        ])
-                        ;
+                        ]);
+                    if ((int)$form->getName() !== 2 ) {
+                        $form
+                            ->add('otherAddress', CheckboxType::class, [
+                                'label' => 'Réside à une autre adresse que l\'enfant',
+                                'required' => false,
+                                'mapped' => false,
+                                'data' => ($identity->hasAddress()) ? true : false,
+                            ])
+                            ;
+                    }
                     $addressClass = ($identity->hasAddress()) ? '': ' hidden';
                 } else {
                     $form

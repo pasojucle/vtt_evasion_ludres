@@ -118,11 +118,14 @@ class RegistrationController extends AbstractController
                 $category = $licenceService->getCategory($user);
                 $user->getSeasonLicence($season)->setCategory($category);
                 if (Licence::CATEGORY_MINOR === $category) {
-                    $identityKinShip = $user->getIdentities()->last();
-                    $addressKinShip = $identityKinShip->getAddress();
-                    if (!$identityKinShip->hasAddress() && null !== $addressKinShip) {
-                        $identityKinShip->setAddress(null);
-                        $this->entityManager->remove($addressKinShip);
+                    foreach($user->getIdentities() as $identity) {
+                        if (null !== $identity->getKinShip()) {
+                            $addressKinShip = $identity->getAddress();
+                            if (!$identity->hasAddress() && null !== $addressKinShip) {
+                                $identity->setAddress(null);
+                                $this->entityManager->remove($addressKinShip);
+                            }
+                        }
                     }
                 }
             }

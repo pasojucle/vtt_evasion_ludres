@@ -85,11 +85,6 @@
 
             {% endif %}
         </div>
-        <br>
-        <p>{{ membership_fee_service.amount(user) }}</p>
-        <br>
-        <p>{{ user.isMedicalCertificateRequired(licence_service.currentSeason) }}</p>
-        <br>
         {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_ADULT') %}
             {{ rigth_to_image }}
             <p>Je soussigné {{ user.member.fullName }} <b>{{ user.approvals.rightToImage.string}}</b> le club VTT Evasion Ludres à utiliser ou faire utiliser ou reproduire ou faire reproduire
@@ -144,16 +139,33 @@
                 <b>Je soussigné {{ user.kinShip.fullName }} {{ user.approvals.goingHomeAlone.string }}</b> mon enfant à rejoindre seul le domicile à l’issue de la séance. Pour ce faire je m’engage à lui fournir un gilet jaune fluo ainsi qu’un dispositif d’éclairage avant (blanc) et arrière (rouge)
             </p>
             {% endif %}
-
         </div>
-        {% endif %}
+        <table class="table-fixed">
+            <tr>
+                <td><b>Second contact : </b>{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</td>
+                <td>Téléphone : </b>{{ user.secondKinShip.phone}}</td>
+            </tr>
+        </table>
         <br>
-        <p><b>Type de licence : </b>{{ licence.type|trans}}</p>
-        <p><b>Type d'assurance : </b>{{ licence.coverage|trans}}</p>
+        {% endif %}
+        <table class="table-fixed">
+            <tr>
+                <td><b>Type de licence : </b>{{ licence.type|trans}}</td>
+                <td><b>Type d'assurance : </b>{{ licence.coverage|trans}}</td>
+            </tr>
+        </table>
+        <br>
+        <table class="table-fixed">
+            <tr>
+                <td>{{ membership_fee_service.amount(user) }}</td>
+            </tr>
+            <tr>
+                <td>{{ user.isMedicalCertificateRequired(licence_service.currentSeason) }}</td>
+            </tr>
+        </table>
         {% if not licence.isFinal %}
             <br>
-            <p>Je fournis un certificat médical daté de moins de 12 mois de non contre-indication à la pratique du VTT
-            et j'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site
+            <p>J'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site
             www.vttevasionludres.fr</p>
             <br>
             <p>IL EST IMPERATIF DE REMPLIR ET SIGNER L'INFORMATION D'ASSURANCE GRATUITE JOINTE A CE DOCUMENT</p>

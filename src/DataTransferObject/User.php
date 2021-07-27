@@ -16,6 +16,7 @@ class User {
         $this->user = $user;
         $this->memberIdentity = null;
         $this->kinshipIdentity = null;
+        $this->secondKinshipIdentity = null;
         $this->setIdentities();
     }
 
@@ -28,7 +29,11 @@ class User {
                     $this->memberIdentity = $identity;
 
                 } else {
-                    $this->kinshipIdentity = $identity;
+                    if (null !== $identity->getBirthDate() && null !== $identity->getEmail()) {
+                        $this->kinshipIdentity = $identity;
+                    } else {
+                        $this->secondKinshipIdentity = $identity;
+                    }
                 }
             }
         } else {
@@ -127,6 +132,22 @@ class User {
                 'address' => $address,
                 'email' => $this->kinshipIdentity->getEmail(),
                 'phone' => implode(' - ', array_filter([$this->kinshipIdentity->getMobile(), $this->kinshipIdentity->getPhone()])),
+            ];
+            
+        }
+        return $kinShip;
+    }
+
+
+
+    public function getSecondKinShip(): array
+    {
+        $kinShip = [];
+        if ($this->secondKinshipIdentity) {
+            $kinShip = [
+                'fullName' => $this->secondKinshipIdentity->getName().' '.$this->secondKinshipIdentity->getFirstName(),
+                'type' => Identity::KINSHIPS[$this->secondKinshipIdentity->getKinShip()] ,
+                'phone' => $this->secondKinshipIdentity->getMobile(),
             ];
             
         }

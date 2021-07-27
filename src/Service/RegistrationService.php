@@ -177,18 +177,21 @@ class RegistrationService
             $this->user->addApproval($aproval);
             $this->entityManager->persist($aproval);
         }
+
         if (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) {
             if ($this->user->getIdentities()->count() < 2) {
-                $identity = new Identity();
-                $identity->setKinship(Identity::KINSHIP_FATHER);
-                $this->user->addIdentity($identity);
-                $this->entityManager->persist($identity);
+                foreach([Identity::KINSHIP_FATHER, Identity::KINSHIP_MOTHER] as $kinShip) {
+                    $identity = new Identity();
+                    $identity->setKinship($kinShip);
+                    $this->user->addIdentity($identity);
+                    $this->entityManager->persist($identity);
+                }
             }
-            if ($this->user->getIdentities()->count() === 2 && null === $this->user->getIdentities()->last()->getAddress()) {
+            if (isset($identity) && $this->user->getIdentities()->count() > 1 && null === $identity->getAddress()) {
                 $address = new Address();
                 $this->entityManager->persist($address);
-                $this->user->getIdentities()->last()->setAddress($address);
-                $this->entityManager->persist($this->user->getIdentities()->last());
+                $identity->setAddress($address);
+                $this->entityManager->persist($identity);
             }
             if ($this->user->getApprovals()->count() < 2) {
                 $aproval = new Approval();

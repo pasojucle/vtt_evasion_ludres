@@ -77,6 +77,11 @@
                             <li><i class="fas fa-at"></i> {{ user.kinShip.email }}</li>
                             <li><i class="fas fa-phone-square"></i> {{ user.kinShip.phone }}</li>
                         </ul>
+                        <br>
+                        <ul>
+                            <li><b>{{ user.secondKinShip.type | trans  }}</b> : {{ user.secondKinShip.fullName }} </li>
+                            <li><i class="fas fa-phone-square"></i> {{ user.secondKinShip.phone }}</li>
+                        </ul>
                     </div>
                 {% endif %}
                 {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and  licence.isFinal and user.health is not empty %}

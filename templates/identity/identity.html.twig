@@ -1,15 +1,23 @@
 {% if identity.children is not empty %}
+    {% if identity.vars.name == 2 %}
+        <b>Second contact</b>
+    {% endif %}
+    {% if identity.kinship is defined %}
+        <div class="form-group">{{ form_row(identity.kinship) }}</div>
+    {% endif %}
     {% set first_block %}
         <div class="form-group">
             {{ form_row(identity.name) }}
             {{ form_row(identity.firstName) }}
         </div>
+        {% if identity.birthDate is defined %}
         <div class="form-group">
             {{ form_row(identity.birthDate)}}
             {% if identity.birthplace is defined %}
                 {{ form_row(identity.birthplace) }}
             {% endif %}
         </div>
+        {% endif %}
     {% endset %}
     {% if identity.pictureFile is defined %}
         <div class="col-2">
@@ -26,16 +34,19 @@
         {{ first_block }}
     {% endif %}
     <div class="form-group">
-        {{ form_row(identity.phone) }}
         {{ form_row(identity.mobile) }}
+        {% if identity.phone is defined %}
+            {{ form_row(identity.phone) }}
+        {% endif %}
     </div>  
     {% if identity.profession is defined %}
         <div class="form-group">{{ form_row(identity.profession) }}</div>
     {% endif %}
-    {% if identity.kinship is defined %}
-        <div class="form-group">{{ form_row(identity.kinship) }}</div>
+      
+    {% if identity.email is defined %}
+        <div class="form-group">{{ form_row(identity.email) }}</div>
     {% endif %}
-    <div class="form-group">{{ form_row(identity.email) }}</div>
+    
     {% if identity.otherAddress is defined %}
         <div class="form-group">
             <div class="inputGroup long check">
@@ -45,7 +56,7 @@
         </div>
     {% endif %}
     {% if identity.address is defined %}
-        <div id="address_container">
+        <div{% if identity.vars.name == 1 %} id="address_container"{% endif %}>
             <div class="form-group">{{ form_row(identity.address.street) }}</div>
             <div class="form-group">
                 {{ form_row(identity.address.postalCode) }}
