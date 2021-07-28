@@ -704,7 +704,7 @@ body {
     .row.row-list .btn {
         height: 80px;
     }
-    .row.row-list .btn-ico {
+    .row.row-list .btn-ico, .row.row-list .one-line {
         line-height: 65px;
     }
     .li-long {

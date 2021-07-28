@@ -9,7 +9,6 @@
         <div class="block-title">
             <h2>{{ title }}</h2>
             <span class="tools">
-                <a href="{{ path('admin_event_cluster_show', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour aux participants</a>
             </span>
         </div>
         {{ form_start(form) }}
@@ -19,7 +18,8 @@
             {{ form_row(form.cluster) }}
         </div>
         <div class="block-footer">
-            {{ form_row(form.save) }}
+            <a href="{{ path('admin_event_cluster_show', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour aux participants</a>
+            {{ form_widget(form.save) }}
         </div>
         {{ form_end(form) }}
     </div>
