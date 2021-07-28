@@ -648,7 +648,7 @@ body {
     }
     .row .col-md-1, .row .col-md-2, .row .col-md-3, .row .col-md-4, .row .col-md-5, .row .col-md-6, .row .col-md-7, .row .col-md-8, .row .col-md-9, .row .col-md-10, .row .col-md-11, .row .col-md-12 {
         width: unset;
-        padding: 1px;
+        padding: 1px 2px;
     } 
     .row .col-xs-1 {
         width: 8.333%;
@@ -706,5 +706,11 @@ body {
     }
     .row.row-list .btn-ico {
         line-height: 65px;
+    }
+    .li-long {
+        overflow: auto;
+    }
+    .li-long .row-list {
+        width: 130%;
     }
 }
