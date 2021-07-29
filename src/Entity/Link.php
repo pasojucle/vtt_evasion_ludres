@@ -10,6 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Link
 {
+    const POSITION_LINK_PAGE = 1;
+    const POSITION_HOME_FOOTER = 2;
+    const POSITION_HOME_BIKE_RIDE = 3;
+    const POSITIONS = [
+        SELF::POSITION_LINK_PAGE => 'link.position.link_page',
+        SELF::POSITION_HOME_FOOTER => 'link.position.home_footer',
+        SELF::POSITION_HOME_BIKE_RIDE => 'link.position.home_bike_ride',
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -38,9 +47,14 @@ class Link
     private $image;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="integer", options={"default":1})
      */
-    private $isDisplayHome = false;
+    private $position = 1;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $orderBy;
 
     public function getId(): ?int
     {
@@ -95,14 +109,26 @@ class Link
         return $this;
     }
 
-    public function getIsDisplayHome(): ?bool
+    public function getPosition(): ?int
     {
-        return $this->isDisplayHome;
+        return $this->position;
     }
 
-    public function setIsDisplayHome(bool $isDisplayHome): self
+    public function setPosition(int $position): self
     {
-        $this->isDisplayHome = $isDisplayHome;
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function getOrderBy(): ?int
+    {
+        return $this->orderBy;
+    }
+
+    public function setOrderBy(int $orderBy): self
+    {
+        $this->orderBy = $orderBy;
 
         return $this;
     }

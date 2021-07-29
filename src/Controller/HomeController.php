@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Link;
 use App\Repository\EventRepository;
 use App\Repository\LinkRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,11 +19,13 @@ class HomeController extends AbstractController
         EventRepository $eventRepository
     ): Response
     {
-        $links = $linkRepository->findHomePageView();
+        $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
+        $linksFooter = $linkRepository->findByPosition(Link::POSITION_HOME_FOOTER);
         $events = $eventRepository->findEnableView();
 
         return $this->render('home/index.html.twig', [
-            'links' => $links,
+            'links_bike_ride' => $linksBikeRide,
+            'links_footer' => $linksFooter,
             'events' => $events,
         ]);
     }

@@ -9,44 +9,48 @@
         
 
         </div>
-
-        <div class="block background-ligth">
-            <div class="block-title">
-                <h2></h2>
+        <div class="events-container">
+            <div class="block background-ligth">
+                <div class="block-title">
+                    <h2></h2>
+                </div>
+                <div class="block-body">
+                    <ul>
+                    {% for event in events %}
+                        <li>
+                            <h2>
+                                {% if event.endAt is null %}
+                                    {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')  | capitalize}}
+                                {% else %}
+                                    du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')}}} | capitalize} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                                {% endif %}
+                            </h2>
+                            <p>{{ event.title }}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="block-footer">
+                    <a href="{{ path('schedule', {'period': 'mois'}) }}" class="btn btn-secondary align-center btn-full-width"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
+                </div>
             </div>
-            <div class="block-body">
-                <ul>
-                {% for event in events %}
-                    <li>
-                        <h2>
-                            {% if event.endAt is null %}
-                                {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')  | capitalize}}
-                            {% else %}
-                                du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')}}} | capitalize} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
-                            {% endif %}
-                        </h2>
-                        <p>{{ event.title }}</p>
-                    </li>
-                {% endfor %}
-                </ul>
-            </div>
-            <div class="block-footer">
-                <a href="{{ path('schedule', {'period': 'mois'}) }}" class="btn btn-secondary align-center btn-full-width"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
-            </div>
-
- 
-        </div>
-        <div class="links-container col-4">
-            {% for link in links %}
-            <div class="card card-link">
-                <a href="{{ link.url }}" target="_blank">
+            {% for link in links_bike_ride %}
+            <div class="card card-img-only">
+                <a href="{{ link.url }}" target="_blank" title="{{ link.title }}">
                     {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
-                    <div class="card-img" style="background-image:url({{ src }}"></div>
-                    <div class="card-body">
-                        <h3>{{ link.title }}</h3>
-                    </div>
+                    <img src="{{ src }}" alt="">
                 </a>
             </div>
+            {% endfor %}
+        </div>
+        <div class="links-container col-4">
+            {% for link in links_footer %}
+            <a href="{{ link.url }}" target="_blank" title="{{ link.title }}">
+                <div class="card card-full-img">
+                    {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
+                    <div style="background-image:url({{ src }}"></div>
+                </div>
+            </a>
             {% endfor %}
         </div>
         

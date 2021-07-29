@@ -36,7 +36,7 @@ class LinkController extends AbstractController
         LinkService $linkService
     ): Response
     {
-        $links = $this->linkRepository->findAll();
+        $links = $this->linkRepository->findByPosition(Link::POSITION_LINK_PAGE);
 
         return $this->render('link/list.html.twig', [
             'links' => $links,
@@ -53,7 +53,7 @@ class LinkController extends AbstractController
     {
         $filters = null;
 
-        $query =  $this->linkRepository->findMemberQuery($filters);
+        $query =  $this->linkRepository->findLinkQuery($filters);
         $links =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('link/admin/list.html.twig', [
@@ -78,9 +78,11 @@ class LinkController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $link = $form->getData();
 
-            if (null !== $link->getUrl() && null === $link->getTitle() && null === $link->getDescription() &&null === $link->getImage()) {
+            if (null !== $link->getUrl() 
+                && (null === $link->getTitle() && null === $link->getDescription() &&null === $link->getImage()) 
+                || ($form->has('search') && $form->get('search')->isClicked())) {
                 $data = $linkService->getUrlData($link->getUrl());
-                dump($data);
+
                 if ($data) {
                     $link->setTitle($data['title'])
                         ->setDescription($data['description'])

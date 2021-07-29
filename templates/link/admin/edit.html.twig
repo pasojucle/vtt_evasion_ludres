@@ -30,17 +30,23 @@
                     <div class="form-group">
                         {{ form_row(form.imageFile) }}
                         <div class="form-group-inline">
-                            {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '/uploads/' ~ link.image %}
+                            {% set src = '' %}
+                            {% if link is not null %}
+                                {% set src =  link.image matches '/^http/' or  link.image is null ? link.image : '/uploads/' ~ link.image %}
+                            {% endif %}
                             <img class="user-picture" src="{{ src }}" alt="{{ src }}">   
                         </div>
                     </div>
                     <div class="form-group">
-                        {{ form_row(form.isDisplayHome) }}
+                        {{ form_row(form.position) }}
                     </div>
                 {% endif %}
             </div>
             <div class="block-footer">
-                {{ form_row(form.save) }}
+                {{ form_widget(form.save) }}
+                {% if form.dearch is defined %}
+                    {{ form_widget(form.search) }}
+                {% endif %}
             </div>
         </div>
         {{ form_end(form) }}

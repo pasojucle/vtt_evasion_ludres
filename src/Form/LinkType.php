@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class LinkType extends AbstractType
@@ -81,14 +82,16 @@ class LinkType extends AbstractType
                             ])
                         ],
                     ])
-                    ->add('isDisplayHome', CheckboxType::class, [
-                        // 'data' => (bool)$value,
-                        'label' => 'Afficher en page d\'accueil',
-                        'block_prefix' => 'switch',
-                        'required' => false,
+                    ->add('position', ChoiceType::class, [
+                        'label' => 'Position',
+                        'choices' => array_flip(Link::POSITIONS),
                         'row_attr' => [
                             'class' => 'form-group-inline',
                         ],
+                    ])
+                    ->add('search', SubmitType::class, [
+                        'label' => 'Rechercher les infos SEO',
+                        'attr' => ['class' => 'btn btn-secondary  float-right'],
                     ])
                 ;
             }

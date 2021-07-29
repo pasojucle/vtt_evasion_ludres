@@ -85,3 +85,9 @@ level:
   type:
     member: Niveau
     frame: Encradrement
+
+link:
+  position:
+    link_page: Page des liens
+    home_footer: En pied de la page d'accueil
+    home_bike_ride: Dans les sorties en page d'accueil

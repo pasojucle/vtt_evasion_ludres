@@ -4,17 +4,22 @@
 
 {% block body %}
     
-    <div class="wrapper background-ligth col-4 wrapper-full-width ">
-        {% for link in links %}
-        <div class="card card-link">
-            <a href="{{ link.url }}" target="_blank">
-                {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
-                <div class="card-img" style="background-image:url({{ src }}"></div>
-                <div class="card-body">
-                    <h3>{{ link.title }}</h3>
-                </div>
-            </a>
+    <div class="wrapper background-ligth wrapper-full-width full-background">
+        <div class="wrapper-title">
+            <h1>Liens</h1>
         </div>
-        {% endfor %}
+        <div class="wrapper-body col-4 ">
+            {% for link in links %}
+            <div class="card card-link">
+                <a href="{{ link.url }}" target="_blank">
+                    {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
+                    <div class="card-img" style="background-image:url({{ src }}"></div>
+                    <div class="card-body">
+                        <h3>{{ link.title }}</h3>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        <div>
     </div>
 {% endblock %}

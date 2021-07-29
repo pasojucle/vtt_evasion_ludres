@@ -314,14 +314,15 @@ p + p {
 .wrapper-home {
     display: grid;
     grid-template-areas: "news events"
-                         "links links";
+                         "links events";
     grid-template-columns: 1fr 270px;
+    grid-template-rows: 1fr 120px;
     gap: 50px;
 }
 .news-container {
     grid-area: news;
 }
-.events.container {
+.events-container {
     grid-area: events;
 }
 .links-container {
@@ -377,7 +378,7 @@ button[type="submit"] {
     font-weight: 700;
     font-size: 18px;
 }
-.bike-rides .item-center > div, .bike-rides .item-center > div::after {
+.item-center > div, .item-center > div::after {
     vertical-align: middle;
     display: inline-block;
     content: '';
@@ -417,6 +418,23 @@ button[type="submit"] {
     font-size: 80px;
     font-style: oblique;
 }
+.card-img-only:not(:first-child) {
+    margin-top: 25px;
+}
+.card.card-full-img {
+    background-color: var(--white-color);
+    padding: 5px;
+    height: 100%;
+    box-sizing: border-box;
+}
+.card.card-full-img > div {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
 @media screen and (max-width: 800px) {
     .wrapper-medium-width, .wrapper-small-width {
         padding: 5%;

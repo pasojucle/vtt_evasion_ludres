@@ -21,7 +21,7 @@ class LinkRepository extends ServiceEntityRepository
         parent::__construct($registry, Link::class);
     }
 
-    public function findMemberQuery(?array $filters = null): QueryBuilder
+    public function findLinkQuery(?array $filters = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('l')
             ;
@@ -38,13 +38,15 @@ class LinkRepository extends ServiceEntityRepository
      * @return User[] Returns an array of link objects
      */
 
-    public function findHomePageView(): array
+    public function findByPosition(int $position): array
     {
         return $this->createQueryBuilder('l')
             ->andWhere(
-                (new Expr)->eq('l.isDisplayHome', true)
+                (new Expr)->eq('l.position', ':position')
             )
-            ->orderBy('l.title', 'ASC')
+            ->setParameter('position', $position)
+            ->orderBy('l.orderBy', 'ASC')
+            ->addOrderBy('l.title', 'ASC')
             ->getQuery()
             ->getResult();
         ;

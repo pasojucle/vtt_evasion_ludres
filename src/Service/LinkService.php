@@ -45,21 +45,21 @@ class LinkService
             $links = $this->getTags($match);
             if (array_key_exists('https://api.w.org/', $links)) {
                 $content = json_decode(file_get_contents($links['https://api.w.org/']['value'], true));
-                if(array_key_exists('description', $content)) {
+                if(null !== $content && array_key_exists('description', $content)) {
                     $description = $content->description;
                 }
             }
             if (array_key_exists('image_src', $links) && null === $image) {
                 $image = $links['image_src']['value'];
             }
-            if ('iso-8859-1' === $charset) {
+            // if ('iso-8859-1' === $charset) {
                 $title = utf8_encode($title);
                 $description = utf8_encode($description);
-            }
+            // }
 
             $result = [
-                'title' => html_entity_decode($title),
-                'description' => html_entity_decode($description),
+                'title' => substr(html_entity_decode($title), 0, 100) ,
+                'description' => html_entity_decode((string) $description),
                 'image' => $image,
             ];
         }
