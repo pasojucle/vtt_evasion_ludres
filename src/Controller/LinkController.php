@@ -11,7 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
@@ -44,25 +46,26 @@ class LinkController extends AbstractController
     }
 
         /**
-     * @Route("/admin/liens", name="admin_links")
+     * @Route("/admin/liens/{position}", name="admin_links", defaults={"position" = 1})
      */
     public function adminList(
         PaginatorService $paginator,
-        Request $request
+        Request $request,
+        int $position
     ): Response
     {
-        $filters = null;
-
-        $query =  $this->linkRepository->findLinkQuery($filters);
+        $query =  $this->linkRepository->findLinkQuery($position);
         $links =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('link/admin/list.html.twig', [
             'links' => $links,
-            'lastPage' => $paginator->lastPage($links)
+            'lastPage' => $paginator->lastPage($links),
+            'current_position' => $position,
+            'current_filters' => ['position' => (int) $position],
         ]);
     }
 
-        /**
+    /**
      * @Route("/admin/lien/{link}", name="admin_link_edit", defaults={"link"=null})
      */
     public function adminLinkEdit(
@@ -78,9 +81,8 @@ class LinkController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $link = $form->getData();
 
-            if (null !== $link->getUrl() 
-                && (null === $link->getTitle() && null === $link->getDescription() &&null === $link->getImage()) 
-                || ($form->has('search') && $form->get('search')->isClicked())) {
+            $isNew = null === $link->getTitle() && null === $link->getDescription() &&null === $link->getImage();
+            if (null !== $link->getUrl() && ($isNew || ($form->has('search') && $form->get('search')->isClicked()))) {
                 $data = $linkService->getUrlData($link->getUrl());
 
                 if ($data) {
@@ -111,10 +113,44 @@ class LinkController extends AbstractController
             }
             $this->entityManager->persist($link);
             $this->entityManager->flush();
-            return $this->redirectToRoute('admin_link_edit', ['link' => $link->getId()]);
+            if ($isNew) {
+                return $this->redirectToRoute('admin_link_edit', ['link' => $link->getId()]);
+            }
+            return $this->redirectToRoute('admin_links', ['position' => $link->getPosition()]);
         }
 
         return $this->render('link/admin/edit.html.twig', [
+            'link' => $link,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/supprimer/lien/{link}", name="admin_link_delete")
+     */
+    public function adminLinkDelete(
+        Request $request,
+        Link $link
+    ): Response
+    {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl('admin_link_delete', 
+                [
+                    'link'=> $link->getId(),
+                ]
+            ),
+        ]);
+        $position = $link->getPosition();
+
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->remove($link);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_links', ['position' => $position]);
+        }
+
+        return $this->render('link/admin/delete.modale.html.twig', [
             'link' => $link,
             'form' => $form->createView(),
         ]);

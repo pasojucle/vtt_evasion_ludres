@@ -21,16 +21,15 @@ class LinkRepository extends ServiceEntityRepository
         parent::__construct($registry, Link::class);
     }
 
-    public function findLinkQuery(?array $filters = null): QueryBuilder
+    public function findLinkQuery(int $position): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('l')
-            ;
-
-        if (!empty($filters)) {
-            
-        }
-        return $qb
-            ->orderBy('l.title', 'ASC')
+        return $this->createQueryBuilder('l')
+        ->andWhere(
+            (new Expr)->eq('l.position', ':position')
+        )
+        ->setParameter('position', $position)
+        ->orderBy('l.orderBy', 'ASC')
+        ->addOrderBy('l.title', 'ASC')
         ;
     }
 
@@ -40,13 +39,8 @@ class LinkRepository extends ServiceEntityRepository
 
     public function findByPosition(int $position): array
     {
-        return $this->createQueryBuilder('l')
-            ->andWhere(
-                (new Expr)->eq('l.position', ':position')
-            )
-            ->setParameter('position', $position)
-            ->orderBy('l.orderBy', 'ASC')
-            ->addOrderBy('l.title', 'ASC')
+        $qb = $this->findLinkQuery($position);
+        return $qb
             ->getQuery()
             ->getResult();
         ;

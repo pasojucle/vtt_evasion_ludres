@@ -564,7 +564,70 @@ body {
     max-width: 400px;
     margin: auto;
 }
-
+nav.nav-tab a {
+    padding: 10px;
+    color: var(--gray-color);
+    border-top: 1px solid var(--gray-color);
+    border-left: 1px solid var(--gray-color);
+    border-right: 1px solid var(--gray-color);
+    border-radius: 5px 5px 0 0;
+}
+nav.nav-tab a:hover, nav.nav-tab a.active {
+    color: var(--white-color);
+    background-color: var(--primary-color);
+    border-top: 1px solid var(--primary-color);
+    border-left: 1px solid var(--primary-color);
+    border-right: 1px solid var(--primary-color);
+}
+nav.nav-tab {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.background-primary {
+    background-color: var(--primary-color);
+    margin: unset;
+    width: 100%;
+    box-sizing: border-box;
+}
+.background-primary .wrapper-img, .card-img {
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.background-primary .wrapper-content {
+    padding: 10%;
+    color: var(--white-color);
+}
+.background-primary h1, .background-primary h2 {
+    color: var(--white-color);
+}
+.background-ligth h1, .background-ligth h2 {
+    color: var(--background-color);
+}
+.background-ligth {
+    background-color: var(--light-color);
+    box-sizing: border-box;
+    padding: 25px;
+    color: var(--background-color);
+}
+.row-list .background-ligth {
+    padding: 5px;
+    min-height: 45px;
+}
+.background-white {
+    background-color: var(--white-color);
+    box-sizing: border-box;
+    padding: 25px;
+    color: var(--background-color);
+}
+.background-gray {
+    background-color: var(--gray-color);
+    box-sizing: border-box;
+    padding: 25px;
+}
 @media screen and (max-width: 800px) {
     .nav-bar {
         display: block;
@@ -608,7 +671,7 @@ body {
         display: block;
         max-width: 100%;
     }
-    nav:not(.paginator) {
+    nav:not(.paginator, nav.nav-tab) {
         position: absolute;
         top: 50px;
         left: -100vw;
@@ -621,6 +684,10 @@ body {
     nav.nav-active {
         left: 0;
     }
+    nav.nav-tab, nav.nav-tab a {
+        display: block;
+    }
+
     .form-group-inline {
         width: 100%;
     }
@@ -701,7 +768,7 @@ body {
     .filters span > b {
         letter-spacing: -0.5px;
     }
-    .row.row-list .btn {
+    .row.row-list .btn, .row.row-list .background-ligth {
         height: 80px;
     }
     .row.row-list .btn-ico, .row.row-list .one-line {

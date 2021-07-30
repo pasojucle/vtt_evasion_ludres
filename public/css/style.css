@@ -241,28 +241,6 @@ p + p {
     display: none;
 }
 
-.background-primary {
-    background-color: var(--primary-color);
-    margin: unset;
-    width: 100%;
-    box-sizing: border-box;
-}
-.background-primary .wrapper-img, .card-img {
-    width: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-.background-primary .wrapper-content {
-    padding: 10%;
-    color: var(--white-color);
-}
-.background-primary h1, .background-primary h2 {
-    color: var(--white-color);
-}
-.background-ligth h1, .background-ligth h2 {
-    color: var(--background-color);
-}
 .wrapper h1 {
     font-size: 50px;
     margin-bottom: 50px;
@@ -274,23 +252,6 @@ p + p {
 .wrapper .content-footer {
     text-align: center;
     margin-top: 25px;
-}
-.background-ligth {
-    background-color: var(--light-color);
-    box-sizing: border-box;
-    padding: 25px;
-    color: var(--background-color);
-}
-.background-white {
-    background-color: var(--white-color);
-    box-sizing: border-box;
-    padding: 25px;
-    color: var(--background-color);
-}
-.background-gray {
-    background-color: var(--gray-color);
-    box-sizing: border-box;
-    padding: 25px;
 }
 .wrapper-full-width {
     width: 100%;
@@ -316,7 +277,7 @@ p + p {
     grid-template-areas: "news events"
                          "links events";
     grid-template-columns: 1fr 270px;
-    grid-template-rows: 1fr 120px;
+    grid-template-rows: 1fr 100px;
     gap: 50px;
 }
 .news-container {
@@ -408,6 +369,7 @@ button[type="submit"] {
     background-image: url(../images/background.jpg);
     background-size: cover;
     background-attachment: fixed;
+    min-height: 100vh;
     /* background-blend-mode: soft-light;
     background-color: rgba(255,255 ,255, 0.3); */
 }
@@ -433,6 +395,9 @@ button[type="submit"] {
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
+}
+.links-container .card {
+    height: 100px;
 }
 
 @media screen and (max-width: 800px) {
