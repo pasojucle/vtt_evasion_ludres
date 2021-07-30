@@ -610,8 +610,10 @@ nav.nav-tab {
 .background-ligth {
     background-color: var(--light-color);
     box-sizing: border-box;
-    padding: 25px;
     color: var(--background-color);
+}
+.block.background-ligth {
+    padding: 25px;
 }
 .row-list .background-ligth {
     padding: 5px;
