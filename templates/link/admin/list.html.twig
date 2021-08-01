@@ -19,9 +19,9 @@
                 </nav>
             </div>
             <div class="block-body">
-                <ul>
+                <ul class="sortable">
                     {% for link in links %}     
-                        <li>
+                        <li class="ui-state-default" data-link-id="{{ link.id }}">
                             <div>
                                 <div class="row row-list">
                                     <div class="col-md-10 col-xs-8 background-ligth">{{ link.title }}</div>

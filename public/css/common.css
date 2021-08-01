@@ -183,7 +183,7 @@ body > script {display: none !important;}
     top: 5px;
     right: 25px;
 }
-.btn-primary {
+.btn-primary , .ui-state-default a.btn-primary{
     background-color: var(--primary-color);
     color: var(--white-color);
     border: 2px solid var(--primary-color);
@@ -198,7 +198,7 @@ body > script {display: none !important;}
     background-color: var(--success-color);
     border: 2px solid var(--success-color);
 }
-.btn-danger{
+.btn-danger, .ui-state-default a.btn-danger{
     background-color: var(--danger-color);
     color: var(--white-color);
     border: 2px solid var(--danger-color);

@@ -45,4 +45,30 @@ class LinkRepository extends ServiceEntityRepository
             ->getResult();
         ;
     }
+
+
+    /**
+     * @return User[] Returns an array of link objects
+     */
+
+    public function findNexOrderByPosition(int $position): int
+    {
+        $nexOrder = 0;
+        $maxOrder = $this->createQueryBuilder('l')
+            ->select('MAX(l.orderBy)')
+            ->andWhere(
+                (new Expr)->eq('l.position', ':position')
+            )
+            ->setParameter('position', $position)
+            ->getQuery()
+            ->getSingleScalarResult();
+        ;
+
+        if (null !== $maxOrder) {
+            $maxOrder = (int) $maxOrder;
+            $nexOrder = $maxOrder + 1;
+        }
+
+        return $nexOrder;
+    }
 }

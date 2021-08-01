@@ -111,6 +111,10 @@ class LinkController extends AbstractController
                     $link->setImage($newFilename);
                 }
             }
+            if (null === $link->getOrderBy() && null !== $link->getPosition()) {
+                $order = $this->linkRepository->findNexOrderByPosition($link->getPosition());
+                $link->setOrderBy($order);
+            }
             $this->entityManager->persist($link);
             $this->entityManager->flush();
             if ($isNew) {
@@ -154,5 +158,43 @@ class LinkController extends AbstractController
             'link' => $link,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/ordonner/lien/{link}", name="admin_link_order", options={"expose"=true},)
+     */
+    public function adminLinkOrder(
+        Request $request,
+        Link $link
+    ): Response
+    {
+        $oldOrder = $link->getOrderBy();
+        $position = $link->getPosition();
+        $newOrder = $request->request->get('newOrder');
+        $links = $this->linkRepository->findByPosition($position);
+
+        if (null !== $newOrder && null !== $link) {           
+            $startOrder = $oldOrder;
+            $endOrder = $newOrder;
+            $order = $startOrder;
+
+            if (0 < $oldOrder - $newOrder) {
+                $startOrder = $newOrder;
+                $endOrder = $oldOrder;
+                $order = $startOrder;
+                ++$order;
+            }
+
+            foreach($links as $currentLink) {
+                if ($link !== $currentLink && $startOrder <= $currentLink->getOrderBy() && $currentLink->getOrderBy() <= $endOrder ) {
+                    $currentLink->setOrderBy($order);
+                    ++$order;
+                }
+            }
+            $link->setOrderBy($newOrder);
+            $this->entityManager->flush();
+        }
+
+        return new Response();
     }
 }

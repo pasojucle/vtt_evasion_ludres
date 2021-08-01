@@ -23,6 +23,9 @@ $(document).ready(function(){
             $('nav img').addClass('hidden');
         }
     });
+    if ($('.sortable').length > 0) {
+        buildSortable();
+    }
     $(document).on('change', '#user_identities_1_otherAddress', updateIdentity);
     $(document).on('change', 'input[type="file"]', previewFile);
     $('.js-datepicker').datepicker({
@@ -93,4 +96,30 @@ function toggleMenu(e) {
     e.preventDefault();
     $('nav').toggleClass('nav-active');
     $('.nav-bar .btn').toggleClass('nav-hide');
+}
+function buildSortable() {
+    let error = false;
+    $("ul.sortable").sortable({
+        connectWith: ".connectedSortable",
+        helper: "clone",
+        cursor: "move",
+        zIndex: 99999,
+        items: "> li",
+        start: function (event, ui) {
+            ui.item.data('old-order', ui.item.index());
+        },
+        update: function (event, ui) {
+            updateLinkOrder(ui.item.data('link-id'), ui.item.index());
+        },
+    });
+}
+
+function updateLinkOrder(linkId, newOrder) {
+    const route = Routing.generate('admin_link_order', {'link':linkId});
+    const data = {'newOrder' : newOrder};
+    $.ajax({
+        url : route,
+        type: 'POST',
+        data : data,
+    });
 }

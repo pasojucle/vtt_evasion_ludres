@@ -10,8 +10,9 @@
         <div class="block">
             <div class="block-title">
                 <h2>{{ title }}</h2>
+                {% set position = (link is not null) ? link.position : constant('App\\Entity\\Link::POSITION_LINK_PAGE') %}
                 <span class="tools">
-                    <a href="{{ path('admin_links', {'position': link.position}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>
+                    <a href="{{ path('admin_links', {'position': position}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>
                 </span>
             </div>
             <div class="block-body">
