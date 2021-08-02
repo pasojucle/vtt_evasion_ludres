@@ -109,13 +109,16 @@ function buildSortable() {
             ui.item.data('old-order', ui.item.index());
         },
         update: function (event, ui) {
-            updateLinkOrder(ui.item.data('link-id'), ui.item.index());
+            updateLinkOrder(ui.item.data('id'), ui.item.index());
         },
     });
 }
 
-function updateLinkOrder(linkId, newOrder) {
-    const route = Routing.generate('admin_link_order', {'link':linkId});
+function updateLinkOrder(id, newOrder) {
+    const sortable = $("ul.sortable").first();
+    const parameters = {};
+    parameters[sortable.data('parameter')] = id;
+    const route = Routing.generate(sortable.data('route'), parameters);
     const data = {'newOrder' : newOrder};
     $.ajax({
         url : route,

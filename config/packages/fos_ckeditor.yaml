@@ -12,6 +12,11 @@ fos_ck_editor:
             toolbar: "full_toolbar"
             filebrowserBrowseRoute: elfinder
             filebrowserBrowseRouteParameters: []
+            extraPlugins: [iframe]
+    plugins:       
+        iframe:
+            path:     "ckeditor/iframe/" # with trailing slash
+            filename: "plugin.js"
 
     toolbars:
         configs:
@@ -24,4 +29,4 @@ fos_ck_editor:
             link: ['Link', "Anchor"]
             table: ['Table']
             advanced_styles: ['Styles', 'Format','Font','FontSize', '-', 'TextColor', 'BGColor']
-            image: ['Image']
+            image: ['Image', 'Iframe']

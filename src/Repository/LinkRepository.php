@@ -46,11 +46,6 @@ class LinkRepository extends ServiceEntityRepository
         ;
     }
 
-
-    /**
-     * @return User[] Returns an array of link objects
-     */
-
     public function findNexOrderByPosition(int $position): int
     {
         $nexOrder = 0;

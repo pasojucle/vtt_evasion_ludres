@@ -19,9 +19,9 @@
                 </nav>
             </div>
             <div class="block-body">
-                <ul class="sortable">
+                <ul class="sortable" data-route="admin_link_order" data-parameter="link">
                     {% for link in links %}     
-                        <li class="ui-state-default" data-link-id="{{ link.id }}">
+                        <li class="ui-state-default" data-id="{{ link.id }}">
                             <div>
                                 <div class="row row-list">
                                     <div class="col-md-10 col-xs-8 background-ligth">{{ link.title }}</div>

@@ -6,14 +6,27 @@
     
     <div class="wrapper wrapper-home wrapper-full-width full-background">
         <div class="news-container">
-        
-
+            {% if home_contents.flashes is defined %}
+                {% for flash in home_contents.flashes %}
+                    <div class="block background-primary">        
+                        <div class="block-body">{{ flash.content | raw}}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if home_contents.contents is defined %}
+                {% for content in home_contents.contents %}
+                    <div class="block background-ligth">        
+                        <div class="block-body">{{ content.content | raw}}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
         <div class="events-container">
             <div class="block background-ligth">
-                <div class="block-title">
+                {# <div class="block-title">
                     <h2></h2>
-                </div>
+                </div> #}
+                {% if events is not empty %}
                 <div class="block-body">
                     <ul>
                     {% for event in events %}
@@ -30,6 +43,7 @@
                     {% endfor %}
                     </ul>
                 </div>
+                {% endif %}
                 <div class="block-footer">
                     <a href="{{ path('schedule', {'period': 'mois'}) }}" class="btn btn-secondary align-center btn-full-width"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
                 </div>

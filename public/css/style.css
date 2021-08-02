@@ -132,7 +132,7 @@ p + p {
 .block-body .container:not(:last-child), .content-container .container:not(:last-child) {
     margin-bottom: 15px;
 }
-.block-footer {
+.block-footer:not(:first-child) {
     margin-top: 25px;
     min-height: 35px;
 }

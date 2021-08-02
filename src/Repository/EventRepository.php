@@ -20,8 +20,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class EventRepository extends ServiceEntityRepository
 {
-    public const PAGINATOR_PER_PAGE = 2;
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);

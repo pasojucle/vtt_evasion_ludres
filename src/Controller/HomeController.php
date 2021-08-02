@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Link;
+use App\Repository\ContentRepository;
 use App\Repository\EventRepository;
 use App\Repository\LinkRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,9 +17,11 @@ class HomeController extends AbstractController
      */
     public function home (
         LinkRepository $linkRepository,
+        ContentRepository $contentRepository,
         EventRepository $eventRepository
     ): Response
     {
+        $homeContents = $contentRepository->findHomeContents();
         $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
         $linksFooter = $linkRepository->findByPosition(Link::POSITION_HOME_FOOTER);
         $events = $eventRepository->findEnableView();
@@ -27,6 +30,7 @@ class HomeController extends AbstractController
             'links_bike_ride' => $linksBikeRide,
             'links_footer' => $linksFooter,
             'events' => $events,
+            'home_contents' => $homeContents,
         ]);
     }
 }

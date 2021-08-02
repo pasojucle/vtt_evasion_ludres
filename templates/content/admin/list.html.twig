@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% set title = 'Gestion des contenus' %}
+{% if current_route == 'home' %}
+    {% set title = 'Gestion de la page d\'accueil' %}
+{% endif %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="block">
+            <div class="block-title">
+                <h2>{{ title }}</h2>
+                <span class="tools">
+                    {% if current_route == 'home' %}
+                        <a href="{{ path('admin_home_content_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un lien"><i class="fas fa-plus"></i></a>
+                    {% endif %}
+                </span>
+            </div>
+            <div>
+                <nav  class="nav-tab">
+                {% if current_route == 'home' %}
+                    {% set tabs = constant('App\\Entity\\Content::IS_FLASH') %}
+                    {% for isFlash, label in tabs %}
+                        <a href="{{ path('admin_home_contents', {'isFlash': isFlash} )}}"{% if is_flash == isFlash %} class="active"{% endif %}>{{ label|trans}}</a>
+                    {% endfor %}
+                {% endif %}
+                </nav>
+            </div>
+            <div class="block-body">
+                <ul class="sortable" data-route="admin_content_order" data-parameter="content">
+                    {% for content in contents %}     
+                        <li class="ui-state-default" data-id="{{ content.id }}">
+                            <div>
+                                <div class="row row-list">
+                                    {% set title = content.title %}
+                                    {% if content.title is null %}
+                                        {% set title = constant('App\\Entity\\Content::ROUTES')[content.route] | trans %}
+                                    {% endif %}
+                                    <div class="col-md-10 col-xs-8 background-ligth">{{ title }}</div>
+                                    <div class="col-md-2 col-xs-4">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_home_content_edit', {'content': content.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                        {% if current_route == 'home' %}
+                                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_content_delete', {'content': content.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% include('common/pagination.html.twig') %}
+    </div>
+{% endblock %}

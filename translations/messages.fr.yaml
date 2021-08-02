@@ -91,3 +91,11 @@ link:
     link_page: Page des liens
     home_footer: En pied de la page d'accueil
     home_bike_ride: Dans les sorties en page d'accueil
+
+content:
+  route:
+    home: Page d'accueil
+    registration_detail: Page d'inscription
+  type:
+    flash: Message flash
+    content: Contenu

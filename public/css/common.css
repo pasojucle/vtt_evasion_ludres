@@ -601,7 +601,7 @@ nav.nav-tab {
     padding: 10%;
     color: var(--white-color);
 }
-.background-primary h1, .background-primary h2 {
+.background-primary h1, .background-primary h2, .background-primary {
     color: var(--white-color);
 }
 .background-ligth h1, .background-ligth h2 {
@@ -612,8 +612,11 @@ nav.nav-tab {
     box-sizing: border-box;
     color: var(--background-color);
 }
-.block.background-ligth {
+.block.background-ligth, .block.background-primary {
     padding: 25px;
+}
+.block:not(:first-child) {
+    margin-top: 25px;
 }
 .row-list .background-ligth {
     padding: 5px;

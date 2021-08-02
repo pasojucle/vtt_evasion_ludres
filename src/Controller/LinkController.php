@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Link;
 use App\Form\LinkType;
 use App\Service\LinkService;
+use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Repository\LinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,14 +22,17 @@ class LinkController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private LinkRepository $linkRepository;
+    private OrderByService $orderByService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        LinkRepository $linkRepository
+        LinkRepository $linkRepository,
+        OrderByService $orderByService
     )
     {
         $this->entityManager = $entityManager;
         $this->linkRepository = $linkRepository;
+        $this->orderByService = $orderByService;
     }
 
     /**
@@ -151,10 +155,13 @@ class LinkController extends AbstractController
             $this->entityManager->remove($link);
             $this->entityManager->flush();
 
+            $links = $this->linkRepository->findByPosition($position);
+            $this->orderByService->ResetOrders($links);
+
             return $this->redirectToRoute('admin_links', ['position' => $position]);
         }
 
-        return $this->render('link/admin/delete.modale.html.twig', [
+        return $this->render('link/admin/delete.modal.html.twig', [
             'link' => $link,
             'form' => $form->createView(),
         ]);
@@ -168,32 +175,11 @@ class LinkController extends AbstractController
         Link $link
     ): Response
     {
-        $oldOrder = $link->getOrderBy();
         $position = $link->getPosition();
         $newOrder = $request->request->get('newOrder');
         $links = $this->linkRepository->findByPosition($position);
 
-        if (null !== $newOrder && null !== $link) {           
-            $startOrder = $oldOrder;
-            $endOrder = $newOrder;
-            $order = $startOrder;
-
-            if (0 < $oldOrder - $newOrder) {
-                $startOrder = $newOrder;
-                $endOrder = $oldOrder;
-                $order = $startOrder;
-                ++$order;
-            }
-
-            foreach($links as $currentLink) {
-                if ($link !== $currentLink && $startOrder <= $currentLink->getOrderBy() && $currentLink->getOrderBy() <= $endOrder ) {
-                    $currentLink->setOrderBy($order);
-                    ++$order;
-                }
-            }
-            $link->setOrderBy($newOrder);
-            $this->entityManager->flush();
-        }
+        $this->orderByService->setNewOrders($link, $links, $newOrder);
 
         return new Response();
     }

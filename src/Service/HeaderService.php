@@ -74,8 +74,14 @@ class HeaderService
             ],
             [
                 'label' => 'Gestion de la page d\'accueil',
-                 'route' => 'admin_events',
-                 'pattern' => '/session/',
+                 'route' => 'admin_home_contents',
+                 'pattern' => '/admin_home/',
+                 'subMenus' => [],
+            ],
+            [
+                'label' => 'Gestion des contenus',
+                 'route' => 'admin_contents',
+                 'pattern' => '/admin_content/',
                  'subMenus' => [],
             ],
             [

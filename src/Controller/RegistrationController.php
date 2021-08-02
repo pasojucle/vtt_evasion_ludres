@@ -13,6 +13,7 @@ use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
+use App\Repository\ContentRepository;
 use App\Service\RegistrationService;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,9 +49,13 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/inscription/info", name="registration_detail")
      */
-    public function registrationDetail(): Response
+    public function registrationDetail(
+        ContentRepository $contentRepository
+    ): Response
     {
-        return $this->render('registration/detail.html.twig');
+        return $this->render('registration/detail.html.twig', [
+            'content' => $contentRepository->findOneByRoute('registration_detail'),
+        ]);
     }
 
     /**
