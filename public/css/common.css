@@ -686,7 +686,7 @@ nav.nav-tab {
         background-color: var(--white-color);
         z-index: 3;
     }
-    nav.nav-active {
+    nav:not(.paginator, nav.nav-tab).nav-active {
         left: 0;
     }
     nav.nav-tab, nav.nav-tab a {
