@@ -455,4 +455,7 @@ button[type="submit"] {
     .bike-rides .bike-ride-date-btn {
         display: none;
     }
+    .events-container, .links-container {
+        margin-top: 25px;
+    }
 }
