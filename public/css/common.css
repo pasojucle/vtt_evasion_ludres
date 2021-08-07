@@ -453,6 +453,8 @@ body {
 }
 .col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3 {
     display: grid;
+}
+.col-1, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3 {
     gap: 5%;
 }
 .wrapper-full.col-1 {
