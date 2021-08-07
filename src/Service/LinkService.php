@@ -127,18 +127,5 @@ class LinkService
 
         $html = curl_exec($ch);
         curl_close($ch);
-
-        dump($html);
-        // $doc = new DOMDocument();
-        // $doc->loadHTML($html);
-
-        // $xpath = new DOMXPath($doc);
-
-        // $nodes = $xpath->query('//head/meta');
-
-        // foreach($nodes as $node) {
-        //     dump($node);
-        // }
-        // dump(get_meta_tags($data));
     }
 }

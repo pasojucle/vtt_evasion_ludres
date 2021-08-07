@@ -53,7 +53,7 @@
                                 <li><b>Type : </b>{{ season_licence.type|trans }}</li>
                             {% endif %}
                             {% if season_licence.coverage is not null %}
-                                <li><b>Assurance : </b>{{ season_licence.coverage|trans }}</li>
+                                <li><b>Assurance : </b>{{ season_licence.coverageStr|trans }}</li>
                             {% endif %}
                         {% endif %}
                         {% if user.level is not null %}

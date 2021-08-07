@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+{% endblock %}
+{% block body %}
+     <div class="wrapper wrapper-medium-width full-background">
+        <div class="wrapper-title">
+            <h1>Inscription</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="block background-ligth">
+                <div class="block-body">
+                    <p class="alert-warning">Votre inscription pour la saison {{ licence_service.currentSeason }} a été validée. Vous ne pouvez plus la modifier en ligne.</p>
+                    <p>Pour toutes modifications, contactez une personne de l'encadrement de club.</p>
+
+                    <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_entity.id }) }}">Télécharger le dossier d'inscription</a>
+                </div>
+                 <div class="block-footer">
+                    <a href="{{ path('user_account') }}" class="btn btn-secondary float-right">Voir mon compte</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

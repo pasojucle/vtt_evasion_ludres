@@ -59,17 +59,6 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/inscription", name="registration_member")
-     */
-    public function registration(): Response
-    {
-        $this->session->remove('registrationMaxStep');
-        
-        return $this->render('registration/member.html.twig');
-    }
-
-
-    /**
      * @Route("/inscription/{step}", name="registration_form")
      * @Route("/mon-compte/inscription/{step}", name="user_registration_form")
      */
@@ -90,6 +79,10 @@ class RegistrationController extends AbstractController
         }
 
         $progress = $registrationService->getProgress($step);
+
+        if ($progress['seasonLicence']->isValid()) {
+            return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
+        }
         $form = $progress['form'];
 
         if (1 === $step) {
@@ -223,6 +216,19 @@ class RegistrationController extends AbstractController
         return $this->render('registration/admin/registrationStep.html.twig', [
             'registrationStep' => $step,
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/inscription/telechargement/{user}", name="registration_download")
+     */
+    public function registrationDownload(
+        UserEntity $user
+    ): Response
+    {
+        
+        return $this->render('registration/download.html.twig', [
+            'user_entity' => $user,
         ]);
     }
 
