@@ -2,19 +2,26 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\ContentRepository;
+use App\Repository\LevelRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SchoolController extends AbstractController
 {
     /**
-     * @Route("/ecole_vtt", name="school")
+     * @Route("/ecole_vtt", name="school_detail")
      */
-    public function index(): Response
+    public function schoolDetail(
+        ContentRepository $contentRepository,
+        LevelRepository $levelRepository
+    ): Response
     {
-        return $this->render('school/index.html.twig', [
-            'controller_name' => 'SchoolController',
+
+        return $this->render('school/detail.html.twig', [
+            'content' => $contentRepository->findOneByRoute('school_detail'),
+            'levels' => $levelRepository->findAllTypeMember(),
         ]);
     }
 }

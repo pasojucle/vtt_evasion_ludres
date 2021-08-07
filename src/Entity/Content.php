@@ -18,6 +18,8 @@ class Content
     public const ROUTES = [
         'home' => 'content.route.home',
         'registration_detail' => 'content.route.registration_detail',
+        'club_detail' => 'content.route.club_detail',
+        'school_detail' => 'content.route.school_detail',
     ];
 
     /**

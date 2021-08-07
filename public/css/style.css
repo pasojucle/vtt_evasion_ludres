@@ -106,8 +106,18 @@ h2 {
     color: var(--primary-color);
     margin-bottom: 5px;
 }
-h2:not(:first-child) {
+h2:not(:first-child), h3:not(:first-child) {
     margin-top: 15px;
+}
+h4 {
+    display: inline;
+}
+ul.school-level{
+    margin-left: 18px;
+}
+.school-level li {
+    list-style: disc outside;
+    margin-top: 8px;
 }
 p {
     text-align: justify;

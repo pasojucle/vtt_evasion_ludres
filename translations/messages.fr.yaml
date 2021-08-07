@@ -95,7 +95,9 @@ link:
 content:
   route:
     home: Page d'accueil
-    registration_detail: Page d'inscription
+    registration_detail: Page Inscription
+    club_detail: Page Le club
+    school_detail: Page L'école vtt
   type:
     flash: Message flash
     content: Contenu

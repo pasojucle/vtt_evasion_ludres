@@ -12,7 +12,7 @@ class HeaderService
         $this->menus = [
             [
                 'label' => 'Le club',
-                'route' => 'club',
+                'route' => 'club_detail',
                 'pattern' => '/club/',
                 'subMenus' => [],
             ],
@@ -24,7 +24,7 @@ class HeaderService
             ],
             [
                 'label' => 'L\'école VTT',
-                'route' => 'school',
+                'route' => 'school_detail',
                 'pattern' => '/school/',
                 'subMenus' => [],
             ],

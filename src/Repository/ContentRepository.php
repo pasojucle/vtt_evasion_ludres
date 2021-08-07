@@ -23,12 +23,18 @@ class ContentRepository extends ServiceEntityRepository
         parent::__construct($registry, Content::class);
     }
 
-    public function findContentQuery(string $route, ?bool $isFlash = null): QueryBuilder
+    public function findContentQuery(?string $route = null, ?bool $isFlash = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('c');
         
         $andX = $qb->expr()->andX();
-        $andX->add($qb->expr()->eq('c.route', ':route'));
+        if (null !== $route) {
+            $andX->add($qb->expr()->eq('c.route', ':route'));
+        } else {
+            $andX->add($qb->expr()->neq('c.route', ':route'));
+            $route = 'home';
+        }
+        
         if (null !== $isFlash) {
             $andX->add($qb->expr()->eq('c.isFlash', ':isFlash'));
             $qb->setParameter('isFlash', $isFlash);

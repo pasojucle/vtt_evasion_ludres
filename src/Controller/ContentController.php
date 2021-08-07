@@ -32,7 +32,7 @@ class ContentController extends AbstractController
     }
     /**
      * @Route("/admin/page/accueil/contenus/{isFlash}", name="admin_home_contents", defaults={"route"="home", "isFlash"=true})
-     * @Route("/admin/contenus/{route}", name="admin_contents", defaults={"route"=null, "isFlash"=false})
+     * @Route("/admin/contenus", name="admin_contents", defaults={"route"=null, "isFlash"=false})
      */
     public function list(
         PaginatorService $paginator,
@@ -41,9 +41,6 @@ class ContentController extends AbstractController
         bool $isFlash
     ): Response
     {
-        if (null === $route) {
-            $route = 'registration_detail';
-        }
         $query =  $this->contentRepository->findContentQuery($route, $isFlash);
         $contents =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
@@ -84,7 +81,7 @@ class ContentController extends AbstractController
                 return $this->redirectToRoute('admin_home_contents', ['route' => $content->getRoute(), 'isFlash' => (int) $content->isFlash()]);
             }
 
-            return $this->redirectToRoute('admin_contents', ['route' => $content->getRoute()]);
+            return $this->redirectToRoute('admin_contents');
         }
 
         return $this->render('content/admin/edit.html.twig', [
