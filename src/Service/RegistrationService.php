@@ -154,13 +154,15 @@ class RegistrationService
         if (null === $this->user->getHealth()) {
             $health = new Health();
             $this->user->setHealth($health);
+            $this->entityManager->persist($health);
+        }
+        if ($this->user->getHealth()->getHealthQuestions()->isEmpty()) {
             foreach (range(0, 8) as $number) {
                 $healthQuestion = new HealthQuestion();
                 $healthQuestion->setField($number);
-                $health->addHealthQuestion($healthQuestion);
+                $this->user->getHealth()->addHealthQuestion($healthQuestion);
                 $this->entityManager->persist($healthQuestion);
             }
-            $this->entityManager->persist($health);
         }
         if ($this->user->getIdentities()->isEmpty()) {
             $identity = new Identity();
