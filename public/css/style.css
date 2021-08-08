@@ -96,6 +96,25 @@ ul.sub-menu a:hover {
     margin: auto -2.5px;
     height: 100%;
 }
+footer {
+    background-color: var(--background-color);
+    text-align: center;
+    color: var(--white-color);
+}
+footer a {
+    color: var(--white-color);
+}
+footer li {
+    display: inline;
+    line-height: 50px;
+}
+footer li:not(:first-child) {
+    margin-left: 25px;
+}
+footer li:not(:first-child)::before {
+    content: "|";
+    margin-right: 25px;
+}
 h1 {
     color: var(--light-color);
 }
@@ -112,10 +131,10 @@ h2:not(:first-child), h3:not(:first-child) {
 h4 {
     display: inline;
 }
-ul.school-level{
+ul.list-outside, .text-2-col ul {
     margin-left: 18px;
 }
-.school-level li {
+.list-outside li, .text-2-col ul li {
     list-style: disc outside;
     margin-top: 8px;
 }
@@ -281,14 +300,18 @@ p + p {
     padding: 5% 25%;
     box-sizing: border-box;
 }
-
 .wrapper-home {
     display: grid;
     grid-template-areas: "news events"
                          "links events";
     grid-template-columns: 1fr 270px;
     grid-template-rows: 1fr 100px;
-    gap: 50px;
+    gap: 10%;
+    padding-top: 150px;
+    padding-bottom: 150px;
+}
+.wrapper.background-color.col-2 {
+    min-height: calc(100vh - 240px);
 }
 .news-container {
     grid-area: news;
@@ -344,7 +367,7 @@ button[type="submit"] {
     background-color: var(--white-color);
 }
 .bike-rides .bike-ride-date, .bike-rides .bike-ride-btn{
-    background-color: var(--gray-color);
+    background-color: var(--green-color);
     color: var(--white-color);
     font-weight: 700;
     font-size: 18px;
@@ -408,6 +431,10 @@ button[type="submit"] {
 }
 .links-container .card {
     height: 100px;
+}
+.text-2-col {
+    column-count: 2;
+    column-gap: 5%;
 }
 
 @media screen and (max-width: 800px) {

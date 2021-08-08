@@ -20,8 +20,8 @@ fos_ck_editor:
 
     toolbars:
         configs:
-            minimum_toolbar: [ "@styles", "@align", "@link"]
-            full_toolbar: [ "@styles", "@advanced_styles", "@align", "@table", "@image", "@link", "@document",]
+            minimum_toolbar: [ "@styles", "@align", "@lists", "@link"]
+            full_toolbar: [ "@styles", "@advanced_styles", "@align", "@lists", "@table", "@image", "@link", "@document",]
         items:
             document: [ "Source"]
             styles: ['Bold', 'Italic', 'Underline', 'Strike']
@@ -30,3 +30,4 @@ fos_ck_editor:
             table: ['Table']
             advanced_styles: ['Styles', 'Format','Font','FontSize', '-', 'TextColor', 'BGColor']
             image: ['Image', 'Iframe']
+            lists: ['NumberedList', 'BulletedList']

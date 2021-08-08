@@ -15,7 +15,6 @@ $(document).ready(function(){
     }
     $( window ).scroll(function() {
         if ($(window).scrollTop() > 150) {
-            console.log('fixed');
             $('nav').addClass('fixed');
             $('nav img').removeClass('hidden');
         } else {

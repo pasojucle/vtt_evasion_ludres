@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Link;
 use App\Entity\Content;
 use App\Form\ContentType;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\Repository\LinkRepository;
+use App\Repository\EventRepository;
+use App\Repository\LevelRepository;
 use App\Repository\ContentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -141,5 +145,82 @@ class ContentController extends AbstractController
         $this->orderByService->setNewOrders($content, $contents, $newOrder);
 
         return new Response();
+    }
+
+    /**
+     * @Route("/", name="home")
+     */
+    public function home (
+        LinkRepository $linkRepository,
+        ContentRepository $contentRepository,
+        EventRepository $eventRepository
+    ): Response
+    {
+        $homeContents = $contentRepository->findHomeContents();
+        $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
+        $linksFooter = $linkRepository->findByPosition(Link::POSITION_HOME_FOOTER);
+        $events = $eventRepository->findEnableView();
+
+        return $this->render('content/home.html.twig', [
+            'links_bike_ride' => $linksBikeRide,
+            'links_footer' => $linksFooter,
+            'events' => $events,
+            'home_contents' => $homeContents,
+        ]);
+    }
+
+     /**
+     * @Route("/club", name="club")
+     */
+    public function club(): Response
+    {
+
+        return $this->render('content/club.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('club'),
+        ]);
+    }
+
+    /**
+     * @Route("/ecole_vtt", name="school")
+     */
+    public function school(
+        LevelRepository $levelRepository
+    ): Response
+    {
+
+        return $this->render('content/school.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('school'),
+            'levels' => $levelRepository->findAllTypeMember(),
+        ]);
+    }
+
+    /**
+     * @Route("/contact", name="contact")
+     */
+    public function contact(): Response
+    {
+        return $this->render('content/contact.html.twig', [
+            'controller_name' => 'ContactController',
+        ]);
+    }
+
+    /**
+     * @Route("/reglement", name="rules")
+     */
+    public function rules(): Response
+    {
+        return $this->render('content/rules.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('rules'),
+        ]);
+    }
+
+    /**
+     * @Route("/mentions/legales", name="legal_notices")
+     */
+    public function legalNotices(): Response
+    {
+        return $this->render('content/legal_notices.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('legal_notices'),
+        ]);
     }
 }

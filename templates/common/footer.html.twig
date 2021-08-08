@@ -1,0 +1,10 @@
+{% set menus = nav_service.footer() %}
+<footer>
+    <ul>
+        {% for menu in menus %}
+            <li>
+                <a href="{{ path(menu.route) }}"{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</footer>

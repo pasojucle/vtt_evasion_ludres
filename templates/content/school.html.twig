@@ -11,7 +11,7 @@
         <div class="wrapper-content">
             {{ content.content | raw}}
             <h3>A l'école VTT de Ludres il y a {{levels|length}} groupes</h3>
-            <ul class="school-level">
+            <ul class="list-outside">
                 {% for level in levels %}
                     <li>
                         <h4>{{ level.title }}</h4>

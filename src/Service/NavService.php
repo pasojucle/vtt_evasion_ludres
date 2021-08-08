@@ -2,17 +2,18 @@
 
 namespace App\Service;
 
-class HeaderService
+class NavService
 {
     private array $menus;
     private array $menusAdmin;
+    private array $footer;
 
     public function __construct()
     {
         $this->menus = [
             [
                 'label' => 'Le club',
-                'route' => 'club_detail',
+                'route' => 'club',
                 'pattern' => '/club/',
                 'subMenus' => [],
             ],
@@ -24,7 +25,7 @@ class HeaderService
             ],
             [
                 'label' => 'L\'école VTT',
-                'route' => 'school_detail',
+                'route' => 'school',
                 'pattern' => '/school/',
                 'subMenus' => [],
             ],
@@ -97,6 +98,20 @@ class HeaderService
                  'subMenus' => [],
             ],
         ];
+        $this->footer = [
+            [
+                'label' => 'Réglement intérieur',
+                'route' => 'rules',
+                'pattern' => '/reglement/',
+                'subMenus' => [],
+            ],
+            [
+                'label' => 'Mentions légales',
+                'route' => 'legal_notices',
+                'pattern' => '/legales/',
+                'subMenus' => [],
+            ],
+        ];
     }
 
     public function getMenus(): array
@@ -107,5 +122,10 @@ class HeaderService
     public function getMenusAdmin(): array
     {
         return $this->menusAdmin;
+    }
+
+    public function getFooter(): array
+    {
+        return $this->footer;
     }
 }

@@ -7,7 +7,7 @@ twig:
         - 'form/custom_switch_widget.html.twig'
 
     globals:
-        header_service: '@App\Service\HeaderService'
+        nav_service: '@App\Service\NavService'
         licence_service: '@App\Service\LicenceService'
         membership_fee_service: '@App\Service\MembershipFeeService'
         registration_service: '@App\Service\RegistrationService'

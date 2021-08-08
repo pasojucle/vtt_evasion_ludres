@@ -96,8 +96,11 @@ content:
   route:
     home: Page d'accueil
     registration_detail: Page Inscription
-    club_detail: Page Le club
-    school_detail: Page L'école vtt
+    club: Page Le club
+    school: Page L'école vtt
+    rules: Réglement intérieur
+    legal_notices: Mentions légales
+
   type:
     flash: Message flash
     content: Contenu

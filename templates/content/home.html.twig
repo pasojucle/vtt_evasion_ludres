@@ -8,21 +8,21 @@
         <div class="news-container">
             {% if home_contents.flashes is defined %}
                 {% for flash in home_contents.flashes %}
-                    <div class="block background-primary">        
+                    <div class="block background-color background-primary">        
                         <div class="block-body">{{ flash.content | raw}}</div>
                     </div>
                 {% endfor %}
             {% endif %}
             {% if home_contents.contents is defined %}
                 {% for content in home_contents.contents %}
-                    <div class="block background-ligth">        
+                    <div class="block{% if not(content.content matches '/iframe/') %} background-clear{% endif %}">        
                         <div class="block-body">{{ content.content | raw}}</div>
                     </div>
                 {% endfor %}
             {% endif %}
         </div>
         <div class="events-container">
-            <div class="block background-ligth">
+            <div class="block background-clear">
                 {# <div class="block-title">
                     <h2></h2>
                 </div> #}

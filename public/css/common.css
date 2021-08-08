@@ -114,6 +114,7 @@ body > script {display: none !important;}
     --nav-height: 49px;
     --gray-color: rgb(100,100,100);
     --white-color: #fff;
+    --gap:25px;
 }
 .alert-danger {
     color: var(--danger-color);
@@ -627,7 +628,7 @@ nav.nav-tab {
 .background-color h1, .background-color h2, .background-color {
     color: var(--white-color);
 }
-.background-ligth h1, .background-ligth h2 {
+.background-ligth h1, .background-ligth h2, .background-clear h2 {
     color: var(--background-color);
 }
 .background-ligth {
@@ -635,11 +636,16 @@ nav.nav-tab {
     box-sizing: border-box;
     color: var(--background-color);
 }
-.block.background-ligth, .block.background-primary {
+.background-clear {
+    background-color: var(--clear-color);
+    box-sizing: border-box;
+    color: var(--background-color);
+}
+.block.background-ligth, .block.background-clear , .block.background-color {
     padding: 25px;
 }
 .block:not(:first-child) {
-    margin-top: 25px;
+    margin-top: var(--gap);
 }
 .row-list .background-ligth {
     padding: 5px;
@@ -655,6 +661,9 @@ nav.nav-tab {
     background-color: var(--gray-color);
     box-sizing: border-box;
     padding: 25px;
+}
+.block.no-padding {
+    padding: 0;
 }
 @media screen and (max-width: 800px) {
     .nav-bar {
