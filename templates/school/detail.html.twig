@@ -6,8 +6,8 @@
     {{ parent()}}
 {% endblock %}
 {% block body %}
-    <div class="wrapper background-primary col-2">
-        
+    <div class="wrapper background-green background-color col-2 col-no-gap">
+        <div class="wrapper-img" style="background-image:url(../images/fond_ecole_vtt.jpg)"></div>
         <div class="wrapper-content">
             {{ content.content | raw}}
             <h3>A l'école VTT de Ludres il y a {{levels|length}} groupes</h3>
@@ -21,6 +21,5 @@
             </ul>
 
         </div>
-        <div class="wrapper-img" style="background-image:url(../images/ecole_vtt.jpg)"></div>
     </div>
 {% endblock %}

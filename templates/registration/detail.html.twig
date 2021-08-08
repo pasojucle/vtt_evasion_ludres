@@ -6,7 +6,7 @@
     {{ parent()}}
 {% endblock %}
 {% block body %}
-    <div class="wrapper background-primary col-2">
+    <div class="wrapper background-red background-color col-2 col-no-gap">
         <div class="wrapper-img" style="background-image:url(../images/background.jpg)"></div>
         <div class="wrapper-content">
             {{ content.content | raw}}
@@ -15,14 +15,14 @@
                     <a class="btn btn-secondary btn-xl" href="{{ path('user_registration_form', {'step': 1}) }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
                 {% else %}
                     {# <a class="btn btn-secondary btn-xl" href="{{ path('registration_member') }}"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a> #}
-                    <a class="btn btn-secondary btn-xl" href="#btn-wrapper"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
+                    <a class="btn btn-red btn-xl" href="#btn-wrapper"><i class="fas fa-chevron-circle-right"></i> Je m'inscris</a>
                 {% endif %}
             </div>
         </div>
     </div>
      <div id="btn-wrapper" class="wrapper background-ligth wrapper-small-width col-2">
         <div class="card card-event">
-            <div class="card-img" style="background-image:url(../../images/clip_image001_0001.jpg)"></div>
+            <div class="card-img" style="background-image:url(../../images/ecole_vtt.jpg)"></div>
             <div class="card-body">
                 <h3>Je suis un nouvel adhérent</h3>
             </div>

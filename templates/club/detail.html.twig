@@ -6,11 +6,10 @@
     {{ parent()}}
 {% endblock %}
 {% block body %}
-    <div class="wrapper background-primary col-2">
-        
+    <div class="wrapper background-blue background-color col-2 col-no-gap">
+        <div class="wrapper-img" style="background-image:url(../images/background.jpg)"></div>
         <div class="wrapper-content">
             {{ content.content | raw}}
         </div>
-        <div class="wrapper-img" style="background-image:url(../images/background.jpg)"></div>
     </div>
 {% endblock %}
