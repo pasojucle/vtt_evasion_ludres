@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% form_theme form '@EWZRecaptcha/Form/ewz_recaptcha_widget.html.twig' %}
 
 {% block title %}Contact{% endblock %}
 
@@ -6,10 +7,27 @@
     {{ parent()}}
 {% endblock %}
 {% block body %}
-    <div class="wrapper background-blue background-color col-2 col-no-gap">
+    <div class="wrapper background-blue background-color col-content">
         <div class="wrapper-img" style="background-image:url(../images/1946657171_1.jpg)"></div>
         <div class="wrapper-content">
-            
+            {{ content.content | raw}}
+            {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_row(form.firstName) }}
+                {{ form_row(form.name) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.email) }}
+            </div>
+            {{ form_row(form.message) }}
+            <div class="form-group">
+                {{ form_widget(form.recaptcha) }}
+                <div class="form-errors">
+                    {{ form_errors(form.recaptcha) }}
+                </div>
+            </div>
+            {{ form_row(form.submit) }}
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

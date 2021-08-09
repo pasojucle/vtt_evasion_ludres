@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Link;
 use App\Entity\Content;
+use App\Form\ContactType;
 use App\Form\ContentType;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
@@ -241,10 +242,20 @@ class ContentController extends AbstractController
     /**
      * @Route("/contact", name="contact")
      */
-    public function contact(): Response
+    public function contact(
+        Request $request
+    ): Response
     {
+        $form = $this->createForm(ContactType::class);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+
+        }
+
         return $this->render('content/contact.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('contact'),
+            'form' => $form->createView(),
         ]);
     }
 
