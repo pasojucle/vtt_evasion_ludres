@@ -181,26 +181,70 @@ class ContentController extends AbstractController
     }
 
     /**
-     * @Route("/ecole_vtt", name="school")
+     * @Route("/ecole_vtt/disciplines", name="school_practices")
      */
-    public function school(
+    public function schoolPractices(
         LevelRepository $levelRepository
     ): Response
     {
 
         return $this->render('content/school.html.twig', [
-            'content' => $this->contentRepository->findOneByRoute('school'),
+            'content' => $this->contentRepository->findOneByRoute('school_practices'),
             'levels' => $levelRepository->findAllTypeMember(),
+            'background_color' => 'red',
         ]);
     }
 
+    /**
+     * @Route("/ecole_vtt/presentation", name="school_overview")
+     */
+    public function schoolOverview(
+        LevelRepository $levelRepository
+    ): Response
+    {
+
+        return $this->render('content/school.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('school_overview'),
+            'background_color' => 'green',
+        ]);
+    }
+
+    /**
+     * @Route("/ecole_vtt/fonctionnement", name="school_operating")
+     */
+    public function schoolOperating(
+        LevelRepository $levelRepository
+    ): Response
+    {
+
+        return $this->render('content/school.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('school_operating'),
+            'background_color' => 'blue',
+        ]);
+    }
+    
+
+    /**
+     * @Route("/ecole_vtt/equipement", name="school_equipment")
+     */
+    public function schoolEquipment(
+        LevelRepository $levelRepository
+    ): Response
+    {
+
+        return $this->render('content/school.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('school_equipment'),
+            'background_color' => 'green',
+        ]);
+    }
+    
     /**
      * @Route("/contact", name="contact")
      */
     public function contact(): Response
     {
         return $this->render('content/contact.html.twig', [
-            'controller_name' => 'ContactController',
+            'content' => $this->contentRepository->findOneByRoute('contact'),
         ]);
     }
 

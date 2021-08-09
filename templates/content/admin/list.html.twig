@@ -6,6 +6,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
+{% set class_ul ='' %}
  <div class="wrapper">
         <div class="block">
             <div class="block-title">
@@ -23,11 +24,12 @@
                     {% for isFlash, label in tabs %}
                         <a href="{{ path('admin_home_contents', {'isFlash': isFlash} )}}"{% if is_flash == isFlash %} class="active"{% endif %}>{{ label|trans}}</a>
                     {% endfor %}
+                    {% set class_ul ='sortable' %}
                 {% endif %}
                 </nav>
             </div>
             <div class="block-body">
-                <ul class="sortable" data-route="admin_content_order" data-parameter="content">
+                <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
                     {% for content in contents %}     
                         <li class="ui-state-default" data-id="{{ content.id }}">
                             <div>

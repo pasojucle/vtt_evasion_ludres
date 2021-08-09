@@ -55,21 +55,22 @@ nav:not(.admin) > a.logo img {
 }
 ul.sub-menu {
     display: none;
-    left: 0;
+    /* left: 0; */
     top: var(--nav-height);
     background-color: var(--gray-color);
-    width: 100%;
+    /* width: 100%; */
     text-align: left;
     position: absolute;
     z-index: 3;
+    padding: 5px;
 }
 ul.sub-menu a {
     color: var(--white-color);
     display: inline-block;
-    padding: 5px;
+    padding: 10px;
 }
 ul.sub-menu a:hover {
-    font-weight: 700;
+    color: var(--primary-color-darker);
 }
 .header {
     position: relative;
@@ -131,10 +132,10 @@ h2:not(:first-child), h3:not(:first-child) {
 h4 {
     display: inline;
 }
-ul.list-outside, .text-2-col ul {
+ul.list-outside, .text-2-col ul, .col-content > .wrapper-content > ul > li {
     margin-left: 18px;
 }
-.list-outside li, .text-2-col ul li {
+.list-outside li, .text-2-col ul li, .col-content > .wrapper-content > ul > li  {
     list-style: disc outside;
     margin-top: 8px;
 }
@@ -310,7 +311,7 @@ p + p {
     padding-top: 150px;
     padding-bottom: 150px;
 }
-.wrapper.background-color.col-2 {
+.wrapper.background-color.col-content {
     min-height: calc(100vh - 240px);
 }
 .news-container {

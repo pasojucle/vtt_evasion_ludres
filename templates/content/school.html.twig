@@ -1,25 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}L'école vtt{% endblock %}
+{% set title = constant('App\\Entity\\content::ROUTES')[app.request.get('_route')] %}
+
+{% block title %}{{ title | trans }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent()}}
 {% endblock %}
 {% block body %}
-    <div class="wrapper background-green background-color col-2 col-no-gap">
+    <div class="wrapper background-{{ background_color }} background-color col-content">
         <div class="wrapper-img" style="background-image:url(../images/fond_ecole_vtt.jpg)"></div>
         <div class="wrapper-content">
             {{ content.content | raw}}
-            <h3>A l'école VTT de Ludres il y a {{levels|length}} groupes</h3>
-            <ul class="list-outside">
-                {% for level in levels %}
-                    <li>
-                        <h4>{{ level.title }}</h4>
-                        <p>{{ level.content | raw }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
-
+            {% if app.request.get('_route') == 'school_practices' %}
+                <h3>A l'école VTT de Ludres il y a {{levels|length}} groupes</h3>
+                <ul class="list-outside">
+                    {% for level in levels %}
+                        <li>
+                            <h4>{{ level.title }}</h4>
+                            <p>{{ level.content | raw }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

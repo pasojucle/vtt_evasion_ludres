@@ -19,7 +19,11 @@ class Content
         'home' => 'content.route.home',
         'registration_detail' => 'content.route.registration_detail',
         'club' => 'content.route.club',
-        'school' => 'content.route.school',
+        'school_practices' => 'content.route.school_practices',
+        'school_overview' => 'content.route.school_overview',
+        'school_operating' => 'content.route.school_operating',
+        'school_equipment' => 'content.route.school_equipment',
+        'contact' => 'content.route.contact',
         'rules' => 'content.route.rules',
         'legal_notices' => 'content.route.legal_notices',
     ];

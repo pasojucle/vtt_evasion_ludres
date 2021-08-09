@@ -14,7 +14,7 @@ $(document).ready(function(){
         });
     }
     $( window ).scroll(function() {
-        if ($(window).scrollTop() > 150) {
+        if ($(window).scrollTop() > 155) {
             $('nav').addClass('fixed');
             $('nav img').removeClass('hidden');
         } else {

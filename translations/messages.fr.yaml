@@ -97,7 +97,11 @@ content:
     home: Page d'accueil
     registration_detail: Page Inscription
     club: Page Le club
-    school: Page L'école vtt
+    school_practices: Page L'école vtt - disciplines
+    school_overview: Page L'école vtt - présentation
+    school_operating: Page L'école vtt - fonctionnement
+    school_equipment: Page L'école vtt - équipement
+    contact: Page contact
     rules: Réglement intérieur
     legal_notices: Mentions légales
 
