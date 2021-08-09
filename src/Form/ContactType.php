@@ -47,7 +47,7 @@ class ContactType extends AbstractType
             'language' => 'fr',
             'attr' => [
                 'options' => [
-                    'theme' => 'dark',
+                    'theme' => 'light',
                     'type'  => 'image',
                     'size'  => 'normal'
                 ],
