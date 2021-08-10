@@ -245,12 +245,12 @@ body > script {display: none !important;}
     position: absolute;
     top: 33vh;
     right: 25px;
-    width: 200px;
+    width: 250px;
     color: var(--white-color);
     opacity: 0;
     font-size: 18px;
-    -webkit-animation: flash 5s;
-    animation: flash 5s;
+    -webkit-animation: flash 10s;
+    animation: flash 10s;
 }
 .flashes > div {
     padding: 12px 20px;

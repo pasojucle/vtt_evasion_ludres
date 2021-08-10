@@ -12,3 +12,7 @@ twig:
         membership_fee_service: '@App\Service\MembershipFeeService'
         registration_service: '@App\Service\RegistrationService'
         user_service: '@App\Service\UserService'
+
+    paths:
+        # point this wherever your css files live
+        '%kernel.project_dir%/assets/styles': styles

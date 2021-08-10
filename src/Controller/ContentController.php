@@ -6,6 +6,7 @@ use App\Entity\Link;
 use App\Entity\Content;
 use App\Form\ContactType;
 use App\Form\ContentType;
+use App\Service\MailerService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Repository\LinkRepository;
@@ -243,14 +244,20 @@ class ContentController extends AbstractController
      * @Route("/contact", name="contact")
      */
     public function contact(
-        Request $request
+        Request $request,
+        MailerService $mailerService
     ): Response
     {
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-
+            $response = $mailerService->sendMailContact($form->getData());
+            if ($response) {
+                $this->addFlash('success', 'Votre message a bien été envoyé');
+                return $this->redirectToRoute('contact');
+            }
+            $this->addFlash('danger', 'Une erreure est survenue');
         }
 
         return $this->render('content/contact.html.twig', [

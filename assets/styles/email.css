@@ -1,0 +1,13 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+footer * {
+    vertical-align: middle;
+    display: inline-block;
+}
+header {
+    height: 100px;
+}
+header img {
+    height: 100%;
+}

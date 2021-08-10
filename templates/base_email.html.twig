@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        
+    </head>
+    {% apply inline_css(source('@styles/email.css')) %}
+        <body>
+            <header>
+                <img src="{{ app.request.schemeAndHttpHost }}/images/logo.jpg" alt="VTT EVASION LUDRES">
+            </header>
+            <main>
+                {% block body %}{% endblock %}
+            </main>
+            <footer>
+                <img src="{{ app.request.schemeAndHttpHost }}/images/logo.png" alt="vvt évasion Ludres" style="height:70px;  width: 80px">
+                <div>Burreau des associations<br>Hôtel de ville<br>54710 Ludres</div>
+            </footer>
+        </body>
+
+    {% endapply %}
+</html>

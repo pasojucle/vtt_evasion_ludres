@@ -16,7 +16,7 @@
     <ul>
         {% for menu in menus %}
             <li>
-                <a href="{% if menu.route is not null %}{{ path(menu.route) }}{% endif %}"{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
+                <a {% if menu.route is not null %}href="{{ path(menu.route) }}"{% endif %}{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
                 {% if menu.subMenus is not empty %}
                     <ul class="sub-menu">
                         {% for sub_menu in menu.subMenus %}

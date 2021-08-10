@@ -1,3 +1,7 @@
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
+        envelope:
+            sender: 'contact@vttevasionludres.fr'
+        headers:
+            from: 'VTT Evasion Ludres <contact@vttevasionludres.fr>'
