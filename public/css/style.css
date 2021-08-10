@@ -33,6 +33,7 @@ nav > ul > li {
 nav > ul> li > a:hover, nav > ul> li > a.active {
     color: var(--white-color);
     background-color: var(--primary-color);
+    cursor: pointer;
 }
 nav > ul> li:hover  ul {
     display: block;
@@ -57,7 +58,7 @@ ul.sub-menu {
     display: none;
     /* left: 0; */
     top: var(--nav-height);
-    background-color: var(--gray-color);
+    background-color: var(--light-color);
     /* width: 100%; */
     text-align: left;
     position: absolute;
@@ -65,12 +66,15 @@ ul.sub-menu {
     padding: 5px;
 }
 ul.sub-menu a {
-    color: var(--white-color);
+    color: var(--background-color);
     display: inline-block;
     padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 ul.sub-menu a:hover {
-    color: var(--primary-color-darker);
+    background-color: var(--primary-color);
+    color: var(--white-color);
 }
 .header {
     position: relative;
@@ -312,7 +316,7 @@ p + p {
     padding-bottom: 150px;
 }
 .wrapper.background-color.col-content {
-    min-height: calc(100vh - 240px);
+    min-height: calc(100vh - 200px);
 }
 .news-container {
     grid-area: news;
@@ -329,9 +333,6 @@ p + p {
 .wrapper .wrapper-title h2 {
     text-shadow: unset;
     font-size: 30px;
-}
-.wrapper-content {
-    /*width: max-content;*/
 }
 button[type="submit"] {
     font-size: 16px;
