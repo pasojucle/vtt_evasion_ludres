@@ -253,6 +253,7 @@ class ContentController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $response = $mailerService->sendMailContact($form->getData());
+            dump($response);
             if ($response) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
                 return $this->redirectToRoute('contact');
