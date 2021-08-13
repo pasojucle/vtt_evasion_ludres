@@ -94,7 +94,7 @@ class User implements UserInterface
         return $this->id;
     }
 
-    public function getlicenceNumber(): ?string
+    public function getLicenceNumber(): ?string
     {
         return $this->licenceNumber;
     }

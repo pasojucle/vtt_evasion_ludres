@@ -1,0 +1,19 @@
+{% extends 'base_email.html.twig' %}
+
+{% block body %}
+<b>{{ data.subject }}</b>
+
+<p>
+    <b>Nom : </b>{{ data.name }}<br>
+    <b>Prénom : </b>{{ data.firstName }}<br>
+    <b>Mail : </b>{{ data.email }}<br>
+    {% if data.message is defined %}
+        <b>Message : </b><br>{{ data.message }}
+    {% endif %}
+    {% if data.registration is defined %}
+        <a href="{{ data.registration }}">Lien vers le dossier d'inscription</a>
+    {% endif %}
+    <br>
+</p>
+<hr>
+{% endblock %}

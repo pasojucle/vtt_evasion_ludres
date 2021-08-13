@@ -194,6 +194,7 @@ class ContentController extends AbstractController
             'content' => $this->contentRepository->findOneByRoute('school_practices'),
             'levels' => $levelRepository->findAllTypeMember(),
             'background_color' => 'red',
+            'background_img' => 'ecole_vtt_disciplines.jpg',
         ]);
     }
 
@@ -208,6 +209,7 @@ class ContentController extends AbstractController
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_overview'),
             'background_color' => 'green',
+            'background_img' => 'ecole_vtt_presentation.jpg',
         ]);
     }
 
@@ -222,6 +224,7 @@ class ContentController extends AbstractController
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_operating'),
             'background_color' => 'blue',
+            'background_img' => 'ecole_vtt_fonctionnement.jpg',
         ]);
     }
     
@@ -237,6 +240,7 @@ class ContentController extends AbstractController
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_equipment'),
             'background_color' => 'green',
+            'background_img' => 'ecole_vtt_equipement.jpg',
         ]);
     }
     
@@ -252,9 +256,9 @@ class ContentController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $response = $mailerService->sendMailContact($form->getData());
-            dump($response);
-            if ($response) {
+            $data = $form->getData();
+            $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
+            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data)) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
                 return $this->redirectToRoute('contact');
             }
