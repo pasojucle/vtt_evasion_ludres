@@ -1,0 +1,18 @@
+{% extends 'base_email.html.twig' %}
+
+{% block body %}
+<b>{{ data.subject }}</b>
+<br>
+<p>Bonjour {{ data.name }} {{ data.firstName }},</p>
+{% if data.message is defined %}
+    <p>Nous avons bien pris en compte votre demande, et nous allons y répondre au plus vite.</p>
+{% endif %}
+{% if data.licenceNumber is defined %}
+    <p>Vous vennez de créer un compte sur notre site</p>
+    <b>Voici votre indentifiant pour vous connecter : </b>{{ data.licenceNumber }}<br>
+    Vous seul connessez le mot de passe<br>
+{% endif %}
+<p>Cordialement</p>
+<p>L'équipe du VTT Évasion Ludres</p>
+<hr>
+{% endblock %}

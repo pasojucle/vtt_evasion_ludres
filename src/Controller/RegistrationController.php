@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
+use App\Service\MailerService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class RegistrationController extends AbstractController
@@ -38,12 +40,19 @@ class RegistrationController extends AbstractController
     private RegistrationStepRepository $registrationStepRepository;
     private EntityManagerInterface $entityManager;
     private SessionInterface $session;
+    private MailerService $mailerService;
 
-    public function __construct(RegistrationStepRepository $registrationStepRepository, EntityManagerInterface $entityManager, SessionInterface $session)
+    public function __construct(
+        RegistrationStepRepository $registrationStepRepository,
+        EntityManagerInterface $entityManager,
+        SessionInterface $session,
+        MailerService $mailerService
+    )
     {
         $this->registrationStepRepository = $registrationStepRepository;
         $this->entityManager = $entityManager;
         $this->session = $session;
+        $this->mailerService = $mailerService;
     }
 
     /**
@@ -110,6 +119,14 @@ class RegistrationController extends AbstractController
                     )
                 );
                 $manualAuthenticating = true;
+
+                $identity = $user->getFirstIdentity();
+                $this->mailerService->sendMailToMember([
+                    'name' => $identity->getName(),
+                    'firstName' => $identity->getFirstName(),
+                    'email' => $identity->getEmail(),
+                    'subject' => 'Création de compte sur le site VTT Evasion Ludres',
+                    'licenceNumber' => $user->getLicenceNumber(),]);
             }
 
             if (null !== $user->getIdentities()->first()->getBirthDate()) {
@@ -314,6 +331,17 @@ class RegistrationController extends AbstractController
         );
         
         $response->headers->set('Content-Disposition', $disposition);
+
+        if ($this->getUser() === $user) {
+            $identity = $user->getFirstIdentity();
+            $this->mailerService->sendMailToClub([
+                'name' => $identity->getName(),
+                'firstName' => $identity->getFirstName(),
+                'email' => $identity->getEmail(),
+                'subject' => 'Nouvelle Inscription sur le site VTT Evasion Ludres',
+                'registration' => $this->generateUrl('registration_file', ['user' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            ]);
+        }
 
         return $response;
     }

@@ -16,13 +16,32 @@ class MailerService
         $this->mailer = $mailer;
     }
 
-    public function sendMailContact(array $data): bool
+    public function sendMailToClub(array $data): bool
     {
     
         $email = (new TemplatedEmail())
             ->to(new Address('contact@vttevasionludres.fr'))
-            ->subject('Message envoyé depuis le site vttevasionludres.fr')
-            ->htmlTemplate('email/contact.html.twig')
+            ->subject($data['subject'])
+            ->htmlTemplate('email/toClub.html.twig')
+            ->context([
+                'data' => $data,
+            ]);
+        
+        try {
+            $this->mailer->send($email);
+            return true;
+        } catch (TransportExceptionInterface $e) {
+            return false;
+        }
+    }
+
+    public function sendMailToMember(array $data): bool
+    {
+    
+        $email = (new TemplatedEmail())
+            ->to(new Address($data['email']))
+            ->subject($data['subject'])
+            ->htmlTemplate('email/toMember.html.twig')
             ->context([
                 'data' => $data,
             ]);
