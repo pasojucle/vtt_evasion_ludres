@@ -82,8 +82,8 @@ class NavService
             ],
             [
                 'label' => 'Gestion des niveaux',
-                 'route' => 'admin_events',
-                 'pattern' => '/session/',
+                 'route' => 'admin_levels',
+                 'pattern' => '/level/',
                  'subMenus' => [],
             ],
             [

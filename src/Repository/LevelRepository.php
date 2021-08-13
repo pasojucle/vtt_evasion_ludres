@@ -3,9 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Level;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Level|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,20 +21,42 @@ class LevelRepository extends ServiceEntityRepository
         parent::__construct($registry, Level::class);
     }
 
+    public function findLevelQuery(int $type): QueryBuilder
+    {
+        return $this->createQueryBuilder('l')
+        ->andWhere(
+            (new Expr)->eq('l.type', ':type')
+        )
+        ->setParameter('type', $type)
+        ->orderBy('l.orderBy', 'ASC')
+        ->addOrderBy('l.title', 'ASC')
+        ;
+    }
+
+    /**
+     * @return Level[] Returns an array of Level objects
+     */
+
+    public function findByType(int $type):array
+    {
+        $qb = $this->findLevelQuery($type);
+        return $qb
+            ->getQuery()
+            ->getResult()
+        ; 
+    }
+
     /**
      * @return Level[] Returns an array of Level objects
      */
 
     public function findAllTypeMember():array
     {
-        return $this->createQueryBuilder('l')
-            ->andWhere(
-                (new Expr)->eq('l.type', Level::TYPE_MEMBER)
-            )
-            ->orderBy('l.orderBy', 'ASC')
+        $qb = $this->findLevelQuery(Level::TYPE_MEMBER);
+        return $qb
             ->getQuery()
             ->getResult()
-        ;
+        ; 
     }
 
     /**
@@ -42,14 +65,11 @@ class LevelRepository extends ServiceEntityRepository
 
     public function findAllTypeFramer():array
     {
-        return $this->createQueryBuilder('l')
-            ->andWhere(
-                (new Expr)->eq('l.type', Level::TYPE_FRAME)
-            )
-            ->orderBy('l.orderBy', 'ASC')
+        $qb = $this->findLevelQuery(Level::TYPE_FRAME);
+        return $qb
             ->getQuery()
             ->getResult()
-        ;
+        ; 
     }
     /**
      * @return Level[] Returns an array of Level objects
@@ -63,5 +83,26 @@ class LevelRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findNexOrderByType(int $type): int
+    {
+        $nexOrder = 0;
+        $maxOrder = $this->createQueryBuilder('l')
+            ->select('MAX(l.orderBy)')
+            ->andWhere(
+                (new Expr)->eq('l.type', ':type')
+            )
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getSingleScalarResult();
+        ;
+
+        if (null !== $maxOrder) {
+            $maxOrder = (int) $maxOrder;
+            $nexOrder = $maxOrder + 1;
+        }
+
+        return $nexOrder;
     }
 }
