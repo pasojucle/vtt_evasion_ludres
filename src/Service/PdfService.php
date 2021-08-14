@@ -39,6 +39,9 @@ class PdfService
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         $output = $dompdf->output();
+        if (!is_dir('../data')) {
+            mkdir('../data');
+        }
         $publicDirectory = '../data/licences';
         $pdfFilepath =  $publicDirectory .$this->filenameService->clean($filename).'.pdf';
         file_put_contents($pdfFilepath, $output);
