@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    getMediaScreen();
     if ($('ul.StepProgress').length > 0) {
         const stepProgressMargingTop = parseInt($('ul.StepProgress').css('margin-top').replace('px', ''));
         const offsetTop = $('ul.StepProgress').offset().top-100;
@@ -119,6 +120,16 @@ function updateLinkOrder(id, newOrder) {
     parameters[sortable.data('parameter')] = id;
     const route = Routing.generate(sortable.data('route'), parameters);
     const data = {'newOrder' : newOrder};
+    $.ajax({
+        url : route,
+        type: 'POST',
+        data : data,
+    });
+}
+
+function getMediaScreen() {
+    const route = Routing.generate('media_screen');
+    const data = {'width' : screen.width};
     $.ajax({
         url : route,
         type: 'POST',

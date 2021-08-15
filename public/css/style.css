@@ -457,7 +457,7 @@ button[type="submit"] {
         font-size: 12px;
     }
     .wrapper-img {
-        height: 150px;
+        height: 450px;
     }
     nav > ul > li > a {
         padding: 15px;
@@ -496,5 +496,10 @@ button[type="submit"] {
     }
     .events-container, .links-container {
         margin-top: 25px;
+    }
+}
+@media screen and (max-width: 414px) {
+    .wrapper-img {
+        height: 230px;
     }
 }

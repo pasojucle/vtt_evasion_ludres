@@ -209,7 +209,7 @@ class ContentController extends AbstractController
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_overview'),
             'background_color' => 'green',
-            'background_img' => 'ecole_vtt_presentation.jpg',
+            'background_img' => 'ecole_vtt_groupe.jpg',
         ]);
     }
 
