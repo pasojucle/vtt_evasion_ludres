@@ -243,4 +243,10 @@ class Identity
     {
         return (null !== $this->address) ? !$this->address->isEmpty() : false;
     }
+
+
+    public function isEmpty()
+    {
+        return null === $this->name && null === $this->firstName; 
+    }
 }

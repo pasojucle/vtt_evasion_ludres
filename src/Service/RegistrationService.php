@@ -130,10 +130,8 @@ class RegistrationService
     {
         if (null === $this->user) {
             $this->user = new User();
-            $idMax = $this->userRepository->findMaxId();
-            ++$idMax;
-            $this->user->setLicenceNumber('VTTEVASIONLUDRES'.$idMax)
-                ->setRoles(['ROLE_USER']);
+
+            $this->user->setRoles(['ROLE_USER']);
             $this->entityManager->persist($this->user);
         } 
         $this->seasonLicence = $this->user->getSeasonLicence($this->season);

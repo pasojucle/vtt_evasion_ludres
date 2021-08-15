@@ -109,7 +109,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    public function findMaxId(): int
+    public function findNextId(): int
     {
         try {
             $result = $this->createQueryBuilder('u')
@@ -117,7 +117,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->getQuery()
                 ->getSingleResult()
             ;
-            return (int) $result['idMax'];
+            $maxId = (int) $result['idMax'];
+            return ++ $maxId;
         } catch (NoResultException $e) {
             return 0;
         }

@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
+use App\Repository\UserRepository;
 use App\Service\MailerService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -78,6 +79,7 @@ class RegistrationController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
+        UserRepository $userRepository,
         UserService $userService,
         MembershipFeeRepository $membershipFeeRepository,
         int $step
@@ -120,7 +122,12 @@ class RegistrationController extends AbstractController
                 );
                 $manualAuthenticating = true;
 
+                $nextId = $userRepository->findNextId();
+
                 $identity = $user->getFirstIdentity();
+                $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
+                $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
+
                 $this->mailerService->sendMailToMember([
                     'name' => $identity->getName(),
                     'firstName' => $identity->getFirstName(),
@@ -165,19 +172,26 @@ class RegistrationController extends AbstractController
 
             $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
+            if (!$user->getIdentities()->isEmpty()) {
+                foreach($user->getIdentities() as $identity) {
+                    if ($identity->isEmpty()) {
+                        $user->removeIdentity($identity);
+                        $this->entityManager->remove($identity);
+                    }
+                }
+            }
+
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             $this->session->remove('registrationPath');
             if ($manualAuthenticating) {
                 $this->session->set('registrationPath', $route);
-                // after validating the user and saving them to the database
-                // authenticate the user and use onAuthenticationSuccess on the authenticator
                 $guardHandler->authenticateUserAndHandleSuccess(
-                    $user,          // the User object you just created
+                    $user,
                     $request,
-                    $authenticator, // authenticator whose onAuthenticationSuccess you want to use
-                    'main'          // the name of your firewall in security.yaml
+                    $authenticator,
+                    'main'
                 );
             }
             return $this->redirectToRoute($route, ['step' => $progress['next']]);
