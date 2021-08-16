@@ -25,7 +25,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
     * @return RegistrationStep[] Returns an array of RegistrationStep objects
     */
 
-    public function findByCategoryAndFinal(? int $category, bool $final): array
+    public function findByCategoryAndFinal(? int $category, bool $final, int $render): array
     {
         $qb = $this->createQueryBuilder('r');
         $orX = $qb->expr()->orx();
@@ -36,11 +36,15 @@ class RegistrationStepRepository extends ServiceEntityRepository
             $qb->setParameter('category', $category);
         }
         if (!$final) {
+            $testingRender = (RegistrationStep::RENDER_FILE === $render)
+                ? RegistrationStep::TESTING_RENDER_FILE
+                : RegistrationStep::TESTING_RENDER_FILE_AND_VIEW;
+
             $qb->            
                 andWhere(
-                    $qb->expr()->eq('r.testing', ':testing')
+                    $qb->expr()->gte('r.testingRender', ':testingRender')
                 )
-                ->setParameter('testing', !$final);
+                ->setParameter('testingRender', $testingRender);
         }
 
         return $qb

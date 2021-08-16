@@ -13,6 +13,19 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class RegistrationStep
 {
+    public const RENDER_VIEW = 0;
+    public const RENDER_FILE = 1;
+
+    public const TESTING_RENDER_NONE = 0;
+    public const TESTING_RENDER_FILE = 1;
+    public const TESTING_RENDER_FILE_AND_VIEW = 2;
+
+    public const TESTING_RENDER = [
+        self::TESTING_RENDER_NONE => 'registration_step.testing_render.none',
+        self::TESTING_RENDER_FILE => 'registration_step.testing_render.file',
+        self::TESTING_RENDER_FILE_AND_VIEW => 'registration_step.testing_render.file_and_view',
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -57,12 +70,12 @@ class RegistrationStep
     /**
      * @ORM\Column(type="boolean")
      */
-    private $testing;
+    private $toPdf;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="integer")
      */
-    private $toPdf;
+    private $testingRender;
 
 
     public function __construct()
@@ -171,18 +184,6 @@ class RegistrationStep
         return $this;
     }
 
-    public function getTesting(): ?bool
-    {
-        return $this->testing;
-    }
-
-    public function setTesting(bool $testing): self
-    {
-        $this->testing = $testing;
-
-        return $this;
-    }
-
     public function isToPdf(): ?bool
     {
         return $this->toPdf;
@@ -191,6 +192,18 @@ class RegistrationStep
     public function setToPdf(bool $toPdf): self
     {
         $this->toPdf = $toPdf;
+
+        return $this;
+    }
+
+    public function getTestingRender(): ?int
+    {
+        return $this->testingRender;
+    }
+
+    public function setTestingRender(int $testingRender): self
+    {
+        $this->testingRender = $testingRender;
 
         return $this;
     }

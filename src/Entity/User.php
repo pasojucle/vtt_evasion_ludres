@@ -282,6 +282,14 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getApprovalsGoingHomeAlone(): Collection
+    {
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq('type', self::APPROVAL_GOING_HOME_ALONE))
+        ;
+        return $this->approvals->matching($criteria);
+    }
+
     /**
      * @return Collection|Licence[]
      */

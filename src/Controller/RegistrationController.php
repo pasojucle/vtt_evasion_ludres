@@ -141,6 +141,7 @@ class RegistrationController extends AbstractController
                 $user->getSeasonLicence($season)->setCategory($category);
                 if (Licence::CATEGORY_MINOR === $category) {
                     foreach($user->getIdentities() as $identity) {
+                        
                         if (null !== $identity->getKinShip()) {
                             $addressKinShip = $identity->getAddress();
                             if (!$identity->hasAddress() && null !== $addressKinShip) {
@@ -175,6 +176,11 @@ class RegistrationController extends AbstractController
             if (!$user->getIdentities()->isEmpty()) {
                 foreach($user->getIdentities() as $identity) {
                     if ($identity->isEmpty()) {
+                        $address = $identity->getAddress();
+                        if (null !== $address) {
+                            $identity->setAddress(null);
+                            $this->entityManager->remove($address);
+                        }
                         $user->removeIdentity($identity);
                         $this->entityManager->remove($identity);
                     }
@@ -276,7 +282,7 @@ class RegistrationController extends AbstractController
         $season = $licenceService->getCurrentSeason();
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal());
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal(), RegistrationStep::RENDER_FILE);
         $allmembershipFee = $membershipFeeRepository->findAll();
 
         $files = [];

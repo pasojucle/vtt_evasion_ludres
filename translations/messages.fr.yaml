@@ -46,6 +46,10 @@ registration_step:
     adult: Bulletin d'inscription Adulte
     minor: Bulletin d'inscription Mineur
     testing: Bulletin de pré-inscription pour 3 séances concécutives d'essai gratuites
+  testing_render:
+    none: Aucun
+    file: Au téléchargement seul
+    file_and_view: A l'affichage et téléchargement
 
 approval: 
   right_to_the_image: Droit à l'image

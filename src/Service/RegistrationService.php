@@ -76,7 +76,7 @@ class RegistrationService
         $this->setUser();
 
         $category = $this->seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal());
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
         $stepIndex = $step -1;
         
         $progress['max_step'] = count($steps);
@@ -141,6 +141,10 @@ class RegistrationService
             if (!$this->user->getLicences()->isEmpty()) {
                 $this->seasonLicence->setFinal(true)
                     ->setType(Licence::TYPE_HIKE);
+            } else {
+                $this->seasonLicence->setFinal(false)
+                    ->setType(Licence::TYPE_HIKE)
+                    ->setCoverage(Licence::COVERAGE_MINI_GEAR);
             }
             if (!$this->user->getIdentities()->isEmpty()) {
                 $category = $this->licenceService->getCategory($this->user);
@@ -216,6 +220,14 @@ class RegistrationService
                 }
             }
             $this->seasonLicence->setType(Licence::TYPE_HIKE);
+        } else {
+            $approvalsGoingHomeAlone = $this->user->getApprovalsGoingHomeAlone();
+            if (!$approvalsGoingHomeAlone->isEmpty()) {
+                foreach ($approvalsGoingHomeAlone as $approval) {
+                    $this->user->removeApproval($approval);
+                    $this->entityManager->remove($approval);
+                }
+            }
         }
     }
 
