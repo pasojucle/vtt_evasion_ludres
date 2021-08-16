@@ -7,7 +7,8 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper background-red background-color col-content">
-        <div class="wrapper-img" style="background-image:url(../images/inscription.jpg)"></div>
+        {% set media_screen = app.session.get('media_screen') %}
+        <div class="wrapper-img" style="background-image:url(../images/background/{{ media_screen }}/inscription.jpg)"></div>
         <div class="wrapper-content">
             {{ content.content | raw}}
             <div class="content-footer">
