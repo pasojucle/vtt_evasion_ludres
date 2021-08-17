@@ -42,11 +42,13 @@ class RegistrationController extends AbstractController
     private EntityManagerInterface $entityManager;
     private SessionInterface $session;
     private MailerService $mailerService;
+    private LicenceService $licenceService;
 
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
         EntityManagerInterface $entityManager,
         SessionInterface $session,
+        LicenceService $licenceService,
         MailerService $mailerService
     )
     {
@@ -54,6 +56,7 @@ class RegistrationController extends AbstractController
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->mailerService = $mailerService;
+        $this->licenceService = $licenceService;
     }
 
     /**
@@ -75,7 +78,6 @@ class RegistrationController extends AbstractController
     public function registerForm(
         Request $request,
         RegistrationService $registrationService,
-        LicenceService $licenceService,
         UserPasswordEncoderInterface $passwordEncoder,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
@@ -91,7 +93,7 @@ class RegistrationController extends AbstractController
 
         $progress = $registrationService->getProgress($step);
 
-        if ($progress['seasonLicence']->isValid()) {
+        if ($progress['seasonLicence']->isValid() || $progress['seasonLicence']->isDownload()) {
             return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
         }
         $form = $progress['form'];
@@ -137,7 +139,7 @@ class RegistrationController extends AbstractController
             }
 
             if (null !== $user->getIdentities()->first()->getBirthDate()) {
-                $category = $licenceService->getCategory($user);
+                $category = $this->licenceService->getCategory($user);
                 $user->getSeasonLicence($season)->setCategory($category);
                 if (Licence::CATEGORY_MINOR === $category) {
                     foreach($user->getIdentities() as $identity) {
@@ -263,9 +265,11 @@ class RegistrationController extends AbstractController
         UserEntity $user
     ): Response
     {
+        $season = $this->licenceService->getCurrentSeason();
         
         return $this->render('registration/download.html.twig', [
             'user_entity' => $user,
+            'licence' => $user->getSeasonLicence($season),
         ]);
     }
 
@@ -273,13 +277,12 @@ class RegistrationController extends AbstractController
      * @Route("/inscription/file/{user}", name="registration_file")
      */
     public function registrationFile(
-        LicenceService $licenceService,
         MembershipFeeRepository $membershipFeeRepository,
         PdfService $pdfService,
         UserEntity $user
     ): Response
     {
-        $season = $licenceService->getCurrentSeason();
+        $season = $this->licenceService->getCurrentSeason();
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal(), RegistrationStep::RENDER_FILE);
@@ -349,6 +352,9 @@ class RegistrationController extends AbstractController
             HeaderUtils::DISPOSITION_ATTACHMENT,
             'inscription_vtt_evasion_ludres.pdf'
         );
+
+        $seasonLicence->setIsDownload(true);
+        $this->entityManager->flush();
         
         $response->headers->set('Content-Disposition', $disposition);
 

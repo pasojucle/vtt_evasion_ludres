@@ -13,7 +13,8 @@
         <div class="wrapper-body">
             <div class="block background-ligth">
                 <div class="block-body">
-                    <p class="alert-warning">Votre inscription pour la saison {{ licence_service.currentSeason }} a été validée. Vous ne pouvez plus la modifier en ligne.</p>
+                    {% set status = (licence.valid) ? 'validée' : 'téléchargée' %}
+                    <p class="alert-warning">Votre inscription pour la saison {{ licence_service.currentSeason }} a été {{ status }}.<br>Vous ne pouvez plus la modifier en ligne.</p>
                     <p>Pour toutes modifications, contactez une personne de l'encadrement de club.</p>
 
                     <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_entity.id }) }}">Télécharger le dossier d'inscription</a>

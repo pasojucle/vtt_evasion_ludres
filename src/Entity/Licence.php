@@ -113,6 +113,11 @@ class Licence
      * @ORM\Column(type="boolean", options={"default":true})
      */
     private $final = false;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default":false})
+     */
+    private $isDownload = 0;
     
     public function getId(): ?int
     {
@@ -259,6 +264,18 @@ class Licence
     public function setFinal(bool $final): self
     {
         $this->final = $final;
+
+        return $this;
+    }
+
+    public function isDownload(): ?bool
+    {
+        return $this->isDownload;
+    }
+
+    public function setIsDownload(bool $isDownload): self
+    {
+        $this->isDownload = $isDownload;
 
         return $this;
     }
