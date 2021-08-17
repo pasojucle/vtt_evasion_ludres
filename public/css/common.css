@@ -162,14 +162,17 @@ body > script {display: none !important;}
 .btn-xl {
     padding: 15px 20px;
 }
-.btn-xxl {
+.btn-xxl, .btn-xxxl {
     margin: 40px auto;
     display: block;
     width: max-content;
     padding: 20px 85px 20px 20px;
     position: relative;
 }
-.btn-xxl::after {
+.btn-xxxl {
+    line-height: 24px;
+}
+.btn-xxl::after, .btn-xxxl::after {
     content: '\f56d';
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
@@ -185,6 +188,9 @@ body > script {display: none !important;}
     text-align: center;
     top: 5px;
     right: 25px;
+}
+.btn-xxxl::after {
+    top: 20px;
 }
 .btn-primary , .ui-state-default a.btn-primary{
     background-color: var(--primary-color);
