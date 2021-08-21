@@ -17,16 +17,19 @@ class PdfService
     private FilenameService $filenameService;
     private LicenceService $licenceService;
     private KernelInterface $kernel;
+    private UserService $userService;
 
     public function __construct(
         FilenameService $filenameService,
         LicenceService $licenceService,
-        KernelInterface $kernel
+        KernelInterface $kernel,
+        UserService $userService
     )
     {
         $this->filenameService = $filenameService;
         $this->licenceService = $licenceService;
         $this->kernel = $kernel;
+        $this->userService = $userService;
     }
 
     public function makePdf(string $html, string $filename)
@@ -52,7 +55,7 @@ class PdfService
     public function addData(Fpdi &$pdf, User $user )
     {
         /**@var UserDto $userDto */
-        $userDto = new UserDto($user);
+        $userDto = $this->userService->convertToUser($user);
         $today = new DateTime();
 
         $coverage = [

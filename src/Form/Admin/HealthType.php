@@ -27,6 +27,7 @@ class HealthType extends AbstractType
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
+                'required' => false,
             ])
         ;
     }

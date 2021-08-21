@@ -380,6 +380,15 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getDoneSessions(): Collection
+    {
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq('isPresent', true))
+        ;
+        return $this->sessions->matching($criteria);
+
+    }
+
     public function getLevel(): ?Level
     {
         return $this->level;

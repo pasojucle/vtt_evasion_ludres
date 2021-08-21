@@ -292,6 +292,7 @@ class User {
         $statusClassArray = [
             Licence::STATUS_NONE => 'alert-black',
             Licence::STATUS_WAITING_RENEW => 'alert-danger',
+            Licence::STATUS_IN_PROCESSING=> 'alert-warning',
             Licence::STATUS_WAITING_VALIDATE => 'alert-warning',
             Licence::STATUS_TESTING => 'success-test',
             Licence::STATUS_VALID => 'success',

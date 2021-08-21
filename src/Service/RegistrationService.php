@@ -22,6 +22,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\DataTransferObject\User as UserDto;
 use Symfony\Component\Security\Core\Security;
 use App\Repository\RegistrationStepRepository;
+use App\Repository\SessionRepository;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -40,6 +41,8 @@ class RegistrationService
     private ?Licence $seasonLicence;
     private LicenceService $licenceService;
     private LevelRepository $levelRepository;
+    private UserService $userService;
+    private SessionRepository $sessionRepository;
 
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
@@ -51,7 +54,9 @@ class RegistrationService
         UserRepository $userRepository,
         LicenceRepository $licenceRepository,
         LicenceService $licenceService,
-        LevelRepository $levelRepository
+        LevelRepository $levelRepository,
+        UserService $userService,
+        SessionRepository $sessionRepository
     )
     {
         $this->registrationStepRepository = $registrationStepRepository;
@@ -66,6 +71,8 @@ class RegistrationService
         $this->userRepository = $userRepository;
         $this->licenceRepository = $licenceRepository;
         $this->levelRepository = $levelRepository;
+        $this->userService = $userService;
+        $this->sessionRepository = $sessionRepository;
     }
 
     public function getProgress(int $step)
@@ -79,7 +86,7 @@ class RegistrationService
         $isKinship = false;
 
         $this->setUser();
-
+        $this->updateStatus($this->user);
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
         $stepIndex = $step -1;
@@ -247,11 +254,41 @@ class RegistrationService
     public function getReplaces(User $user)
     {
         /**@var UserDto $userDto */
-        $user = new UserDto($user);
+        $user = $this->userService->convertToUser($user);
 
         return [
             '{{ prenom_nom }}' => $user->getFullName(),
             '{{ prenom_nom_enfant }}' => $user->getFullNameChildren(),
         ];
+    }
+
+    public function isAllreadyRegistered(?User $user): bool
+    {
+        $isAllreadyRegistered = false;
+
+        if (null !== $user) {
+            $licence = $user->getSeasonLicence($this->season);
+            if (null !== $licence) {
+                if ($licence->isFinal() && Licence::STATUS_IN_PROCESSING < $licence->getStatus()) {
+                    $isAllreadyRegistered = true;
+                }
+                if (!$licence->isFinal() && 1 > count($$user->getSessionsDone())) {
+                    $isAllreadyRegistered = true;
+                }
+            }
+        }
+        
+        return $isAllreadyRegistered;
+    }
+
+    public function updateStatus(): void
+    {
+        $licence = $this->seasonLicence;
+        if (!$licence->isFinal() && 
+            ((0 < count($this->user->getDoneSessions()) && $licence->getCategory() === Licence::CATEGORY_MINOR)
+            || (0 < count($this->user->getSessions()) && $licence->getCategory() === Licence::CATEGORY_ADULT))) {
+            $this->seasonLicence->setFinal(true)
+                ->setStatus(Licence::STATUS_IN_PROCESSING);
+        }
     }
 }

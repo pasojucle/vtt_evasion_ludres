@@ -151,7 +151,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
         }
         return $this->render('identity/edit.html.twig', [
-            'user' => new User($user),
+            'user' => $this->userService->convertToUser($user),
             'form' => $form->createView(),
         ]);
     }
@@ -165,7 +165,7 @@ class UserController extends AbstractController
         $user = $this->getUser();
 
         return $this->render('user/account.html.twig', [
-            'user' => new User($user),
+            'user' => $this->userService->convertToUser($user),
         ]);
     }
 }

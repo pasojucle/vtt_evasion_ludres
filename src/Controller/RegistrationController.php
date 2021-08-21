@@ -43,13 +43,15 @@ class RegistrationController extends AbstractController
     private SessionInterface $session;
     private MailerService $mailerService;
     private LicenceService $licenceService;
+    private UserService $userService;
 
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
         EntityManagerInterface $entityManager,
         SessionInterface $session,
         LicenceService $licenceService,
-        MailerService $mailerService
+        MailerService $mailerService,
+        UserService $userService
     )
     {
         $this->registrationStepRepository = $registrationStepRepository;
@@ -57,6 +59,7 @@ class RegistrationController extends AbstractController
         $this->session = $session;
         $this->mailerService = $mailerService;
         $this->licenceService = $licenceService;
+        $this->userService = $userService;
     }
 
     /**
@@ -82,7 +85,6 @@ class RegistrationController extends AbstractController
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
         UserRepository $userRepository,
-        UserService $userService,
         MembershipFeeRepository $membershipFeeRepository,
         int $step
     ): Response
@@ -93,7 +95,7 @@ class RegistrationController extends AbstractController
 
         $progress = $registrationService->getProgress($step);
 
-        if ($progress['seasonLicence']->isValid() || $progress['seasonLicence']->isDownload()) {
+        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus()) {
             return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
         }
         $form = $progress['form'];
@@ -157,7 +159,7 @@ class RegistrationController extends AbstractController
 
             if ($request->files->get('user')) {
                 $pictureFile = $request->files->get('user')['identities'][0]['pictureFile'];
-                $newFilename = $userService->uploadFile($pictureFile);
+                $newFilename = $this->userService->uploadFile($pictureFile);
                 if (null !== $newFilename) {
                     $user->getIdentities()->first()->setPicture($newFilename);
                 }
@@ -217,7 +219,7 @@ class RegistrationController extends AbstractController
             'season_licence' => $progress['seasonLicence'],
             'maxStep' => $this->session->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
-            'user' => new User($progress['user']),
+            'user' => $this->userService->convertToUser($progress['user']),
             'media' => self::OUT_SCREEN,
         ]);
     }
@@ -318,7 +320,7 @@ class RegistrationController extends AbstractController
                             $template = 'registration/'.$formName.'.html.twig';
 
                             $html = $this->renderView('registration/registrationPdf.html.twig', [
-                                'user' => new User($user),
+                                'user' => $this->userService->convertToUser($user),
                                 'all_membership_fee' => $allmembershipFee,
                                 'current' => $step,
                                 'form' => $form->createView(),
@@ -337,7 +339,7 @@ class RegistrationController extends AbstractController
             }
         }
         $registration = $this->renderView('registration/registrationPdf.html.twig', [
-            'user' => new User($user),
+            'user' => $this->userService->convertToUser($user),
             'user_entity' => $user,
         ]);
         $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
@@ -353,7 +355,7 @@ class RegistrationController extends AbstractController
             'inscription_vtt_evasion_ludres.pdf'
         );
 
-        $seasonLicence->setIsDownload(true);
+        $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE);
         $this->entityManager->flush();
         
         $response->headers->set('Content-Disposition', $disposition);

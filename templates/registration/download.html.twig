@@ -13,7 +13,7 @@
         <div class="wrapper-body">
             <div class="block background-ligth">
                 <div class="block-body">
-                    {% set status = (licence.valid) ? 'validée' : 'téléchargée' %}
+                    {% set status = (licence.status == constant('APP\\Entity\\Licence::STATUS_VALID')) ? 'validée' : 'téléchargée' %}
                     <p class="alert-warning">Votre inscription pour la saison {{ licence_service.currentSeason }} a été {{ status }}.<br>Vous ne pouvez plus la modifier en ligne.</p>
                     <p>Pour toutes modifications, contactez une personne de l'encadrement de club.</p>
 
