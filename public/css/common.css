@@ -445,6 +445,9 @@ body {
     opacity: 0;
     z-index: -1;
 }
+input[type="file"] {
+    opacity: 0;
+}
 .badge {
     display: inline-block;
     border-radius: 50%;

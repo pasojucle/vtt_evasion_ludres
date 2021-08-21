@@ -127,9 +127,10 @@ class IdentityType extends AbstractType
                             'required' => false,
                         ])
                         ->add('pictureFile', FileType::class, [
-                            'label' => false,
+                            'label' => 'Photo',
                             'mapped' => false,
                             'required' => false,
+                            'block_prefix' => 'custom_file',
                             'attr' => [
                                 'accept' => '.bmp,.jpeg,.jpg,.png'
                             ],

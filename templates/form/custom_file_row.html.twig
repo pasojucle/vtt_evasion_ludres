@@ -1,0 +1,8 @@
+{% block custom_file_row %}
+    <div class="form-group">
+        {{ form_label(form) }}
+        <button class="input-file-button">Selectionner un fichier</button>
+        <p id="filename">{{ form.vars.value }}</p>  
+        {{ form_widget(form) }} 
+    </div>
+{% endblock %}

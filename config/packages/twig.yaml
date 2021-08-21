@@ -5,6 +5,7 @@ twig:
         - 'form/custom_check_widget.html.twig'
         - 'form/custom_errors_widget.html.twig'
         - 'form/custom_switch_widget.html.twig'
+        - 'form/custom_file_row.html.twig'
 
     globals:
         nav_service: '@App\Service\NavService'

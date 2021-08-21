@@ -33,6 +33,7 @@ $(document).ready(function(){
     });
     $(document).on('change', '#event_filter_period, #user_filter_status, #user_filter_level', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
+    $(document).on('click', '.input-file-button', getFile);
 });
 
 jQuery(function($){
@@ -135,4 +136,17 @@ function getMediaScreen() {
         type: 'POST',
         data : data,
     });
+}
+
+function getFile(e) {
+    e.preventDefault();
+    $inputFile = $('input[type="file"]');
+    console.log($inputFile);
+    $inputFile.click();
+    $inputFile.on('change',  function(event) {
+        filename = event.target.value.split('\\').pop();
+        console.log(filename);
+        $('#filename').text(filename);
+    });
+    return false;
 }
