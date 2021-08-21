@@ -35,7 +35,7 @@ class LicenceType extends AbstractType
                         'label' => 'Dossier d\'inscription',
                         'choices' => [
                             'licence.status.waiting_validate' => Licence::STATUS_WAITING_VALIDATE,
-                            'licence.status.valid' => Licence::STATUS_VALID,
+                            'licence.status.valid' => ($options['season_licence']->isFinal()) ? Licence::STATUS_VALID : Licence::STATUS_TESTING,
                         ],
                         'row_attr' => [
                             'class' => 'form-group-inline',
