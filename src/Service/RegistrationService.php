@@ -4,7 +4,7 @@ namespace App\Service;
 
 use DateTime;
 use App\Entity\User;
-use App\DataTransferObject\User as UserDto;
+use App\Entity\Level;
 use App\Entity\Health;
 use App\Form\UserType;
 use App\Entity\Address;
@@ -16,8 +16,10 @@ use App\Entity\HealthQuestion;
 use App\Entity\RegistrationStep;
 use Symfony\Component\Form\Form;
 use App\Repository\UserRepository;
+use App\Repository\LevelRepository;
 use App\Repository\LicenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\DataTransferObject\User as UserDto;
 use Symfony\Component\Security\Core\Security;
 use App\Repository\RegistrationStepRepository;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -37,6 +39,7 @@ class RegistrationService
     private LicenceRepository $licenceRepository;
     private ?Licence $seasonLicence;
     private LicenceService $licenceService;
+    private LevelRepository $levelRepository;
 
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
@@ -47,7 +50,8 @@ class RegistrationService
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
         LicenceRepository $licenceRepository,
-        LicenceService $licenceService
+        LicenceService $licenceService,
+        LevelRepository $levelRepository
     )
     {
         $this->registrationStepRepository = $registrationStepRepository;
@@ -61,6 +65,7 @@ class RegistrationService
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->licenceRepository = $licenceRepository;
+        $this->levelRepository = $levelRepository;
     }
 
     public function getProgress(int $step)
@@ -219,7 +224,9 @@ class RegistrationService
                     $this->user->getHealth()->addDisease($disease);
                 }
             }
+            $levels = $this->levelRepository->findByType(Level::TYPE_MEMBER);
             $this->seasonLicence->setType(Licence::TYPE_HIKE);
+            $this->user->setLevel(array_shift($levels));
         } else {
             $approvalsGoingHomeAlone = $this->user->getApprovalsGoingHomeAlone();
             if (!$approvalsGoingHomeAlone->isEmpty()) {
@@ -228,6 +235,7 @@ class RegistrationService
                     $this->entityManager->remove($approval);
                 }
             }
+            $this->user->setLevel(null);
         }
     }
 

@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use DateTime;
 use App\Entity\User;
 use App\Entity\Event;
+use App\Entity\Level;
 use App\Entity\Licence;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -66,44 +68,86 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     )
                     ;
             }
-            // if (null !== $filters['category']) {
-            //     $qb->andWhere(
-            //             $qb->expr()->eq('li.category', ':category'),
-            //         )
-            //         ->setParameter('category', $filters['category'])
-            //         ;
-            // }
             if (null !== $filters['level']) {
-                $qb
-                    ->andWhere(
-                        $qb->expr()->eq('u.level', ':level'),
-                    )
-                    ->setParameter('level', $filters['level'])
+                $type = null;
+                if ($filters['level'] === Level::TYPE_ALL_MEMBER) {
+                    $type = Level::TYPE_MEMBER;
+                }
+                if ($filters['level'] === Level::TYPE_ALL_FRAME) {
+                    $type = Level::TYPE_FRAME;
+                }
+                if ($filters['level'] === Level::TYPE_ADULT) {
+                    $qb
+                        ->andWhere(
+                            $qb->expr()->isNull('u.level'),
+                        )
                     ;
+                } elseif (null !== $type) {
+                    $qb
+                        ->join('u.level', 'l')
+                        ->andWhere(
+                            $qb->expr()->eq('l.type', ':type'),
+                        )
+                        ->setParameter('type', $type)
+                        ;
+                } else {
+                    $qb
+                        ->andWhere(
+                            $qb->expr()->eq('u.level', ':level'),
+                        )
+                        ->setParameter('level', $filters['level'])
+                        ;
+                }
+
             }
             if (null !== $filters['status']) {
 
                 $qb->innerJoin('u.licences', 'li');
-                if ($filters['status'] < Licence::STATUS_NONE) {
+                
+                if ($filters['status'] == Licence::STATUS_NONE) {
+                    $maxSeason = $this->licenceService->getSeasonByStatus(Licence::STATUS_NONE);
+                    $qb
+                        ->groupBy('u.id')
+                        ->having('MAX(li.season) <= :maxSeason')
+                        ->setParameter('maxSeason', $maxSeason)
+                        ;
+                } elseif ($filters['status'] === Licence::STATUS_WAITING_RENEW) {
+                    $season = $this->licenceService->getSeasonByStatus(Licence::STATUS_WAITING_RENEW);
+                    $qb 
+                        ->groupBy('u.id')
+                        ->having('MAX(li.season) = :season')
+                        ->setParameter('season', $season);
+
+                } elseif ($filters['status'] > Licence::STATUS_WAITING_RENEW) {
+                    $final = null;
+                    if ($filters['status'] === Licence::STATUS_TESTING) {
+                        $final = 0;
+                    }
+                    if ($filters['status'] === Licence::STATUS_VALID) {
+                        $final = 1;
+                    }
                     $qb
                         ->andWhere(
                             $qb->expr()->eq('li.season', ':season'),
-                            $qb->expr()->eq('li.valid', ':valid'),
+                            $qb->expr()->eq('li.status', ':status'),
                         )
-                    
-                        ->setParameter('valid', $filters['status'])
+                        ->setParameter('status', $filters['status'])
+                        ->setParameter('season', $currentSeason)
                     ;
-                } else {
-                    $qb
-                        ->groupBy('u.id')
-                        ->having('MAX(li.season) != :season');
+                    if (null !== $final) {
+                        $qb
+                        ->andWhere(
+                            $qb->expr()->eq('li.final', ':final'),
+                        )
+                        ->setParameter('final', $final)
+                        ;
+                    }
                 }
-                $qb->setParameter('season', $currentSeason);
             }
         }
         return $qb
             ->andWhere(
-                $qb->expr()->isNull('i.kinship')
+                $qb->expr()->isNull('i.kinship'),
             )
             ->orderBy('i.name', 'ASC')
         ;

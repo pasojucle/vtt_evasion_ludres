@@ -124,6 +124,7 @@ class ToolController extends AbstractController
                             ->setCategory($category)
                             ->setFinal(true)
                             ->setSeason('2021')
+                            ->setStatus(Licence::STATUS_VALID);
                             ;
                         $address->setStreet($street)
                             ->setPostalCode($postalCode)

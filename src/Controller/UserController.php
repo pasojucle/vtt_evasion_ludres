@@ -34,7 +34,7 @@ class UserController extends AbstractController
     )
     {
         $this->userRepository = $userRepository;
-        $this->userService =$userService;
+        $this->userService = $userService;
         $this->entityManager = $entityManager;
         $this->session = $session;
     }
@@ -81,7 +81,7 @@ class UserController extends AbstractController
     {
 
         return $this->render('user/admin/user.html.twig', [
-            'user' => new User($user),
+            'user' => $this->userService->convertToUser($user),
             'referer' => $this->session->get('user_return'),
         ]);
     }
@@ -95,11 +95,10 @@ class UserController extends AbstractController
         UserEntity $user
     ): Response
     {
-        $currentSeason = $licenceService->getCurrentSeason();
-        $seasonLicence = $user->getSeasonLicence($currentSeason);
+        $licence = $user->getLastLicence();
         $form = $this->createForm(UserType::class, $user, [
-            'category' => $seasonLicence->getCategory(),
-            'season_licence' => $seasonLicence,
+            'category' => $licence->getCategory(),
+            'season_licence' => $licence,
         ]);
         $form->handleRequest($request);
 
@@ -116,7 +115,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
         }
         return $this->render('user/admin/edit.html.twig', [
-            'user' => new User($user),
+            'user' => $this->userService->convertToUser($user),
             'form' => $form->createView(),
         ]);
     }

@@ -38,13 +38,19 @@ class Licence
         self::CATEGORY_ADULT => 'licence.category.adult',
     ];
 
-    public const STATUS_NONE = 2;
-    public const STATUS_IN_PROGRESS  = 0;
-    public const STATUS_VALID  = 1;
+    public const STATUS_NONE = 0;
+    public const STATUS_WAITING_RENEW = 1;
+    public const STATUS_IN_PROCESSING = 2;
+    public const STATUS_WAITING_VALIDATE = 3;
+    public const STATUS_TESTING = 4;
+    public const STATUS_VALID  = 5;
 
     public const STATUS = [
         self::STATUS_NONE => 'licence.status.none',
-        self::STATUS_IN_PROGRESS => 'licence.status.in_progress',
+        self::STATUS_WAITING_RENEW => 'licence.status.waiting_renew',
+        self::STATUS_IN_PROCESSING => 'licence.status.in_processing',
+        self::STATUS_WAITING_VALIDATE => 'licence.status.waiting_validate',
+        self::STATUS_TESTING => 'licence.status.testing',
         self::STATUS_VALID => 'licence.status.valid',
     ];
     /**
@@ -73,11 +79,6 @@ class Licence
      * @ORM\Column(type="float", nullable=true)
      */
     private $subscriptionAmount;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $valid = false;
 
     /**
      * @ORM\Column(type="boolean")
@@ -115,9 +116,9 @@ class Licence
     private $final = false;
 
     /**
-     * @ORM\Column(type="boolean", options={"default":false})
+     * @ORM\Column(type="integer")
      */
-    private $isDownload = 0;
+    private $status = self::STATUS_IN_PROCESSING;
     
     public function getId(): ?int
     {
@@ -168,18 +169,6 @@ class Licence
     public function setSubscriptionAmount(float $subscriptionAmount): self
     {
         $this->subscriptionAmount = $subscriptionAmount;
-
-        return $this;
-    }
-
-    public function isValid(): ?bool
-    {
-        return $this->valid;
-    }
-
-    public function setValid(bool $valid): self
-    {
-        $this->valid = $valid;
 
         return $this;
     }
@@ -268,14 +257,14 @@ class Licence
         return $this;
     }
 
-    public function isDownload(): ?bool
+    public function getStatus(): ?int
     {
-        return $this->isDownload;
+        return $this->status;
     }
 
-    public function setIsDownload(bool $isDownload): self
+    public function setStatus(int $status): self
     {
-        $this->isDownload = $isDownload;
+        $this->status = $status;
 
         return $this;
     }

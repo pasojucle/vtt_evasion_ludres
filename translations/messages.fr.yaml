@@ -11,9 +11,12 @@ licence:
     minor: mineur
     adult: adulte
   status:
-    none: Non renouvelées
-    in_progress: En cours
+    none: Non renouvelée
+    waiting_renew: En attente de renouvelement
+    in_processing: En cours
+    waiting_validate: En attente de validation
     valid: Valide
+    testing: 3 séances gratuites
 
 identity:
   kinship:

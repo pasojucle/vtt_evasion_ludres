@@ -14,6 +14,9 @@ class Level
 {
     public const TYPE_MEMBER = 1;
     public const TYPE_FRAME = 2;
+    public const TYPE_ALL_MEMBER = 'ALL_MEMBER ';
+    public const TYPE_ALL_FRAME = 'ALL_FRAME';
+    public const TYPE_ADULT = 'ADULT';
 
     public const TYPES = [
         self::TYPE_MEMBER => 'level.type.member',

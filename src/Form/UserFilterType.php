@@ -22,6 +22,8 @@ class UserFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $statusChoices = array_reverse(Licence::STATUS, true);
+        unset($statusChoices[Licence::STATUS_IN_PROCESSING]);
         $builder
             ->add('fullName', TextType::class, [
                 'label' => false,
@@ -33,21 +35,13 @@ class UserFilterType extends AbstractType
             ->add('status', ChoiceType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
-                'choices' => ['Licence' => array_flip(Licence::STATUS)],
+                'choices' => ['Licence' => array_flip($statusChoices)],
                 'attr' => [
                     'class' => 'btn',
                 ],
                 'required' => false,
             ])
-            // ->add('category', ChoiceType::class, [
-            //     'label' => false,
-            //     'placeholder' => 'Tous',
-            //     'choices' => array_flip(Licence::CATEGORIES),
-            //     'attr' => [
-            //         'class' => 'btn',
-            //     ],
-            //     'required' => false,
-            // ])
+        
             ->add('level', ChoiceType::class, [
                 'label' => false,
                 'choices' => $this->getLevelChoices(),
@@ -70,10 +64,14 @@ class UserFilterType extends AbstractType
     private function getLevelChoices(): array
     {
         $levelChoices = [];
+        $levelChoices['École VTT']['Toute l\'école VTT'] = Level::TYPE_ALL_MEMBER;
+        $levelChoices['Encadrement']['Tout l\'encadrement'] = Level::TYPE_ALL_FRAME;
+        $levelChoices['Adultes']['Adultes hors encadrement'] = Level::TYPE_ADULT;
         $levels = $this->levelRepository->findAll();
+
         if (!empty($levels)) {
             foreach($levels as $level) {
-                $type = ($level->getType() === Level::TYPE_MEMBER) ? 'Adhérent' : 'Encadrement';
+                $type = ($level->getType() === Level::TYPE_MEMBER) ? 'École VTT' : 'Encadrement';
                 $levelChoices[$type][$level->getTitle()] = $level->getId();
             }
         }

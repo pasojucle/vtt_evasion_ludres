@@ -11,9 +11,11 @@ use App\Entity\User as UserEntity;
 
 class User {
 
-    public function __construct(UserEntity $user)
+    public function __construct(UserEntity $user, int $currentSeason, array $seasonsStatus)
     {
         $this->user = $user;
+        $this->currentSeason = $currentSeason;
+        $this->seasonsStatus = $seasonsStatus;
         $this->memberIdentity = null;
         $this->kinshipIdentity = null;
         $this->secondKinshipIdentity = null;
@@ -97,30 +99,24 @@ class User {
         return '';
     }
 
-    public function getCoverage(string $season): ?int
+    public function getCoverage(): ?int
     {
-        $seasonLicence = $this->user->getSeasonLicence($season);
+        $seasonLicence = $this->user->getSeasonLicence($this->currentSeason);
         return (null !== $seasonLicence) ? $seasonLicence->getCoverage() : null;
     }
 
-    public function getSeasonLicence(string $season): array
+    public function getSeasonLicence(): array
     {
-        $seasonLicence = [];
+        $licence = $this->user->getSeasonLicence($this->currentSeason);
+        
+        return $this->getLicenceArray($licence);
+    }
 
-        $licence = $this->user->getSeasonLicence($season);
+    public function getLastLicence(): array
+    {
+        $licence = $this->user->getLastLicence();
 
-        if (null !== $licence) {
-            $seasonLicence = [
-                'isFinal' => $licence->isFinal(),
-                'coverage' => (null !== $licence->getCoverage()) ? $licence->getCoverage() : null,
-                'coverageStr' => (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null,
-                'hasFamilyMember' => $licence->getAdditionalFamilyMember(),
-                'category' => $licence->getCategory(),
-                'isValid' => $licence->isValid(),
-                'type' => (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null,
-            ];  
-        } 
-        return $seasonLicence;
+        return $this->getLicenceArray($licence);
     }
 
     public function getKinShip(): array
@@ -216,10 +212,10 @@ class User {
         return $health;
     }
 
-    public function isMedicalCertificateRequired($season): string
+    public function isMedicalCertificateRequired(): string
     {
         $message = '';
-        $licence = $this->user->getSeasonLicence($season);
+        $licence = $this->user->getSeasonLicence($this->currentSeason);
 
         if (null !== $licence && $licence->isMedicalCertificateRequired()) {
             $message = 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
@@ -288,5 +284,45 @@ class User {
     {
         $type = (null !== $this->user->getLevel()) ? $this->user->getLevel()->getType() : null;
         return $type === Level::TYPE_FRAME;
+    }
+
+    Private function getLicenceArray(Licence $licence): array
+    {
+        $licenceArray = [];
+        $statusClassArray = [
+            Licence::STATUS_NONE => 'alert-black',
+            Licence::STATUS_WAITING_RENEW => 'alert-danger',
+            Licence::STATUS_WAITING_VALIDATE => 'alert-warning',
+            Licence::STATUS_TESTING => 'success-test',
+            Licence::STATUS_VALID => 'success',
+        ];
+
+        if (null !== $licence) {
+            $status = $licence->getStatus();
+            if ($licence->getSeason() !== $this->currentSeason) {
+                if ($this->seasonsStatus[Licence::STATUS_NONE] >= $licence->getSeason()) {
+                    $status = Licence::STATUS_NONE;
+                }
+                if ($this->seasonsStatus[Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
+                    $status = Licence::STATUS_WAITING_RENEW;
+                }
+            }
+
+            $licenceArray = [
+                'season' => $licence->getSeason(),
+                'isFinal' => $licence->isFinal(),
+                'coverage' => (null !== $licence->getCoverage()) ? $licence->getCoverage() : null,
+                'coverageStr' => (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null,
+                'hasFamilyMember' => $licence->getAdditionalFamilyMember(),
+                'category' => $licence->getCategory(),
+                'statusClass' => $statusClassArray[$status],
+                'status' => $status,
+                'statusStr' => Licence::STATUS[$status],
+                'type' => (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null,
+                'lock' => $licence->getSeason() !== $this->currentSeason,
+            ];  
+        }
+
+        return $licenceArray;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Identity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -331,6 +332,22 @@ class User implements UserInterface
         }
 
         return null;
+    }
+
+    public function getLastLicence(): ?licence
+    {;
+        $lastSeason = 1900;
+        $lastLicence = null;
+        if (!$this->licences->isEmpty()) {
+            foreach ($this->licences as $licence) {
+                if ($licence->getSeason() > $lastSeason) {
+                    $lastSeason = $licence->getSeason(); 
+                    $lastLicence = $licence; 
+                }
+            }
+        }
+
+        return $lastLicence;
     }
 
     /**

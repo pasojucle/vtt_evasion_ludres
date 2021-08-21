@@ -31,11 +31,11 @@ class LicenceType extends AbstractType
                             'class' => 'form-group-inline',
                         ],
                     ])
-                    ->add('valid', ChoiceType::class, [
+                    ->add('status', ChoiceType::class, [
                         'label' => 'Dossier d\'inscription',
                         'choices' => [
-                            'En cours' => false,
-                            'Validé'=> true,
+                            'licence.status.waiting_validate' => Licence::STATUS_WAITING_VALIDATE,
+                            'licence.status.valid' => Licence::STATUS_VALID,
                         ],
                         'row_attr' => [
                             'class' => 'form-group-inline',

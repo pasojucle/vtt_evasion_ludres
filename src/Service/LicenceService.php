@@ -51,4 +51,23 @@ class LicenceService
         }
         return $this->translator->trans($title);;
     }
+
+    public function getSeasonsStatus(): array
+    {
+        $today = new DateTime();
+        $currentSeason = $this->getCurrentSeason();
+
+        $seasonsStatus = [];
+
+        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') < 9) ? $currentSeason - 1 : $currentSeason - 2;
+        
+        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = (9 < (int) $today->format('m')) ? $currentSeason - 1 : 1900;
+
+        return $seasonsStatus;
+    }
+
+    public function getSeasonByStatus(int $status): int
+    {
+        return $this->getSeasonsStatus()[$status];
+    }
 }

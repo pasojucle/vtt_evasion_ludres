@@ -126,6 +126,16 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
+.alert-black {
+    color: var(--background-color);
+}
+.alert-black::before {
+    content: '\f057';
+    color: var(--background-color);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
 .alert-warning {
     color: var(--primary-color-darker);
 }
@@ -143,6 +153,16 @@ body > script {display: none !important;}
 .success::before {
     content: '\f058';
     color: var(--success-color);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
+.success-test {
+    color: var(--blue-color);
+}
+.success-test::before {
+    content: '\f058';
+    color: var(--blue-color);
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
@@ -461,6 +481,9 @@ body {
 }
 .filters ul > li > * {
     vertical-align: middle;
+}
+.filters ul > li > .btn:not(.btn-ico) {
+    padding: 12px 8px;
 }
 .filters span b {
     color: var(--primary-color-darker);

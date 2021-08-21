@@ -2,22 +2,25 @@
 
 namespace App\Service;
 
+use App\Service\LicenceService;
 use App\DataTransferObject\User;
 use App\Entity\User as EntityUser;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UserService
 {
     private ParameterBagInterface $params;
     private SluggerInterface $slugger;
+    private LicenceService $licenceService;
 
-    public function __construct(ParameterBagInterface $params, SluggerInterface $slugger)
+    public function __construct(ParameterBagInterface $params, SluggerInterface $slugger, LicenceService $licenceService)
     {
         $this->params = $params;
         $this->slugger = $slugger;
+        $this->licenceService = $licenceService;
     }
 
     public function convertPaginatorToUsers(Paginator $users): array
@@ -35,15 +38,20 @@ class UserService
     public function convertToUser(EntityUser $user): User
     {
 
-        return $usersDto[] = new User($user);
+        return $usersDto[] = new User($user,
+            $this->licenceService->getCurrentSeason(),
+            $this->licenceService->getSeasonsStatus());
     }
 
     private function convertUsers($users): array
     {
+
         $usersDto = [];
         if (!empty($users)) {
             foreach ($users as $user){
-               $usersDto[] = new User($user);
+               $usersDto[] = new User($user,
+                $this->licenceService->getCurrentSeason(),
+                $this->licenceService->getSeasonsStatus());
             }        
         }
 
