@@ -133,7 +133,7 @@ class UserType extends AbstractType
                         ],
                     ],
                     'required' => true,
-                    'first_options'  => ['label' => 'Mot de passe'],
+                    'first_options'  => ['label' => 'Mot de passe (6 caractères minimum)'],
                     'second_options' => ['label' => 'Confirmation du mot de passe'],
                     'mapped' => false,
                     'constraints' => [
