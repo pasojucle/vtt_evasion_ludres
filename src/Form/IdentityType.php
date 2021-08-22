@@ -26,6 +26,8 @@ class IdentityType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $identity = $event->getData();
             $form = $event->getForm();
+            $disabled = ($options['season_licence']->isFinal() && $form->getName() === "0") ? 'disabled' : '';
+
             $row_class =  ($options['is_kinship']) ? 'form-group-inline' : 'form-group';
             if ((!$options['is_kinship'] && $form->getName() === "0") || ($options['is_kinship'] && in_array($form->getName(),[1,2])) || 'identity' === $form->getName()) {
                 $form
@@ -34,12 +36,14 @@ class IdentityType extends AbstractType
                         'row_attr' => [
                             'class' => $row_class
                         ],
+                        'disabled' => $disabled,
                     ])
                     ->add('firstName', TextType::class, [
                         'label' => 'Prénom',
                         'row_attr' => [
                             'class' => $row_class,
                         ],
+                        'disabled' => $disabled,
                     ])
                     ->add('mobile', TextType::class, [
                         'label' => 'Téléphone mobile',
@@ -81,6 +85,7 @@ class IdentityType extends AbstractType
                                 'row_attr' => [
                                     'class' => $row_class,
                                 ],
+                                'disabled' => $disabled,
                             ])
                         ;
                     }
@@ -180,6 +185,7 @@ class IdentityType extends AbstractType
             'is_kinship' => false,
             'current' => null,
             'category' => Licence::CATEGORY_ADULT,
+            'season_licence' => null,
         ]);
     }
 }
