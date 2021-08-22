@@ -41,7 +41,8 @@ class HealthType extends AbstractType
                     'label' => 'Groupe sanguin',
                     'row_attr' => [
                         'class' => 'form-group-inline'
-                    ]
+                    ],
+                    'required' => false,
                 ])
                 ->add('tetanusBooster', DateType::class, [
                     'label' => 'Date du dernier rappel antitétanique',
@@ -63,19 +64,19 @@ class HealthType extends AbstractType
                     ]
                 ])
                 ->add('doctorAddress', TextType::class, [
-                    'label' => 'Adresse',
+                    'label' => 'Adresse du medecin traitant',
                     'row_attr' => [
                         'class' => 'form-group-inline'
                     ]
                 ])
                 ->add('doctorTown', TextType::class, [
-                    'label' => 'Ville',
+                    'label' => 'Ville du medecin traitant',
                     'row_attr' => [
                         'class' => 'form-group-inline'
                     ]
                 ])
                 ->add('doctorPhone', TextType::class, [
-                    'label' => 'Télephone',
+                    'label' => 'Télephone du medecin traitant',
                     'row_attr' => [
                         'class' => 'form-group-inline'
                     ],
