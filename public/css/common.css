@@ -448,6 +448,9 @@ body {
 input[type="file"] {
     opacity: 0;
 }
+.required::after {
+    content: ' *';
+}
 .badge {
     display: inline-block;
     border-radius: 50%;
