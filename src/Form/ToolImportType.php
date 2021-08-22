@@ -15,10 +15,11 @@ class ToolImportType extends AbstractType
     {
         $builder
             ->add('userList', FileType::class, [
-                'label' => false,
+                'label' => 'Fichier',
                 'attr' => [
                     'accept' => '.csv'
                 ],
+                'block_prefix' => 'custom_file',
                 // 'constraints' => [
                 //     new File([
                 //         'maxSize' => '1024k',

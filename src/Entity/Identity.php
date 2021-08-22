@@ -14,11 +14,13 @@ class Identity
     public const KINSHIP_FATHER = 1;
     public const KINSHIP_MOTHER = 2;
     public const KINSHIP_GUARDIANSHIP = 3;
+    public const KINSHIP_OTHER = 4;
 
     public const KINSHIPS = [
         self::KINSHIP_FATHER => 'identity.kinship.father',
         self::KINSHIP_MOTHER => 'identity.kinship.mother',
         self::KINSHIP_GUARDIANSHIP => 'identity.kinship.guardianship',
+        self::KINSHIP_OTHER => 'identity.kinship.other',
     ];
 
     /**
@@ -88,6 +90,11 @@ class Identity
      * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="identities", cascade={"persist"})
      */
     private $address;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $birthDepartment;
 
 
     public function getId(): ?int
@@ -248,5 +255,17 @@ class Identity
     public function isEmpty()
     {
         return null === $this->name && null === $this->firstName; 
+    }
+
+    public function getBirthDepartment(): ?string
+    {
+        return $this->birthDepartment;
+    }
+
+    public function setBirthDepartment(?string $birthDepartment): self
+    {
+        $this->birthDepartment = $birthDepartment;
+
+        return $this;
     }
 }

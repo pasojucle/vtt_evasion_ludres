@@ -243,4 +243,43 @@ class ToolController extends AbstractController
             'count' => $count,
         ]);
     }
+    /**
+     * @Route("/admin/outil/departements", name="admin_departments")
+     */
+    public function adminDepartments(
+        Request $request
+    ): Response
+    {
+        $form = $this->createForm(ToolImportType::class);
+        $form->handleRequest($request);
+        $departments = [];
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            if ($request->files->get('tool_import')) {
+                $userListFile = $request->files->get('tool_import')['userList'];
+
+                if (($handle = fopen($userListFile, "r")) !== FALSE) {
+                    while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                        list(
+                            $number,
+                            $name
+                        ) = $row;
+
+                        if (preg_match('#^(NUMÉRO)$#', $number)) {
+                            continue;
+                        }
+                        $departments[] = $number.' - '.$name;
+                        
+                    }
+                    fclose($handle);
+                    file_put_contents('../data/departments', json_encode($departments));
+                }
+            }
+        }
+
+        return $this->render('tool/import.html.twig', [
+            'form' => $form->createView(),
+            'count' => count($departments),
+        ]);
+    }
 }

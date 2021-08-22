@@ -98,10 +98,14 @@ class IdentityType extends AbstractType
                 }
 
                 if ($options['is_kinship']) {
+                    $kinshipChoices = Identity::KINSHIPS;
+                    if ((int)$form->getName() !== 2 ) {
+                        unset($kinshipChoices[Identity::KINSHIP_OTHER]);
+                    }
                     $form
                         ->add('kinship', ChoiceType::class, [
                             'label' => 'Parenté',
-                            'choices' => array_flip(Identity::KINSHIPS),
+                            'choices' => array_flip($kinshipChoices),
                             'row_attr' => [
                                 'class' => 'form-group-inline'
                             ],
@@ -120,14 +124,20 @@ class IdentityType extends AbstractType
                 } else {
                     $form
                         ->add('birthplace', TextType::class, [
-                            'label' => 'Lieux de naissance',
+                            'label' => 'Lieu de naissance',
                             'row_attr' => [
                                 'class' => $row_class,
                             ],
-                            'required' => false,
+                        ])
+                        ->add('birthDepartment', ChoiceType::class, [
+                            'label' => 'Département de naissance',
+                            'choices' => array_flip(json_decode(file_get_contents('../data/departments'), true)),
+                            'row_attr' => [
+                                'class' => $row_class,
+                            ],
                         ])
                         ->add('pictureFile', FileType::class, [
-                            'label' => 'Photo',
+                            'label' => 'Photo d\'itentité',
                             'mapped' => false,
                             'required' => false,
                             'block_prefix' => 'custom_file',

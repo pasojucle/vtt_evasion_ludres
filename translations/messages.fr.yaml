@@ -23,6 +23,7 @@ identity:
     father: Père
     mother: Mère
     guardianship: Réprésentant légal
+    other: Autre
 
 disease:
   type:

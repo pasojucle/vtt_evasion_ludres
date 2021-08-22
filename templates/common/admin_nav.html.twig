@@ -27,10 +27,13 @@
     {% if is_granted('ROLE_SUPER_ADMIN') %}
         <ul>
             <li>
-                <a  href="{{ path('admin_import_users') }}">Importer la liste des utilisateurs</a>
+                <a href="{{ path('admin_import_users') }}">Importer la liste des utilisateurs</a>
             </li>
             <li>
-                <a  href="{{ path('admin_update_licence_type') }}">Mise à jours type licence</a>
+                <a href="{{ path('admin_update_licence_type') }}">Mise à jours type licence</a>
+            </li>
+            <li>
+                <a href="{{ path('admin_departments') }}">Liste des départements</a>
             </li>
         </ul>
         <br>
