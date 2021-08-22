@@ -268,7 +268,7 @@ class ToolController extends AbstractController
                         if (preg_match('#^(NUMÉRO)$#', $number)) {
                             continue;
                         }
-                        $departments[] = $number.' - '.$name;
+                        $departments[$name] = $number.' - '.$name;
                         
                     }
                     fclose($handle);

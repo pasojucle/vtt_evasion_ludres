@@ -160,7 +160,7 @@ class User {
             $member = [
                 'fullName' => $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName(),
                 'birthDate' => ($bithDate) ? $bithDate->format('d/m/Y'): null,
-                'birthDateAndPlace' => ($bithDate) ? $bithDate->format('d/m/Y').' à '.$this->memberIdentity->getBirthPlace() : null,
+                'birthPlace' => $this->memberIdentity->getBirthPlace().' ('.$this->memberIdentity->getBirthDepartment().')',
                 'address' => $this->memberIdentity->getAddress(),
                 'email' => $this->memberIdentity->getEmail(),
                 'phone' => implode(' - ', array_filter([$this->memberIdentity->getMobile(), $this->memberIdentity->getPhone()])),
@@ -310,6 +310,7 @@ class User {
             }
 
             $licenceArray = [
+                'createdAt' => ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null,
                 'season' => $licence->getSeason(),
                 'isFinal' => $licence->isFinal(),
                 'coverage' => (null !== $licence->getCoverage()) ? $licence->getCoverage() : null,

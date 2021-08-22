@@ -25,7 +25,10 @@
                     <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3" ><b>Date et lieu de naissance : </b>{{ user.member.birthDateAndPlace }}</td>
+                    <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>

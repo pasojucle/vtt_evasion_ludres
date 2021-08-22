@@ -73,7 +73,7 @@ class PdfService
             ['value' => 'X', 'x' => $coverage[$userDto->getCoverage($this->licenceService->getCurrentSeason())], 'y' => 247.5],
             ['value' => 'X', 'x' => 81, 'y' => 257.5],
             ['value' => 'Ludres', 'x' => 20, 'y' => 262],
-            ['value' => $today->format('d/m/Y'), 'x' => 75, 'y' => 262]
+            ['value' => $userDto->getSeasonLicence()['createdAt'], 'x' => 75, 'y' => 262]
         ];
 
         $pdf->SetFont('Helvetica');

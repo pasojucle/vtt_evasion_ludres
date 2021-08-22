@@ -32,7 +32,6 @@ class MembershipFeeService
         $amountStr = '';
 
         $seasonLicence = $user->getSeasonLicence();
-        dump($seasonLicence);
         if ($seasonLicence['isFinal']) {
             $coverage = $seasonLicence['coverage'];
             $hasFamilyMember = $seasonLicence['hasFamilyMember'];

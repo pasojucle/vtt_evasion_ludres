@@ -289,6 +289,10 @@ class RegistrationController extends AbstractController
         $category = $seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal(), RegistrationStep::RENDER_FILE);
         $allmembershipFee = $membershipFeeRepository->findAll();
+        if ($this->getUser() === $user) {
+            $today = new DateTime();
+            $seasonLicence->setCreatedAt($today);
+        }
 
         $files = [];
         if (!empty($steps)) {
@@ -299,7 +303,6 @@ class RegistrationController extends AbstractController
                 }
                 if (null !== $step->getFilename()) {
                     $filename = './files/'.$step->getFilename();
-                    
                     $files[] = ['filename' => $filename, 'form' => $step->getForm()];
                 }
                 if ($step->isToPdf()) {
