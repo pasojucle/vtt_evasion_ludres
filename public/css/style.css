@@ -29,6 +29,7 @@ nav > ul > li > a {
 nav > ul > li {
     display: inline-block;
     margin: 0 -4px;
+    position: relative;
 }
 nav > ul> li > a:hover, nav > ul> li > a.active {
     color: var(--white-color);
@@ -59,11 +60,12 @@ ul.sub-menu {
     /* left: 0; */
     top: var(--nav-height);
     background-color: var(--light-color);
-    /* width: 100%; */
+    min-width: 100%;
     text-align: left;
     position: absolute;
     z-index: 3;
     padding: 5px;
+    box-sizing: border-box;
 }
 ul.sub-menu a {
     color: var(--background-color);

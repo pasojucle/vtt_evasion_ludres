@@ -28,6 +28,19 @@
                 {% endif %}
             </li>
         {% endfor %}
+        {% if is_granted('ROLE_USER') %}
+            {% set member = user_service.convertToUser(app.user).member %}
+            {% if member is not empty %}
+                <li>
+                    <a class="btn-logger"><i class="fas fa-user"></i> {{ member.fullName }}</a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="{{ path('user_account') }}">Mon compte</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+        {% endif %}
         {% if is_granted('ROLE_FRAME') %}
             {% set admin_route = (is_granted('ROLE_ADMIN')) ? 'admin_home' : 'admin_events' %}
             <li>
