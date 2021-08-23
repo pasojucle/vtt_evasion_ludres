@@ -4,18 +4,21 @@ namespace App\Service;
 
 use App\Entity\Event;
 use App\Entity\Session;
-use App\Entity\User as UserEntity;
+use App\Service\UserService;
 use App\DataTransferObject\User;
+use App\Entity\User as UserEntity;
 use App\Repository\SessionRepository;
 
 
 class SessionService
 {
     private SessionRepository $sessionRepository;
+    private UserService $userService;
     
-    public function __construct(SessionRepository $sessionRepository)
+    public function __construct(SessionRepository $sessionRepository, UserService $userService)
     {
         $this->sessionRepository = $sessionRepository;
+        $this->userService = $userService;
     }
     
     public function getSessionsBytype(Event $event, ?UserEntity $user = null): array
@@ -35,7 +38,7 @@ class SessionService
                 } else {
                     if ($user !== $session->getUser()) {
                         $framers[] = [
-                            'user' => new User($session->getUser()),
+                            'user' => $this->userService->convertToUser($session->getUser()),
                             'availability' => $session->getAvailabilityToView(),
                         ];
                     }
