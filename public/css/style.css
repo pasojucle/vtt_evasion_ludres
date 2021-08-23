@@ -414,7 +414,7 @@ button[type="submit"] {
     margin-bottom: 100px;
     color: rgba(255,255,255,0.4);
     text-align: left;
-    font-size: 80px;
+    font-size: 75px;
     font-style: oblique;
 }
 .card-img-only:not(:first-child) {

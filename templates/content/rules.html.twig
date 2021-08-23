@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réglément intérieur{% endblock %}
+{% block title %}Règlément intérieur{% endblock %}
 
 {% block stylesheets %}
     {{ parent()}}
 {% endblock %}
 {% block body %}
-    <div class="wrapper wrapper-full-width full-background">
+    <div class="wrapper wrapper-medium-width full-background">
         <div class="wrapper-title">
             <h1>Réglément intérieur</h1>
         </div>
         <div class="wrapper-body ">
-            <div class="block background-clear text-2-col">
+            <div class="block background-clear">
                 {{ content.content | raw}}
             </div>
         </div>
