@@ -130,11 +130,12 @@ class UserController extends AbstractController
         UserEntity $user
     ): Response
     {
-        $currentSeason = $licenceService->getCurrentSeason();
-        $seasonLicence = $user->getSeasonLicence($currentSeason);
+        $licence = $user->getLastLicence();
+
         $identity = $user->getFirstIdentity();
         $form = $this->createForm(IdentityType::class, $identity, [
-            'category' => $seasonLicence->getCategory(),
+            'category' => $licence->getCategory(),
+            'season_licence' => $licence,
         ]);
         $form->handleRequest($request);
 

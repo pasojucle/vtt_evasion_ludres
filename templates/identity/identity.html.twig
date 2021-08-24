@@ -1,8 +1,8 @@
 {% if identity.children is not empty %}
-    {% if identity.vars.name == 2 %}
-        <b>Second contact</b>
-    {% else %}
+    {% if identity.vars.name == 1 %}
         <b>Contact parent principal</b>
+    {% elseif identity.vars.name == 2 %}
+        <b>Second contact</b>
     {% endif %}
     {% if identity.kinship is defined %}
         <div class="form-group">{{ form_row(identity.kinship) }}</div>
