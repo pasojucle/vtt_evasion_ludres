@@ -25,21 +25,20 @@ final class Version20210823182053 extends AbstractMigration
     
         $events = $this->connection->fetchAllAssociative('SELECT e.id AS event_id, e.type, c.id AS cluster_id, c.title AS cluster_title, s.id AS session_id FROM `event` AS e
         LEFT JOIN cluster AS c ON c.event_id = e.id
-        LEFT JOIN session AS s ON s.cluster_id = c.id
-        WHERE e.type != 1');
+        LEFT JOIN session AS s ON s.cluster_id = c.id');
 
         $eventsByType = [];
         if (!empty($events)) {
             foreach($events as $event) {
-                if ((int) $event['type'] === 3 ) {
-                    if (strtolower('1er groupe') == strtolower($event['cluster_title'])) {
+                if ((int) $event['type'] !== 2 ) {
+                    if (null !== $event['cluster_title'] && strtolower('1er groupe') == strtolower($event['cluster_title'])) {
                         $eventsByType[$event['event_id']]['cluster'] = $event['cluster_id'];
                     } elseif (null !== $event['session_id']) {
                         $eventsByType[$event['event_id']]['sessions_tmp'][] = $event['session_id'];
                     }
                 }
                 if ((int) $event['type'] === 2 ) {
-                    if ('Encadrement' === $event['cluster_title']) {
+                    if (null !== $event['cluster_title'] && 'Encadrement' === $event['cluster_title']) {
                         $eventsByType[$event['event_id']]['cluster'] = $event['cluster_id'];
                     } elseif (in_array($event['cluster_title'], ['Adulte expérimenté', 'Initiateur', 'Moniteur']) && null !== $event['session_id']) {
                         $eventsByType[$event['event_id']]['sessions_tmp'][] = $event['session_id'];
