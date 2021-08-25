@@ -27,7 +27,7 @@
                             {% if event.endAt is null %}
                                 {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
                             {% else %}
-                                du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                                du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}} 
                             {% endif %}
                             {% if event.isRegistrable or event.accessAvailabity(app.user) %}
                                 <div class="bike-ride-date-btn">

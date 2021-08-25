@@ -16,7 +16,7 @@
                         {% if bikeRide.endAt is null %}
                             {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
                         {% else %}
-                            du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}}} 
+                            du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
                         {% endif %}
                     </h2>
                 </div>
