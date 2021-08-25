@@ -3,21 +3,39 @@
 namespace App\Form\Admin;
 
 use App\Entity\Event;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use App\Repository\ParameterRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class EventType extends AbstractType
 {
+    Private ParameterRepository $parameterRepository;
+    
+    public function __construct(ParameterRepository $parameterRepository)
+    {
+      $this->parameterRepository = $parameterRepository;  
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('type', ChoiceType::class, [
+                'label' => 'Type de randonnée',
+                'choices' => array_flip(Event::TYPES),
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+            ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
                 'row_attr' => [
@@ -89,19 +107,13 @@ class EventType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('type', ChoiceType::class, [
-                'label' => 'Type de randonnée',
-                'choices' => array_flip(Event::TYPES),
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregister',
                 'attr' => ['class' => 'btn btn-primary float-right'],
             ])
         ;
     }
+
 
     public function configureOptions(OptionsResolver $resolver)
     {

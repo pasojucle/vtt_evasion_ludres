@@ -10,7 +10,9 @@ use App\Form\EventFilterType;
 use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
+use App\Repository\ParameterRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -22,6 +24,7 @@ class EventService
     private EventRepository $eventRepository;
     private LevelRepository $levelRepository;
     private EntityManagerInterface $entityManager;
+    private ParameterRepository $parameterRepository;
 
     public function __construct(
         PaginatorService $paginator,
@@ -29,7 +32,8 @@ class EventService
         FormFactoryInterface $formFactory, 
         EventRepository $eventRepository,
         LevelRepository $levelRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ParameterRepository $parameterRepository
     )
     {
         $this->paginator = $paginator;
@@ -38,6 +42,7 @@ class EventService
         $this->eventRepository = $eventRepository;
         $this->levelRepository = $levelRepository;
         $this->entityManager = $entityManager;
+        $this->parameterRepository = $parameterRepository;
     }
     
     
@@ -156,7 +161,7 @@ class EventService
                     ->setRole('ROLE_FRAME');
                 $event->addCluster($cluster);
                 $this->entityManager->persist($cluster);
-                $levels = $this->levelRepository->findAll();
+                $levels = $this->levelRepository->findAllTypeMember();
                 if (null !== $levels) {
                     foreach ($levels as $level) {
                         $cluster = new Cluster();
@@ -168,15 +173,6 @@ class EventService
                     }
                 }
                 break;
-            case Event::TYPE_ADULT:
-                $clusterTitles = ['1er groupe', '2e groupe', '3e groupe'];
-                foreach ($clusterTitles as $titles) {
-                    $cluster = new Cluster();
-                    $cluster->setTitle($titles);
-                    $event->addCluster($cluster);
-                    $this->entityManager->persist($cluster);
-                }
-                break;
             default:
                 $cluster = new Cluster();
                 $cluster->setTitle('1er Groupe');
@@ -185,5 +181,28 @@ class EventService
         }
             
             // $this->entityManager->flush();
+    }
+
+    public function setDefaultContent(Request $request, Event $event): Event
+    {
+        $eventRequest = $request->request->get('event');
+        if (null !== $eventRequest) {
+            $type = (int) $eventRequest['type'];
+            $parameterName = null;
+            if (Event::TYPE_SCHOOL === $type) {
+                $parameterName = 'EVENT_SCHOOL_CONTENT';
+            }
+            if (Event::TYPE_ADULT === $type) {
+                $parameterName = 'EVENT_ADULT_CONTENT';
+            }
+            if (null !== $parameterName) {
+                $parameter = $this->parameterRepository->findOneByName($parameterName);
+                if (null !== $parameter) {
+                    $event->setTitle($parameter->getLabel())->setContent($parameter->getValue());
+                }
+            }
+        }
+
+        return $event;
     }
 }

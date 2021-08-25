@@ -105,7 +105,7 @@ class Event
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -129,7 +129,7 @@ class Event
         return $this->startAt;
     }
 
-    public function setStartAt(\DateTimeInterface $startAt): self
+    public function setStartAt(?\DateTimeInterface $startAt): self
     {
         $this->startAt = $startAt;
 
@@ -153,7 +153,7 @@ class Event
         return $this->displayDuration;
     }
 
-    public function setDisplayDuration(int $displayDuration): self
+    public function setDisplayDuration(?int $displayDuration): self
     {
         $this->displayDuration = $displayDuration;
 
@@ -259,7 +259,7 @@ class Event
         return $this->closingDuration;
     }
 
-    public function setClosingDuration(int $closingDuration): self
+    public function setClosingDuration(?int $closingDuration): self
     {
         $this->closingDuration = $closingDuration;
 

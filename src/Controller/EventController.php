@@ -9,6 +9,7 @@ use App\Form\Admin\EventType;
 use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
+use App\Repository\ParameterRepository;
 use App\Service\EventService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,18 +78,24 @@ class EventController extends AbstractController
     public function adminEdit(
         Request $request,
         LevelRepository $levelRepository,
+        ParameterRepository $parameterRepository,
         ?Event $event
     ): Response
     {
         if (null == $event) {
             $event = new Event();
         }
+        $event = $this->eventService->setDefaultContent($request, $event);
         $filters = $this->session->get('admin_events_filters');
         $form = $this->createForm(EventType::class, $event);
-        $form->handleRequest($request);
-
+      
+        ;
+        if (!$request->isXmlHttpRequest()) {
+            $form->handleRequest($request); 
+        }
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $event = $form->getData();
+
             $clusters = $event->getClusters();
             if ($clusters->isEmpty($event)) {
                 $this->eventService->createClusters($event);
@@ -109,6 +116,7 @@ class EventController extends AbstractController
             'events_filters' => ($filters) ? $filters : [],
         ]);
     }
+
 
     /**
      * @Route("/admin/sortie/groupe/{event}", name="admin_event_cluster_show")

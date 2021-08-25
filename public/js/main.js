@@ -34,6 +34,8 @@ $(document).ready(function(){
     $(document).on('change', '#event_filter_period, #user_filter_status, #user_filter_level', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
+    $(document).on('change', '#event_type', modifierEvent);
+    
 });
 
 jQuery(function($){
@@ -141,7 +143,6 @@ function getMediaScreen() {
 function getFile(e) {
     e.preventDefault();
     $inputFile = $('input[type="file"]');
-    console.log($inputFile);
     $inputFile.click();
     $inputFile.on('change',  function(event) {
         filename = event.target.value.split('\\').pop();
@@ -149,4 +150,29 @@ function getFile(e) {
         $('#filename').text(filename);
     });
     return false;
+}
+
+function modifierEvent() {
+
+    var form = $(this).closest('form');
+    var data = {};
+    // data[$(this).attr('name')] = $(this).val();
+    $.each(form[0].elements,function() {
+        if ($(this).attr('type') !== 'hidden') {
+            data[$(this).attr('name')] = $(this).val();
+        }
+    });
+
+    $.ajax({
+        url : form.attr('action'),
+        type: form.attr('method'),
+        data : data,
+        success: function(html) {
+          console.log($(html).find('#event_container').html());
+          $('#event_container').replaceWith(
+            $(html).find('#event_container')
+          );
+        //   $('#cke_event_content').ckEditor();
+        }
+      });
 }
