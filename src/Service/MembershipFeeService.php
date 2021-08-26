@@ -46,7 +46,7 @@ class MembershipFeeService
                 $amountStr = "Le montant de votre inscription pour la formule d'assurance $coverageSrt est de $amount €";
             }
         } else {
-            $amountStr = "Votre inscription aux trois séances consécutives d'essai est gratuite";
+            $amountStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";
         }
 
         return $amountStr;

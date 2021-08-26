@@ -1,6 +1,6 @@
 <div class="container">{{ current.content | raw}}</div>
 
-<p>{{ membership_fee_service.amount(user) }}</p>
+<p>{{ membership_fee_service.amount(user)|raw }}</p>
 <br>
 <p>{{ user.isMedicalCertificateRequired(licence_service.currentSeason) }}</p>
 <br>
