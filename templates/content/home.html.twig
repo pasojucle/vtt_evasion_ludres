@@ -35,7 +35,7 @@
                                 {% if event.endAt is null %}
                                     {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')  | capitalize}}
                                 {% else %}
-                                    du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')} | capitalize} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                                    du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')} | capitalize }} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize }}
                                 {% endif %}
                             </h2>
                             <p>{{ event.title }}</p>
