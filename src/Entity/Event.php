@@ -17,6 +17,7 @@ class Event
     public const PERIOD_DAY = 'jour';
     public const PERIOD_WEEK = 'semaine';
     public const PERIOD_MONTH = 'mois';
+    public const PERIOD_NEXT = 'prochainement';
     public const PERIOD_ALL = 'tous';
 
     public const DIRECTION_PREV = 1;
@@ -26,6 +27,7 @@ class Event
         self::PERIOD_DAY => 'event.period.day',
         self::PERIOD_WEEK => 'event.period.week',
         self::PERIOD_MONTH => 'event.period.month',
+        self::PERIOD_NEXT => 'event.period.next',
         self::PERIOD_ALL => 'event.period.all',
     ];
 

@@ -11,6 +11,7 @@ use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
+use DatePeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -49,7 +50,7 @@ class EventService
     public function getFiltersByParam(?string $period, ?int $year, ?int $month, ?int $day, string $route) {
         $date = (null === $year && null === $month && null === $day) ? new DateTime(): DateTime::createFromFormat('Y-m-d', "$year-$month-$day");
         if (null === $period) {
-            $period = ('admin_events' === $route) ? Event::PERIOD_WEEK : Event::PERIOD_MONTH;
+            $period = ('admin_events' === $route) ? Event::PERIOD_WEEK : Event::PERIOD_NEXT;
         }
 
         return $this->getFilters($period, $date);
@@ -79,6 +80,7 @@ class EventService
         }
         $startAt = clone $date;
         $endAt = clone $date;
+        $limit = null;
         switch ($period) {
             case Event::PERIOD_DAY:
                 $startAt = $startAt;
@@ -95,6 +97,11 @@ class EventService
                 $endAt = $endAt->modify('last day of this month');
                 break;
             
+            case Event::PERIOD_NEXT:
+                $startAt = $startAt;
+                $endAt = null;
+                $limit = 6;
+                break;
             default:
                 $startAt = null;
                 $endAt = null;
@@ -111,6 +118,7 @@ class EventService
             'month' => $date->format('m'), 
             'day' => $date->format('d'),
             'date' => $date->format('y-m-d'),
+            'limit' => $limit,
         ];
     }
 
@@ -138,15 +146,20 @@ class EventService
             $this->session->set('admin_events_filters', $filters);
             return ['redirect' => $route, 'filters' => $filters];
         }
-
-        $query =  $this->eventRepository->findAllQuery($filters);
-        $events =  $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-
-        $parameters = [
+        $parameters = [];
+        if (null == $filters['limit']) {
+            $query = $this->eventRepository->findAllQuery($filters);
+            $events =  $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+            $parameters['lastPage'] = $this->paginator->lastPage($events);
+        } else {
+            $events =  $this->eventRepository->findAllFiltered($filters);
+            $parameters['lastPage'] = null;
+        }
+        
+        $parameters += [
             'form' => $form->createView(),
             'events' => $events,
-            'lastPage' => $this->paginator->lastPage($events),
-            'filters' => $filters,
+            'current_filters' => $filters,
         ];
 
         return ['parameters' => $parameters];

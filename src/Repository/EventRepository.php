@@ -33,19 +33,35 @@ class EventRepository extends ServiceEntityRepository
     {
 
         $qb = $this->createQueryBuilder('e');
-        if (null !== $filters['startAt'] && null !== $filters['endAt']) {
-            $qb->andWhere(
-                $qb->expr()->gte('e.startAt', ':startAt'),
-                $qb->expr()->lte('e.startAt', ':endAt')
-            )
-            ->setParameter('startAt', $filters['startAt'])
-            ->setParameter('endAt', $filters['endAt'])
-            ;
+        $andX = $qb->expr()->andX();
+        if (null !== $filters['startAt']) {
+            $andX->add($qb->expr()->gte('e.startAt', ':startAt'));
+            $qb->setParameter('startAt', $filters['startAt']);
+            if (null === $filters['endAt']) {
+                $qb->setMaxResults(6);
+            }
+        }
+        if (null !== $filters['endAt']) {
+            $andX->add($qb->expr()->lte('e.startAt', ':endAt'));
+            $qb->setParameter('endAt', $filters['endAt']);
+        }
+        if (!empty($andX)) {
+            $qb->andWhere($andX);
         }
         return $qb
             ->orderBy('e.startAt', 'ASC')
         ;
     }
+
+    /**
+     * @return User[] Returns an array of enent objects
+     */
+    public function findAllFiltered(array $filters): array
+    {
+        $qb = $this->findAllQuery($filters);
+
+        return $qb->getQuery()->getResult();
+    } 
 
 
     /**
@@ -60,7 +76,6 @@ class EventRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->andWhere(
                 (new Expr)->gte('e.startAt', ':today'),
-
             )
             ->setParameter('today', $today)
             ->orderBy('e.startAt', 'ASC')

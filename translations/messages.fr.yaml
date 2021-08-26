@@ -73,6 +73,7 @@ event:
     day: Jour
     week: Semaine
     month: Mois
+    next: Prochainement
     all: Tous
   type:
     casual: Randonnée occasionnelle

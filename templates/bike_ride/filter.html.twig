@@ -3,10 +3,10 @@
         {% if form.prev is defined and form.today is defined and form.next is defined %}
             <span>
                 <b>
-                {% if filters.period == constant('App\\Entity\\Event::PERIOD_DAY') %}
-                    Du {{ filters.startAt | date('d/m/Y')}}
+                {% if current_filters.period == constant('App\\Entity\\Event::PERIOD_DAY') %}
+                    Du {{ current_filters.startAt | date('d/m/Y')}}
                 {% else %}
-                    Du {{ filters.startAt | date('d/m/Y')}} au  {{ filters.endAt | date('d/m/Y')}} 
+                    Du {{ current_filters.startAt | date('d/m/Y')}} au  {{ current_filters.endAt | date('d/m/Y')}} 
                 {% endif %}
                 </b>
             </span>
