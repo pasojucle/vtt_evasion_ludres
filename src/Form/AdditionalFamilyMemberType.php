@@ -22,7 +22,7 @@ class AdditionalFamilyMemberType extends AbstractType
             if ($licence === $options['season_licence'] && !$options['is_kinship']) {
                 $form
                 ->add('additionalFamilyMember', CheckboxType::class, [
-                    'label' => 'Un membre de ma famille est déja inscri au club',
+                    'label' => 'Un membre de ma famille est déjà inscrit au club',
                     'required' => false,
                 ])
                 ;

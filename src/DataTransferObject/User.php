@@ -173,7 +173,7 @@ class User {
 
     public function isNewMember(): bool
     {
-        return 1 < $this->user->getLicences()->count();
+        return 2 > $this->user->getLicences()->count();
     }
 
     public function getHealth(): array

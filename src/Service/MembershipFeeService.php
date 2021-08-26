@@ -36,7 +36,6 @@ class MembershipFeeService
             $coverage = $seasonLicence['coverage'];
             $hasFamilyMember = $seasonLicence['hasFamilyMember'];
             $isNewMember = $user->isNewMember();
-
             $membershipFee = $this->membershipFeeAmountRepository->findOneByLicence($coverage, $isNewMember, $hasFamilyMember);
             if (null !== $membershipFee) {
                 $amount = $membershipFee->getAmount();

@@ -60,12 +60,12 @@ approval:
   going_home_alone: Autorisé à rentrer seul
 
 form:
-  health_question: Questionaire QS sport
+  health_question: Questionaire de santé
   identity: Identité
-  health: Questionnaire santé enfant
-  approval_right_image: Droit à l'image
-  licence: Formule de licence
-  membership_fee: Cotisation
+  health: Questionnaire de santé enfant
+  approval_right_image: Droit image
+  licence: Assurance
+  membership_fee: Tarifs
   registration_file: Téléchargement du pdf
 
 event:
