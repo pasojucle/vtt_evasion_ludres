@@ -102,9 +102,6 @@ class RegistrationController extends AbstractController
 
         if (1 === $step) {
             $maxStep = $step;
-            // if (null !== $progress['seasonLicence'] && null !== $progress['seasonLicence']->getCategory()) {
-            //     $maxStep = $progress['max_step'];
-            // } 
             $this->session->set('registrationMaxStep',  $maxStep);
         }
         if (null !== $form) {
@@ -295,6 +292,14 @@ class RegistrationController extends AbstractController
         }
 
         $files = [];
+
+        $registration = $this->renderView('registration/registrationPdf.html.twig', [
+            'user' => $this->userService->convertToUser($user),
+            'user_entity' => $user,
+        ]);
+        $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
+        $files[] = ['filename' => $pdfFilepath, 'form' => null];
+
         if (!empty($steps)) {
             foreach($steps as $key => $step) {
                 $isKinship = false;
@@ -341,12 +346,7 @@ class RegistrationController extends AbstractController
                 }
             }
         }
-        $registration = $this->renderView('registration/registrationPdf.html.twig', [
-            'user' => $this->userService->convertToUser($user),
-            'user_entity' => $user,
-        ]);
-        $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
-        $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
+
 
         $filename = $pdfService->joinPdf($files, $user);
 

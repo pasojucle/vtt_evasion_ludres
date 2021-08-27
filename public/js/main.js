@@ -16,11 +16,11 @@ $(document).ready(function(){
     }
     $( window ).scroll(function() {
         if ($(window).scrollTop() > 150) {
-            $('nav').addClass('fixed');
-            $('nav img').removeClass('hidden');
+            $('nav:not(.paginator)').addClass('fixed');
+            $('nav:not(.paginator) img').removeClass('hidden');
         } else {
-            $('nav').removeClass('fixed');
-            $('nav img').addClass('hidden');
+            $('nav:not(.paginator)').removeClass('fixed');
+            $('nav:not(.paginator) img').addClass('hidden');
         }
     });
     if ($('.sortable').length > 0) {

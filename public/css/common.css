@@ -176,6 +176,9 @@ body > script {display: none !important;}
     line-height: initial;
     box-sizing: border-box;
 }
+.btn:hover {
+    cursor: pointer;
+}
 .btn-xs {
     padding: 2px 3px;
 }

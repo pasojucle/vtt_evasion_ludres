@@ -45,9 +45,11 @@ class EventRepository extends ServiceEntityRepository
             $andX->add($qb->expr()->lte('e.startAt', ':endAt'));
             $qb->setParameter('endAt', $filters['endAt']);
         }
-        if (!empty($andX)) {
+
+        if (!empty($andX->getParts())) {
             $qb->andWhere($andX);
         }
+
         return $qb
             ->orderBy('e.startAt', 'ASC')
         ;

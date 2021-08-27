@@ -31,7 +31,7 @@ class EventFilterType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event){
             $filters = $event->getData();
             $form = $event->getForm();
-            if (Event::PERIOD_ALL !== $filters['period']) {
+            if (!in_array($filters['period'], [Event::PERIOD_ALL, Event::PERIOD_NEXT])) {
                 $form
                 ->add('prev', SubmitType::class, [
                     'label' => '<i class="fas fa-angle-left"></i>',

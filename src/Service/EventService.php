@@ -65,7 +65,7 @@ class EventService
     }
 
     public function getFilters(string $period, DateTime $date, ?int $direction = null) {
-        if (null !== $direction && Event::PERIOD_ALL !== $period) {
+        if (null !== $direction && !in_array($period, [Event::PERIOD_ALL, Event::PERIOD_NEXT])) {
             $intervals = [
                 Event::PERIOD_DAY => "P1D",
                 Event::PERIOD_WEEK => "P1W",
