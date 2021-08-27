@@ -102,9 +102,9 @@ class RegistrationController extends AbstractController
 
         if (1 === $step) {
             $maxStep = $step;
-            if (null !== $progress['seasonLicence'] && null !== $progress['seasonLicence']->getType()) {
-                $maxStep = $progress['max_step'];
-            } 
+            // if (null !== $progress['seasonLicence'] && null !== $progress['seasonLicence']->getCategory()) {
+            //     $maxStep = $progress['max_step'];
+            // } 
             $this->session->set('registrationMaxStep',  $maxStep);
         }
         if (null !== $form) {

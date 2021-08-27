@@ -64,9 +64,10 @@ form:
   identity: Identité
   health: Questionnaire de santé enfant
   approval_right_image: Droit image
-  licence: Assurance
+  licence_coverage: Assurance
   membership_fee: Tarifs
   registration_file: Téléchargement du pdf
+  licence_type: Type de licence
 
 event:
   period:

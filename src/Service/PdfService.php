@@ -105,7 +105,7 @@ class PdfService
 
                 // use the imported page
                 $pdf->useTemplate($templateId);
-                if (3 == $pageNo && UserType::FORM_LICENCE === $file['form']) {
+                if (3 == $pageNo && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
                     $this->addData($pdf, $user);
                 }
             }

@@ -8,8 +8,11 @@
         {% elseif form.vars.name == 'cluster' %}
             {% set children = form %}
         {% endif %}    
-
+        {% if form.vars.label is not null %}
+            <p><b>{{ form.vars.label }}</b></p>
+        {% endif %}
         {% for  child in children %}
+            
             <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
                 {{ form_widget(child)}}
                 {{ form_label(child)}}

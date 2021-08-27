@@ -27,18 +27,20 @@ class UserType extends AbstractType
     public const FORM_IDENTITY = 2;
     public const FORM_HEALTH = 3;
     public const FORM_APPROVAL = 4;
-    public const FORM_LICENCE = 5;
+    public const FORM_LICENCE_COVERAGE = 5;
     public const FORM_MEMBERSHIP_FEE = 6;
     public const FORM_REGISTRATION_FILE = 7;
+    public const FORM_LICENCE_TYPE = 8;
 
     public const FORMS = [
         self::FORM_HEALTH_QUESTION => 'form.health_question',
         self::FORM_IDENTITY => 'form.identity',
         self::FORM_HEALTH => 'form.health',
         self::FORM_APPROVAL => 'form.approval_right_image',
-        self::FORM_LICENCE => 'form.licence',
+        self::FORM_LICENCE_COVERAGE => 'form.licence_coverage',
         self::FORM_MEMBERSHIP_FEE => 'form.membership_fee',
         self::FORM_REGISTRATION_FILE => 'form.registration_file',
+        self::FORM_LICENCE_TYPE => 'form.licence_type',
     ];
 
     public const FORM_CHILDREN_RIGHT_IMAGE = 1;
@@ -96,7 +98,7 @@ class UserType extends AbstractType
                     
                 ]);
         }
-        if (self::FORM_LICENCE === $options['current']->getForm()) {
+        if (in_array($options['current']->getForm(), [self::FORM_LICENCE_COVERAGE, self::FORM_LICENCE_TYPE])) {
             $builder
                 ->add('licences', CollectionType::class, [
                     'label' => false,
@@ -104,7 +106,8 @@ class UserType extends AbstractType
                     'entry_options' => [
                         'label' => false,
                         'season_licence' => $options['season_licence'],
-                        'category' => $options['category']
+                        'category' => $options['category'],
+                        'current' => $options['current']
                     ],
                 ]);
         }

@@ -19,30 +19,33 @@ class LicenceType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $licence = $event->getData();
             $form = $event->getForm();
+            
             if ($licence === $options['season_licence']) {
-                $choices = array_flip(Licence::COVERAGES);
+                $choicesCoverage = array_flip(Licence::COVERAGES);
                 if ($options['category'] === Licence::CATEGORY_MINOR) {
-                    array_shift($choices);
+                    array_shift($choicesCoverage);
                 } 
-                if ($options['category'] === Licence::CATEGORY_ADULT && $licence->isFinal()) {
+                if ($options['category'] === Licence::CATEGORY_ADULT && $licence->isFinal() && UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
                     $form
                     ->add('type', ChoiceType::class, [
-                        'label' => false,
+                        'label' => 'Sélectionnez un type de licence avec les 3 boutons Balade, Rando et Sportive',
                         'choices' => array_flip(Licence::TYPES),
                         'expanded' => true,
                         'multiple' => false,
                         'block_prefix' => 'customcheck',
                     ]);
                 }
-                $form
-                    ->add('coverage', ChoiceType::class, [
-                        'label' => false,
-                        'choices' => $choices,
-                        'expanded' => true,
-                        'multiple' => false,
-                        'block_prefix' => 'customcheck',
-                    ])
-                ;
+                if (UserType::FORM_LICENCE_COVERAGE === $options['current']->getForm()) {
+                    $form
+                        ->add('coverage', ChoiceType::class, [
+                            'label' => 'Selectionnez une formule d\'assurance',
+                            'choices' => $choicesCoverage,
+                            'expanded' => true,
+                            'multiple' => false,
+                            'block_prefix' => 'customcheck',
+                        ])
+                    ;
+                }
             }
         });
     }
@@ -53,6 +56,7 @@ class LicenceType extends AbstractType
             'data_class' => Licence::class,
             'season_licence' => null,
             'category' => Licence::CATEGORY_ADULT,
+            'current' => null,
         ]);
     }
 }
