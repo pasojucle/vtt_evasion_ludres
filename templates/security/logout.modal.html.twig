@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{% set button_href = path('check_logout') %}
+{% block form %}{% set form = null%}{% endblock %}
+{% block modal_title %}Déconnexion{% endblock %}
+{% block body %}
+    <p>Etes-vous sûr de vouloir vous déconnecter ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Se déconnecter' %}
+    {{ parent() }}
+{% endblock %}

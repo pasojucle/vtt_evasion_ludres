@@ -6,6 +6,7 @@
     background-color: rgba(150,150,150,.5);
     left: 0px;
     display: block;
+    z-index: 90;
 }
 .modal-dialog {
     position: fixed;
@@ -37,8 +38,8 @@
     color: var(--primary-color);
 }
 .bg-primary {
-    background-color: var(--primary-color);
-    color: var(--light-color);
+    background-color: var(--light-color);
+    color: var(--primary-color);
 }
 .modal-header, .modal-footer, .modal .modal-body {
     padding: 10px;

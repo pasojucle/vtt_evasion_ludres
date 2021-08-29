@@ -156,6 +156,7 @@ class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    
     /**
      * @Route("/mon-compte", name="user_account")
      */

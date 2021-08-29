@@ -49,7 +49,7 @@
         {% endif %}
         {% if app.user is not null %}
             <li>
-                <a class="btn-logger" href="{{ path('app_logout') }}" title="Se déconnecter"><i class="fas fa-power-off"></i></a>
+                <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-toggle="modal" data-type="primary"><i class="fas fa-power-off"></i></a>
             </li>
         {% else %}
             <li>

@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -32,5 +34,25 @@ class SecurityController extends AbstractController
     public function logout()
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    /**
+     * @Route("/deconnexion", name="check_logout")
+     */
+    public function checkLogout(
+        Request $request,
+        FormFactoryInterface $formFactory
+        )
+    {
+
+
+        $form = $formFactory->create();
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('security/logout.modal.html.twig', [
+                'form' => $form->createView(),
+            ]);
+        }
+
+        return $this->redirectToRoute('app_logout');
     }
 }
