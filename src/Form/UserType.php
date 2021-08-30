@@ -111,17 +111,6 @@ class UserType extends AbstractType
                     ],
                 ]);
         }
-        // if (self::FORM_HEALTH === $options['current']->getForm()) {
-        //     $builder->add('health', HealthType::class, [
-        //         'current' => $options['current'],
-        //     ]);
-        // }
-        /*$builder
-            ->add('save', SubmitType::class, [
-                'label' => 'messages',
-                'attr' => ['class' => 'btn btn-primary float-right'],
-            ])
-        ;*/
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $user = $event->getData();

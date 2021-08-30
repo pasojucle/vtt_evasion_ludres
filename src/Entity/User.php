@@ -82,6 +82,11 @@ class User implements UserInterface
      */
     private $level;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default":0})
+     */
+    private $passwordMustBeChanged = false;
+
     public function __construct()
     {
         $this->identities = new ArrayCollection();
@@ -397,6 +402,18 @@ class User implements UserInterface
     public function setLevel(?Level $level): self
     {
         $this->level = $level;
+
+        return $this;
+    }
+
+    public function isPasswordMustBeChanged(): ?bool
+    {
+        return $this->passwordMustBeChanged;
+    }
+
+    public function setPasswordMustBeChanged(bool $passwordMustBeChanged): self
+    {
+        $this->passwordMustBeChanged = $passwordMustBeChanged;
 
         return $this;
     }

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block body %}
+    {% for flashError in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+    <div class="wrapper wrapper-medium-width full-background">
+        <div class="wrapper-title">
+            <h1>Mot de passe</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="block background-ligth">
+                {{ form_start(requestForm) }}
+                <div class="block-title bike-ride-date active">
+                    <h2>Réinitialiser votre mot de passe</h2>
+                </div>
+                <div class="block-body">
+                    <div class="form-group">
+                        {{ form_row(requestForm.licenceNumber) }}
+                    </div>
+                    <p>
+                        Entrez votre numéro de licence et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                    </p>
+                </div>
+                <div class="block-footer">
+                    <button class="btn btn-primary float-right">Envoyer la demande</button>
+                </div>
+                {{ form_end(requestForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

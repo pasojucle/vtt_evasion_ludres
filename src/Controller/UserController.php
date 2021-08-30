@@ -12,12 +12,17 @@ use App\DataTransferObject\User;
 use App\Service\PaginatorService;
 use App\Repository\UserRepository;
 use App\Entity\User as  UserEntity;
+use App\Form\ChangePasswordFormType;
+use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
@@ -168,6 +173,52 @@ class UserController extends AbstractController
 
         return $this->render('user/account.html.twig', [
             'user' => $this->userService->convertToUser($user),
+        ]);
+    }
+
+    /**
+     *
+     * @Route("/mot_de_passe/modifier", name="change_password")
+     */
+    public function changePassword(
+        Request $request, 
+        UserPasswordEncoderInterface $passwordEncoder,
+        LoginFormAuthenticator $authenticator,
+        GuardAuthenticatorHandler $guardHandler
+    ): Response
+    {
+        $user = $this->getUser();
+
+        if (null === $user) {
+            return $this->redirectToRoute('home');
+        }
+
+        $form = $this->createForm(ChangePasswordFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $encodedPassword = $passwordEncoder->encodePassword(
+                $user,
+                $form->get('plainPassword')->getData()
+            );
+
+            $user->setPassword($encodedPassword)
+                ->setPasswordMustBeChanged(false);
+            $this->getDoctrine()->getManager()->flush();
+
+            // $this->session->set('registrationPath', 'home');
+            //     $guardHandler->authenticateUserAndHandleSuccess(
+            //         $user,
+            //         $request,
+            //         $authenticator,
+            //         'main'
+            //     );
+
+            // return $this->redirectToRoute('home');
+        }
+
+        return $this->render('reset_password/reset.html.twig', [
+            'resetForm' => $form->createView(),
         ]);
     }
 }

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width full-background">
+        <div class="wrapper-title">
+            <h1>Mot de passe</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="block background-ligth">
+                {{ form_start(resetForm) }}
+                <div class="block-title bike-ride-date active">
+                    <h2>Modifier votre mot de passe</h2>
+                </div>
+                <div class="block-body">
+                    <div class="form-group">
+                        {{ form_row(resetForm.plainPassword) }}
+                    </div>
+                </div>
+                <div class="block-footer">
+                    <button class="btn btn-primary float-right">Modifier</button>
+                </div>
+                {{ form_end(resetForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
