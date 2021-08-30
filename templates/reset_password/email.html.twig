@@ -7,3 +7,19 @@
 <p>This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
 
 <p>Cheers!</p>
+
+{% extends 'base_email.html.twig' %}
+
+{% block body %}
+<b>Réinitialiser votre mot de passe</b>
+<br>
+<p>Bonjour,</p>
+
+    <p>Pour réinitialiser votre mot de passe, veuillez consulter le lien suivant</p>
+    <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+    <p>Ce lien expirera dans 1 heure.</p>
+{% endif %}
+<p>Cordialement</p>
+<p>L'équipe du VTT Évasion Ludres</p>
+<hr>
+{% endblock %}

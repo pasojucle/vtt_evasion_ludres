@@ -206,15 +206,9 @@ class UserController extends AbstractController
                 ->setPasswordMustBeChanged(false);
             $this->getDoctrine()->getManager()->flush();
 
-            // $this->session->set('registrationPath', 'home');
-            //     $guardHandler->authenticateUserAndHandleSuccess(
-            //         $user,
-            //         $request,
-            //         $authenticator,
-            //         'main'
-            //     );
+            $this->addFlash('succes', 'Votre mot de passe a bien été modifé.');
 
-            // return $this->redirectToRoute('home');
+            return $this->redirectToRoute('user_account');
         }
 
         return $this->render('reset_password/reset.html.twig', [
