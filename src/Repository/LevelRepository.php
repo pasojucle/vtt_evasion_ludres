@@ -25,9 +25,11 @@ class LevelRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('l')
         ->andWhere(
-            (new Expr)->eq('l.type', ':type')
+            (new Expr)->eq('l.type', ':type'),
+            (new Expr)->eq('l.isDeleted', ':isDeleted'),
         )
         ->setParameter('type', $type)
+        ->setParameter('isDeleted', false)
         ->orderBy('l.orderBy', 'ASC')
         ->addOrderBy('l.title', 'ASC')
         ;

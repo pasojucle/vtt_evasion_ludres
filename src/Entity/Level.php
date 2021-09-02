@@ -70,6 +70,11 @@ class Level
      */
     private $isProtected = false;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isDeleted;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -214,6 +219,18 @@ class Level
     public function setIsProtected(bool $isProtected): self
     {
         $this->isProtected = $isProtected;
+
+        return $this;
+    }
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(bool $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }
