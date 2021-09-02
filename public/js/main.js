@@ -107,7 +107,7 @@ function buildSortable() {
         helper: "clone",
         cursor: "move",
         zIndex: 99999,
-        items: "> li",
+        items: "> li.ui-state-default",
         start: function (event, ui) {
             ui.item.data('old-order', ui.item.index());
         },

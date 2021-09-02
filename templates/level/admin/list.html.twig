@@ -21,14 +21,16 @@
             <div class="block-body">
                 <ul class="sortable" data-route="admin_level_order" data-parameter="level">
                     {% for level in levels %}     
-                        <li class="ui-state-default" data-id="{{ level.id }}">
+                        <li{% if not level.isProtected %} class="ui-state-default" data-id="{{ level.id }}"{% endif %}>
                             <div>
                                 <div class="row row-list">
                                     <div class="col-md-10 col-xs-8 background-ligth">{{ level.title }}</div>
                                     <div class="col-md-2 col-xs-4">
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <a class="btn btn-primary btn-ico" href="{{ path('admin_level_edit', {'level': level.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                        <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                        {% if not level.isProtected %}
+                                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </a>

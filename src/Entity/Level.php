@@ -223,7 +223,7 @@ class Level
         return $this;
     }
 
-    public function getIsDeleted(): ?bool
+    public function isDeleted(): ?bool
     {
         return $this->isDeleted;
     }
