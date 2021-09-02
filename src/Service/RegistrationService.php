@@ -231,7 +231,7 @@ class RegistrationService
                     $this->user->getHealth()->addDisease($disease);
                 }
             }
-            $levels = $this->levelRepository->findByType(Level::TYPE_MEMBER);
+            $levels = $this->levelRepository->findByType(Level::TYPE_AWAITING_EVALUATION);
             $this->seasonLicence->setType(Licence::TYPE_HIKE);
             $this->user->setLevel(array_shift($levels));
         } else {

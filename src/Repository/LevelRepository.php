@@ -49,7 +49,6 @@ class LevelRepository extends ServiceEntityRepository
     /**
      * @return Level[] Returns an array of Level objects
      */
-
     public function findAllTypeMember():array
     {
         $qb = $this->findLevelQuery(Level::TYPE_MEMBER);
@@ -59,10 +58,25 @@ class LevelRepository extends ServiceEntityRepository
         ; 
     }
 
+
     /**
      * @return Level[] Returns an array of Level objects
      */
+    public function findAllTypeMemberNotProtected():array
+    {
+        $qb = $this->findLevelQuery(Level::TYPE_MEMBER);
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('l.isProtected', 0)
+            )
+            ->getQuery()
+            ->getResult()
+        ; 
+    }
 
+    /**
+     * @return Level[] Returns an array of Level objects
+     */
     public function findAllTypeFramer():array
     {
         $qb = $this->findLevelQuery(Level::TYPE_FRAME);
@@ -74,7 +88,6 @@ class LevelRepository extends ServiceEntityRepository
     /**
      * @return Level[] Returns an array of Level objects
      */
-
     public function findAll():array
     {
         return $this->createQueryBuilder('l')

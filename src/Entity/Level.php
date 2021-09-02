@@ -65,6 +65,11 @@ class Level
      */
     private $type;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isProtected = false;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -197,6 +202,18 @@ class Level
     public function setType(int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getIsProtected(): ?bool
+    {
+        return $this->isProtected;
+    }
+
+    public function setIsProtected(bool $isProtected): self
+    {
+        $this->isProtected = $isProtected;
 
         return $this;
     }

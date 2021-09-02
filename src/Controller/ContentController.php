@@ -192,7 +192,7 @@ class ContentController extends AbstractController
 
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_practices'),
-            'levels' => $levelRepository->findAllTypeMember(),
+            'levels' => $levelRepository->findAllTypeMemberNotProtected(),
             'background_color' => 'red',
             'background_img' => 'ecole_vtt_disciplines.jpg',
         ]);

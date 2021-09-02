@@ -95,6 +95,8 @@ level:
   type:
     member: Niveau
     frame: Encradrement
+    awaiting_evaluation: En attente d'évaluation
+    adult: Adulte
 
 link:
   position:

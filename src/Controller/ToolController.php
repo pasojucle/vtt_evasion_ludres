@@ -50,7 +50,7 @@ class ToolController extends AbstractController
             if ($request->files->get('tool_import')) {
                 $userListFile = $request->files->get('tool_import')['userList'];
 
-                $allLevel = $levelRepository->findAllTypeMember();
+                $allLevel = $levelRepository->findAll();
                 $levels = [];
 
                 foreach ($allLevel as $level) {
@@ -180,6 +180,12 @@ class ToolController extends AbstractController
         $form = $this->createForm(ToolImportType::class);
         $form->handleRequest($request);
         $count = null;
+        $allLevel = $levelRepository->findAll();
+        $levels = [];
+
+        foreach ($allLevel as $level) {
+            $levels[$level->getId()] = $level;
+        }
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             if ($request->files->get('tool_import')) {
@@ -230,6 +236,7 @@ class ToolController extends AbstractController
                             $licence->setType($licenceType);
                             $this->entityManager->persist($user);
                         }
+                        $user->setLevel((!empty($levelId)) ? $levels[(int) $levelId] : null);
                     }
                     fclose($handle);
                     $this->entityManager->flush();
