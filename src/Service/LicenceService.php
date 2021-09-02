@@ -59,9 +59,9 @@ class LicenceService
 
         $seasonsStatus = [];
 
-        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') < 9) ? $currentSeason - 1 : $currentSeason - 2;
+        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') < 9) ? $currentSeason - 2 : $currentSeason - 1;
         
-        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = (9 < (int) $today->format('m')) ? $currentSeason - 1 : 1900;
+        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = (9 < (int) $today->format('m')) ? $currentSeason - 2 : $currentSeason-1;
 
         return $seasonsStatus;
     }

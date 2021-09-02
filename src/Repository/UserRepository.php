@@ -103,12 +103,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['status']) {
 
                 $qb->innerJoin('u.licences', 'li');
-                
                 if ($filters['status'] == Licence::STATUS_NONE) {
                     $maxSeason = $this->licenceService->getSeasonByStatus(Licence::STATUS_NONE);
                     $qb
                         ->groupBy('u.id')
-                        ->having('MAX(li.season) <= :maxSeason')
+                        ->having('MAX(li.season) < :maxSeason')
                         ->setParameter('maxSeason', $maxSeason)
                         ;
                 } elseif ($filters['status'] === Licence::STATUS_WAITING_RENEW) {
