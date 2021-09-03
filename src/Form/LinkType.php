@@ -62,6 +62,7 @@ class LinkType extends AbstractType
                         'label' => false,
                         'mapped' => false,
                         'required' => false,
+                        'block_prefix' => 'custom_file',
                         'attr' => [
                             'accept' => '.bmp,.jpeg,.jpg,.png,.gif,.svg'
                         ],

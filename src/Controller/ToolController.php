@@ -147,6 +147,7 @@ class ToolController extends AbstractController
                             ->addIdentity($identity)
                             ->addLicence($licence)
                             ->setHealth($health)
+                            ->setPasswordMustBeChanged(true)
                             ;
                         $this->entityManager->persist($approval);
                         $this->entityManager->persist($identity);
