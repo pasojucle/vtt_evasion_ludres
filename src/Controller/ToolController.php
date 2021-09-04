@@ -4,15 +4,17 @@ namespace App\Controller;
 
 use DateTime;
 use App\Entity\User;
+use App\Entity\Event;
 use App\Entity\Health;
 use App\Entity\Address;
 use App\Entity\Licence;
+use App\Entity\Session;
 use App\Entity\Approval;
 use App\Entity\Identity;
 use App\Form\ToolImportType;
 use App\Entity\HealthQuestion;
-use App\Repository\LevelRepository;
 use App\Service\LicenceService;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -238,6 +240,94 @@ class ToolController extends AbstractController
                             $this->entityManager->persist($user);
                         }
                         $user->setLevel((!empty($levelId)) ? $levels[(int) $levelId] : null);
+                    }
+                    fclose($handle);
+                    $this->entityManager->flush();
+                }
+            }
+        }
+
+
+        return $this->render('tool/import.html.twig', [
+            'form' => $form->createView(),
+            'count' => $count,
+        ]);
+    }
+    /**
+     * @Route("/admin/outil/newsession/{event}", name="admin_newsession")
+     */
+    public function adminNewSession(
+        Request $request,
+        UserPasswordEncoderInterface $passwordEncoder,
+        LevelRepository $levelRepository,
+        Event $event
+    ): Response
+    {
+        $form = $this->createForm(ToolImportType::class);
+        $form->handleRequest($request);
+        $count = null;
+        $allLevel = $levelRepository->findAll();
+        $levels = [];
+
+        foreach ($allLevel as $level) {
+            $levels[$level->getId()] = $level;
+        }
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            if ($request->files->get('tool_import')) {
+                $userListFile = $request->files->get('tool_import')['userList'];
+
+                if (($handle = fopen($userListFile, "r")) !== FALSE) {
+                    while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                        list(
+                            $licenceNumber,
+                            $plainPassword,
+                            $genre,
+                            $name,
+                            $firstName,
+                            $levelId,
+                            $role,
+                            $sexe,
+                            $birthDate,
+                            $age,
+                            $status,
+                            $licenceTypeStr,
+                            $activity,
+                            $createdAt,
+                            $email,
+                            $phone,
+                            $mobile,
+                            $fullAdress,
+                            $rightImage,
+                            $hasMedicalCetificate,
+                            $medicalCetificateDate,
+                        ) = $row;
+
+                        if (preg_match('#^(N° licence ou login)$#', $licenceNumber)) {
+                            continue;
+                        }
+
+                        $user = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
+                        $clustersLevelAsUser = [];
+                        $availability = null;
+                        foreach($event->getClusters() as $cluster) {
+                            if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
+                                $clustersLevelAsUser[] = $cluster;
+                                if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {
+                                    $userCluster = $cluster;
+                                }
+                            }
+                            if (null !== $cluster->getRole() && 5 < $user->getLevel()->getId()) {
+                                $userCluster = $cluster;
+                                $availability = 1;
+                            }
+                        }
+
+                        $userSession = new Session();
+                        $userSession->setUser($user)
+                            ->setCluster($userCluster)
+                            ->setAvailability($availability);
+                        $this->entityManager->persist($userSession);
                     }
                     fclose($handle);
                     $this->entityManager->flush();
