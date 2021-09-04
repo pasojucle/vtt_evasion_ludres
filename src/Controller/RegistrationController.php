@@ -14,6 +14,7 @@ use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
 use App\Repository\ContentRepository;
+use App\Repository\IdentityRepository;
 use App\Service\RegistrationService;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +30,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -86,6 +88,7 @@ class RegistrationController extends AbstractController
         GuardAuthenticatorHandler $guardHandler,
         UserRepository $userRepository,
         MembershipFeeRepository $membershipFeeRepository,
+        IdentityRepository $identityRepository,
         int $step
     ): Response
     {
@@ -128,6 +131,10 @@ class RegistrationController extends AbstractController
                 $identity = $user->getFirstIdentity();
                 $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
                 $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
+
+                if ($identityRepository->findByNameAndFirstName($identity->getName(), $identity->getFirstName())) {
+                    $form->addError(new FormError('Un compte avec le nom '.$identity->getName().' '.$identity->getFirstName().' existe déja'));
+                }
 
                 $this->mailerService->sendMailToMember([
                     'name' => $identity->getName(),
@@ -187,21 +194,22 @@ class RegistrationController extends AbstractController
                     }
                 }
             }
+            if ($form->isValid()) {
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
 
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-
-            $this->session->remove('registrationPath');
-            if ($manualAuthenticating) {
-                $this->session->set('registrationPath', $route);
-                $guardHandler->authenticateUserAndHandleSuccess(
-                    $user,
-                    $request,
-                    $authenticator,
-                    'main'
-                );
+                $this->session->remove('registrationPath');
+                if ($manualAuthenticating) {
+                    $this->session->set('registrationPath', $route);
+                    $guardHandler->authenticateUserAndHandleSuccess(
+                        $user,
+                        $request,
+                        $authenticator,
+                        'main'
+                    );
+                }
+                return $this->redirectToRoute($route, ['step' => $progress['next']]);
             }
-            return $this->redirectToRoute($route, ['step' => $progress['next']]);
         }
 
 

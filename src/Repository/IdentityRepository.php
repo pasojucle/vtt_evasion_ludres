@@ -6,6 +6,7 @@ use App\Entity\Identity;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * @method Identity|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,20 +21,18 @@ class IdentityRepository extends ServiceEntityRepository
         parent::__construct($registry, Identity::class);
     }
 
-    // /**
-    //  * @return Identity[] Returns an array of Identity objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findByNameAndFirstName(string $name, string $firstName)
     {
         return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere(
+                (new Expr())->like('LOWER(i.name)', ':name'),
+                (new Expr())->like('LOWER(i.firstName)', ':firstName'),
+                (new Expr())->isNull('i.kinship')
+            )
+            ->setParameter('name', strtolower($name))
+            ->setParameter('firstName', strtolower($firstName))
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 }
