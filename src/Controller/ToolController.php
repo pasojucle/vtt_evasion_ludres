@@ -15,6 +15,7 @@ use App\Form\ToolImportType;
 use App\Entity\HealthQuestion;
 use App\Service\LicenceService;
 use App\Repository\LevelRepository;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -400,6 +401,75 @@ class ToolController extends AbstractController
                             ->setMobile(preg_replace('#\s#', '',$mobile))
                             ;
                         // $this->entityManager->persist($identity);
+                    }
+                    fclose($handle);
+                    $this->entityManager->flush();
+                }
+            }
+        }
+
+
+        return $this->render('tool/import.html.twig', [
+            'form' => $form->createView(),
+            'count' => $count,
+        ]);
+    }
+    /**
+     * @Route("/admin/send/login", name="admin_send_login")
+     */
+    public function adminSendLogin(
+        Request $request,
+        MailerService $mailerService
+    ): Response
+    {
+        $form = $this->createForm(ToolImportType::class);
+        $form->handleRequest($request);
+        $count = null;
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            if ($request->files->get('tool_import')) {
+                $userListFile = $request->files->get('tool_import')['userList'];
+
+                if (($handle = fopen($userListFile, "r")) !== FALSE) {
+                    while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                        list(
+                            $licenceNumber,
+                            $plainPassword,
+                            $genre,
+                            $name,
+                            $firstName,
+                            $levelId,
+                            $role,
+                            $sexe,
+                            $birthDate,
+                            $age,
+                            $status,
+                            $licenceTypeStr,
+                            $activity,
+                            $createdAt,
+                            $email,
+                            $phone,
+                            $mobile,
+                            $fullAdress,
+                            $rightImage,
+                            $hasMedicalCetificate,
+                            $medicalCetificateDate,
+                        ) = $row;
+
+                        if (preg_match('#^(N° licence ou login)$#', $licenceNumber)) {
+                            continue;
+                        }
+
+                        $user = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
+                        $mailerService->sendMailToMember([
+                            'name' => $name,
+                            'firstName' => $firstName,
+                            'email' => $email,
+                            'subject' => 'Nouveau site vttevasionludres',
+                            'licenceNumber' => $licenceNumber,
+                            'password' => $plainPassword,
+                            'sendLogin' => true,
+                        ]);
                     }
                     fclose($handle);
                     $this->entityManager->flush();

@@ -37,7 +37,7 @@ class NavService
                 ],
             ],
             [
-                'label' => 'Programe du club',
+                'label' => 'Programme du club',
                 'route' => 'schedule',
                 'pattern' => '/schedule/',
                 'subMenus' => [],
