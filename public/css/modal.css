@@ -51,3 +51,12 @@
     content: "";
     clear: both;
 }
+@media screen and (max-width: 600px) {
+    .modal-dialog {
+        width: 100%;
+        left: 0;
+    }
+    .modal-open {
+        top: 150px;
+    }
+}

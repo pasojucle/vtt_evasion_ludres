@@ -52,11 +52,11 @@
         {% endif %}
         {% if app.user is not null %}
             <li>
-                <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-toggle="modal" data-type="primary"><i class="fas fa-power-off"></i></a>
+                <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-toggle="modal" data-type="primary"><i class="fas fa-power-off"></i> <span class="xs-display">Se connecter</span></a>
             </li>
         {% else %}
             <li>
-                <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter"><i class="fas fa-sign-in-alt"></i> <span  class="xs-display">Se connecter</span></a>
+                <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter"><i class="fas fa-sign-in-alt"></i> <span class="xs-display">Se connecter</span></a>
             </li>
         {% endif %}
     </ul>
