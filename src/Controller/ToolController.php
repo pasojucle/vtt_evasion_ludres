@@ -342,6 +342,78 @@ class ToolController extends AbstractController
         ]);
     }
     /**
+     * @Route("/admin/outil/phone", name="admin_update_phone")
+     */
+    public function adminUpdatePhone(
+        Request $request,
+        UserPasswordEncoderInterface $passwordEncoder,
+        LevelRepository $levelRepository
+    ): Response
+    {
+        $form = $this->createForm(ToolImportType::class);
+        $form->handleRequest($request);
+        $count = null;
+        $allLevel = $levelRepository->findAll();
+        $levels = [];
+
+        foreach ($allLevel as $level) {
+            $levels[$level->getId()] = $level;
+        }
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            if ($request->files->get('tool_import')) {
+                $userListFile = $request->files->get('tool_import')['userList'];
+
+                if (($handle = fopen($userListFile, "r")) !== FALSE) {
+                    while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                        list(
+                            $licenceNumber,
+                            $plainPassword,
+                            $genre,
+                            $name,
+                            $firstName,
+                            $levelId,
+                            $role,
+                            $sexe,
+                            $birthDate,
+                            $age,
+                            $status,
+                            $licenceTypeStr,
+                            $activity,
+                            $createdAt,
+                            $email,
+                            $phone,
+                            $mobile,
+                            $fullAdress,
+                            $rightImage,
+                            $hasMedicalCetificate,
+                            $medicalCetificateDate,
+                        ) = $row;
+
+                        if (preg_match('#^(N° licence ou login)$#', $licenceNumber)) {
+                            continue;
+                        }
+
+                        $user = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
+                        $identity = $user->getFirstIdentity();
+                        $identity->setPhone(preg_replace('#\s#', '',$phone))
+                            ->setMobile(preg_replace('#\s#', '',$mobile))
+                            ;
+                        // $this->entityManager->persist($identity);
+                    }
+                    fclose($handle);
+                    $this->entityManager->flush();
+                }
+            }
+        }
+
+
+        return $this->render('tool/import.html.twig', [
+            'form' => $form->createView(),
+            'count' => $count,
+        ]);
+    }
+    /**
      * @Route("/admin/outil/departements", name="admin_departments")
      */
     public function adminDepartments(
