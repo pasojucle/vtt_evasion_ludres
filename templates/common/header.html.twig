@@ -14,6 +14,9 @@
         <img class="hidden" src="/images/logo.png" alt="vtt évasion ludres">
     </a>
     <ul>
+        <li  class="xs-display">
+            <a href="{{ path('home') }}" title="Accueil">Accueil</a>
+        </li>
         {% for menu in menus %}
             <li>
                 <a {% if menu.route is not null %}href="{{ path(menu.route) }}"{% endif %}{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
@@ -53,7 +56,7 @@
             </li>
         {% else %}
             <li>
-                <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter"><i class="fas fa-sign-in-alt"></i></a>
+                <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter"><i class="fas fa-sign-in-alt"></i> <span  class="xs-display">Se connecter</span></a>
             </li>
         {% endif %}
     </ul>

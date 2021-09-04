@@ -267,6 +267,9 @@ body > script {display: none !important;}
     width: 100%;
     text-align: center;
 }
+.xs-display {
+    display: none;
+}
 .float-right.btn + .float-right.btn {
     margin-right: 25px;
 }
@@ -715,6 +718,9 @@ nav.nav-tab {
     padding: 0;
 }
 @media screen and (max-width: 800px) {
+    .xs-display {
+        display: initial;
+    }
     .nav-bar {
         display: block;
         background-color: var(--background-color);
