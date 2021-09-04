@@ -140,3 +140,6 @@ table {
     border: 1px solid var(--background-color);
     padding: 1px;
 }
+br {
+    line-height: 6px;
+}
