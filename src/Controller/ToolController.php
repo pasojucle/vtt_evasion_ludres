@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ToolController extends AbstractController
@@ -519,9 +520,12 @@ class ToolController extends AbstractController
                         }
                     }
                 }
+                $this->entityManager->remove($user);
+                $this->entityManager->flush();
                 $this->addFlash('success', "Les données de l'utilisateur $fullName ont bien été supprimées");
+                return $this->redirectToRoute('admin_delete_user');
             } else {
-                $this->addFlash('danger', "Le numéro de licence $licenceNumber n'existe pas");
+                $form->addError(new FormError("Le numéro de licence $licenceNumber n'existe pas"));
             }
 
         }
