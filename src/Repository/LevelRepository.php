@@ -6,6 +6,7 @@ use App\Entity\Level;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -59,8 +60,7 @@ class LevelRepository extends ServiceEntityRepository
             ->getResult()
         ; 
     }
-
-
+    
     /**
      * @return Level[] Returns an array of Level objects
      */
@@ -119,5 +119,22 @@ class LevelRepository extends ServiceEntityRepository
         }
 
         return $nexOrder;
+    }
+
+    public function findAwaitingEvaluation(): ?Level
+    {
+        try {
+            return $this->createQueryBuilder('l')
+            ->andWhere(
+                (new Expr)->eq('l.type', ':type'),
+                (new Expr)->eq('l.isProtected', 1)
+            )
+            ->setParameter('type', Level::TYPE_MEMBER)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        } catch(NonUniqueResultException $e) {
+            return null;
+        }
     }
 }

@@ -116,7 +116,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                         ->groupBy('u.id')
                         ->having('MAX(li.season) = :season')
                         ->setParameter('season', $season);
-
                 } elseif ($filters['status'] > Licence::STATUS_WAITING_RENEW) {
                     $final = null;
                     if ($filters['status'] === Licence::STATUS_TESTING) {

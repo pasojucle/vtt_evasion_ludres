@@ -231,9 +231,9 @@ class RegistrationService
                     $this->user->getHealth()->addDisease($disease);
                 }
             }
-            $levels = $this->levelRepository->findByType(Level::TYPE_AWAITING_EVALUATION);
+            $awaitingEvaluationlevel = $this->levelRepository->findAwaitingEvaluation();
             $this->seasonLicence->setType(Licence::TYPE_HIKE);
-            $this->user->setLevel(array_shift($levels));
+            $this->user->setLevel($awaitingEvaluationlevel);
         } else {
             $approvalsGoingHomeAlone = $this->user->getApprovalsGoingHomeAlone();
             if (!$approvalsGoingHomeAlone->isEmpty()) {
