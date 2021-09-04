@@ -17,6 +17,7 @@ class Level
     public const TYPE_ALL_MEMBER = 'ALL_MEMBER ';
     public const TYPE_ALL_FRAME = 'ALL_FRAME';
     public const TYPE_ADULT = 'ADULT';
+    public const TYPE_AWAITING_EVALUATION = 0;
 
     public const TYPES = [
         self::TYPE_MEMBER => 'level.type.member',

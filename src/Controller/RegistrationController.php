@@ -132,16 +132,18 @@ class RegistrationController extends AbstractController
                 $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
                 $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
 
-                if ($identityRepository->findByNameAndFirstName($identity->getName(), $identity->getFirstName())) {
+                $userSameName = $identityRepository->findByNameAndFirstName($identity->getName(), $identity->getFirstName());
+                if (!empty($userSameName)) {
                     $form->addError(new FormError('Un compte avec le nom '.$identity->getName().' '.$identity->getFirstName().' existe déja'));
                 }
-
-                $this->mailerService->sendMailToMember([
-                    'name' => $identity->getName(),
-                    'firstName' => $identity->getFirstName(),
-                    'email' => $identity->getEmail(),
-                    'subject' => 'Création de compte sur le site VTT Evasion Ludres',
-                    'licenceNumber' => $user->getLicenceNumber(),]);
+                if ($form->isValid()) {
+                    $this->mailerService->sendMailToMember([
+                        'name' => $identity->getName(),
+                        'firstName' => $identity->getFirstName(),
+                        'email' => $identity->getEmail(),
+                        'subject' => 'Création de compte sur le site VTT Evasion Ludres',
+                        'licenceNumber' => $user->getLicenceNumber(),]);
+                }
             }
 
             if (null !== $user->getIdentities()->first()->getBirthDate()) {
