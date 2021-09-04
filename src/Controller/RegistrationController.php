@@ -182,9 +182,17 @@ class RegistrationController extends AbstractController
             }
 
             $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
+            
+            $minLimit = new DateTime();
+            $minLimit->sub(new DateInterval('P80Y'));
+            $maxLimit = new DateTime();
+            $maxLimit->sub(new DateInterval('P5Y'));
 
             if (!$user->getIdentities()->isEmpty()) {
                 foreach($user->getIdentities() as $identity) {
+                    if (null !== $identity->getBirthDate() && !($minLimit < $identity->getBirthDate() && $identity->getBirthDate() < $maxLimit)) {
+                        $form->addError(new FormError('La date de naissance est invalide'));
+                    }
                     if ($identity->isEmpty()) {
                         $address = $identity->getAddress();
                         if (null !== $address) {
