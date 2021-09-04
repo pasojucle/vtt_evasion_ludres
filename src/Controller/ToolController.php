@@ -13,9 +13,10 @@ use App\Entity\Approval;
 use App\Entity\Identity;
 use App\Form\ToolImportType;
 use App\Entity\HealthQuestion;
+use App\Service\MailerService;
 use App\Service\LicenceService;
 use App\Repository\LevelRepository;
-use App\Service\MailerService;
+use App\Form\Admin\LicenceNumberType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -481,6 +482,52 @@ class ToolController extends AbstractController
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
             'count' => $count,
+        ]);
+    }
+        /**
+     * @Route("/admin/delete/user", name="admin_delete_user")
+     */
+    public function adminDeleteUser(
+        Request $request
+    ): Response
+    {
+        $form = $this->createForm(LicenceNumberType::class);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $licenceNumber = $data['licenceNumber'];
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
+            if (null !== $user) {
+                $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
+                $allData = [
+                    [
+                        'entity' => $user->getHealth(),
+                        'methods' =>['getDiseases', 'getHealthQuestions']
+                    ],
+                    [
+                        'entity' => $user,
+                        'methods' =>['getSessions', 'getLicences', 'getApprovals', 'getIdentities']
+                    ]
+                ];
+                foreach($allData as $data) {
+                    foreach($data['methods'] as $method) {
+                        if (!$data['entity']->$method()->isEmpty()) {
+                            foreach($data['entity']->$method() as $entity) {
+                                $this->entityManager->remove($entity);
+                            }
+                        }
+                    }
+                }
+                $this->addFlash('success', "Les données de l'utilisateur $fullName ont bien été supprimées");
+            } else {
+                $this->addFlash('danger', "Le numéro de licence $licenceNumber n'existe pas");
+            }
+
+        }
+
+        return $this->render('tool/delete_user.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
     /**
