@@ -7,15 +7,15 @@
 {% if data.message is defined %}
     <p>Nous avons bien pris en compte votre demande, et nous allons y répondre au plus vite.</p>
 {% endif %}
-{% if data.licenceNumber is defined and data.sendLogin is not defined %}
+{% if data.licenceNumber is defined and data.sendLogin is not defined and data.registration_error is not defined %}
     <p>Vous venez de créer un compte sur notre site</p>
     <p>
         <b>Voici votre indentifiant pour vous connecter : </b>{{ data.licenceNumber }}<br>
         Vous seul connaissez le mot de passe
     </p>
     <p>
-        Pour valider votre inscription, vous devez vous inscrire sur le site à une sortie ou à une séance de l'école VTT.<br>
-        <a href="https://vttevasionludres.fr/programme">https://vttevasionludres.fr onglet "Programme"</a>
+        Pour valider votre inscription, vous devez vous inscrire sur le site à une sortie ou à une séance de l'école VTT en cliquant sur ce lien.<br>
+        <a href="https://vttevasionludres.fr/programme">https://vttevasionludres.fr onglet "Programme"</a> 
     </p>
 {% endif %}
 
@@ -39,6 +39,15 @@
         <b>Mot de passe : </b>{{ data.password }}<br>
     </p>
     <p>A la première connexion, nous vous invitons à modifier votre mot de passe.</p>
+{% endif %}
+{% if data.registration_error is defined %}
+    <p>Une erreur est survenue pendant la création de votre inscription au club.</p>
+    <p>Les informations du parent ou tuteur sont manquantes.<p>
+    <p>Merci de complèter votre inscription en cliquant sur <a href="http://vtt-evasion-ludres/mon-compte/inscription/1">ce lien</a></p>
+    <p>
+        <b>Voici votre indentifiant pour vous connecter : </b>{{ data.licenceNumber }}<br>
+        Vous seul connaissez le mot de passe
+    </p>
 {% endif %}
 <p>Cordialement</p>
 <p>L'équipe du VTT Évasion Ludres</p>

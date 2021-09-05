@@ -158,6 +158,8 @@ class User {
         if ($this->memberIdentity) {
             $bithDate = $this->memberIdentity->getBirthDate();
             $member = [
+                'name' => $this->memberIdentity->getName(),
+                'firstName' => $this->memberIdentity->getFirstName(),
                 'fullName' => $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName(),
                 'birthDate' => ($bithDate) ? $bithDate->format('d/m/Y'): null,
                 'birthPlace' => $this->memberIdentity->getBirthPlace().' ('.$this->memberIdentity->getBirthDepartment().')',

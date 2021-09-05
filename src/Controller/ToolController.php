@@ -17,6 +17,7 @@ use App\Service\MailerService;
 use App\Service\LicenceService;
 use App\Repository\LevelRepository;
 use App\Form\Admin\LicenceNumberType;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -462,7 +463,7 @@ class ToolController extends AbstractController
                             continue;
                         }
 
-                        $user = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
+                        // $user = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
                         $mailerService->sendMailToMember([
                             'name' => $name,
                             'firstName' => $firstName,
@@ -485,7 +486,7 @@ class ToolController extends AbstractController
             'count' => $count,
         ]);
     }
-        /**
+    /**
      * @Route("/admin/delete/user", name="admin_delete_user")
      */
     public function adminDeleteUser(
@@ -531,6 +532,50 @@ class ToolController extends AbstractController
         }
 
         return $this->render('tool/delete_user.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/registration/error", name="admin_registration_error")
+     */
+    public function adminRegistrationError(
+        Request $request,
+        MailerService $mailerService,
+        UserService $userService
+    ): Response
+    {
+        $form = $this->createForm(LicenceNumberType::class);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $licenceNumber = $data['licenceNumber'];
+            $doctrineUser = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
+            $user = $userService->convertToUser($doctrineUser);
+
+            if (null !== $user) {
+                $mailerService->sendMailToMember([
+                    'name' => $user->getMember()['name'],
+                    'firstName' => $user->getMember()['firstName'],
+                    'email' => $user->getMember()['email'],
+                    'subject' => 'Votre inscription au club de Vtt Évasion Ludres',
+                    'licenceNumber' => $user->getLicenceNumber(),
+                    'registration_error' => true,
+                ]);
+
+                $licence = $doctrineUser->getLastLicence();
+                $licence->setStatus(Licence::STATUS_IN_PROCESSING);
+                $this->entityManager->persist($licence);
+                $this->entityManager->flush();
+                return $this->redirectToRoute('admin_registration_error');
+            } else {
+                $form->addError(new FormError("Le numéro de licence $licenceNumber n'existe pas"));
+            }
+
+        }
+
+        return $this->render('tool/registration_error.html.twig', [
             'form' => $form->createView(),
         ]);
     }

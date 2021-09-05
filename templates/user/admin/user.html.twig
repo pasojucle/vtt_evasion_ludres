@@ -60,7 +60,7 @@
                                 <li><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b> {{ user.level }}</li>
                             {% endif %}
                         </ul>
-                        {% if is_granted('ROLE_ADMIN') and not licence.lock %}
+                        {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
                                 class="btn btn-secondary" title="Modifier">
                                 <i class="fas fa-edit"></i> Modifier
