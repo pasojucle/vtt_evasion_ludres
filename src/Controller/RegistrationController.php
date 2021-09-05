@@ -116,6 +116,29 @@ class RegistrationController extends AbstractController
             $user = $form->getData();
             $season = $registrationService->getSeason();
             $manualAuthenticating = false;
+            
+            $minLimit = new DateTime();
+            $minLimit->sub(new DateInterval('P80Y'));
+            $maxLimit = new DateTime();
+            $maxLimit->sub(new DateInterval('P5Y'));
+
+            if (!$user->getIdentities()->isEmpty()) {
+                foreach($user->getIdentities() as $identity) {
+                    if (null !== $identity->getBirthDate() && !($minLimit < $identity->getBirthDate() && $identity->getBirthDate() < $maxLimit)) {
+                        $form->addError(new FormError('La date de naissance est invalide'));
+                    }
+                    if ($identity->isEmpty()) {
+                        $address = $identity->getAddress();
+                        if (null !== $address) {
+                            $identity->setAddress(null);
+                            $this->entityManager->remove($address);
+                        }
+                        $user->removeIdentity($identity);
+                        $this->entityManager->remove($identity);
+                    }
+                }
+            }
+
             if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
                 // encode the plain password
                 $user->setPassword(
@@ -170,6 +193,7 @@ class RegistrationController extends AbstractController
                     $user->getIdentities()->first()->setPicture($newFilename);
                 }
             }
+
             $isMedicalCertificateRequired = false;
             if ($user->getSeasonLicence($season)->getType() !== Licence::TYPE_RIDE) {
                 $medicalCertificateDate = $user->getHealth()->getMedicalCertificateDate();
@@ -180,30 +204,8 @@ class RegistrationController extends AbstractController
                     $isMedicalCertificateRequired = true;
                 }
             }
-
             $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
-            
-            $minLimit = new DateTime();
-            $minLimit->sub(new DateInterval('P80Y'));
-            $maxLimit = new DateTime();
-            $maxLimit->sub(new DateInterval('P5Y'));
 
-            if (!$user->getIdentities()->isEmpty()) {
-                foreach($user->getIdentities() as $identity) {
-                    if (null !== $identity->getBirthDate() && !($minLimit < $identity->getBirthDate() && $identity->getBirthDate() < $maxLimit)) {
-                        $form->addError(new FormError('La date de naissance est invalide'));
-                    }
-                    if ($identity->isEmpty()) {
-                        $address = $identity->getAddress();
-                        if (null !== $address) {
-                            $identity->setAddress(null);
-                            $this->entityManager->remove($address);
-                        }
-                        $user->removeIdentity($identity);
-                        $this->entityManager->remove($identity);
-                    }
-                }
-            }
             if ($form->isValid()) {
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
@@ -221,7 +223,6 @@ class RegistrationController extends AbstractController
                 return $this->redirectToRoute($route, ['step' => $progress['next']]);
             }
         }
-
 
         return $this->render('registration/registrationForm.html.twig', [
             'step' => $step,
