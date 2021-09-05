@@ -476,13 +476,14 @@ class ToolController extends AbstractController
                             'password' => $plainPassword,
                             'sendLogin' => true,
                         ]);
+                        sleep(10);
                     }
                     fclose($handle);
                     $this->entityManager->flush();
                 }
             }
+            $this->addFlash('success', 'Terminé');
         }
-
 
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
