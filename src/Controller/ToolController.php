@@ -476,7 +476,7 @@ class ToolController extends AbstractController
                             'password' => $plainPassword,
                             'sendLogin' => true,
                         ]);
-                        sleep(10);
+                        sleep(2);
                     }
                     fclose($handle);
                     $this->entityManager->flush();
