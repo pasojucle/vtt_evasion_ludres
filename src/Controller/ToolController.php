@@ -255,6 +255,7 @@ class ToolController extends AbstractController
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
             'count' => $count,
+            'title' => 'Importer la liste des utilisateurs',
         ]);
     }
     /**
@@ -343,6 +344,7 @@ class ToolController extends AbstractController
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
             'count' => $count,
+            'title' => 'Envoi des types de licence',
         ]);
     }
     /**
@@ -415,6 +417,7 @@ class ToolController extends AbstractController
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
             'count' => $count,
+            'title' => 'Mise à jours des téléphones',
         ]);
     }
     /**
@@ -484,6 +487,7 @@ class ToolController extends AbstractController
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
             'count' => $count,
+            'title' => 'Envoi des identifiants',
         ]);
     }
     /**
