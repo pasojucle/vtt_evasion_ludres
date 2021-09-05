@@ -9,7 +9,7 @@
             {% set children = form %}
         {% endif %}    
         {% if form.vars.label is not null %}
-            <p><b>{{ form.vars.label }}</b></p>
+            <p><b>{{ form.vars.label }}</b> *</p>
         {% endif %}
         {% for  child in children %}
             
