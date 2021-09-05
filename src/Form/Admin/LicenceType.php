@@ -18,7 +18,6 @@ class LicenceType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $licence = $event->getData();
             $form = $event->getForm();
-            
             if ($licence === $options['season_licence']) {
                 $form
                     ->add('final', ChoiceType::class, [

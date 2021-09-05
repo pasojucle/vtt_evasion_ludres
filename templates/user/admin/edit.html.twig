@@ -18,8 +18,12 @@
             <div class="block-body">
                 <div class="form-group">{{ form_row(form.licenceNumber) }}</div>
                 <div class="form-group">{{ form_row(form.level) }}</div>
-                <div class="form-group">{{ form_row(form.licences[0].status) }}</div>
-                <div class="form-group">{{ form_row(form.licences[0].final) }}</div>
+                {% for licence in form.licences %}
+                    {% if licence.status is defined and licence.final is defined %}
+                        <div class="form-group">{{ form_row(licence.status) }}</div>
+                        <div class="form-group">{{ form_row(licence.final) }}</div>
+                    {% endif %}
+                {% endfor %}
             </div>
             <div class="block-footer">
                 {{ form_row(form.save) }}
