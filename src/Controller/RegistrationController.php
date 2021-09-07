@@ -97,8 +97,7 @@ class RegistrationController extends AbstractController
         }
 
         $progress = $registrationService->getProgress($step);
-
-        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus()) {
+        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus() && $progress['current']->getForm() !== UserType::FORM_REGISTRATION_FILE) {
             return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
         }
         $form = $progress['form'];
@@ -207,6 +206,19 @@ class RegistrationController extends AbstractController
             $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
             if ($form->isValid()) {
+                if ($progress['current']->getForm() === UserType::FORM_OVERVIEW) {
+
+                    $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
+
+                    $identity = $user->getFirstIdentity();
+                    $this->mailerService->sendMailToClub([
+                        'name' => $identity->getName(),
+                        'firstName' => $identity->getFirstName(),
+                        'email' => $identity->getEmail(),
+                        'subject' => 'Nouvelle Inscription sur le site VTT Evasion Ludres',
+                        'registration' => $this->generateUrl('registration_file', ['user' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+                    ]);
+                }
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 
@@ -220,6 +232,7 @@ class RegistrationController extends AbstractController
                         'main'
                     );
                 }
+
                 return $this->redirectToRoute($route, ['step' => $progress['next']]);
             }
         }
@@ -376,22 +389,8 @@ class RegistrationController extends AbstractController
             HeaderUtils::DISPOSITION_ATTACHMENT,
             'inscription_vtt_evasion_ludres.pdf'
         );
-
-        $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE);
-        $this->entityManager->flush();
         
         $response->headers->set('Content-Disposition', $disposition);
-
-        if ($this->getUser() === $user) {
-            $identity = $user->getFirstIdentity();
-            $this->mailerService->sendMailToClub([
-                'name' => $identity->getName(),
-                'firstName' => $identity->getFirstName(),
-                'email' => $identity->getEmail(),
-                'subject' => 'Nouvelle Inscription sur le site VTT Evasion Ludres',
-                'registration' => $this->generateUrl('registration_file', ['user' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-            ]);
-        }
 
         return $response;
     }

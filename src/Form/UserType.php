@@ -31,6 +31,7 @@ class UserType extends AbstractType
     public const FORM_MEMBERSHIP_FEE = 6;
     public const FORM_REGISTRATION_FILE = 7;
     public const FORM_LICENCE_TYPE = 8;
+    public const FORM_OVERVIEW = 9;
 
     public const FORMS = [
         self::FORM_HEALTH_QUESTION => 'form.health_question',
@@ -41,6 +42,7 @@ class UserType extends AbstractType
         self::FORM_MEMBERSHIP_FEE => 'form.membership_fee',
         self::FORM_REGISTRATION_FILE => 'form.registration_file',
         self::FORM_LICENCE_TYPE => 'form.licence_type',
+        self::FORM_OVERVIEW => 'form.overview',
     ];
 
     public const FORM_CHILDREN_RIGHT_IMAGE = 1;

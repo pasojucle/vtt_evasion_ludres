@@ -1,0 +1,96 @@
+<div class="block background-primary background-color">{{ current.content | raw}}</div>
+<br>
+<div class="registration">
+    {% set licence = user.seasonLicence(licence_service.currentSeason) %}
+    <h3>Renseignements concernant l'adhérent</h3>
+    <ul class="block background-ligth">
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Non et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.member.fullName }}</span>
+        </li>
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Date naissance : </b></span><span class="col-md-8 col-sx-6">{{ user.member.birthDate }}</span>
+        </li>
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Lieu de naissance : </b></span><span class="col-md-8 col-sx-6">{{ user.member.birthPlace }}</span>
+        </li>
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Adresse : </b> </span><span class="col-md-8 col-sx-6">{{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</span>
+        </li>
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.member.email }}</span>
+        </li>
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.member.phone}}</span>
+        </li>
+    </ul>
+    {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal %}
+        <ul class="block background-ligth">
+            <li class="row">
+                <span class="col-md-4 col-sx-6"><b>Numéro de sécurité sociale : </b></span><span class="col-md-8 col-sx-6">{{ user.health.socialSecurityNumber }}</span>
+                <span class="col-md-4 col-sx-6"><b>Groupe sanguin : </b></span><span class="col-md-8 col-sx-6">{{ user.health.bloodGroup }}</span>
+            </li>
+            <li class="row">
+                <span class="col-md-4 col-sx-6"><b>Mutuelle : </b></span><span class="col-md-8 col-sx-6">{{ user.health.mutualCompany }}</span>
+                <span class="col-md-4 col-sx-6"><b>Numéro : </b></span><span class="col-md-8 col-sx-6">{{ user.health.mutualNumber }}</span>
+                <span class="col-md-4 col-sx-6"><b>Date du dernier rappel antitétanique : </b></span><span class="col-md-8 col-sx-6">{{ user.health.tetanusBooster }}</span>
+            </li>
+            <li class="row">
+                <span class="col-md-4 col-sx-6"><b>Médecin traitant : </b></span><span class="col-md-8 col-sx-6">{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}</span>
+                <span class="col-md-4 col-sx-6"></span><span class="col-md-8 col-sx-6"><img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}</span>
+            </li>
+        </ul>
+        {% if user.health.diseases is not empty %}
+            <ul class="block background-ligth">
+                {% for type, diseases in user.health.diseases %}
+                    <li>
+                        <b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b>
+                    </li>
+                    {% for disease in diseases %}
+                        <li class="row">
+                            <span class="col-md-4 col-sx-6">
+                                {{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }} :
+                            {% if disease.title is not null %}
+                                 {{ disease.title }}</span>
+                            {% endif %}
+                            <span class="col-md-8 col-sx-6">
+                                {{ disease.curentTreatment }}
+                                {{ disease.emergencyTreatment }}
+                            </span>
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+            <br>
+        {% endif %}
+
+    {% endif %}
+</div>
+{% if user.kinShip %}
+<h3>Autorisation parentale pour mineur</h3>
+<ul class="block background-ligth">
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Non et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}</span>
+
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.email }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.phone}}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Second contact : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</span>
+        <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinShip.phone}}</span>
+    </li>
+</ul>
+<br>
+{% endif %}
+<ul>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Type de licence : </b></span><span class="col-md-8 col-sx-6">{{ licence.type|trans}}</span>
+        <span class="col-md-4 col-sx-6"><b>Type d'assurance : </b></span><span class="col-md-8 col-sx-6">{{ licence.coverageStr|trans}}</span>
+    </li>
+</ul>

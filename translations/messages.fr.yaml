@@ -68,6 +68,7 @@ form:
   membership_fee: Tarifs
   registration_file: Téléchargement du pdf
   licence_type: Type de licence
+  overview: Récapitulatif
 
 event:
   period:

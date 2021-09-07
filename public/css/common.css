@@ -267,6 +267,9 @@ body > script {display: none !important;}
     width: 100%;
     text-align: center;
 }
+.float-left + .float-right.btn-xl {
+    margin-top: -25px;
+}
 .xs-display {
     display: none;
 }
@@ -549,6 +552,9 @@ input[type="file"] {
     margin-left: -5px;
     margin-right: -5px;
     align-items: center;
+}
+.registration .row {
+    line-height: unset;
 }
 .row .col-md-1, .row .col-md-2, .row .col-md-3, .row .col-md-4, .row .col-md-5, .row .col-md-6, .row .col-md-7, .row .col-md-8, .row .col-md-9, .row .col-md-10, .row .col-md-11, .row .col-md-12 {
     padding: 5px;
