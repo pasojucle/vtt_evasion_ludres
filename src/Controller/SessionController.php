@@ -8,12 +8,13 @@ use App\Entity\Session;
 use App\Service\UserService;
 use App\Form\SessionEditType;
 use App\Service\EventService;
+use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
+use App\Service\SessionService;
 use App\Repository\UserRepository;
 use App\Form\SessionAvailabilityType;
 use App\Repository\ClusterRepository;
 use App\Repository\SessionRepository;
-use App\Service\SessionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 
 class SessionController extends AbstractController
 {
@@ -104,34 +106,7 @@ class SessionController extends AbstractController
         list($framers, $members) = $this->sessionService->getSessionsBytype($event);
 
         if (null === $userSession) {
-            $userCluster = null;
-            if ($event->getType() === Event::TYPE_SCHOOL) {
-                $clustersLevelAsUser = [];
-                foreach($event->getClusters() as $cluster) {
-                    if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
-                        $clustersLevelAsUser[] = $cluster;
-                        if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {
-                            $userCluster = $cluster;
-                        }
-                    }
-                    if (null !== $cluster->getRole() && $this->isGranted($cluster->getRole())) {
-                        $userCluster = $cluster;
-                    }
-                }
-
-                if (null === $userCluster) {
-                    $cluster = new Cluster();
-                    $count = count($clustersLevelAsUser) + 1;
-                    $cluster->setTitle($user->getLevel()->getTitle().' '.$count)
-                        ->setLevel($user->getLevel())
-                        ->setEvent($event)
-                        ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS);
-                }
-            }
-            
-            if (null === $userCluster && 1 === $clusters->count()) {
-                $userCluster = $clusters->first();
-            }
+            $userCluster = $this->sessionService->getCluster($event, $user, $clusters);
 
             $userSession = new Session();
             $userSession->setUser($user)
@@ -160,6 +135,48 @@ class SessionController extends AbstractController
             'event' => $event,
             'framers' => $framers,
             'members' => $members,
+        ]);
+    }
+
+
+    /**
+     * @Route("/admin/rando/inscription/{event}",
+     * name="admin_session_add")
+     */
+    public function adminSessionAdd(
+        Request $request,
+        SessionRepository $sessionRepository,
+        Event $event
+    ): Response
+    {
+        $clusters = $event->getClusters();
+
+        $form = $this->createForm(SessionType::class);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $userSession = $form->getData();
+            $user = $userSession->getUser();
+            if ($sessionRepository->findByUserAndClusters($user, $clusters)) {
+                $form->addError(new FormError('Cet adhérent est déjà inscrit'));
+            }
+    
+            if ($form->isValid()) {
+                $userCluster = $this->sessionService->getCluster($event, $user, $clusters);
+                $userSession->setCluster($userCluster);
+
+                $this->entityManager->persist($userSession);
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Le participant à bien été inscrit');
+
+                return $this->redirectToRoute('admin_event_cluster_show', ['event' => $event->getId()]);
+            }
+            
+        }
+
+        return $this->render('session/admin/add.html.twig', [
+            'form' => $form->createView(),
+            'event' => $event,
         ]);
     }
 

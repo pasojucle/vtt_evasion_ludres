@@ -165,4 +165,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return 0;
         }
     }
+
+    public function findByFullName(?string $fullName): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->innerJoin('u.identities', 'i');
+        if (null !== $fullName) {
+            dump($fullName);
+            $qb->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
+                        $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
+                    )
+                );
+        }
+        return $qb->andWhere(
+                $qb->expr()->isNull('i.kinship')
+            )
+            ->orderBy('i.name')
+            ->getQuery()
+            ->getResult();
+    }
 }

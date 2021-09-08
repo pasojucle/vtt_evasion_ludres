@@ -634,6 +634,9 @@
             "config/packages/reset_password.yaml"
         ]
     },
+    "tetranz/select2entity-bundle": {
+        "version": "v3.1.0"
+    },
     "tijsverkoyen/css-to-inline-styles": {
         "version": "2.2.3"
     },

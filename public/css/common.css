@@ -454,6 +454,9 @@ body {
     opacity: 0;
     z-index: -1;
 }
+span.select2-selection.select2-selection--single {
+    height: 32px;
+}
 input[type="file"] {
     opacity: 0;
 }

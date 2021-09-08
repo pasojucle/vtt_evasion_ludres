@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -214,5 +215,31 @@ class UserController extends AbstractController
         return $this->render('reset_password/reset.html.twig', [
             'resetForm' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route(
+     *     "/utilisateur/list/select2",
+     *     name="user_list_select2"
+     * )
+     */
+    public function userListSelect2(
+        UserRepository $userRepository,
+        Request $request
+    ): JsonResponse {
+        $query = $request->query->get('q');
+
+        $users = $userRepository->findByFullName($query);
+
+        $response = [];
+
+        foreach ($users as $user) {
+            $response[] = [
+                'id' => $user->getId(),
+                'text' => $user->GetFirstIdentity()->getName().' '.$user->GetFirstIdentity()->getFirstName(),
+            ];
+        }
+
+        return new JsonResponse($response);
     }
 }

@@ -161,6 +161,11 @@ class User implements UserInterface
         return $this;
     }
 
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->roles);
+    }
+
     /**
      * @see UserInterface
      */
@@ -416,5 +421,10 @@ class User implements UserInterface
         $this->passwordMustBeChanged = $passwordMustBeChanged;
 
         return $this;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->getFirstIdentity()->getName().' '.$this->getFirstIdentity()->getfirstName();
     }
 }
