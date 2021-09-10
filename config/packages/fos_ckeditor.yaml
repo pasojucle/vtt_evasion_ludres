@@ -8,6 +8,9 @@ fos_ck_editor:
     configs:
         minimum_config:
             toolbar: "minimum_toolbar"
+            filebrowserBrowseRoute: elfinder
+            filebrowserBrowseRouteParameters: []
+            extraPlugins: [iframe]
         full_config:
             toolbar: "full_toolbar"
             filebrowserBrowseRoute: elfinder
