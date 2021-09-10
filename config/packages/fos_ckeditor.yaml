@@ -20,7 +20,7 @@ fos_ck_editor:
 
     toolbars:
         configs:
-            minimum_toolbar: [ "@styles", "@align", "@lists", "@link"]
+            minimum_toolbar: [ "@styles", "@align", "@lists", "@image", "@link"]
             full_toolbar: [ "@styles", "@advanced_styles", "@align", "@lists", "@table", "@image", "@link", "@document",]
         items:
             document: [ "Source"]
