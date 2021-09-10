@@ -17,6 +17,8 @@ licence:
     waiting_validate: En attente de validation
     valid: Valide
     testing: 3 séances gratuites
+    testing_in_processing: 3 séances en cours
+    testing_complete: 3 séances terminées
 
 identity:
   kinship:
@@ -68,7 +70,6 @@ form:
   membership_fee: Tarifs
   registration_file: Téléchargement du pdf
   licence_type: Type de licence
-  overview: Récapitulatif
 
 event:
   period:

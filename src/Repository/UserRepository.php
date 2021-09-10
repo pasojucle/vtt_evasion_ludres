@@ -101,7 +101,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             }
             if (null !== $filters['status']) {
-
                 $qb->innerJoin('u.licences', 'li');
                 if ($filters['status'] == Licence::STATUS_NONE) {
                     $maxSeason = $this->licenceService->getSeasonByStatus(Licence::STATUS_NONE);
@@ -116,30 +115,35 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                         ->groupBy('u.id')
                         ->having('MAX(li.season) = :season')
                         ->setParameter('season', $season);
-                } elseif ($filters['status'] > Licence::STATUS_WAITING_RENEW) {
-                    $final = null;
-                    if ($filters['status'] === Licence::STATUS_TESTING) {
-                        $final = 0;
+                } elseif (in_array($filters['status'],[Licence::STATUS_TESTING_IN_PROGRESS, Licence::STATUS_TESTING_COMPLETE])) {
+                    $having = 'COUNT(s.id) BETWEEN 1 and 2';
+                    $andX = $qb->expr()->andX();
+                    $andX->add($qb->expr()->eq('li.season', ':season'));
+                    $andX->add($qb->expr()->eq('li.final', ':final'));
+                    if ($filters['status'] === Licence::STATUS_TESTING_COMPLETE) {
+                        $andX->add($qb->expr()->eq('s.isPresent', 1));
+                        $having = 'COUNT(s.id) > 2';
                     }
-                    if ($filters['status'] === Licence::STATUS_VALID) {
-                        $final = 1;
-                    }
+                    $qb
+                        ->join('u.sessions', 's')
+                        ->andWhere($andX)
+                        ->groupBy('u.id')
+                        ->having($having)
+                        ->setParameter('season', $currentSeason)
+                        ->setParameter('final', 0)
+                    ;
+
+                } elseif ($filters['status'] === Licence::STATUS_VALID) {
                     $qb
                         ->andWhere(
                             $qb->expr()->eq('li.season', ':season'),
                             $qb->expr()->eq('li.status', ':status'),
+                            $qb->expr()->eq('li.final', ':final'),
                         )
                         ->setParameter('status', $filters['status'])
                         ->setParameter('season', $currentSeason)
+                        ->setParameter('final', 1)
                     ;
-                    if (null !== $final) {
-                        $qb
-                        ->andWhere(
-                            $qb->expr()->eq('li.final', ':final'),
-                        )
-                        ->setParameter('final', $final)
-                        ;
-                    }
                 }
             }
         }
@@ -149,6 +153,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
             ->orderBy('i.name', 'ASC')
         ;
+
+        return $qb;
     }
 
     public function findNextId(): int
@@ -171,7 +177,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i');
         if (null !== $fullName) {
-            dump($fullName);
             $qb->andWhere(
                     $qb->expr()->orX(
                         $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%'.strtolower($fullName).'%')),

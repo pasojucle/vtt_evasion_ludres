@@ -45,6 +45,9 @@ class Licence
     public const STATUS_TESTING = 4;
     public const STATUS_VALID  = 5;
 
+    public const STATUS_TESTING_IN_PROGRESS = 6;
+    public const STATUS_TESTING_COMPLETE = 7;
+
     public const STATUS = [
         self::STATUS_NONE => 'licence.status.none',
         self::STATUS_WAITING_RENEW => 'licence.status.waiting_renew',

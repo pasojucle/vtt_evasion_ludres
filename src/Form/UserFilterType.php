@@ -22,8 +22,13 @@ class UserFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $statusChoices = array_reverse(Licence::STATUS, true);
-        unset($statusChoices[Licence::STATUS_IN_PROCESSING]);
+        $statusChoices = [
+            Licence::STATUS_VALID => 'licence.status.valid',
+            Licence::STATUS_WAITING_RENEW => 'licence.status.waiting_renew',
+            Licence::STATUS_NONE => 'licence.status.none',
+            Licence::STATUS_TESTING_IN_PROGRESS => 'licence.status.testing_in_processing',
+            Licence::STATUS_TESTING_COMPLETE => 'licence.status.testing_complete',
+        ];
         $builder
             ->add('fullName', TextType::class, [
                 'label' => false,

@@ -24,7 +24,7 @@ class SessionType extends AbstractType
                 'class' => User::class,
                 'primary_key' => 'id',
                 'text_property' => 'fullName',
-                'minimum_input_length' => 2,
+                'minimum_input_length' => 0,
                 'page_limit' => 10,
                 'allow_clear' => true,
                 'delay' => 250,
