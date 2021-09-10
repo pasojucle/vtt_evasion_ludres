@@ -243,6 +243,21 @@ class User {
         return $approvals;
     }
 
+    public function getApprovalGoingHome(): ?array
+    {
+        $approvalGoingHome = null;
+        if (!$this->user->getApprovals()->isEmpty()) {
+            foreach ($this->user->getApprovals() as $approval) {
+                if (UserEntity::APPROVAL_GOING_HOME_ALONE == $approval->getType()) {
+                    $approvalGoingHome = ($approval->getValue()) 
+                        ? ['class' => 'success', 'message' => 'Autorisé à rentrer seul']
+                        : ['class' => 'alert-danger', 'message' => 'Pas autorisé à rentrer seul'];
+                }
+            }
+        }
+        return $approvalGoingHome;
+    }
+
     public function getLevel(): ?Level
     {
         return $this->user->getLevel();

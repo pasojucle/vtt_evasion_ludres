@@ -28,6 +28,9 @@
                         <li>{{ user.member.address.postalCode }} {{ user.member.address.town }}</li>
                         <li><i class="fas fa-at"></i> {{ user.member.email }}</li>
                         <li><i class="fas fa-phone-square"></i> {{ user.member.phone }}</li>
+                        {% if user.approvalGoingHome is not null %}
+                            <li class="{{ user.approvalGoingHome.class }}">{{ user.approvalGoingHome.message }}</li>
+                        {% endif %}
                     </ul>
                   {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('admin_identity_edit', {'user': user.id}) }}"
