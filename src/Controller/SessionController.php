@@ -127,7 +127,9 @@ class SessionController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Votre inscription a bien été prise en compte');
 
-            return $this->redirectToRoute('user_account');
+            $this->sessionService->checkEndTesting($user);
+
+            return $this->redirectToRoute('user_account_bike_rides');
         }
 
         return $this->render('session/add.html.twig', [
@@ -169,6 +171,8 @@ class SessionController extends AbstractController
                 $this->entityManager->flush();
                 $this->addFlash('success', 'Le participant à bien été inscrit');
 
+                $this->sessionService->checkEndTesting($user);
+
                 return $this->redirectToRoute('admin_event_cluster_show', ['event' => $event->getId()]);
             }
             
@@ -202,7 +206,7 @@ class SessionController extends AbstractController
 
             $this->addFlash('success', 'Votre disponiblité à bien été modifiée');
 
-            return $this->redirectToRoute('user_account');
+            return $this->redirectToRoute('user_account_bike_rides');
         }
 
         return $this->render('session/edit.html.twig', [
@@ -233,7 +237,7 @@ class SessionController extends AbstractController
 
             $this->addFlash('success', 'Votre désinscrition à bien été prise en compte');
 
-            return $this->redirectToRoute('user_account');
+            return $this->redirectToRoute('user_account_bike_rides');
         }
 
         return $this->render('session/delete.html.twig', [

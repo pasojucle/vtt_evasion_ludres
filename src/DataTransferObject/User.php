@@ -344,4 +344,10 @@ class User {
 
         return $licenceArray;
     }
+
+    public function isEndTesting(): bool
+    {
+        $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
+        return 2 < $count;
+    }
 }

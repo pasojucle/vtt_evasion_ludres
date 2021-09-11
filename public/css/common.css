@@ -492,6 +492,17 @@ input[type="file"] {
     line-height: 45px;
     font-size: 18px;
 }
+.badge.warning {
+    /* position: absolute; */
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    top: -5px;
+    right: -15px;
+    z-index: 3;
+}
 .nav-bar {
     display: none;
 }
@@ -724,6 +735,9 @@ nav.nav-tab {
 }
 .block:not(:first-child) {
     margin-top: var(--gap);
+}
+.col-2 .block {
+    margin-top: unset;
 }
 .row-list .background-ligth {
     padding: 5px;

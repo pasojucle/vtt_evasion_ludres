@@ -18,12 +18,19 @@ class SessionService
     private SessionRepository $sessionRepository;
     private UserService $userService;
     private LevelRepository $levelRepository;
+    private MailerService $mailerService;
     
-    public function __construct(SessionRepository $sessionRepository, UserService $userService, LevelRepository $levelRepository)
+    public function __construct(
+        SessionRepository $sessionRepository,
+        UserService $userService,
+        LevelRepository $levelRepository,
+        MailerService $mailerService     
+    )
     {
         $this->sessionRepository = $sessionRepository;
         $this->userService = $userService;
         $this->levelRepository = $levelRepository;
+        $this->mailerService = $mailerService;
     }
     
     public function getSessionsBytype(Event $event, ?UserEntity $user = null): array
@@ -87,5 +94,19 @@ class SessionService
             $userCluster = $clusters->first();
         }
         return $userCluster;
+    }
+
+    public function checkEndTesting(UserEntity $entityUser): void
+    {
+        $user = $this->userService->convertToUser($entityUser);
+
+        if ($user->isEndTesting()) {
+            $this->mailerService->sendMailToMember([
+                'name' => $user->getMember()['name'],
+                'firstName' => $user->getMember()['firstName'],
+                'email' => $user->getMember()['email'],
+                'subject' => 'Fin de la période d\'éssai',
+                'testing_end' => true,]);
+        }
     }
 }
