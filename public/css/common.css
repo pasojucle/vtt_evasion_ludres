@@ -126,6 +126,22 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
+.home.success::before, .home.alert-danger::before {
+    content: '\f015';
+    color: var(--white-color);
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+}
+.home.success::before {
+    background-color: var(--success-color);
+}
+.home.alert-danger::before {
+    background-color: var(--danger-color);
+}
 .alert-black {
     color: var(--background-color);
 }

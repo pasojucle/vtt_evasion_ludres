@@ -40,17 +40,19 @@
                                                 {{ user.member.fullName }}
                                             </div>
                                             
-                                            {% if session.availability is not empty %}
-                                            <div class="col-md-3 col-xs-12">
-                                                <span class="{{ session.availabilityToView.class }}">{{ session.availabilityToView.text|trans }}</span>
-                                            </div>
-                                            {% endif %}
-                                            
-                                            <div class="col-md-4 col-xs-12">
+                                            <div class="col-md-4 col-xs-10">
                                             {% if user.level is not null %}
                                                 {{ user.level|trans }}
                                             {% endif %}
                                             </div>
+                                            {% if user.approvalGoingHome is not null %}
+                                                <span class="home {{ user.approvalGoingHome.class }}"></span>
+                                            {% endif %}
+                                            {% if session.availability is not empty %}
+                                                <div class="col-md-3 col-xs-12">
+                                                    <span class="{{ session.availabilityToView.class }}">{{ session.availabilityToView.text|trans }}</span>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     </a>
                                 </div>
