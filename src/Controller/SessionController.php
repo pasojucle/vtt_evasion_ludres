@@ -129,7 +129,7 @@ class SessionController extends AbstractController
 
             $this->sessionService->checkEndTesting($user);
 
-            return $this->redirectToRoute('user_account_bike_rides');
+            return $this->redirectToRoute('user_account');
         }
 
         return $this->render('session/add.html.twig', [
