@@ -74,9 +74,12 @@ class ContentController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $content = $form->getData();
-            $content->setOrderBy(0);
-            $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
-            $content->setOrderBy($order);
+            if (null === $content->getOrderBy()) {
+                $content->setOrderBy(0);
+                $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
+                $content->setOrderBy($order); 
+            }
+
             $this->entityManager->persist($content);
             $this->entityManager->flush();
 
