@@ -135,6 +135,7 @@ body > script {display: none !important;}
     display: inline-block;
     line-height: 30px;
     text-align: center;
+    border: 2px solid var(--white-color);
 }
 .home.success::before {
     background-color: var(--success-color);
