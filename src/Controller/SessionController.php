@@ -106,7 +106,6 @@ class SessionController extends AbstractController
 
         $domaineUser = $userService->convertToUser($user);
         $isEndTesting = $domaineUser->isEndTesting();
-        dump($isEndTesting);
 
         list($framers, $members) = $this->sessionService->getSessionsBytype($event);
 

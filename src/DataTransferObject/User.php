@@ -347,7 +347,11 @@ class User {
 
     public function isEndTesting(): bool
     {
-        $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
-        return 2 < $count;
+        dump($this->getSeasonLicence());
+        if (!empty($this->getSeasonLicence()) && !$this->getSeasonLicence()['isFinal']) {
+            $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
+            return 2 < $count;
+        }
+        return false;
     }
 }
