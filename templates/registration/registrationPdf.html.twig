@@ -160,7 +160,7 @@
         <br>
         <table class="table-fixed">
             <tr>
-                <td>{{ membership_fee_service.amount(user) }}</td>
+                <td>{{ membership_fee_service.amount(user) | raw }}</td>
             </tr>
             <tr>
                 <td>{{ user.isMedicalCertificateRequired(licence_service.currentSeason) }}</td>
