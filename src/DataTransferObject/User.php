@@ -303,7 +303,7 @@ class User {
         return $type === Level::TYPE_FRAME;
     }
 
-    Private function getLicenceArray(Licence $licence): array
+    Private function getLicenceArray(?Licence $licence): array
     {
         $licenceArray = [];
         $statusClassArray = [
@@ -347,7 +347,6 @@ class User {
 
     public function isEndTesting(): bool
     {
-        dump($this->getSeasonLicence());
         if (!empty($this->getSeasonLicence()) && !$this->getSeasonLicence()['isFinal']) {
             $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
             return 2 < $count;
