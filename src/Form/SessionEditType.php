@@ -33,7 +33,7 @@ class SessionEditType extends AbstractType
             $form = $event->getForm();
             $submitLabel = null;
 
-            if (!$options['is_already_registered']) {
+            if (!$options['is_already_registered'] && !$options['is_end_testing']) {
                 if (null !== $options['event'] && $options['event']->getAccessAvailabity($this->security->getUser())) {
                     $submitLabel = 'Enregister';
                     $form
@@ -74,7 +74,13 @@ class SessionEditType extends AbstractType
                     ;
                 }
             } else {
-                $form->addError(new FormError('Votre inscription a déjà été prise en compte !'));
+
+                if ($options['is_already_registered']) {
+                    $form->addError(new FormError('Votre inscription a déjà été prise en compte !'));
+                }elseif ($options['is_end_testing']) {
+                    $form->addError(new FormError('Votre période d\'essai est terminée ! Pour continuer à participer aux sorties, inscrivez-vous.'));
+                }
+                
             }
         });
         $builder
@@ -89,6 +95,7 @@ class SessionEditType extends AbstractType
             'clusters' => [],
             'event' => null,
             'is_already_registered' => false,
+            'is_end_testing' => false,
         ]);
     }
 }

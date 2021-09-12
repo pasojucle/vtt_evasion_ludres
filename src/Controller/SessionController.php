@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DataTransferObject\User;
 use App\Entity\Event;
 use App\Entity\Cluster;
 use App\Entity\Session;
@@ -103,6 +104,10 @@ class SessionController extends AbstractController
         $userSession = $sessionRepository->findByUserAndClusters($user, $clusters);
         $isAlreadyRegistered = ($userSession) ? true : false;
 
+        $domaineUser = $userService->convertToUser($user);
+        $isEndTesting = $domaineUser->isEndTesting();
+        dump($isEndTesting);
+
         list($framers, $members) = $this->sessionService->getSessionsBytype($event);
 
         if (null === $userSession) {
@@ -117,6 +122,7 @@ class SessionController extends AbstractController
             'clusters' => $clusters,
             'event' => $event,
             'is_already_registered' => $isAlreadyRegistered,
+            'is_end_testing' => $isEndTesting,
         ]);
         $form->handleRequest($request);
 
@@ -137,6 +143,8 @@ class SessionController extends AbstractController
             'event' => $event,
             'framers' => $framers,
             'members' => $members,
+            'is_already_registered' => $isAlreadyRegistered,
+            'is_end_testing' => $isEndTesting,
         ]);
     }
 
