@@ -127,7 +127,8 @@ class SessionController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $userSession = $form->getData();
-            
+            $user->addSession($userSession);
+
             $this->entityManager->persist($userSession);
             $this->entityManager->flush();
             $this->addFlash('success', 'Votre inscription a bien été prise en compte');
@@ -173,8 +174,9 @@ class SessionController extends AbstractController
             if ($form->isValid()) {
                 $userCluster = $this->sessionService->getCluster($event, $user, $clusters);
                 $userSession->setCluster($userCluster);
-
+                $user->addSession($userSession);
                 $this->entityManager->persist($userSession);
+
                 $this->entityManager->flush();
                 $this->addFlash('success', 'Le participant à bien été inscrit');
 
@@ -213,7 +215,7 @@ class SessionController extends AbstractController
 
             $this->addFlash('success', 'Votre disponiblité à bien été modifiée');
 
-            return $this->redirectToRoute('user_account_bike_rides');
+            return $this->redirectToRoute('user_account');
         }
 
         return $this->render('session/edit.html.twig', [
@@ -244,7 +246,7 @@ class SessionController extends AbstractController
 
             $this->addFlash('success', 'Votre désinscrition à bien été prise en compte');
 
-            return $this->redirectToRoute('user_account_bike_rides');
+            return $this->redirectToRoute('user_account');
         }
 
         return $this->render('session/delete.html.twig', [

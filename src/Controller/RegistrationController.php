@@ -89,6 +89,7 @@ class RegistrationController extends AbstractController
         UserRepository $userRepository,
         MembershipFeeRepository $membershipFeeRepository,
         IdentityRepository $identityRepository,
+        UserService $userService,
         int $step
     ): Response
     {
@@ -159,10 +160,12 @@ class RegistrationController extends AbstractController
                     $form->addError(new FormError('Un compte avec le nom '.$identity->getName().' '.$identity->getFirstName().' existe déja'));
                 }
                 if ($form->isValid()) {
+                    $domainUser = $userService->convertToUser($user);
+                    $email = $domainUser->getContactEmail();
                     $this->mailerService->sendMailToMember([
                         'name' => $identity->getName(),
                         'firstName' => $identity->getFirstName(),
-                        'email' => $identity->getEmail(),
+                        'email' => $email,
                         'subject' => 'Création de compte sur le site VTT Evasion Ludres',
                         'licenceNumber' => $user->getLicenceNumber(),]);
                 }

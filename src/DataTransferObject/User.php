@@ -136,8 +136,6 @@ class User {
         return $kinShip;
     }
 
-
-
     public function getSecondKinShip(): array
     {
         $kinShip = [];
@@ -349,6 +347,7 @@ class User {
     {
         if (!empty($this->getSeasonLicence()) && !$this->getSeasonLicence()['isFinal']) {
             $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
+            
             return 2 < $count;
         }
         return false;
@@ -362,5 +361,16 @@ class User {
             return $count;
         }
         return null;
+    }
+
+    public function getContactEmail(): string
+    {
+        $member = $this->getMember();
+        $licence = $this->getLastLicence();
+        if (!empty($licence) && $licence['category'] === Licence::CATEGORY_MINOR) {
+            $member = $this->getKinShip();
+        }
+
+        return $member['email'];
     }
 }

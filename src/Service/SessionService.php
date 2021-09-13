@@ -104,7 +104,7 @@ class SessionService
             $this->mailerService->sendMailToMember([
                 'name' => $user->getMember()['name'],
                 'firstName' => $user->getMember()['firstName'],
-                'email' => $user->getMember()['email'],
+                'email' => $user->getContactEmail(),
                 'subject' => 'Fin de la période d\'essai',
                 'testing_end' => true,]);
         }
