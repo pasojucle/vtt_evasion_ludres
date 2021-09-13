@@ -353,4 +353,14 @@ class User {
         }
         return false;
     }
+
+    public function testingBikeRides(): int
+    {
+        if (!empty($this->getSeasonLicence()) && !$this->getSeasonLicence()['isFinal']) {
+            $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
+
+            return $count;
+        }
+        return null;
+    }
 }

@@ -44,20 +44,21 @@
                     <div class="col-md-5 col-xs-12">
                         <ul>
                             <li><b>Licence :</b> {{ user.licenceNumber }}</li>
-                                <li><b>Saison {{ licence.season }}</b></li>
-                                {% if licence.status is not null %}
-                                    <li>{{ licence.statusStr|trans }}</li>
-                                {% endif %}
-                                {% if not licence.isFinal %}
-                                    <li>Période de test en cours</li>
-                                {% endif %}
+                            <li><b>Saison {{ licence.season }}</b></li>
+                            {% if licence.status is not null %}
+                                <li>{{ licence.statusStr|trans }}</li>
+                            {% endif %}
+                            {% if not licence.isFinal %}
+                                <li>Période de test en cours</li>
+                                <li>Nombre de sortie(s) : {{ user.testingBikeRides }}</li>
+                            {% endif %}
 
-                                {% if licence.type is not null %}
-                                    <li><b>Type : </b>{{ licence.type|trans }}</li>
-                                {% endif %}
-                                {% if licence.coverage is not null %}
-                                    <li><b>Assurance : </b>{{ licence.coverageStr|trans }}</li>
-                                {% endif %}
+                            {% if licence.type is not null %}
+                                <li><b>Type : </b>{{ licence.type|trans }}</li>
+                            {% endif %}
+                            {% if licence.coverage is not null %}
+                                <li><b>Assurance : </b>{{ licence.coverageStr|trans }}</li>
+                            {% endif %}
 
                             {% if user.level is not null %}
                                 <li><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b> {{ user.level }}</li>
