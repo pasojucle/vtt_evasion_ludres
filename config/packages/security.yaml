@@ -42,11 +42,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin/groupe, roles: ROLE_FRAME }
-        - { path: ^/admin/seance, roles: ROLE_FRAME }
-        - { path: ^/admin/calendrier, roles: ROLE_FRAME }
-        - { path: ^/admin/sortie, roles: ROLE_FRAME }
-        - { path: ^/admin/adherent, roles: ROLE_FRAME }
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/mon-compte, roles: ROLE_USER }
-        - { path: '^/', roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/groupe, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin/seance, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin/calendrier, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin/sortie, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin/adherent, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
+        - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
+        - { path: '^/', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
