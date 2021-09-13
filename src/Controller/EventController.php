@@ -5,16 +5,20 @@ namespace App\Controller;
 use DateTime;
 use DateInterval;
 use App\Entity\Event;
+use App\Service\UserService;
 use App\Form\Admin\EventType;
+use App\Service\EventService;
 use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
+use App\Repository\SessionRepository;
 use App\Repository\ParameterRepository;
-use App\Service\EventService;
+use App\Service\FilenameService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -117,7 +121,6 @@ class EventController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route("/admin/sortie/groupe/{event}", name="admin_event_cluster_show")
      */
@@ -133,6 +136,45 @@ class EventController extends AbstractController
             'event' => $event,
             'events_filters' =>  ($filters) ? $filters : [],
         ]);
+    }
+
+    /**
+     * @Route("/admin/sortie/export/{event}", name="admin_event_export")
+     */
+    public function adminEventExport(
+        SessionRepository $sessionRepository,
+        UserService $userService,
+        FilenameService $filenameService,
+        Event $event
+    ): Response
+    {
+        $sessions = $sessionRepository->findByEvent($event);
+        $separator = ',';
+        $fileContent = [];
+        $fileContent[] = $event->getTitle().' - '.$event->getStartAt()->format('d/m/Y');
+        $fileContent[] = '';
+        $row = ['n° de Licence', 'Nom', 'Prénom', 'Présent', 'Niveau'];
+        $fileContent[] = implode($separator, $row);
+        if (!empty($sessions)) {
+            foreach($sessions as $session) {
+                $user = $userService->convertToUser($session->getUser());
+                $member = $user->getMember();
+                $present = ($session->isPresent()) ? 'oui' : 'non';
+                $row = [$user->getLicenceNumber(), $member['name'], $member['firstName'], $present, $user->getLevel()];
+                $fileContent[] = implode($separator, $row);
+            }
+        }
+        $filename = $event->getTitle().'_'.$event->getStartAt()->format('Y_m_d');
+        $filename = $filenameService->clean($filename).'.csv';
+        $response = new Response(implode(PHP_EOL, $fileContent));
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $filename,
+        );
+        
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 
     /**
