@@ -49,3 +49,4 @@ security:
         - { path: ^/admin/adherent, roles: ROLE_FRAME }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/mon-compte, roles: ROLE_USER }
+        - { path: '^/', roles: IS_AUTHENTICATED_ANONYMOUSLY }
