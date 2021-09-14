@@ -47,6 +47,7 @@ security:
         - { path: ^/admin/calendrier, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin/sortie, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin/adherent, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin/rando, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
         - { path: '^/', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
