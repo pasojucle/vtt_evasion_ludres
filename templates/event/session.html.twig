@@ -1,0 +1,45 @@
+{% set user = user_service.converttoUser(session.user)%} 
+<li id="session-{{ session.id }}" class="li-long">
+    <div class="row row-list">
+        <div class="col-md-9 col-xs-8">
+            {% set btn_color = '' %}
+            {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') and session.availability is null and session.user.level is not null %}
+                {% set btn_color = ' style = background-color:' ~ session.user.level.color ~ ';' %}
+            {% endif %}
+            <a href="{{ path('admin_user', {'user': session.user.id}) }}" class="btn btn-list btn-light"{{ btn_color }} title="Informatons sur l'adhérent">
+                <div class="row">
+                    <div class="col-md-5 col-xs-12">
+                        {{ user.member.fullName }}
+                    </div>
+                    <div class="col-md-4 col-xs-10">
+                    {% if user.level is not null %}
+                        {{ user.level|trans }}
+                    {% endif %}
+                    </div>
+                    {% if user.approvalGoingHome is not null %}
+                        <span class="col-md-3 col-xs-2 home {{ user.approvalGoingHome.class }}"></span>
+                    {% endif %}
+                    {% if session.availability is not empty %}
+                        <div class="col-md-3 col-xs-12">
+                            <span class="{{ session.availabilityToView.class }}">{{ session.availabilityToView.text|trans }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-xs-4">
+            {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') %}
+                {% if not session.isPresent %}
+                    <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-light btn-ico admin-session-present" title="Absent"><i class="fas fa-times"></i></a>
+                {% else %}
+                    <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico admin-session-present" title="Présent"><i class="fas fa-check-circle"></i></a>
+                {% endif %}
+            {% endif %}
+            {% if hasGroups and (session.availability is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+                <a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
+                    <i class="fas fa-exchange-alt"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</li>

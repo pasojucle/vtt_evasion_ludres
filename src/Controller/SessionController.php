@@ -48,8 +48,13 @@ class SessionController extends AbstractController
 
         $session->setIsPresent($isPresent);
         $this->entityManager->flush();
+        $event = $session->getCluster()->getEvent();
 
-        return $this->redirectToRoute('admin_event_cluster_show', ['event' => $session->getCluster()->getEvent()->getId()]);
+        return $this->render('event/session.html.twig', [
+            'event' => $event,
+            'session' => $session,
+            'hasGroups' => count($event->getClusters()) > 1,
+        ]);
     }
 
     /**

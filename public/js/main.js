@@ -35,7 +35,7 @@ $(document).ready(function(){
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
     $(document).on('change', '#event_type', modifierEvent);
-    
+    $(document).on('click', '.admin-session-present', adminSessionPresent);
 });
 
 jQuery(function($){
@@ -168,11 +168,21 @@ function modifierEvent() {
         type: form.attr('method'),
         data : data,
         success: function(html) {
-          console.log($(html).find('#event_container').html());
           $('#event_container').replaceWith(
             $(html).find('#event_container')
           );
-        //   $('#cke_event_content').ckEditor();
+        }
+      });
+}
+
+function adminSessionPresent(e) {
+    e.preventDefault();
+    const target = $(this).closest('li');
+
+    $.ajax({
+        url : $(this).attr('href'),
+        success: function(html) {
+            target.replaceWith(html);
         }
       });
 }
