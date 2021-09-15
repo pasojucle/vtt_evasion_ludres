@@ -177,12 +177,11 @@ function modifierEvent() {
 
 function adminSessionPresent(e) {
     e.preventDefault();
-    const target = $(this).closest('li');
 
     $.ajax({
         url : $(this).attr('href'),
         success: function(html) {
-            target.replaceWith(html);
+            $('#sessions_container').replaceWith($(html).find('#sessions_container'));
         }
       });
 }

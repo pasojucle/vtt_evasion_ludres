@@ -17,7 +17,7 @@
                 <a href="{{ path('admin_events', events_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
-        <div class="block-body">
+        <div  id="sessions_container" class="block-body">
             {% for cluster in event.clusters %}
                 {% set hasGroups = event.clusters| length > 1 %}
                 {% if hasGroups %}

@@ -50,10 +50,9 @@ class SessionController extends AbstractController
         $this->entityManager->flush();
         $event = $session->getCluster()->getEvent();
 
-        return $this->render('event/session.html.twig', [
+        return $this->render('event/cluster_show.html.twig', [
             'event' => $event,
-            'session' => $session,
-            'hasGroups' => count($event->getClusters()) > 1,
+            'events_filters' => [],
         ]);
     }
 
@@ -249,7 +248,7 @@ class SessionController extends AbstractController
             $this->entityManager->remove($session);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Votre désinscrition à bien été prise en compte');
+            $this->addFlash('success', 'Votre désinscription à bien été prise en compte');
 
             return $this->redirectToRoute('user_account');
         }
