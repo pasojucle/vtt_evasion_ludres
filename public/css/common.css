@@ -384,7 +384,7 @@ body {
 .inputGroup {
     background-color: var(--white-color);
     display: inline-block;
-    width: 30%;
+    width: calc(33% - 2px);
     margin: 10px 0;
     position: relative;
 }

@@ -85,9 +85,9 @@ event:
 
 session:
   availability:
-    registered: Inscrit
-    available: Disponible
-    unavailable: Non disponible
+    registered: Sera présent
+    available: Disponible si besoin
+    unavailable: Absent
 
 role:
    ROLE_FRAME: Encadrant
