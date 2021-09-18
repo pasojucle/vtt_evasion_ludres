@@ -2,11 +2,14 @@ security:
     encoders:
         App\Entity\User:
             algorithm: auto
-
-    #enable_authenticator_manager: true
+    # https://symfony.com/doc/current/security/experimental_authenticators.html
+    enable_authenticator_manager: true
+    # https://symfony.com/doc/current/security.html#c-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
+        users_in_memory: { memory: null }
         app_user_provider:
             entity:
                 class: App\Entity\User
@@ -16,22 +19,18 @@ security:
         ROLE_ADMIN: [ROLE_USER, ROLE_FRAME]
         ROLE_FRAME: [ROLE_USER]
         ROLE_USER:
-
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
             lazy: true
-            provider: app_user_provider
+            provider: users_in_memory
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
-            # by default, the feature allows 5 login attempts per minute
-            #login_throttling: null
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -50,4 +49,4 @@ security:
         - { path: ^/admin/rando, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
-        - { path: '^/', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: '^/', roles: PUBLIC_ACCESS, requires_channel: https }
