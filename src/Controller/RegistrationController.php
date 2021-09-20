@@ -57,7 +57,6 @@ class RegistrationController extends AbstractController
         $this->registrationStepRepository = $registrationStepRepository;
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
-        $this->session = $this->requestStack->getSession();
         $this->mailerService = $mailerService;
         $this->licenceService = $licenceService;
         $this->userService = $userService;
@@ -92,8 +91,8 @@ class RegistrationController extends AbstractController
         int $step
     ): Response
     {
-        if ((int) $this->session->get('registrationMaxStep') < $step) {
-            $this->session->set('registrationMaxStep', $step);
+        if ((int) $this->requestStack->getSession()->get('registrationMaxStep') < $step) {
+            $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
 
         $progress = $registrationService->getProgress($step);
@@ -104,7 +103,7 @@ class RegistrationController extends AbstractController
 
         if (1 === $step) {
             $maxStep = $step;
-            $this->session->set('registrationMaxStep',  $maxStep);
+            $this->requestStack->getSession()->set('registrationMaxStep',  $maxStep);
         }
         if (null !== $form) {
             $form->handleRequest($request);
@@ -224,9 +223,9 @@ class RegistrationController extends AbstractController
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 
-                $this->session->remove('registrationPath');
+                $this->requestStack->getSession()->remove('registrationPath');
                 if ($manualAuthenticating) {
-                    $this->session->set('registrationPath', $route);
+                    $this->requestStack->getSession()->set('registrationPath', $route);
                     $guardHandler->authenticateUserAndHandleSuccess(
                         $user,
                         $request,
@@ -248,7 +247,7 @@ class RegistrationController extends AbstractController
             'next' => $progress['next'],
             'user_entity' => $progress['user'],
             'season_licence' => $progress['seasonLicence'],
-            'maxStep' => $this->session->get('registrationMaxStep'),
+            'maxStep' => $this->requestStack->getSession()->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
             'user' => $this->userService->convertToUser($progress['user']),
             'media' => self::OUT_SCREEN,

@@ -35,7 +35,6 @@ class SessionController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
-        $this->session = $this->requestStack->getSession();
         $this->sessionService = $sessionService;
     }
     /**

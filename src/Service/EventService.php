@@ -39,7 +39,6 @@ class EventService
     {
         $this->paginator = $paginator;
         $this->requestStack = $requestStack;
-        $this->session = $this->requestStack->getSession();
         $this->formFactory = $formFactory;
         $this->eventRepository = $eventRepository;
         $this->levelRepository = $levelRepository;
@@ -144,7 +143,7 @@ class EventService
             }
 
             $filters = $this->getFiltersByData($data);
-            $this->session->set('admin_events_filters', $filters);
+            $this->requestStack->getSession()->set('admin_events_filters', $filters);
             return ['redirect' => $route, 'filters' => $filters];
         }
         $parameters = [];

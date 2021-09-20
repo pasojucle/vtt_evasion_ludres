@@ -40,7 +40,6 @@ class EventController extends AbstractController
         $this->eventRepository = $eventRepository;
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
-        $this->session = $this->requestStack->getSession();
         $this->eventService = $eventService;
     }
 
@@ -92,7 +91,7 @@ class EventController extends AbstractController
             $event = new Event();
         }
         $event = $this->eventService->setDefaultContent($request, $event);
-        $filters = $this->session->get('admin_events_filters');
+        $filters = $this->requestStack->getSession()->get('admin_events_filters');
         $form = $this->createForm(EventType::class, $event);
       
         ;
@@ -131,8 +130,8 @@ class EventController extends AbstractController
         Event $event
     ): Response
     {
-        $filters = $this->session->get('admin_events_filters');
-        $this->session->set('user_return', $this->generateUrl('admin_event_cluster_show', ['event' => $event->getId()]));
+        $filters = $this->requestStack->getSession()->get('admin_events_filters');
+        $this->requestStack->getSession()->set('user_return', $this->generateUrl('admin_event_cluster_show', ['event' => $event->getId()]));
         
         return $this->render('event/cluster_show.html.twig', [
             'event' => $event,

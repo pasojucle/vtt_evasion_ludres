@@ -67,7 +67,6 @@ class RegistrationService
         $this->router = $router;
         $this->formFactory = $formFactory;
         $this->requestStack = $requestStack;
-        $this->session = $this->requestStack->getSession();
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->licenceRepository = $licenceRepository;
