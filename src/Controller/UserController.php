@@ -76,6 +76,7 @@ class UserController extends AbstractController
             'lastPage' => $paginator->lastPage($users),
             'form' => $form->createView(),
             'current_filters' => ['filtered' => (int) $filtered],
+            'count' => $paginator->total($users),
         ]);
     }
 

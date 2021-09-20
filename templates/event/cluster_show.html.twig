@@ -21,7 +21,7 @@
             {% for cluster in event.clusters %}
                 {% set hasGroups = event.clusters| length > 1 %}
                 {% if hasGroups %}
-                    <h3>{{ cluster.title }}</h3>
+                    <h3>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.sessions | length }}</span></h3>
                 {% endif %} 
                 {% if cluster.sessions | length > 0 %}
                 <ul>

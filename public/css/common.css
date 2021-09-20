@@ -483,7 +483,7 @@ input[type="file"] {
 .badge {
     display: inline-block;
     border-radius: 50%;
-    width: 45px;
+    min-width: 45px;
     height: 45px;
     text-align: center;
     box-sizing: border-box;
@@ -496,12 +496,21 @@ input[type="file"] {
     /* position: absolute; */
     background-color: var(--primary-color);
     color: var(--white-color);
-    width: 30px;
+    min-width: 30px;
     height: 30px;
-    line-height: 30px;
+    line-height: 26px;
     top: -5px;
     right: -15px;
     z-index: 3;
+}
+.badge.badge-info {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    min-width: 30px;
+    height: 30px;
+    line-height: 24px;
+    padding: 3px;
+    border-radius: 15px;
 }
 .nav-bar {
     display: none;
