@@ -63,7 +63,6 @@ class SessionService
 
     public function getCluster(Event $event, UserEntity $user, Collection $clusters)
     {
-        dump($user, $clusters);
         $userCluster = null;
         if ($event->getType() === Event::TYPE_SCHOOL) {
             $clustersLevelAsUser = [];
@@ -93,7 +92,7 @@ class SessionService
         
         if (null === $userCluster && 1 === $clusters->count()) {
             $userCluster = $clusters->first();
-        }dump($userCluster);
+        }
         return $userCluster;
     }
 
