@@ -259,4 +259,25 @@ class SessionController extends AbstractController
             'session' => $session,
         ]);
     }
+
+    /**
+     * @Route("/admin/rando/supprime/{session}",
+     * name="admin_session_delete")
+     */
+    public function adminSessionDelete(
+        UserService $userService,
+        Session $session
+    )
+    {
+        $user = $userService->convertToUser($session->getUser());
+        $event = $session->getCluster()->getEvent();
+
+        $this->entityManager->remove($session);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', $user->getMember()['fullName'].' à bien été désincrit');
+
+        return $this->redirectToRoute('admin_event_cluster_show', ['event' => $event->getId()]);
+
+    }
 }

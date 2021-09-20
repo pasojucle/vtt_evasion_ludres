@@ -40,6 +40,9 @@
                     <i class="fas fa-exchange-alt"></i>
                 </a>
             {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a class="btn btn-danger btn-ico" href="{{ path('admin_session_delete', {'session' : session.id}) }}" title="Supprimer"><i class="fas fa-times"></i></a>
+            {% endif %}
         </div>
     </div>
 </li>
