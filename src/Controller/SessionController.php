@@ -21,20 +21,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 
 class SessionController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
-    private SessionInterface $session;
+    private RequestStack $requestStack;
     private SessionService $sessionService;
 
-    public function __construct(EntityManagerInterface $entityManager, SessionInterface $session, SessionService $sessionService)
+    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack, SessionService $sessionService)
     {
         $this->entityManager = $entityManager;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->sessionService = $sessionService;
     }
     /**

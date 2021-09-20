@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Repository\RegistrationStepRepository;
 use App\Repository\SessionRepository;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationService
@@ -32,7 +32,7 @@ class RegistrationService
     private RegistrationStepRepository $registrationStepRepository;
     private UrlGeneratorInterface $router;
     private FormFactoryInterface $formFactory;
-    private SessionInterface $session;
+    private RequestStack $requestStack;
     private ?User $user;
     private EntityManagerInterface $entityManager;
     private UserRepository $userRepository;
@@ -49,7 +49,7 @@ class RegistrationService
         Security $security,
         UrlGeneratorInterface $router,
         FormFactoryInterface $formFactory,
-        SessionInterface $session,
+        RequestStack $requestStack,
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
         LicenceRepository $licenceRepository,
@@ -66,7 +66,8 @@ class RegistrationService
         $this->season = $this->licenceService->getCurrentSeason();
         $this->router = $router;
         $this->formFactory = $formFactory;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->licenceRepository = $licenceRepository;

@@ -8,32 +8,30 @@ use App\Form\UserType;
 use App\Entity\Licence;
 use App\Service\PdfService;
 use App\Service\UserService;
+use App\Service\MailerService;
 use App\Service\LicenceService;
 use App\DataTransferObject\User;
 use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
-use App\Repository\ContentRepository;
-use App\Repository\IdentityRepository;
+use App\Repository\UserRepository;
 use App\Service\RegistrationService;
+use App\Repository\ContentRepository;
+use Symfony\Component\Form\FormError;
+use App\Repository\IdentityRepository;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
-use App\Repository\UserRepository;
-use App\Service\MailerService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -42,7 +40,7 @@ class RegistrationController extends AbstractController
     
     private RegistrationStepRepository $registrationStepRepository;
     private EntityManagerInterface $entityManager;
-    private SessionInterface $session;
+    private RequestStack $requestStack;
     private MailerService $mailerService;
     private LicenceService $licenceService;
     private UserService $userService;
@@ -50,7 +48,7 @@ class RegistrationController extends AbstractController
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
         EntityManagerInterface $entityManager,
-        SessionInterface $session,
+        RequestStack $requestStack,
         LicenceService $licenceService,
         MailerService $mailerService,
         UserService $userService
@@ -58,7 +56,8 @@ class RegistrationController extends AbstractController
     {
         $this->registrationStepRepository = $registrationStepRepository;
         $this->entityManager = $entityManager;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->mailerService = $mailerService;
         $this->licenceService = $licenceService;
         $this->userService = $userService;
@@ -83,7 +82,7 @@ class RegistrationController extends AbstractController
     public function registerForm(
         Request $request,
         RegistrationService $registrationService,
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordHasher,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
         UserRepository $userRepository,
@@ -142,7 +141,7 @@ class RegistrationController extends AbstractController
             if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
                 // encode the plain password
                 $user->setPassword(
-                    $passwordEncoder->encodePassword(
+                    $passwordHasher->hashPassword(
                         $user,
                         $form->get('plainPassword')->getData()
                     )

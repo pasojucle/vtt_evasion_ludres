@@ -5,6 +5,7 @@ namespace App\Controller;
 use DateTime;
 use DateInterval;
 use App\Entity\Event;
+use App\Entity\Session;
 use App\Service\UserService;
 use App\Form\Admin\EventType;
 use App\Service\EventService;
@@ -19,26 +20,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EventController extends AbstractController
 {
     private EventRepository $eventRepository;
     private EntityManagerInterface $entityManager;
-    private SessionInterface $session;
+    private RequestStack $requestStack;
     private EventService $eventService;
 
     public function __construct(
         EventRepository $eventRepository,
-        SessionInterface $session,
+        RequestStack $requestStack,
         EntityManagerInterface $entityManager,
         EventService $eventService
     )
     {
         $this->eventRepository = $eventRepository;
         $this->entityManager = $entityManager;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->eventService = $eventService;
     }
 
@@ -157,11 +159,13 @@ class EventController extends AbstractController
         $fileContent[] = implode($separator, $row);
         if (!empty($sessions)) {
             foreach($sessions as $session) {
-                $user = $userService->convertToUser($session->getUser());
-                $member = $user->getMember();
-                $present = ($session->isPresent()) ? 'oui' : 'non';
-                $row = [$user->getLicenceNumber(), $member['name'], $member['firstName'], $present, $user->getLevel()];
-                $fileContent[] = implode($separator, $row);
+                if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
+                    $user = $userService->convertToUser($session->getUser());
+                    $member = $user->getMember();
+                    $present = ($session->isPresent()) ? 'oui' : 'non';
+                    $row = [$user->getLicenceNumber(), $member['name'], $member['firstName'], $present, $user->getLevel()];
+                    $fileContent[] = implode($separator, $row);
+                }
             }
         }
         $filename = $event->getTitle().'_'.$event->getStartAt()->format('Y_m_d');

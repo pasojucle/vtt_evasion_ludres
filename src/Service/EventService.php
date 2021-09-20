@@ -15,12 +15,12 @@ use DatePeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class EventService
 {
     private PaginatorService $paginator;
-    private SessionInterface $session;
+    private RequestStack $requestStack;
     private FormFactoryInterface $formFactory;
     private EventRepository $eventRepository;
     private LevelRepository $levelRepository;
@@ -29,7 +29,7 @@ class EventService
 
     public function __construct(
         PaginatorService $paginator,
-        SessionInterface $session, 
+        RequestStack $requestStack, 
         FormFactoryInterface $formFactory, 
         EventRepository $eventRepository,
         LevelRepository $levelRepository,
@@ -38,7 +38,8 @@ class EventService
     )
     {
         $this->paginator = $paginator;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->formFactory = $formFactory;
         $this->eventRepository = $eventRepository;
         $this->levelRepository = $levelRepository;

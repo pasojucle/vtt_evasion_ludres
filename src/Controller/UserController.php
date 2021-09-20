@@ -19,30 +19,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
     private UserRepository $userRepository;
     private EntityManagerInterface $entityManager;
-    private SessionInterface $session;
+    private RequestStack $requestStack;
     private UserService $userService;
 
     public function __construct(
         UserRepository $userRepository,
         UserService $userService,
-        SessionInterface $session,
+        RequestStack $requestStack,
         EntityManagerInterface $entityManager
     )
     {
         $this->userRepository = $userRepository;
         $this->userService = $userService;
         $this->entityManager = $entityManager;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
     }
     /**
      * @Route("/admin/adherents/{filtered}", name="admin_users", defaults={"filtered"=0})
@@ -183,7 +184,7 @@ class UserController extends AbstractController
      */
     public function changePassword(
         Request $request, 
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordHasher,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler
     ): Response
@@ -198,7 +199,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $encodedPassword = $passwordEncoder->encodePassword(
+            $encodedPassword = $passwordHasher->hashPassword(
                 $user,
                 $form->get('plainPassword')->getData()
             );

@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class MediaScreenController extends AbstractController
 {
@@ -14,8 +13,7 @@ class MediaScreenController extends AbstractController
      * @Route("/media/screen", name="media_screen", options={"expose"=true})
      */
     public function getMediaScreen(
-        Request $request,
-        SessionInterface $session
+        Request $request
     ): Response
     {
         $mediaScreen = 'md';
@@ -24,7 +22,7 @@ class MediaScreenController extends AbstractController
             $mediaScreen = ($width > 800) ? 'md' : 'xs'; 
         }
 
-        $session->set('media_screen', $mediaScreen);
+        $request->getSession()->set('media_screen', $mediaScreen);
         return new Response();
     }
 }

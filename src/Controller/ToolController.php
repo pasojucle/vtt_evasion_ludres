@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ToolController extends AbstractController
 {
@@ -44,7 +44,7 @@ class ToolController extends AbstractController
      */
     public function adminUsers(
         Request $request,
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordHasher,
         LevelRepository $levelRepository
     ): Response
     {
@@ -147,7 +147,7 @@ class ToolController extends AbstractController
                         $user->setLicenceNumber($licenceNumber)
                             ->setActive(true)
                             ->setLevel((!empty($levelId)) ? $levels[(int) $levelId] : null)
-                            ->setPassword($passwordEncoder->encodePassword($user, $plainPassword))
+                            ->setPassword($passwordHasher->hashPassword($user, $plainPassword))
                             ->setRoles([$role])
                             ->addApproval($approval)
                             ->addIdentity($identity)
@@ -180,7 +180,7 @@ class ToolController extends AbstractController
      */
     public function adminUpdateLicenceType(
         Request $request,
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordHasher,
         LevelRepository $levelRepository
     ): Response
     {
@@ -263,7 +263,7 @@ class ToolController extends AbstractController
      */
     public function adminNewSession(
         Request $request,
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordHasher,
         LevelRepository $levelRepository,
         Event $event
     ): Response
@@ -352,7 +352,7 @@ class ToolController extends AbstractController
      */
     public function adminUpdatePhone(
         Request $request,
-        UserPasswordEncoderInterface $passwordEncoder,
+        UserPasswordHasherInterface $passwordHasher,
         LevelRepository $levelRepository
     ): Response
     {
