@@ -45,7 +45,7 @@ class SessionService
                     $level = $session->getUser()->getLevel();
                     $levelId = (null !== $level) ? $level->getId() : 0;
                     $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';
-                    $members[$levelId]['members'] = $session->getUser();
+                    $members[$levelId]['members'][] = $session->getUser();
                     $members[$levelId]['title'] = $levelTitle;
                 } else {
                     if ($user !== $session->getUser()) {
@@ -63,6 +63,7 @@ class SessionService
 
     public function getCluster(Event $event, UserEntity $user, Collection $clusters)
     {
+        dump($user, $clusters);
         $userCluster = null;
         if ($event->getType() === Event::TYPE_SCHOOL) {
             $clustersLevelAsUser = [];
@@ -92,7 +93,7 @@ class SessionService
         
         if (null === $userCluster && 1 === $clusters->count()) {
             $userCluster = $clusters->first();
-        }
+        }dump($userCluster);
         return $userCluster;
     }
 
