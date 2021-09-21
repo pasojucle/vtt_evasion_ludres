@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block body %}
@@ -19,9 +18,11 @@
         </div>
         <div  id="sessions_container" class="block-body">
             {% for cluster in event.clusters %}
+                {% set presentCount = cluster.presentCount %}
+                {% set cluster = cluster.cluster %}
                 {% set hasGroups = event.clusters| length > 1 %}
                 {% if hasGroups %}
-                    <h3>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.sessions | length }}</span></h3>
+                    <h3>{{ cluster.title }} - <span class="badge badge-info">{{ presentCount }}</span></h3>
                 {% endif %} 
                 {% if cluster.sessions | length > 0 %}
                 <ul>

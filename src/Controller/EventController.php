@@ -127,6 +127,7 @@ class EventController extends AbstractController
      */
     public function adminClusterShow(
         Request $request,
+        EventService $eventService,
         Event $event
     ): Response
     {
@@ -134,7 +135,7 @@ class EventController extends AbstractController
         $this->requestStack->getSession()->set('user_return', $this->generateUrl('admin_event_cluster_show', ['event' => $event->getId()]));
         
         return $this->render('event/cluster_show.html.twig', [
-            'event' => $event,
+            'event' => $eventService->getEventWithPresentsByCluster($event),
             'events_filters' =>  ($filters) ? $filters : [],
         ]);
     }

@@ -41,7 +41,8 @@ class SessionController extends AbstractController
      * @Route("/admin/seance/{session}", name="admin_session_present")
      */
     public function adminPresent(
-        Session $session
+        Session $session,
+        EventService $eventService
     ): Response
     {
         $isPresent = !$session->isPresent();
@@ -51,7 +52,7 @@ class SessionController extends AbstractController
         $event = $session->getCluster()->getEvent();
 
         return $this->render('event/cluster_show.html.twig', [
-            'event' => $event,
+            'event' => $eventService->getEventWithPresentsByCluster($event),
             'events_filters' => [],
         ]);
     }

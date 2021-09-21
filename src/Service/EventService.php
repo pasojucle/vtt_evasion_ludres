@@ -3,16 +3,18 @@
 namespace App\Service;
 
 use DateTime;
+use DatePeriod;
 use DateInterval;
 use App\Entity\Event;
+use App\Entity\Level;
 use App\Entity\Cluster;
 use App\Form\EventFilterType;
 use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
-use DatePeriod;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -217,5 +219,42 @@ class EventService
         }
 
         return $event;
+    }
+
+    public function getEventWithPresentsByCluster(Event $event): array
+    {
+        $clusters = [];
+        if (!$event->getClusters()->isEmpty()) {
+            foreach ($event->getClusters() as $cluster) {
+                $clusters[] = [
+                    'cluster' => $cluster,
+                    'presentCount' => $this->getCountOfPresents($cluster->getSessions()),
+                ];
+            }
+        }
+
+        return [
+            'title' => $event->getTitle(),
+            'startAt' => $event->getStartAt(),
+            'endAt' => $event->getEndAt(),
+            'type' => $event->getType(),
+            'id' => $event->getId(),
+            'clusters' => $clusters,
+        ];
+    }
+
+    public function getCountOfPresents(Collection $sessions): int
+    {
+        $presentSessions = [];
+        if (!$sessions->isEmpty()) {
+            foreach ($sessions as $session) {
+                $level = $session->getUser()->getLevel();
+                $levelType = (null !== $level) ? $level->getType() : Level::TYPE_MEMBER;
+                if ($session->isPresent() && $levelType === Level::TYPE_MEMBER ) {
+                    $presentSessions[] = $session;
+                }
+            }
+        }
+        return count($presentSessions);
     }
 }
