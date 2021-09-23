@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Aide à la connexion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+{% endblock %}
+{% block body %}
+    <div class="wrapper background-red background-color col-content">
+        {% set media_screen = app.session.get('media_screen') %}
+        <div class="wrapper-img" style="background-image:url(../images/background/{{ media_screen }}/le_club.jpg)"></div>
+        <div class="wrapper-content">
+            <h1>Aide à la connexion</h1>
+            {{ content.content | raw}}
+            <div class="content-footer">
+                <a class="btn btn-red btn-xl" href="{{ path('app_login') }}"><i class="fas fa-chevron-circle-right"></i> Se connecter</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

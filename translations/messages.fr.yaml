@@ -118,7 +118,7 @@ content:
     contact: Page contact
     rules: Réglement intérieur
     legal_notices: Mentions légales
-
+    login_help: Aide à la connexion
   type:
     flash: Message flash
     content: Contenu

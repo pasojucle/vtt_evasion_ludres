@@ -293,4 +293,16 @@ class ContentController extends AbstractController
             'content' => $this->contentRepository->findOneByRoute('legal_notices'),
         ]);
     }
+
+    /**
+     * @Route("/aide/connexion", name="login_help")
+     */
+    public function loginHelp(): Response
+    {
+        return $this->render('content/login_help.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('login_help'),
+            'background_color' => 'red',
+            'background_img' => 'ecole_vtt_disciplines.jpg',
+        ]);
+    }
 }

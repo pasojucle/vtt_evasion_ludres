@@ -26,6 +26,7 @@ class Content
         'contact' => 'content.route.contact',
         'rules' => 'content.route.rules',
         'legal_notices' => 'content.route.legal_notices',
+        'login_help' => 'content.route.login_help',
     ];
 
     /**
