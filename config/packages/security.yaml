@@ -14,10 +14,15 @@ security:
                 class: App\Entity\User
                 property: licenceNumber
     role_hierarchy:
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_ADMIN]
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
         ROLE_ADMIN: [ROLE_USER, ROLE_FRAME]
         ROLE_FRAME: [ROLE_USER]
         ROLE_USER:
+
+    access_decision_manager:
+        strategy: unanimous
+        allow_if_all_abstain: false
+        
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -30,6 +35,8 @@ security:
                     - App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
+            switch_user: 
+                provider: app_user_provider
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

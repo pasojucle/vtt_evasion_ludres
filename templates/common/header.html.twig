@@ -51,13 +51,20 @@
             </li>
         {% endif %}
         {% if app.user is not null %}
-            <li>
-                <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-toggle="modal" data-type="primary"><i class="fas fa-power-off"></i> <span class="xs-display">Se connecter</span></a>
-            </li>
+            {% if is_granted('IS_IMPERSONATOR') %}
+                <li>
+                    <a  class="btn-logger" href="{{ impersonation_exit_path(path('admin_users') ) }}"><i class="fas fa-exchange-alt"></i></a>
+                </li>
+            {% else %}
+                <li>
+                    <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-toggle="modal" data-type="primary"><i class="fas fa-power-off"></i> <span class="xs-display">Se connecter</span></a>
+                </li>
+            {% endif %}
         {% else %}
             <li>
                 <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter"><i class="fas fa-sign-in-alt"></i> <span class="xs-display">Se connecter</span></a>
             </li>
         {% endif %}
+        
     </ul>
 </nav>
