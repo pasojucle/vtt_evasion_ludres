@@ -11,7 +11,7 @@
 
                 </h2>
                 <span class="tools">
-                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}
                         <a class="btn btn-primary btn-ico" href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"><i class="fas fa-exchange-alt"></i></a>
                     {% endif %}
                     <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
