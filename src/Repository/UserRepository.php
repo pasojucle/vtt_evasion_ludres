@@ -56,6 +56,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $currentSeason = $this->licenceService->getCurrentSeason();
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i')
+            ->innerJoin('u.licences', 'li')
             ;
 
         if (!empty($filters)) {
@@ -101,7 +102,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             }
             if (null !== $filters['status']) {
-                $qb->innerJoin('u.licences', 'li');
                 if ($filters['status'] == Licence::STATUS_NONE) {
                     $maxSeason = $this->licenceService->getSeasonByStatus(Licence::STATUS_NONE);
                     $qb
