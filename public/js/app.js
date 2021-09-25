@@ -36,6 +36,7 @@ $(document).ready(function(){
     $(document).on('click', '.input-file-button', getFile);
     $(document).on('change', '#event_type', modifierEvent);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
+    $(document).on('click', '.disease-active', toggleDisease);
 });
 
 jQuery(function($){
@@ -184,4 +185,15 @@ function adminSessionPresent(e) {
             $('#sessions_container').replaceWith($(html).find('#sessions_container'));
         }
       });
+}
+
+function toggleDisease() {
+    const parent = $(this).closest('div.form-group');
+    parent.find('input[type="text"]').toggleClass('disabled');
+    if(!$(this).is(':checked')) {
+        parent.find('input[type="text"]').removeAttr('required').removeAttr('required').val('');
+
+    } else {
+        parent.find('input[type="text"]').attr('required', true);
+    }
 }

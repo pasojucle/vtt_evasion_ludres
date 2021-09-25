@@ -18,24 +18,37 @@ class DiseaseType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $disease = $event->getData();
             $form = $event->getForm();
+            $isActive = !empty($disease->getCurentTreatment()) || !empty($disease->getEmergencyTreatment());
 
             $curentTreatmentClass ='widget-inline widget-curent-treatment';
+            $currentTraitementLabel = (Disease::TYPE_DISEASE === $disease->getType()) ? 'Traitement actuel' :'Lesquelles';
             if (Disease::LABEL_POLLEN_BEES >= $disease->getLabel()) {
                 $curentTreatmentClass ='widget-inline';
                 $form
-                ->add('emergencyTreatment', TextType::class, [
-                    'attr' => [
-                        'class' => 'widget-inline',
-                    ],
-                    'required' => false,
-                ]);
+                    ->add('emergencyTreatment', TextType::class, [
+                        'attr' => [
+                            'class' => ($isActive) ? 'widget-inline' : 'widget-inline disabled',
+                            'placeholder' => "Traitement d'urgence",
+                        ],
+                        'required' => $isActive,
+                    ]);
             }
             $form
                 ->add('curentTreatment', TextType::class, [
                     'attr' => [
-                        'class' => $curentTreatmentClass,
+                        'class' => ($isActive) ? $curentTreatmentClass : $curentTreatmentClass.' disabled',
+                        'placeholder' => $currentTraitementLabel,
                     ],
+                    'required' => $isActive,
+                ])
+                ->add('active', CheckboxType::class, [
+                    'mapped' => false,
+                    'data' => $isActive,
                     'required' => false,
+                    'label' => false,
+                    'attr' => [
+                        'class' => 'disease-active',
+                    ],
                 ])
             ;
             if (Disease::LABEL_OTHER === $disease->getLabel()) {
@@ -44,7 +57,8 @@ class DiseaseType extends AbstractType
                         'attr' => [
                             'class' => 'widget-inline'
                         ],
-                        'required' => false,
+                        'required' => $isActive,
+                        'disabled' => !$isActive,
                     ]);
             }
 

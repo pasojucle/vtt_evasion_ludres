@@ -341,6 +341,10 @@ body {
     height: 30px;
     line-height: 30px;
 }
+.form-group > input.disease-active {
+    width: unset;
+    height: unset;
+}
 
 .form-group > textarea {
     height: 100px;
@@ -381,6 +385,10 @@ body {
     float: right;
 }
 
+.disabled {
+    pointer-events: none;
+    background-color: var(--light-color);
+}
 .inputGroup {
     background-color: var(--white-color);
     display: inline-block;

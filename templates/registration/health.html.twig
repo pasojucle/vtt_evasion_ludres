@@ -25,6 +25,7 @@
         <b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b>
     {% endif %}
     <div class="form-group">
+        {{ form_widget(disease.children.active)}}
         <div class="widget-inline disease-label{% if disease.vars.value.label == constant('App\\Entity\\Disease::LABEL_OTHER') %} disease-label-other{% endif %}">
             {{ constant('App\\Entity\\Disease::LABELS')[disease.vars.value.label] | trans }}
         </div>
