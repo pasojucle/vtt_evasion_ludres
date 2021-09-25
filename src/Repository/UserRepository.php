@@ -150,7 +150,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb
             ->andWhere(
                 $qb->expr()->isNull('i.kinship'),
+                $qb->expr()->gt('li.status', ':inProgress')
             )
+            ->setParameter('inProgress', Licence::STATUS_IN_PROCESSING)
             ->orderBy('i.name', 'ASC')
         ;
 
