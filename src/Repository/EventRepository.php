@@ -31,7 +31,6 @@ class EventRepository extends ServiceEntityRepository
 
     public function findAllQuery(array $filters): QueryBuilder
     {
-
         $qb = $this->createQueryBuilder('e');
         $andX = $qb->expr()->andX();
         if (null !== $filters['startAt']) {
@@ -73,7 +72,7 @@ class EventRepository extends ServiceEntityRepository
     public function findEnableView(): array
     {
         $today = new DateTime();
-        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 23:59:00');
 
         return $this->createQueryBuilder('e')
             ->andWhere(

@@ -218,11 +218,12 @@ class Event
     public function getAccessAvailabity(?User $user): bool
     {
         $today = new DateTime();
+        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
         
         $level = (null !== $user) ? $user->getLevel() : null;
         $type =  (null !== $level) ? $level->getType() : null;
 
-        return $type == Level::TYPE_FRAME && $this->type === self::TYPE_SCHOOL && $today < $this->startAt;
+        return $type == Level::TYPE_FRAME && $this->type === self::TYPE_SCHOOL && $today <= $this->startAt;
     }
 
     public function isOver(): bool
