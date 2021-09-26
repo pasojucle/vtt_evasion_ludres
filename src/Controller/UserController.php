@@ -186,7 +186,7 @@ class UserController extends AbstractController
             $filtered = true;
             $request->query->set('p', 1);
         }
-dump($filters);
+
         $query =  $this->userRepository->findUserLicenceInProgressQuery($filters);
         $users =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $this->session->set('user_return', $this->generateUrl('admin_registrations', ['filtered' => true, 'p' => $request->query->get('p')]));
