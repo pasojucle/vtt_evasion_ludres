@@ -44,7 +44,7 @@ class NavService
             ],
             [
                 'label' => 'Inscription',
-                'route' => 'registration_detail',
+                'route' => null,
                 'pattern' => '/registration/',
                 'subMenus' => [
                     ['label' => 'S\'inscrire',
