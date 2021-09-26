@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
+use Proxies\__CG__\App\Entity\MembershipFee;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -71,6 +72,18 @@ class RegistrationController extends AbstractController
     {
         return $this->render('registration/detail.html.twig', [
             'content' => $contentRepository->findOneByRoute('registration_detail'),
+        ]);
+    }
+
+    /**
+     * @Route("/inscription/taris", name="registration_membership_fee")
+     */
+    public function registrationMemberShipFee(
+        MembershipFeeRepository $membershipFeeRepository
+    ): Response
+    {
+        return $this->render('registration/membership_fee_page.html.twig', [
+            'all_membership_fee' => $membershipFeeRepository->findAll(),
         ]);
     }
 

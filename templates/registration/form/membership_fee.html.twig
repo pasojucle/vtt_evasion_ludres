@@ -1,0 +1,6 @@
+{% if media == constant('App\\Controller\\RegistrationController::OUT_PDF') %}
+    <h1>{{ current.title }}</h1>
+{% endif %}
+{% include('registration/membership_fee.html.twig') %}
+
+<div class="container">{{ current.content | raw}}</div>

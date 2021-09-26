@@ -50,7 +50,7 @@
                         </div>
                     {% endif %}
                     {% if current.form is not null %}
-                        {% set template = 'registration/' ~ constant('App\\Form\\UserType::FORMS')[current.form] | replace({'form.':''}) ~ '.html.twig' %}
+                        {% set template = 'registration/form/' ~ constant('App\\Form\\UserType::FORMS')[current.form] | replace({'form.':''}) ~ '.html.twig' %}
                         {% include template %}
                     {% endif %}
                 </div>

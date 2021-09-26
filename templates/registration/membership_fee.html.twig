@@ -1,6 +1,3 @@
-{% if media == constant('App\\Controller\\RegistrationController::OUT_PDF') %}
-    <h1>{{ current.title }}</h1>
-{% endif %}
 <table class="table-border">
     <thead>
         <tr>
@@ -34,5 +31,3 @@
         {% endfor %}
     </tbody>
 </table>
-
-<div class="container">{{ current.content | raw}}</div>

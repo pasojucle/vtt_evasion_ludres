@@ -46,7 +46,14 @@ class NavService
                 'label' => 'Inscription',
                 'route' => 'registration_detail',
                 'pattern' => '/registration/',
-                'subMenus' => [],
+                'subMenus' => [
+                    ['label' => 'S\'inscrire',
+                    'route' => 'registration_detail',
+                    'pattern' => '/registration/',],
+                    ['label' => 'Les tarifs',
+                    'route' => 'registration_membership_fee',
+                    'pattern' => '/registration/',],
+                ],
             ],
             [
                 'label' => 'Liens',
