@@ -771,6 +771,9 @@ nav.nav-tab {
     box-sizing: border-box;
     padding: 25px;
 }
+.background-color .table-border,.background-color .table-border th, .background-color .table-border td {
+    border: 2px solid var(--white-color);
+}
 .block.no-padding {
     padding: 0;
 }
