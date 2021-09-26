@@ -34,6 +34,12 @@
                                     <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step': 1})}}">S'inscrire</a>
                                 </li>
                             {% endif %}
+                            {% if user.seasonLicence.status == constant('App\\Entity\\Licence::STATUS_WAITING_VALIDATE') %}
+                                <li>
+                                    <b>Mon dossier d'inscription</b>
+                                    <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                </li>
+                            {% endif %}
                             <li>
                                 <a href="{{ path('change_password') }}">Modifier mon mot de passe</a>
                             </li>
