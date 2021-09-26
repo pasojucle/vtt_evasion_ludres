@@ -31,7 +31,7 @@ $(document).ready(function(){
     $('.js-datepicker').datepicker({
         format: 'yyyy-mm-dd hh:ii',
     });
-    $(document).on('change', '#event_filter_period, #user_filter_status, #user_filter_level', submitFom);
+    $(document).on('change', '#event_filter_period, #user_filter_status, #user_filter_level, #registration_filter_isFinal', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
     $(document).on('change', '#event_type', modifierEvent);

@@ -82,6 +82,12 @@ class NavService
                  'subMenus' => [],
             ],
             [
+                'label' => 'Gestion des inscriptions',
+                 'route' => 'admin_registrations',
+                 'pattern' => '/admin_registrations/',
+                 'subMenus' => [],
+            ],
+            [
                 'label' => 'Gestion des niveaux',
                  'route' => 'admin_levels',
                  'pattern' => '/level/',
@@ -108,7 +114,7 @@ class NavService
             [
                 'label' => 'Paramètrage des inscriptions',
                  'route' => 'admin_registration_steps',
-                 'pattern' => '/registration/',
+                 'pattern' => '/registration_step/',
                  'subMenus' => [],
             ],
         ];

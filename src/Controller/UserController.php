@@ -13,6 +13,7 @@ use App\Service\PaginatorService;
 use App\Repository\UserRepository;
 use App\Entity\User as  UserEntity;
 use App\Form\ChangePasswordFormType;
+use App\Form\Admin\RegistrationFilterType;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -164,7 +165,41 @@ class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    
+
+    /**
+     * @Route("/admin/inscripton/{filtered}", name="admin_registrations", defaults={"filtered"=0})
+     */
+    public function adminRegistration(
+        PaginatorService $paginator,
+        Request $request,
+        bool $filtered
+    ): Response
+    {
+        $filters = ($filtered) ? $this->session->get('admin_registrations_filters'): null;
+
+        $form = $this->createForm(RegistrationFilterType::class, $filters);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $filters = $form->getData();
+            $this->session->set('admin_registrations_filters', $filters);
+            $filtered = true;
+            $request->query->set('p', 1);
+        }
+dump($filters);
+        $query =  $this->userRepository->findUserLicenceInProgressQuery($filters);
+        $users =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $this->session->set('user_return', $this->generateUrl('admin_registrations', ['filtered' => true, 'p' => $request->query->get('p')]));
+
+        return $this->render('user/admin/registrations.html.twig', [
+            'users' => $this->userService->convertPaginatorToUsers($users),
+            'lastPage' => $paginator->lastPage($users),
+            'current_filters' => ['filtered' => (int) $filtered],
+            'count' => $paginator->total($users),
+            'form' => $form->createView(),
+        ]);
+    }
+
     /**
      * @Route("/mon-compte", name="user_account")
      */

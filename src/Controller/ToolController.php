@@ -492,10 +492,11 @@ class ToolController extends AbstractController
         ]);
     }
     /**
-     * @Route("/admin/delete/user", name="admin_delete_user")
+     * @Route("/admin/tool/delete/user", name="admin_tool_delete_user")
      */
     public function adminDeleteUser(
-        Request $request
+        Request $request,
+        UserService $userService
     ): Response
     {
         $form = $this->createForm(LicenceNumberType::class);
@@ -507,29 +508,9 @@ class ToolController extends AbstractController
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
             if (null !== $user) {
                 $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
-                $allData = [
-                    [
-                        'entity' => $user->getHealth(),
-                        'methods' =>['getDiseases', 'getHealthQuestions']
-                    ],
-                    [
-                        'entity' => $user,
-                        'methods' =>['getSessions', 'getLicences', 'getApprovals', 'getIdentities']
-                    ]
-                ];
-                foreach($allData as $data) {
-                    foreach($data['methods'] as $method) {
-                        if (!$data['entity']->$method()->isEmpty()) {
-                            foreach($data['entity']->$method() as $entity) {
-                                $this->entityManager->remove($entity);
-                            }
-                        }
-                    }
-                }
-                $this->entityManager->remove($user);
-                $this->entityManager->flush();
+                $userService->deleteUser($user);
                 $this->addFlash('success', "Les données de l'utilisateur $fullName ont bien été supprimées");
-                return $this->redirectToRoute('admin_delete_user');
+                return $this->redirectToRoute('admin_tool_delete_user');
             } else {
                 $form->addError(new FormError("Le numéro de licence $licenceNumber n'existe pas"));
             }

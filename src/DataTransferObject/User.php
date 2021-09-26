@@ -325,6 +325,7 @@ class User {
             }
 
             $licenceArray = [
+                'id' => $licence->getId(),
                 'createdAt' => ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null,
                 'season' => $licence->getSeason(),
                 'isFinal' => $licence->isFinal(),
@@ -353,7 +354,7 @@ class User {
         return false;
     }
 
-    public function testingBikeRides(): int
+    public function testingBikeRides(): ?int
     {
         if (!empty($this->getSeasonLicence()) && !$this->getSeasonLicence()['isFinal']) {
             $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;

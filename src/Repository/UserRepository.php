@@ -47,10 +47,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    /**
-     * @return User[] Returns an array of Userobjects
-     */
-
     public function findMemberQuery(?array $filters): QueryBuilder
     {
         $currentSeason = $this->licenceService->getCurrentSeason();
@@ -152,7 +148,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $qb->expr()->isNull('i.kinship'),
                 $qb->expr()->gt('li.status', ':inProgress')
             )
-            ->setParameter('inProgress', Licence::STATUS_IN_PROCESSING)
+            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE)
             ->orderBy('i.name', 'ASC')
         ;
 
@@ -193,4 +189,31 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
+    public function findUserLicenceInProgressQuery(?array $filters): QueryBuilder
+    {
+        $currentSeason = $this->licenceService->getCurrentSeason();
+
+        $qb = $this->createQueryBuilder('u')
+            ->innerJoin('u.identities', 'i')
+            ->innerJoin('u.licences', 'li');
+        if (null !== $filters && array_key_exists('isFinal', $filters) && null !== $filters['isFinal']) {
+            $qb->andWhere(
+                $qb->expr()->eq('li.final', ':isFinal')
+            )
+            ->setParameter('isFinal', $filters['isFinal'])
+            ;
+        }
+        return $qb
+            ->andWhere(
+                $qb->expr()->isNull('i.kinship'),
+                $qb->expr()->eq('li.status', ':inProgress'),
+                $qb->expr()->eq('li.season', ':season'),
+            )
+            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('season', $currentSeason)
+            ->orderBy('i.name', 'ASC')
+            ;
+    }
+
 }
