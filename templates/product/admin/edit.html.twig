@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% set title = (product is null) ? 'Ajouter une sortie' : 'Modifier une sortie' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        {{ form_start(form) }}
+        <div class="block">
+            <div class="block-title">
+                <h2>{{ title }}</h2>
+                <span class="tools">
+                    <a href="{{ path('admin_products') }}" class="btn btn-secondary btn-ico" title="Retour à la gestion de la boutique"><i class="fas fa-chevron-left"></i></a>
+                </span>
+            </div>
+            <div class="block-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <img class="user-picture" src="{{ product.pathName }}" alt="{{ product.filename }}">   
+                        <div class="form-group">
+                            {{ form_row(form.pictureFile) }}
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.content) }}
+                        {{ form_row(form.price) }}
+                        {{ form_row(form.ref) }}
+                        {{ form_label(form.sizes) }}
+                        <ul>
+                            {% for size in form.sizes.children %}
+                                <li>
+                                    {{ form_widget(size) }}
+                                    {{ form_label(size) }}
+                                </li>  
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                
+
+            </div>
+            <div class="block-footer">
+                {{ form_errors(form) }}
+                {{ form_row(form.save) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -56,6 +56,12 @@ class NavService
                 ],
             ],
             [
+                'label' => 'Boutique',
+                'route' => 'products',
+                'pattern' => '/product/',
+                'subMenus' => [],
+            ],
+            [
                 'label' => 'Liens',
                 'route' => 'links',
                 'pattern' => '/links/',
@@ -85,6 +91,12 @@ class NavService
                 'label' => 'Gestion des inscriptions',
                  'route' => 'admin_registrations',
                  'pattern' => '/admin_registrations/',
+                 'subMenus' => [],
+            ],
+            [
+                'label' => 'Gestion de la boutique',
+                 'route' => 'admin_products',
+                 'pattern' => '/produit/',
                  'subMenus' => [],
             ],
             [

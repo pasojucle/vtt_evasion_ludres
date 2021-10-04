@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon pannier{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width background-green background-color">
+        <div class="wrapper-title">
+            <h1>Mon panier</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="row">
+                <div class="col-md-4 col-xs-10">Article</div>
+                <div class="col-md-2 col-xs-10">Taille</div>
+                <div class="col-md-2 col-xs-10 align-right">Prix/u</div>
+                <div class="col-md-2 col-xs-10 align-right">Quantité</div>
+                <div class="col-md-2 col-xs-10 align-right">Total</div>
+            </div>
+            <ul>
+                {% for line in view.lines %}
+                    <li class="row row-list">
+                        <div class="col-md-4 col-xs-10">{{ line.product.name }}<br>{{ line.product.ref }}</div>
+                        <div class="col-md-2 col-xs-10">{{ line.size }}</div>
+                        <div class="col-md-2 col-xs-10 align-right">{{ line.product.price }}</div>
+                        <div class="col-md-2 col-xs-10 align-right">{{ line.quantity }}</div>
+                        <div class="col-md-2 col-xs-10 align-right">{{ line.amount }}</div>
+                    </li>
+
+                {% endfor %}
+            </ul>
+            <div class="row">
+                <div class="col-md-10 col-xs-10 align-right">Total :</div>
+                <div class="col-md-2 col-xs-10  align-right">{{ view.amount }}</div>
+            </div>
+        </div>
+        <div class="wrapper-footer">
+            <a href="{{ path('products') }}" class="btn btn-secondary float-right">Retour à la boutique</a>
+        </div>
+    </div>
+{% endblock %}

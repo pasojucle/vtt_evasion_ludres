@@ -377,7 +377,9 @@ body {
 .form-group-inline:not(:first-child) {
     margin-left: 50px;
 }
-
+.form-group-small {
+    width: 100px;
+}
 .float-left {
     float: left;
 }
@@ -551,11 +553,11 @@ input[type="file"] {
 .filters span b {
     color: var(--primary-color-darker);
 }
-.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-content {
+.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-content, .col-6 {
     display: grid;
 }
-.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3 {
-    gap: 5%;
+.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-6 {
+    gap: 50px;
 }
 .col-no-gap {
     gap: unset;
@@ -582,6 +584,9 @@ input[type="file"] {
 .col-4 {
     grid-template-columns: repeat(4, 1fr);
     text-align: center;
+}
+.col-6 {
+    grid-template-columns: repeat(6, 1fr);
 }
 .col-2-1 {
     grid-template-columns: 2fr 1fr;
@@ -726,7 +731,7 @@ nav.nav-tab {
 .background-color h1, .background-color h2, .background-color h3, .background-color {
     color: var(--white-color);
 }
-.background-color h1, .background-color h2, .background-color h3{
+.background-color h2, .background-color h3{
     margin-bottom: 10px;
 }
 .background-color a:not(.btn) {

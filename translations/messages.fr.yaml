@@ -122,3 +122,9 @@ content:
   type:
     flash: Message flash
     content: Contenu
+
+    order:
+      in_progress: En cours
+      ordeded: Commandée
+      valided: Validée
+      completed: Cloturée

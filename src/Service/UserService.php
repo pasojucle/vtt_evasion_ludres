@@ -61,28 +61,6 @@ class UserService
         return $usersDto;
     }
 
-    public function uploadFile($pictureFile): ?string
-    {
-        if ($pictureFile) {
-            $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
-            if (!is_dir($this->params->get('uploads_directory'))) {
-                mkdir($this->params->get('uploads_directory'));
-            }
-            try {
-                $pictureFile->move(
-                    $this->params->get('uploads_directory'),
-                    $newFilename
-                );
-            } catch (FileException $e) {
-                // ... handle exception if something happens during file upload
-            }
-            return $newFilename;
-        }
-        return null;
-    }
-
     public function deleteUser(EntityUser $user):void
     {
         $allData = [

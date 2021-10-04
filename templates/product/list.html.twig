@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Boutique{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width background-ligth">
+        <div class="wrapper-title">
+            <h1>Boutique</h1>
+        </div>
+        <div class="wrapper-body col-4">
+            {% for product in products %}
+                <div class="card card-product">
+                    <a href="{{ path('product_show', {'product': product.id}) }}">
+                        <div class="card-img" style="background-image:url({{ product.pathName }}"></div>
+                        <div class="card-body">
+                            {{ product.name }}
+                            {% if is_granted('ROLE_USER') %}
+                                <p class="price">{{ product.price }}</p>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% include('common/pagination.html.twig') %}
+    </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width background-ligth">
+        <div class="wrapper-title">
+            <h1>Boutique</h1>
+        </div>
+        <div class="wrapper-body col-1-3 product-detail">
+            <div> 
+                    <img src="{{ product.pathName }}" alt="{{ product.filename }}">  
+            </div>
+            <div>
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.ref }}</p>
+                <br>
+                <p>{{ product.content|raw}}</p>
+                {% if is_granted('ROLE_USER') %}
+                    <div class="price">{{ product.price }}</div>
+                    {{ form_start(form)}}
+                    <div class="form-group">
+                        {{ form_row(form.size)}}
+                        {{ form_row(form.quantity)}}
+                    </div>
+                    {{ form_end(form)}}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

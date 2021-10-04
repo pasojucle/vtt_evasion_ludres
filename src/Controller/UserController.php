@@ -15,6 +15,7 @@ use App\Entity\User as  UserEntity;
 use App\Form\ChangePasswordFormType;
 use App\Form\Admin\RegistrationFilterType;
 use App\Security\LoginFormAuthenticator;
+use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -136,6 +137,7 @@ class UserController extends AbstractController
         Request $request,
         LicenceService $licenceService,
         UserService $userService,
+        UploadService $uploadService,
         UserEntity $user
     ): Response
     {
@@ -152,7 +154,7 @@ class UserController extends AbstractController
             $identity = $form->getData();
             if ($request->files->get('identity')) {
                 $pictureFile = $request->files->get('identity')['pictureFile'];
-                $newFilename = $userService->uploadFile($pictureFile);
+                $newFilename = $uploadService->uploadFile($pictureFile);
                 if (null !== $newFilename) {
                     $identity->setPicture($newFilename);
                 }

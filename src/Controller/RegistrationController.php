@@ -10,6 +10,7 @@ use App\Service\PdfService;
 use App\Service\UserService;
 use App\Service\MailerService;
 use App\Service\LicenceService;
+use App\Service\UploadService;
 use App\Entity\RegistrationStep;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
@@ -43,6 +44,7 @@ class RegistrationController extends AbstractController
     private MailerService $mailerService;
     private LicenceService $licenceService;
     private UserService $userService;
+    private UploadService $uploadService;
 
     public function __construct(
         RegistrationStepRepository $registrationStepRepository,
@@ -50,7 +52,8 @@ class RegistrationController extends AbstractController
         RequestStack $requestStack,
         LicenceService $licenceService,
         MailerService $mailerService,
-        UserService $userService
+        UserService $userService,
+        UploadService $uploadService
     )
     {
         $this->registrationStepRepository = $registrationStepRepository;
@@ -59,6 +62,7 @@ class RegistrationController extends AbstractController
         $this->mailerService = $mailerService;
         $this->licenceService = $licenceService;
         $this->userService = $userService;
+        $this->uploadeService = $uploadService;
     }
 
     /**
@@ -199,7 +203,7 @@ class RegistrationController extends AbstractController
 
             if ($request->files->get('user')) {
                 $pictureFile = $request->files->get('user')['identities'][0]['pictureFile'];
-                $newFilename = $this->userService->uploadFile($pictureFile);
+                $newFilename = $this->uploadService->uploadFile($pictureFile);
                 if (null !== $newFilename) {
                     $user->getIdentities()->first()->setPicture($newFilename);
                 }
@@ -369,7 +373,7 @@ class RegistrationController extends AbstractController
                             ]);
                             $formName = str_replace('form.', '', UserType::FORMS[$step->getForm()]);
 
-                            $template = 'registration/'.$formName.'.html.twig';
+                            $template = 'registration/form/'.$formName.'.html.twig';
 
                             $html = $this->renderView('registration/registrationPdf.html.twig', [
                                 'user' => $this->userService->convertToUser($user),

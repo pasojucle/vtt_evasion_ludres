@@ -59,7 +59,7 @@ ul.sub-menu {
     display: none;
     /* left: 0; */
     top: var(--nav-height);
-    background-color: var(--light-color);
+    background-color: var(--white-color);
     min-width: 100%;
     text-align: left;
     position: absolute;
@@ -215,6 +215,19 @@ p + p {
     height: 150px;
     background-size: 90% auto;
 }
+.card-product .card-img {
+    height: 250px;
+}
+.card-product .card-body {
+    font-size: 13px;
+    text-align: left;
+    color: var(--background-color);
+    font-weight: 700;
+}
+.card-product .price{
+    color: var(--primary-color-darker);
+    font-size: 16px;
+}
 .card-img {
     height: 220px;
 }
@@ -277,7 +290,7 @@ p + p {
     display: none;
 }
 
-.wrapper h1 {
+.wrapper h1, .wrapper.background-color h1 {
     font-size: 50px;
     margin-bottom: 50px;
 }
@@ -317,7 +330,7 @@ p + p {
     padding-top: 150px;
     padding-bottom: 150px;
 }
-.wrapper.background-color.col-content {
+.wrapper {
     min-height: calc(100vh - 200px);
 }
 .news-container {
@@ -345,6 +358,9 @@ button[type="submit"] {
 }
 .align-center {
     text-align: center;
+}
+.align-right {
+    text-align: right;
 }
 .table-border {
     border: 2px solid var(--background-color);
@@ -439,6 +455,12 @@ button[type="submit"] {
 .text-2-col {
     column-count: 2;
     column-gap: 5%;
+}
+.product-detail .price {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 25px auto;
+    color: var(--primary-color-darker);
 }
 
 @media screen and (max-width: 800px) {

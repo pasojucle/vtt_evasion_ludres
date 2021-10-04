@@ -87,12 +87,18 @@ class User implements UserInterface
      */
     private $passwordMustBeChanged = false;
 
+    /**
+     * @ORM\OneToMany(targetEntity=OrderHeader::class, mappedBy="user")
+     */
+    private $orderHeaders;
+
     public function __construct()
     {
         $this->identities = new ArrayCollection();
         $this->approvals = new ArrayCollection();
         $this->licences = new ArrayCollection();
         $this->sessions = new ArrayCollection();
+        $this->orderHeaders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -426,5 +432,35 @@ class User implements UserInterface
     public function getFullName(): string
     {
         return $this->getFirstIdentity()->getName().' '.$this->getFirstIdentity()->getfirstName();
+    }
+
+    /**
+     * @return Collection|OrderHeader[]
+     */
+    public function getOrderHeaders(): Collection
+    {
+        return $this->orderHeaders;
+    }
+
+    public function addOrderHeader(OrderHeader $orderHeader): self
+    {
+        if (!$this->orderHeaders->contains($orderHeader)) {
+            $this->orderHeaders[] = $orderHeader;
+            $orderHeader->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderHeader(OrderHeader $orderHeader): self
+    {
+        if ($this->orderHeaders->removeElement($orderHeader)) {
+            // set the owning side to null (unless already changed)
+            if ($orderHeader->getUser() === $this) {
+                $orderHeader->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
