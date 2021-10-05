@@ -22,7 +22,7 @@ class ProductsPresenter
         $productDirectory = $this->parameterBag->get('products_directory');
 
         if (!empty($products)) {
-            $this->viewModel = ProductsViewModel::fromProduct($products, $productDirectory);
+            $this->viewModel = ProductsViewModel::fromProducts($products, $productDirectory);
         } else {
             $this->viewModel = new ProductsViewModel();
         }

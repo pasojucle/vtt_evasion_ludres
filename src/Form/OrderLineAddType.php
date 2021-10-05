@@ -34,8 +34,9 @@ class OrderLineAddType extends AbstractType
             ->add('quantity', IntegerType::class, [
                 'label' => 'Quantité',
                 'attr' => [
-                    'min' => 0,
+                    'min' => 1,
                 ],
+                'data' => 1,
                 'row_attr' => [
                     'class' => 'form-group-inline form-group-small',
                 ],
