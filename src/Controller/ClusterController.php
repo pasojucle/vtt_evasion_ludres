@@ -23,9 +23,6 @@ class ClusterController extends AbstractController
     ): Response
     {
 
-
-        
-
         return $this->redirectToRoute('admin_event_cluster_show', ['event' => $session->getCluster()->getEvent()->getId()]);
     }
 }

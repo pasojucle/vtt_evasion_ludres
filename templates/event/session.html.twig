@@ -30,7 +30,8 @@
         <div class="col-md-3 col-xs-5">
             {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') %}
                 {% if not session.isPresent %}
-                    <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-light btn-ico admin-session-present" title="Absent"><i class="fas fa-times"></i></a>
+                    <a href="{{ path('admin_session_present', {'session': session.id}) }}" 
+                    class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} btn-ico admin-session-present" title="Absent"><i class="fas fa-times"></i></a>
                 {% else %}
                     <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico admin-session-present" title="Présent"><i class="fas fa-check-circle"></i></a>
                 {% endif %}

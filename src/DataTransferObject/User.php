@@ -374,4 +374,10 @@ class User {
 
         return $member['email'];
     }
+
+    public function mustProvideRegistration(): bool
+    {
+        $lastLicence = $this->getLastLicence();
+        return $lastLicence['season'] === $this->currentSeason && $lastLicence['isFinal'] && $lastLicence['status'] === Licence::STATUS_WAITING_VALIDATE;
+    }
 }

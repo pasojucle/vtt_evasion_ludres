@@ -21,13 +21,14 @@ class UserViewModel extends AbstractViewModel
     private ?Identity $member;
     private ?Identity $kinship;
     private ?Identity $secondKinship;
+    private ?int $currentSeason;
 
-    public static function fromUser(User $user)
+    public static function fromUser(User $user, int $currentSeason)
     {
         $userView = new self();
         $userView->user = $user;
         $userView->setIdentities();
-
+        $userView->currentSeason = $currentSeason;
         return $userView;
     }
 
@@ -382,5 +383,11 @@ class UserViewModel extends AbstractViewModel
         }
 
         return $member['email'];
+    }
+
+    public function mustProvideRegistration(): bool
+    {
+        $lastLicence = $this->getLastLicence();
+        return $lastLicence['season'] === $this->currentSeason && $lastLicence['isFinal'] && $lastLicence['status'] === Licence::STATUS_WAITING_VALIDATE;
     }
 }
