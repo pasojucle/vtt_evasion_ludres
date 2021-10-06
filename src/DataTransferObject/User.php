@@ -378,6 +378,6 @@ class User {
     public function mustProvideRegistration(): bool
     {
         $lastLicence = $this->getLastLicence();
-        return $lastLicence['season'] === $this->currentSeason && $lastLicence['isFinal'] && $lastLicence['status'] === Licence::STATUS_WAITING_VALIDATE;
+        return $this->user->getLicences()->count() === 1 && $lastLicence['season'] === $this->currentSeason && $lastLicence['isFinal'] && $lastLicence['status'] === Licence::STATUS_WAITING_VALIDATE;
     }
 }
