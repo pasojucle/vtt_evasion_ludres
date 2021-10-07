@@ -200,9 +200,9 @@ class RegistrationController extends AbstractController
                     }
                 }
             }
-
-            if ($request->files->get('user')) {
-                $pictureFile = $request->files->get('user')['identities'][0]['pictureFile'];
+            $requestFile = $request->files->get('user');
+            if (null !== $requestFile && array_key_exists('identities', $requestFile) && null !== $requestFile['identities'][0]['pictureFile']) {
+                $pictureFile = $requestFile['identities'][0]['pictureFile'];
                 $newFilename = $this->uploadService->uploadFile($pictureFile);
                 if (null !== $newFilename) {
                     $user->getIdentities()->first()->setPicture($newFilename);
