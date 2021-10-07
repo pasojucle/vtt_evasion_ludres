@@ -17,7 +17,7 @@ class ProductEditService
     public function __construct(UploadService $uploadService, EntityManagerInterface $entityManager)
     {
         $this->uploadService = $uploadService;
-        $this->entityManager =$entityManager;
+        $this->entityManager = $entityManager;
     }
     public function execute(Form &$form, ?Product $originalProduct, Request $request)
     {

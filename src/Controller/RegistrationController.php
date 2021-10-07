@@ -62,7 +62,7 @@ class RegistrationController extends AbstractController
         $this->mailerService = $mailerService;
         $this->licenceService = $licenceService;
         $this->userService = $userService;
-        $this->uploadeService = $uploadService;
+        $this->uploadService = $uploadService;
     }
 
     /**
