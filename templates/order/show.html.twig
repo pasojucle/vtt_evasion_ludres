@@ -3,26 +3,27 @@
 {% block title %}Mon pannier{% endblock %}
 
 {% block body %}
-    <div class="wrapper wrapper-medium-width background-green background-color">
+    <div class="wrapper wrapper-small-width background-green background-color">
         <div class="wrapper-title">
             <h1>Mon panier</h1>
         </div>
         <div class="wrapper-body">
-            <div class="row">
-                <div class="col-md-4 col-xs-10">Article</div>
-                <div class="col-md-2 col-xs-10">Taille</div>
-                <div class="col-md-2 col-xs-10 align-right">Prix/u</div>
-                <div class="col-md-2 col-xs-10 align-right">Quantité</div>
-                <div class="col-md-2 col-xs-10 align-right">Total</div>
-            </div>
             <ul>
-                {% for line in view.lines %}
+                {% for line in view.orderLines.lines %}
                     <li class="row row-list">
-                        <div class="col-md-4 col-xs-10">{{ line.product.name }}<br>{{ line.product.ref }}</div>
-                        <div class="col-md-2 col-xs-10">{{ line.size }}</div>
-                        <div class="col-md-2 col-xs-10 align-right">{{ line.product.price }}</div>
-                        <div class="col-md-2 col-xs-10 align-right">{{ line.quantity }}</div>
-                        <div class="col-md-2 col-xs-10 align-right">{{ line.amount }}</div>
+                        <div class="col-md-2 col-xs-3">
+                            <a href="{{ path('product_show', {'product': line.product.id}) }}">
+                                <div class="thumbnail"><img class="" src="{{ line.product.pathName }}" alt=""> </div>
+                            </a>
+                        </div>
+                        <div class="col-md-5 col-xs-4">
+                            {{ line.product.name }}<br>
+                            {{ line.product.ref }}<br>
+                            Taille : {{ line.size }}<br>
+                            Prix/unitaire : {{ line.product.price }}
+                        </div>
+                        <div class="col-md-2 col-xs-2 align-right">{{ line.quantity }}</div>
+                        <div class="col-md-3 col-xs-2 align-right">{{ line.amount }}</div>
                     </li>
 
                 {% endfor %}

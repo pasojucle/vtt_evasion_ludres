@@ -147,7 +147,7 @@ function getFile(e) {
     $inputFile.click();
     $inputFile.on('change',  function(event) {
         filename = event.target.value.split('\\').pop();
-        console.log(filename);
+        console.log(event.target.value);
         $('#filename').text(filename);
     });
     return false;

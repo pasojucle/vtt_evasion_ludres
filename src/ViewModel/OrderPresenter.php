@@ -3,24 +3,28 @@
 namespace App\ViewModel;
 
 use App\Entity\OrderHeader;
+use App\Service\LicenceService;
 use App\ViewModel\OrderViewModel;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class OrderPresenter 
 {
+    private LicenceService $licenceService;
     private ParameterBagInterface $parameterBag;
     private $viewModel;
 
-    public function __construct(ParameterBagInterface $parameterBag)
+    public function __construct(LicenceService $licenceService, ParameterBagInterface $parameterBag)
     {
+        $this->licenceService = $licenceService;
         $this->parameterBag = $parameterBag;
     }
 
     public function present(?OrderHeader $orderHeader): void
     {
-        
+        $productDirectory = $this->parameterBag->get('products_directory');
+        $currentSeason = $this->licenceService->getCurrentSeason();
         if (null !== $orderHeader) {
-            $this->viewModel = OrderViewModel::fromOrderHeader($orderHeader);
+            $this->viewModel = OrderViewModel::fromOrderHeader($orderHeader, $productDirectory, $currentSeason);
         } else {
             $this->viewModel = new OrderViewModel();
         }

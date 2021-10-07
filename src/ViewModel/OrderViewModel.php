@@ -11,44 +11,27 @@ class OrderViewModel extends AbstractViewModel
 {
     public ?int $id;
     private ?UserViewModel $user;
-    private ?Collection $oderLines;
+    public ?OrderLinesViewModel $orderLines;
     public ?int $status;
     public ?string $amount;
 
-    public static function fromOrderHeader(OrderHeader $orderHeader)
+    public static function fromOrderHeader(OrderHeader $orderHeader, string $productDirecrtory, int $currentSeason)
     {
         $orderView = new self();
         $orderView->id = $orderHeader->getId();
-        $orderView->user = UserViewModel::fromUser($orderHeader->getUser());
+        $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $currentSeason);
         $orderView->status = $orderHeader->getStatus();
-        $orderView->orderLines = $orderHeader->getOrderLines();
+        $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $productDirecrtory);
 
         return $orderView;
-    }
-
-    public function getLines(): array
-    {
-        $lines = [];
-        if (!$this->orderLines->isEmpty()) {
-            foreach($this->orderLines as $line) {
-                $lines[] = [
-                    'product' => ProductViewModel::fromProduct($line->getProduct(), ''),
-                    'quantity' => $line->getQuantity(),
-                    'size' => $line->getSize()->getName(),
-                    'amount' => number_format($line->getQuantity() * $line->getProduct()->getPrice(), 2).' €',
-                ];
-            }
-        }
-
-        return $lines;
     }
 
     public function getAmount(): string
     {
         $amount = 0;
-        if (!$this->orderLines->isEmpty()) {
-            foreach($this->orderLines as $line) {
-                $amount += ($line->getQuantity() * $line->getProduct()->getPrice());
+        if (!empty($this->orderLines->lines)) {
+            foreach($this->orderLines->lines as $line) {
+                $amount += $line['amount_float'];
             }
         }
 

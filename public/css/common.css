@@ -782,6 +782,11 @@ nav.nav-tab {
 .block.no-padding {
     padding: 0;
 }
+.thumbnail {
+    height: 120px;
+    width: 80px;
+    overflow: hidden;
+}
 @media screen and (max-width: 800px) {
     .xs-display {
         display: initial;
