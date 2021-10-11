@@ -616,10 +616,9 @@ class ToolController extends AbstractController
         UserRepository $userRepository
     ): Response
     {
-
         $users = $userRepository->findMinorAndTesting();
         $content = [];
-        $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\essai'];
+        $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
         if (!empty($users)) {

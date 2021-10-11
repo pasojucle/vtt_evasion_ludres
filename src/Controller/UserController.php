@@ -6,25 +6,25 @@ use App\Entity\Level;
 use App\Form\IdentityType;
 use App\Form\Admin\UserType;
 use App\Form\UserFilterType;
+use App\Service\ExportService;
 use App\Service\UserService;
+use App\Service\UploadService;
 use App\Service\LicenceService;
-use App\DataTransferObject\User;
 use App\Service\PaginatorService;
 use App\Repository\UserRepository;
 use App\Entity\User as  UserEntity;
 use App\Form\ChangePasswordFormType;
-use App\Form\Admin\RegistrationFilterType;
 use App\Security\LoginFormAuthenticator;
-use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\Admin\RegistrationFilterType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
@@ -47,6 +47,7 @@ class UserController extends AbstractController
         $this->requestStack = $requestStack;
         $this->session = $this->requestStack->getSession();
     }
+
     /**
      * @Route("/admin/adherents/{filtered}", name="admin_users", defaults={"filtered"=0})
      */
@@ -68,8 +69,8 @@ class UserController extends AbstractController
             $request->query->set('p', 1);
         }
 
-        $query =  $this->userRepository->findMemberQuery($filters);
-        $users =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $query = $this->userRepository->findMemberQuery($filters);
+        $users = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $this->session->set('user_return', $this->generateUrl('admin_users', ['filtered' => true, 'p' => $request->query->get('p')]));
 
@@ -82,6 +83,29 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/admin/export/adherents", name="admin_users_export")
+     */
+    public function adminUsersExport(
+        ExportService $exportService
+    ): Response
+    {
+        $filters = $this->session->get('admin_users_filters');
+
+        $query = $this->userRepository->findMemberQuery($filters);
+        $users = $query->getQuery()->getResult();
+        $content = $exportService->exportUsers($users);
+
+        $response = new Response($content);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            'export_email.csv'
+        );
+        
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
+    }
     /**
      * @Route("/admin/adherent/{user}", name="admin_user")
      */
