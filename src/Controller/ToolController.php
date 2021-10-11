@@ -12,18 +12,20 @@ use App\Entity\Session;
 use App\Entity\Approval;
 use App\Entity\Identity;
 use App\Form\ToolImportType;
+use App\Service\UserService;
 use App\Entity\HealthQuestion;
 use App\Service\MailerService;
 use App\Service\LicenceService;
 use App\Repository\LevelRepository;
 use App\Form\Admin\LicenceNumberType;
-use App\Service\UserService;
+use App\Repository\UserRepository;
+use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ToolController extends AbstractController
@@ -565,6 +567,7 @@ class ToolController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/admin/outil/departements", name="admin_departments")
      */
@@ -603,5 +606,41 @@ class ToolController extends AbstractController
             'form' => $form->createView(),
             'count' => count($departments),
         ]);
+    }
+
+
+    /**
+     * @Route("/admin/outil/export_email", name="admin_export_email")
+     */
+    public function adminExportEmail(
+        UserRepository $userRepository
+    ): Response
+    {
+
+        $users = $userRepository->findMinorAndTesting();
+        $content = [];
+        $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\essai'];
+        $content[] = implode(',', $row);
+
+        if (!empty($users)) {
+            foreach($users as $user) {
+                $identity = $user->getFirstIdentity();
+                $licence = $user->getLastLicence();
+                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->isFinal()];
+                $content[] = implode(',', $row);
+            }
+        }
+
+        $fileContent = implode(PHP_EOL, $content);
+
+        $response = new Response($fileContent);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            'export_email.csv'
+        );
+        
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use DateTime;
+use DateInterval;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Level;
@@ -214,6 +215,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('season', $currentSeason)
             ->orderBy('i.name', 'ASC')
             ;
+    }
+
+    public function findMinorAndTesting(): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->innerJoin('u.identities', 'i')
+            ->innerJoin('u.licences', 'l');
+
+            $limit = new DateTime();
+            $limit->sub(new DateInterval('P18Y'));
+   
+
+            return $qb->andWhere(
+                $qb->expr()->isNull('i.kinship'),
+                $qb->expr()->gte('i.birthDate', ':limit'),
+                $qb->expr()->gte('l.season', ':season'),
+            )
+            ->setParameter('limit', $limit)
+            ->setParameter('season', 2021)
+            ->orderBy('i.name')
+            ->getQuery()
+            ->getResult();
     }
 
 }
