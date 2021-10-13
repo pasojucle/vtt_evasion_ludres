@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Licence;
+use App\Form\Admin\LicenceValidateType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Service\Licence\LicenceValidateService;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -59,18 +62,29 @@ class LicenceController extends AbstractController
      */
     public function adminValidateLicence(
         Request $request,
+        LicenceValidateService $licenceValidateService,
         Licence $licence
     ): Response
     {
         $user = $licence->getUser();
         $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
-        $status = ($licence->isFinal()) ? Licence::STATUS_VALID : Licence::STATUS_TESTING;
-        $licence->setStatus($status);
-        $this->entityManager->persist($licence);
-        $this->entityManager->flush();
+        $data = ['licenceNumber' => $user->getLicenceNumber(), 'medicalCertificateDate' => $user->getHealth()->getMedicalCertificateDate()];
+        $form = $this->createForm(LicenceValidateType::class, $data, [
+            'is_final' => $licence->isFinal(),
+            'licences' => $user->getLicences(),
+        ]);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $licenceValidateService->execute($request,$licence);
 
-        $this->addFlash('success', "La licence de l'utilisateur $fullName a bien été validée");
+            $this->addFlash('success', "La licence de l'utilisateur $fullName a bien été validée");
 
-        return $this->redirectToRoute('admin_registrations', ['filtered' => true, 'p' => $request->query->get('p')]);
+            return $this->redirectToRoute('admin_registrations', ['filtered' => true, 'p' => $request->query->get('p')]);
+        }
+        return $this->render('licence/admin/validate.modal.html.twig', [
+            'form' => $form->createView(),
+            'licence'=> $licence,
+            'fullname' => $fullName,
+        ]);
     }
 }

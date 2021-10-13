@@ -7,7 +7,7 @@
 {% if data.message is defined %}
     <p>Nous avons bien pris en compte votre demande, et nous allons y répondre au plus vite.</p>
 {% endif %}
-{% if data.licenceNumber is defined and data.sendLogin is not defined and data.registration_error is not defined %}
+{% if data.licenceNumber is defined and data.sendLogin is not defined and data.registration_error is not defined and content is null%}
     <p>Vous venez de créer un compte sur notre site</p>
     <p>
         <b>Voici votre indentifiant pour vous connecter : </b>{{ data.licenceNumber }}<br>
@@ -53,6 +53,17 @@
     <p>Vous venez de vous inscrire à votre dernière séance d'essai au club.</p>
     <p>Si vous souhaitez continuer l'aventure, inscrivez-vous dès maintenant pour la saison entière en cliquant sur <a href="http://vttevasionludres.fr/mon-compte/inscription/1">ce lien</a></p>
 {% endif %}
+
+
+{% if content is defined %}
+        {% set replaces =
+        {
+            '{{ licenceNumber }}': data.licenceNumber ,
+        }
+    %}
+    <div>{{ content|replace(replaces) | raw}}</div>
+{% endif %}
+
 <p>Cordialement</p>
 <p>L'équipe du VTT Évasion Ludres</p>
 <hr>

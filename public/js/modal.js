@@ -15,6 +15,9 @@ function showModal(event) {
             $('.modal').replaceWith($(html));
             $('.modal').find('.modal-header').addClass('bg-'+modalType);
             $('.modal').find('button:not(button[data-dismiss="modal"])').addClass('btn-'+modalType);
+            $('.js-datepicker').datepicker({
+                format: 'yyyy-mm-dd hh:ii',
+            });
             setTimeout(function () {
                 //$('.modal-dialog').transition({ top: 100px });
                 $('.modal-dialog').addClass('modal-open');

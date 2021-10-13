@@ -16,7 +16,12 @@
             </div>
             {{ form_start(form) }}
             <div class="block-body">
-                <div class="form-group">{{ form_row(form.licenceNumber) }}</div>
+                <div class="form-group">
+                    {{ form_row(form.licenceNumber) }}
+                    <div class="form-group-inline">
+                        <a href="{{ path('admin_send_number_licence', {'user': user.id })}}" class="btn btn-xs btn-success">Envoyer le numéro de licence</a>
+                    </div>
+                </div>
                 <div class="form-group">{{ form_row(form.level) }}</div>
                 {% for licence in form.licences %}
                     {% if licence.status is defined and licence.final is defined %}

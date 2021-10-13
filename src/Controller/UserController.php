@@ -6,8 +6,9 @@ use App\Entity\Level;
 use App\Form\IdentityType;
 use App\Form\Admin\UserType;
 use App\Form\UserFilterType;
-use App\Service\ExportService;
 use App\Service\UserService;
+use App\Service\ExportService;
+use App\Service\MailerService;
 use App\Service\UploadService;
 use App\Service\LicenceService;
 use App\Service\PaginatorService;
@@ -224,6 +225,28 @@ class UserController extends AbstractController
             'count' => $paginator->total($users),
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/send/numberlicence/{user}", name="admin_send_number_licence")
+     */
+    public function adminSendLicence(
+        MailerService $mailerService,
+        UserEntity $user
+    ): Response
+    {
+        $identity = $user->getFirstIdentity();
+        $mailerService->sendMailToMember([
+            'subject' => 'Votre numero de licence',
+            'email' => $identity->getEmail(),
+            'name' => $identity->getName(),
+            'firstName' => $identity->getFirstName(),
+            'licenceNumber' => $user->getLicenceNumber(),
+        ], 'EMAIL_LICENCE_VALIDATE');
+
+        $this->addFlash('success', 'Le messsage à été envoyé avec succès');
+
+        return $this->redirectToRoute('admin_user_edit', ['user' => $user->getId()]);
     }
 
     /**

@@ -36,7 +36,7 @@ class OrderAddService
         $this->orderHeaderRepository = $orderHeaderRepository;
         $this->security = $security;
     }
-    public function execute(Product $product, Form &$form)
+    public function execute(Product $product, Form &$form): void
     {
         $user = $this->security->getUser();
         $orderLine = $form->getData();
@@ -74,7 +74,7 @@ class OrderAddService
                 if ($line->getProduct() === $orderLine->getProduct() && $line->getSize() === $orderLine->getSize()) {
                     $quantity = $line->getQuantity() + $orderLine->getQuantity();
                     $line->setQuantity($quantity);
-                    dump($line);
+                    
                     return $line;
                 }
             }

@@ -1,9 +1,9 @@
 {% extends 'base_modal.html.twig' %}
 {% set button_href = path('admin_delete_licence', {'licence' : licence.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Supprimer l\'inscription de {{ fullname }}{% endblock %}
+{% block modal_title %}Supprimer l'inscription de {{ fullname }}{% endblock %}
 {% block body %}
-    <p>Etes-vous de supprimer l\'inscription de {{ fullname }} ?</p>
+    <p>Etes-vous de supprimer l'inscription de {{ fullname }} ?</p>
 {% endblock %}
 {% block footer %}
     {% set button_text = 'Supprimer' %}
