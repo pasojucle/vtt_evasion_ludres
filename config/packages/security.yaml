@@ -14,8 +14,9 @@ security:
                 class: App\Entity\User
                 property: licenceNumber
     role_hierarchy:
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_ADMIN]
-        ROLE_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_REGISTER, ROLE_ADMIN]
+        ROLE_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_REGISTER, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_REGISTER : [ROLE_USER, ROLE_FRAME]
         ROLE_FRAME: [ROLE_USER]
         ROLE_USER:
 
@@ -53,6 +54,7 @@ security:
         - { path: ^/admin/sortie, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin/adherent, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin/rando, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin/inscription, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
         - { path: '^/', roles: PUBLIC_ACCESS, requires_channel: https }

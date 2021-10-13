@@ -58,9 +58,9 @@ class LicenceController extends AbstractController
     }
 
     /**
-     * @Route("/admin/validate/licence/{licence}", name="admin_validate_licence")
+     * @Route("/admin/inscription/validate/{licence}", name="admin_registration_validate")
      */
-    public function adminValidateLicence(
+    public function adminRegistartionValidate(
         Request $request,
         LicenceValidateService $licenceValidateService,
         Licence $licence

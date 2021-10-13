@@ -1,5 +1,5 @@
 {% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_validate_licence', {'licence' : licence.id}) %}
+{% set button_href = path('admin_registration_validate', {'licence' : licence.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
 {% block modal_title %}Valider l'inscription de {{ fullname }}{% endblock %}
 {% block body %}

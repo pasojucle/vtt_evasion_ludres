@@ -270,7 +270,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/admin/inscription/", name="admin_registration_steps")
+     * @Route("/admin/param_inscription/", name="admin_registration_steps")
      */
     public function adminRegistrationSteps(
         Request $request
@@ -282,7 +282,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/admin/inscription/{step}", name="admin_registration_step")
+     * @Route("/admin/param_inscription/{step}", name="admin_registration_step")
      */
     public function adminRegistrationStep(
         Request $request,

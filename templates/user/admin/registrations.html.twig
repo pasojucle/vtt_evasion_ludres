@@ -36,7 +36,7 @@
                             </div>
                             <div class="col-md-4 col-xs-6">
                                 {% if user.seasonLicence is not empty %}
-                                    <a class="btn btn-success" href="{{ path('admin_validate_licence', {'licence': user.seasonLicence.id})}}" title="Valider" data-toggle="modal" data-type="danger"><i class="fas fa-check"></i> Valider</a>
+                                    <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.id})}}" title="Valider" data-toggle="modal" data-type="danger"><i class="fas fa-check"></i> Valider</a>
                                     <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
                                 {% endif %}
                             </div>

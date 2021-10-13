@@ -194,7 +194,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/admin/inscripton/{filtered}", name="admin_registrations", defaults={"filtered"=0})
+     * @Route("/admin/inscriptions/{filtered}", name="admin_registrations", defaults={"filtered"=0})
      */
     public function adminRegistration(
         PaginatorService $paginator,
