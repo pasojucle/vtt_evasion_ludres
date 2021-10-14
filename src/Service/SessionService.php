@@ -4,9 +4,7 @@ namespace App\Service;
 
 use App\Entity\Event;
 use App\Entity\Cluster;
-use App\Entity\Session;
 use App\Service\UserService;
-use App\DataTransferObject\User;
 use App\Entity\User as UserEntity;
 use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;

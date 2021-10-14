@@ -84,7 +84,19 @@ class Cluster
      */
     public function getSessions(): Collection
     {
-        return $this->sessions;
+        $sortedCluster = [];
+        if (!$this->sessions->isEmpty()) {
+            $sortedCluster = $this->sessions->toArray();
+            uasort($sortedCluster, function($a, $b){
+                $a = $a->getUser()->getName();
+                $b = $b->getUser()->getName();
+                if ( $a == $b) {
+                    return 0;
+                }
+                return ($a < $b) ? -1 : 1;
+            });
+        }
+        return new ArrayCollection($sortedCluster);
     }
 
     public function addSession(Session $session): self
