@@ -42,8 +42,15 @@
                                             <span class="{{ licence.statusClass }}"></span>
                                         {% endif %}
                                     </div>
-                                    <div class="col-md-8 col-xs-6">{{ user.member.fullName }}</div>
-                                    <div class="col-md-3 col-xs-5">{{ user.level }}</div>
+                                    <div class="col-md-5 col-xs-11">{{ user.member.fullName }}</div>
+                                    <div class="col-md-3 col-xs-12">
+                                        {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
+                                            {{ user.testingBikeRides }}/3 séances d'essai
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-3 col-xs-12">
+                                        {{ user.level }}
+                                    </div>
                                 </div>
                             </a>
                         </li>

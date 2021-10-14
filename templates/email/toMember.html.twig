@@ -56,12 +56,16 @@
 
 
 {% if content is defined and content is not null %}
-        {% set replaces =
+    {% if data.licenceNumber is defined %}
+    {% set replaces =
         {
             '{{ licenceNumber }}': data.licenceNumber ,
         }
     %}
-    <div>{{ content|replace(replaces) | raw}}</div>
+        <div>{{ content|replace(replaces) | raw}}</div>
+    {% else %}
+        <div>{{ content | raw}}</div>
+    {% endif %}
 {% endif %}
 
 <p>Cordialement</p>
