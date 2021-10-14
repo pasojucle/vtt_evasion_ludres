@@ -88,8 +88,8 @@ class Cluster
         if (!$this->sessions->isEmpty()) {
             $sortedCluster = $this->sessions->toArray();
             uasort($sortedCluster, function($a, $b){
-                $a = $a->getUser()->getName();
-                $b = $b->getUser()->getName();
+                $a = $a->getUser()->getFirstIdentity()->getName();
+                $b = $b->getUser()->getFirstIdentity()->getName();
                 if ( $a == $b) {
                     return 0;
                 }
