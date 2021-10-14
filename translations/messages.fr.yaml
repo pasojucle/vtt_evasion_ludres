@@ -12,7 +12,7 @@ licence:
     adult: adulte
   status:
     none: Non renouvelée
-    waiting_renew: En attente de renouvelement
+    waiting_renew: En attente de renouvellement
     in_processing: En cours
     waiting_validate: En attente de validation
     valid: Valide

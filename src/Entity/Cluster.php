@@ -79,24 +79,11 @@ class Cluster
         return $this;
     }
 
-    /**
-     * @return Collection|Session[]
+    /**     * @return Collection|Session[]
      */
-    public function getSessions(): ArrayCollection
+    public function getSessions(): Collection
     {
-        $sortedCluster = [];
-        if (!$this->sessions->isEmpty()) {
-            $sortedCluster = $this->sessions->toArray();
-            uasort($sortedCluster, function($a, $b){
-                $a = $a->getUser()->getFirstIdentity()->getName();
-                $b = $b->getUser()->getFirstIdentity()->getName();
-                if ( $a == $b) {
-                    return 0;
-                }
-                return ($a < $b) ? -1 : 1;
-            });
-        }
-        return new ArrayCollection($sortedCluster);
+        return $this->sessions;
     }
 
     public function addSession(Session $session): self
@@ -182,11 +169,26 @@ class Cluster
         return $this;
     }
 
-    public function getSessionAvailable()
+    public function getSessionAvailable(): ArrayCollection
     {
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->neq('availability', Session::AVAILABILITY_UNAVAILABLE))
         ;
-        return $this->sessions->matching($criteria);
+        $sessions = $this->sessions->matching($criteria);
+
+        $sortedSessions = [];
+        if (!$sessions->isEmpty()) {
+            $sortedSessions = $sessions->toArray();
+            usort($sortedSessions, function($a, $b){
+                $a =  strtolower($a->getUser()->getFirstIdentity()->getName());
+                $b =  strtolower($b->getUser()->getFirstIdentity()->getName());
+
+                if ( $a == $b) {
+                    return 0;
+                }
+                return ($a < $b) ? -1 : 1;
+            });
+        }
+        return new ArrayCollection($sortedSessions);
     }
 }
