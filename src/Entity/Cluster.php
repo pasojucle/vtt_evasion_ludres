@@ -82,7 +82,7 @@ class Cluster
     /**
      * @return Collection|Session[]
      */
-    public function getSessions(): Collection
+    public function getSessions(): ArrayCollection
     {
         $sortedCluster = [];
         if (!$this->sessions->isEmpty()) {
