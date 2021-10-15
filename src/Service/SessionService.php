@@ -104,7 +104,7 @@ class SessionService
                 'firstName' => $user->getMember()['firstName'],
                 'email' => $user->getContactEmail(),
                 'subject' => 'Fin de la période d\'essai',
-                'testing_end' => true,]);
+                'testing_end' => true,], 'EMAIL_END_TESTING');
         }
     }
 }

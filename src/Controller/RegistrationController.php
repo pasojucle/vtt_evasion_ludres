@@ -180,7 +180,7 @@ class RegistrationController extends AbstractController
                         'firstName' => $identity->getFirstName(),
                         'email' => $email,
                         'subject' => 'Création de compte sur le site VTT Evasion Ludres',
-                        'licenceNumber' => $user->getLicenceNumber(),]);
+                        'licenceNumber' => $user->getLicenceNumber(),], 'EMAIL_REGISTRATION');
                 }
             }
 

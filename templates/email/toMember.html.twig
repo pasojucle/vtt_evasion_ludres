@@ -4,21 +4,6 @@
 <b>{{ data.subject }}</b>
 <br>
 <p>Bonjour {{ data.name }} {{ data.firstName }},</p>
-{% if data.message is defined %}
-    <p>Nous avons bien pris en compte votre demande, et nous allons y répondre au plus vite.</p>
-{% endif %}
-{% if data.licenceNumber is defined and data.sendLogin is not defined and data.registration_error is not defined and content is null%}
-    <p>Vous venez de créer un compte sur notre site</p>
-    <p>
-        <b>Voici votre indentifiant pour vous connecter : </b>{{ data.licenceNumber }}<br>
-        Vous seul connaissez le mot de passe
-    </p>
-    <p>
-        Pour valider votre inscription, vous devez vous inscrire sur le site à une sortie ou à une séance de l'école VTT en cliquant sur ce lien.<br>
-        <a href="https://vttevasionludres.fr/programme">https://vttevasionludres.fr onglet "Programme"</a> 
-    </p>
-{% endif %}
-
 {% if data.sendLogin is defined %}
     <p>La rentrée du club se fait avec l'arrivée d'un nouveau site internet.</p>
     <p>Vous y retrouverez toutes les infos sur le club, et notamment le programme des sorties organisées par le club,
@@ -48,12 +33,6 @@
         Vous seul connaissez le mot de passe
     </p>
 {% endif %}
-
-{% if data.testing_end is defined %}
-    <p>Vous venez de vous inscrire à votre dernière séance d'essai au club.</p>
-    <p>Si vous souhaitez continuer l'aventure, inscrivez-vous dès maintenant pour la saison entière en cliquant sur <a href="http://vttevasionludres.fr/mon-compte/inscription/1">ce lien</a></p>
-{% endif %}
-
 
 {% if content is defined and content is not null %}
     {% if data.licenceNumber is defined %}
