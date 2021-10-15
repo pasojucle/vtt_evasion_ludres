@@ -38,7 +38,7 @@
                             <li class="{{ user.approvalGoingHome.class }}">{{ user.approvalGoingHome.message }}</li>
                         {% endif %}
                     </ul>
-                  {% if is_granted('ROLE_ADMIN') %}
+                  {% if is_granted('ROLE_REGISTER') %}
                         <a href="{{ path('admin_identity_edit', {'user': user.id}) }}"
                             class="btn btn-secondary" title="Modifier">
                             <i class="fas fa-edit"></i> Modifier
@@ -70,7 +70,7 @@
                                 <li><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b> {{ user.level }}</li>
                             {% endif %}
                         </ul>
-                        {% if is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_REGISTER') %}
                             <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
                                 class="btn btn-secondary" title="Modifier">
                                 <i class="fas fa-edit"></i> Modifier
