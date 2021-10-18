@@ -1,0 +1,45 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+        <div id="header">
+            <img src="./images/logo-pdf.jpg" alt="vvt évasion Ludres" style="height:110px;  width: 120px">
+            <h1> Bon de commande vêtements aux couleurs du club</h1>
+            <img src="./images/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
+        </div>
+        <div style="margin-top: 30px">
+            <h2>Cde {{ order.id }} du {{ order.createdAt }} : {{ order.user.member.name }} {{ order.user.member.firstName }}</h2>
+            <br>
+
+            <table class="table-fixed">
+                <tr>
+                    <th class="align-top" style="height: 60px"></th>
+                    <th class="align-left">Descritif</th>
+                    <th class="align-right">Quantité</th>
+                    <th class="align-right">Prix</th>
+                </tr>
+                {% for key, line in order.orderLines.lines %}
+                    <tr>
+                        <td class="align-top"><img src="{{ line.product.pathNameForPdf }}" style="width: 70px;"></td>
+                        <td class="align-top">
+                            {{ line.product.name }}<br>
+                            {{ line.product.ref }}<br>
+                            Taille : {{ line.size }}<br>
+                            Prix/unitaire : {{ line.product.price }}
+                        </td>
+                        <td class="align-right align-top">{{ line.quantity }}</td>
+                        <td class="align-right align-top">{{ line.amount }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="align-right">Total</td>
+                    <td class="align-right">{{ order.amount }}</td>
+                </tr>
+            </table>
+        </div>
+        <br>
+        <div style="margin-top: 50px">
+            <b>Document à remètre au club avec le réglement par chèque.</b>
+        </div>
+{% endblock %}

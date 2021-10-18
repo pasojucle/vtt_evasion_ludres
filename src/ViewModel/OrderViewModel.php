@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 class OrderViewModel extends AbstractViewModel
 {
     public ?int $id;
-    private ?UserViewModel $user;
+    public ?UserViewModel $user;
     public ?OrderLinesViewModel $orderLines;
     public ?int $status;
     public ?string $amount;
@@ -19,6 +19,8 @@ class OrderViewModel extends AbstractViewModel
     {
         $orderView = new self();
         $orderView->id = $orderHeader->getId();
+        $createdAt = $orderHeader->getCreatedAt();
+        $orderView->createdAt = $createdAt->format('d/m/Y');
         $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $currentSeason);
         $orderView->status = $orderHeader->getStatus();
         $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $productDirecrtory);

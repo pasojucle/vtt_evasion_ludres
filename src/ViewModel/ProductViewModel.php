@@ -28,7 +28,8 @@ class ProductViewModel extends AbstractViewModel
         $productView->ref = $product->getRef();
         $productView->filename = $product->getFilename();
         $productView->productSizes = $product->getSizes();
-        $productView->pathName = $productDirectory.DIRECTORY_SEPARATOR.$productView->filename;
+        $productView->pathName = DIRECTORY_SEPARATOR.$productDirectory.DIRECTORY_SEPARATOR.$productView->filename;
+        $productView->pathNameForPdf = $productDirectory.DIRECTORY_SEPARATOR.$productView->filename;
 
         return $productView;
     }

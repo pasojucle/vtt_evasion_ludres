@@ -53,7 +53,7 @@ class ProductController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $orderAddService->execute($product, $form);
             if ($form->isValid()) {
-                return $this->redirectToRoute('order');
+                return $this->redirectToRoute('order_edit');
             }
         }
         $presenter->present($product);

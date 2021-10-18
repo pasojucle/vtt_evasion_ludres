@@ -130,7 +130,7 @@ table {
     table-layout: fixed;
  }
 
- .table-border {
+.table-border {
     border: 1px solid var(--background-color);
     border-collapse: collapse;
     margin-top: 10px;
@@ -142,4 +142,13 @@ table {
 }
 br {
     line-height: 6px;
+}
+.align-left {
+    text-align: left;
+}
+.align-right {
+    text-align: right;
+}
+.align-top {
+    vertical-align: top;
 }

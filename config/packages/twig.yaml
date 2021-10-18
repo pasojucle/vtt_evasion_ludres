@@ -14,6 +14,7 @@ twig:
         membership_fee_service: '@App\Service\MembershipFeeService'
         registration_service: '@App\Service\RegistrationService'
         user_service: '@App\Service\UserService'
+        order_service: '@App\Service\Order\OrderGetService'
 
     paths:
         # point this wherever your css files live

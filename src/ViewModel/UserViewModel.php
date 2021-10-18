@@ -18,7 +18,7 @@ class UserViewModel extends AbstractViewModel
     private ?string $memberFullName;
     public ?array $lines;
     private ?Collection $oderLines;
-    private ?Identity $member;
+    public ?Identity $member;
     private ?Identity $kinship;
     private ?Identity $secondKinship;
     private ?int $currentSeason;

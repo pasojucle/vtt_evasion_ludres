@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Size;
+use App\Entity\OrderLine;
+use App\Form\QuantityType;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+class OrderLineType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            $orderLine = $event->getData();
+            $form = $event->getForm();
+            $form
+                ->add('quantity', QuantityType::class,[
+                    'label' => false,
+                    'row_attr' => [
+                        'class' => 'form-group',
+                    ],
+                    'attr' => [
+                        'class' => 'orderline-quantity',
+                      ],
+                ])
+                ->add('remove', SubmitType::class, [
+                    'label' => 'supprimer',
+                    'label_html' => true,
+                    'attr' => [
+                        'class' => 'orderline-remove',
+                    ],
+                ])
+                ->add('lineId', HiddenType::class)
+            ;
+        });
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => OrderLine::class,
+        ]);
+    }
+}

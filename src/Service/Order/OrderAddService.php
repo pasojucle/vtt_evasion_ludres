@@ -9,29 +9,22 @@ use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use App\Service\UploadService;
 use Symfony\Component\Form\Form;
-use App\Repository\OrderRepository;
-use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
 class OrderAddService
 {
-    private UploadService $uploadService;
     private EntityManagerInterface $entityManager;
     private OrderHeaderRepository $orderHeaderRepository;
     private Security $security;
 
     public function __construct(
-        UploadService $uploadService,
         EntityManagerInterface $entityManager,
         OrderHeaderRepository $orderHeaderRepository,
         Security $security
     )
     {
-        $this->uploadService = $uploadService;
         $this->entityManager =$entityManager;
         $this->orderHeaderRepository = $orderHeaderRepository;
         $this->security = $security;
@@ -54,7 +47,7 @@ class OrderAddService
 
     private function getOrderHeader(User $user): OrderHeader
     {
-        $orderHeader = $this->orderHeaderRepository->findOneOrderByUserAndStatus($user, OrderHeader::STATUS_VALIDED);
+        $orderHeader = $this->orderHeaderRepository->findOneOrderByUser($user);
         if (null === $orderHeader) {
             $orderHeader = new OrderHeader();
             $orderHeader->setUser($user)

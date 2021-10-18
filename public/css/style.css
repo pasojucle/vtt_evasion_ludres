@@ -349,6 +349,9 @@ p + p {
     text-shadow: unset;
     font-size: 30px;
 }
+.wrapper .wrapper-footer {
+    overflow: hidden;
+}
 button[type="submit"] {
     font-size: 16px;
 }

@@ -3,16 +3,16 @@
 {% block title %}Mon pannier{% endblock %}
 
 {% block body %}
+    {{ form_start(form) }}
     <div id="order" class="wrapper wrapper-small-width background-green background-color">
         <div class="wrapper-title">
-            <h1>Ma commande</h1>
+            <h1>Mon panier</h1>
         </div>
         <div class="wrapper-body">
-            <h2>Document à imprimer <br>et à remètre au club avec le réglement</h2>
-            <h3>Cde {{ order.id }} du {{ order.createdAt }}</h3>
-            <br>
             <ul>
-                {% for line in order.orderLines.lines %}
+            {% set orderLine = form.children.orderLines.children %}
+                {% dump(order) %}
+                {% for key, line in order.orderLines.lines %}
                     <li class="row row-list row-align-top block background-ligth">
                         <div class="col-md-2 col-xs-3">
                             <a href="{{ path('product_show', {'product': line.product.id}) }}">
@@ -26,7 +26,9 @@
                             Prix/unitaire : {{ line.product.price }}
                         </div>
                         <div class="col-md-2 col-xs-2 align-right form-group">
-                            {{ line.quantity }}
+                            {{ form_widget(orderLine[key].quantity) }}
+                            {{ form_widget(orderLine[key].remove) }}
+                            {{ form_row(orderLine[key].lineId) }}
                         </div>
                         <div class="col-md-3 col-xs-2 align-right">{{ line.amount }}</div>
                     </li>
@@ -39,8 +41,9 @@
             </div>
         </div>
         <div class="wrapper-footer">
-            <a href="{{ path('order_acknowledgement', {'orderHeader': order.id}) }}" class="btn btn-xxl btn-primary float-right">Télécharger ma commande</a>
+            {{ form_widget(form.save)}}
+            <a href="{{ path('products') }}" class="btn btn-secondary float-right">Retour à la boutique</a>
         </div>
     </div>
-
+    {{ form_end(form) }}
 {% endblock %}

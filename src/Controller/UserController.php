@@ -13,10 +13,12 @@ use App\Service\UploadService;
 use App\Service\LicenceService;
 use App\Service\PaginatorService;
 use App\Repository\UserRepository;
+use App\ViewModel\OrdersPresenter;
 use App\Entity\User as  UserEntity;
 use App\Form\ChangePasswordFormType;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\OrderHeaderRepository;
 use App\Form\Admin\RegistrationFilterType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -253,13 +255,21 @@ class UserController extends AbstractController
      * @Route("/mon-compte", name="user_account")
      */
     public function userAccount(
+        OrderHeaderRepository $ordersHeaderRepository,
+        PaginatorService $paginator,
+        OrdersPresenter $ordersPresenter,
         Request $request
     ): Response
     {
         $user = $this->getUser();
 
+        $query = $ordersHeaderRepository->findOrdersByUserQuery($user);
+        $ordersHeader = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+
+        $ordersPresenter->present($ordersHeader);
         return $this->render('user/account.html.twig', [
             'user' => $this->userService->convertToUser($user),
+            'orders' => $ordersPresenter->viewModel()->orders,
         ]);
     }
 

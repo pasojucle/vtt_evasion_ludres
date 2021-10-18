@@ -606,6 +606,9 @@ input[type="file"] {
     margin-right: -5px;
     align-items: center;
 }
+.row.row-align-top {
+    align-items: unset;
+}
 .registration .row {
     line-height: unset;
 }

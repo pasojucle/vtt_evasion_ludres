@@ -37,6 +37,7 @@ $(document).ready(function(){
     $(document).on('change', '#event_type', modifierEvent);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.disease-active', toggleDisease);
+    $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
 });
 
 jQuery(function($){
@@ -154,7 +155,6 @@ function getFile(e) {
 }
 
 function modifierEvent() {
-
     var form = $(this).closest('form');
     var data = {};
     // data[$(this).attr('name')] = $(this).val();
@@ -196,4 +196,26 @@ function toggleDisease() {
     } else {
         parent.find('input[type="text"]').attr('required', true);
     }
+}
+
+
+function setOrderLineQuantity(e) {
+    e.preventDefault();
+
+    const form = $(this).closest('form');
+    let data = {};
+    data[$(this).attr('name')] = $(this).val();
+    const id = $(this).parent().find('input[type="hidden"]');
+    data[id.attr('name')] = id.val();
+
+    $.ajax({
+        url : form.attr('action'),
+        type: form.attr('method'),
+        data : data,
+        success: function(html) {
+          $('#order').replaceWith(
+            $(html).find('#order')
+          );
+        }
+      });
 }

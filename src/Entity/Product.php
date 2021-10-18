@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -165,7 +166,10 @@ class Product
      */
     public function getSizes(): Collection
     {
-        return $this->sizes;
+        $criteria = Criteria::create()
+        ->orderBy(['id' => Criteria::ASC]);
+
+        return $this->sizes->matching($criteria);
     }
 
     public function addSize(Size $size): self

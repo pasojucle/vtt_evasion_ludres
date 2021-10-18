@@ -32,7 +32,7 @@ class PdfService
         $this->userService = $userService;
     }
 
-    public function makePdf(string $html, string $filename)
+    public function makePdf(string $html, string $filename, $directory = '../data/licences')
     {
         $options = new Options();
         $options->setIsHtml5ParserEnabled(true);
@@ -45,8 +45,7 @@ class PdfService
         if (!is_dir('../data')) {
             mkdir('../data');
         }
-        $publicDirectory = '../data/licences';
-        $pdfFilepath =  $publicDirectory .$this->filenameService->clean($filename).'.pdf';
+        $pdfFilepath =  $directory .$this->filenameService->clean($filename).'.pdf';
         file_put_contents($pdfFilepath, $output);
 
         return $pdfFilepath;

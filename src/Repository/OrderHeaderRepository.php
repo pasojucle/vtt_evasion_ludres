@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use App\Entity\OrderHeader;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -22,15 +23,35 @@ class OrderHeaderRepository extends ServiceEntityRepository
         parent::__construct($registry, OrderHeader::class);
     }
 
-    public function findOneOrderByUserAndStatus(User $user, int $status): ?OrderHeader
+    public function findOrdersByUser(User $user): array
+    {
+        $qb = $this->findOrdersByUserQuery($user);
+        return $qb
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findOrdersByUserQuery(User $user): QueryBuilder
+    {
+        return $this->createQueryBuilder('oh')
+        ->andWhere(
+            (new Expr)->gte('oh.status', ':status'),
+            (new Expr)->eq('oh.user', ':user'),
+        )
+        ->setParameter('status', OrderHeader::STATUS_ORDERED)
+        ->setParameter('user', $user);
+    }
+
+    public function findOneOrderByUser(User $user): ?OrderHeader
     {
         try {
             return $this->createQueryBuilder('oh')
             ->andWhere(
-                (new Expr)->lt('oh.status', ':status'),
+                (new Expr)->eq('oh.status', ':status'),
                 (new Expr)->eq('oh.user', ':user'),
             )
-            ->setParameter('status', $status)
+            ->setParameter('status', OrderHeader::STATUS_IN_PROGRESS)
             ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult()
