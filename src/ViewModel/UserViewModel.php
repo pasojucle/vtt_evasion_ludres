@@ -18,14 +18,15 @@ class UserViewModel extends AbstractViewModel
     private ?string $memberFullName;
     public ?array $lines;
     private ?Collection $oderLines;
-    public ?Identity $member;
-    private ?Identity $kinship;
-    private ?Identity $secondKinship;
+    public ?Identity $memberIdentity;
+    private ?Identity $kinshipIdentity;
+    private ?Identity $secondKinshipIdentity;
     private ?int $currentSeason;
 
     public static function fromUser(User $user, int $currentSeason)
     {
         $userView = new self();
+        $userView->id = $user->getId();
         $userView->user = $user;
         $userView->setIdentities();
         $userView->currentSeason = $currentSeason;
@@ -38,19 +39,19 @@ class UserViewModel extends AbstractViewModel
         if (1 < $identities->count()) {
             foreach ($identities as $identity) {
                 if (null === $identity->getKinship()) {
-                    $this->member = $identity;
+                    $this->memberIdentity = $identity;
 
                 } else {
                     if (null !== $identity->getBirthDate() && null !== $identity->getEmail()) {
-                        $this->kinship = $identity;
+                        $this->kinshipIdentity = $identity;
                     } else {
-                        $this->secondKinship = $identity;
+                        $this->secondKinshipIdentity = $identity;
                     }
                 }
             }
         } else {
-            $this->member = $identities->first();
-            $this->kinship = null;
+            $this->memberIdentity = $identities->first();
+            $this->kinshipIdentity = null;
         }
 
         return $this;

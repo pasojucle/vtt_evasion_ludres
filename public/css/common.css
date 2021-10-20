@@ -284,6 +284,14 @@ body > script {display: none !important;}
     width: 100%;
     text-align: center;
 }
+.success-ico {
+    font-size: 36px;
+    padding: 5px 8px;
+    min-width: 45px;
+    text-align: center;
+    display: inline-block;
+    color: var(--success-color);
+}
 .float-left + .float-right.btn-xl {
     margin-top: -25px;
 }

@@ -29,20 +29,26 @@
         </div>
         <div class="col-md-3 col-xs-5">
             {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') %}
-                {% if not session.isPresent %}
-                    <a href="{{ path('admin_session_present', {'session': session.id}) }}" 
-                    class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} btn-ico admin-session-present" title="Absent">
-                    <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-times{% endif %}"></i></a>
+                {% if not cluster.isComplete %}
+                    {% if not session.isPresent %}
+                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" 
+                        class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} btn-ico admin-session-present" title="Absent">
+                        <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-times{% endif %}"></i></a>
+                    {% else %}
+                        <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico admin-session-present" title="Présent"><i class="fas fa-check-circle"></i></a>
+                    {% endif %}
                 {% else %}
-                    <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success btn-ico admin-session-present" title="Présent"><i class="fas fa-check-circle"></i></a>
+                    {% if session.isPresent %}
+                        <div  class="success-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
+                    {% endif %}
                 {% endif %}
             {% endif %}
-            {% if hasGroups and (session.availability is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+            {% if hasGroups and not cluster.isComplete and (session.availability is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
                 <a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
                     <i class="fas fa-exchange-alt"></i>
                 </a>
             {% endif %}
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_ADMIN') and not cluster.isComplete%}
                 <a class="btn btn-danger btn-ico" href="{{ path('admin_session_delete', {'session' : session.id}) }}" title="Supprimer"><i class="fas fa-times"></i></a>
             {% endif %}
         </div>

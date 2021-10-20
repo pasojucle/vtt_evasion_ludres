@@ -45,7 +45,7 @@ class PdfService
         if (!is_dir('../data')) {
             mkdir('../data');
         }
-        $pdfFilepath =  $directory .$this->filenameService->clean($filename).'.pdf';
+        $pdfFilepath =  $directory.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
         file_put_contents($pdfFilepath, $output);
 
         return $pdfFilepath;
@@ -84,9 +84,8 @@ class PdfService
         return $pdf;
     }
 
-    public function joinPdf(array $files, User $user): string
+    public function joinPdf(array $files, ?User $user=null, $filename = '../data/pdf_temp.pdf'): string
     {
-        $filename = '../data/pdf_temp.pdf';
         // initiate FPDI
         $pdf = new Fpdi();
         // iterate through the files
@@ -104,7 +103,7 @@ class PdfService
 
                 // use the imported page
                 $pdf->useTemplate($templateId);
-                if (3 == $pageNo && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
+                if (null !== $user && 3 == $pageNo && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
                     $this->addData($pdf, $user);
                 }
             }

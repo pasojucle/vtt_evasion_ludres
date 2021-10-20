@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Cluster
 {
     public const SCHOOL_MAX_MEMEBERS = 6;
+    public const CLUSTER_FRAME = 'Encadrement';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -51,6 +52,11 @@ class Cluster
      * @ORM\Column(type="string", length=25, nullable=true)
      */
     private $role;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default":0})
+     */
+    private $isComplete = false;
 
     public function __construct()
     {
@@ -190,5 +196,17 @@ class Cluster
             });
         }
         return new ArrayCollection($sortedSessions);
+    }
+
+    public function isComplete(): ?bool
+    {
+        return $this->isComplete;
+    }
+
+    public function setIsComplete(bool $isComplete): self
+    {
+        $this->isComplete = $isComplete;
+
+        return $this;
     }
 }

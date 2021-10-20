@@ -1,0 +1,40 @@
+{% extends 'base_pdf.html.twig' %}
+
+{% block body %}
+        <div>
+            <br>
+                <table {% if user.member.picture %}class="table-fixed"{% endif %}>
+                    <tr>
+                        {% if user.member.picture %}<td rowspan="5" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+                        <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.getMember().fullName }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
+                    </tr>
+                    {% if user.kinShip %}
+                        <tr>
+                            <td style="width: 150px">{{ user.kinShip.type|trans }}</td>
+                            <td>{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
+                        </tr>
+                        <tr>
+                            <td>Téléphone :</td>
+                            <td>{{ user.kinShip.phone}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Second contact : </b>{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</td>
+                            <td>Téléphone : </b>{{ user.secondKinShip.phone}}</td>
+                        </tr>
+
+                    {% endif %}
+                </table>
+        </div>
+{% endblock %}

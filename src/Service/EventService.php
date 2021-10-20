@@ -174,7 +174,7 @@ class EventService
         switch ($event->getType()) {
             case Event::TYPE_SCHOOL:
                 $cluster = new Cluster();
-                $cluster->setTitle("Encadrement")
+                $cluster->setTitle(Cluster::CLUSTER_FRAME)
                     ->setRole('ROLE_FRAME');
                 $event->addCluster($cluster);
                 $this->entityManager->persist($cluster);

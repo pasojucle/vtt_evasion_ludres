@@ -38,6 +38,7 @@ $(document).ready(function(){
     $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
+    $(document).on('click', '.cluster-complete', clusterComplete);
 });
 
 jQuery(function($){
@@ -88,7 +89,6 @@ function previewFile() {
     const [file] = this.files;
 
     if (file) {
-        console.log(URL.createObjectURL(file))
         preview.src = URL.createObjectURL(file)
     }
 }
@@ -172,6 +172,19 @@ function modifierEvent() {
           $('#event_container').replaceWith(
             $(html).find('#event_container')
           );
+        }
+      });
+}
+
+function clusterComplete() {
+    const parameters = {};
+    parameters['cluster'] = $(this).data('cluster-id');
+    const route = Routing.generate('admin_cluster_complete', parameters);
+
+    $.ajax({
+        url : route,
+        success: function(html) {
+            $('#sessions_container').replaceWith($(html).find('#sessions_container'));
         }
       });
 }
