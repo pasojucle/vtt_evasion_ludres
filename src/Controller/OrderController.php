@@ -2,20 +2,23 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Form\OrderType;
 use App\Entity\OrderHeader;
 use App\Service\PdfService;
+use App\Service\MailerService;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\OrderPresenter;
 use App\Repository\OrderLineRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
-use DateTime;
+use App\Service\Order\OrderValidateService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OrderController extends AbstractController
@@ -39,6 +42,7 @@ class OrderController extends AbstractController
      */
     public function orderEdit(
         OrderLinesSetService $orderLinesSetService,
+        OrderValidateService $orderValidateService,
         Request $request
     ): Response
     {
@@ -55,11 +59,7 @@ class OrderController extends AbstractController
         if(!$request->isXmlHttpRequest() && $request->isMethod('POST')) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $orderHeader = $form->getData();
-                $orderHeader->setCreatedAt(new DateTime())
-                    ->setStatus(OrderHeader::STATUS_ORDERED);
-                $this->entityManager->persist($orderHeader);
-                $this->entityManager->flush();
+                $orderValidateService->execute($form);
 
                 return $this->redirectToRoute('order', ['orderHeader' => $orderHeader->getId()]);
             }
