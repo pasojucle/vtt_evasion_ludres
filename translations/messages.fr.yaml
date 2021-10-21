@@ -29,7 +29,7 @@ identity:
 
 disease:
   type:
-    diseases: Souffre t'il ou t'elle de
+    diseases: Pathologies
     allergies: Allergies
     intolerances: Intolérances
   label: 

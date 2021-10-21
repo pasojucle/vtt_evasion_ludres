@@ -1,40 +1,111 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
+        <h2>{{ user.member.fullName }}</h2>
         <div>
             <br>
-                <table {% if user.member.picture %}class="table-fixed"{% endif %}>
+            <table class="table-fixed">
+                <tr>
+                    <td rowspan="5" style="width: 150px">
+                        {% if user.member.picture %}
+                            <img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 80px;">
+                        {% endif %}
+                    </td>
+                    <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
+                </tr>
+            </table>
+            {% if user.lastLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+                <table class="table-border">
                     <tr>
-                        {% if user.member.picture %}<td rowspan="5" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
-                        <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.getMember().fullName }}</td>
+                        <td><b>Numéro de sécurité sociale</b></td>
+                        <td>{{ user.health.socialSecurityNumber }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+                        <td><b>Groupe sanguin</b></td>
+                        <td>{{ user.health.bloodGroup }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
+                        <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
+                        <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+                        <td><b>Date du dernier rappel antitétanique</b></td>
+                        <td>{{ user.health.tetanusBooster }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
+                        <td>
+                            <b>Médecin traitant : </b>{{ user.health.doctorName }}<br>{{ user.health.doctorAddress }} {{ user.health.doctorTown }}
+                        </td>
+                        <td><img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}</td>
                     </tr>
-                    {% if user.kinShip %}
-                        <tr>
-                            <td style="width: 150px">{{ user.kinShip.type|trans }}</td>
-                            <td>{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
-                        </tr>
-                        <tr>
-                            <td>Téléphone :</td>
-                            <td>{{ user.kinShip.phone}}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Second contact : </b>{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</td>
-                            <td>Téléphone : </b>{{ user.secondKinShip.phone}}</td>
-                        </tr>
-
-                    {% endif %}
                 </table>
+                {% if user.health.diseases is not empty %}
+                    <table class="table-border">
+                        {% for type, diseases in user.health.diseases %}
+                            {% for disease in diseases %}
+                                <tr>
+                                    <td><b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b></td>
+                                    {% if disease.title is not null %}
+                                        <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                                        <td>{{ disease.title }}</td>
+                                    {% else %}
+                                        <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                                    {% endif %}
+                                    <td>{{ disease.curentTreatment }}</td>
+                                    <td>{{ disease.emergencyTreatment }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% if user.kinShip %}
+            <table class="table-border table-fixed">
+                <tr>
+                    <td></td>
+                    <td><b>{{ user.kinShip.type | trans  }}</b></td>
+                    <td><b>{{ user.secondKinShip.type|trans}}</b></td>
+                </tr>
+                <tr>
+                    <td style="width: 150px">Non et prénom</td>
+                    <td>{{ user.kinShip.fullName }}</td>
+                    <td>{{ user.secondKinShip.fullName}}</td>
+                </tr>
+                <tr>
+                    <td>Téléphone</td>
+                    <td>{{ user.kinShip.phone}}</td>
+                    <td>{{ user.secondKinShip.phone}}</td>
+                </tr>
+                <tr>
+                    <td>Adresse</td>
+                    <td>
+                        {{ user.kinShip.address.street }}<br>{{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Courriel</td>
+                    <td>{{ user.kinShip.email }}</td>
+                    <td></td>
+                </tr>
+            </table>
+        {% endif %}
+        <ul>
+            <li><b>Type de licence : </b>{{ user.lastLicence.type|trans}}</li>
+            <li><b>Type d'assurance : </b>{{ user.lastLicence.coverageStr|trans }}</li>
+        </ul>
         </div>
 {% endblock %}

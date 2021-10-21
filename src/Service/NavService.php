@@ -55,12 +55,12 @@ class NavService
                     'pattern' => '/registration/',],
                 ],
             ],
-            [
-                'label' => 'Boutique',
-                'route' => 'products',
-                'pattern' => '/product/',
-                'subMenus' => [],
-            ],
+            // [
+            //     'label' => 'Boutique',
+            //     'route' => 'products',
+            //     'pattern' => '/product/',
+            //     'subMenus' => [],
+            // ],
             [
                 'label' => 'Liens',
                 'route' => 'links',

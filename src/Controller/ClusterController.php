@@ -3,15 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Cluster;
-use App\Entity\Session;
-use App\Form\SessionType;
 use App\Service\PdfService;
 use App\Service\EventService;
-use App\Repository\ClusterRepository;
 use App\Service\FilenameService;
 use App\ViewModel\ClusterPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -29,7 +26,7 @@ class ClusterController extends AbstractController
     ): Response
     {
         $cluster->setIsComplete(true);
-        // $entityManager->flush();
+        $entityManager->flush();
 
         $event = $cluster->getEvent();
 
@@ -39,7 +36,7 @@ class ClusterController extends AbstractController
         ]);
     }
 
-        /**
+    /**
      * @Route("/admin/groupe/export/{cluster}", name="admin_cluster_export")
      */
     public function adminClusterExport(
@@ -61,22 +58,22 @@ class ClusterController extends AbstractController
                     'user' => $session['user'],
                 ]);
                 $tmp = $session['user']->id.'_tmp';
-                $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName);
+                $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName, 'B6');
                 $files[] = ['filename' => $pdfFilepath];
             }
         }
 
-        $fileName = $dirName.DIRECTORY_SEPARATOR.$cluster->getTitle().'_'.$cluster->getEvent()->getStartAt()->format('Ymd').'.pdf';
+        $fileName = $cluster->getTitle().'_'.$cluster->getEvent()->getStartAt()->format('Ymd').'.pdf';
         $fileName = $filenameService->clean($fileName);
-        $filename = $pdfService->joinPdf($files, null, $fileName);
-
-        $fileContent = file_get_contents($filename);
+        $pathName = $pdfService->joinPdf($files, null, '../data/'.$filenameService->clean($cluster->getTitle()).'.pdf');
+        $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
             $fileName
         );
-        // rmdir($dirName);
+
+        (new Filesystem)->remove($dirName);
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;

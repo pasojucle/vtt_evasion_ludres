@@ -21,7 +21,7 @@
 
             <table {% if user.member.picture %}class="table-fixed"{% endif %}>
                 <tr>
-                    {% if user.member.picture %}<td rowspan="5" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+                    {% if user.member.picture %}<td rowspan="6" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
                     <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
                 </tr>
                 <tr>
@@ -83,9 +83,7 @@
                             {% endfor %}
                         {% endfor %}
                     </table>
-                    <br>
                 {% endif %}
-
             {% endif %}
         </div>
         {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_ADULT') %}

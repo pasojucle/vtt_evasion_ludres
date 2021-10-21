@@ -212,6 +212,11 @@ body > script {display: none !important;}
 .btn-xxxl {
     line-height: 24px;
 }
+.btn-100 {
+    margin: 10px auto 20px auto;
+    width: 100%;
+    text-align: center;
+}
 .btn-xxl::after, .btn-xxxl::after {
     content: '\f56d';
     font-family: "Font Awesome 5 Free";
@@ -886,6 +891,8 @@ nav.nav-tab {
     }
     .btn-xxl {
         width: 100%;
+        height: 65px;
+        line-height: 45px;
     }
     .col-4, .col-2, .col-1fr-3fr, .col-3, .col-content {
         grid-template-columns: 1fr;

@@ -17,6 +17,7 @@ class UserViewModel extends AbstractViewModel
     public ?User $user;
     private ?string $memberFullName;
     public ?array $lines;
+    public ?array $lastLicence;
     private ?Collection $oderLines;
     public ?Identity $memberIdentity;
     private ?Identity $kinshipIdentity;
@@ -30,6 +31,7 @@ class UserViewModel extends AbstractViewModel
         $userView->user = $user;
         $userView->setIdentities();
         $userView->currentSeason = $currentSeason;
+        $userView->lastLicence = $userView->getLastLicence();
         return $userView;
     }
 
