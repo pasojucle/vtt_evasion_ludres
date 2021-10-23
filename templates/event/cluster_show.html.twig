@@ -36,11 +36,18 @@
                                 <i class="fas fa-check"></i> Valider le groupe
                             </a>
                         {% else %}
-                        {# {% endif %}
-                        {% if cluster.isComplete and is_granted('ROLE_ADMIN') %} #}
-                            <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger">
-                                <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
-                            </a>
+                            <div class="row row-list">
+                                <div class="col-md-9 col-xs-6">
+                                    <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete">
+                                        <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-xs-6">
+                                    <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success">
+                                        <i class="fas fa-file-pdf"></i> Exporter
+                                    </a>
+                                </div>
+                            </div>
                         {% endif %}
                     {% endif %}
                 {% else %}

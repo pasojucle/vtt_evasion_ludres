@@ -27,7 +27,7 @@ class ClusterController extends AbstractController
     {
         $cluster->setIsComplete(!$cluster->isComplete());
         $entityManager->flush();
-
+dump($cluster);
         $event = $cluster->getEvent();
 
         return $this->render('event/cluster_show.html.twig', [
@@ -54,12 +54,14 @@ class ClusterController extends AbstractController
         }
         if (!empty($presenter->viewModel()->sessions)) {
             foreach($presenter->viewModel()->sessions as $session) {
-                $render = $this->renderView('cluster/export.html.twig', [
-                    'user' => $session['user'],
-                ]);
-                $tmp = $session['user']->id.'_tmp';
-                $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName, 'B6');
-                $files[] = ['filename' => $pdfFilepath];
+                if ($session['isPresent']) {
+                    $render = $this->renderView('cluster/export.html.twig', [
+                        'user' => $session['user'],
+                    ]);
+                    $tmp = $session['user']->id.'_tmp';
+                    $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName, 'B6');
+                    $files[] = ['filename' => $pdfFilepath];
+                }
             }
         }
 
