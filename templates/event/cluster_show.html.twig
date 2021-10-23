@@ -30,10 +30,17 @@
                             {% include ('event/session.html.twig')%}
                         {% endfor %}
                     </ul>
-                    {% if hasGroups and not cluster.isComplete and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
-                        <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete" data-cluster-id="{{ cluster.id }}" target="_blank">
-                            <i class="fas fa-check"></i> Valider le groupe
-                        </a>
+                    {% if hasGroups  and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+                        {% if not cluster.isComplete %}
+                            <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete" data-cluster-id="{{ cluster.id }}" target="_blank">
+                                <i class="fas fa-check"></i> Valider le groupe
+                            </a>
+                        {% endif %}
+                        {% if cluster.isComplete and is_granted('ROLE_FRAME') %}
+                            <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger">
+                                <i class="fas fa-unlock-alt"></i> Déveirouiller le groupe
+                            </a>
+                        {% endif %}
                     {% endif %}
                 {% else %}
                     <p>Auncun inscrit</p>

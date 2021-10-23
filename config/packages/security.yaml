@@ -54,6 +54,7 @@ security:
         - { path: ^/admin/sortie, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin/adherent, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin/rando, roles: ROLE_FRAME, requires_channel: https }
+        - { path: ^/admin/group, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin/inscription, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin/send, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }

@@ -25,7 +25,7 @@ class ClusterController extends AbstractController
         Cluster $cluster
     ): Response
     {
-        $cluster->setIsComplete(true);
+        $cluster->setIsComplete(!$cluster->isComplete());
         $entityManager->flush();
 
         $event = $cluster->getEvent();
