@@ -35,8 +35,9 @@
                             <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete" data-cluster-id="{{ cluster.id }}" target="_blank">
                                 <i class="fas fa-check"></i> Valider le groupe
                             </a>
-                        {% endif %}
-                        {% if cluster.isComplete and is_granted('ROLE_ADMIN') %}
+                        {% else %}
+                        {# {% endif %}
+                        {% if cluster.isComplete and is_granted('ROLE_ADMIN') %} #}
                             <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger">
                                 <i class="fas fa-unlock-alt"></i> Déveirouiller le groupe
                             </a>
