@@ -83,7 +83,7 @@ class LevelController extends AbstractController
     }
 
     /**
-     * @Route("/admin/supprimer/nuveau/{level}", name="admin_level_delete")
+     * @Route("/admin/supprimer/niveau/{level}", name="admin_level_delete")
      */
     public function adminLevelDelete(
         Request $request,

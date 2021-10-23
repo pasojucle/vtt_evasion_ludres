@@ -55,8 +55,11 @@ class UserViewModel extends AbstractViewModel
                     }
                 }
             }
-        } else {
+        } elseif(0 < $identities->count()) {
             $this->memberIdentity = $identities->first();
+            $this->kinshipIdentity = null;
+        } else {
+            $this->memberIdentity = null;
             $this->kinshipIdentity = null;
         }
 

@@ -60,6 +60,21 @@ class Product
      */
     private $ref;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $discountPrice;
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $discountTitle;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $category;
+
     public function __construct()
     {
         $this->orderLines = new ArrayCollection();
@@ -196,6 +211,42 @@ class Product
     public function setRef(string $ref): self
     {
         $this->ref = $ref;
+
+        return $this;
+    }
+
+    public function getDiscountPrice(): ?float
+    {
+        return $this->discountPrice;
+    }
+
+    public function setDiscountPrice(?float $discountPrice): self
+    {
+        $this->discountPrice = $discountPrice;
+
+        return $this;
+    }
+
+    public function getDiscountTitle(): ?string
+    {
+        return $this->discountTitle;
+    }
+
+    public function setDiscountTitle(?string $discountTitle): self
+    {
+        $this->discountTitle = $discountTitle;
+
+        return $this;
+    }
+
+    public function getCategory(): ?int
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?int $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

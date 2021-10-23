@@ -224,9 +224,16 @@ p + p {
     color: var(--background-color);
     font-weight: 700;
 }
-.card-product .price{
+.card-product .price {
     color: var(--primary-color-darker);
     font-size: 16px;
+}
+.throughed-price {
+    color: var(--background-color);
+    text-decoration-line: line-through;
+}
+.card-product .throughed-price {
+    font-size: 12px;
 }
 .card-img {
     height: 220px;
@@ -464,6 +471,9 @@ button[type="submit"] {
     font-weight: 700;
     margin: 25px auto;
     color: var(--primary-color-darker);
+}
+.product-detail .throughed-price {
+    font-size: 18px;
 }
 
 @media screen and (max-width: 800px) {

@@ -40,7 +40,7 @@ class OrderValidateService
             'firstName' => $identity->getFirstName(),
             'email' => $identity->getEmail(),
             'subject' => 'Nouvelle commande passéee sur le site VTT Evasion Ludres',
-            'registration' => $this->router->generate('order_acknowledgement', ['orderHeader' => $orderHeader->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'order' => $this->router->generate('order_acknowledgement', ['orderHeader' => $orderHeader->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
     ]);
 
     }

@@ -17,7 +17,11 @@
                 <br>
                 <p>{{ product.content|raw}}</p>
                 {% if is_granted('ROLE_USER') %}
-                    <div class="price">{{ product.price }}</div>
+                    <p>
+                        {% if product.discountPrice %}{{ product.discountTitle }}<br>{% endif %}
+                        <span class="{{ product.priceClass }}">{{ product.price }}</span>
+                        {% if product.discountPrice %} <span class="price">{{ product.discountPrice }}</span>{% endif %}
+                    </p>
                     {{ form_start(form)}}
                     <div class="form-group">
                         {{ form_row(form.size)}}

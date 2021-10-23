@@ -38,9 +38,12 @@ class OrderHeaderRepository extends ServiceEntityRepository
         ->andWhere(
             (new Expr)->gte('oh.status', ':status'),
             (new Expr)->eq('oh.user', ':user'),
+            (new Expr)->eq('oh.isDisabled', ':disabled'),
         )
         ->setParameter('status', OrderHeader::STATUS_ORDERED)
-        ->setParameter('user', $user);
+        ->setParameter('user', $user)
+        ->setParameter('disabled', false)
+        ;
     }
 
     public function findOneOrderByUser(User $user): ?OrderHeader

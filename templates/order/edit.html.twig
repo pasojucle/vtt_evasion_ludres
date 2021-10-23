@@ -22,7 +22,9 @@
                             {{ line.product.name }}<br>
                             {{ line.product.ref }}<br>
                             Taille : {{ line.size }}<br>
-                            Prix/unitaire : {{ line.product.price }}
+                            {% if line.product.discountPrice %}{{ line.product.discountTitle }}<br>{% endif %}
+                            Prix/unitaire : <span class="{{ line.product.priceClass }}">{{ line.product.price }}</span>
+                            {% if line.product.discountPrice %} <span class="price">{{ line.product.discountPrice }}</span>{% endif %}
                         </div>
                         <div class="col-md-2 col-xs-2 align-right form-group">
                             {{ form_widget(orderLine[key].quantity) }}

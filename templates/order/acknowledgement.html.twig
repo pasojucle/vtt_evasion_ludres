@@ -24,7 +24,12 @@
                             {{ line.product.name }}<br>
                             {{ line.product.ref }}<br>
                             Taille : {{ line.size }}<br>
-                            Prix/unitaire : {{ line.product.price }}
+                            {% if line.product.discountPrice %}
+                                {{ line.product.discountTitle }}
+                                Prix/unitaire : {{ line.product.discountPrice }}
+                            {% else %}
+                                Prix/unitaire : {{ line.product.price }}
+                            {% endif %}
                         </td>
                         <td class="align-right align-top">{{ line.quantity }}</td>
                         <td class="align-right align-top">{{ line.amount }}</td>

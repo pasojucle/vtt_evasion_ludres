@@ -15,7 +15,10 @@
                         <div class="card-body">
                             {{ product.name }}
                             {% if is_granted('ROLE_USER') %}
-                                <p class="price">{{ product.price }}</p>
+                                <p>
+                                    <span class="{{ product.priceClass }}">{{ product.price }}</span>
+                                    {% if product.discountPrice %} <span class="price">{{ product.discountPrice }}</span>{% endif %}
+                                </p>
                             {% endif %}
                         </div>
                     </a>

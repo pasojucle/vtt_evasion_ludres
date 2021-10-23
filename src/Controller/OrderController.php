@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -113,5 +114,38 @@ class OrderController extends AbstractController
         $response->headers->set('Content-Type', 'application/pdf');
 
         return $response;
+    }
+
+    /**
+     * @Route("/commande/supprimer/{orderHeader}", name="order_delete")
+     */
+    public function orderDelete(
+        Request $request,
+        OrderPresenter $presenter,
+        OrderHeader $orderHeader
+    ): Response
+    {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl('order_delete', 
+                [
+                    'orderHeader'=> $orderHeader->getId(),
+                ]
+            ),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $orderHeader->setIsDisabled(true);
+            $this->entityManager->persist($orderHeader);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('user_account');
+        }
+
+        $presenter->present($orderHeader);
+        return $this->render('order/delete.modal.html.twig', [
+            'order_header' => $presenter->viewModel(),
+            'form' => $form->createView(),
+        ]);
     }
 }
