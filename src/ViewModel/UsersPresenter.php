@@ -21,7 +21,7 @@ class UsersPresenter
         $currentSeason = $this->licenceService->getCurrentSeason();
 
         if (!empty($users)) {
-            $this->viewModel = UsersViewModel::fromUsers($users, $currentSeason);
+            $this->viewModel = UsersViewModel::fromUsers($users, $this->licenceService);
         } else {
             $this->viewModel = new UsersViewModel();
         }

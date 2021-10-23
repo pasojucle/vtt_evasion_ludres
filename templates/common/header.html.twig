@@ -46,7 +46,7 @@
         {% endif %}
         {% if order_service.getOrderByUser %}
             <li>
-                <a class="btn-logger" href="{{ path('order_edit') }}" title="Mon panier"><i class="fas fa-shopping-cart"></i> <span class="xs-display">Mon pannier</span></a>
+                <a class="btn-logger" href="{{ path('order_edit') }}" title="Mon panier"><i class="fas fa-shopping-cart"></i> <span class="xs-display">Mon panier</span></a>
             </li>
         {% endif %}
         {% if is_granted('ROLE_FRAME') %}

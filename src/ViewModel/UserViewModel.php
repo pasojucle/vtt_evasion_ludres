@@ -8,6 +8,7 @@ use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Identity;
 use App\Entity\OrderHeader;
+use App\Service\LicenceService;
 use App\ViewModel\ProductViewModel;
 use Doctrine\Common\Collections\Collection;
 
@@ -23,14 +24,17 @@ class UserViewModel extends AbstractViewModel
     private ?Identity $kinshipIdentity;
     private ?Identity $secondKinshipIdentity;
     private ?int $currentSeason;
+    private ?array $seasonsStatus;
 
-    public static function fromUser(User $user, int $currentSeason)
+    public static function fromUser(User $user, LicenceService $licenceService)
     {
         $userView = new self();
         $userView->id = $user->getId();
         $userView->user = $user;
         $userView->setIdentities();
-        $userView->currentSeason = $currentSeason;
+        $userView->currentSeason = $licenceService->getCurrentSeason();
+        $userView->seasonsStatus = $licenceService->getSeasonsStatus();
+
         $userView->lastLicence = $userView->getLastLicence();
         return $userView;
     }

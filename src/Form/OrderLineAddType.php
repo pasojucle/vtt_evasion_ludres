@@ -37,7 +37,7 @@ class OrderLineAddType extends AbstractType
                 ],
             ])
             ->add('save', SubmitType::class, [
-                'label' => '<i class="fas fa-shopping-cart"></i> Ajouter au pannier',
+                'label' => '<i class="fas fa-shopping-cart"></i> Ajouter au panier',
                 'label_html' => true,
                 'attr' => ['class' => 'btn btn-primary'],
             ])
