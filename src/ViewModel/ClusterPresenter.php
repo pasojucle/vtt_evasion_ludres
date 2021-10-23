@@ -21,7 +21,7 @@ class ClusterPresenter
     {
         
         if (null !== $cluster) {
-            $this->viewModel = ClusterViewModel::fromCluster($cluster, $this->licenceService->getCurrentSeason());
+            $this->viewModel = ClusterViewModel::fromCluster($cluster, $this->licenceService);
         } else {
             $this->viewModel = new ClusterViewModel();
         }

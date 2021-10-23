@@ -4,7 +4,7 @@ namespace App\ViewModel;
 
 use ReflectionClass;
 use App\Entity\Cluster;
-
+use App\Service\LicenceService;
 
 class ClusterViewModel extends AbstractViewModel
 {
@@ -12,13 +12,13 @@ class ClusterViewModel extends AbstractViewModel
     public ?string $title;
     public ?array $sessions;
 
-    public static function fromCluster(Cluster $cluster, int $currentSeason)
+    public static function fromCluster(Cluster $cluster, LicenceService $licenceService)
     {
         $sessions = [];
         if (!$cluster->getSessions()->isEmpty()) {
             foreach($cluster->getSessions() as $session) {
                 $sessions[] = [
-                    'user' => UserViewModel::fromUser($session->getUser(), $currentSeason),
+                    'user' => UserViewModel::fromUser($session->getUser(), $licenceService),
                     'availability' => $session->getAvailability(),
                     'isPresent' => $session->isPresent(),
                 ];
