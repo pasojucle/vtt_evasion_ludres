@@ -63,8 +63,8 @@ class ClusterController extends AbstractController
             }
         }
 
-        $fileName = $cluster->getTitle().'_'.$cluster->getEvent()->getStartAt()->format('Ymd').'.pdf';
-        $fileName = $filenameService->clean($fileName);
+        $fileName = $cluster->getTitle().'_'.$cluster->getEvent()->getStartAt()->format('Ymd');
+        $fileName = $filenameService->clean($fileName).'.pdf';
         $pathName = $pdfService->joinPdf($files, null, '../data/'.$filenameService->clean($cluster->getTitle()).'.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
