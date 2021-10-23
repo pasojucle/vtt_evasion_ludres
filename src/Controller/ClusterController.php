@@ -75,6 +75,7 @@ class ClusterController extends AbstractController
 
         (new Filesystem)->remove($dirName);
         $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-Type', 'application/pdf');
 
         return $response;
     }
