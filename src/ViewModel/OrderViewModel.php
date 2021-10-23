@@ -4,6 +4,7 @@ namespace App\ViewModel;
 
 use App\Entity\User;
 use App\Entity\OrderHeader;
+use App\Service\LicenceService;
 use App\ViewModel\ProductViewModel;
 use Doctrine\Common\Collections\Collection;
 
@@ -15,13 +16,13 @@ class OrderViewModel extends AbstractViewModel
     public ?int $status;
     public ?string $amount;
 
-    public static function fromOrderHeader(OrderHeader $orderHeader, string $productDirecrtory, int $currentSeason)
+    public static function fromOrderHeader(OrderHeader $orderHeader, string $productDirecrtory, LicenceService $licenceService)
     {
         $orderView = new self();
         $orderView->id = $orderHeader->getId();
         $createdAt = $orderHeader->getCreatedAt();
         $orderView->createdAt = $createdAt->format('d/m/Y');
-        $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $currentSeason);
+        $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $licenceService);
         $orderView->status = $orderHeader->getStatus();
         $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $productDirecrtory);
 

@@ -110,6 +110,7 @@ class OrderController extends AbstractController
         );
         
         $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-Type', 'application/pdf');
 
         return $response;
     }

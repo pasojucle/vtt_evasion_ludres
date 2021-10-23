@@ -23,9 +23,8 @@ class OrdersPresenter
     public function present(Paginator $ordrers): void
     {
         $productDirectory = $this->parameterBag->get('products_directory');
-        $currentSeason = $this->licenceService->getCurrentSeason();
         if (!empty($ordrers)) {
-            $this->viewModel = OrdersViewModel::fromOrders($ordrers, $productDirectory, $currentSeason);
+            $this->viewModel = OrdersViewModel::fromOrders($ordrers, $productDirectory, $this->licenceService);
         } else {
             $this->viewModel = new OrdersViewModel();
         }

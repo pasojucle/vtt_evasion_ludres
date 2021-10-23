@@ -22,9 +22,9 @@ class OrderPresenter
     public function present(?OrderHeader $orderHeader): void
     {
         $productDirectory = $this->parameterBag->get('products_directory');
-        $currentSeason = $this->licenceService->getCurrentSeason();
+
         if (null !== $orderHeader) {
-            $this->viewModel = OrderViewModel::fromOrderHeader($orderHeader, $productDirectory, $currentSeason);
+            $this->viewModel = OrderViewModel::fromOrderHeader($orderHeader, $productDirectory, $this->licenceService);
         } else {
             $this->viewModel = new OrderViewModel();
         }
