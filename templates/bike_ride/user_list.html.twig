@@ -44,6 +44,8 @@
                         {% endfor %}
                         {% if user.bikeRides is empty %}
                             <p>Vous n'êtes inscrit à aucune rando</p>
+                            <br>
+                            <a href="{{ path('schedule', {'period': 'prochainement'}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
                         {% endif %}
                     </ul> 
                 </div>  
