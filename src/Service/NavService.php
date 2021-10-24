@@ -104,6 +104,13 @@ class NavService
                  'role' => 'ROLE_ADMIN',
             ],
             [
+                'label' => 'Gestion des commandes',
+                 'route' => 'admin_orders',
+                 'pattern' => '/commande/',
+                 'subMenus' => [],
+                 'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Gestion des niveaux',
                  'route' => 'admin_levels',
                  'pattern' => '/level/',

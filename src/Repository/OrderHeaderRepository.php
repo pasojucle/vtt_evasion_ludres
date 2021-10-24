@@ -63,4 +63,18 @@ class OrderHeaderRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+
+    public function findOrdersQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('oh')
+        ->andWhere(
+            (new Expr)->gte('oh.status', ':status'),
+            (new Expr)->eq('oh.isDisabled', ':disabled'),
+        )
+        ->setParameter('status', OrderHeader::STATUS_ORDERED)
+        ->setParameter('disabled', false)
+            ->orderBy('oh.id', 'DESC')
+        ;
+    }
 }

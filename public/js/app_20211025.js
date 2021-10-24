@@ -39,6 +39,7 @@ $(document).ready(function(){
     $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.cluster-complete', clusterComplete);
+    $(document).on('click', '.order-status', orderStatus);
 });
 
 jQuery(function($){
@@ -229,6 +230,17 @@ function setOrderLineQuantity(e) {
           $('#order').replaceWith(
             $(html).find('#order')
           );
+        }
+      });
+}
+
+function orderStatus() {
+    const route = $(this).attr('href');
+
+    $.ajax({
+        url : route,
+        success: function(html) {
+            $('#orders_container').replaceWith($(html).find('#orders_container'));
         }
       });
 }

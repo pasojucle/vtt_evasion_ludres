@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma commande{% endblock %}
+
+{% block body %}
+    <div id="order" class="wrapper">
+        <div class="block">
+            <div class="block-title">
+                <h2>Cde {{ order.id }} du {{ order.createdAt }}</h>
+            <span class="tools">
+                <a href="{{ path('admin_orders') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des commandes">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
+            </div>
+            <div class="block-body">
+                <ul>
+                    {% for line in order.orderLines.lines %}
+                        <li class="row row-list row-align-top block background-ligth">
+                            <div class="col-md-2 col-xs-3">
+                                <a href="{{ path('product_show', {'product': line.product.id}) }}">
+                                    <div class="thumbnail"><img class="" src="{{ line.product.pathName }}" alt=""></div>
+                                </a>
+                            </div>
+                            <div class="col-md-5 col-xs-4">
+                                {{ line.product.name }}<br>
+                                {{ line.product.ref }}<br>
+                                Taille : {{ line.size }}<br>
+                                {% if line.product.discountPrice %}{{ line.product.discountTitle }}{% endif %}
+                                Prix/unitaire : <span class="{{ line.product.priceClass }}">{{ line.product.price }}</span>
+                                {% if line.product.discountPrice %} <span class="price">{{ line.product.discountPrice }}</span>{% endif %}
+                            </div>
+                            <div class="col-md-2 col-xs-2 align-right form-group">
+                                {{ line.quantity }}
+                            </div>
+                            <div class="col-md-3 col-xs-2 align-right">{{ line.amount }}</div>
+                        </li>
+
+                    {% endfor %}
+                </ul>
+                <div class="row">
+                    <div class="col-md-10 col-xs-10 align-right">Total :</div>
+                    <div class="col-md-2 col-xs-10  align-right">{{ order.amount }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

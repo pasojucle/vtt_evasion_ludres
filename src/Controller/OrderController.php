@@ -8,18 +8,19 @@ use App\Entity\OrderHeader;
 use App\Service\PdfService;
 use App\Service\MailerService;
 use App\ViewModel\UserPresenter;
+use App\Service\PaginatorService;
 use App\ViewModel\OrderPresenter;
+use App\ViewModel\OrdersPresenter;
 use App\Repository\OrderLineRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
 use App\Service\Order\OrderValidateService;
-use App\Service\PaginatorService;
-use App\ViewModel\OrdersPresenter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -167,6 +168,64 @@ class OrderController extends AbstractController
 
         return $this->render('order/list.html.twig', [
             'orders' => $presenter->viewModel()->orders,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/commandes", name="admin_orders")
+     */
+    public function adminOrders(
+        OrdersPresenter $presenter,
+        PaginatorService $paginator,
+        Request $request
+    ): Response
+    {
+        $query = $this->orderHeaderRepository->findOrdersQuery();
+        $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $presenter->present($orders);
+
+        return $this->render('order/admin/list.html.twig', [
+            'orders' => $presenter->viewModel()->orders,
+            'lastPage' => $paginator->lastPage($orders),
+            'count' => $paginator->total($orders),
+        ]);
+    }
+    /**
+     * @Route("/admin/commande/status/{orderHeader}/{status}", name="admin_order_status")
+     */
+    public function adminOrderValidate(
+        OrdersPresenter $presenter,
+        PaginatorService $paginator,
+        Request $request,
+        OrderHeader $orderHeader,
+        int $status
+    ): Response
+    {
+        $orderHeader->setStatus($status);
+        $this->entityManager->flush();
+        $query = $this->orderHeaderRepository->findOrdersQuery();
+        $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $presenter->present($orders);
+
+        return $this->render('order/admin/list.html.twig', [
+            'orders' => $presenter->viewModel()->orders,
+            'lastPage' => $paginator->lastPage($orders),
+            'count' => $paginator->total($orders),
+        ]);
+    }
+
+
+    /**
+     * @Route("/admin/commande/{orderHeader}", name="admin_order")
+     */
+    public function admin_order(
+        ?OrderHeader $orderHeader
+    ): Response
+    {
+        $this->presenter->present($orderHeader);
+
+        return $this->render('order/admin/show.html.twig', [
+            'order' => $this->presenter->viewModel()
         ]);
     }
 }
