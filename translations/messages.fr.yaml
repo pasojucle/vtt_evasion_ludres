@@ -123,8 +123,8 @@ content:
     flash: Message flash
     content: Contenu
 
-    order:
-      in_progress: En cours
-      ordeded: Commandée
-      valided: Validée
-      completed: Cloturée
+order:
+  in_progress: En cours
+  ordered: Commandée
+  valided: Validée
+  completed: Cloturée

@@ -140,7 +140,7 @@ class SessionController extends AbstractController
 
             $this->sessionService->checkEndTesting($user);
 
-            return $this->redirectToRoute('user_account');
+            return $this->redirectToRoute('user_bike_rides');
         }
 
         return $this->render('session/add.html.twig', [
@@ -220,7 +220,7 @@ class SessionController extends AbstractController
 
             $this->addFlash('success', 'Votre disponiblité à bien été modifiée');
 
-            return $this->redirectToRoute('user_account');
+            return $this->redirectToRoute('user_bike_rides');
         }
 
         return $this->render('session/edit.html.twig', [
@@ -251,7 +251,7 @@ class SessionController extends AbstractController
 
             $this->addFlash('success', 'Votre désinscription à bien été prise en compte');
 
-            return $this->redirectToRoute('user_account');
+            return $this->redirectToRoute('user_bike_rides');
         }
 
         return $this->render('session/delete.html.twig', [

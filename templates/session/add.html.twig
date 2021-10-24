@@ -50,7 +50,7 @@
                     {% if form.submit is defined %}
                         {{ form_row(form.submit)}}
                     {% elseif is_already_registered %}
-                        <a href="{{ path('user_account') }}" class="btn btn-primary float-right">Voir toutes mes sorties</a>
+                        <a href="{{ path('user_bike_rides') }}" class="btn btn-primary float-right">Voir toutes mes sorties</a>
                     {% elseif is_end_testing %}
                         <a href="{{ path('user_registration_form', {'step': 1}) }}" class="btn btn-primary float-right">S'inscrire</a>
                     {% endif %}

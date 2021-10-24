@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width full-background">
+        <div class="wrapper-title">
+            <h1>Mon compte</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="block background-white">
+                <div class="block-title">
+                    <h2>Mes commandes</h2>
+                </div>
+                <div class="block-body">
+                    <ul>
+                        {% for order in orders %}
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-4 col-xs-12">
+                                        <b>Cde {{ order.id }} du {{ order.createdAt }}</b>
+                                    </div>
+                                    <div class="col-md-3 col-xs-4">
+                                        {{ order.amount }}
+                                    </div>
+                                    <div class="col-md-2 col-xs-4">
+                                        {{ constant('APP\\Entity\\OrderHeader::STATUS')[order.status]|trans }}
+                                    </div>
+                                    <div class="col-md-3 col-xs-4">
+                                        <a href="{{ path('order',{'orderHeader': order.id}) }}" class="btn btn-primary btn-ico" title="Voir la commande"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ path('order_delete',{'orderHeader': order.id}) }}" class="btn btn-danger btn-ico"  data-toggle="modal" data-type="danger" title="Annuler">
+                                            <i class="fas fa-times-circle"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul> 
+                </div>  
+            </div>
+        </div>
+    </div>
+{% endblock %}

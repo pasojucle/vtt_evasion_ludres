@@ -38,7 +38,13 @@
                     <a class="btn-logger"><i class="fas fa-user"></i> {{ member.fullName }}</a>
                     <ul class="sub-menu">
                         <li>
-                            <a href="{{ path('user_account') }}">Mon compte</a>
+                            <a href="{{ path('user_bike_rides') }}">Mon programme perso</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('user_account') }}">Mes infos</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('user_orders') }}">Mes commandes</a>
                         </li>
                     </ul>
                 </li>

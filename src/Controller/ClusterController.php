@@ -27,7 +27,7 @@ class ClusterController extends AbstractController
     {
         $cluster->setIsComplete(!$cluster->isComplete());
         $entityManager->flush();
-dump($cluster);
+
         $event = $cluster->getEvent();
 
         return $this->render('event/cluster_show.html.twig', [

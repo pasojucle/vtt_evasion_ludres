@@ -14,6 +14,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
 use App\Service\Order\OrderValidateService;
+use App\Service\PaginatorService;
+use App\ViewModel\OrdersPresenter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -139,13 +141,32 @@ class OrderController extends AbstractController
             $this->entityManager->persist($orderHeader);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('user_account');
+            return $this->redirectToRoute('user_orders');
         }
 
         $presenter->present($orderHeader);
         return $this->render('order/delete.modal.html.twig', [
             'order_header' => $presenter->viewModel(),
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/mes_commandes", name="user_orders")
+     */
+    public function userOrders(
+        OrdersPresenter $presenter,
+        PaginatorService $paginator,
+        Request $request
+    ): Response
+    {
+        $user = $this->getUser();
+        $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);
+        $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $presenter->present($orders);
+
+        return $this->render('order/list.html.twig', [
+            'orders' => $presenter->viewModel()->orders,
         ]);
     }
 }

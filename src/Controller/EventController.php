@@ -15,6 +15,7 @@ use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
 use App\Repository\ParameterRepository;
 use App\Service\FilenameService;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -203,5 +204,18 @@ class EventController extends AbstractController
         }
 
         return $this->render('bike_ride/list.html.twig', $response['parameters']);
+    }
+
+       /**
+     * @Route("/mon_programme", name="user_bike_rides")
+     */
+    public function userBikeRides(
+        UserPresenter $presenter
+    ): Response
+    {
+        $presenter->present($this->getUser());
+        return $this->render('bike_ride/user_list.html.twig', [
+            'user' => $presenter->viewModel(),
+        ]);
     }
 }
