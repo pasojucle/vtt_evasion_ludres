@@ -42,6 +42,9 @@
                                 </div>
                             </li>
                         {% endfor %}
+                        {% if user.bikeRides is empty %}
+                            <p>Vous n'êtes inscrit à aucune rando</p>
+                        {% endif %}
                     </ul> 
                 </div>  
             </div>

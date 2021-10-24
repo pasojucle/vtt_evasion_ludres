@@ -35,7 +35,10 @@
                                 </div>
                             </li>
                         {% endfor %}
-                    </ul> 
+                    </ul>
+                    {% if orders is empty %}
+                        <p>Vous n'avez aucune commande</p>
+                    {% endif %}
                 </div>  
             </div>
         </div>
