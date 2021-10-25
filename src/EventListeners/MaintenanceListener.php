@@ -12,7 +12,7 @@ class MaintenanceListener
     public function __construct($maintenance, Environment $environment)
     {
         $this->environment = $environment;
-        $this->maintenance = filter_var($maintenance["statut"], FILTER_VALIDATE_BOOL);
+        $this->maintenance = filter_var($maintenance["status"], FILTER_VALIDATE_BOOL);
         $this->ipAuthorized = $maintenance["ipAuthorized"];
     }
     public function onKernelRequest(RequestEvent $event)

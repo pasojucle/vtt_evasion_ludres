@@ -39,7 +39,11 @@
         </div>
         <main>
             {% if isAdmin %}
-                <div class="header"><h1>Administration du site</h1></div>
+                <div class="header">
+                    <h1>Administration du site
+                        {% if nav_service.maintenance %} - Mode Maintenance{% endif %}
+                    </h1>
+                </div>
                 {% include 'common/admin_nav.html.twig' %}
             {% endif %}
             {% block body %}{% endblock %}

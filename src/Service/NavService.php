@@ -2,14 +2,18 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+
 class NavService
 {
     private array $menus;
     private array $menusAdmin;
     private array $footer;
+    private ParameterBagInterface $parameterBag;
 
-    public function __construct()
+    public function __construct(ParameterBagInterface $parameterBag)
     {
+        $this->parameterBag = $parameterBag;
         $this->menus = [
             [
                 'label' => 'Le club',
@@ -175,5 +179,12 @@ class NavService
     public function getFooter(): array
     {
         return $this->footer;
+    }
+
+    public function getMaintenance()
+    {
+        $maintenance = $this->parameterBag->get('maintenance');
+
+        return ($maintenance) ? filter_var($maintenance['status'], FILTER_VALIDATE_BOOL) : false;
     }
 }

@@ -8,7 +8,7 @@ parameters:
     products_directory: 'uploads/products'
     products_directory_path: '%kernel.project_dir%/public/%products_directory%'
     maintenance:
-        statut: '%env(resolve:MAINTENANCE)%'
+        status: '%env(resolve:MAINTENANCE)%'
         ipAuthorized: ["127.0.0.1","88.166.188.236"] 
 
 services:
