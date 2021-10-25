@@ -14,6 +14,20 @@
             </span>
             </div>
             <div class="block-body">
+                {% set member = order.user.member %}
+                <a class="btn-list  block background-ligth" href="{{ path('admin_user', {'user': order.user.id }) }}">
+                    <div class="row">
+                        <div class="col-md-3 col-xs-6 no-padding"><b>Nom :</b></div>
+                        <div class="col-md-9 col-xs-6 no-padding">{{ member.fullName }}</div>
+                        <div class="col-md-3 col-xs-6 no-padding"><b>Téléphone :</b></div>
+                        <div class="col-md-9 col-xs-6 no-padding">{{ member.phone }}</div>
+                        <div class="col-md-3 col-xs-6 no-padding"><b>Adresse mail :</b></div>
+                        <div class="col-md-9 col-xs-6 no-padding">{{ member.email }}</div>
+                    </div>
+                </a>
+            </div>
+            <br>
+            <div class="block-body">
                 <ul>
                     {% for line in order.orderLines.lines %}
                         <li class="row row-list row-align-top block background-ligth">

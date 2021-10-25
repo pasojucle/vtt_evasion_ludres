@@ -795,7 +795,7 @@ nav.nav-tab {
 .background-color .table-border,.background-color .table-border th, .background-color .table-border td {
     border: 2px solid var(--white-color);
 }
-.block.no-padding {
+.block.no-padding, .row .no-padding {
     padding: 0;
 }
 .thumbnail {

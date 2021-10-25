@@ -219,10 +219,12 @@ class OrderController extends AbstractController
      * @Route("/admin/commande/{orderHeader}", name="admin_order")
      */
     public function admin_order(
+        Request $request,
         ?OrderHeader $orderHeader
     ): Response
     {
         $this->presenter->present($orderHeader);
+        $request->getSession()->set('user_return', $this->generateUrl('admin_order', ['orderHeader' => $orderHeader->getId()]));
 
         return $this->render('order/admin/show.html.twig', [
             'order' => $this->presenter->viewModel()
