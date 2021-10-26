@@ -25,6 +25,9 @@
         {% endblock %}
     </head>
     <body>
+        {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
+            <div class="maintenance">Mode Maintenance</div>
+        {% endif %}
         {% if not isAdmin %}
             {% include 'common/header.html.twig' %}
         {% endif %}
@@ -40,9 +43,7 @@
         <main>
             {% if isAdmin %}
                 <div class="header">
-                    <h1>Administration du site
-                        {% if nav_service.maintenance %} - Mode Maintenance{% endif %}
-                    </h1>
+                    <h1>Administration du site</h1>
                 </div>
                 {% include 'common/admin_nav.html.twig' %}
             {% endif %}

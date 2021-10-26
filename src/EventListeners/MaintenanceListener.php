@@ -1,18 +1,20 @@
 <?php
 namespace App\EventListeners;
 
+use Twig\Environment;
+use App\Service\ParameterService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Twig\Environment;
 
 class MaintenanceListener
 {
     private Environment $environment;
-    public function __construct($maintenance, Environment $environment)
+    private ParameterService $parameterService;
+    public function __construct($maintenance, Environment $environment, ParameterService $parameterService)
     {
         $this->environment = $environment;
-        $this->maintenance = filter_var($maintenance["status"], FILTER_VALIDATE_BOOL);
+        $this->parameterService = $parameterService;
+        $this->maintenance = $this->parameterService->getParameterByName('MAINTENANCE_MODE');
         $this->ipAuthorized = $maintenance["ipAuthorized"];
     }
     public function onKernelRequest(RequestEvent $event)

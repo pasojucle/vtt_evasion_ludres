@@ -803,6 +803,13 @@ nav.nav-tab {
     width: 80px;
     overflow: hidden;
 }
+.maintenance {
+    background-color: var(--danger-color);
+    color: var(--white-color);
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+}
 @media screen and (max-width: 800px) {
     .xs-display {
         display: initial;

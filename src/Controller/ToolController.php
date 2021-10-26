@@ -16,13 +16,16 @@ use App\Service\UserService;
 use App\Entity\HealthQuestion;
 use App\Service\MailerService;
 use App\Service\LicenceService;
+use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
 use App\Form\Admin\LicenceNumberType;
-use App\Repository\UserRepository;
 use Symfony\Component\Form\FormError;
+use App\Repository\ParameterRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -175,6 +178,7 @@ class ToolController extends AbstractController
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
             'count' => $count,
+            'title' => 'Importer la liste des utilisateurs',
         ]);
     }
     /**
@@ -605,9 +609,9 @@ class ToolController extends AbstractController
         return $this->render('tool/import.html.twig', [
             'form' => $form->createView(),
             'count' => count($departments),
+            'title' => 'Liste des départements',
         ]);
     }
-
 
     /**
      * @Route("/admin/outil/export_email", name="admin_export_email")

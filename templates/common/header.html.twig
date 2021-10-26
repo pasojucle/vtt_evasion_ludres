@@ -1,10 +1,11 @@
+{% set menus = nav_service.menus() %}
 <div class="header">
     <a class="logo" href="{{ path('home')}}">
         <img src="/images/logo.png" alt="vtt évasion ludres">
     </a>
     <img src="/images/logo.jpg" alt="vtt évasion ludres">
 </div>
-{% set menus = nav_service.menus() %}
+
 <div class="nav-bar">
     <a href="" class="btn btn-ico"></a>
     <img src="/images/logo.jpg" alt="VTT EVASION LUDRES">
@@ -74,11 +75,6 @@
         {% else %}
             <li>
                 <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter"><i class="fas fa-sign-in-alt"></i> <span class="xs-display">Se connecter</span></a>
-            </li>
-        {% endif %}
-        {% if nav_service.maintenance %}
-            <li>
-                <a class="btn-logger">Mode Maintenance</a>
             </li>
         {% endif %}
     </ul>
