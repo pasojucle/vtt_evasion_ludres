@@ -21,6 +21,7 @@ use App\Repository\LevelRepository;
 use App\Form\Admin\LicenceNumberType;
 use Symfony\Component\Form\FormError;
 use App\Repository\ParameterRepository;
+use App\Service\ParameterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -534,16 +535,19 @@ class ToolController extends AbstractController
     public function adminRegistrationError(
         Request $request,
         MailerService $mailerService,
-        UserService $userService
+        UserService $userService,
+        ParameterService $parameterService
     ): Response
     {
-        $form = $this->createForm(LicenceNumberType::class);
+        $content = $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
+        $form = $this->createForm(LicenceNumberType::class, ['user' => null, 'content' => $content]);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $licenceNumber = $data['licenceNumber'];
-            $doctrineUser = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
+            $doctrineUser = $data['user'];
+            $content = utf8_encode($data['content']);
+            // $doctrineUser = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
             $user = $userService->convertToUser($doctrineUser);
 
             if (null !== $user) {
@@ -554,17 +558,15 @@ class ToolController extends AbstractController
                     'subject' => 'Votre inscription au club de Vtt Évasion Ludres',
                     'licenceNumber' => $user->getLicenceNumber(),
                     'registration_error' => true,
+                    'content' => $content,
                 ]);
 
                 $licence = $doctrineUser->getLastLicence();
                 $licence->setStatus(Licence::STATUS_IN_PROCESSING);
                 $this->entityManager->persist($licence);
                 $this->entityManager->flush();
-                return $this->redirectToRoute('admin_registration_error');
-            } else {
-                $form->addError(new FormError("Le numéro de licence $licenceNumber n'existe pas"));
+                return $this->redirectToRoute('admin_home');
             }
-
         }
 
         return $this->render('tool/registration_error.html.twig', [

@@ -24,8 +24,13 @@
         {% endfor %}
     </ul>
     <br>
-    {% if is_granted('ROLE_SUPER_ADMIN') %}
-        <ul>
+    
+        <ul>{% if is_granted('ROLE_ADMIN') %}
+            <li>
+                <a href="{{ path('admin_registration_error') }}">Notification d'erreur à l'inscription</a>
+            </li>
+            {% endif %}
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
             <li>
                 <a href="{{ path('admin_import_users') }}">Importer la liste des utilisateurs</a>
             </li>
@@ -38,9 +43,7 @@
             <li>
                 <a href="{{ path('admin_send_login') }}">Envoi des idintifiants</a>
             </li>
-            <li>
-                <a href="{{ path('admin_registration_error') }}">Notification d'erreur à l'inscription</a>
-            </li>
+
             <li>
                 <a href="{{ path('admin_tool_delete_user') }}">Supprimer un adhérent</a>
             </li>
@@ -50,9 +53,10 @@
             <li>
                 <a href="{{ path('admin_export_email') }}">Export liste mineurs</a>
             </li>
+            {% endif %}
         </ul>
         <br>
-    {% endif %}
+
     <ul>
         <li>
             <a  href="{{ path('app_logout') }}">Se déconnecter</a>

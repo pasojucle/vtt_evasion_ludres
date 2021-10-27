@@ -2,21 +2,39 @@
 
 namespace App\Form\Admin;
 
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class LicenceNumberType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('licenceNumber', TextType::class, [
-                'label' => 'numéro de licence',
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
+            ->add('user', Select2EntityType::class, [
+                'multiple' => false,
+                'remote_route' => 'user_list_select2',
+                'class' => User::class,
+                'primary_key' => 'id',
+                'text_property' => 'fullName',
+                'minimum_input_length' => 0,
+                'page_limit' => 10,
+                'allow_clear' => true,
+                'delay' => 250,
+                'cache' => true,
+                'cache_timeout' => 60000, // if 'cache' is true
+                'language' => 'fr',
+                'placeholder' => 'Saisisez un nom et prénom',
+                'width' => '100%',
+                'label' => 'Adhérent'
+            ])
+            ->add('content', CKEditorType::class, [
+                'label' => 'Message',
+                'config_name' => 'full_config',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Supprimer',

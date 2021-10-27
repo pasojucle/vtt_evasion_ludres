@@ -41,8 +41,15 @@ class MailerService
     public function sendMailToMember(array $data, ?string $paramName = null): bool
     {
         $parameter = null;
+        $content = null;
         if (null !== $paramName) {
             $parameter = $this->parameterRepository->findOneByName($paramName);
+        }
+        if (null !== $parameter) {
+            $content = $parameter->getValue();
+        }
+        if (array_key_exists('content', $data)) {
+            $content = $data['content'];
         }
 
         $email = (new TemplatedEmail())
@@ -51,7 +58,7 @@ class MailerService
             ->htmlTemplate('email/toMember.html.twig')
             ->context([
                 'data' => $data,
-                'content' => (null !== $parameter) ? $parameter->getValue() : null,
+                'content' => $content,
             ]);
         
         try {
