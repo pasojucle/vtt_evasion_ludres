@@ -37,6 +37,10 @@ class UpdateCommand extends Command
         $maintenance->setValue(1);
         $this->entityManager->flush();
 
+        $io->writeln('git reset --hard');
+        $output = shell_exec('git reset --hard');
+        $io->writeln($output);
+
         $io->writeln('git pull');
         $output = shell_exec('git pull');
         $io->writeln($output);
