@@ -158,7 +158,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/admin/identité/edit/{user}", name="admin_identity_edit")
+     * @Route("/admin/identite/edit/{user}", name="admin_identity_edit")
      */
     public function adminIdentityEdit(
         Request $request,
