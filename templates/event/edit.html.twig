@@ -14,11 +14,11 @@
                     <a href="{{ path('admin_events', events_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
                 </span>
             </div>
-            <div class="block-body">
+            <div id="event_container" class="block-body">
                 <div class="form-group">
                     {{ form_row(form.type) }}
                 </div>
-                <div id="event_container">
+                <div>
                     {{ form_row(form.title) }}
                     {{ form_row(form.content) }}
                 </div>

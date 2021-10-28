@@ -34,10 +34,12 @@ class Event
     public const TYPE_CASUAL = 1;
     public const TYPE_SCHOOL = 2;
     public const TYPE_ADULT = 3;
+    public const TYPE_HOLIDAYS = 4;
     public const TYPES = [
         self::TYPE_CASUAL => 'event.type.casual',
         self::TYPE_SCHOOL => 'event.type.school',
         self::TYPE_ADULT => 'event.type.adult',
+        self::TYPE_HOLIDAYS => 'event.type.holidays',
     ];
 
     /**
@@ -206,6 +208,10 @@ class Event
 
     public function isRegistrable(): bool
     {
+        if (self::TYPE_HOLIDAYS === $this->type) {
+            return false;
+        }
+
         $today = new DateTime();
         $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
         $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
@@ -217,6 +223,10 @@ class Event
 
     public function getAccessAvailabity(?User $user): bool
     {
+        if (self::TYPE_HOLIDAYS === $this->type) {
+            return false;
+        }
+        
         $today = new DateTime();
         $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
         

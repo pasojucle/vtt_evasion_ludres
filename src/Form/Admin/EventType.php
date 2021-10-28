@@ -5,7 +5,6 @@ namespace App\Form\Admin;
 use App\Entity\Event;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use App\Repository\ParameterRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -19,13 +18,6 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class EventType extends AbstractType
 {
-    Private ParameterRepository $parameterRepository;
-    
-    public function __construct(ParameterRepository $parameterRepository)
-    {
-      $this->parameterRepository = $parameterRepository;  
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -60,58 +52,81 @@ class EventType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('endAt', DateTimeType::class, [
-                'label' => 'Date de fin (optionnel)',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => "off",
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-                'required' => false,
-            ])
-            ->add('displayDuration', IntegerType::class, [
-                'label' => 'Durée d\'affichage (nbr de jours avant)',
-                'required' => false,
-                'attr' => [
-                    'min' => 0,
-                    'max' => 90,
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-            ])
-            ->add('closingDuration', IntegerType::class, [
-                'label' => 'Fin d\'inscription (nbr de jours avant)',
-                'required' => false,
-                'attr' => [
-                    'min' => 0,
-                    'max' => 90,
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-            ])
-            ->add('minAge', IntegerType::class, [
-                'label' => 'Age minimum (optionnel)',
-                'attr' => [
-                    'min' => 10,
-                    'max' => 90,
-                ],
-                'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregister',
-                'attr' => ['class' => 'btn btn-primary float-right'],
-            ])
         ;
+
+        $formModifier = function (FormInterface $form, int $type) {
+            $isDiabled = (Event::TYPE_HOLIDAYS === $type) ? 'disabled' : '';
+
+            $form
+                ->add('endAt', DateTimeType::class, [
+                    'label' => 'Date de fin (optionnel)',
+                    'widget' => 'single_text',
+                    'html5' => false,
+                    'format' => 'dd/MM/yyyy',
+                    'attr' => [
+                        'class' => 'js-datepicker',
+                        'autocomplete' => "off",
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'required' => false,
+                    'disabled' => $isDiabled,
+                ])
+                ->add('displayDuration', IntegerType::class, [
+                    'label' => 'Durée d\'affichage (nbr de jours avant)',
+                    'required' => false,
+                    'attr' => [
+                        'min' => 0,
+                        'max' => 90,
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'disabled' => $isDiabled,
+                ])
+                ->add('closingDuration', IntegerType::class, [
+                    'label' => 'Fin d\'inscription (nbr de jours avant)',
+                    'required' => false,
+                    'attr' => [
+                        'min' => 0,
+                        'max' => 90,
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'disabled' => $isDiabled,
+                ])
+                ->add('minAge', IntegerType::class, [
+                    'label' => 'Age minimum (optionnel)',
+                    'attr' => [
+                        'min' => 10,
+                        'max' => 90,
+                    ],
+                    'required' => false,
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'disabled' => $isDiabled,
+                ])
+                ->add('save', SubmitType::class, [
+                    'label' => 'Enregister',
+                    'attr' => ['class' => 'btn btn-primary float-right'],
+                ])
+            ;
+        };
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+            $data = $event->getData();
+            $formModifier($event->getForm(), $data->getType());
+        });
+
+        $builder->get('type')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($formModifier) {
+                $type = $event->getForm()->getData();
+                $formModifier($event->getForm()->getParent(), $type);
+            }
+        );
     }
 
 

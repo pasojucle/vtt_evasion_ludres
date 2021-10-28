@@ -173,6 +173,9 @@ function modifierEvent() {
           $('#event_container').replaceWith(
             $(html).find('#event_container')
           );
+          $('.js-datepicker').datepicker({
+            format: 'yyyy-mm-dd hh:ii',
+        });
         }
       });
 }

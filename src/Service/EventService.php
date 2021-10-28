@@ -190,14 +190,14 @@ class EventService
                     }
                 }
                 break;
+            case Event::TYPE_HOLIDAYS:
+                break;
             default:
                 $cluster = new Cluster();
                 $cluster->setTitle('1er Groupe');
                 $event->addCluster($cluster);
                 $this->entityManager->persist($cluster);
         }
-            
-            // $this->entityManager->flush();
     }
 
     public function setDefaultContent(Request $request, Event $event): Event
@@ -205,12 +205,16 @@ class EventService
         $eventRequest = $request->request->get('event');
         if (null !== $eventRequest) {
             $type = (int) $eventRequest['type'];
+            $event->setType($type);
             $parameterName = null;
             if (Event::TYPE_SCHOOL === $type) {
                 $parameterName = 'EVENT_SCHOOL_CONTENT';
             }
             if (Event::TYPE_ADULT === $type) {
                 $parameterName = 'EVENT_ADULT_CONTENT';
+            }
+            if (Event::TYPE_HOLIDAYS === $type) {
+                $parameterName = 'EVENT_HOLIDAYS_CONTENT';
             }
             if (null !== $parameterName) {
                 $parameter = $this->parameterRepository->findOneByName($parameterName);
