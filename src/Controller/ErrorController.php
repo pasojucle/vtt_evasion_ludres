@@ -17,7 +17,7 @@ class ErrorController extends AbstractController
     {
         $error = $getError->execute($request);
 
-        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image'];
+        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot'];
         $pattern = '#%s#i';
         if (!preg_match(sprintf($pattern, implode('|', $robots)), $error['user-agent'])) {
             $mailerService->sendError($error);

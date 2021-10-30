@@ -31,6 +31,7 @@ class GetError
         $error['message'] = $exception->getMessage();
         $error['humanMessage'] = 'Une erreur est survenue !<br>Si le problème persite, contacter le club';
         $error['user-agent'] = $request->headers->get('user-agent');
+        $error['REMOTE_ADDR'] = $request->server->get('REMOTE_ADDR');
 
         if ($exception instanceof ErrorException) {
             $error['file'] = $exception->getFile();
