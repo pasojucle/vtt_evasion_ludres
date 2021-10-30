@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="wrapper wrapper-full-width full-background">
+        <div class="wrapper-title">
+            <h1>Oups !</h1>
+        </div>
+        <div class="wrapper-body">
+            <h2>{{ error.humanMessage|raw }}</h2>
+        </div>
+    </div>
+{% endblock %}

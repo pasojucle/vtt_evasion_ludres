@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Repository\ParameterRepository;
+use Exception;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -59,6 +60,26 @@ class MailerService
             ->context([
                 'data' => $data,
                 'content' => $content,
+            ]);
+        
+        try {
+            $this->mailer->send($email);
+            return true;
+        } catch (TransportExceptionInterface $e) {
+            return false;
+        }
+    }
+
+
+    public function sendError(array $error): bool
+    {
+    
+        $email = (new TemplatedEmail())
+            ->to(new Address('contact@vttevasionludres.fr'))
+            ->subject('[ERREUR] Site vttevasionludres')
+            ->htmlTemplate('email/error.html.twig')
+            ->context([
+                'error' => $error,
             ]);
         
         try {

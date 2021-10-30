@@ -42,4 +42,8 @@ services:
     App\EventListeners\MaintenanceListener:
        tags:
           - { name: kernel.event_listener, event: kernel.request }
-       arguments: ['%maintenance%'] 
+       arguments: ['%maintenance%']
+
+    # App\EventListeners\ExceptionListener:
+    #     tags:
+    #         - { name: kernel.event_listener, event: kernel.exception }
