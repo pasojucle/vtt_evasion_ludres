@@ -16,10 +16,8 @@ class ErrorController extends AbstractController
     public function show(Request $request, MailerService $mailerService, GetError $getError)
     {
         $error = $getError->execute($request);
-
-        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot'];
-        $pattern = '#%s#i';
-        if (!preg_match(sprintf($pattern, implode('|', $robots)), $error['user-agent'])) {
+dump($error);
+        if ($error['sendMessage']) {
             $mailerService->sendError($error);
         }
 
