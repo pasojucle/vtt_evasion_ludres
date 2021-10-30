@@ -17,7 +17,11 @@ class ErrorController extends AbstractController
     {
         $error = $getError->execute($request);
 
-        $mailerService->sendError($error);
+        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image'];
+        $pattern = '#%s#i';
+        if (!preg_match(sprintf($pattern, implode('|', $robots)), $error['user-agent'])) {
+            $mailerService->sendError($error);
+        }
 
         return $this->render('error/error.html.twig', [
             'error' => $error,

@@ -30,6 +30,7 @@ class GetError
         $error['requestUri'] = $request->getRequestUri();
         $error['message'] = $exception->getMessage();
         $error['humanMessage'] = 'Une erreur est survenue !<br>Si le problème persite, contacter le club';
+        $error['user-agent'] = $request->headers->get('user-agent');
 
         if ($exception instanceof ErrorException) {
             $error['file'] = $exception->getFile();
