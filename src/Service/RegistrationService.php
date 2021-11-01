@@ -60,7 +60,7 @@ class RegistrationService
     )
     {
         $this->registrationStepRepository = $registrationStepRepository;
-        $this->user = $security->getUser();
+        $this->security = $security;
         $this->seasonLicence = null;
         $this->licenceService = $licenceService;
         $this->season = $this->licenceService->getCurrentSeason();
@@ -86,6 +86,7 @@ class RegistrationService
         $isKinship = false;
 
         $this->setUser();
+        
         $this->updateStatus($this->user);
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
@@ -140,6 +141,7 @@ class RegistrationService
 
     public function setUser()
     {
+        $this->user = $this->security->getUser();
         if (null === $this->user) {
             $this->user = new User();
 
