@@ -187,4 +187,21 @@ class NavService
 
         return ($maintenance) ? filter_var($maintenance['status'], FILTER_VALIDATE_BOOL) : false;
     }
+
+    public function getIndexableRoutes(): array
+    {
+        $routes = [];
+        $allMenus = array_merge($this->getMenus(), $this->getFooter());
+        foreach($allMenus as $menu) {
+            if (empty($menu['subMenus'])) {
+                $routes[] = $menu['route'];
+            } else {
+                foreach($menu['subMenus'] as $subMenu) {
+                    $routes[] = $subMenu['route'];
+                }
+            }
+        }
+
+        return $routes;
+    }
 }
