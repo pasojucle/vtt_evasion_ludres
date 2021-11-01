@@ -32,7 +32,7 @@ class UserFilterType extends AbstractType
             Licence::STATUS_TESTING_IN_PROGRESS => 'licence.status.testing_in_processing',
             Licence::STATUS_TESTING_COMPLETE => 'licence.status.testing_complete',
         ];
-        if ('ROLE_SUPER_USER') {
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
             $statusChoices[Licence::ALL_USERS] = 'licence.all_users';
         }
         $builder
