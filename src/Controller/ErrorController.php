@@ -16,7 +16,7 @@ class ErrorController extends AbstractController
     public function show(Request $request, MailerService $mailerService, GetError $getError)
     {
         $error = $getError->execute($request);
-dump($error);
+
         if ($error['sendMessage']) {
             $mailerService->sendError($error);
         }

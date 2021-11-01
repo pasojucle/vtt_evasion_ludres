@@ -59,7 +59,7 @@ class GetError
     private function getSend(array $error): bool
     {
         $sendMessage = true;
-        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot'];
+        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot', 'ltx71','GoogleImageProxy'];
         $pattern = '#%s#i';
         if (preg_match(sprintf($pattern, implode('|', $robots)), $error['userAgent'])) {
             $sendMessage = false;
