@@ -43,6 +43,7 @@ class GetError
             $statusCode = $exception->getStatusCode();
             $error['statusCode'] = $statusCode;
             if (403 === $statusCode) {
+                $error['route'] = $exception->getPrevious()->getSubject()->attributes->get('_route');
                 $error['humanMessage'] = 'Vous n\'avez pas les droits nécessaires pour afficher cette page.';
             }
             if (404 === $statusCode) {
@@ -65,6 +66,9 @@ class GetError
             $sendMessage = false;
         }
         if (array_key_exists('statusCode', $error) && 404 === $error['statusCode']) {
+            $sendMessage = false;
+        }
+        if (array_key_exists('statusCode', $error) && 403 === $error['statusCode'] && !preg_match('#admin_#', $error['route'])) {
             $sendMessage = false;
         }
 
