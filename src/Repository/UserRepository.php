@@ -129,7 +129,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                         ->setParameter('season', $currentSeason)
                         ->setParameter('final', 0)
                     ;
-
+                } elseif ($filters['status'] === Licence::ALL_USERS) {
+                    return $qb->andWhere(
+                        $qb->expr()->isNull('i.kinship'),
+                    )
+                    ->orderBy('i.name', 'ASC');
                 } elseif ($filters['status'] === Licence::STATUS_VALID) {
                     $qb
                         ->andWhere(

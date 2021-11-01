@@ -47,6 +47,7 @@ class Licence
 
     public const STATUS_TESTING_IN_PROGRESS = 6;
     public const STATUS_TESTING_COMPLETE = 7;
+    public const ALL_USERS = 99;
 
     public const STATUS = [
         self::STATUS_NONE => 'licence.status.none',

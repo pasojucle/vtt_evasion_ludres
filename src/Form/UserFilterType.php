@@ -6,6 +6,7 @@ use App\Entity\Level;
 use App\Entity\Licence;
 use App\Repository\LevelRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -15,9 +16,11 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 class UserFilterType extends AbstractType
 {
     private LevelRepository $levelRepository;
-    public function __construct(LevelRepository $levelRepository)
+    private Security $security;
+    public function __construct(LevelRepository $levelRepository, Security $security)
     {
         $this->levelRepository = $levelRepository;
+        $this->security = $security;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -29,6 +32,9 @@ class UserFilterType extends AbstractType
             Licence::STATUS_TESTING_IN_PROGRESS => 'licence.status.testing_in_processing',
             Licence::STATUS_TESTING_COMPLETE => 'licence.status.testing_complete',
         ];
+        if ('ROLE_SUPER_USER') {
+            $statusChoices[Licence::ALL_USERS] = 'licence.all_users';
+        }
         $builder
             ->add('fullName', TextType::class, [
                 'label' => false,

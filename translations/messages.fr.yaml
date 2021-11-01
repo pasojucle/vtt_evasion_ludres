@@ -19,6 +19,7 @@ licence:
     testing: 3 séances gratuites
     testing_in_processing: 3 séances en cours
     testing_complete: 3 séances terminées
+  all_users: Tous les utilisateurs
 
 identity:
   kinship:
