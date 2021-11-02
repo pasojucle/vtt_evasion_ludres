@@ -121,7 +121,6 @@ class RegistrationController extends AbstractController
         $schoolTestingRegistration = $parameterService->getParameterByName('SCHOOL_TESTING_REGISTRATION');
         $schoolTestingRegistrationMessage = 'L\'inscription à l\'école vtt est close pour la saison '.$season;
         if (1 === $step) {
-            dump($progress['user']);
             if (!$schoolTestingRegistration && !$progress['user']->getId()) {
                 $this->addFlash('success', $schoolTestingRegistrationMessage);
             }

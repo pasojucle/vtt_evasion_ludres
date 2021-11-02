@@ -23,7 +23,7 @@ class OrderLinesSetService
     public function execute(Request $request): void
     {
         /**@var array order */
-        $order = $request->request->get('order');dump($request->request);
+        $order = $request->request->get('order');
         if($order && array_key_exists('orderLines', $order) && !empty($order['orderLines'])) {
             foreach ($order['orderLines'] as $line) {
                 $orderLine = $this->orderLineRepository->find($line['lineId']);
