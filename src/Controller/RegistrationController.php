@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
+use App\Service\ParameterService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -103,6 +104,7 @@ class RegistrationController extends AbstractController
         MembershipFeeRepository $membershipFeeRepository,
         IdentityRepository $identityRepository,
         UserService $userService,
+        ParameterService $parameterService,
         int $step
     ): Response
     {
@@ -140,6 +142,7 @@ class RegistrationController extends AbstractController
                     if (null !== $identity->getBirthDate() && !($minLimit < $identity->getBirthDate() && $identity->getBirthDate() < $maxLimit)) {
                         $form->addError(new FormError('La date de naissance est invalide'));
                     }
+
                     if ($identity->isEmpty()) {
                         $address = $identity->getAddress();
                         if (null !== $address) {
@@ -170,7 +173,7 @@ class RegistrationController extends AbstractController
 
                 $userSameName = $identityRepository->findByNameAndFirstName($identity->getName(), $identity->getFirstName());
                 if (!empty($userSameName)) {
-                    $form->addError(new FormError('Un compte avec le nom '.$identity->getName().' '.$identity->getFirstName().' existe déja'));
+                    $form->addError(new FormError('Un compte avec le nom '.$identity->getName().' '.$identity->getFirstName().' existe déjà'));
                 }
                 if ($form->isValid()) {
                     $domainUser = $userService->convertToUser($user);
@@ -188,6 +191,9 @@ class RegistrationController extends AbstractController
                 $category = $this->licenceService->getCategory($user);
                 $user->getSeasonLicence($season)->setCategory($category);
                 if (Licence::CATEGORY_MINOR === $category) {
+                    if (!$parameterService->getParameterByName('SCHOOL_TESTING_REGISTRATION') && !$user->getSeasonLicence($season)->isFinal()) {
+                        $form->addError(new FormError('L\'inscription à l\'école vtt est close pour la saison '.$season));
+                    }
                     foreach($user->getIdentities() as $identity) {
                         
                         if (null !== $identity->getKinShip()) {
