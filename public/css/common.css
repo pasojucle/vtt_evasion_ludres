@@ -308,9 +308,9 @@ body > script {display: none !important;}
 }
 .flashes {
     position: absolute;
-    top: 33vh;
-    right: 25px;
-    width: 250px;
+    top: 30vh;
+    right: 10%;
+    max-width: 100%;
     color: var(--white-color);
     opacity: 0;
     font-size: 18px;

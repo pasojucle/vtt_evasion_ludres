@@ -117,8 +117,14 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
         }
         $form = $progress['form'];
-
+        $season = $registrationService->getSeason();
+        $schoolTestingRegistration = $parameterService->getParameterByName('SCHOOL_TESTING_REGISTRATION');
+        $schoolTestingRegistrationMessage = 'L\'inscription à l\'école vtt est close pour la saison '.$season;
         if (1 === $step) {
+            dump($progress['user']);
+            if (!$schoolTestingRegistration && !$progress['user']->getId()) {
+                $this->addFlash('success', $schoolTestingRegistrationMessage);
+            }
             $maxStep = $step;
             $this->requestStack->getSession()->set('registrationMaxStep',  $maxStep);
         }
@@ -129,7 +135,6 @@ class RegistrationController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $route = (4 > $step) ? 'registration_form': 'user_registration_form';
             $user = $form->getData();
-            $season = $registrationService->getSeason();
             $manualAuthenticating = false;
             
             $minLimit = new DateTime();
@@ -191,8 +196,8 @@ class RegistrationController extends AbstractController
                 $category = $this->licenceService->getCategory($user);
                 $user->getSeasonLicence($season)->setCategory($category);
                 if (Licence::CATEGORY_MINOR === $category) {
-                    if (!$parameterService->getParameterByName('SCHOOL_TESTING_REGISTRATION') && !$user->getSeasonLicence($season)->isFinal()) {
-                        $form->addError(new FormError('L\'inscription à l\'école vtt est close pour la saison '.$season));
+                    if (!$schoolTestingRegistration && !$user->getSeasonLicence($season)->isFinal()) {
+                        $form->addError(new FormError($schoolTestingRegistrationMessage));
                     }
                     foreach($user->getIdentities() as $identity) {
                         
