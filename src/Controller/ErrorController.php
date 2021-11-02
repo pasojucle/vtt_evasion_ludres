@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Service\MailerService;
 use App\UseCase\Error\GetError;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,16 +13,21 @@ class ErrorController extends AbstractController
     /**
      * @Route("/erreur", name="error")
      */
-    public function show(Request $request, MailerService $mailerService, GetError $getError)
+    public function show(Request $request, EntityManagerInterface $entityManager, GetError $getError)
     {
-        $error = $getError->execute($request);
+        $logError = $getError->execute($request);
 
-        if ($error['sendMessage']) {
-            $mailerService->sendError($error);
+        if ($logError->getPersist()) {
+            if (!$entityManager->isOpen()) {
+                $entityManager = $entityManager->create(
+                  $entityManager->getConnection(), $entityManager->getConfiguration());
+              }
+            $entityManager->persist($logError);
+            $entityManager->flush();
         }
 
         return $this->render('error/error.html.twig', [
-            'error' => $error,
+            'error' => $logError,
         ]);
     }
 }

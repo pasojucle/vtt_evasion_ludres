@@ -2,6 +2,7 @@
 
 namespace App\UseCase\Error;
 
+use App\Entity\LogError;
 use App\ViewModel\UserPresenter;
 use ErrorException;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,65 +24,53 @@ class GetError
         $this->presenter = $presenter;
     }
 
-    public function execute(Request $request): array
+    public function execute(Request $request): LogError
     {
         $exception = $request->attributes->get('exception');
-        $error = [];
-        $error['requestUri'] = $request->getRequestUri();
-        $error['message'] = $exception->getMessage();
-        $error['humanMessage'] = 'Une erreur est survenue !<br>Si le problème persite, contacter le club';
-        $error['userAgent'] = $request->headers->get('user-agent');
-        $error['REMOTE_ADDR'] = $request->server->get('REMOTE_ADDR');
-        
-
+        $logError = new LogError();
+        $logError->setUrl($request->getRequestUri())
+            ->setErrorMessage($exception->getMessage())
+            ->setMessage('Une erreur est survenue !<br>Si le problème persite, contacter le club')
+            ->setUserAgent($request->headers->get('user-agent'));
+     
         if ($exception instanceof ErrorException) {
-            $error['file'] = $exception->getFile();
-            $error['line'] = $exception->getLine();
+            $logError->setFileName($exception->getFile())
+                ->setLine($exception->getLine());
         }
 
         if ($exception instanceof NotFoundHttpException || $exception instanceof AccessDeniedHttpException) {
             $statusCode = $exception->getStatusCode();
-            $error['statusCode'] = $statusCode;
+            $logError->setStatusCode($statusCode);
+
             if (403 === $statusCode) {
-                $error['route'] = $exception->getPrevious()->getSubject()->attributes->get('_route');
-                $error['humanMessage'] = 'Vous n\'avez pas les droits nécessaires pour afficher cette page.';
+                $logError->setRoute($exception->getPrevious()->getSubject()->attributes->get('_route'))
+                    ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.');
             }
             if (404 === $statusCode) {
-                $error['humanMessage'] = 'La page recherchée n\'existe pas.';
+                $logError->setMessage('La page recherchée n\'existe pas.');
             }
         }
-        $this->addUser($error);
+        $this->addUser($logError);
 
-        $error['sendMessage'] = $this->getSend($error);
+        $this->setPersist($logError);
 
-        return $error;
+        return $logError;
     }
 
-    private function getSend(array $error): bool
+    private function setPersist(LogError &$logError): void
     {
-        $sendMessage = true;
         $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot', 'ltx71','GoogleImageProxy'];
         $pattern = '#%s#i';
-        if (preg_match(sprintf($pattern, implode('|', $robots)), $error['userAgent'])) {
-            $sendMessage = false;
+        if (preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
+            $logError->setPersit(false);
         }
-        if (array_key_exists('statusCode', $error) && 404 === $error['statusCode']) {
-            $sendMessage = false;
-        }
-        if (array_key_exists('statusCode', $error) && 403 === $error['statusCode'] && !preg_match('#admin_#', $error['route'])) {
-            $sendMessage = false;
-        }
-
-        return $sendMessage;
     }
 
-    private function addUser(array &$error): void
+    private function addUser(LogError &$logError): void
     {
         $user = $this->security->getUser();
         if ($user) {
-            $this->presenter->present($user);
-            $user = $this->presenter->viewModel();
-            $error['user'] = $user->getMember()['fullName'].' - '. $user->getLicenceNumber();
+            $logError->setUser($user);
         }
     }
 }

@@ -1,8 +1,0 @@
-{% extends 'base_email.html.twig' %}
-
-{% block body %}
-    {% for key, row in error %}
-        <p><b>{{ key }} : </b> {{ row|raw }}</p>
-    {% endfor %}
-<hr>
-{% endblock %}
