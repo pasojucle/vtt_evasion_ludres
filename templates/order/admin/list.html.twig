@@ -9,6 +9,15 @@
                 <h2>Gestion des commandes - <span class="badge badge-info">{{ count }}</span></h2>
             </div>
             <div class="block-body">
+                {% if form is defined %}
+                {{ form_start(form) }}
+                <div class="filters">
+                    <ul>
+                        <li>{{ form_widget(form.status)}}</li>
+                    </ul>
+                </div>
+                {{ form_end(form) }}
+                {% endif %}
                 <ul id="orders_container">
                     {% for order in orders %}
                         <li class="row row-list">

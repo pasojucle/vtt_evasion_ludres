@@ -6,6 +6,7 @@ use DateTime;
 use App\Form\OrderType;
 use App\Entity\OrderHeader;
 use App\Service\PdfService;
+use App\Form\Admin\OrderFilterType;
 use App\Service\MailerService;
 use App\ViewModel\UserPresenter;
 use App\Service\PaginatorService;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,16 +32,20 @@ class OrderController extends AbstractController
     private OrderPresenter $presenter;
     private OrderHeaderRepository $orderHeaderRepository;
     private EntityManagerInterface $entityManager;
+    private RequestStack $requestStack;
 
     public function __construct(
         OrderPresenter $presenter,
         OrderHeaderRepository $orderHeaderRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        RequestStack $requestStack
     )
     {
         $this->presenter = $presenter;
         $this->orderHeaderRepository = $orderHeaderRepository;
         $this->entityManager = $entityManager;
+        $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
     }
     /**
      * @Route("/mon_panier", name="order_edit")
@@ -172,19 +178,33 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/admin/commandes", name="admin_orders")
+     * @Route("/admin/commandes/filtered", name="admin_orders", defaults={"filtered"=0})
      */
     public function adminOrders(
         OrdersPresenter $presenter,
         PaginatorService $paginator,
-        Request $request
+        Request $request,
+        bool $filtered
     ): Response
     {
-        $query = $this->orderHeaderRepository->findOrdersQuery();
+        $filters = ($filtered) ? $this->session->get('admin_orders_filters'): null;
+
+        $form = $this->createForm(OrderFilterType::class, $filters);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $filters = $form->getData();
+            $this->session->set('admin_orders_filters', $filters);
+            $filtered = true;
+            $request->query->set('p', 1);
+        }
+
+        $query = $this->orderHeaderRepository->findOrdersQuery($filters);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($orders);
 
         return $this->render('order/admin/list.html.twig', [
+            'form' => $form->createView(),
             'orders' => $presenter->viewModel()->orders,
             'lastPage' => $paginator->lastPage($orders),
             'count' => $paginator->total($orders),

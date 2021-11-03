@@ -65,15 +65,23 @@ class OrderHeaderRepository extends ServiceEntityRepository
     }
 
 
-    public function findOrdersQuery(): QueryBuilder
+    public function findOrdersQuery(?array $filters = null): QueryBuilder
     {
-        return $this->createQueryBuilder('oh')
-        ->andWhere(
-            (new Expr)->gte('oh.status', ':status'),
-            (new Expr)->eq('oh.isDisabled', ':disabled'),
-        )
-        ->setParameter('status', OrderHeader::STATUS_ORDERED)
-        ->setParameter('disabled', false)
+        $qb = $this->createQueryBuilder('oh');
+
+        if ($filters && !empty($filters['status'])) {
+            $qb
+                ->andWhere(
+                    (new Expr)->eq('oh.status', ':status'),
+                )
+                ->setParameter('status', $filters['status']);
+        }         
+
+        return $qb
+            ->andWhere(
+                (new Expr)->eq('oh.isDisabled', ':disabled'),
+            )
+            ->setParameter('disabled', false)
             ->orderBy('oh.id', 'DESC')
         ;
     }
