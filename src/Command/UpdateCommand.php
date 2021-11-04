@@ -45,21 +45,23 @@ class UpdateCommand extends Command
         $output = shell_exec('git pull');
         $io->writeln($output);
         
-        $cmdComposer = 'composer install';
-        $cmdMigration = 'php bin/console doctrine:migration:migrate -n';
-        if (getcwd() !== '/home/patrick/Sites/vtt_evasion_ludres') {
-            $cmdComposer = '/usr/bin/php7.4-cli composer.phar install';
-            $cmdMigration = '/usr/bin/php7.4-cli  bin/console doctrine:migration:migrate -n';
+        if ('Déjà à jour.' !== $output) {
+            $cmdComposer = 'composer install';
+            $cmdMigration = 'php bin/console doctrine:migration:migrate -n';
+            if (getcwd() !== '/home/patrick/Sites/vtt_evasion_ludres') {
+                $cmdComposer = '/usr/bin/php7.4-cli composer.phar install';
+                $cmdMigration = '/usr/bin/php7.4-cli  bin/console doctrine:migration:migrate -n';
+            }
+
+            $io->writeln('composer install');
+            $output = shell_exec($cmdComposer);
+            $io->writeln($output);
+
+            $io->writeln('doctrine:migration:migrate');
+            $output = shell_exec($cmdMigration);
+            $io->writeln($output);
         }
-
-        $io->writeln('composer install');
-        $output = shell_exec($cmdComposer);
-        $io->writeln($output);
-
-        $io->writeln('doctrine:migration:migrate');
-        $output = shell_exec($cmdMigration);
-        $io->writeln($output);
-
+        
         $io->writeln('Suppression du mode maintenance');
         $maintenance->setValue(0);
         $this->entityManager->flush();
