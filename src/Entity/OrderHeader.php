@@ -16,12 +16,14 @@ class OrderHeader
     public const STATUS_ORDERED = 2;
     public const STATUS_VALIDED= 3;
     public const STATUS_COMPLETED = 4;
+    public const STATUS_CANCELED = 9;
     
     public CONST STATUS = [
         self::STATUS_IN_PROGRESS => 'order.in_progress',
         self::STATUS_ORDERED => 'order.ordered',
         self::STATUS_VALIDED => 'order.valided',
         self::STATUS_COMPLETED => 'order.completed',
+        self::STATUS_CANCELED => 'order.canceled',
     ];
     /**
      * @ORM\Id
@@ -29,11 +31,6 @@ class OrderHeader
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isDisabled = 0;
 
     /**
      * @ORM\OneToMany(targetEntity=OrderLine::class, mappedBy="orderHeader")
@@ -64,18 +61,6 @@ class OrderHeader
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIsDisabled(): ?bool
-    {
-        return $this->isDisabled;
-    }
-
-    public function setIsDisabled(bool $isDisabled): self
-    {
-        $this->isDisabled = $isDisabled;
-
-        return $this;
     }
 
     /**

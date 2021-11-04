@@ -144,11 +144,11 @@ class OrderController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $orderHeader->setIsDisabled(true);
+            $orderHeader->setStatus(OrderHeader::STATUS_CANCELED);
             $this->entityManager->persist($orderHeader);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('user_orders');
+            return $this->redirect($this->requestStack->getSession()->get('order_return'));
         }
 
         $presenter->present($orderHeader);
@@ -171,6 +171,8 @@ class OrderController extends AbstractController
         $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($orders);
+
+        $this->requestStack->getSession()->set('order_return', $this->generateUrl('user_orders'));
 
         return $this->render('order/list.html.twig', [
             'orders' => $presenter->viewModel()->orders,
@@ -198,6 +200,7 @@ class OrderController extends AbstractController
             $filtered = true;
             $request->query->set('p', 1);
         }
+        $this->requestStack->getSession()->set('order_return', $this->generateUrl('admin_orders', ['filtered' => $filtered]));
 
         $query = $this->orderHeaderRepository->findOrdersQuery($filters);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
@@ -215,6 +218,7 @@ class OrderController extends AbstractController
      */
     public function adminOrderValidate(
         OrdersPresenter $presenter,
+        OrderPresenter $orderPresenter,
         PaginatorService $paginator,
         Request $request,
         OrderHeader $orderHeader,

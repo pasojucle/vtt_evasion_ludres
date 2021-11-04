@@ -1,9 +1,9 @@
 {% extends 'base_modal.html.twig' %}
 {% set button_href = path('order_delete', {'orderHeader' : order_header.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Supprimer une commande {{ order_header.id }}{% endblock %}
+{% block modal_title %}Supprimer la commande n° {{ order_header.id }}{% endblock %}
 {% block body %}
-    <p>Etes-vous de supprimer la commande {{ order_header.id }} ?</p>
+    <p>Etes-vous de supprimer la commande n° {{ order_header.id }} ?</p>
 {% endblock %}
 {% block footer %}
     {% set button_text = 'Supprimer' %}

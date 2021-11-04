@@ -35,14 +35,14 @@ class OrderHeaderRepository extends ServiceEntityRepository
     public function findOrdersByUserQuery(User $user): QueryBuilder
     {
         return $this->createQueryBuilder('oh')
-        ->andWhere(
-            (new Expr)->gte('oh.status', ':status'),
-            (new Expr)->eq('oh.user', ':user'),
-            (new Expr)->eq('oh.isDisabled', ':disabled'),
-        )
-        ->setParameter('status', OrderHeader::STATUS_ORDERED)
-        ->setParameter('user', $user)
-        ->setParameter('disabled', false)
+            ->andWhere(
+                (new Expr)->gte('oh.status', ':status'),
+                (new Expr)->neq('oh.status', ':statusCanceled'),
+                (new Expr)->eq('oh.user', ':user'),
+            )
+            ->setParameter('status', OrderHeader::STATUS_ORDERED)
+            ->setParameter('statusCanceled', OrderHeader::STATUS_CANCELED)
+            ->setParameter('user', $user)
         ;
     }
 
@@ -78,10 +78,6 @@ class OrderHeaderRepository extends ServiceEntityRepository
         }         
 
         return $qb
-            ->andWhere(
-                (new Expr)->eq('oh.isDisabled', ':disabled'),
-            )
-            ->setParameter('disabled', false)
             ->orderBy('oh.id', 'DESC')
         ;
     }

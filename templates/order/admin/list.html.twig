@@ -21,7 +21,7 @@
                 <ul id="orders_container">
                     {% for order in orders %}
                         <li class="row row-list">
-                            <div class="col-md-9 col-xs-12">
+                            <div class="col-md-8 col-xs-12">
                                 <a href="{{ path('admin_order', {'orderHeader': order.id})}}" class="btn btn-list btn-light" title="Voir la commande">
                                     <div class="row">
                                         <div class="col-md-6 col-xs-8">Cde {{ order.id }} du {{ order.createdAt }}</div>
@@ -30,7 +30,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-md-3 col-xs-12">
+                            <div class="col-md-4 col-xs-12">
                                 {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_ORDERED') %}
                                     <a class="btn btn-success order-status" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_VALIDED')})}}" title="Valider">
                                         <i class="fas fa-check"></i> Valider
@@ -39,6 +39,11 @@
                                 {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_VALIDED') %}
                                     <a class="btn btn-primary order-status" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_COMPLETED')})}}" title="Cloturer">
                                         <i class="fas fa-check"></i> Cloturer
+                                    </a>
+                                {% endif %}
+                                {% if order.status < constant('App\\Entity\\OrderHeader::STATUS_CANCELED') %}
+                                    <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
+                                        <i class="fas fa-times"></i>
                                     </a>
                                 {% endif %}
                             </div>
