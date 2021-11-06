@@ -8,23 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class OrdersPresenter 
+class OrdersPresenter extends AbstractPresenter
 {
-    private LicenceService $licenceService;
-    private ParameterBagInterface $parameterBag;
-    private $viewModel;
-
-    public function __construct(LicenceService $licenceService, ParameterBagInterface $parameterBag)
-    {
-        $this->licenceService = $licenceService;
-        $this->parameterBag = $parameterBag;
-    }
-
     public function present(Paginator $ordrers): void
     {
-        $productDirectory = $this->parameterBag->get('products_directory');
         if (!empty($ordrers)) {
-            $this->viewModel = OrdersViewModel::fromOrders($ordrers, $productDirectory, $this->licenceService);
+            $this->viewModel = OrdersViewModel::fromOrders($ordrers, $this->data);
         } else {
             $this->viewModel = new OrdersViewModel();
         }

@@ -2,8 +2,6 @@
 
 namespace App\ViewModel;
 
-use App\Entity\User;
-use App\Service\LicenceService;
 use App\ViewModel\ProductViewModel;
 use Doctrine\Common\Collections\Collection;
 
@@ -11,12 +9,12 @@ class OrderLinesViewModel extends AbstractViewModel
 {
     public ?array $lines = [];
 
-    public static function fromOrderLines(collection $orderLines, string $productDirecrtory, ?User $user, LicenceService $licenceService)
+    public static function fromOrderLines(collection $orderLines, array $data)
     {
         $linesView = new self();
         if (!$orderLines->isEmpty()) {
             foreach($orderLines as $line) {
-                $product = ProductViewModel::fromProduct($line->getProduct(), $productDirecrtory, $user, $licenceService);
+                $product = ProductViewModel::fromProduct($line->getProduct(), $data);
                 $amount = $line->getQuantity() * $product->sellingPrice;
                 $linesView->lines[] = [
                     'product' => $product,

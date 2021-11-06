@@ -39,7 +39,7 @@ $(document).ready(function(){
     $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.cluster-complete', clusterComplete);
-    $(document).on('click', '.order-status', orderStatus);
+    $(document).on('click', '.order-status, .delete-error', actionAndRefresh);
 });
 
 jQuery(function($){
@@ -237,14 +237,15 @@ function setOrderLineQuantity(e) {
       });
 }
 
-function orderStatus(e) {
+function actionAndRefresh(e) {
     e.preventDefault();
     const route = $(this).attr('href');
+    const container = $(this).closest('ul').attr('id');
 
     $.ajax({
         url : route,
         success: function(html) {
-            $('#orders_container').replaceWith($(html).find('#orders_container'));
+            $('#'+container).replaceWith($(html).find('#'+container));
         }
       });
 }

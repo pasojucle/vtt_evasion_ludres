@@ -7,9 +7,6 @@ use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Identity;
-use App\Entity\OrderHeader;
-use App\Service\LicenceService;
-use App\ViewModel\ProductViewModel;
 use Doctrine\Common\Collections\Collection;
 
 class UserViewModel extends AbstractViewModel
@@ -26,14 +23,14 @@ class UserViewModel extends AbstractViewModel
     private ?int $currentSeason;
     private ?array $seasonsStatus;
 
-    public static function fromUser(User $user, LicenceService $licenceService)
+    public static function fromUser(User $user, array $data)
     {
         $userView = new self();
         $userView->id = $user->getId();
         $userView->user = $user;
         $userView->setIdentities();
-        $userView->currentSeason = $licenceService->getCurrentSeason();
-        $userView->seasonsStatus = $licenceService->getSeasonsStatus();
+        $userView->currentSeason = $data['currentSeason'];
+        $userView->seasonsStatus = $data['seasonsStatus'];
 
         $userView->lastLicence = $userView->getLastLicence();
         return $userView;

@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\LogErrorRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LogErrorRepository;
 
 /**
  * @ORM\Entity(repositoryClass=LogErrorRepository::class)
@@ -60,6 +61,11 @@ class LogError
      * @ORM\ManyToOne(targetEntity=User::class)
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     public function getId(): ?int
     {
@@ -182,6 +188,18 @@ class LogError
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

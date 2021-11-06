@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContentController extends AbstractController
 {
@@ -125,7 +126,7 @@ class ContentController extends AbstractController
             $contents = $this->contentRepository->findByRoute($route, $isFlash);
             $this->orderByService->ResetOrders($contents);
 
-            return $this->redirectToRoute('admin_contents', ['route' => $route, 'isFlash' => $isFlash]);
+            return $this->redirectToRoute('admin_home_contents', ['isFlash' => (int) $isFlash]);
         }
 
         return $this->render('content/admin/delete.modal.html.twig', [

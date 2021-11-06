@@ -24,7 +24,7 @@ class ProductViewModel extends AbstractViewModel
     public ?string $pathName = null;
     public ?array $sizes;
 
-    public static function fromProduct(Product $product, string $productDirectory, ?User $user, LicenceService $licenceService)
+    public static function fromProduct(Product $product, array $data)
     {
         $productView = new self();
         $productView->id = $product->getId();
@@ -35,15 +35,15 @@ class ProductViewModel extends AbstractViewModel
         $productView->ref = $product->getRef();
         $productView->filename = $product->getFilename();
         $productView->productSizes = $product->getSizes();
-        $productView->pathName = DIRECTORY_SEPARATOR.$productDirectory.DIRECTORY_SEPARATOR.$productView->filename;
-        $productView->pathNameForPdf = $productDirectory.DIRECTORY_SEPARATOR.$productView->filename;
+        $productView->pathName = DIRECTORY_SEPARATOR.$data['productDirectory'].DIRECTORY_SEPARATOR.$productView->filename;
+        $productView->pathNameForPdf = $data['productDirectory'].DIRECTORY_SEPARATOR.$productView->filename;
         $productView->sellingPrice = $product->getPrice();
         $productView->price = number_format($product->getPrice(), 2).' €';
         $productView->discountPrice = null;
         $productView->discountTitle = null;
         
-        if (null !== $user) {
-            $user = UserViewModel::fromUser($user, $licenceService);
+        if (null !== $data['user']) {
+            $user = UserViewModel::fromUser($data['user'], $data);
             
             if (!empty($user->getMember()) && $product->getCategory() === $user->getLastLicence()['category']) {
                 $productView->sellingPrice = $product->getDiscountPrice();

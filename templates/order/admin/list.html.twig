@@ -41,7 +41,7 @@
                                         <i class="fas fa-check"></i> Cloturer
                                     </a>
                                 {% endif %}
-                                {% if order.status < constant('App\\Entity\\OrderHeader::STATUS_CANCELED') %}
+                                {% if order.status < constant('App\\Entity\\OrderHeader::STATUS_COMPLETED') %}
                                     <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
                                         <i class="fas fa-times"></i>
                                     </a>

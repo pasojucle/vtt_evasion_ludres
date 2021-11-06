@@ -25,7 +25,7 @@ class LicenceValidateService
         $user = $licence->getUser();
         $licenceNumber = $user->getLicenceNumber();
         $status = ($licence->isFinal()) ? Licence::STATUS_VALID : Licence::STATUS_TESTING;
-        // $licence->setStatus($status);
+        $licence->setStatus($status);
         $this->entityManager->persist($licence);
         $data = $request->request->get('licence_validate');
         $this->setLicenceNumber($data, $user);

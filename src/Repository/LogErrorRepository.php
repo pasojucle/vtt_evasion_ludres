@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\LogError;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * @method LogError|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +21,18 @@ class LogErrorRepository extends ServiceEntityRepository
         parent::__construct($registry, LogError::class);
     }
 
-    // /**
-    //  * @return LogError[] Returns an array of LogError objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+    /**
+     * @return LogError[] Returns an array of LogError objects
+     */
 
-    /*
-    public function findOneBySomeField($value): ?LogError
+    public function findLogErrorQuery(int $statusCode): QueryBuilder
     {
         return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
+            ->andWhere(
+                (new Expr)->eq('l.statusCode', ':statusCode')
+            )
+            ->setParameter('statusCode', $statusCode)
+            ->orderBy('l.createdAt', 'DESC')
         ;
     }
-    */
 }

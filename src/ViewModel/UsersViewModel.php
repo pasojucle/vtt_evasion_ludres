@@ -8,12 +8,12 @@ class UsersViewModel
 {
     public ?array $users;
 
-    public static function fromUsers(array $users, LicenceService $licenceService): UsersViewModel
+    public static function fromUsers(array $users, array $data): UsersViewModel
     {
         $usersViewModel = [];
         if (!empty($users)) {
             foreach ($users as $user) {
-                $usersViewModel[] = UserViewModel::fromUser($user, $licenceService);
+                $usersViewModel[] = UserViewModel::fromUser($user, $data);
             }
         }
 

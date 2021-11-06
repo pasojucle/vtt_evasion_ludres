@@ -6,22 +6,12 @@ namespace App\ViewModel;
 use App\Service\LicenceService;
 
 
-class UsersPresenter 
+class UsersPresenter extends AbstractPresenter
 {
-    private LicenceService $licenceService;
-    private $viewModel;
-
-    public function __construct(LicenceService $licenceService)
-    {
-        $this->licenceService = $licenceService;
-    }
-
     public function present(array $users): void
     {
-        $currentSeason = $this->licenceService->getCurrentSeason();
-
         if (!empty($users)) {
-            $this->viewModel = UsersViewModel::fromUsers($users, $this->licenceService);
+            $this->viewModel = UsersViewModel::fromUsers($users, $this->data);
         } else {
             $this->viewModel = new UsersViewModel();
         }

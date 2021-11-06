@@ -4,6 +4,7 @@ namespace App\UseCase\Error;
 
 use App\Entity\LogError;
 use App\ViewModel\UserPresenter;
+use DateTime;
 use ErrorException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
@@ -28,14 +29,18 @@ class GetError
     {
         $exception = $request->attributes->get('exception');
         $logError = new LogError();
+
         $logError->setUrl($request->getRequestUri())
             ->setErrorMessage($exception->getMessage())
             ->setMessage('Une erreur est survenue !<br>Si le problème persite, contacter le club')
-            ->setUserAgent($request->headers->get('user-agent'));
+            ->setUserAgent($request->headers->get('user-agent'))
+            ->setCreatedAt(new DateTime())
+            ;
      
         if ($exception instanceof ErrorException) {
             $logError->setFileName($exception->getFile())
-                ->setLine($exception->getLine());
+                ->setLine($exception->getLine())
+                ->setStatusCode(500);
         }
 
         if ($exception instanceof NotFoundHttpException || $exception instanceof AccessDeniedHttpException) {

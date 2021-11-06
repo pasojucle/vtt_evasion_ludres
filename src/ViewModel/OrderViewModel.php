@@ -14,15 +14,15 @@ class OrderViewModel extends AbstractViewModel
     public ?int $status;
     public ?string $amount;
 
-    public static function fromOrderHeader(OrderHeader $orderHeader, string $productDirecrtory, LicenceService $licenceService)
+    public static function fromOrderHeader(OrderHeader $orderHeader, array $data)
     {
         $orderView = new self();
         $orderView->id = $orderHeader->getId();
         $createdAt = $orderHeader->getCreatedAt();
         $orderView->createdAt = $createdAt->format('d/m/Y');
-        $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $licenceService);
+        $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $data);
         $orderView->status = $orderHeader->getStatus();
-        $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $productDirecrtory, $orderHeader->getUser(), $licenceService);
+        $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $data);
 
         return $orderView;
     }

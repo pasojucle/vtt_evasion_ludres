@@ -12,13 +12,13 @@ class ClusterViewModel extends AbstractViewModel
     public ?string $title;
     public ?array $sessions;
 
-    public static function fromCluster(Cluster $cluster, LicenceService $licenceService)
+    public static function fromCluster(Cluster $cluster, array $data)
     {
         $sessions = [];
         if (!$cluster->getSessions()->isEmpty()) {
             foreach($cluster->getSessions() as $session) {
                 $sessions[] = [
-                    'user' => UserViewModel::fromUser($session->getUser(), $licenceService),
+                    'user' => UserViewModel::fromUser($session->getUser(), $data),
                     'availability' => $session->getAvailability(),
                     'isPresent' => $session->isPresent(),
                 ];
