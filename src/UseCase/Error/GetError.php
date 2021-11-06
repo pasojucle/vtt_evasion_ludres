@@ -35,12 +35,13 @@ class GetError
             ->setMessage('Une erreur est survenue !<br>Si le problème persite, contacter le club')
             ->setUserAgent($request->headers->get('user-agent'))
             ->setCreatedAt(new DateTime())
+            ->setStatusCode(500)
             ;
      
         if ($exception instanceof ErrorException) {
             $logError->setFileName($exception->getFile())
                 ->setLine($exception->getLine())
-                ->setStatusCode(500);
+                ;
         }
 
         if ($exception instanceof NotFoundHttpException || $exception instanceof AccessDeniedHttpException) {
