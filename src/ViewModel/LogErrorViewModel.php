@@ -30,7 +30,9 @@ class LogErrorViewModel extends AbstractViewModel
         $logErrorView->url = $logError->getUrl();
         $logErrorView->fileName = $logError->getFileName();
         $logErrorView->line = $logError->getLine();
-        $logErrorView->user = UserViewModel::fromUser($logError->getUser(), $data);
+        $logErrorView->user = ($logError->getUser())
+            ? UserViewModel::fromUser($logError->getUser(), $data)
+            : null;
 
         return $logErrorView;
     }
