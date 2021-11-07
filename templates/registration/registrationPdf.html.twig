@@ -105,21 +105,19 @@
             <h2>Autorisation parentale pour mineur</h2>
             <table>
                 <tr>
-                    <td style="width: 150px">Non et prénom :</td>
-                    <td>{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
+                    <td style="width: 150px"><b>Non et prénom :</b></td>
+                    <td colspan="3">{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
                 </tr>
                 <tr>
-                    <td>Adresse :</td>
-                    <td>
+                    <td><b>Adresse :</b></td>
+                    <td colspan="3">
                         {{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
                     </td>
                 </tr>
                 <tr>
-                    <td>Courriel :</td>
+                    <td><b>Courriel :</b></td>
                     <td>{{ user.kinShip.email }}</td>
-                </tr>
-                <tr>
-                    <td>Téléphone :</td>
+                    <td><b>Téléphone :</b></td>
                     <td>{{ user.kinShip.phone}}</td>
                 </tr>
             </table>
@@ -170,6 +168,11 @@
             www.vttevasionludres.fr</p>
             <br>
             <p>IL EST IMPERATIF DE SIGNER L'INFORMATION D'ASSURANCE GRATUITE JOINTE A CE DOCUMENT</p>
+        {% else %}
+            <br>
+            <p>J'atteste avoir répondu "NON" à toutes les questions du questionnaire de santé et ne
+            pas fournir de nouveau certificat médical pour ma réinscription (sauf pour la 1ère demande de licence ou date de validité).</p>
+            <p>Dans le cas contraire, je fournis un certificat de non contre-indication à la pratique du VTT, daté de -12 mois.</p>
         {% endif %}
         <br>
         <table class="table-fixed">
