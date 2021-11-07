@@ -184,7 +184,7 @@ class OrderController extends AbstractController
         bool $filtered
     ): Response
     {
-        $filters = ($filtered) ? $this->session->get('admin_orders_filters'): null;
+        $filters = ($filtered) ? $this->session->get('admin_orders_filters'): [];
 
         $form = $this->createForm(OrderFilterType::class, $filters);
         $form->handleRequest($request);
@@ -205,6 +205,7 @@ class OrderController extends AbstractController
             'form' => $form->createView(),
             'orders' => $presenter->viewModel()->orders,
             'lastPage' => $paginator->lastPage($orders),
+            'current_filters' => $filters,
             'count' => $paginator->total($orders),
         ]);
     }

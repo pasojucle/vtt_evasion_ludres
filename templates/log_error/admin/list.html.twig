@@ -29,7 +29,7 @@
                             </div>
                             <div class="col-md-1 col-xs-2">
                                 <a class="btn btn-danger delete-error" 
-                                    href="{{ path('admin_log_error_delete', {'error': error.id}) }}" title="Annuler">
+                                    href="{{ path('admin_log_error_delete', {'error': error.id, 'p': app.request.query.get('p')}) }}" title="Annuler">
                                     <i class="fas fa-times"></i>
                                 </a>
                             </div>

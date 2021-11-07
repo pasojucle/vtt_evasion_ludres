@@ -32,13 +32,13 @@ class GetError
         $logError = new LogError();
 
         $logError->setUrl($request->getRequestUri())
-            ->setErrorMessage($exception->getMessage())
+            ->setErrorMessage($exception->getMessage().' / '.get_class($exception))
             ->setMessage('Une erreur est survenue !<br>Si le problème persite, contacter le club')
             ->setUserAgent($request->headers->get('user-agent'))
             ->setCreatedAt(new DateTime())
             ->setStatusCode(500)
             ;
-        dump($exception);
+
         if ($exception instanceof ErrorException || $exception instanceof RuntimeError) {
             $logError->setFileName($exception->getFile())
                 ->setLine($exception->getLine())

@@ -65,11 +65,11 @@ class OrderHeaderRepository extends ServiceEntityRepository
     }
 
 
-    public function findOrdersQuery(?array $filters = null): QueryBuilder
+    public function findOrdersQuery(?array $filters = []): QueryBuilder
     {
         $qb = $this->createQueryBuilder('oh');
 
-        if ($filters && !empty($filters['status'])) {
+        if (!empty($filters) && !empty($filters['status'])) {
             $qb
                 ->andWhere(
                     (new Expr)->eq('oh.status', ':status'),
