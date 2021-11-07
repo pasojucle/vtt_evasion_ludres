@@ -40,7 +40,7 @@ class LogErrorController extends AbstractController
     }
 
     /**
-     * @Route("/admin/log/error/{error}", name="admin_log_error")
+     * @Route("/admin/log/error/show/{error}", name="admin_log_error")
      */
     public function show(
         LogErrorPresenter $presenter,
