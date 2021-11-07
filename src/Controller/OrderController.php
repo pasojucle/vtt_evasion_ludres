@@ -221,9 +221,10 @@ class OrderController extends AbstractController
         int $status
     ): Response
     {
+        $filters = $this->session->get('admin_orders_filters');
         $orderHeader->setStatus($status);
         $this->entityManager->flush();
-        $query = $this->orderHeaderRepository->findOrdersQuery();
+        $query = $this->orderHeaderRepository->findOrdersQuery($filters);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($orders);
 
@@ -231,6 +232,8 @@ class OrderController extends AbstractController
             'orders' => $presenter->viewModel()->orders,
             'lastPage' => $paginator->lastPage($orders),
             'count' => $paginator->total($orders),
+            'target_route' => 'admin_orders',
+            'current_Filters' => ['filterd' => true],
         ]);
     }
 

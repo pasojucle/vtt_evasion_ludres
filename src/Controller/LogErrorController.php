@@ -81,6 +81,8 @@ class LogErrorController extends AbstractController
             'status_code' => $statusCode,
             'lastPage' => $paginator->lastPage($errors),
             'count' => $paginator->total($errors),
+            'target_route' => 'admin_log_errors',
+            'current_Filters' => ['statusCode' => $statusCode],
         ]);
     }
 }

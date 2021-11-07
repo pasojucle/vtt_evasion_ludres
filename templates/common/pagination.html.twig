@@ -1,5 +1,8 @@
 {% set _currentPage = app.request.query.get('p') ?: 1 %}
 {% set _currentRoute = app.request.attributes.get('_route') %}
+{% if target_route is defined %}
+    {% set _currentRoute = target_route %}
+{% endif %}
 {% set _currentParams = app.request.query.all %}
 {% if current_filters is defined %}
     {% set _currentParams = _currentParams|merge(current_filters) %}
