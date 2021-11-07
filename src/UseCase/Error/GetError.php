@@ -2,10 +2,11 @@
 
 namespace App\UseCase\Error;
 
-use App\Entity\LogError;
-use App\ViewModel\UserPresenter;
 use DateTime;
 use ErrorException;
+use App\Entity\LogError;
+use Twig\Error\RuntimeError;
+use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -37,8 +38,8 @@ class GetError
             ->setCreatedAt(new DateTime())
             ->setStatusCode(500)
             ;
-     
-        if ($exception instanceof ErrorException) {
+        dump($exception);
+        if ($exception instanceof ErrorException || $exception instanceof RuntimeError) {
             $logError->setFileName($exception->getFile())
                 ->setLine($exception->getLine())
                 ;
