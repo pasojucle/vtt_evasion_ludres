@@ -7,12 +7,9 @@ use App\Form\OrderType;
 use App\Entity\OrderHeader;
 use App\Service\PdfService;
 use App\Form\Admin\OrderFilterType;
-use App\Service\MailerService;
-use App\ViewModel\UserPresenter;
 use App\Service\PaginatorService;
 use App\ViewModel\OrderPresenter;
 use App\ViewModel\OrdersPresenter;
-use App\Repository\OrderLineRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
@@ -21,10 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OrderController extends AbstractController
@@ -180,7 +175,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/admin/commandes/filtered", name="admin_orders", defaults={"filtered"=0})
+     * @Route("/admin/commandes/{filtered}", name="admin_orders", defaults={"filtered"=0})
      */
     public function adminOrders(
         OrdersPresenter $presenter,
@@ -197,10 +192,10 @@ class OrderController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $this->session->set('admin_orders_filters', $filters);
-            $filtered = true;
             $request->query->set('p', 1);
+            return $this->redirectToRoute('admin_orders', ['filtered' => true]);
         }
-        $this->requestStack->getSession()->set('order_return', $this->generateUrl('admin_orders', ['filtered' => $filtered]));
+        $this->requestStack->getSession()->set('order_return', $this->generateUrl('admin_orders', ['filtered' => (int) $filtered]));
 
         $query = $this->orderHeaderRepository->findOrdersQuery($filters);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
@@ -214,7 +209,7 @@ class OrderController extends AbstractController
         ]);
     }
     /**
-     * @Route("/admin/commande/status/{orderHeader}/{status}", name="admin_order_status")
+     * @Route("/admin/command/status/{orderHeader}/{status}", name="admin_order_status")
      */
     public function adminOrderValidate(
         OrdersPresenter $presenter,

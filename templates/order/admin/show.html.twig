@@ -8,7 +8,7 @@
             <div class="block-title">
                 <h2>Cde {{ order.id }} du {{ order.createdAt }}</h>
             <span class="tools">
-                <a href="{{ path('admin_orders') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des commandes">
+                <a href="{{ path('admin_orders', {'filtered': true}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des commandes">
                     <i class="fas fa-chevron-left"></i>
                 </a>
             </span>
