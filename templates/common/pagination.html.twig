@@ -4,7 +4,7 @@
     {% set _currentRoute = target_route %}
 {% endif %}
 {% set _currentParams = app.request.query.all %}
-{% if current_filters is defined %}
+{% if current_filters is defined and current_filters is not empty %}
     {% set _currentParams = _currentParams|merge(current_filters) %}
 {% endif %}
 
