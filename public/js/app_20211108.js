@@ -134,13 +134,9 @@ function updateLinkOrder(id, newOrder) {
 }
 
 function getMediaScreen() {
-    const route = Routing.generate('media_screen');
-    const data = {'width' : screen.width};
-    $.ajax({
-        url : route,
-        type: 'POST',
-        data : data,
-    });
+    const width = screen.width;
+    let mediaScreen = (width > 800) ? 'md' : 'xs'; 
+    document.cookie = "media_screen = "+mediaScreen;
 }
 
 function getFile(e) {

@@ -9,7 +9,6 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper background-{{ background_color }} background-color col-content">
-        {% set media_screen = app.session.get('media_screen') %}
         <div class="wrapper-img" style="background-image:url(../images/background/{{ media_screen }}/{{ background_img }})"></div>
         <div class="wrapper-content">
             {{ content.content | raw}}
