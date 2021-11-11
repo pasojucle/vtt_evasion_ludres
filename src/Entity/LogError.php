@@ -55,7 +55,7 @@ class LogError
      */
     private $errorMessage;
 
-    private $persit = true;
+    private $persist = true;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
@@ -170,10 +170,10 @@ class LogError
 
     public function getPersist(): bool
     {
-        return $this->persit;
+        return $this->persist;
     }
 
-    public function setPersit(bool $persist): self
+    public function setPersist(bool $persist): self
     {
         $this->persist = $persist;
 

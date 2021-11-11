@@ -60,7 +60,7 @@ class GetError
         $this->addUser($logError);
 
         $this->setPersist($logError);
-
+        
         return $logError;
     }
 
@@ -69,7 +69,7 @@ class GetError
         $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot', 'ltx71','GoogleImageProxy'];
         $pattern = '#%s#i';
         if (1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
-            $logError->setPersit(false);
+            $logError->setPersist(false);
         }
     }
 
