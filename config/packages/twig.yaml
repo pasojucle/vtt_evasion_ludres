@@ -16,6 +16,7 @@ twig:
         user_service: '@App\Service\UserService'
         order_service: '@App\Service\Order\OrderGetService'
         parameter_service: '@App\Service\ParameterService'
+        media_screen_service: '@App\Service\MediaScreenService'
 
     paths:
         # point this wherever your css files live

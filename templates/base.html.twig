@@ -25,7 +25,7 @@
         {% endblock %}
     </head>
     <body>
-        {% set media_screen = app.request.cookies.get('media_screen') %}
+        {% set media_screen = media_screen_service.mediaScreen %}
         {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
             <div class="maintenance">Mode Maintenance</div>
         {% endif %}
