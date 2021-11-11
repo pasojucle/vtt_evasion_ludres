@@ -11,6 +11,10 @@ use App\Repository\IdentityRepository;
  */
 class Identity
 {
+    public const TYPE_MEMBER = 1;
+    public const TYPE_KINSHIP = 2;
+    public const TYPE_SECOND_CONTACT = 3;
+
     public const KINSHIP_FATHER = 1;
     public const KINSHIP_MOTHER = 2;
     public const KINSHIP_GUARDIANSHIP = 3;
@@ -95,6 +99,11 @@ class Identity
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $birthDepartment;
+
+    /**
+     * @ORM\Column(type="integer", options={"default":1}))
+     */
+    private $type;
 
 
     public function getId(): ?int
@@ -265,6 +274,18 @@ class Identity
     public function setBirthDepartment(?string $birthDepartment): self
     {
         $this->birthDepartment = $birthDepartment;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

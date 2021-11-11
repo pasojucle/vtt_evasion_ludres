@@ -15,7 +15,6 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
@@ -26,10 +25,12 @@ class IdentityType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $identity = $event->getData();
             $form = $event->getForm();
-            $disabled = ($options['season_licence']->isFinal() && $form->getName() === "0") ? 'disabled' : '';
-
-            $row_class =  ($options['is_kinship']) ? 'form-group-inline' : 'form-group';
-            if ((!$options['is_kinship'] && $form->getName() === "0") || ($options['is_kinship'] && in_array($form->getName(),[1,2])) || 'identity' === $form->getName()) {
+            $type = $identity->getType();
+            $kinship = $identity->getKinship();
+            $disabled = ($options['season_licence']->isFinal() && $type === Identity::TYPE_MEMBER) ? 'disabled' : '';
+            $addressClass = ($type !== Identity::TYPE_SECOND_CONTACT) ? ' identity-address' : '';
+            $row_class =  ($kinship) ? 'form-group-inline' : 'form-group';
+            if ((!$kinship && $form->getName() === "0") || ($kinship && in_array($form->getName(),[1,2])) || 'identities' === $form->getParent()->getName()) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
@@ -55,7 +56,7 @@ class IdentityType extends AbstractType
                         ],
                     ]);
                     
-                    if ((int) $form->getName() !== 2 ) {
+                    if ($type !== Identity::TYPE_SECOND_CONTACT) {
                         $form
                             ->add('phone', TextType::class, [
                                 'label' => 'Téléphone fixe',
@@ -102,30 +103,33 @@ class IdentityType extends AbstractType
                     ;
                 }
 
-                if ($options['is_kinship']) {
+                if ($kinship) {
                     $kinshipChoices = Identity::KINSHIPS;
-                    if ((int)$form->getName() !== 2 ) {
+                    if ($type !== Identity::TYPE_SECOND_CONTACT) {
                         unset($kinshipChoices[Identity::KINSHIP_OTHER]);
-                    }
-                    $form
-                        ->add('kinship', ChoiceType::class, [
-                            'label' => 'Parenté',
-                            'choices' => array_flip($kinshipChoices),
-                            'row_attr' => [
-                                'class' => 'form-group-inline'
-                            ],
-                        ]);
-                    if ((int)$form->getName() !== 2 ) {
                         $form
                             ->add('otherAddress', CheckboxType::class, [
                                 'label' => 'Réside à une autre adresse que l\'enfant',
                                 'required' => false,
                                 'mapped' => false,
+                                'attr' => [
+                                    'class' => 'identity-other-address',
+                                ],
                                 'data' => ($identity->hasAddress()) ? true : false,
                             ])
                             ;
                     }
-                    $addressClass = ($identity->hasAddress()) ? '': ' hidden';
+                    $form
+                    ->add('kinship', ChoiceType::class, [
+                        'label' => 'Parenté',
+                        'choices' => array_flip($kinshipChoices),
+                        'row_attr' => [
+                            'class' => 'form-group-inline'
+                        ],
+                    ]);
+                    if (!$identity->hasAddress()) {
+                        $addressClass .=' hidden';
+                    }
                 } else {
                     $form
                         ->add('birthplace', TextType::class, [
@@ -162,18 +166,10 @@ class IdentityType extends AbstractType
                             ],
                         ])
                         ;
-                    $addressClass = '';
                 }
                 $form->add('address', AddressType::class, [
                     'row_class' => $addressClass,
                 ]);
-                if ('identity' === $form->getName()) {
-                    $form
-                        ->add('save', SubmitType::class, [
-                            'label' => 'Modifier',
-                            'attr' => ['class' => 'btn btn-primary float-right'],
-                        ]);
-                }
             }
         });
     }
@@ -182,8 +178,6 @@ class IdentityType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Identity::class,
-            'is_kinship' => false,
-            'current' => null,
             'category' => Licence::CATEGORY_ADULT,
             'season_licence' => null,
         ]);

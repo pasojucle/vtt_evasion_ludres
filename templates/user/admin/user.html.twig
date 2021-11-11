@@ -94,6 +94,13 @@
                                     <li><i class="fas fa-phone-square"></i> {{ user.secondKinShip.phone }}</li>
                                 </ul>
                             {% endif %}
+                            {% if is_granted('ROLE_REGISTER') %}
+                                <a href="{{ path('admin_identity_edit', {'user': user.id, 'isKinship': 1}) }}"
+                                    class="btn btn-secondary" title="Modifier">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <br>
+                            {% endif %}
                         </div>
                     {% endif %}
                     {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and  licence.isFinal and user.health is not empty %}

@@ -393,6 +393,9 @@ body {
 .form-group-small {
     width: 100px;
 }
+.hidden , .form-group-inline.hidden {
+    display: none;
+}
 .float-left {
     float: left;
 }

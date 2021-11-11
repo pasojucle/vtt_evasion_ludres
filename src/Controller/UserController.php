@@ -3,23 +3,30 @@
 namespace App\Controller;
 
 use App\Entity\Level;
+use App\Entity\Licence;
 use App\Form\IdentityType;
 use App\Form\Admin\UserType;
+use App\Form\IdentitiesType;
 use App\Form\UserFilterType;
 use App\Service\UserService;
 use App\Service\ExportService;
 use App\Service\MailerService;
 use App\Service\UploadService;
 use App\Service\LicenceService;
+use App\ViewModel\UserPresenter;
 use App\Service\PaginatorService;
+use App\ViewModel\UsersPresenter;
 use App\Repository\UserRepository;
 use App\ViewModel\OrdersPresenter;
 use App\Entity\User as  UserEntity;
 use App\Form\ChangePasswordFormType;
+use App\Repository\LicenceRepository;
+use App\Repository\IdentityRepository;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Form\Admin\RegistrationFilterType;
+use App\Service\IdentityService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -158,20 +165,27 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/admin/identite/edit/{user}", name="admin_identity_edit")
+     * @Route("/admin/identite/edit/{user}/{isKinship}", name="admin_identity_edit", defaults={"isKinship"=0})
      */
     public function adminIdentityEdit(
         Request $request,
         LicenceService $licenceService,
-        UserService $userService,
+        IdentityRepository $identityRepository,
+        UserPresenter $presenter,
         UploadService $uploadService,
-        UserEntity $user
+        IdentityService $identityService,
+        UserEntity $user,
+        bool $isKinship
     ): Response
     {
         $licence = $user->getLastLicence();
-
-        $identity = $user->getFirstIdentity();
-        $form = $this->createForm(IdentityType::class, $identity, [
+        if (!$isKinship) {
+            $identity = $identityRepository->findMemberByUser($user);
+            $identities = [$identity];
+        } else {
+            $identities = $identityRepository->findKinShipsByUser($user);
+        }
+        $form = $this->createForm(IdentitiesType::class, ['identities' => $identities], [
             'category' => $licence->getCategory(),
             'season_licence' => $licence,
         ]);
@@ -179,6 +193,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $identity = $form->getData();
+            $identityService->setAddress($user);
             if ($request->files->get('identity')) {
                 $pictureFile = $request->files->get('identity')['pictureFile'];
                 $newFilename = $uploadService->uploadFile($pictureFile);
@@ -189,8 +204,9 @@ class UserController extends AbstractController
             $this->entityManager->flush();
             return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
         }
+        $presenter->present($user);
         return $this->render('identity/edit.html.twig', [
-            'user' => $this->userService->convertToUser($user),
+            'user' => $presenter->viewModel(),
             'form' => $form->createView(),
         ]);
     }

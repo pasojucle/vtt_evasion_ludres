@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Identity;
+use App\Entity\User;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 
 /**
@@ -34,5 +36,35 @@ class IdentityRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findMemberByUser(User $user): ?Identity
+    {
+        try {
+            return $this->createQueryBuilder('i')
+                ->andWhere(
+                    (new Expr())->eq('i.user', ':user'),
+                    (new Expr())->isNull('i.kinship')
+                )
+                ->setParameter('user', $user)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
+
+    public function findKinShipsByUser(User $user): array
+    {
+        return $this->createQueryBuilder('i')
+        ->andWhere(
+            (new Expr())->eq('i.user', ':user'),
+            (new Expr())->isNotNull('i.kinship')
+        )
+        ->setParameter('user', $user)
+        ->getQuery()
+        ->getResult()
+    ;
     }
 }

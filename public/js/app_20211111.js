@@ -26,7 +26,7 @@ $(document).ready(function(){
     if ($('.sortable').length > 0) {
         buildSortable();
     }
-    $(document).on('change', '#user_identities_1_otherAddress', updateIdentity);
+    $(document).on('change', '.identity-other-address', updateIdentity);
     $(document).on('change', 'input[type="file"]', previewFile);
     $('.js-datepicker').datepicker({
         format: 'yyyy-mm-dd hh:ii',
@@ -73,17 +73,13 @@ jQuery(function($){
 
 function updateIdentity() {
     let required = $(this).is(':checked');
-    $('#address_container .form-group-inline').each(function() {
-        $(this).toggleClass('hidden');
-    });
-    $('#address_container input').each(function() {
-        if (required) {
-            $(this).attr('required', 'required');
-        } else {
-            $(this).removeAttr('required');
-            $(this).val('');
-        }
-    });
+    $('.identity-address').toggleClass('hidden');
+    if (required) {
+        $('.identity-address').attr('required', 'required');
+    } else {
+        $('.identity-address').removeAttr('required');
+        $('.identity-address').val('');
+    }
 }
 
 function previewFile() {

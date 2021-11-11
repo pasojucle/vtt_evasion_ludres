@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
+use App\Service\IdentityService;
 use App\Service\ParameterService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -105,6 +106,7 @@ class RegistrationController extends AbstractController
         IdentityRepository $identityRepository,
         UserService $userService,
         ParameterService $parameterService,
+        IdentityService $identityService,
         int $step
     ): Response
     {
@@ -198,16 +200,7 @@ class RegistrationController extends AbstractController
                     if (!$schoolTestingRegistration && !$user->getSeasonLicence($season)->isFinal()) {
                         $form->addError(new FormError($schoolTestingRegistrationMessage));
                     }
-                    foreach($user->getIdentities() as $identity) {
-                        
-                        if (null !== $identity->getKinShip()) {
-                            $addressKinShip = $identity->getAddress();
-                            if (!$identity->hasAddress() && null !== $addressKinShip) {
-                                $identity->setAddress(null);
-                                $this->entityManager->remove($addressKinShip);
-                            }
-                        }
-                    }
+                    $identityService->setAddress($user);
                 }
             }
             $requestFile = $request->files->get('user');

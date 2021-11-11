@@ -16,7 +16,9 @@
             </div>
             {{ form_start(form) }}
             <div class="block-body">
-                {% include('identity/identity.html.twig') with {'identity': form} %}
+                {% for identity in form.children.identities %}
+                    {% include('identity/identity.html.twig') %}
+                {% endfor %}
             </div>
             <div class="block-footer">
                 {{ form_row(form.save) }}
