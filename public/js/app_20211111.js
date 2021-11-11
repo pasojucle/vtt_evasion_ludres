@@ -251,8 +251,6 @@ function submitAsynchronous(e) {
     e.preventDefault();
     const form = $(this).closest('form');
     let selector = 'form[name="'+form.attr('name')+'"]';
-    console.log(selector);
-    console.warn($(selector));
     let data = {};
     data[$(this).attr('name')] = $(this).val();
 
@@ -261,9 +259,8 @@ function submitAsynchronous(e) {
         type: form.attr('method'),
         data : form.serialize(),
         success: function(html) {
-            console.info(html);
-            console.info($(html).find(selector));
             $(selector).replaceWith($(html).find(selector));
+            $('.select2entity').select2entity();
         }
       });
 }
