@@ -7,6 +7,8 @@ use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Identity;
+use App\Repository\MembershipFeeAmountRepository;
+use App\Service\MembershipFeeService;
 use Doctrine\Common\Collections\Collection;
 
 class UserViewModel extends AbstractViewModel
@@ -22,15 +24,20 @@ class UserViewModel extends AbstractViewModel
     private ?Identity $secondKinshipIdentity;
     private ?int $currentSeason;
     private ?array $seasonsStatus;
+    private MembershipFeeAmountRepository $membershipFeeAmountRepository;
+    private array $services;
 
-    public static function fromUser(User $user, array $data)
+    public static function fromUser(User $user, array $services)
     {
         $userView = new self();
         $userView->id = $user->getId();
         $userView->user = $user;
         $userView->setIdentities();
-        $userView->currentSeason = $data['currentSeason'];
-        $userView->seasonsStatus = $data['seasonsStatus'];
+        $userView->currentSeason = $services['currentSeason'];
+        $userView->seasonsStatus = $services['seasonsStatus'];
+        $userView->membershipFeeAmountRepository = $services['membershipFeeAmountRepository'];
+        $userView->translator = $services['translator'];
+        $userView->services = $services;
 
         $userView->lastLicence = $userView->getLastLicence();
         return $userView;
@@ -144,7 +151,7 @@ class UserViewModel extends AbstractViewModel
             $kinShip = [
                 'fullName' => $this->kinshipIdentity->getName().' '.$this->kinshipIdentity->getFirstName(),
                 'type' => Identity::KINSHIPS[$this->kinshipIdentity->getKinShip()] ,
-                'address' => $address,
+                'address' => AddressViewModel::fromAddress($address, $this->services),
                 'email' => $this->kinshipIdentity->getEmail(),
                 'phone' => implode(' - ', array_filter([$this->kinshipIdentity->getMobile(), $this->kinshipIdentity->getPhone()])),
             ];
@@ -178,7 +185,7 @@ class UserViewModel extends AbstractViewModel
                 'fullName' => $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName(),
                 'birthDate' => ($bithDate) ? $bithDate->format('d/m/Y'): null,
                 'birthPlace' => $this->memberIdentity->getBirthPlace().' ('.$this->memberIdentity->getBirthDepartment().')',
-                'address' => $this->memberIdentity->getAddress(),
+                'address' => AddressViewModel::fromAddress($this->memberIdentity->getAddress(), $this->services),
                 'email' => $this->memberIdentity->getEmail(),
                 'phone' => implode(' - ', array_filter([$this->memberIdentity->getMobile(), $this->memberIdentity->getPhone()])),
                 'picture' => $this->memberIdentity->getPicture(),
@@ -356,6 +363,7 @@ class UserViewModel extends AbstractViewModel
                 'type' => (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null,
                 'lock' => $licence->getSeason() !== $this->currentSeason,
             ];  
+            $licenceArray['amount'] = $this->getAmount($licenceArray)['value'].' €';
         }
 
         return $licenceArray;
@@ -396,5 +404,31 @@ class UserViewModel extends AbstractViewModel
     {
         $lastLicence = $this->getLastLicence();
         return $this->user->getLicences()->count() === 1 && $lastLicence['season'] === $this->currentSeason && $lastLicence['isFinal'] && $lastLicence['status'] === Licence::STATUS_WAITING_VALIDATE;
+    }
+
+    private function getAmount(array $seasonLicence): array
+    {
+        $amount = null;
+        $amountStr = '';
+
+        if (!empty($seasonLicence) && $seasonLicence['isFinal']) {
+            $coverage = $seasonLicence['coverage'];
+            $hasFamilyMember = $seasonLicence['hasFamilyMember'];
+            $isNewMember = $this->isNewMember();
+            $membershipFee = (null !== $coverage && null !== $hasFamilyMember && null !== $isNewMember)
+                ? $this->membershipFeeAmountRepository->findOneByLicence($coverage, $isNewMember, $hasFamilyMember)
+                : null;
+            if (null !== $membershipFee) {
+                $amount = $membershipFee->getAmount();
+            }
+            if (null !== $amount) {
+                $coverageSrt = $this->translator->trans(Licence::COVERAGES[$coverage]);
+                $amountStr = "Le montant de votre inscription pour la formule d'assurance $coverageSrt est de $amount €";
+            }
+        } else {
+            $amountStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";
+        }
+
+        return ['value' => $amount, 'str' => $amountStr];
     }
 }

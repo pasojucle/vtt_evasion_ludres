@@ -175,7 +175,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
-    public function findByFullName(?string $fullName): array
+    public function findByFullName(?string $fullName, bool $hasCurrentSeason = false): array
     {
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i');
@@ -186,6 +186,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                         $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
                     )
                 );
+        }
+
+        if ($hasCurrentSeason) {
+            $currentSeason = $this->licenceService->getCurrentSeason();
+            $qb->leftJoin('u.licences', 'l')
+                ->andWhere(
+                    $qb->expr()->eq('l.season', ':currentSeason')
+                )
+                ->setParameter('currentSeason', $currentSeason);
         }
         return $qb->andWhere(
                 $qb->expr()->isNull('i.kinship')

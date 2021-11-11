@@ -324,8 +324,9 @@ class UserController extends AbstractController
         Request $request
     ): JsonResponse {
         $query = $request->query->get('q');
+        $hasCurrentSeason = $request->query->get('has_current_season');
 
-        $users = $userRepository->findByFullName($query);
+        $users = $userRepository->findByFullName($query, $hasCurrentSeason);
 
         $response = [];
 

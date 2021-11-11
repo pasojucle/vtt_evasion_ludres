@@ -10,12 +10,12 @@ class ProductsViewModel
 {
     public ?array $products;
 
-    public static function fromProducts(Paginator $products, array $data): ProductsViewModel
+    public static function fromProducts(Paginator $products, array $services): ProductsViewModel
     {
         $productsViewModel = [];
         if (!empty($products)) {
             foreach ($products as $product) {
-                $productsViewModel[] = ProductViewModel::fromProduct($product, $data);
+                $productsViewModel[] = ProductViewModel::fromProduct($product, $services);
             }
         }
 

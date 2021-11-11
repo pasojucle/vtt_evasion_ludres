@@ -9,12 +9,12 @@ class OrdersViewModel
 {
     public ?array $orders;
 
-    public static function fromOrders(Paginator $orders, array $data): OrdersViewModel
+    public static function fromOrders(Paginator $orders, array $services): OrdersViewModel
     {
         $ordersViewModel = [];
         if (!empty($orders)) {
             foreach ($orders as $order) {
-                $ordersViewModel[] = OrderViewModel::fromOrderHeader($order, $data);
+                $ordersViewModel[] = OrderViewModel::fromOrderHeader($order,  $services);
             }
         }
 

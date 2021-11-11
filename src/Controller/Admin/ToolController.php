@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use DateTime;
 use App\Entity\User;
@@ -20,13 +20,12 @@ use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
 use App\Form\Admin\LicenceNumberType;
 use Symfony\Component\Form\FormError;
-use App\Repository\ParameterRepository;
 use App\Service\ParameterService;
+use App\Service\PdfService;
+use App\UseCase\Tool\GetRegistrationCertificate;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -528,6 +527,32 @@ class ToolController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    /**
+     * @Route("/admin/registration/certificate", name="admin_registration_certificate")
+     */
+    public function adminRegistrationCertificate(
+        Request $request,
+        PdfService $pdfService,
+        GetRegistrationCertificate $getRegistrationCertificate,
+        ParameterService $parameterService
+    ): Response
+    {
+        $form = $this->createForm(LicenceNumberType::class);
+        $form->handleRequest($request);
+        $filename = null;
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $content = utf8_encode($data['content']);
+            list($filename, $content) = $getRegistrationCertificate->execute($request, $data['user'], $content);
+            $form = $this->createForm(LicenceNumberType::class, ['user' => $data['user'], 'content' => $content]);
+        }
+
+        return $this->render('tool/registration_certificate.html.twig', [
+            'form' => $form->createView(),
+            'filename' => $filename,
+        ]);
+    }
 
     /**
      * @Route("/admin/registration/error", name="admin_registration_error")
@@ -547,7 +572,6 @@ class ToolController extends AbstractController
             $data = $form->getData();
             $doctrineUser = $data['user'];
             $content = utf8_encode($data['content']);
-            // $doctrineUser = $this->entityManager->getRepository(User::class)->findOneBy(['licenceNumber' => $licenceNumber]);
             $user = $userService->convertToUser($doctrineUser);
 
             if (null !== $user) {

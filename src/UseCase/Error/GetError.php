@@ -68,7 +68,7 @@ class GetError
     {
         $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot', 'ltx71','GoogleImageProxy'];
         $pattern = '#%s#i';
-        if (preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
+        if (1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
             $logError->setPersit(false);
         }
     }

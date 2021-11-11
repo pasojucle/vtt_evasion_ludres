@@ -9,7 +9,7 @@ class ProductPresenter extends AbstractPresenter
     public function present(?Product $product): void
     {
         if (null !== $product) {
-            $this->viewModel = ProductViewModel::fromProduct($product, $this->data);
+            $this->viewModel = ProductViewModel::fromProduct($product, $this->services);
         } else {
             $this->viewModel = new ProductViewModel();
         }

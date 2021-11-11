@@ -9,12 +9,12 @@ class OrderLinesViewModel extends AbstractViewModel
 {
     public ?array $lines = [];
 
-    public static function fromOrderLines(collection $orderLines, array $data)
+    public static function fromOrderLines(collection $orderLines, array $services)
     {
         $linesView = new self();
         if (!$orderLines->isEmpty()) {
             foreach($orderLines as $line) {
-                $product = ProductViewModel::fromProduct($line->getProduct(), $data);
+                $product = ProductViewModel::fromProduct($line->getProduct(),  $services);
                 $amount = $line->getQuantity() * $product->sellingPrice;
                 $linesView->lines[] = [
                     'product' => $product,

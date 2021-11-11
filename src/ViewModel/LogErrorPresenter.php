@@ -12,7 +12,7 @@ class LogErrorPresenter extends AbstractPresenter
     public function present(?LogError $logError): void
     {
         if (null !== $logError) {
-            $this->viewModel = LogErrorViewModel::fromLogError($logError, $this->data);
+            $this->viewModel = LogErrorViewModel::fromLogError($logError, $this->services);
         } else {
             $this->viewModel = new OrderViewModel();
         }

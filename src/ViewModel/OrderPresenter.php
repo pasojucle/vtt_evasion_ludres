@@ -10,7 +10,7 @@ class OrderPresenter extends AbstractPresenter
     public function present(?OrderHeader $orderHeader): void
     {
         if (null !== $orderHeader) {
-            $this->viewModel = OrderViewModel::fromOrderHeader($orderHeader, $this->data);
+            $this->viewModel = OrderViewModel::fromOrderHeader($orderHeader, $this->services);
         } else {
             $this->viewModel = new OrderViewModel();
         }

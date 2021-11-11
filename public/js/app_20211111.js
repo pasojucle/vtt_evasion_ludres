@@ -39,7 +39,8 @@ $(document).ready(function(){
     $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.cluster-complete', clusterComplete);
-    $(document).on('click', '.order-status, .delete-error', actionAndRefresh);
+    $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
+    $('.select2entity').on('select2:close', submitAsynchronous);
 });
 
 jQuery(function($){
@@ -233,7 +234,7 @@ function setOrderLineQuantity(e) {
       });
 }
 
-function actionAndRefresh(e) {
+function anchorAsynchronous(e) {
     e.preventDefault();
     const route = $(this).attr('href');
     const container = $(this).closest('ul').attr('id');
@@ -242,6 +243,27 @@ function actionAndRefresh(e) {
         url : route,
         success: function(html) {
             $('#'+container).replaceWith($(html).find('#'+container));
+        }
+      });
+}
+
+function submitAsynchronous(e) {
+    e.preventDefault();
+    const form = $(this).closest('form');
+    let selector = 'form[name="'+form.attr('name')+'"]';
+    console.log(selector);
+    console.warn($(selector));
+    let data = {};
+    data[$(this).attr('name')] = $(this).val();
+
+    $.ajax({
+        url : form.attr('action'),
+        type: form.attr('method'),
+        data : form.serialize(),
+        success: function(html) {
+            console.info(html);
+            console.info($(html).find(selector));
+            $(selector).replaceWith($(html).find(selector));
         }
       });
 }

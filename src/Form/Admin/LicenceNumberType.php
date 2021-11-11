@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
@@ -30,7 +31,9 @@ class LicenceNumberType extends AbstractType
                 'language' => 'fr',
                 'placeholder' => 'Saisisez un nom et prénom',
                 'width' => '100%',
-                'label' => 'Adhérent'
+                'label' => 'Adhérent',
+                'remote_params' => ['has_current_season' => true],
+                'required' => true,
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Message',
@@ -41,5 +44,11 @@ class LicenceNumberType extends AbstractType
                 'attr' => ['class' => 'btn btn-primary float-right'],
             ])
         ;
+    }
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'has_current_season' => false,
+        ]);
     }
 }

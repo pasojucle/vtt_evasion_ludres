@@ -10,12 +10,12 @@ class LogErrorsViewModel
     public ?array $logErrors;
     public ?array $tabs;
 
-    public static function fromLogErrors(Paginator $logErrors, array $data): LogErrorsViewModel
+    public static function fromLogErrors(Paginator $logErrors, array $services): LogErrorsViewModel
     {
         $logErrorsViewModel = [];
         if (!empty($logErrors)) {
             foreach ($logErrors as $logError) {
-                $logErrorsViewModel[] = LogErrorViewModel::fromLogError($logError, $data);
+                $logErrorsViewModel[] = LogErrorViewModel::fromLogError($logError,  $services);
             }
         }
 

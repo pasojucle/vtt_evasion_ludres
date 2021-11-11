@@ -17,4 +17,22 @@ class AbstractViewModel
             }
         }
     }
+
+    public function toString(): string
+    {
+        $reflectionClass = new ReflectionClass($this);
+
+        $properties = $reflectionClass->getProperties();
+        $entity = [];
+        if (!empty($properties)) {
+            foreach($properties as $property) {
+                if ('id' !== $property->getName()) {
+                    $propertyName = $property->getName();
+                    $entity[] = $this->$propertyName;
+                }
+            }
+        }
+
+        return implode(', ', $entity);
+    }
 }

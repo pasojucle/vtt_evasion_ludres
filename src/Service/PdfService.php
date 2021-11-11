@@ -42,6 +42,7 @@ class PdfService
         $dompdf->setPaper($paper, 'portrait');
         $dompdf->render();
         $output = $dompdf->output();
+        
         if (!is_dir('../data')) {
             mkdir('../data');
         }
@@ -49,6 +50,7 @@ class PdfService
             mkdir($directory);
         }
         $pdfFilepath =  $directory.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
+
         file_put_contents($pdfFilepath, $output);
 
         return $pdfFilepath;

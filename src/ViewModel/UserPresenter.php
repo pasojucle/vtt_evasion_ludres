@@ -10,7 +10,7 @@ class UserPresenter extends AbstractPresenter
     public function present(?User $user): void
     {
         if (null !== $user) {
-            $this->viewModel = UserViewModel::fromUser($user, $this->data);
+            $this->viewModel = UserViewModel::fromUser($user, $this->services);
         } else {
             $this->viewModel = new UserViewModel();
         }

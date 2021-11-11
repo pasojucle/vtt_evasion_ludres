@@ -16,7 +16,7 @@ class LogErrorViewModel extends AbstractViewModel
     public ?string $url;
     public ?UserViewModel $user;
 
-    public static function fromLogError(LogError $logError, array $data)
+    public static function fromLogError(LogError $logError, array $services)
     {
         $logErrorView = new self();
         $logErrorView->id = $logError->getId();
@@ -31,7 +31,7 @@ class LogErrorViewModel extends AbstractViewModel
         $logErrorView->fileName = $logError->getFileName();
         $logErrorView->line = $logError->getLine();
         $logErrorView->user = ($logError->getUser())
-            ? UserViewModel::fromUser($logError->getUser(), $data)
+            ? UserViewModel::fromUser($logError->getUser(),  $services)
             : null;
 
         return $logErrorView;
