@@ -22,7 +22,7 @@ class OrderViewModel extends AbstractViewModel
         $orderView->createdAt = $createdAt->format('d/m/Y');
         $orderView->user = UserViewModel::fromUser($orderHeader->getUser(),  $services);
         $orderView->status = $orderHeader->getStatus();
-        $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(),  $services);
+        $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $orderView->user, $services);
 
         return $orderView;
     }

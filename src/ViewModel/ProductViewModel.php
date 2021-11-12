@@ -24,7 +24,7 @@ class ProductViewModel extends AbstractViewModel
     public ?string $pathName = null;
     public ?array $sizes;
 
-    public static function fromProduct(Product $product, array $services)
+    public static function fromProduct(Product $product, array $services, UserViewModel $user = null)
     {
         $productView = new self();
         $productView->id = $product->getId();
@@ -41,10 +41,12 @@ class ProductViewModel extends AbstractViewModel
         $productView->price = number_format($product->getPrice(), 2).' €';
         $productView->discountPrice = null;
         $productView->discountTitle = null;
-        
-        if (null !== $services['user']) {
+
+        if (null === $user && $services['user']) {
             $user = UserViewModel::fromUser($services['user'],  $services);
-            
+        }
+
+        if (null !== $user) {
             if (!empty($user->getMember()) && $product->getCategory() === $user->getLastLicence()['category']) {
                 $productView->sellingPrice = $product->getDiscountPrice();
                 $productView->discountPrice = number_format($product->getDiscountPrice(), 2).' €';
