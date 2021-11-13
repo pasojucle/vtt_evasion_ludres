@@ -11,13 +11,14 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class HealthType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (UserType::FORM_HEALTH === $options['current']->getForm()) {
+        if (null !== $options['current'] && UserType::FORM_HEALTH === $options['current']->getForm() || null === $options['current']) {
             $builder
                 ->add('socialSecurityNumber', TextType::class, [
                     'label' => 'Numéro de sécurité sociale',
@@ -98,7 +99,7 @@ class HealthType extends AbstractType
                 ])
             ;
         }
-        if (UserType::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
+        if (null !== $options['current'] && UserType::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
             $builder
                 ->add('healthQuestions', CollectionType::class, [
                     'label' => false,
@@ -106,13 +107,20 @@ class HealthType extends AbstractType
                 ]);
             ;
         }
+
+        if (null == $options['current']) {
+            $builder
+                ->add('save', SubmitType::class, [
+                    'label' => 'Modifier',
+                    'attr' => ['class' => 'btn btn-primary float-right'],
+                ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Health::class,
-            'type' => 'adulte',
             'current' => null,
         ]);
     }

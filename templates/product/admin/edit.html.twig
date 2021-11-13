@@ -1,11 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% set title = (product is null) ? 'Ajouter une sortie' : 'Modifier une sortie' %}
+{% set title = (product is null) ? 'Ajouter un produit' : 'Modifier un produit' %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
  <div class="wrapper">
+    <div class="padding-10">
         {{ form_start(form) }}
         <div class="block">
             <div class="block-title">
@@ -48,4 +49,5 @@
         </div>
         {{ form_end(form) }}
     </div>
+</div>
 {% endblock %}

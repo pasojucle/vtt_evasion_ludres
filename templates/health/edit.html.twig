@@ -14,19 +14,15 @@
                     </a>
                 </span>
             </div>
-            <div class="padding-10">
-                {{ form_start(form) }}
-                <div class="block-body">
-                    {% for identity in form.children.identities %}
-                        {% include('identity/identity.html.twig') %}
-                    {% endfor %}
-                </div>
-                <div class="block-footer">
-                    {{ form_errors(form) }}
-                    {{ form_row(form.save) }}
-                </div>
-                {{ form_end(form) }}
+            {{ form_start(form) }}
+            <div class="block-body padding-10">
+                {% include('health/form.html.twig') %}
             </div>
+            <div class="block-footer">
+                {{ form_errors(form) }}
+                {{ form_row(form.save) }}
+            </div>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

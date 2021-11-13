@@ -279,7 +279,9 @@ body > script {display: none !important;}
 .btn-list {
     display: block;
     padding: 5px;
+    margin: 0 10px;
     color: var(--background-color);
+    box-sizing: border-box;
 }
 .btn-logger {
     background-color: var(--background-color);
@@ -632,6 +634,10 @@ input[type="file"] {
     padding: 5px;
     box-sizing: border-box;
 } 
+.row.padding-10 .col-md-1, .row.padding-10 .col-md-2, .row.padding-10 .col-md-3, .row.padding-10 .col-md-4, .row.padding-10 .col-md-5, .row.padding-10 .col-md-6, .row.padding-10 .col-md-7, .row.padding-10 .col-md-8, .row.padding-10 .col-md-9, .row.padding-10 .col-md-10, .row.padding-10 .col-md-11, .row.padding-10 .col-md-12, .filters, .padding-10 {
+    padding: 0 10px;
+    box-sizing: border-box;
+} 
 .row .col-md-1 {
     width: 8.33333%;
 }
@@ -668,15 +674,17 @@ input[type="file"] {
 .row .col-md-12 {
     width: 100%;
 }
+.marging-bottom-20 {
+    margin-bottom: 20px;
+}
 .info {
     color: var(--primary-color-darker);
     font-style: oblique;
     font-weight: 700;
 }
-
 .block-title {
     position: relative;
-    margin: -20px -20px 20px -20px;
+    margin: -10px -10px 20px -10px;
     padding: 10px 20px;
 }
 .block .block-body h2 {

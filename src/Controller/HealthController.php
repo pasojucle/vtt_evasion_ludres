@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\User;
+use App\Entity\Health;
+use App\Form\HealthType;
+use App\ViewModel\UserPresenter;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+class HealthController extends AbstractController
+{
+    /**
+     * @Route("/admin/sante/edit/{user}", name="admin_health_edit")
+     */
+    public function adminEdit(
+        Request $request,
+        UserPresenter $presenter,
+        EntityManagerInterface $entityManager,
+        User $user
+    ): Response
+    {
+        $form = $this->createForm(HealthType::class, $user->getHealth());
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $health = $form->getData();
+            $entityManager->persist($health);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
+        }
+        $presenter->present($user);
+        return $this->render('health/edit.html.twig', [
+            'user' => $presenter->viewModel(),
+            'form' => $form->createView(),
+        ]);
+    }
+}

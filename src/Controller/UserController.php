@@ -3,37 +3,26 @@
 namespace App\Controller;
 
 use App\Entity\Level;
-use App\Entity\Licence;
-use App\Form\IdentityType;
 use App\Form\Admin\UserType;
-use App\Form\IdentitiesType;
 use App\Form\UserFilterType;
 use App\Service\UserService;
 use App\Service\ExportService;
 use App\Service\MailerService;
-use App\Service\UploadService;
 use App\Service\LicenceService;
-use App\ViewModel\UserPresenter;
 use App\Service\PaginatorService;
-use App\ViewModel\UsersPresenter;
 use App\Repository\UserRepository;
 use App\ViewModel\OrdersPresenter;
 use App\Entity\User as  UserEntity;
 use App\Form\ChangePasswordFormType;
-use App\Repository\LicenceRepository;
-use App\Repository\IdentityRepository;
-use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Form\Admin\RegistrationFilterType;
-use App\Service\IdentityService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -74,11 +63,11 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
-            $this->session->set('admin_users_filters', $filters);
             $filtered = true;
             $request->query->set('p', 1);
         }
-
+        
+        $this->session->set('admin_users_filters', $filters);
         $query = $this->userRepository->findMemberQuery($filters);
         $users = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
@@ -160,54 +149,6 @@ class UserController extends AbstractController
         }
         return $this->render('user/admin/edit.html.twig', [
             'user' => $this->userService->convertToUser($user),
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/admin/identite/edit/{user}/{isKinship}", name="admin_identity_edit", defaults={"isKinship"=0})
-     */
-    public function adminIdentityEdit(
-        Request $request,
-        LicenceService $licenceService,
-        IdentityRepository $identityRepository,
-        UserPresenter $presenter,
-        UploadService $uploadService,
-        IdentityService $identityService,
-        UserEntity $user,
-        bool $isKinship
-    ): Response
-    {
-        $licence = $user->getLastLicence();
-        if (!$isKinship) {
-            $identity = $identityRepository->findMemberByUser($user);
-            $identities = [$identity];
-        } else {
-            $identities = $identityRepository->findKinShipsByUser($user);
-        }
-        $form = $this->createForm(IdentitiesType::class, ['identities' => $identities], [
-            'category' => $licence->getCategory(),
-            'season_licence' => $licence,
-            'is_kinship' => $isKinship,
-        ]);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $identity = $form->getData();
-            $identityService->setAddress($user);
-            if ($request->files->get('identity')) {
-                $pictureFile = $request->files->get('identity')['pictureFile'];
-                $newFilename = $uploadService->uploadFile($pictureFile);
-                if (null !== $newFilename) {
-                    $identity->setPicture($newFilename);
-                }
-            }
-            $this->entityManager->flush();
-            return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
-        }
-        $presenter->present($user);
-        return $this->render('identity/edit.html.twig', [
-            'user' => $presenter->viewModel(),
             'form' => $form->createView(),
         ]);
     }
@@ -296,9 +237,7 @@ class UserController extends AbstractController
      */
     public function changePassword(
         Request $request, 
-        UserPasswordHasherInterface $passwordHasher,
-        LoginFormAuthenticator $authenticator,
-        GuardAuthenticatorHandler $guardHandler
+        UserPasswordHasherInterface $passwordHasher
     ): Response
     {
         $user = $this->getUser();

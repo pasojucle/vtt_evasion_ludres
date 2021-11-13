@@ -133,7 +133,7 @@ function updateLinkOrder(id, newOrder) {
 function getMediaScreen() {
     const width = screen.width;
     let mediaScreen = (width > 800) ? 'md' : 'xs'; 
-    document.cookie = "media_screen = "+mediaScreen;
+    document.cookie = "media_screen = "+mediaScreen; SameSite=Strict
 }
 
 function getFile(e) {
