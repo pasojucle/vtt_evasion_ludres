@@ -103,7 +103,7 @@ class Identity
     /**
      * @ORM\Column(type="integer", options={"default":1}))
      */
-    private $type;
+    private $type = self::TYPE_MEMBER;
 
 
     public function getId(): ?int

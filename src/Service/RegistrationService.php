@@ -198,9 +198,13 @@ class RegistrationService
 
         if (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) {
             if ($this->user->getIdentities()->count() < 2) {
-                foreach([Identity::KINSHIP_FATHER, Identity::KINSHIP_MOTHER] as $kinShip) {
+                foreach([
+                    Identity::TYPE_KINSHIP => Identity::KINSHIP_FATHER,
+                    Identity::TYPE_SECOND_CONTACT => Identity::KINSHIP_MOTHER,
+                ] as $type => $kinShip) {
                     $identity = new Identity();
-                    $identity->setKinship($kinShip);
+                    $identity->setKinship($kinShip)
+                        ->setType($type);
                     $this->user->addIdentity($identity);
                     $this->entityManager->persist($identity);
                 }

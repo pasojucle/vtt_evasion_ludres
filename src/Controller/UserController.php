@@ -188,6 +188,7 @@ class UserController extends AbstractController
         $form = $this->createForm(IdentitiesType::class, ['identities' => $identities], [
             'category' => $licence->getCategory(),
             'season_licence' => $licence,
+            'is_kinship' => $isKinship,
         ]);
         $form->handleRequest($request);
 

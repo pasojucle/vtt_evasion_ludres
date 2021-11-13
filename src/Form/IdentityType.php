@@ -30,7 +30,8 @@ class IdentityType extends AbstractType
             $disabled = ($options['season_licence']->isFinal() && $type === Identity::TYPE_MEMBER) ? 'disabled' : '';
             $addressClass = ($type !== Identity::TYPE_SECOND_CONTACT) ? ' identity-address' : '';
             $row_class =  ($kinship) ? 'form-group-inline' : 'form-group';
-            if ((!$kinship && $form->getName() === "0") || ($kinship && in_array($form->getName(),[1,2])) || 'identities' === $form->getParent()->getName()) {
+
+            if ((!$options['is_kinship'] && !$kinship) || ($options['is_kinship'] && $kinship)) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
@@ -180,6 +181,7 @@ class IdentityType extends AbstractType
             'data_class' => Identity::class,
             'category' => Licence::CATEGORY_ADULT,
             'season_licence' => null,
+            'is_kinship' => false,
         ]);
     }
 }

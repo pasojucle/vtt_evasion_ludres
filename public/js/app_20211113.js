@@ -40,7 +40,7 @@ $(document).ready(function(){
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.cluster-complete', clusterComplete);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
-    $('.select2entity').on('select2:close', submitAsynchronous);
+    $('.select2entity.submit-asynchronous').on('select2:close', submitAsynchronous);
 });
 
 jQuery(function($){
@@ -75,10 +75,10 @@ function updateIdentity() {
     let required = $(this).is(':checked');
     $('.identity-address').toggleClass('hidden');
     if (required) {
-        $('.identity-address').attr('required', 'required');
+        $('.identity-address').find('input').attr('required', 'required');
     } else {
-        $('.identity-address').removeAttr('required');
-        $('.identity-address').val('');
+        $('.identity-address').find('input').removeAttr('required');
+        $('.identity-address').find('input').val('');
     }
 }
 

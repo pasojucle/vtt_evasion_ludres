@@ -22,6 +22,7 @@ class IdentitiesType extends AbstractType
                     'label' => false,
                     'category' => $options['category'],
                     'season_licence' => $options['season_licence'],
+                    'is_kinship' => $options['is_kinship'],
                 ],
             ])
             ->add('save', SubmitType::class, [
@@ -36,6 +37,7 @@ class IdentitiesType extends AbstractType
         $resolver->setDefaults([
             'category' => Licence::CATEGORY_ADULT,
             'season_licence' => null,
+            'is_kinship' => false,
         ]);
     }
 }

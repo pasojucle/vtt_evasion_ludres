@@ -34,6 +34,9 @@ class LicenceNumberType extends AbstractType
                 'label' => 'Adhérent',
                 'remote_params' => ['has_current_season' => true],
                 'required' => true,
+                'attr' => [
+                    'class' => 'submit-asynchronous',
+                ]
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Message',
