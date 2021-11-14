@@ -6,7 +6,6 @@ $(document).ready(function(){
         let marginTop = stepProgressMargingTop;
         $( window ).scroll(function() {
             if ($(window).scrollTop() >= offsetTop) {
-                console.log($(window).scrollTop() - offsetTop);
                 marginTop = $(window).scrollTop() - 200;
             } else {
                 marginTop = stepProgressMargingTop;
@@ -133,7 +132,7 @@ function updateLinkOrder(id, newOrder) {
 function getMediaScreen() {
     const width = screen.width;
     let mediaScreen = (width > 800) ? 'md' : 'xs'; 
-    document.cookie = "media_screen = "+mediaScreen; SameSite=Strict
+    document.cookie = "media_screen = "+mediaScreen;
 }
 
 function getFile(e) {
@@ -142,7 +141,6 @@ function getFile(e) {
     $inputFile.click();
     $inputFile.on('change',  function(event) {
         filename = event.target.value.split('\\').pop();
-        console.log(event.target.value);
         $('#filename').text(filename);
     });
     return false;
