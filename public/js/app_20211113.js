@@ -40,6 +40,7 @@ $(document).ready(function(){
     $(document).on('click', '.cluster-complete', clusterComplete);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
     $('.select2entity.submit-asynchronous').on('select2:close', submitAsynchronous);
+    $(document).on('click', '.btn .fa-caret-square-down, .btn .fa-caret-square-up', toggleDown);
 });
 
 jQuery(function($){
@@ -257,4 +258,11 @@ function submitAsynchronous(e) {
             $('.select2entity').select2entity();
         }
       });
+}
+
+function toggleDown(e) {
+    e.preventDefault();
+    const blockBody = $(this).closest('div.block').find('.block-body');
+    blockBody.toggleClass('down').toggleClass('up');
+    $(this).toggleClass('fa-caret-square-up').toggleClass('fa-caret-square-down');
 }
