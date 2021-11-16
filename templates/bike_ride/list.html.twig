@@ -22,7 +22,7 @@
                         {% set btn_label = 'Disponibilité' %}
                     {% endif %}
                            
-                    <div class="bike-ride-date item-center align-center {{ class }}">
+                    <div class="bike-ride-date item-center align-center {{ class }} reveal">
                         <div>
                             {% if event.endAt is null %}
                                 {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
@@ -37,7 +37,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    <div class="bike-ride-detail {{ class }}">
+                    <div class="bike-ride-detail {{ class }} reveal">
                         <h3>{{ event.title }}</h3>
                         {% if event.minAge is not null %}
                             <p class='info'>A partir de {{ event.minAge }} ans</p>
@@ -45,7 +45,7 @@
                         <p>{{ event.content |raw }}</p>
                     </div>
                     {% if event.isRegistrable or event.accessAvailabity(app.user) %}
-                        <div class="bike-ride-btn item-center align-center {{ class }}">
+                        <div class="bike-ride-btn item-center align-center {{ class }} reveal">
                             <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
                         </div>
                     {% endif %}

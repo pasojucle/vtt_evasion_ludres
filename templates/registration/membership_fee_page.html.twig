@@ -9,8 +9,10 @@
     <div class="wrapper background-blue background-color col-content">
         <div class="wrapper-img" style="background-image:url(../images/background/{{ media_screen }}/ecole_vtt_disciplines.jpg)"></div>
         <div class="wrapper-content">
-            <h1>Les tarifs</h1>
-            {% include('registration/membership_fee.html.twig') %}
+            <div class="reveal">
+                <h1>Les tarifs</h1>
+                {% include('registration/membership_fee.html.twig') %}
+            </div>
         </div>
     </div>
 {% endblock %}

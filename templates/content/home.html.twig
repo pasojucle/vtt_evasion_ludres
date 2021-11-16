@@ -8,7 +8,7 @@
         <div class="news-container">
             {% if home_contents.flashes is defined %}
                 {% for flash in home_contents.flashes %}
-                    <div class="block background-color background-primary block-flash">   
+                    <div class="block background-color background-primary block-flash reveal">   
                         <div class="block-title">
                             <h2>{{ flash.title }}</h2>
                             <span class="tools xs-display">
@@ -28,7 +28,7 @@
             {% endif %}
         </div>
         <div class="events-container">
-            <div class="block background-clear">
+            <div class="block background-clear reveal">
                 {# <div class="block-title">
                     <h2></h2>
                 </div> #}
@@ -55,7 +55,7 @@
                 </div>
             </div>
             {% for link in links_bike_ride %}
-            <div class="card card-img-only">
+            <div class="card card-img-only  reveal">
                 <a href="{{ link.url }}" target="_blank" title="{{ link.title }}">
                     {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
                     <img src="{{ src }}" alt="">
@@ -63,7 +63,7 @@
             </div>
             {% endfor %}
         </div>
-        <div class="links-container col-4">
+        <div class="links-container col-4 reveal">
             {% for link in links_footer %}
             <a href="{{ link.url }}" target="_blank" title="{{ link.title }}">
                 <div class="card card-full-img">

@@ -11,18 +11,20 @@
     <div class="wrapper background-{{ background_color }} background-color col-content">
         <div class="wrapper-img" style="background-image:url(../images/background/{{ media_screen }}/{{ background_img }})"></div>
         <div class="wrapper-content">
-            {{ content.content | raw}}
-            {% if app.request.get('_route') == 'school_practices' %}
-                <h3>A l'école VTT de Ludres il y a {{levels|length}} groupes</h3>
-                <ul class="list-outside">
-                    {% for level in levels %}
-                        <li>
-                            <h4>{{ level.title }}</h4>
-                            <p>{{ level.content | raw }}</p>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+            <div class="reveal">
+                {{ content.content | raw}}
+                {% if app.request.get('_route') == 'school_practices' %}
+                    <h3>A l'école VTT de Ludres il y a {{levels|length}} groupes</h3>
+                    <ul class="list-outside">
+                        {% for level in levels %}
+                            <li>
+                                <h4>{{ level.title }}</h4>
+                                <p>{{ level.content | raw }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}
