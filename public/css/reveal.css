@@ -1,10 +1,10 @@
 .reveal {
     opacity:0;
-    transform: translateY(100px); 
-    transition: .7s cubic-bezier(.5, 0, 0, 1);
+    transform: translateY(120px); 
+    transition: 1s cubic-bezier(.5, 0, 0, 1);
 }
 .reveal.visible{
     transform: translate3d(0, 0, 0);
     opacity: 1;
-    transition: .7s cubic-bezier(.5, 0, 0, 1);
+    transition: 1s cubic-bezier(.5, 0, 0, 1);
   }

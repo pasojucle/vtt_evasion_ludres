@@ -63,9 +63,9 @@
             </div>
             {% endfor %}
         </div>
-        <div class="links-container col-4 reveal">
+        <div class="links-container col-4">
             {% for link in links_footer %}
-            <a href="{{ link.url }}" target="_blank" title="{{ link.title }}">
+            <a href="{{ link.url }}" target="_blank" title="{{ link.title }}" class="reveal">
                 <div class="card card-full-img">
                     {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
                     <div style="background-image:url({{ src }}"></div>
