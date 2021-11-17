@@ -21,7 +21,7 @@
             {% endif %}
             {% if home_contents.contents is defined %}
                 {% for content in home_contents.contents %}
-                    <div class="block{% if not(content.content matches '/iframe/') %} background-clear{% endif %}">        
+                    <div class="block reveal{% if not(content.content matches '/iframe/') %} background-clear{% endif %}">        
                         <div class="block-body">{{ content.content | raw}}</div>
                     </div>
                 {% endfor %}
@@ -55,7 +55,7 @@
                 </div>
             </div>
             {% for link in links_bike_ride %}
-            <div class="card card-img-only  reveal">
+            <div class="card card-img-only reveal">
                 <a href="{{ link.url }}" target="_blank" title="{{ link.title }}">
                     {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
                     <img src="{{ src }}" alt="">
