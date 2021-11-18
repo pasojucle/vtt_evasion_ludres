@@ -704,6 +704,9 @@ input[type="file"] {
     top: 0;
     right: 0;
 }
+.block-flash .tools {
+    top: -10px;
+}
 .block-body > ul > li:not(:last-child)::after {
     content: '';
     height: 2px;
@@ -718,7 +721,7 @@ input[type="file"] {
 .block-flash .block-title{
     position: relative;
     margin: unset;
-    padding: 0 20px;
+    padding: 0 40px 0 20px;
     cursor: pointer;
 }
 .block.block-flash.background-color {
@@ -726,7 +729,7 @@ input[type="file"] {
 }
 .block-flash h2 {
     margin-top: 10px;
-    font-size: 24px;
+    font-size: 20px;
     text-align: center;
 }
 nav.nav-tab a {
@@ -1052,9 +1055,6 @@ nav.nav-tab {
     }
     footer li:not(:first-child)::before {
         display: none;
-    }
-    .block-flash .block-title {
-        padding: 0 40px 0 20px;
     }
     .block-body.up {
         max-height: 0;

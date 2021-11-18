@@ -41,6 +41,8 @@ $(document).ready(function(){
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
     $('.select2entity.submit-asynchronous').on('select2:close', submitAsynchronous);
     $(document).on('click', '.btn .fa-caret-square-down, .btn .fa-caret-square-up', toggleDown);
+    $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
+    $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
 });
 
 jQuery(function($){
@@ -265,4 +267,12 @@ function toggleDown(e) {
     const blockBody = $(this).closest('div.block').find('.block-body');
     blockBody.toggleClass('down').toggleClass('up');
     $(this).toggleClass('fa-caret-square-up').toggleClass('fa-caret-square-down');
+}
+
+function addDown(e) {
+    $(this).closest('div.block').find('i').removeClass('fa-caret-square-up').addClass('fa-caret-square-down');
+}
+
+function addUp(e) {
+    $(this).closest('div.block').find('i').addClass('fa-caret-square-up').removeClass('fa-caret-square-down');
 }
