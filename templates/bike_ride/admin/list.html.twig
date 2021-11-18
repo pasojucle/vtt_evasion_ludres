@@ -38,7 +38,7 @@
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <a class="btn btn-primary btn-ico" href="{{ path('admin_event_edit', {'event' : event.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
                                         {% if event.startAt <= date() %}
-                                            <a href="{{ path('admin_event_export', {'event': event.id}) }}" class="btn btn-success btn-ico" title="Changer de groupe">
+                                            <a href="{{ path('admin_event_export', {'event': event.id}) }}" class="btn btn-success btn-ico" title="Exporter la séance">
                                                 <i class="fas fa-file-download"></i>
                                             </a>
                                         {% endif %}
