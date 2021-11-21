@@ -140,6 +140,8 @@ class MenuAdminService
 
     public function getMenuActived(): int
     {
-        return (int) $this->request->getCurrentRequest()->cookies->get('admin_menu_actived');
+        $menuActived =  $this->request->getCurrentRequest()->cookies->get('admin_menu_actived');
+
+        return (null !== $menuActived) ? (int) $menuActived : 0;
     }
 }
