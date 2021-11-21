@@ -71,7 +71,7 @@ class GetError
         if (1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
             $logError->setPersist(false);
         }
-        $routes = ['wlwmanifest.xml', 'xmlrpc.php', 'wp-content', '.env'];
+        $routes = ['wlwmanifest.xml', 'xmlrpc.php', 'wp-content', 'wp-admin', '.env'];
         $pattern = '#%s#i';
         if (1 === preg_match(sprintf($pattern, implode('|', $routes)), $logError->getRoute())) {
             $logError->setPersist(false);
