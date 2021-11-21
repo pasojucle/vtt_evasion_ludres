@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\NavService;
+use App\Service\MenuService;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -17,14 +17,14 @@ class RobotsFileCommand extends Command
 
     private RequestContext $requestContext;
     private ParameterBagInterface $parameterBag;
-    private NavService $navService;
+    private MenuService $navService;
     private UrlGeneratorInterface $urlGenerator;
     private string $publicDir;
     
     public function __construct(
         RequestContext $requestContext,
         ParameterBagInterface $parameterBag,
-        NavService $navService,
+        MenuService $navService,
         UrlGeneratorInterface $urlGenerator
     )
     {

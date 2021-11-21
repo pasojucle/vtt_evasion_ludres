@@ -21,7 +21,7 @@ nav.fixed {
     position: fixed;
 }
 
-nav > ul > li > a {
+nav > ul > li > div.block-title > a {
     padding: 15px;
     display: block;
     color: var(--background-color);
@@ -31,7 +31,7 @@ nav > ul > li {
     margin: 0 -4px;
     position: relative;
 }
-nav > ul> li > a:hover, nav > ul> li > a.active {
+nav > ul> li > div.block-title > a:hover, nav > ul> li > div.block-title > a.active {
     color: var(--white-color);
     background-color: var(--primary-color);
     cursor: pointer;
@@ -74,7 +74,7 @@ ul.sub-menu a {
     width: 100%;
     box-sizing: border-box;
 }
-ul.sub-menu a:hover {
+ul.sub-menu a:hover, ul.sub-menu a.active {
     background-color: var(--primary-color);
     color: var(--white-color);
 }
@@ -493,13 +493,13 @@ button[type="submit"] {
     .wrapper-img {
         height: 450px;
     }
-    nav > ul > li > a {
+    nav > ul > li > div.block-title > a {
         padding: 15px;
         display: block;
         color: var(--background-color);
-        background-color: var(--white-color);
+        background-color: var(--light-color);
     }
-    nav > ul> li > a:hover, nav > ul> li > a.active {
+    nav > ul > li > div.block-title > a:hover, nav > ul> li > div.block-title > a.active {
         color: var(--white-color);
         background-color: var(--primary-color);
     }

@@ -9,7 +9,8 @@ twig:
         - '@TetranzSelect2Entity/Form/fields.html.twig'
 
     globals:
-        nav_service: '@App\Service\NavService'
+        menu_service: '@App\Service\MenuService'
+        menu_admin_service: '@App\Service\MenuAdminService'
         licence_service: '@App\Service\LicenceService'
         membership_fee_service: '@App\Service\MembershipFeeService'
         registration_service: '@App\Service\RegistrationService'

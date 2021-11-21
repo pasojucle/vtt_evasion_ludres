@@ -10,7 +10,7 @@
                 <span class="tools">
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('admin_event_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter une sortie"><i class="fas fa-plus"></i></a>
-                {%endif %}
+                {% endif %}
                 </span>
             </div>
             <div class="block-body">
@@ -19,7 +19,7 @@
                     {% for event in events %}                      
                         <li class="li-long">
                             <div class="row row-list">
-                                <div class="col-md-10 col-xs-10">
+                                <div class="col-md-10 col-xs-9">
                                     {% set event_content %}
                                         <div class="row one-line">
                                             <div class="col-md-3 col-xs-5">{{ event.startAt | date('d/m/y') }}</div>

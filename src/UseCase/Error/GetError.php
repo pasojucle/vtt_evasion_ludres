@@ -66,7 +66,7 @@ class GetError
 
     private function setPersist(LogError &$logError): void
     {
-        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot', 'ltx71','GoogleImageProxy'];
+        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot', 'ltx71','GoogleImageProxy', 'SiteLockSpider'];
         $pattern = '#%s#i';
         if (1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
             $logError->setPersist(false);

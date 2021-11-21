@@ -131,3 +131,9 @@ order:
   valided: Validée
   completed: Cloturée
   canceled: Annulée
+
+menu:
+  group:
+    management: Gestion
+    setting: Paramètrage
+    tools: Outils

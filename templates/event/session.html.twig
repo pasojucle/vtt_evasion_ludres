@@ -1,7 +1,7 @@
 {% set user = user_service.converttoUser(session.user)%} 
 <li id="session-{{ session.id }}" class="li-long">
     <div class="row row-list">
-        <div class="col-md-9 col-xs-7">
+        <div class="col-md-10 col-xs-7">
             {% set btn_color = '' %}
             {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') and session.availability is null and session.user.level is not null %}
                 {% set btn_color = ' style = background-color:' ~ session.user.level.color ~ ';' %}
@@ -27,7 +27,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3 col-xs-5">
+        <div class="col-md-2 col-xs-5">
             {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') %}
                 {% if not cluster.isComplete %}
                     {% if not session.isPresent %}

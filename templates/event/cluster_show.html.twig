@@ -30,7 +30,7 @@
                             {% include ('event/session.html.twig')%}
                         {% endfor %}
                     </ul>
-                    {% if hasGroups  and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+                    {% if hasGroups and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
                         <div class="padding-10">
                             {% if not cluster.isComplete %}
                                 <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete" data-cluster-id="{{ cluster.id }}" target="_blank">

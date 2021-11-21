@@ -21,13 +21,27 @@ nav {
     grid-area: header;
     text-align: center;
 }
-nav > ul > li > a {
+nav > .nav-group.block:not(:last-child) {
+    margin-bottom: 20px;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+}
+nav > .nav-group > .block-title {
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    margin: unset;
+}
+nav > .nav-group > .block-body > ul > li::after {
+    margin: unset;
+}
+nav > .nav-group > .block-body > ul > li > a {
     padding: 15px;
     display: block;
     color: var(--background-color);
     background-color: var(--white-color);
 }
-nav > ul> li > a:hover, nav > ul> li > a.active {
+nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-body >  ul> li > a.active {
     color: var(--white-color);
     background-color: var(--primary-color);
 }
@@ -36,6 +50,21 @@ nav > ul> li > a:hover, nav > ul> li > a.active {
     background: unset;
     font-weight: normal;
     color: unset;
+}
+.nav-group .block-body.up {
+    max-height: 0;
+    transition: max-height 0.25s ease-out;
+    overflow: hidden;
+}
+.nav-group .block-body.down {
+    max-height: 500px;
+    transition: max-height 0.25s ease-in;
+}
+.nav-group .block-title .btn {
+    color: var(--white-color);
+}
+.nav-group .block-title {
+    margin: unset;
 }
 
 @media screen and (max-width: 800px) {

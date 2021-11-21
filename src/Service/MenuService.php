@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class NavService
+class MenuService
 {
     private array $menus;
     private array $menusAdmin;
@@ -28,16 +28,16 @@ class NavService
                 'subMenus' => [
                     ['label' => 'Présentation',
                     'route' => 'school_overview',
-                    'pattern' => '/school/',],
+                    'pattern' => '/school_overview/',],
                     ['label' => 'Les disciplines',
                     'route' => 'school_practices',
-                    'pattern' => '/school/',],
+                    'pattern' => '/school_practices/',],
                     ['label' => 'Fonctionnement',
                     'route' => 'school_operating',
-                    'pattern' => '/school/',],
+                    'pattern' => '/school_operating/',],
                     ['label' => 'Équipement',
                     'route' => 'school_equipment',
-                    'pattern' => '/school/',],
+                    'pattern' => '/school_equipment/',],
                 ],
             ],
             [
@@ -53,10 +53,10 @@ class NavService
                 'subMenus' => [
                     ['label' => 'S\'inscrire',
                     'route' => 'registration_detail',
-                    'pattern' => '/registration/',],
+                    'pattern' => '/registration_detail/',],
                     ['label' => 'Les tarifs',
                     'route' => 'registration_membership_fee',
-                    'pattern' => '/registration/',],
+                    'pattern' => '/registration_membership_fee/',],
                 ],
             ],
             [
@@ -76,78 +76,6 @@ class NavService
                 'route' => 'contact',
                 'pattern' => '/contact/',
                 'subMenus' => [],
-            ],
-        ];
-        $this->menusAdmin = [
-            [
-                'label' => 'Gestion du programme',
-                 'route' => 'admin_events',
-                 'pattern' => '/event/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_FRAME',
-            ],
-            [
-                'label' => 'Gestion des adhérents',
-                 'route' => 'admin_users',
-                 'pattern' => '/user/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_REGISTER',
-            ],
-            [
-                'label' => 'Gestion des inscriptions',
-                 'route' => 'admin_registrations',
-                 'pattern' => '/admin_registrations/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_REGISTER',
-            ],
-            [
-                'label' => 'Gestion de la boutique',
-                 'route' => 'admin_products',
-                 'pattern' => '/produit/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Gestion des commandes',
-                 'route' => 'admin_orders',
-                 'pattern' => '/commande/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Gestion des niveaux',
-                 'route' => 'admin_levels',
-                 'pattern' => '/level/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Gestion de la page d\'accueil',
-                 'route' => 'admin_home_contents',
-                 'pattern' => '/admin_home/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Gestion des contenus',
-                 'route' => 'admin_contents',
-                 'pattern' => '/admin_content/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Gestion des liens',
-                 'route' => 'admin_links',
-                 'pattern' => '/link/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Paramètrage des inscriptions',
-                 'route' => 'admin_registration_steps',
-                 'pattern' => '/registration_step/',
-                 'subMenus' => [],
-                 'role' => 'ROLE_ADMIN',
             ],
         ];
         $this->footer = [
@@ -171,21 +99,9 @@ class NavService
         return $this->menus;
     }
 
-    public function getMenusAdmin(): array
-    {
-        return $this->menusAdmin;
-    }
-
     public function getFooter(): array
     {
         return $this->footer;
-    }
-
-    public function getMaintenance()
-    {
-        $maintenance = $this->parameterBag->get('maintenance');
-
-        return ($maintenance) ? filter_var($maintenance['status'], FILTER_VALIDATE_BOOL) : false;
     }
 
     public function getIndexableRoutes(): array

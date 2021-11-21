@@ -1,74 +1,48 @@
-{% set menus = nav_service.menusAdmin() %}
+{% set groups = menu_admin_service.menuGroupsAdmin() %}
+{% set menu_actived = menu_admin_service.menuActived() %}
 <div class="nav-bar">
     <a href="" class="btn btn-ico"></a>
     <img src="/images/logo.jpg" alt="VTT EVASION LUDRES">
 </div>
 
 <nav class="admin">
-    <ul>
-        {% for menu in menus %}
-            {% if is_granted(menu.role) %}
-            <li>
-                <a href="{{ path(menu.route) }}"{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
-                {% if menu.subMenus is not empty %}
-                    <ul class="sub-menu">
-                        {% for sub_menu in menu.subMenus %}
-                            <li>
-                                <a href="{{ path(sub_menu.route, sub_menu.params) }}">{{ sub_menu.label }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+    {% for key, group in groups %}
+        {% set btn_class = (key == menu_actived) ? 'fas fa-angle-up' : 'fas fa-angle-down' %}
+        {% set body_class = (key == menu_actived) ? 'down' : 'up' %}
+        <div class="nav-group block" data-group="{{ key }}">
+            <div class="block-title">
+                <h2>{{ group.label|trans }}</h2>
+                <span class="tools">
+                    <a href="" class="btn btn-ico"><i class="{{ btn_class }}"></i></a>
+                </span>
+            </div>
+            <div class="block-body {{ body_class }}">
+                <ul>
+                {% for menu in group.subMenus %}
+                    {% if is_granted(menu.role) %}
+                    <li>
+                        <a href="{{ path(menu.route) }}"
+                            {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
+                            {{ menu.label }}
+                        </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>         
+        </div>         
+    {% endfor %}
     <br>
-    
-        <ul>{% if is_granted('ROLE_ADMIN') %}
-            <li>
-                <a href="{{ path('admin_registration_error') }}">Notification d'erreur à l'inscription</a>
-            </li>
-            <li>
-                <a href="{{ path('admin_registration_certificate') }}">Attestation d'inscription pour CE</a>
-            </li>
-            <li>
-                <a href="{{ path('admin_log_errors') }}">Journal des erreurs</a>
-            </li>
-            {% endif %}
-            {% if is_granted('ROLE_SUPER_ADMIN') %}
-            <li>
-                <a href="{{ path('admin_import_users') }}">Importer la liste des utilisateurs</a>
-            </li>
-            <li>
-                <a href="{{ path('admin_update_licence_type') }}">Mise à jours type licence</a>
-            </li>
-            <li>
-                <a href="{{ path('admin_update_phone') }}">Mise à jours des téléphones</a>
-            </li>
-            <li>
-                <a href="{{ path('admin_send_login') }}">Envoi des identifiants</a>
-            </li>
-
-            <li>
-                <a href="{{ path('admin_tool_delete_user') }}">Supprimer un adhérent</a>
-            </li>
-            <li>
-                <a href="{{ path('admin_departments') }}">Liste des départements</a>
-            </li>
-            <li>
-                <a href="{{ path('admin_export_email') }}">Export liste mineurs</a>
-            </li>
-            {% endif %}
-        </ul>
-        <br>
-
-    <ul>
-        <li>
-            <a  href="{{ path('app_logout') }}">Se déconnecter</a>
-        </li>
-        <li>
-            <a href="{{ path('home') }}">Retour au site</a>
-        </li>
-    </ul>
+    <div class="nav-group block">
+        <div class="block-body">
+            <ul>
+                <li>
+                    <a  href="{{ path('app_logout') }}">Se déconnecter</a>
+                </li>
+                <li>
+                    <a href="{{ path('home') }}">Retour au site</a>
+                </li>
+            </ul>
+        </div>
+    <div>
 </nav>

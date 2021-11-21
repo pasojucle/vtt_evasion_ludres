@@ -283,7 +283,7 @@ body > script {display: none !important;}
     color: var(--background-color);
     box-sizing: border-box;
 }
-.btn-logger {
+nav > ul > li > div.block-title > a.btn-logger {
     background-color: var(--background-color);
     color: var(--primary-color);
 }
@@ -690,7 +690,7 @@ input[type="file"] {
 .block {
     transition: margin-top 1s ease-in;
 }
-.block-title {
+.block .block-title {
     position: relative;
     margin: -10px -10px 20px -10px;
     padding: 10px 20px;
@@ -877,8 +877,10 @@ nav.nav-tab {
         transition: max-height 0.25s ease-in;
         padding: 0 10px 10px 10px;
     }
+    .block-xs .tools {
+        display: none;
+    }
 }
-
 
 @media screen and (max-width: 800px) {
     .xs-display {
@@ -888,7 +890,10 @@ nav.nav-tab {
         display: block;
         background-color: var(--background-color);
         text-align: center;
-        position: relative;
+        position: fixed;
+        width: 100%;
+        height: 50px;
+        z-index: 99;
     }
     .nav-bar > * {
         vertical-align: middle;
@@ -923,10 +928,19 @@ nav.nav-tab {
         display: block;
         position: unset;
         background-color: var(--white-color);
-        padding-left: 20px;
     }
     ul.sub-menu > li > a {
         color: var(--background-color);
+    }
+    li.block-xs::after {
+        content: '';
+        height: 2px;
+        width: 100%;
+        background-color: var(--white-color);
+        display: block;
+    }
+    .block-xs .block-body li > a > span {
+        margin-left: 20px;
     }
     .header {
         display: none;
@@ -934,6 +948,7 @@ nav.nav-tab {
     main {
         display: block;
         max-width: 100%;
+        overflow: hidden;
     }
     nav:not(.paginator, nav.nav-tab) {
         position: absolute;
@@ -942,7 +957,7 @@ nav.nav-tab {
         transition: all 1s ease;
         width: 100vw;
         height: 100vh;
-        background-color: var(--white-color);
+        background-color: var(--light-color);
         z-index: 3;
     }
     nav:not(.paginator, nav.nav-tab).nav-active {
@@ -1064,7 +1079,6 @@ nav.nav-tab {
     .block-body.down {
         max-height: 500px;
         transition: max-height 0.25s ease-in;
-        padding: 0 10px 10px 10px;
     }
     .tools.xs-display a.btn.btn-ico {
         padding: 0;

@@ -1,4 +1,5 @@
-{% set menus = nav_service.menus() %}
+{% set menus = menu_service.menus() %}
+{% set sub_menu_class = (media_screen_service.mediaScreen == 'xs') ? ' up' : '' %}
 <div class="header">
     <a class="logo" href="{{ path('home')}}">
         <img src="/images/logo.png" alt="vtt évasion ludres">
@@ -15,66 +16,97 @@
         <img class="hidden" src="/images/logo.png" alt="vtt évasion ludres">
     </a>
     <ul>
-        <li  class="xs-display">
-            <a href="{{ path('home') }}" title="Accueil">Accueil</a>
+        <li class="block-xs xs-display">
+            <div class="block-title">
+                <a href="{{ path('home') }}" title="Accueil">Accueil</a>
+            </div>
         </li>
         {% for menu in menus %}
-            <li>
-                <a {% if menu.route is not null %}href="{{ path(menu.route) }}"{% endif %}{% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>{{ menu.label }}</a>
+            <li class="block-xs">
+                <div class="block-title">
+                    <a {% if menu.route is not null %}href="{{ path(menu.route) }}" {% endif %}
+                        {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
+                        {{ menu.label }}
+                    </a>
+                    {% if menu.subMenus is not empty %}
+                        <span class="tools">
+                            <a href="" class="btn btn-ico"><i class="fas fa-angle-down"></i></a>
+                        </span>
+                    {% endif %}
+                </div>
                 {% if menu.subMenus is not empty %}
-                    <ul class="sub-menu">
-                        {% for sub_menu in menu.subMenus %}
-                            <li>
-                                <a href="{{ path(sub_menu.route) }}">{{ sub_menu.label }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    <div class="block-body up">
+                        <ul class="sub-menu">
+                            {% for sub_menu in menu.subMenus %}
+                                <li>
+                                    <a href="{{ path(sub_menu.route) }}"
+                                        {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
+                                        <span>{{ sub_menu.label }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 {% endif %}
             </li>
         {% endfor %}
         {% if is_granted('ROLE_USER') %}
             {% set member = user_service.convertToUser(app.user).member %}
             {% if member is not empty %}
-                <li>
-                    <a class="btn-logger"><i class="fas fa-user"></i> {{ member.fullName }}</a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a href="{{ path('user_bike_rides') }}">Mon programme perso</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('user_account') }}">Mes infos</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('user_orders') }}">Mes commandes</a>
-                        </li>
-                    </ul>
+                <li class="block-xs">
+                    <div class="block-title">
+                        <a class="btn-logger"><i class="fas fa-user"></i> {{ member.fullName }}</a>
+                    </div>
+                    <div class="block-body">
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="{{ path('user_bike_rides') }}">Mon programme perso</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('user_account') }}">Mes infos</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('user_orders') }}">Mes commandes</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             {% endif %}
         {% endif %}
         {% if order_service.getOrderByUser %}
-            <li>
-                <a class="btn-logger" href="{{ path('order_edit') }}" title="Mon panier"><i class="fas fa-shopping-cart"></i> <span class="xs-display">Mon panier</span></a>
+            <li class="block-xs">
+                <div class="block-title">
+                    <a class="btn-logger" href="{{ path('order_edit') }}" title="Mon panier"><i class="fas fa-shopping-cart"></i> <span class="xs-display">Mon panier</span></a>
+                </div>
             </li>
         {% endif %}
         {% if is_granted('ROLE_FRAME') %}
             {% set admin_route = (is_granted('ROLE_ADMIN')) ? 'admin_home' : 'admin_events' %}
-            <li>
-                <a class="btn-logger" href="{{ path(admin_route) }}" title="Admin">admin</a>
+            <li class="block-xs">
+                <div class="block-title">
+                    <a class="btn-logger" href="{{ path(admin_route) }}" title="Admin">admin</a>
+                </div>
             </li>
         {% endif %}
         {% if app.user is not null %}
             {% if is_granted('IS_IMPERSONATOR') %}
-                <li>
+                <li class="block-xs">
+                    <div class="block-title">
                     <a  class="btn-logger" href="{{ impersonation_exit_path(path('admin_users') ) }}"><i class="fas fa-exchange-alt"></i></a>
+                    </div>
                 </li>
             {% else %}
-                <li>
+                <li class="block-xs">
+                    <div class="block-title">
                     <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-toggle="modal" data-type="primary"><i class="fas fa-power-off"></i> <span class="xs-display">Se connecter</span></a>
+                    </div>
                 </li>
             {% endif %}
         {% else %}
-            <li>
+            <li class="block-xs">
+                <div class="block-title">
                 <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter"><i class="fas fa-sign-in-alt"></i> <span class="xs-display">Se connecter</span></a>
+                </div>
             </li>
         {% endif %}
     </ul>
