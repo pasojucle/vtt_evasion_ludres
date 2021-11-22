@@ -5,6 +5,7 @@ namespace App\UseCase\Error;
 use DateTime;
 use ErrorException;
 use App\Entity\LogError;
+use App\Service\ParameterService;
 use Twig\Error\RuntimeError;
 use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,14 +17,17 @@ class GetError
 {
     private Security $security;
     private UserPresenter $presenter;
+    private ParameterService $parameterService;
 
     public function __construct(
         Security $security,
-        UserPresenter $presenter
+        UserPresenter $presenter,
+        ParameterService $parameterService
     )
     {
         $this->security = $security;
         $this->presenter = $presenter;
+        $this->parameterService = $parameterService;
     }
 
     public function execute(Request $request): LogError
@@ -66,14 +70,15 @@ class GetError
 
     private function setPersist(LogError &$logError): void
     {
-        $robots = ['Googlebot', 'AdsBot-Google', 'Googlebot-Image', 'bingbot', 'bot', 'ltx71','GoogleImageProxy', 'SiteLockSpider'];
+        $robots = $this->parameterService->getParameterByName('ERROR_USER_AGENT_IGNORE');
         $pattern = '#%s#i';
         if (1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
             $logError->setPersist(false);
         }
-        $routes = ['wlwmanifest', 'xmlrpc.php', 'wp-content', 'wp-admin', '.env'];
+
+        $url = $this->parameterService->getParameterByName('ERROR_URL_IGNORE');
         $pattern = '#%s#i';
-        if (1 === preg_match(sprintf($pattern, implode('|', $routes)), $logError->getUrl())) {
+        if (1 === preg_match(sprintf($pattern, implode('|', $url)), $logError->getUrl())) {
             $logError->setPersist(false);
         }
     }

@@ -28,6 +28,9 @@ class ParameterService
             if (Parameter::TYPE_INTEGER === $parameter->getType()) {
                 $value = (int) $value;
             }
+            if (Parameter::TYPE_ARRAY === $parameter->getType()) {
+                $value = json_decode($value);
+            }
         }
 
         return $value;

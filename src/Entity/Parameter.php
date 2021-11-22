@@ -13,11 +13,13 @@ class Parameter
     public const TYPE_TEXT = 1;
     public const TYPE_INTEGER = 2;
     public const TYPE_BOOL = 3;
+    public const TYPE_ARRAY = 4;
 
     public const TYPES = [
         self::TYPE_TEXT => 'parameter.type.text',
         self::TYPE_INTEGER => 'parameter.type.interger',
         self::TYPE_BOOL => 'parameter.type.bool',
+        self::TYPE_ARRAY => 'parameter.type.array',
     ];
     /**
      * @ORM\Id
