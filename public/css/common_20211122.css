@@ -950,6 +950,9 @@ nav.nav-tab {
         max-width: 100%;
         overflow: hidden;
     }
+    main > .wrapper {
+        margin-top: 50px;
+    }
     nav:not(.paginator, nav.nav-tab) {
         position: absolute;
         top: 50px;
