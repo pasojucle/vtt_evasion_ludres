@@ -101,6 +101,12 @@ class MenuAdminService
                  'role' => 'ROLE_ADMIN',
             ],
             [
+                'label' => 'Paramètres',
+                 'route' => 'admin_group_parameters',
+                 'pattern' => '/parameter/',
+                 'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Paramètrage des inscriptions',
                  'route' => 'admin_registration_steps',
                  'pattern' => '/registration_step/',

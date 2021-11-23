@@ -48,6 +48,12 @@ class Parameter
      */
     private $value;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=ParameterGroup::class, inversedBy="parameters")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $parameterGroup;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -97,6 +103,18 @@ class Parameter
     public function setValue(string $value): self
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function getParameterGroup(): ?ParameterGroup
+    {
+        return $this->parameterGroup;
+    }
+
+    public function setParameterGroup(?ParameterGroup $parameterGroup): self
+    {
+        $this->parameterGroup = $parameterGroup;
 
         return $this;
     }
