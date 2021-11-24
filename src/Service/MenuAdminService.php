@@ -102,7 +102,7 @@ class MenuAdminService
             ],
             [
                 'label' => 'Paramètres',
-                 'route' => 'admin_group_parameters',
+                 'route' => 'admin_groups_parameter',
                  'pattern' => '/parameter/',
                  'role' => 'ROLE_ADMIN',
             ],
