@@ -28,17 +28,15 @@ class ParameterGroupRepository extends ServiceEntityRepository
     public function findParameterGroups(): array
     {
         $qb = $this->createQueryBuilder('p');
-        if ($this->security->isGranted('ROLE_SUPER_USER')) {
-            $qb->andWhere(
-                (new Expr())->eq('p.role', ':roleSuperAdmin')
-            )
-            ->setParameter('roleSuperAdmin', 'ROLE_SUPER_ADMIN');
+        $roles = ['ROLE_ADMIN'];
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            $roles[] = 'ROLE_SUPER_ADMIN';
         }
-
-        return $qb->andWhere(
-                (new Expr())->eq('p.role', ':roleAdmin')
+        return $qb
+            ->andWhere(
+                (new Expr())->in('p.role', ':roles'),
             )
-            ->setParameter('roleAdmin', 'ROLE_ADMIN')
+            ->setParameter('roles', $roles)
             ->orderBy('p.label', 'ASC')
             ->getQuery()
             ->getResult()

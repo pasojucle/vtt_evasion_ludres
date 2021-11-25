@@ -277,10 +277,13 @@ function submitAsynchronous(e) {
 function toggleDown(e) {
     e.preventDefault();
     const button = $(this);
-    const block = $(this).closest('div.block, li.block-xs');
-    const blockBody = block.find('.block-body');
+    console.info(button);
+    const block = $(this).closest('[data-toggle]');
+    console.log(block);
+    const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
+    console.warn(blockBody);
     blockBody.toggleClass('down').toggleClass('up');
-    $('.block-body.down').each(function() {
+    $('.down[data-target="'+block.data('toggle')+'"]').each(function() {
         if (!$(this).is(blockBody)) {
             $(this).removeClass('down').addClass('up');
         }

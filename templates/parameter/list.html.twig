@@ -18,17 +18,27 @@
                     {% endfor %}
                 </nav>
             </div>
+            {{ form_start(form) }}
             <div class="block-body">
                 <ul>
-                    {{ form_start(form) }}
+                    
                     {% for parameter in form.children.parameters.children %}   
-                        <li>
-                            {{ form_row(parameter.value) }}
+                        <li data-toggle="param-body">
+                            <a href="" class="btn btn-ico"><i class="fas fa-angle-up"></i></a>
+                            <b>{{ form_label(parameter.value) }}</b>
+
+                            <div class="up" data-target="param-body">
+                                {{ form_widget(parameter.value) }}
+                            </div>
                         </li>
                     {% endfor %}
-                    {{ form_end(form) }}
+
                 </ul>
             </div>
+            <div class="block-footer">
+                {{ form_row(form.save) }}
+            </div>
+            {{ form_end(form) }}
         </div>
 
     </div>

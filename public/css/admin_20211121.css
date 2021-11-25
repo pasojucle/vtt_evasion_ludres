@@ -51,12 +51,12 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     font-weight: normal;
     color: unset;
 }
-.nav-group .block-body.up {
+.nav-group .block-body.up, .up[data-target] {
     max-height: 0;
     transition: max-height 0.25s ease-out;
     overflow: hidden;
 }
-.nav-group .block-body.down {
+.nav-group .block-body.down, .down[data-target] {
     max-height: 500px;
     transition: max-height 0.25s ease-in;
 }

@@ -9,14 +9,14 @@
     {% for key, group in groups %}
         {% set btn_class = (key == menu_actived) ? 'fas fa-angle-up' : 'fas fa-angle-down' %}
         {% set body_class = (key == menu_actived) ? 'down' : 'up' %}
-        <div class="nav-group block" data-group="{{ key }}">
+        <div class="nav-group block" data-group="{{ key }}" data-toggle="block-body">
             <div class="block-title">
                 <h2>{{ group.label|trans }}</h2>
                 <span class="tools">
                     <a href="" class="btn btn-ico"><i class="{{ btn_class }}"></i></a>
                 </span>
             </div>
-            <div class="block-body {{ body_class }}">
+            <div class="block-body {{ body_class }}" data-target="block-body">
                 <ul>
                 {% for menu in group.subMenus %}
                     {% if is_granted(menu.role) %}
