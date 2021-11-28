@@ -39,7 +39,7 @@
   }
   
   input:checked + .slider {
-    background-color: var(--primary-color);
+    background-color: var(--success-color);
   }
   
   input:focus + .slider {
@@ -60,4 +60,7 @@
   
   .slider.round:before {
     border-radius: 50%;
+  }
+  .switch-group {
+    line-height: 34px;
   }

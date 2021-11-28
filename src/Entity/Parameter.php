@@ -95,13 +95,30 @@ class Parameter
         return $this;
     }
 
-    public function getValue(): ?string
+    public function getValue(): string|bool|array|null
     {
-        return $this->value;
+        if (null === $this->value) {
+            return $this->value;
+        }
+        $value = $this->value;
+        if (self::TYPE_BOOL === $this->type) {
+            $value = (bool) $this->value;
+        }
+        if (self::TYPE_INTEGER === $this->type) {
+            $value = (int) $this->value;
+        }
+        if (self::TYPE_ARRAY === $this->type) {
+            $value = json_decode($this->value, true);
+        }
+
+        return $value;
     }
 
-    public function setValue(string $value): self
+    public function setValue(string|array $value): self
     {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
         $this->value = $value;
 
         return $this;

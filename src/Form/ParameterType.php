@@ -3,13 +3,16 @@
 namespace App\Form;
 
 use App\Entity\Parameter;
+use App\Form\ParameterArrayType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class ParameterType extends AbstractType
 {
@@ -17,48 +20,49 @@ class ParameterType extends AbstractType
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $parameter = $event->getData();
-            $type = $parameter->getType();
-            $value = $parameter->getValue();
-            $label = $parameter->getLabel();
-            $form = $event->getForm();
-
-            $fieldOptions = [];
-            if ($type === Parameter::TYPE_BOOL) {
-                $classType = CheckboxType::class;
-                $fieldOptions = [
-                    'data' => (bool)$value,
-                    'block_prefix' => 'switch',
-                    'required' => false,
-                ];
-            } elseif($type === Parameter::TYPE_TEXT) {
-                $classType = CKEditorType::class;
-                $fieldOptions = [
-                    'config_name' => 'minimum_config',
-                    
-                ];
-            } elseif($type === Parameter::TYPE_ARRAY) {
-                    $classType = CollectionType::class;
+            if (null !== $parameter) {
+                $type = $parameter?->getType();
+                $value = $parameter?->getValue();
+                $label = $parameter?->getLabel();
+                $form = $event->getForm();
+                $fieldOptions = [];
+                if ($type === Parameter::TYPE_BOOL) {
+                    $classType = CheckboxType::class;
                     $fieldOptions = [
-                        'entry_type' => ParameterType::class,
-                        'entry_options' => [
-                            'label' => false,
-                        ],
-                        'allow_add' => true,
-                        'allow_delete' => true,
+                        'data' => (bool)$value,
+                        'block_prefix' => 'switch',
+                        'required' => false,
                     ];
-            } else {
-                $classType = TextType::class;
-            }
+                } elseif($type === Parameter::TYPE_TEXT) {
+                    $classType = CKEditorType::class;
+                    $fieldOptions = [
+                        'config_name' => 'minimum_config',
+                        
+                    ];
+                } elseif($type === Parameter::TYPE_ARRAY) {
+                        $classType = CollectionType::class;
+                        $fieldOptions = [
+                            // 'entry_type' => ParameterArrayType::class,
+                            'entry_options' => [
+                                'label' => false,
+                            ],
+                            'allow_add' => true,
+                            'allow_delete' => true,
+                        ];
+                } else {
+                    $classType = TextType::class;
+                }
 
-            $fieldOptions['label'] = $label;
-            $fieldOptions['row_attr'] = [
-                'class' => 'form-group',
-            ];
-            $fieldOptions['required'] = false;
+                $fieldOptions['label'] = $label;
+                $fieldOptions['row_attr'] = [
+                    'class' => 'form-group',
+                ];
+                $fieldOptions['required'] = false;
 
-            $form
-                ->add('value', $classType, $fieldOptions)
-            ;
+                $form
+                    ->add('value', $classType, $fieldOptions)
+                ;
+            }    
         });
     }
 

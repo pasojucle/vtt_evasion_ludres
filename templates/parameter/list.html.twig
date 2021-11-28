@@ -23,6 +23,7 @@
                 <ul>
                     
                     {% for parameter in form.children.parameters.children %}   
+                        {% if parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_TEXT') %}
                         <li data-toggle="param-body">
                             <a href="" class="btn btn-ico"><i class="fas fa-angle-up"></i></a>
                             <b>{{ form_label(parameter.value) }}</b>
@@ -31,6 +32,38 @@
                                 {{ form_widget(parameter.value) }}
                             </div>
                         </li>
+                        {% elseif parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_BOOL') %}
+                        <li>
+                        <div class="switch-group">
+                            {{ form_widget(parameter.value) }}<b>{{ form_label(parameter.value) }}</b>
+                        </div>
+                        </li>
+                        {% elseif parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_ARRAY') %}
+                        <li>
+                            <b>{{ form_label(parameter.value) }}</b>
+                            <div class="row row-align-top">
+                                <div class="col-md-8">
+                                    <ul class="collection_container {{ parameter.vars.value.name }}"
+                                    data-index="{{ parameter|length > 0 ? parameter|last.vars.value|length + 1 : 0 }}" 
+                                    data-prototype="{{ form_widget(parameter.children.value.vars.prototype)|e('html_attr') }}">
+                                        {% for item in parameter.value %}
+                                            <li>{{ form_widget(item) }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ parameter.vars.value.name }}">
+                                    <i class="fas fa-plus-circle"></i> Ajouter une valeur
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li>
+                            <b>{{ form_label(parameter.value) }}</b>
+                            <div>{{ form_widget(parameter.value) }}</div>
+                        </li>
+                        {% endif %}
                     {% endfor %}
 
                 </ul>
