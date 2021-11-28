@@ -51,8 +51,6 @@ final class Version20211123180925 extends AbstractMigration
                 $this->addSql('UPDATE `parameter` SET `parameter_group_id`=:parameterGroup WHERE `name`=:parameterName', $parameter);
             }
         }
-
-        $this->addSql('ALTER TABLE parameter CHANGE parameter_group_id parameter_group_id INT NOT NULL');
     }
 
     public function down(Schema $schema): void
