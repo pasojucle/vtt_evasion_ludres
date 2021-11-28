@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Parameter;
-use App\Form\ParameterArrayType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
