@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Parameter;
 use App\Entity\ParameterGroup;
 use App\Form\ParameterGroupType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,7 +36,6 @@ class ParameterController extends AbstractController
             $entityManager->flush();
         }
 
-        dump($entityManager->getRepository(Parameter::class)->findAll());
         return $this->render('parameter/list.html.twig', [
             'parameter_group' => $parameterGroup,
             'parameter_groups' => $parameterGroups,
