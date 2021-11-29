@@ -40,7 +40,7 @@ $(document).ready(function(){
     $(document).on('click', '.cluster-complete', clusterComplete);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
     $('.select2entity.submit-asynchronous').on('select2:close', submitAsynchronous);
-    $(document).on('click', '.btn .fa-caret-square-down, .btn .fa-caret-square-up, .btn .fa-angle-down, .btn .fa-angle-up', toggleDown);
+    $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
@@ -284,11 +284,8 @@ function submitAsynchronous(e) {
 function toggleDown(e) {
     e.preventDefault();
     const button = $(this);
-    console.info(button);
     const block = $(this).closest('[data-toggle]');
-    console.log(block);
     const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
-    console.warn(blockBody);
     blockBody.toggleClass('down').toggleClass('up');
     $('.down[data-target="'+block.data('toggle')+'"]').each(function() {
         if (!$(this).is(blockBody)) {
