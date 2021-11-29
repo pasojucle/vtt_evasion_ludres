@@ -9,9 +9,11 @@ use App\Entity\Licence;
 use App\Service\PdfService;
 use App\Service\UserService;
 use App\Service\MailerService;
-use App\Service\LicenceService;
 use App\Service\UploadService;
+use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
+use App\Service\IdentityService;
+use App\Service\ParameterService;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
 use App\Repository\UserRepository;
@@ -24,12 +26,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
-use App\Service\IdentityService;
-use App\Service\ParameterService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\UseCase\RegistrationStep\EditRegistrationStep;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -289,6 +290,7 @@ class RegistrationController extends AbstractController
      */
     public function adminRegistrationStep(
         Request $request,
+        EditRegistrationStep $editRegistrationStep,
         RegistrationStep $step
     ): Response
     {
@@ -296,10 +298,7 @@ class RegistrationController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $step = $form->getData();
-
-            $this->entityManager->persist($step);
-            $this->entityManager->flush();
+            $editRegistrationStep->execute($request, $form);
         }
 
         return $this->render('registration/admin/registrationStep.html.twig', [

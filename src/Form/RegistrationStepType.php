@@ -6,8 +6,10 @@ use App\Entity\RegistrationStep;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -28,9 +30,23 @@ class RegistrationStepType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre',
             ])
-            ->add('filename', TextType::class, [
+            ->add('pdfFile', FileType::class, [
                 'label' => 'Fichier pdf',
+                'mapped' => false,
                 'required' => false,
+                'block_prefix' => 'custom_file',
+                'attr' => [
+                    'accept' => '.pdf'
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'Format pdf obligatoire',
+                    ])
+                ],
             ])
             ->add('form', ChoiceType::class, [
                 'label' => 'Nom du formulaire',
