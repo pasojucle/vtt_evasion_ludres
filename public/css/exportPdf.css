@@ -89,11 +89,16 @@ body > script {display: none !important;}
 /*styles*/
 body {
     font-family: Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 20px;
 }
 main {
-    margin: 40px;
+    margin: 20px;
+}
+main.registration {
+    font-size: 12px;
+    line-height: 16px;
+    margin: 0px;
 }
 h1 {
     font-size: 20px;
@@ -136,11 +141,16 @@ table {
     margin-top: 10px;
     margin-bottom: 10px;
 }
-.table-border th, .table-border td {
-    border: 1px solid var(--background-color);
+th, td {
+    padding: 5px;
+}
+.registration th, .registration td {
     padding: 1px;
 }
-br {
+.table-border th, .table-border td {
+    border: 1px solid var(--background-color);
+}
+.registration br {
     line-height: 4px;
 }
 .align-left {
@@ -158,4 +168,28 @@ br {
 .registration-cerficate p {
     font-size: 16px;
     line-height: 24px;
+}
+div.page_break + div.page_break{
+    page-break-before: always;
+    margin-top: 50px;
+}
+.value {
+    width: 160px;
+    text-align: center;
+    height: 22px;
+}
+.value input, .value label {
+    display: inline-block;
+    vertical-align: top;
+}
+.value input {
+    width: 10px;
+    margin-left: 10px;
+}
+.value label {
+    width: 40px;
+}
+.logo-75 {
+    height: 75px;
+    width: 75px;
 }

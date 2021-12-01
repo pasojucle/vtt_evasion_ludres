@@ -141,6 +141,7 @@ class RegistrationService
 
     public function setUser()
     {
+        $category = null;
         $this->user = $this->security->getUser();
         if (null === $this->user) {
             $this->user = new User();
@@ -172,8 +173,10 @@ class RegistrationService
             $this->user->setHealth($health);
             $this->entityManager->persist($health);
         }
-        if ($this->user->getHealth()->getHealthQuestions()->isEmpty()) {
-            foreach (range(0, 8) as $number) {
+        $formQuestionCount = (Licence::CATEGORY_ADULT === $this->seasonLicence->getCategory()) ? 8 : 24;
+        $healthQuestionCount = $this->user->getHealth()->getHealthQuestions()->count();
+        if ($healthQuestionCount < $formQuestionCount) {
+            foreach (range($healthQuestionCount, $formQuestionCount) as $number) {
                 $healthQuestion = new HealthQuestion();
                 $healthQuestion->setField($number);
                 $this->user->getHealth()->addHealthQuestion($healthQuestion);

@@ -1,8 +1,9 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
-
+    
     {% if template is not defined %}
+        <main class="registration">
         {% set rigth_to_image %}
             <p><b>DROIT A L'IMAGE : </b>Dans le cadre de nos activités, nous sommes amenés à prendre des photos, des films ou des enregistrements
             sonores des membres du club pratiquant le VTT seul ou en groupe lors de nos sorties ou de diverses manifestations sportives. C'est
@@ -182,6 +183,8 @@
             </tr>
         </table>
     {% else %}
+        <main>
         {% include(template) %}
     {% endif %}
+    </main>
 {% endblock %}

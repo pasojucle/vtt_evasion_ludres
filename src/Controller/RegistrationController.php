@@ -377,6 +377,16 @@ class RegistrationController extends AbstractController
 
                             $template = 'registration/form/'.$formName.'.html.twig';
 
+                            $pages = preg_split('#{{ saut_page }}#', $step->getContent());
+                            if (1 < count($pages)) {
+                                $content = '';
+                                foreach($pages as $page) {
+                                    $content .= '<div class="page_break">'.$page.'</div>';
+                                }
+                                $step->setContent($content);
+                                dump($content);
+                            }
+                            
                             $html = $this->renderView('registration/registrationPdf.html.twig', [
                                 'user' => $this->userService->convertToUser($user),
                                 'all_membership_fee' => $allmembershipFee,
@@ -396,7 +406,6 @@ class RegistrationController extends AbstractController
                 }
             }
         }
-
 
         $filename = $pdfService->joinPdf($files, $user);
 

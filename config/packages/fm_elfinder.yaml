@@ -10,7 +10,7 @@ fm_elfinder:
                 roots:
                     uploads:
                         driver: LocalFileSystem # Pilote des fichiers
-                        path: uploads/images # Chemin d'upload
+                        path: images # Chemin d'upload
                         show_hidden: false # Masque les fichiers cachés
                         upload_allow: ['image/png', 'image/jpg', 'image/jpeg'] # Fichiers autorisés
                         upload_deny: ['all'] # Fichiers interdits

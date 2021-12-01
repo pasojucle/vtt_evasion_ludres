@@ -1,4 +1,5 @@
 {% set healthQuestions = form.children.health.children.healthQuestions %}
+{% set today = "now"|date("d/m/Y") %}
 {% set replaces =
     {
         '{{ question_1 }}': form_widget(healthQuestions[0]),
@@ -9,7 +10,28 @@
         '{{ question_6 }}': form_widget(healthQuestions[5]),
         '{{ question_7 }}': form_widget(healthQuestions[6]),
         '{{ question_8 }}': form_widget(healthQuestions[7]),
-        '{{ question_9 }}': form_widget(healthQuestions[8])
+        '{{ question_9 }}': form_widget(healthQuestions[8]),
+        '{{ question_10 }}': form_widget(healthQuestions[9]),
+        '{{ question_11 }}': form_widget(healthQuestions[10]),
+        '{{ question_12 }}': form_widget(healthQuestions[11]),
+        '{{ question_13 }}': form_widget(healthQuestions[12]),
+        '{{ question_14 }}': form_widget(healthQuestions[13]),
+        '{{ question_15 }}': form_widget(healthQuestions[14]),
+        '{{ question_16 }}': form_widget(healthQuestions[15]),
+        '{{ question_17 }}': form_widget(healthQuestions[16]),
+        '{{ question_18 }}': form_widget(healthQuestions[17]),
+        '{{ question_19 }}': form_widget(healthQuestions[18]),
+        '{{ question_20 }}': form_widget(healthQuestions[19]),
+        '{{ question_21 }}': form_widget(healthQuestions[20]),
+        '{{ question_22 }}': form_widget(healthQuestions[21]),
+        '{{ question_23 }}': form_widget(healthQuestions[22]),
+        '{{ question_24 }}': form_widget(healthQuestions[23]),
+        '{{ date }}': today,
+        '{{ nom_prenom_parent }}': user.fullName,
+        '{{ date_naissance_parent }}': user.birthDate,
+        '{{ nom_prenom_enfant }}': user.fullNameChildren,
+        '{{ date_naissance_enfant }}': user.birthDateChildren,
+        '{{ saut_page }}': '<br>',
     }
 %}
 

@@ -846,6 +846,24 @@ nav.nav-tab {
     text-align: center;
     line-height: 40px;
 }
+.value input + .value label {
+    margin-left: 10px;
+}
+.value {
+    width: 160px;
+    text-align: center;
+    height: 22px;
+}
+.value input, .value label {
+    display: inline-block;
+    vertical-align: top;
+}
+.value input {
+    width: 10px;
+}
+.value label {
+    width: 40px;
+}
 
 @media screen and (min-width: 800px) {
     .block.block-flash.background-color .block-title::after {
