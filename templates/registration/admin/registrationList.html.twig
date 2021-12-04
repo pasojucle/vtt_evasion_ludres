@@ -19,7 +19,8 @@
                     <div class="col-md-5 col-xs-5">
                         <div class="row">
                             {% for category in labels.categories %}
-                                <div class="col-md-6 col-xs-6">{{ category|trans|capitalize }}</div>
+                                {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
+                                <div class="col-md-6 col-xs-6 {{ category_class }}"><b>{{ category|trans|capitalize }}</b></div>
                             {% endfor %}
                             <div class="col-md-12 col-xs-12">
                                 <div class="row">
@@ -50,19 +51,20 @@
                 <ul>
                     {% for step in registrationSteps %}
                         {% set  is_last_item = loop.last %}
-                        <li class="row">
+                        <li class="row{% if step.orderBy is not divisible by(2) %} background-ligth{% endif %}">
                             <div class="col-md-1 col-xs-1">{{ step.orderBy }}</div>
                             <div class="col-md-5 col-xs-5">{{ step.title }}</div>
                             <div class="col-md-5 col-xs-5">
                                 <div class="row">
                                     {% for category in registrationByTypes %}
+                                    {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
                                         <div class="col-md-6 col-xs-6">
                                             <div class="row">
                                             {% for isFinal in category %}
                                                 <div class="col-md-6 col-xs-6">
                                                     <div class="row">
                                                         {% for render in isFinal %}
-                                                            <div class="col-md-6 col-xs-6 chart
+                                                            <div class="col-md-6 col-xs-6 chart {{ category_class }}
                                                             {% if step in render %} active{% endif %}
                                                             {% if is_last_item %} last-item{% endif %}
                                                             ">

@@ -81,7 +81,7 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     height: 20px;
     width: 20px;
     border-radius: 50%;
-    top: 22px;
+    top: 12px;
     left: 0px;
 }
 .registrations .chart:not(.last-item)::before {
@@ -94,8 +94,20 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     top: 30px;
     left:10px;
 }
+.registrations .labels .chart::before {
+    top: 35px;
+}
+.registrations .chart.school-vtt::after {
+    border: 2px solid var(--green-color);
+}
 .registrations .labels {
     text-align: center;
+}
+.registrations .labels .school-vtt {
+    color: var(--green-color);
+}
+.registrations .labels .adult {
+    color: var(--primary-color-darker);
 }
 .registrations .labels .row {
     line-height: 20px;
