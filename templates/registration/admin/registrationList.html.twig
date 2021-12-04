@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent()}}
+    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
+{% endblock %}
+{% block body %}
+    <div class="wrapper registrations">
+        <div class="block padding-10">
+            <div class="block-title">
+                <h2>Etapes des inscriptions</h2>
+            </div>
+            <div class="block-body">
+                <div class="row labels">
+                    <div class="col-md-1 col-xs-1"></div>
+                    <div class="col-md-5 col-xs-5"></div>
+                    <div class="col-md-5 col-xs-5">
+                        <div class="row">
+                            {% for category in labels.categories %}
+                                <div class="col-md-6 col-xs-6">{{ category|trans|capitalize }}</div>
+                            {% endfor %}
+                            <div class="col-md-12 col-xs-12">
+                                <div class="row">
+                                    {% for isFinal in labels.isFinalLabels %}
+                                        <div class="col-md-3 col-xs-3">{{ isFinal|capitalize }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                                {% for categories in labels.render %}
+                                    <div class="col-md-6 col-xs-6">
+                                        <div class="row">
+                                            {% for isFinal in categories %}
+                                                <div class="col-md-6 col-xs-6">
+                                                    <div class="row">
+                                                        {% for render in isFinal %}
+                                                            <div class="col-md-6 col-xs-6 chart">{{ render|raw }}</div> 
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-xs-1"></div>
+                </div>
+                <ul>
+                    {% for step in registrationSteps %}
+                        {% set  is_last_item = loop.last %}
+                        <li class="row">
+                            <div class="col-md-1 col-xs-1">{{ step.orderBy }}</div>
+                            <div class="col-md-5 col-xs-5">{{ step.title }}</div>
+                            <div class="col-md-5 col-xs-5">
+                                <div class="row">
+                                    {% for category in registrationByTypes %}
+                                        <div class="col-md-6 col-xs-6">
+                                            <div class="row">
+                                            {% for isFinal in category %}
+                                                <div class="col-md-6 col-xs-6">
+                                                    <div class="row">
+                                                        {% for render in isFinal %}
+                                                            <div class="col-md-6 col-xs-6 chart
+                                                            {% if step in render %} active{% endif %}
+                                                            {% if is_last_item %} last-item{% endif %}
+                                                            ">
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>                   
+                                            {% endfor %}
+                                            </div>
+                                        </div>                     
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-xs-1">
+                                <a class="btn btn-primary btn-ico" title="Modifier"
+                                    href="{{ path('admin_registration_step', {'step' : step.id}) }}">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -268,8 +268,27 @@ class RegistrationController extends AbstractController
         Request $request
     ): Response
     {
-        return $this->render('registration/admin/registrationTypes.html.twig', [
+
+        $isFinalValues = ['essai' => false, 'final' =>true];
+        $registrationByTypes = [];
+        $labels = [];
+        foreach (array_keys(Licence::CATEGORIES) as $category) {
+            $labels['categories'][] = Licence::CATEGORIES[$category];
+            foreach ($isFinalValues as $isFinalLabel => $isFinal) {
+                $labels['isFinalLabels'][] = $isFinalLabel;
+                foreach(array_keys(RegistrationStep::RENDERS) as $render) {
+                    $labels['render'][$category][$isFinal][] = (RegistrationStep::RENDER_VIEW === $render)
+                        ? '<i class="fas fa-desktop"></i>'
+                        : '<i class="fas fa-file-pdf"></i>';
+                    $registrationByTypes[$category][$isFinal][$render] = $this->registrationStepRepository->findByCategoryAndFinal($category, $isFinal, $render);
+                }
+            }
+        }
+
+        return $this->render('registration/admin/registrationList.html.twig', [
             'registrationSteps' => $this->registrationStepRepository->findAll(),
+            'registrationByTypes' => $registrationByTypes,
+            'labels' => $labels,
         ]);
     }
 

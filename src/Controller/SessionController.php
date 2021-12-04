@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\DataTransferObject\User;
 use App\Entity\Event;
-use App\Entity\Cluster;
 use App\Entity\Session;
 use App\Service\UserService;
 use App\Form\SessionEditType;
@@ -27,15 +25,11 @@ use Symfony\Component\Form\FormError;
 
 class SessionController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-    private RequestStack $requestStack;
-    private SessionService $sessionService;
-
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $requestStack, SessionService $sessionService)
+    public function __construct(
+        private EntityManagerInterface $entityManager, 
+        private RequestStack $requestStack, 
+        private SessionService $sessionService)
     {
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-        $this->sessionService = $sessionService;
     }
     /**
      * @Route("/admin/seance/{session}", name="admin_session_present")
@@ -91,11 +85,10 @@ class SessionController extends AbstractController
      */
     public function sessionAdd(
         Request $request,
-        Event $event,
         SessionRepository $sessionRepository,
-        UserRepository $userRepository,
         EventService $eventService,
-        UserService $userService
+        UserService $userService,
+        Event $event
     ): Response
     {
         $user = $this->getUser();

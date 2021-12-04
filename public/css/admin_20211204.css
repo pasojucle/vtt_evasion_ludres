@@ -66,6 +66,43 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
 .nav-group .block-title {
     margin: unset;
 }
+.registrations .chart {
+    position: relative;
+    height: 45px;
+    line-height: 45px;
+    width: 30px;
+}
+.registrations .chart.active::after {
+    content: '';
+    border: 2px solid var(--primary-color);
+    background-color: var(--white-color);
+    position: absolute;
+    display: block;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    top: 22px;
+    left: 0px;
+}
+.registrations .chart:not(.last-item)::before {
+    content: '';
+    background-color: var(--background-color);
+    position: absolute;
+    display: block;
+    height: 75px;
+    width: 2px;
+    top: 30px;
+    left:10px;
+}
+.registrations .labels {
+    text-align: center;
+}
+.registrations .labels .row {
+    line-height: 20px;
+}
+.registrations .labels .col-md-6, .registrations .labels .col-md-3  {
+    padding: 0 5px;
+}
 
 @media screen and (max-width: 800px) {
     

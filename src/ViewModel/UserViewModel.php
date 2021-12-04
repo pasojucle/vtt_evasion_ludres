@@ -88,7 +88,6 @@ class UserViewModel extends AbstractViewModel
     public function getFullName(): string
     {
         if (null !== $this->memberIdentity) {
-            dump($this);
             return ($this->kinshipIdentity)
                 ? $this->kinshipIdentity->getName().' '.$this->kinshipIdentity->getFirstName()
                 : $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName();

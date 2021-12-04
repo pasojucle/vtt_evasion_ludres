@@ -28,22 +28,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
-    private UserRepository $userRepository;
-    private EntityManagerInterface $entityManager;
-    private RequestStack $requestStack;
-    private UserService $userService;
-
     public function __construct(
-        UserRepository $userRepository,
-        UserService $userService,
-        RequestStack $requestStack,
-        EntityManagerInterface $entityManager
+        private UserRepository $userRepository,
+        private UserService $userService,
+        private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager
     )
     {
-        $this->userRepository = $userRepository;
-        $this->userService = $userService;
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
         $this->session = $this->requestStack->getSession();
     }
 
