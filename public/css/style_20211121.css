@@ -39,10 +39,14 @@ nav > ul> li > div.block-title > a:hover, nav > ul> li > div.block-title > a.act
 nav > ul> li:hover  ul {
     display: block;
 }
-.header:not(.admin) > a.logo {
+.header:not(.admin) > .logo {
     position: absolute;
     left: 25px;
     top: 15px;
+}
+.header:not(.admin) > .logo.logo-ludres {
+    right: 25px;
+    left: unset;
 }
 .header:not(.admin) > a.logo img {
     height: 100px;
