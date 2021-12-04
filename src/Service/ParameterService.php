@@ -21,16 +21,6 @@ class ParameterService
         $value = null;
         if ($parameter) {
             $value = $parameter->getValue();
-
-            if (Parameter::TYPE_BOOL === $parameter->getType()) {
-                $value = (bool) $value;
-            }
-            if (Parameter::TYPE_INTEGER === $parameter->getType()) {
-                $value = (int) $value;
-            }
-            if (Parameter::TYPE_ARRAY === $parameter->getType()) {
-                $value = json_decode($value);
-            }
         }
 
         return $value;
