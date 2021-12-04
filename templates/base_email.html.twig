@@ -7,13 +7,13 @@
     {% apply inline_css(source('@styles/email.css')) %}
         <body>
             <header>
-                <img src="{{ app.request.schemeAndHttpHost }}/images/logo.jpg" alt="VTT EVASION LUDRES">
+                <img src="{{ app.request.schemeAndHttpHost }}/logos/logo.jpg" alt="VTT EVASION LUDRES">
             </header>
             <main>
                 {% block body %}{% endblock %}
             </main>
             <footer>
-                <img src="{{ app.request.schemeAndHttpHost }}/images/logo.png" alt="vvt évasion Ludres" style="height:70px;  width: 80px">
+                <img src="{{ app.request.schemeAndHttpHost }}/logos/logo.png" alt="vvt évasion Ludres" style="height:70px;  width: 80px">
                 <div>Bureau des associations<br>Hôtel de ville<br>54710 Ludres</div>
             </footer>
         </body>
