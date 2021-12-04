@@ -15,6 +15,10 @@ class RegistrationStep
 {
     public const RENDER_VIEW = 0;
     public const RENDER_FILE = 1;
+    public const RENDERS = [
+        self::RENDER_VIEW => 'registration_step.render.view',
+        self::RENDER_FILE => 'registration_step.render.file',
+    ];
 
     public const TESTING_RENDER_NONE = 0;
     public const TESTING_RENDER_FILE = 1;

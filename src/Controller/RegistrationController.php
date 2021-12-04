@@ -31,6 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
+use App\UseCase\RegistrationStep\GetReplaces;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,32 +41,18 @@ class RegistrationController extends AbstractController
 {
     public const OUT_PDF = 1;
     public const OUT_SCREEN = 2;
-    
-    private RegistrationStepRepository $registrationStepRepository;
-    private EntityManagerInterface $entityManager;
-    private RequestStack $requestStack;
-    private MailerService $mailerService;
-    private LicenceService $licenceService;
-    private UserService $userService;
-    private UploadService $uploadService;
 
     public function __construct(
-        RegistrationStepRepository $registrationStepRepository,
-        EntityManagerInterface $entityManager,
-        RequestStack $requestStack,
-        LicenceService $licenceService,
-        MailerService $mailerService,
-        UserService $userService,
-        UploadService $uploadService
+        private RegistrationStepRepository $registrationStepRepository,
+        private EntityManagerInterface $entityManager,
+        private RequestStack $requestStack,
+        private LicenceService $licenceService,
+        private MailerService $mailerService,
+        private UserService $userService,
+        private UploadService $uploadService, 
+        private GetReplaces $getReplaces,
     )
     {
-        $this->registrationStepRepository = $registrationStepRepository;
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-        $this->mailerService = $mailerService;
-        $this->licenceService = $licenceService;
-        $this->userService = $userService;
-        $this->uploadService = $uploadService;
     }
 
     /**
@@ -270,6 +257,7 @@ class RegistrationController extends AbstractController
             'all_membership_fee' => $membershipFeeRepository->findAll(),
             'user' => $this->userService->convertToUser($progress['user']),
             'media' => self::OUT_SCREEN,
+            'replaces' => $this->getReplaces->execute($progress['current'], $progress['user'], $progress['form']),
         ]);
     }
 
@@ -335,6 +323,7 @@ class RegistrationController extends AbstractController
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal(), RegistrationStep::RENDER_FILE);
+
         $allmembershipFee = $membershipFeeRepository->findAll();
         if ($this->getUser() === $user) {
             $today = new DateTime();
@@ -384,7 +373,6 @@ class RegistrationController extends AbstractController
                                     $content .= '<div class="page_break">'.$page.'</div>';
                                 }
                                 $step->setContent($content);
-                                dump($content);
                             }
                             
                             $html = $this->renderView('registration/registrationPdf.html.twig', [
@@ -394,6 +382,7 @@ class RegistrationController extends AbstractController
                                 'form' => $form->createView(),
                                 'media' => self::OUT_PDF,
                                 'template' => $template,
+                                'replaces' => $this->getReplaces->execute($step, $user, $form),
                             ]);
                         } else {
                             $html = $step->getContent();

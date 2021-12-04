@@ -3,17 +3,20 @@
 namespace App\ViewModel;
 
 use ReflectionClass;
+use ReflectionProperty;
 
 class AbstractViewModel 
 {
     public function __construct()
     {
-        $reflectionClass = new ReflectionClass(self::class);
+        $reflectionClass = new ReflectionClass($this);
         $properties = $reflectionClass->getProperties();
         if (!empty($properties)) {
             foreach($properties as $property) {
-                $propertyName = $property->getName();
-                $this->$propertyName = null;
+                if ($property->getModifiers() === ReflectionProperty::IS_PUBLIC) {
+                    $propertyName = $property->getName();
+                    $this->$propertyName = null;
+                }
             }
         }
     }

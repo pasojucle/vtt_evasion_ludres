@@ -60,7 +60,6 @@ class PdfService
     {
         /**@var UserDto $userDto */
         $userDto = $this->userService->convertToUser($user);
-        $today = new DateTime();
 
         $coverage = [
             Licence::COVERAGE_MINI_GEAR => 50.5,

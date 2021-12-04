@@ -29,50 +29,25 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationService
 {
-    private RegistrationStepRepository $registrationStepRepository;
-    private UrlGeneratorInterface $router;
-    private FormFactoryInterface $formFactory;
-    private RequestStack $requestStack;
     private ?User $user;
-    private EntityManagerInterface $entityManager;
-    private UserRepository $userRepository;
     private int $season;
-    private LicenceRepository $licenceRepository;
-    private ?Licence $seasonLicence;
-    private LicenceService $licenceService;
-    private LevelRepository $levelRepository;
-    private UserService $userService;
-    private SessionRepository $sessionRepository;
 
     public function __construct(
-        RegistrationStepRepository $registrationStepRepository,
-        Security $security,
-        UrlGeneratorInterface $router,
-        FormFactoryInterface $formFactory,
-        RequestStack $requestStack,
-        EntityManagerInterface $entityManager,
-        UserRepository $userRepository,
-        LicenceRepository $licenceRepository,
-        LicenceService $licenceService,
-        LevelRepository $levelRepository,
-        UserService $userService,
-        SessionRepository $sessionRepository
+        private RegistrationStepRepository $registrationStepRepository,
+        private Security $security,
+        private UrlGeneratorInterface $router,
+        private FormFactoryInterface $formFactory,
+        private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager,
+        private UserRepository $userRepository,
+        private LicenceRepository $licenceRepository,
+        private LicenceService $licenceService,
+        private LevelRepository $levelRepository,
+        private UserService $userService,
+        private SessionRepository $sessionRepository
     )
     {
-        $this->registrationStepRepository = $registrationStepRepository;
-        $this->security = $security;
-        $this->seasonLicence = null;
-        $this->licenceService = $licenceService;
         $this->season = $this->licenceService->getCurrentSeason();
-        $this->router = $router;
-        $this->formFactory = $formFactory;
-        $this->requestStack = $requestStack;
-        $this->entityManager = $entityManager;
-        $this->userRepository = $userRepository;
-        $this->licenceRepository = $licenceRepository;
-        $this->levelRepository = $levelRepository;
-        $this->userService = $userService;
-        $this->sessionRepository = $sessionRepository;
     }
 
     public function getProgress(int $step)

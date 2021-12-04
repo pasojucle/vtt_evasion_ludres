@@ -20,8 +20,8 @@ class UserViewModel extends AbstractViewModel
     public ?array $lastLicence;
     private ?Collection $oderLines;
     public ?Identity $memberIdentity;
-    private ?Identity $kinshipIdentity;
-    private ?Identity $secondKinshipIdentity;
+    public ?Identity $kinshipIdentity;
+    public ?Identity $secondKinshipIdentity;
     private ?int $currentSeason;
     private ?array $seasonsStatus;
     private MembershipFeeAmountRepository $membershipFeeAmountRepository;
@@ -87,7 +87,8 @@ class UserViewModel extends AbstractViewModel
 
     public function getFullName(): string
     {
-        if ($this->memberIdentity) {
+        if (null !== $this->memberIdentity) {
+            dump($this);
             return ($this->kinshipIdentity)
                 ? $this->kinshipIdentity->getName().' '.$this->kinshipIdentity->getFirstName()
                 : $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName();

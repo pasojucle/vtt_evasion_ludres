@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -29,6 +30,32 @@ class RegistrationStepType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ]
+            ])
+            ->add('category', ChoiceType::class, [
+                'label' => 'Catégorie',
+                'placeholder' => 'Mineur et adulte',
+                'choices' => array_flip(Licence::CATEGORIES),
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ]
+            ])
+            ->add('toPdf', ChoiceType::class, [
+                'label' => 'Licence final',
+                'choices' => array_flip(RegistrationStep::RENDERS),
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ]
+            ])
+            ->add('testingRender', ChoiceType::class, [
+                'label' => '3 séances d\'essai',
+                'choices' => array_flip(RegistrationStep::TESTING_RENDER),
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ]
             ])
             ->add('pdfFile', FileType::class, [
                 'label' => 'Fichier pdf',
@@ -47,6 +74,7 @@ class RegistrationStepType extends AbstractType
                         'mimeTypesMessage' => 'Format pdf obligatoire',
                     ])
                 ],
+                
             ])
             ->add('form', ChoiceType::class, [
                 'label' => 'Nom du formulaire',
@@ -56,6 +84,9 @@ class RegistrationStepType extends AbstractType
                     return $this->translator->trans($key);
                 },
                 'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline'
+                ]
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
