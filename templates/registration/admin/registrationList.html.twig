@@ -48,42 +48,47 @@
                     </div>
                     <div class="col-md-1 col-xs-1"></div>
                 </div>
-                <ul>
-                    {% for step in registrationSteps %}
+                <ul class="sortable" data-route="admin_registration_step_group_order" data-parameter="group">
+                    {% for group in registrationStepGroups %}
                         {% set  is_last_item = loop.last %}
-                        <li class="row{% if step.orderBy is not divisible by(2) %} background-ligth{% endif %}">
-                            <div class="col-md-1 col-xs-1">{{ step.orderBy }}</div>
-                            <div class="col-md-5 col-xs-5">{{ step.title }}</div>
-                            <div class="col-md-5 col-xs-5">
-                                <div class="row">
-                                    {% for category in registrationByTypes %}
-                                    {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
-                                        <div class="col-md-6 col-xs-6">
-                                            <div class="row">
-                                            {% for isFinal in category %}
-                                                <div class="col-md-6 col-xs-6">
-                                                    <div class="row">
-                                                        {% for render in isFinal %}
-                                                            <div class="col-md-6 col-xs-6 chart {{ category_class }}
-                                                            {% if step in render %} active{% endif %}
-                                                            {% if is_last_item %} last-item{% endif %}
-                                                            ">
-                                                            </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>                   
-                                            {% endfor %}
-                                            </div>
-                                        </div>                     
-                                    {% endfor %}
+                        <li class="row ui-state-default{% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
+                            data-id="{{ group.id }}">
+                            {% for step in group.registrationSteps %}
+                                <div class="col-md-1 col-xs-1">
+                                    {% if loop.first %}{{ group.orderBy + 1 }}{% endif %}
                                 </div>
-                            </div>
-                            <div class="col-md-1 col-xs-1">
-                                <a class="btn btn-primary btn-ico" title="Modifier"
-                                    href="{{ path('admin_registration_step', {'step' : step.id}) }}">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </a>
-                            </div>
+                                <div class="col-md-5 col-xs-5">{{ step.title }}</div>
+                                <div class="col-md-5 col-xs-5">
+                                    <div class="row">
+                                        {% for category in registrationByTypes %}
+                                        {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
+                                            <div class="col-md-6 col-xs-6">
+                                                <div class="row">
+                                                {% for isFinal in category %}
+                                                    <div class="col-md-6 col-xs-6">
+                                                        <div class="row">
+                                                            {% for render in isFinal %}
+                                                                <div class="col-md-6 col-xs-6 chart {{ category_class }}
+                                                                {% if step in render %} active{% endif %}
+                                                                {% if is_last_item %} last-item{% endif %}
+                                                                ">
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>                   
+                                                {% endfor %}
+                                                </div>
+                                            </div>                     
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-xs-1">
+                                    <a class="btn btn-primary btn-ico" title="Modifier"
+                                        href="{{ path('admin_registration_step', {'step' : step.id}) }}">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                </div>
+                            {% endfor %}
                         </li>
                     {% endfor %}
                 </ul>

@@ -43,7 +43,7 @@ class RegistrationStepType extends AbstractType
                     'class' => 'form-group-inline'
                 ]
             ])
-            ->add('toPdf', ChoiceType::class, [
+            ->add('finalRender', ChoiceType::class, [
                 'label' => 'Licence final',
                 'choices' => array_flip(RegistrationStep::RENDERS),
                 'row_attr' => [
@@ -52,7 +52,7 @@ class RegistrationStepType extends AbstractType
             ])
             ->add('testingRender', ChoiceType::class, [
                 'label' => '3 séances d\'essai',
-                'choices' => array_flip(RegistrationStep::TESTING_RENDER),
+                'choices' => array_flip(RegistrationStep::RENDERS),
                 'row_attr' => [
                     'class' => 'form-group-inline'
                 ]

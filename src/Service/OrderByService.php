@@ -17,7 +17,7 @@ class OrderByService
     }
 
     public function setNewOrders($current, ?array $entities, int $newOrder)
-    {
+    {dump($current, $entities, $newOrder);
         $oldOrder = $current->getOrderBy();
         if (null !== $newOrder && null !== $entities) {           
             $startOrder = $oldOrder;

@@ -13,21 +13,15 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class RegistrationStep
 {
-    public const RENDER_VIEW = 0;
-    public const RENDER_FILE = 1;
+    public const RENDER_NONE = 0;
+    public const RENDER_VIEW = 1;
+    public const RENDER_FILE = 2;
+    public const RENDER_FILE_AND_VIEW = 3;
     public const RENDERS = [
+        self::RENDER_NONE => 'registration_step.render.none',
         self::RENDER_VIEW => 'registration_step.render.view',
         self::RENDER_FILE => 'registration_step.render.file',
-    ];
-
-    public const TESTING_RENDER_NONE = 0;
-    public const TESTING_RENDER_FILE = 1;
-    public const TESTING_RENDER_FILE_AND_VIEW = 2;
-
-    public const TESTING_RENDER = [
-        self::TESTING_RENDER_NONE => 'registration_step.testing_render.none',
-        self::TESTING_RENDER_FILE => 'registration_step.testing_render.file',
-        self::TESTING_RENDER_FILE_AND_VIEW => 'registration_step.testing_render.file_and_view',
+        self::RENDER_FILE_AND_VIEW => 'registration_step.render.file_and_view',
     ];
 
     /**
@@ -72,14 +66,19 @@ class RegistrationStep
     private $category;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="integer")
      */
-    private $toPdf;
+    private $testingRender;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=RegistrationStepGroup::class, inversedBy="registrationSteps")
+     */
+    private $registrationStepGroup;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $testingRender;
+    private $finalRender;
 
 
     public function __construct()
@@ -188,18 +187,6 @@ class RegistrationStep
         return $this;
     }
 
-    public function isToPdf(): ?bool
-    {
-        return $this->toPdf;
-    }
-
-    public function setToPdf(bool $toPdf): self
-    {
-        $this->toPdf = $toPdf;
-
-        return $this;
-    }
-
     public function getTestingRender(): ?int
     {
         return $this->testingRender;
@@ -208,6 +195,30 @@ class RegistrationStep
     public function setTestingRender(int $testingRender): self
     {
         $this->testingRender = $testingRender;
+
+        return $this;
+    }
+
+    public function getRegistrationStepGroup(): ?RegistrationStepGroup
+    {
+        return $this->registrationStepGroup;
+    }
+
+    public function setRegistrationStepGroup(?RegistrationStepGroup $registrationStepGroup): self
+    {
+        $this->registrationStepGroup = $registrationStepGroup;
+
+        return $this;
+    }
+
+    public function getFinalRender(): ?int
+    {
+        return $this->finalRender;
+    }
+
+    public function setFinalRender(int $finalRender): self
+    {
+        $this->finalRender = $finalRender;
 
         return $this;
     }

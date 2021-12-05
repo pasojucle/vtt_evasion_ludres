@@ -12,6 +12,7 @@ use App\Service\MailerService;
 use App\Service\UploadService;
 use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
+use App\Entity\RegistrationStepGroup;
 use App\Service\IdentityService;
 use App\Service\ParameterService;
 use App\Entity\User as UserEntity;
@@ -24,14 +25,16 @@ use App\Repository\IdentityRepository;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
+use App\UseCase\RegistrationStep\GetReplaces;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\RegistrationStepRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Repository\RegistrationStepGroupRepository;
+use App\Service\OrderByService;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
-use App\UseCase\RegistrationStep\GetReplaces;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,6 +47,7 @@ class RegistrationController extends AbstractController
 
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
+        private RegistrationStepGroupRepository $registrationStepGroupRepository,
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
         private LicenceService $licenceService,
@@ -51,6 +55,7 @@ class RegistrationController extends AbstractController
         private UserService $userService,
         private UploadService $uploadService, 
         private GetReplaces $getReplaces,
+        private OrderByService $orderByService
     )
     {
     }
@@ -270,13 +275,14 @@ class RegistrationController extends AbstractController
     {
 
         $isFinalValues = ['essai' => false, 'final' =>true];
+        $renders = [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE];
         $registrationByTypes = [];
         $labels = [];
         foreach (array_keys(Licence::CATEGORIES) as $category) {
             $labels['categories'][] = Licence::CATEGORIES[$category];
             foreach ($isFinalValues as $isFinalLabel => $isFinal) {
                 $labels['isFinalLabels'][] = $isFinalLabel;
-                foreach(array_keys(RegistrationStep::RENDERS) as $render) {
+                foreach($renders as $render) {
                     $labels['render'][$category][$isFinal][] = (RegistrationStep::RENDER_VIEW === $render)
                         ? '<i class="fas fa-desktop"></i>'
                         : '<i class="fas fa-file-pdf"></i>';
@@ -286,10 +292,26 @@ class RegistrationController extends AbstractController
         }
 
         return $this->render('registration/admin/registrationList.html.twig', [
-            'registrationSteps' => $this->registrationStepRepository->findAll(),
+            'registrationStepGroups' => $this->registrationStepGroupRepository->findAll(),
             'registrationByTypes' => $registrationByTypes,
             'labels' => $labels,
         ]);
+    }
+
+    /**
+     * @Route("/admin/registrationStepGroup/ordonner/{group}", name="admin_registration_step_group_order", options={"expose"=true},)
+     */
+    public function adminregistrationStepGroupOrder(
+        Request $request,
+        RegistrationStepGroup $group
+    ): Response
+    {
+        $newOrder = $request->request->get('newOrder');
+        $regitrationStepGroups = $this->registrationStepGroupRepository->findAll();
+
+        $this->orderByService->setNewOrders($group, $regitrationStepGroups, $newOrder);
+
+        return new Response();
     }
 
     /**

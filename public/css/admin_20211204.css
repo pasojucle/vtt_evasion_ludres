@@ -13,6 +13,7 @@ main {
     grid-area: wrapper;
     padding: 10px;
     background-color: var(--white-color);
+    overflow: hidden;
 }
 nav {
     grid-area: nav;
