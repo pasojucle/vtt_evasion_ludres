@@ -134,13 +134,15 @@ function buildSortable() {
             ui.item.data('old-order', ui.item.index());
         },
         update: function (event, ui) {
-            updateLinkOrder(ui.item.data('id'), ui.item.index());
+            updateLinkOrder(ui.item);
         },
     });
 }
 
-function updateLinkOrder(id, newOrder) {
-    const sortable = $("ul.sortable").first();
+function updateLinkOrder(item) {
+    const id = item.data('id');
+    const newOrder = item.index();
+    const sortable = $(item).closest("ul.sortable");
     const parameters = {};
     parameters[sortable.data('parameter')] = id;
     const route = Routing.generate(sortable.data('route'), parameters);
@@ -149,6 +151,12 @@ function updateLinkOrder(id, newOrder) {
         url : route,
         type: 'POST',
         data : data,
+        success: function(html) {
+            if(html) {
+                sortable.replaceWith($(html).find('ul.sortable[data-parameter="'+sortable.data('parameter')+'"]'));
+                buildSortable();
+            }
+        }
     });
 }
 

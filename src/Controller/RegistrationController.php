@@ -273,7 +273,6 @@ class RegistrationController extends AbstractController
         Request $request
     ): Response
     {
-
         $isFinalValues = ['essai' => false, 'final' =>true];
         $renders = [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE];
         $registrationByTypes = [];
@@ -311,7 +310,24 @@ class RegistrationController extends AbstractController
 
         $this->orderByService->setNewOrders($group, $regitrationStepGroups, $newOrder);
 
-        return new Response();
+        return $this->redirectToRoute('admin_registration_steps');
+    }
+
+
+    /**
+     * @Route("/admin/registrationStep/ordonner/{step}", name="admin_registration_step_order", options={"expose"=true},)
+     */
+    public function adminregistrationStepOrder(
+        Request $request,
+        RegistrationStep $step
+    ): Response
+    {
+        $newOrder = $request->request->get('newOrder');
+        $regitrationSteps = $this->registrationStepRepository->findByGroup($step->getRegistrationStepGroup());
+
+        $this->orderByService->setNewOrders($step, $regitrationSteps, $newOrder);
+
+        return $this->redirectToRoute('admin_registration_steps');
     }
 
     /**

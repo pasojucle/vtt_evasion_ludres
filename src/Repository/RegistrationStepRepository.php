@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use Doctrine\ORM\Query\Expr;
 use App\Entity\RegistrationStep;
+use App\Entity\RegistrationStepGroup;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -54,5 +55,18 @@ class RegistrationStepRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findByGroup(RegistrationStepGroup $group): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere(
+                (new Expr)->eq('r.registrationStepGroup', ':group')
+            )
+            ->setParameter('group', $group)
+            ->orderBy('r.orderBy', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 }

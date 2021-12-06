@@ -834,6 +834,9 @@ nav.nav-tab {
 .block.no-padding, .row .no-padding {
     padding: 0;
 }
+.row .no-padding-vertical {
+    padding: 0 5px;
+}
 .thumbnail {
     height: 120px;
     width: 80px;
