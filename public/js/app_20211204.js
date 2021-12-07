@@ -130,8 +130,12 @@ function buildSortable() {
         cursor: "move",
         zIndex: 99999,
         items: "> li.ui-state-default",
+        over: function (event, ui) {
+            ui.item.addClass('sortable-over');
+        },
         start: function (event, ui) {
             ui.item.data('old-order', ui.item.index());
+            ui.item.addClass('sortable-over');
         },
         update: function (event, ui) {
             updateLinkOrder(ui.item);
@@ -153,7 +157,7 @@ function updateLinkOrder(item) {
         data : data,
         success: function(html) {
             if(html) {
-                sortable.replaceWith($(html).find('ul.sortable[data-parameter="'+sortable.data('parameter')+'"]'));
+                sortable.replaceWith($(html).find('ul.sortable[data-target="'+sortable.data('target')+'"]'));
                 buildSortable();
             }
         }

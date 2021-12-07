@@ -107,7 +107,7 @@ class MenuAdminService
                  'role' => 'ROLE_ADMIN',
             ],
             [
-                'label' => 'Paramètrage des inscriptions',
+                'label' => 'Etapes des inscriptions',
                  'route' => 'admin_registration_steps',
                  'pattern' => '/registration_step/',
                  'role' => 'ROLE_ADMIN',

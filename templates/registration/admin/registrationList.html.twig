@@ -8,7 +8,7 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper registrations">
-        <div class="block padding-10">
+        <div class="block">
             <div class="block-title">
                 <h2>Etapes des inscriptions</h2>
             </div>
@@ -52,19 +52,19 @@
                         </div>
                     </div>
                 </div>
-                <ul class="sortable" data-route="admin_registration_step_group_order" data-parameter="group">
+                <ul class="sortable" data-route="admin_registration_step_group_order" data-parameter="group" data-target="goups">
                     {% for group in registrationStepGroups %}
                         {% set  is_last_item = loop.last %}
-                        <li class="row ui-state-default{% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
+                        <li class="row ui-state-default {% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
                             data-id="{{ group.id }}">
-                            <div class="col-md-1 col-xs-1">
+                            <div class="col-md-1 col-xs-1 sortable-cursor">
                                 {{ group.orderBy + 1 }}
                             </div>
                             <div class="col-md-11 col-xs-11">
-                                <ul class="sortable" data-route="admin_registration_step_order" data-parameter="step">
+                                <ul class="sortable" data-route="admin_registration_step_order" data-parameter="step" data-target="goup-{{ group.id }}">
                                 {% for step in group.registrationSteps %}
                                     <li class=" row ui-state-default" data-id="{{ step.id }}">
-                                        <div class="col-md-5 col-xs-5 no-padding-vertical">{{ step.title }}</div>
+                                        <div class="col-md-5 col-xs-5 no-padding-vertical {% if group.registrationSteps|length > 1 %}sortable-cursor{% endif %}">{{ step.title }}</div>
                                         <div class="col-md-6 col-xs-6 no-padding-vertical">
                                             <div class="row">
                                                 {% for category in registrationByTypes %}
