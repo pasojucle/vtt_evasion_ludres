@@ -23,6 +23,7 @@ use Symfony\Component\Form\FormError;
 use App\Service\ParameterService;
 use App\Service\PdfService;
 use App\UseCase\Tool\GetRegistrationCertificate;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -543,7 +544,7 @@ class ToolController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $content = utf8_encode($data['content']);
+            $content = ($form->get('submit')->isClicked()) ? utf8_encode($data['content']) : null;
             list($filename, $content) = $getRegistrationCertificate->execute($request, $data['user'], $content);
             $form = $this->createForm(LicenceNumberType::class, ['user' => $data['user'], 'content' => $content]);
         }
@@ -560,21 +561,24 @@ class ToolController extends AbstractController
     public function adminRegistrationError(
         Request $request,
         MailerService $mailerService,
-        UserService $userService,
+        UserPresenter $presenter,
         ParameterService $parameterService
     ): Response
     {
-        $content = $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
-        $form = $this->createForm(LicenceNumberType::class, ['user' => null, 'content' => $content]);
+        $form = $this->createForm(LicenceNumberType::class);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $doctrineUser = $data['user'];
-            $content = utf8_encode($data['content']);
-            $user = $userService->convertToUser($doctrineUser);
-
-            if (null !== $user) {
+            $licence = $data['user']->getLastLicence();
+            $presenter->present($data['user']);
+            $user = $presenter->viewModel();
+            $content = ($form->get('submit')->isClicked()) 
+                ? utf8_encode($data['content']) 
+                : $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
+            $content = str_replace('{{ licenceNumber }}', $user->getLicenceNumber(), $content);
+            $form = $this->createForm(LicenceNumberType::class, ['user' => $data['user'], 'content' => $content]);
+            if ($form->get('submit')->isClicked()) {
                 $mailerService->sendMailToMember([
                     'name' => $user->getMember()['name'],
                     'firstName' => $user->getMember()['firstName'],
@@ -585,11 +589,11 @@ class ToolController extends AbstractController
                     'content' => $content,
                 ]);
 
-                $licence = $doctrineUser->getLastLicence();
+                
                 $licence->setStatus(Licence::STATUS_IN_PROCESSING);
                 $this->entityManager->persist($licence);
                 $this->entityManager->flush();
-                return $this->redirectToRoute('admin_home');
+                //return $this->redirectToRoute('admin_home');
             }
         }
 

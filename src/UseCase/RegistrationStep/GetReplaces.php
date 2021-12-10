@@ -30,15 +30,6 @@ class GetReplaces
             '{{ date_naissance_enfant }}' => $user->getBirthDateChildren(),
             '{{ saut_page }}' => '<br>',
         ];
-        // $containFormRow = false;
-        // if (UserType::FORM_HEALTH_QUESTION === $registrationStep->getForm()) {
-        //     $healthQuestions = $form->get('health')->get('healthQuestions');
-        //     foreach($healthQuestions as $key => $healthQuestion) {
-        //         $containFormRow = true;
-        //         $index = '{{ question_'.($key + 1).' }}';
-        //         $replaces[$index] = $healthQuestion->createView();
-        //     }
-        // }
         return $replaces;
     }
 }

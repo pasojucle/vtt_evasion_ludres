@@ -39,7 +39,7 @@ $(document).ready(function(){
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.cluster-complete', clusterComplete);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
-    $('.select2entity.submit-asynchronous').on('select2:close', submitAsynchronous);
+    $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
@@ -281,7 +281,7 @@ function submitAsynchronous(e) {
     let selector = 'form[name="'+form.attr('name')+'"]';
     let data = {};
     data[$(this).attr('name')] = $(this).val();
-
+    $('.select2entity.submit-asynchronous').off('change', submitAsynchronous);
     $.ajax({
         url : form.attr('action'),
         type: form.attr('method'),
@@ -289,6 +289,7 @@ function submitAsynchronous(e) {
         success: function(html) {
             $(selector).replaceWith($(html).find(selector));
             $('.select2entity').select2entity();
+            $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
         }
       });
 }
