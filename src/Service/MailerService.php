@@ -39,7 +39,7 @@ class MailerService
         }
     }
 
-    public function sendMailToMember(array $data, ?string $paramName = null): bool
+    public function sendMailToMember(array $data, ?string $paramName = null): array
     {
         $parameter = null;
         $content = null;
@@ -51,6 +51,12 @@ class MailerService
         }
         if (array_key_exists('content', $data)) {
             $content = $data['content'];
+        }
+        try{
+            $email = new Address($data['email']);
+        } catch (Exception $e) {
+            
+            return ['success' => false, 'message' => 'Adresse mail manquante ou erronnée'];
         }
 
         $email = (new TemplatedEmail())
@@ -64,9 +70,9 @@ class MailerService
         
         try {
             $this->mailer->send($email);
-            return true;
+            return ['success' => true];
         } catch (TransportExceptionInterface $e) {
-            return false;
+            return ['success' => false, 'message' => 'Problème d\'envoi de mail'];
         }
     }
 }

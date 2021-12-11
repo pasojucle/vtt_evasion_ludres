@@ -318,9 +318,11 @@ nav > ul > li > div.block-title > a.btn-logger {
     font-size: 18px;
     -webkit-animation: flash 10s;
     animation: flash 10s;
+    z-index: 9999;
 }
 .flashes > div {
     padding: 12px 20px;
+    
 }
 .flash-success {
     background-color: var(--primary-color);

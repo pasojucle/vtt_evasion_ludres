@@ -533,9 +533,7 @@ class ToolController extends AbstractController
      */
     public function adminRegistrationCertificate(
         Request $request,
-        PdfService $pdfService,
         GetRegistrationCertificate $getRegistrationCertificate,
-        ParameterService $parameterService
     ): Response
     {
         $form = $this->createForm(LicenceNumberType::class);
@@ -573,13 +571,14 @@ class ToolController extends AbstractController
             $licence = $data['user']->getLastLicence();
             $presenter->present($data['user']);
             $user = $presenter->viewModel();
-            $content = ($form->get('submit')->isClicked()) 
+            $buttonIsCliked = $form->get('submit')->isClicked();
+            $content = ($buttonIsCliked) 
                 ? utf8_encode($data['content']) 
                 : $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
             $content = str_replace('{{ licenceNumber }}', $user->getLicenceNumber(), $content);
             $form = $this->createForm(LicenceNumberType::class, ['user' => $data['user'], 'content' => $content]);
-            if ($form->get('submit')->isClicked()) {
-                $mailerService->sendMailToMember([
+            if ($buttonIsCliked) {
+                $result = $mailerService->sendMailToMember([
                     'name' => $user->getMember()['name'],
                     'firstName' => $user->getMember()['firstName'],
                     'email' => $user->getContactEmail(),
@@ -588,12 +587,14 @@ class ToolController extends AbstractController
                     'registration_error' => true,
                     'content' => $content,
                 ]);
-
+                if ($result['success']) {
+                   $licence->setStatus(Licence::STATUS_IN_PROCESSING);
+                    $this->entityManager->persist($licence);
+                    $this->entityManager->flush(); 
+                } else {
+                    $form->addError(new FormError($result['message']));
+                }
                 
-                $licence->setStatus(Licence::STATUS_IN_PROCESSING);
-                $this->entityManager->persist($licence);
-                $this->entityManager->flush();
-                //return $this->redirectToRoute('admin_home');
             }
         }
 

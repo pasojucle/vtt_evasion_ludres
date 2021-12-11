@@ -389,7 +389,7 @@ class UserViewModel extends AbstractViewModel
         return null;
     }
 
-    public function getContactEmail(): string
+    public function getContactEmail(): ?string
     {
         $member = $this->getMember();
         $licence = $this->getLastLicence();
@@ -397,7 +397,7 @@ class UserViewModel extends AbstractViewModel
             $member = $this->getKinShip();
         }
 
-        return $member['email'];
+        return (array_key_exists('email', $member)) ? $member['email'] : '';
     }
 
     public function mustProvideRegistration(): bool
