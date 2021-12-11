@@ -60,4 +60,8 @@ security:
         - { path: ^/admin/send, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
+        - { path: ^/mes-commandes, roles: ROLE_USER, requires_channel: https }
+        - { path: ^/ma-commande, roles: ROLE_USER, requires_channel: https }
+        - { path: ^/mon-panier, roles: ROLE_USER, requires_channel: https }
+        - { path: ^/mon-programme, roles: ROLE_USER, requires_channel: https }
         - { path: '^/', roles: PUBLIC_ACCESS, requires_channel: https }

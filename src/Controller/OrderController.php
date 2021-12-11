@@ -43,7 +43,7 @@ class OrderController extends AbstractController
         $this->session = $this->requestStack->getSession();
     }
     /**
-     * @Route("/mon_panier", name="order_edit")
+     * @Route("/mon-panier", name="order_edit")
      */
     public function orderEdit(
         OrderLinesSetService $orderLinesSetService,
@@ -79,7 +79,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/ma_commande/{orderHeader}", name="order")
+     * @Route("/ma-commande/{orderHeader}", name="order")
      */
     public function order(
         ?OrderHeader $orderHeader
@@ -93,7 +93,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/confirmation_commande/{orderHeader}", name="order_acknowledgement")
+     * @Route("/confirmation-commande/{orderHeader}", name="order_acknowledgement")
      */
     public function orderAcknowledgement(
         PdfService $pdfService,
@@ -154,7 +154,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/mes_commandes", name="user_orders")
+     * @Route("/mes-commandes", name="user_orders")
      */
     public function userOrders(
         OrdersPresenter $presenter,
