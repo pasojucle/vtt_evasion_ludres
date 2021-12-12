@@ -4,148 +4,42 @@
     
     {% if template is not defined %}
         <main class="registration">
-        {% set rigth_to_image %}
-            <p><b>DROIT A L'IMAGE : </b>Dans le cadre de nos activités, nous sommes amenés à prendre des photos, des films ou des enregistrements
-            sonores des membres du club pratiquant le VTT seul ou en groupe lors de nos sorties ou de diverses manifestations sportives. C'est
-            dans cet objectif que nous vous demandons l’autorisation pour être photographié, filmé ou enregistré, et ce uniquement pour la
-            communication de notre club. L'association s'interdit expressément de procéder à une exploitation des photographies, films et/ou
-            interviews susceptibles de porter atteinte à la vie privée ou à la réputation de ses adhérents.</p>
-        {% endset %}
         <div id="header">
             <img src="./logos/logo-pdf.jpg" alt="vvt évasion Ludres" style="height:110px;  width: 120px">
             <h1> {{ licence_service.registrationTitle(user_entity) }} - {{ licence_service.currentSeason }}</h1>
             <img src="./logos/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
         </div>
-        <div>
-            {% set licence = user.seasonLicence(licence_service.currentSeason) %}
-            <h2>Renseignements concernant l'adhérent</h2>
-
-            <table {% if user.member.picture %}class="table-fixed"{% endif %}>
-                <tr>
-                    {% if user.member.picture %}<td rowspan="6" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
-                    <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
-                </tr>
-            </table>
-            {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal %}
-                <table>
-                    <tr>
-                        <td colspan="2"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
-                        <td></td>
-                        <td><b>Groupe sanguin : </b>{{ user.health.bloodGroup }}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
-                        <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
-                        <td></td>
-                        <td colspan="2"><b>Date du dernier rappel antitétanique : </b>{{ user.health.tetanusBooster }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5">
-                            <b>Médecin traitant : </b>{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}
-                            <img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}
-                        </td>
-                    </tr>
-                </table>
-                {% if user.health.diseases is not empty %}
-                    <table class="table-border">
-                        {% for type, diseases in user.health.diseases %}
-                            <tr>
-                                <td colspan="3"><b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b></td>
-                                <td colspan="2"><b>Lesquelles</b></td>
-                            </tr>
-                            {% for disease in diseases %}
-                                <tr>
-                                    <td></td>
-                                    {% if disease.title is not null %}
-                                        <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
-                                        <td>{{ disease.title }}</td>
-                                    {% else %}
-                                        <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
-                                    {% endif %}
-                                    <td>{{ disease.curentTreatment }}</td>
-                                    <td>{{ disease.emergencyTreatment }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endfor %}
-                    </table>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_ADULT') %}
-            {{ rigth_to_image }}
-            <p>Je soussigné {{ user.member.fullName }} <b>{{ user.approvals.rightToImage.string}}</b> le club VTT Evasion Ludres à utiliser ou faire utiliser ou reproduire ou faire reproduire
-            mon image et ma voix. {% if user.approvals.rightToImage.value %}Je me reconnais entièrement rempli de mes droits et je ne pourrai prétendre à aucune rémunération pour l'exploitation
-            des droits visés à la présente.{% endif %}</p>
-            <br>
-            <b>Je m’engage à :</b>
-            <ul>
-                <li>- Respecter le code de la route et de la nature</li>
-                <li>- Respecter les consignes données par les responsables</li>
-                <li>- Ne pas nuire au club par ma tenue physique et morale</li>
-                <li>- Avoir pris connaissance du règlement intérieur sur le site www.vttevasionludres.fr</li>
-            </ul>
+        {% set key = constant('App\\Form\\UserType::FORM_MEMBER') %}
+        {% dump(registration_page_steps[key]) %}
+        {% if registration_page_steps[key] is defined %}
+            {% include('registration/form/pdf/member.html.twig') %}
+        {% endif %}
+        {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
+        {% if registration_page_steps[key] is defined %}
+            {% include('registration/form/pdf/health.html.twig') %}
+        {% endif %}
+        {% set key = constant('App\\Form\\UserType::FORM_APPROVAL') %}
+        {% if registration_page_steps[key]is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_ADULT') %}
+            {{ registration_page_steps[key]|raw }}
         {% endif %}
         {% if user.kinShip %}
-        <div class="block">
-            <h2>Autorisation parentale pour mineur</h2>
-            <table>
+        {% set key = constant('App\\Form\\UserType::FORM_KINSHIP') %}
+        {% if registration_page_steps[key] is defined %}
+            <div class="block">
+                {% include('registration/form/pdf/kinship.html.twig') %}
+                {% set key = constant('App\\Form\\UserType::FORM_APPROVAL') %}
+                {% if registration_page_steps[key] is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+                    {{ registration_page_steps[key]|raw }}
+                {% endif %}
+            </div>
+            <table class="table-fixed">
                 <tr>
-                    <td style="width: 150px"><b>Non et prénom :</b></td>
-                    <td colspan="3">{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
-                </tr>
-                <tr>
-                    <td><b>Adresse :</b></td>
-                    <td colspan="3">
-                        {{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>Courriel :</b></td>
-                    <td>{{ user.kinShip.email }}</td>
-                    <td><b>Téléphone :</b></td>
-                    <td>{{ user.kinShip.phone}}</td>
+                    <td><b>Second contact : </b>{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</td>
+                    <td>Téléphone : </b>{{ user.secondKinShip.phone}}</td>
                 </tr>
             </table>
+        {% endif %}
 
-            <p>Inscrit et autorise l'enfant {{ user.member.fullName }} à participer aux séances pédagogiques et à vélo du VTT Evasion Ludres. 
-            Je soussigné {{ user.kinShip.fullName }} ({{ user.kinShip.type | trans }}) autorise le club VTT Evasion Ludres à utiliser ou faire utiliser ou reproduire ou
-            faire reproduire l'image et la voix de l'enfant ci-dessus nommé. Je me reconnais entièrement rempli de mes droits et je ne pourrai
-            prétendre à aucune rémunération pour l'exploitation des droits visés à la présente.<br>Je déclare sur l’honneur l’exactitude des renseignements fournis, m’engage à signaler toute modification concernant l’état de santé
-            de mon enfant.</p>
-            <p>J’autorise les moniteurs fédéraux ainsi que les initiateurs fédéraux ou tout autre futur moniteur et/ou initiateur, à prendre toute
-            décision concernant les soins d’urgences qui s’avéreraient nécessaires lors des activités organisées par le club.</p>
-            {{ rigth_to_image }}
-            <p>Je soussigné {{ user.kinShip.fullName }} <b>{{ user.approvals.rightToImage.string}}</b> le club VTT Evasion Ludres à utiliser ou faire utiliser ou reproduire ou
-            faire reproduire l'image et la voix de l'enfant ci-dessus nommé. {% if user.approvals.rightToImage.value %}Je me reconnais entièrement rempli de mes droits et je ne pourrai
-            prétendre à aucune rémunération pour l'exploitation des droits visés à la présente.{% endif %}</p>
-            {% if user.approvals.goingHomeAlone is defined %}
-            <p>
-                <b>Je soussigné {{ user.kinShip.fullName }} {{ user.approvals.goingHomeAlone.string }}</b> mon enfant à rejoindre seul le domicile à l’issue de la séance. Pour ce faire je m’engage à lui fournir un gilet jaune fluo ainsi qu’un dispositif d’éclairage avant (blanc) et arrière (rouge)
-            </p>
-            {% endif %}
-        </div>
-        <table class="table-fixed">
-            <tr>
-                <td><b>Second contact : </b>{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</td>
-                <td>Téléphone : </b>{{ user.secondKinShip.phone}}</td>
-            </tr>
-        </table>
         <br>
         {% endif %}
         <table class="table-fixed">

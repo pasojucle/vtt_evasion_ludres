@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use App\Repository\RegistrationStepGroupRepository;
 use App\Service\OrderByService;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
+use App\ViewModel\UserPresenter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,7 +56,8 @@ class RegistrationController extends AbstractController
         private UserService $userService,
         private UploadService $uploadService, 
         private GetReplaces $getReplaces,
-        private OrderByService $orderByService
+        private OrderByService $orderByService,
+        private RegistrationService $registrationService
     )
     {
     }
@@ -90,7 +92,6 @@ class RegistrationController extends AbstractController
      */
     public function registerForm(
         Request $request,
-        RegistrationService $registrationService,
         UserPasswordHasherInterface $passwordHasher,
         LoginFormAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
@@ -107,12 +108,12 @@ class RegistrationController extends AbstractController
             $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
 
-        $progress = $registrationService->getProgress($step);
+        $progress = $this->registrationService->getProgress($step);
         if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus() && $progress['current']->getForm() !== UserType::FORM_REGISTRATION_FILE) {
             return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
         }
         $form = $progress['form'];
-        $season = $registrationService->getSeason();
+        $season = $this->registrationService->getSeason();
         $schoolTestingRegistration = $parameterService->getParameterByName('SCHOOL_TESTING_REGISTRATION');
         $schoolTestingRegistrationMessage = 'L\'inscription à l\'école vtt est close pour la saison '.$season;
         if (1 === $step) {
@@ -373,6 +374,7 @@ class RegistrationController extends AbstractController
     public function registrationFile(
         MembershipFeeRepository $membershipFeeRepository,
         PdfService $pdfService,
+        UserPresenter $presenter,
         UserEntity $user
     ): Response
     {
@@ -386,71 +388,89 @@ class RegistrationController extends AbstractController
             $today = new DateTime();
             $seasonLicence->setCreatedAt($today);
         }
-
+        $presenter->present($user);
         $files = [];
+        $registrationPageSteps = [];
 
-        $registration = $this->renderView('registration/registrationPdf.html.twig', [
-            'user' => $this->userService->convertToUser($user),
-            'user_entity' => $user,
-        ]);
-        $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
-        $files[] = ['filename' => $pdfFilepath, 'form' => null];
-
+        $registrationPageForms = [
+            UserType::FORM_MEMBER,
+            UserType::FORM_KINSHIP,
+            UserType::FORM_HEALTH,
+            UserType::FORM_APPROVAL,
+        ];
         if (!empty($steps)) {
             foreach($steps as $key => $step) {
-                $isKinship = false;
-                if ($steps[$key]->getForm() === UserType::FORM_IDENTITY && null !== $steps[$key + 1]) {
-                    $isKinship = true;
+
+
+                if (null !== $step->getForm()) {
+                    $formName = str_replace('form.', '', UserType::FORMS[$step->getForm()]);
                 }
+
                 if (null !== $step->getFilename()) {
                     $filename = './files/'.$step->getFilename();
                     $files[] = ['filename' => $filename, 'form' => $step->getForm()];
                 }
-                if ($step->isToPdf()) {
-                    $html = null;
-                    if (null !== $step->getContent()) {
-                        if (null !== $step->getForm()) {
-                            $form = $this->createForm(UserType::class, $user, [
-                                'attr' =>[
-                                    'action' => $this->generateUrl('registration_form', ['step' => $step->getId()]),
-                                ],
-                                'current' => $step,
-                                'is_kinship' => $isKinship,
-                                'category' => $category,
-                                'season_licence' => $seasonLicence,
-                            ]);
-                            $formName = str_replace('form.', '', UserType::FORMS[$step->getForm()]);
-
-                            $template = 'registration/form/'.$formName.'.html.twig';
-
-                            $pages = preg_split('#{{ saut_page }}#', $step->getContent());
-                            if (1 < count($pages)) {
-                                $content = '';
-                                foreach($pages as $page) {
-                                    $content .= '<div class="page_break">'.$page.'</div>';
-                                }
-                                $step->setContent($content);
-                            }
-                            
-                            $html = $this->renderView('registration/registrationPdf.html.twig', [
-                                'user' => $this->userService->convertToUser($user),
-                                'all_membership_fee' => $allmembershipFee,
-                                'current' => $step,
-                                'form' => $form->createView(),
-                                'media' => self::OUT_PDF,
-                                'template' => $template,
-                                'replaces' => $this->getReplaces->execute($step, $user, $form),
-                            ]);
-                        } else {
-                            $html = $step->getContent();
-                        }
+                if (in_array($step->getForm(), $registrationPageForms)) {
+                    $registrationPageSteps[$step->getForm()] =  $step->getContent();
+                } elseif (null !== $step->getContent()) {
+                    $isKinship = false;
+                    if ($steps[$key]->getForm() === UserType::FORM_IDENTITY && null !== $steps[$key + 1]) {
+                        $isKinship = true;
                     }
+                    
+                    $html = null;
+                    if (null !== $step->getForm()) {
+                        $form = $this->createForm(UserType::class, $user, [
+                            'attr' =>[
+                                'action' => $this->generateUrl('registration_form', ['step' => $step->getId()]),
+                            ],
+                            'current' => $step,
+                            'is_kinship' => $isKinship,
+                            'category' => $category,
+                            'season_licence' => $seasonLicence,
+                        ]);
+
+                        $template = 'registration/form/'.$formName.'.html.twig';
+
+                        $pages = preg_split('#{{ saut_page }}#', $step->getContent());
+                        if (1 < count($pages)) {
+                            $content = '';
+                            foreach($pages as $page) {
+                                $content .= '<div class="page_break">'.$page.'</div>';
+                            }
+                            $step->setContent($content);
+                        }
+                        
+                        $html = $this->renderView('registration/registrationPdf.html.twig', [
+                            'user' => $presenter->viewModel(),
+                            'all_membership_fee' => $allmembershipFee,
+                            'current' => $step,
+                            'form' => $form->createView(),
+                            'media' => self::OUT_PDF,
+                            'template' => $template,
+                            'replaces' => $this->getReplaces->execute($step, $user, $form),
+                        ]);
+                    } else {
+                        $html = $step->getContent();
+                    }
+
                     if (null !== $html) {
                         $pdfFilepath = $pdfService->makePdf($html, $step->getTitle());
                         $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
                     }
                 }
             }
+        }
+        if (!empty($registrationPageSteps)) {
+            $registration = $this->renderView('registration/registrationPdf.html.twig', [
+                'user' => $presenter->viewModel(),
+                'user_entity' => $user,
+                'registration_page_steps' => $registrationPageSteps,
+                'category' => $seasonLicence->getCategory(),
+                'licence' => $presenter->viewModel()->getSeasonLicence(),
+            ]);
+            $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
+            array_unshift($files, ['filename' => $pdfFilepath, 'form' => null]);
         }
 
         $filename = $pdfService->joinPdf($files, $user);

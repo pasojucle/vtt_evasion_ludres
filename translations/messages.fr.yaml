@@ -13,7 +13,7 @@ licence:
   status:
     none: Non renouvelée
     waiting_renew: En attente de renouvellement
-    in_processing: En cours
+    in_processing: En cours de création
     waiting_validate: En attente de validation
     valid: Valide
     testing: 3 séances gratuites
@@ -34,18 +34,18 @@ disease:
     allergies: Allergies
     intolerances: Intolérances
   label: 
-        enuresis: Enurésie
-        tetany: Tétanie
-        asthma: Asthme
-        hemophilia: Hémophilie
-        epilepsy: Epilepsie
-        diabetes: Diabète
-        other: Autres
-        dietary: Alimentaires
-        medicated: Médicamenteuses
-        pollen_bees: Pollen, Abeilles
-        food: Aux aliments 
-        medicines: Aux médicaments
+    enuresis: Enurésie
+    tetany: Tétanie
+    asthma: Asthme
+    hemophilia: Hémophilie
+    epilepsy: Epilepsie
+    diabetes: Diabète
+    other: Autres
+    dietary: Alimentaires
+    medicated: Médicamenteuses
+    pollen_bees: Pollen, Abeilles
+    food: Aux aliments 
+    medicines: Aux médicaments
 
 registration_step:
   type:
@@ -67,11 +67,13 @@ form:
   health_question: Questionaire de santé
   identity: Identité
   health: Santé enfant
-  approval_right_image: Droit image
+  approval_right_image: Autorisations
   licence_coverage: Assurance
   membership_fee: Tarifs
   registration_file: Téléchargement du pdf
   licence_type: Type de licence
+  member: Informations de l'adhérent
+  kinship: Informations des parents
 
 event:
   period:

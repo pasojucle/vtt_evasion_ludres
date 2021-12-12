@@ -28,10 +28,8 @@ class LicenceType extends AbstractType
                 $statusChoices = [
                     'licence.status.waiting_validate' => Licence::STATUS_WAITING_VALIDATE,
                     'licence.status.valid' => ($options['season_licence']->isFinal()) ? Licence::STATUS_VALID : Licence::STATUS_TESTING,
+                    'licence.status.in_processing' => Licence::STATUS_IN_PROCESSING,
                 ];
-                if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
-                    $statusChoices['licence.status.in_processing'] = Licence::STATUS_IN_PROCESSING;
-                }
                 $form
                     ->add('final', ChoiceType::class, [
                         'label' => 'Période de 3 séances de test',

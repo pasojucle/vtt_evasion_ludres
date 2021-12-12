@@ -1,0 +1,22 @@
+ <h2>Renseignements concernant l'adhérent</h2>
+<table {% if user.member.picture %}class="table-fixed"{% endif %}>
+    <tr>
+        {% if user.member.picture %}<td rowspan="6" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+        <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
+    </tr>
+    <tr>
+        <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+    </tr>
+    <tr>
+        <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
+    </tr>
+    <tr>
+        <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+    </tr>
+    <tr>
+        <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
+    </tr>
+    <tr>
+        <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
+    </tr>
+</table>

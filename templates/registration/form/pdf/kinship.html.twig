@@ -1,0 +1,19 @@
+<h2>Autorisation parentale pour mineur</h2>
+<table>
+    <tr>
+        <td style="width: 150px"><b>Non et prénom :</b></td>
+        <td colspan="3">{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
+    </tr>
+    <tr>
+        <td><b>Adresse :</b></td>
+        <td colspan="3">
+            {{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
+        </td>
+    </tr>
+    <tr>
+        <td><b>Courriel :</b></td>
+        <td>{{ user.kinShip.email }}</td>
+        <td><b>Téléphone :</b></td>
+        <td>{{ user.kinShip.phone}}</td>
+    </tr>
+</table>

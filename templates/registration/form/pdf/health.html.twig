@@ -1,0 +1,43 @@
+<table>
+    <tr>
+        <td colspan="2"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
+        <td></td>
+        <td><b>Groupe sanguin : </b>{{ user.health.bloodGroup }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
+        <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
+        <td></td>
+        <td colspan="2"><b>Date du dernier rappel antitétanique : </b>{{ user.health.tetanusBooster }}</td>
+    </tr>
+    <tr>
+        <td colspan="5">
+            <b>Médecin traitant : </b>{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}
+            <img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}
+        </td>
+    </tr>
+</table>
+{% if user.health.diseases is not empty %}
+    <table class="table-border">
+        {% for type, diseases in user.health.diseases %}
+            <tr>
+                <td colspan="3"><b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b></td>
+                <td colspan="2"><b>Lesquelles</b></td>
+            </tr>
+            {% for disease in diseases %}
+                <tr>
+                    <td></td>
+                    {% if disease.title is not null %}
+                        <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                        <td>{{ disease.title }}</td>
+                    {% else %}
+                        <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                    {% endif %}
+                    <td>{{ disease.curentTreatment }}</td>
+                    <td>{{ disease.emergencyTreatment }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+{% endif %}

@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use DateTime;
-use App\DataTransferObject\User;
+use App\ViewModel\UserViewModel;
 use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Repository\MembershipFeeAmountRepository;
@@ -26,7 +26,7 @@ class MembershipFeeService
         $this->translator = $translator;
     }
 
-    public function getAmount(User $user): string
+    public function getAmount(UserViewModel $user): string
     {
         $amount = null;
         $amountStr = '';

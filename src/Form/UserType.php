@@ -5,9 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use App\Entity\Licence;
 use App\Form\HealthType;
-use App\Form\AddressType;
 use App\Form\IdentityType;
-use App\Form\HealthQuestionType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
@@ -16,7 +14,6 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -32,6 +29,8 @@ class UserType extends AbstractType
     public const FORM_REGISTRATION_FILE = 7;
     public const FORM_LICENCE_TYPE = 8;
     public const FORM_OVERVIEW = 9;
+    public const FORM_MEMBER = 10;
+    public const FORM_KINSHIP = 11;
 
     public const FORMS = [
         self::FORM_HEALTH_QUESTION => 'form.health_question',
@@ -43,6 +42,8 @@ class UserType extends AbstractType
         self::FORM_REGISTRATION_FILE => 'form.registration_file',
         self::FORM_LICENCE_TYPE => 'form.licence_type',
         self::FORM_OVERVIEW => 'form.overview',
+        self::FORM_MEMBER => 'form.member',
+        self::FORM_KINSHIP => 'form.kinship',
     ];
 
     public const FORM_CHILDREN_RIGHT_IMAGE = 1;
@@ -64,16 +65,16 @@ class UserType extends AbstractType
                 ]);
         }
         
-        if (self::FORM_IDENTITY === $options['current']->getForm()) {
+        if (self::FORM_MEMBER === $options['current']->getForm()) {
             $builder
                 ->add('identities', CollectionType::class, [
                     'label' => false,
                     'entry_type' => IdentityType::class,
                     'entry_options' => [
                         'label' => false,
-                        'is_kinship' => $options['is_kinship'],
                         'category' => $options['category'],
                         'season_licence' => $options['season_licence'],
+                        'is_kinship' => false,
                     ],
                 ])
                 ->add('licences', CollectionType::class, [
@@ -87,6 +88,20 @@ class UserType extends AbstractType
                 ]);
                 ;
         }
+        if (self::FORM_KINSHIP === $options['current']->getForm()) {
+            $builder
+                ->add('identities', CollectionType::class, [
+                    'label' => false,
+                    'entry_type' => IdentityType::class,
+                    'entry_options' => [
+                        'label' => false,
+                        'category' => $options['category'],
+                        'season_licence' => $options['season_licence'],
+                        'is_kinship' => true,
+                    ],
+                ])
+                ;
+        }
         if (self::FORM_APPROVAL === $options['current']->getForm()) {
             $builder
                 ->add('approvals', CollectionType::class, [
@@ -97,7 +112,6 @@ class UserType extends AbstractType
                         'current' => $options['current'],
                         'block_prefix' => 'customcheck',
                     ],
-                    
                 ]);
         }
         if (in_array($options['current']->getForm(), [self::FORM_LICENCE_COVERAGE, self::FORM_LICENCE_TYPE])) {
@@ -118,7 +132,7 @@ class UserType extends AbstractType
             $user = $event->getData();
             $form = $event->getForm();
 
-            if (null === $user->getId() && self::FORM_IDENTITY === $options['current']->getForm()) {
+            if (null === $user->getId() && self::FORM_MEMBER === $options['current']->getForm()) {
                 $form->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'invalid_message' => 'Le mot de passe ne correspond pas.',

@@ -1,7 +1,6 @@
 <div>
     {% for identity in form.identities %}
         {% include('identity/identity.html.twig') %}
-        
     {% endfor %}
     {% if form.plainPassword is defined %}
         <div class="form-group">{{ form_row(form.plainPassword)}}</div>
