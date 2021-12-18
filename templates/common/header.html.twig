@@ -23,7 +23,7 @@
             </div>
         </li>
         {% for menu in menus %}
-            <li class="block-xs">
+            <li class="block-xs" data-toggle="block-body">
                 <div class="block-title">
                     <a {% if menu.route is not null %}href="{{ path(menu.route) }}" {% endif %}
                         {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
@@ -31,12 +31,12 @@
                     </a>
                     {% if menu.subMenus is not empty %}
                         <span class="tools">
-                            <a href="" class="btn btn-ico"><i class="fas fa-angle-down"></i></a>
+                            <a href="" class="btn btn-ico" data-action="toggle-down"><i class="fas fa-angle-down"></i></a>
                         </span>
                     {% endif %}
                 </div>
                 {% if menu.subMenus is not empty %}
-                    <div class="block-body up">
+                    <div class="block-body up" data-target="block-body">
                         <ul class="sub-menu">
                             {% for sub_menu in menu.subMenus %}
                                 <li>
