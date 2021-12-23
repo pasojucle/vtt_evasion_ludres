@@ -25,9 +25,9 @@
                     <div class="bike-ride-date item-center align-center {{ class }} reveal">
                         <div>
                             {% if event.endAt is null %}
-                                {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                                {{ event.startAt | formatDateLong }}
                             {% else %}
-                                du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}} 
+                                du {{ event.startAt | formatDateLong }} au {{ event.endAt | formatDateLong }} 
                             {% endif %}
                             {% if event.isRegistrable or event.accessAvailabity(app.user) %}
                                 <div class="bike-ride-date-btn">

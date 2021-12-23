@@ -1,12 +1,12 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     form_themes:
-        - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
         - 'form/custom_check_widget.html.twig'
         - 'form/custom_errors_widget.html.twig'
-        - 'form/custom_switch_widget.html.twig'
+        - 'form/custom_switch_row.html.twig'
         - 'form/custom_file_row.html.twig'
         - '@TetranzSelect2Entity/Form/fields.html.twig'
+        - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
 
     globals:
         menu_service: '@App\Service\MenuService'
