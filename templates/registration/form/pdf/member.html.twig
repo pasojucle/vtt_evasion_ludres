@@ -1,22 +1,52 @@
  <h2>Renseignements concernant l'adhérent</h2>
 <table {% if user.member.picture %}class="table-fixed"{% endif %}>
     <tr>
-        {% if user.member.picture %}<td rowspan="6" style="width: 150px"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+        {% if user.member.picture %}<td rowspan="8" colspan="2"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
         <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
+        {% if health is same as(true) %}
+            <td colspan="3"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
+        {% endif %}
     </tr>
     <tr>
         <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+        {% if health is same as(true) %}
+            <td colspan="3"><b>Groupe sanguin : </b>{{ user.health.bloodGroup }}</td>
+        {% endif %}
     </tr>
     <tr>
         <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
+        {% if health is same as(true) %}
+            <td colspan="3"><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
+        {% endif %}
     </tr>
     <tr>
-        <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+        <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }}</td>
+        {% if health is same as(true) %}
+            <td colspan="3"><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
+        {% endif %}
+    </tr>
+    <tr>
+        <td colspan="3" >{{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+        {% if health is same as(true) %}
+            <td colspan="3"><b>Date du dernier rappel antitétanique : </b>{{ user.health.tetanusBooster }}</td>
+        {% endif %}
     </tr>
     <tr>
         <td colspan="3" ><b>Courriel : </b>{{ user.member.email }}</td>
+        {% if health is same as(true) %}
+            <td colspan="3"><b>Médecin traitant : </b>{{ user.health.doctorName }}</td>
+        {% endif %}
     </tr>
     <tr>
         <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
+        {% if health is same as(true) %}
+            <td colspan="3">{{ user.health.doctorAddress }} {{ user.health.doctorTown }}</td>
+        {% endif %}
+    </tr>
+    <tr>
+        <td colspan="3" ></td>
+        {% if health is same as(true) %}
+            <td colspan="3"><b>Téléphone médecin : </b> {{ user.health.doctorPhone }}</td>
+        {% endif %}
     </tr>
 </table>

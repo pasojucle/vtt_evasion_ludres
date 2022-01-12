@@ -5,6 +5,7 @@ namespace App\Service;
 use DateTime;
 use App\Entity\User;
 use App\Entity\Licence;
+use App\ViewModel\UserViewModel;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceService
@@ -30,16 +31,16 @@ class LicenceService
     }
 
 
-    public function getRegistrationTitle(User $user): string
+    public function getRegistrationTitle(UserViewModel $user): string
     {
         $title = $this->translator->trans('registration_step.type.default');
-        $licence = $user->getSeasonLicence($this->getCurrentSeason());
+        $licence = $user->seasonLicence;
         $title = 'registration_step.type.';
         if (null !== $licence) {
-            if (!$licence->isFinal()) {
+            if (!$licence->isFinal) {
                 $title .= 'testing';
             } else {
-                $category = $licence->getCategory();
+                $category = $licence->category;
                 if (null !== $category) {
                     $categories = [
                         Licence::CATEGORY_MINOR => 'minor',

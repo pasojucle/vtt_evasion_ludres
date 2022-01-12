@@ -2,10 +2,11 @@
 
 namespace App\Twig;
 
-use App\Controller\RegistrationController;
+use DateInterval;
 use Twig\TwigFilter;
+use IntlDateFormatter;
+use App\Entity\RegistrationStep;
 use Twig\Extension\AbstractExtension;
-
 
 
 class AppExtension extends AbstractExtension
@@ -14,12 +15,13 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('imgPath', [$this, 'imgPath']),
+            new TwigFilter('formatDateLong', [$this, 'formatDateLong']),
         ];
     }
 
     public function imgPath($content, $media)
     {
-        if (RegistrationController::OUT_PDF === $media) {
+        if (RegistrationStep::RENDER_FILE === $media) {
             $pattern = '#(.*) src="\/images(.+)#';
             $replace = '$1 src="./images$2';
             $count = preg_match_all($pattern, $content);
@@ -31,5 +33,13 @@ class AppExtension extends AbstractExtension
         }
 
         return $content;
+    }
+
+    public function formatDateLong($date):string
+    {   
+        $formatter = new IntlDateFormatter('fr_fr', IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
+        $formatter->setPattern('EEEE');
+
+        return ucfirst($formatter->format($date)).' '.$date->format('d/m/Y');
     }
 }

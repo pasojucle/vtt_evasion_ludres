@@ -13,12 +13,15 @@ class AddressType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $required = empty($options['row_class']);
+        $required = $options['required'];
         $builder
             ->add('street', TextType::class, [
                 'label' => 'Adresse',
                 'row_attr' => [
                     'class' => 'form-group-inline full-width'.$options['row_class'],
+                ],                            
+                'attr' => [
+                    'data-constraint' => ''
                 ],
                 'required' => $required,
             ])
@@ -28,12 +31,18 @@ class AddressType extends AbstractType
                 'row_attr' => [
                     'class' => 'form-group-inline'.$options['row_class'],
                 ],
+                'attr' => [
+                    'data-constraint' => 'app-PostalCode'
+                ],
                 'required' => $required,
             ])
             ->add('town', TextType::class, [
                 'label' => 'Ville',
                 'row_attr' => [
                     'class' => 'form-group-inline'.$options['row_class'],
+                ],
+                'attr' => [
+                    'data-constraint' => ''
                 ],
                 'required' => $required,
             ])
@@ -45,6 +54,7 @@ class AddressType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Address::class,
             'row_class' => '',
+            'required' => '',
         ]);
     }
 }

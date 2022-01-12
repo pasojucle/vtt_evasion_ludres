@@ -4,14 +4,16 @@ namespace App\Service;
 
 use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
-
+use App\ViewModel\UserViewModel;
 
 class ParameterService
 {
-    private ParameterRepository $parameterRepository;
-    public function __construct(ParameterRepository $parameterRepository)
+    public function __construct(
+        private ParameterRepository $parameterRepository,
+        private ReplaceKeywordsService $replaceKeywordsService
+    )
     {
-        $this->parameterRepository = $parameterRepository;
+
     }
 
     public function getParameterByName(string $name)
@@ -24,5 +26,13 @@ class ParameterService
         }
 
         return $value;
+    }
+
+    public function getSchoolTestingRegistration(UserViewModel $user): array
+    {
+        $value = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION');
+        $message = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION_MESSAGE');
+        $message = $this->replaceKeywordsService->replace($user, $message);
+        return ['value' => $value, 'message' => $message];
     }
 }

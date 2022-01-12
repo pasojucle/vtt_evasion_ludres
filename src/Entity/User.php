@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
+use DateTime;
 use App\Entity\Identity;
+use App\Validator\UniqueMember;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use DateTime;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -297,14 +298,6 @@ class User implements UserInterface
         }
 
         return $this;
-    }
-
-    public function getApprovalsGoingHomeAlone(): Collection
-    {
-        $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->eq('type', self::APPROVAL_GOING_HOME_ALONE))
-        ;
-        return $this->approvals->matching($criteria);
     }
 
     /**

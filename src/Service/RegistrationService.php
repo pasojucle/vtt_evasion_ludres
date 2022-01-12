@@ -50,56 +50,13 @@ class RegistrationService
         $this->season = $this->licenceService->getCurrentSeason();
     }
 
-    public function getProgress(int $step)
-    {
-        $progress = [];
-        $progress['prev'] = null;
-        $progress['next'] = null;
-        $progress['form'] = null;
-        $progress['current'] = null;
-        $progress['steps'] = null;
-        $isKinship = false;
-
-        $this->setUser();
-        
-        $this->updateStatus($this->user);
-        $category = $this->seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
-        $stepIndex = $step -1;
-        
-        $progress['max_step'] = count($steps);
-
-        foreach($steps as $key => $registrationStep) {
-            if ($key < $stepIndex) {
-                $registrationStep->setClass('is-done');
-                $progress['prev'] = $key+1;
-            } elseif ($key === $stepIndex) {
-                $registrationStep->setClass('current');
-                $progress['current'] = $registrationStep;
-            } else {
-                if (null === $progress['next']) {
-                    $progress['next'] = $key+1;
-                }
-            }
-            $progress['steps'][$key+1] = $registrationStep;
-        }
-
-        if (null !== $progress['prev'] && $steps[$progress['prev']-1]->getForm() === UserType::FORM_IDENTITY) {
-            $isKinship = true;
-        }
-
-        $progress['form'] = $this->getForm($progress['current'], $isKinship, $category, $step);
-        $progress['user'] = $this->user;
-        $progress['seasonLicence'] = $this->seasonLicence;
-
-        return $progress;
-    }
+    
 
     private function getForm(RegistrationStep $registrationStep, bool $isKinship, ?int $category, int $step): ?Form
     {
         $form = null;
         
-        if (null !== $registrationStep->getForm()) {
+        if (null !== $registrationStep->getForm() && UserType::FORM_REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
             $form = $this->formFactory->create(UserType::class, $this->user, [
                 'attr' =>[
                     'action' => $this->router->generate('registration_form', ['step' => $step]),
@@ -114,120 +71,12 @@ class RegistrationService
         return $form;
     }
 
-    public function setUser()
+    public function getTemplate(int $form): ?string
     {
-        $category = null;
-        $this->user = $this->security->getUser();
-        if (null === $this->user) {
-            $this->user = new User();
-
-            $this->user->setRoles(['ROLE_USER']);
-            $this->entityManager->persist($this->user);
-        } 
-        $this->seasonLicence = $this->user->getSeasonLicence($this->season);
-        if (null === $this->seasonLicence) {
-            $this->seasonLicence = new Licence();
-            $this->seasonLicence->setSeason($this->season);
-            if (!$this->user->getLicences()->isEmpty()) {
-                $this->seasonLicence->setFinal(true)
-                    ->setType(Licence::TYPE_HIKE);
-            } else {
-                $this->seasonLicence->setFinal(false)
-                    ->setType(Licence::TYPE_HIKE)
-                    ->setCoverage(Licence::COVERAGE_MINI_GEAR);
-            }
-            if (!$this->user->getIdentities()->isEmpty()) {
-                $category = $this->licenceService->getCategory($this->user);
-                $this->seasonLicence->setCategory($category);
-            }
-            $this->entityManager->persist($this->seasonLicence);
-            $this->user->addLicence($this->seasonLicence);
+        if (UserType::FORM_REGISTRATION_DOCUMENT === $form) {
+            return null;
         }
-        if (null === $this->user->getHealth()) {
-            $health = new Health();
-            $this->user->setHealth($health);
-            $this->entityManager->persist($health);
-        }
-        $formQuestionCount = (Licence::CATEGORY_ADULT === $this->seasonLicence->getCategory()) ? 8 : 24;
-        $healthQuestionCount = $this->user->getHealth()->getHealthQuestions()->count();
-        if ($healthQuestionCount < $formQuestionCount) {
-            foreach (range($healthQuestionCount, $formQuestionCount) as $number) {
-                $healthQuestion = new HealthQuestion();
-                $healthQuestion->setField($number);
-                $this->user->getHealth()->addHealthQuestion($healthQuestion);
-                $this->entityManager->persist($healthQuestion);
-            }
-        }
-        if ($this->user->getIdentities()->isEmpty()) {
-            $identity = new Identity();
-            $this->user->addIdentity($identity);
-            $address = new Address();
-            $this->entityManager->persist($address);
-            $identity->setAddress($address);
-            $this->entityManager->persist($identity);
-        }
-
-        if ($this->user->getApprovals()->isEmpty()) {
-            $aproval = new Approval();
-            $aproval->setType(User::APPROVAL_RIGHT_TO_THE_IMAGE);
-            $this->user->addApproval($aproval);
-            $this->entityManager->persist($aproval);
-        }
-
-        if (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) {
-            if ($this->user->getIdentities()->count() < 2) {
-                foreach([
-                    Identity::TYPE_KINSHIP => Identity::KINSHIP_FATHER,
-                    Identity::TYPE_SECOND_CONTACT => Identity::KINSHIP_MOTHER,
-                ] as $type => $kinShip) {
-                    $identity = new Identity();
-                    $identity->setKinship($kinShip)
-                        ->setType($type);
-                    $this->user->addIdentity($identity);
-                    $this->entityManager->persist($identity);
-                }
-            }
-            if (isset($identity) && $this->user->getIdentities()->count() > 1 && null === $identity->getAddress()) {
-                $address = new Address();
-                $this->entityManager->persist($address);
-                $identity->setAddress($address);
-                $this->entityManager->persist($identity);
-            }
-            if ($this->user->getApprovals()->count() < 2) {
-                $aproval = new Approval();
-                $aproval->setType(User::APPROVAL_GOING_HOME_ALONE);
-                $this->user->addApproval($aproval);
-                $this->entityManager->persist($aproval);
-            }
-            if ($this->user->getHealth()->getDiseases()->isEmpty()) {
-                foreach (array_keys(Disease::LABELS) as $label) {
-                    $type = Disease::TYPE_DISEASE;
-                    if (Disease::LABEL_OTHER < $label) {
-                        $type = Disease::TYPE_ALLERGY;
-                    }
-                    if (Disease::LABEL_POLLEN_BEES < $label) {
-                        $type = Disease::TYPE_INTOLERANCE;
-                    }
-                    $disease = new Disease();
-                    $disease->setType($type)
-                        ->setLabel($label);
-                    $this->entityManager->persist($disease);
-                    $this->user->getHealth()->addDisease($disease);
-                }
-            }
-            $awaitingEvaluationlevel = $this->levelRepository->findAwaitingEvaluation();
-            $this->seasonLicence->setType(Licence::TYPE_HIKE);
-            $this->user->setLevel($awaitingEvaluationlevel);
-        } else {
-            $approvalsGoingHomeAlone = $this->user->getApprovalsGoingHomeAlone();
-            if (!$approvalsGoingHomeAlone->isEmpty()) {
-                foreach ($approvalsGoingHomeAlone as $approval) {
-                    $this->user->removeApproval($approval);
-                    $this->entityManager->remove($approval);
-                }
-            }
-            $this->user->setLevel(null);
-        }
+        return 'registration/form/'. str_replace('form.','', UserType::FORMS[$form]).'.html.twig';
     }
 
     public function getSeason(): int
@@ -263,16 +112,5 @@ class RegistrationService
         }
         
         return $isAllreadyRegistered;
-    }
-
-    public function updateStatus(): void
-    {
-        $licence = $this->seasonLicence;
-        if (!$licence->isFinal() && 
-            ((0 < count($this->user->getDoneSessions()) && $licence->getCategory() === Licence::CATEGORY_MINOR)
-            || (0 < count($this->user->getSessions()) && $licence->getCategory() === Licence::CATEGORY_ADULT))) {
-            $this->seasonLicence->setFinal(true)
-                ->setStatus(Licence::STATUS_IN_PROCESSING);
-        }
     }
 }

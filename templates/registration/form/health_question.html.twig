@@ -1,5 +1,6 @@
 {% set healthQuestions = form.children.health.children.healthQuestions %}
 
+{% set replaces =  [] %} 
 {% for question in healthQuestions %}
     {% set field = '{{ question_' ~ loop.index ~' }}'%}
     {% set replace = {(field): form_widget(question)} %}

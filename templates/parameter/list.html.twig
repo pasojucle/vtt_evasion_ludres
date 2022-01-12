@@ -26,7 +26,6 @@
                         <li data-toggle="param-body">
                             <a href="" class="btn btn-ico" data-action="toggle-down"><i class="fas fa-angle-up"></i></a>
                             <b>{{ form_label(parameter.value) }}</b>
-
                             <div class="up" data-target="param-body">
                                 {{ form_widget(parameter.value) }}
                             </div>
@@ -34,7 +33,7 @@
                         {% elseif parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_BOOL') %}
                         <li>
                         <div class="switch-group">
-                            {{ form_widget(parameter.value) }}<b>{{ form_label(parameter.value) }}</b>
+                            {{ form_row(parameter.value) }}
                         </div>
                         </li>
                         {% elseif parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_ARRAY') %}

@@ -1,19 +1,29 @@
-<h2>Autorisation parentale pour mineur</h2>
+<h2>Autorisations parentales pour mineur</h2>
 <table>
     <tr>
-        <td style="width: 150px"><b>Non et prénom :</b></td>
-        <td colspan="3">{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</td>
+        <td></td>
+        <td><h3>Contact parent principal</h3></td>
+        <td><h3>Second contact</h3></td>
+    </tr>
+    <tr>
+    <td><b>Non et prénom :</b></td>
+       <td>{{ user.kinship.fullName }} ({{ user.kinship.type | trans  }})</td>
+       <td>{{ user.secondKinship.fullName}} ({{ user.secondKinship.type|trans}})</td>
+       
+    </tr>
+    <tr>
+        <td><b>Téléphone : </b></td>
+        <td> {{ user.kinship.phone}}</td>
+        <td>{{ user.secondKinship.phone}}</td>
     </tr>
     <tr>
         <td><b>Adresse :</b></td>
-        <td colspan="3">
-            {{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
-        </td>
+        <td>{{ user.kinship.address.street }}</td>
+        <td></td>
     </tr>
     <tr>
-        <td><b>Courriel :</b></td>
-        <td>{{ user.kinShip.email }}</td>
-        <td><b>Téléphone :</b></td>
-        <td>{{ user.kinShip.phone}}</td>
+        <td></td>
+        <td>{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</td>
+        <td></td>
     </tr>
 </table>

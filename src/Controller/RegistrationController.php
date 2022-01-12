@@ -34,7 +34,11 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Repository\RegistrationStepGroupRepository;
 use App\Service\OrderByService;
+use App\Service\ReplaceKeywordsService;
+use App\UseCase\Registration\EditRegistration;
+use App\UseCase\Registration\GetProgress;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
+use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
@@ -43,9 +47,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegistrationController extends AbstractController
 {
-    public const OUT_PDF = 1;
-    public const OUT_SCREEN = 2;
-
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
         private RegistrationStepGroupRepository $registrationStepGroupRepository,
@@ -57,7 +58,8 @@ class RegistrationController extends AbstractController
         private UploadService $uploadService, 
         private GetReplaces $getReplaces,
         private OrderByService $orderByService,
-        private RegistrationService $registrationService
+        private RegistrationService $registrationService,
+        private GetProgress $getProgress
     )
     {
     }
@@ -87,20 +89,14 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/inscription/{step}", name="registration_form")
+     * @Route("/inscription", name="registration_form", defaults={"step"=1})
      * @Route("/mon-compte/inscription/{step}", name="user_registration_form")
      */
     public function registerForm(
         Request $request,
-        UserPasswordHasherInterface $passwordHasher,
-        LoginFormAuthenticator $authenticator,
-        GuardAuthenticatorHandler $guardHandler,
-        UserRepository $userRepository,
         MembershipFeeRepository $membershipFeeRepository,
-        IdentityRepository $identityRepository,
-        UserService $userService,
         ParameterService $parameterService,
-        IdentityService $identityService,
+        EditRegistration $editRegistration,
         int $step
     ): Response
     {
@@ -108,162 +104,43 @@ class RegistrationController extends AbstractController
             $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
 
-        $progress = $this->registrationService->getProgress($step);
-        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus() && $progress['current']->getForm() !== UserType::FORM_REGISTRATION_FILE) {
+        $progress = $this->getProgress->execute($step);
+        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus() && $progress['current']->form !== UserType::FORM_REGISTRATION_FILE) {
             return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
         }
-        $form = $progress['form'];
-        $season = $this->registrationService->getSeason();
-        $schoolTestingRegistration = $parameterService->getParameterByName('SCHOOL_TESTING_REGISTRATION');
-        $schoolTestingRegistrationMessage = 'L\'inscription à l\'école vtt est close pour la saison '.$season;
-        if (1 === $step) {
-            if (!$schoolTestingRegistration && !$progress['user']->getId()) {
-                $this->addFlash('success', $schoolTestingRegistrationMessage);
-            }
-            $maxStep = $step;
-            $this->requestStack->getSession()->set('registrationMaxStep',  $maxStep);
+        $form = $progress['current']->formObject;
+
+        $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress['user']);
+        if (!$schoolTestingRegistration['value'] && $progress['current']->form === UserType::FORM_MEMBER && !$progress['user']->getId()) {
+            $this->addFlash('success', $schoolTestingRegistration['message']);
         }
+        $maxStep = $step;
+        $this->requestStack->getSession()->set('registrationMaxStep',  $maxStep);
+
         if (null !== $form) {
             $form->handleRequest($request);
-        }
+        } 
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $route = (4 > $step) ? 'registration_form': 'user_registration_form';
-            $user = $form->getData();
-            $manualAuthenticating = false;
-            
-            $minLimit = new DateTime();
-            $minLimit->sub(new DateInterval('P80Y'));
-            $maxLimit = new DateTime();
-            $maxLimit->sub(new DateInterval('P5Y'));
-
-            if (!$user->getIdentities()->isEmpty()) {
-                foreach($user->getIdentities() as $identity) {
-                    if (null !== $identity->getBirthDate() && !($minLimit < $identity->getBirthDate() && $identity->getBirthDate() < $maxLimit)) {
-                        $form->addError(new FormError('La date de naissance est invalide'));
-                    }
-
-                    if ($identity->isEmpty()) {
-                        $address = $identity->getAddress();
-                        if (null !== $address) {
-                            $identity->setAddress(null);
-                            $this->entityManager->remove($address);
-                        }
-                        $user->removeIdentity($identity);
-                        $this->entityManager->remove($identity);
-                    }
-                }
-            }
-
-            if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
-                // encode the plain password
-                $user->setPassword(
-                    $passwordHasher->hashPassword(
-                        $user,
-                        $form->get('plainPassword')->getData()
-                    )
-                );
-                $manualAuthenticating = true;
-
-                $nextId = $userRepository->findNextId();
-
-                $identity = $user->getFirstIdentity();
-                $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
-                $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
-
-                $userSameName = $identityRepository->findByNameAndFirstName($identity->getName(), $identity->getFirstName());
-                if (!empty($userSameName)) {
-                    $form->addError(new FormError('Un compte avec le nom '.$identity->getName().' '.$identity->getFirstName().' existe déjà'));
-                }
-                if ($form->isValid()) {
-                    $domainUser = $userService->convertToUser($user);
-                    $email = $domainUser->getContactEmail();
-                    $this->mailerService->sendMailToMember([
-                        'name' => $identity->getName(),
-                        'firstName' => $identity->getFirstName(),
-                        'email' => $email,
-                        'subject' => 'Création de compte sur le site VTT Evasion Ludres',
-                        'licenceNumber' => $user->getLicenceNumber(),], 'EMAIL_REGISTRATION');
-                }
-            }
-
-            if (null !== $user->getIdentities()->first()->getBirthDate()) {
-                $category = $this->licenceService->getCategory($user);
-                $user->getSeasonLicence($season)->setCategory($category);
-                if (Licence::CATEGORY_MINOR === $category) {
-                    if (!$schoolTestingRegistration && !$user->getSeasonLicence($season)->isFinal()) {
-                        $form->addError(new FormError($schoolTestingRegistrationMessage));
-                    }
-                    $identityService->setAddress($user);
-                }
-            }
-            $requestFile = $request->files->get('user');
-            if (null !== $requestFile && array_key_exists('identities', $requestFile) && null !== $requestFile['identities'][0]['pictureFile']) {
-                $pictureFile = $requestFile['identities'][0]['pictureFile'];
-                $newFilename = $this->uploadService->uploadFile($pictureFile);
-                if (null !== $newFilename) {
-                    $user->getIdentities()->first()->setPicture($newFilename);
-                }
-            }
-
-            $isMedicalCertificateRequired = false;
-            if ($user->getSeasonLicence($season)->getType() !== Licence::TYPE_RIDE) {
-                $medicalCertificateDate = $user->getHealth()->getMedicalCertificateDate();
-                $medicalCertificateDuration = ($user->getSeasonLicence($season)->getType() === Licence::TYPE_HIKE) ? 5 : 3;
-                $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
-                $today = new DateTime();
-                if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->getHealth()->isMedicalCertificateRequired()) {
-                    $isMedicalCertificateRequired = true;
-                }
-            }
-            $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
-
+            $editRegistration->execute($request, $form, $progress);
             if ($form->isValid()) {
-                if ($progress['current']->getForm() === UserType::FORM_OVERVIEW) {
-
-                    $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
-
-                    $identity = $user->getFirstIdentity();
-                    $this->mailerService->sendMailToClub([
-                        'name' => $identity->getName(),
-                        'firstName' => $identity->getFirstName(),
-                        'email' => $identity->getEmail(),
-                        'subject' => 'Nouvelle Inscription sur le site VTT Evasion Ludres',
-                        'registration' => $this->generateUrl('registration_file', ['user' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-                    ]);
-                }
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
-
-                $this->requestStack->getSession()->remove('registrationPath');
-                if ($manualAuthenticating) {
-                    $this->requestStack->getSession()->set('registrationPath', $route);
-                    $guardHandler->authenticateUserAndHandleSuccess(
-                        $user,
-                        $request,
-                        $authenticator,
-                        'main'
-                    );
-                }
-
-                return $this->redirectToRoute($route, ['step' => $progress['next']]);
+                return $this->redirectToRoute('user_registration_form', ['step' => $progress['nextIndex']]);
             }
         }
 
         return $this->render('registration/registrationForm.html.twig', [
             'step' => $step,
             'steps' => $progress['steps'],
-            'form' => (null!== $form) ? $form->createView() : null,
-            'prev' => $progress['prev'],
+            'form' => (null !== $form) ? $form->createView() : null,
+            'template' => $progress['current']->template,
+            'prev' => $progress['prevIndex'],
             'current' => $progress['current'],
-            'next' => $progress['next'],
-            'user_entity' => $progress['user'],
+            'next' => $progress['nextIndex'],
             'season_licence' => $progress['seasonLicence'],
             'maxStep' => $this->requestStack->getSession()->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
-            'user' => $this->userService->convertToUser($progress['user']),
-            'media' => self::OUT_SCREEN,
-            'replaces' => $this->getReplaces->execute($progress['current'], $progress['user'], $progress['form']),
+            'user' => $progress['user'],
+            'media' => RegistrationStep::RENDER_VIEW,
         ]);
     }
 
@@ -375,6 +252,7 @@ class RegistrationController extends AbstractController
         MembershipFeeRepository $membershipFeeRepository,
         PdfService $pdfService,
         UserPresenter $presenter,
+        RegistrationStepPresenter $registrationStepPresenter,
         UserEntity $user
     ): Response
     {
@@ -390,9 +268,10 @@ class RegistrationController extends AbstractController
         }
         $presenter->present($user);
         $files = [];
-        $registrationPageSteps = [];
+        $registrationDocumentSteps = [];
 
-        $registrationPageForms = [
+        $registrationDocumentForms = [
+            UserType::FORM_REGISTRATION_DOCUMENT,
             UserType::FORM_MEMBER,
             UserType::FORM_KINSHIP,
             UserType::FORM_HEALTH,
@@ -400,74 +279,45 @@ class RegistrationController extends AbstractController
         ];
         if (!empty($steps)) {
             foreach($steps as $key => $step) {
-
-
-                if (null !== $step->getForm()) {
-                    $formName = str_replace('form.', '', UserType::FORMS[$step->getForm()]);
+                $registrationStepPresenter->present($step, $presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
+                $step = $registrationStepPresenter->viewModel();
+                if (null !== $step->filename) {
+                    $filename = './files/'.$step->filename;
+                    $files[] = ['filename' => $filename, 'form' => $step->form];
                 }
-
-                if (null !== $step->getFilename()) {
-                    $filename = './files/'.$step->getFilename();
-                    $files[] = ['filename' => $filename, 'form' => $step->getForm()];
-                }
-                if (in_array($step->getForm(), $registrationPageForms)) {
-                    $registrationPageSteps[$step->getForm()] =  $step->getContent();
-                } elseif (null !== $step->getContent()) {
-                    $isKinship = false;
-                    if ($steps[$key]->getForm() === UserType::FORM_IDENTITY && null !== $steps[$key + 1]) {
-                        $isKinship = true;
-                    }
-                    
+                if (in_array($step->form, $registrationDocumentForms)) {
+                    $registrationDocumentSteps[$step->form] = $step->content;
+                } elseif (null !== $step->content) {
                     $html = null;
-                    if (null !== $step->getForm()) {
-                        $form = $this->createForm(UserType::class, $user, [
-                            'attr' =>[
-                                'action' => $this->generateUrl('registration_form', ['step' => $step->getId()]),
-                            ],
-                            'current' => $step,
-                            'is_kinship' => $isKinship,
-                            'category' => $category,
-                            'season_licence' => $seasonLicence,
-                        ]);
-
-                        $template = 'registration/form/'.$formName.'.html.twig';
-
-                        $pages = preg_split('#{{ saut_page }}#', $step->getContent());
-                        if (1 < count($pages)) {
-                            $content = '';
-                            foreach($pages as $page) {
-                                $content .= '<div class="page_break">'.$page.'</div>';
-                            }
-                            $step->setContent($content);
-                        }
-                        
+                    if (null !== $step->form) {
+                        $form = $step->formObject;
                         $html = $this->renderView('registration/registrationPdf.html.twig', [
                             'user' => $presenter->viewModel(),
                             'all_membership_fee' => $allmembershipFee,
                             'current' => $step,
                             'form' => $form->createView(),
-                            'media' => self::OUT_PDF,
-                            'template' => $template,
-                            'replaces' => $this->getReplaces->execute($step, $user, $form),
+                            'media' => RegistrationStep::RENDER_FILE,
+                            'template' => $this->registrationService->getTemplate($step->form),
                         ]);
                     } else {
-                        $html = $step->getContent();
+                        $html = $step->content;
                     }
 
                     if (null !== $html) {
-                        $pdfFilepath = $pdfService->makePdf($html, $step->getTitle());
-                        $files[] = ['filename' => $pdfFilepath, 'form' => $step->getForm()];
+                        $pdfFilepath = $pdfService->makePdf($html, $step->title);
+                        $files[] = ['filename' => $pdfFilepath, 'form' => $step->form];
                     }
                 }
             }
         }
-        if (!empty($registrationPageSteps)) {
+        if (!empty($registrationDocumentSteps)) {
             $registration = $this->renderView('registration/registrationPdf.html.twig', [
                 'user' => $presenter->viewModel(),
                 'user_entity' => $user,
-                'registration_page_steps' => $registrationPageSteps,
+                'registration_document_steps' => $registrationDocumentSteps,
                 'category' => $seasonLicence->getCategory(),
-                'licence' => $presenter->viewModel()->getSeasonLicence(),
+                'licence' => $presenter->viewModel()->seasonLicence,
+                'media' => RegistrationStep::RENDER_FILE,
             ]);
             $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
             array_unshift($files, ['filename' => $pdfFilepath, 'form' => null]);

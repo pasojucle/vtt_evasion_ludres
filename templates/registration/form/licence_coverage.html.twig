@@ -1,16 +1,19 @@
-{% set licences = form.children.licences %}
-{% for licence in form.licences %}
-    {% set boutons_radio_type = (licence.children.type is defined) ? form_widget(licence.children.type) : '' %}
-    {% set boutons_radio_coverage = (licence.children.coverage is defined) ? form_widget(licence.children.coverage) : '' %}
-    {% set replaces =
-        {
-            '{{ boutons_radio_type }}': boutons_radio_type,
-            '{{ boutons_radio_assurance }}': boutons_radio_coverage,
-        }
-    %}
-    <div class="container">{{ current.content|replace(replaces) | raw}}</div>
-{% endfor %}
-<br>
+{% if media == constant('App\\Entity\\RegistrationStep::RENDER_VIEW') %}
+    {% set licences = form.children.licences %}
+    {% for licence in form.licences %}
+        {% set boutons_radio_type = (licence.children.type is defined) ? form_widget(licence.children.type) : '' %}
+        {% set boutons_radio_coverage = (licence.children.coverage is defined) ? form_widget(licence.children.coverage) : '' %}
+        {% set replaces =
+            {
+                '{{ boutons_radio_type }}': boutons_radio_type,
+                '{{ boutons_radio_assurance }}': boutons_radio_coverage,
+            }
+        %}
+        <div class="container">{{ current.content|replace(replaces) | raw}}</div>
+    {% endfor %}
+    <br>
+{% endif %}
+
 
 
 

@@ -7,6 +7,7 @@ use DatePeriod;
 use DateInterval;
 use App\Entity\Event;
 use App\Entity\Level;
+use IntlDateFormatter;
 use App\Entity\Cluster;
 use App\Form\EventFilterType;
 use App\Service\PaginatorService;

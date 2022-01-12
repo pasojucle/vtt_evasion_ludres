@@ -32,13 +32,18 @@ class EditIdentity
 
     public function execute(Request $request, ?User $user, FormInterface $form): void
     {
-        $identity = $form->getData();
+        $identities = $form->getData();
         $this->identityService->setAddress($user);
-        if ($request->files->get('identity')) {
-            $pictureFile = $request->files->get('identity')['pictureFile'];
+
+        if ($request->files->get('identities')) {
+            $pictureFile = $request->files->get('identities')['identities'][0]['pictureFile'];
             $newFilename = $this->uploadService->uploadFile($pictureFile);
             if (null !== $newFilename) {
-                $identity->setPicture($newFilename);
+                foreach($identities as $identity) {
+                    if (null === $identity[0]->getKinship()) {
+                        $identity[0]->setPicture($newFilename);
+                    }
+                }
             }
         }
         $this->entityManager->flush();

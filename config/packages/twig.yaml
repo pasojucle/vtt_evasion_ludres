@@ -12,7 +12,6 @@ twig:
         menu_service: '@App\Service\MenuService'
         menu_admin_service: '@App\Service\MenuAdminService'
         licence_service: '@App\Service\LicenceService'
-        membership_fee_service: '@App\Service\MembershipFeeService'
         registration_service: '@App\Service\RegistrationService'
         user_service: '@App\Service\UserService'
         order_service: '@App\Service\Order\OrderGetService'

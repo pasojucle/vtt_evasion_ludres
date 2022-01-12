@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Licence;
 use App\Entity\Identity;
+use App\Validator\BirthDate;
+use App\Validator\Phone;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
@@ -17,6 +19,10 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
+
 
 class IdentityType extends AbstractType
 {
@@ -29,6 +35,7 @@ class IdentityType extends AbstractType
             $kinship = $identity->getKinship();
             $disabled = ($options['season_licence']->isFinal() && $type === Identity::TYPE_MEMBER) ? 'disabled' : '';
             $addressClass = ($type !== Identity::TYPE_SECOND_CONTACT) ? ' identity-address' : '';
+            $addressRequired = 'required';
             $row_class =  ($kinship) ? 'form-group-inline' : 'form-group';
 
             if ((!$options['is_kinship'] && !$kinship) || ($options['is_kinship'] && $kinship)) {
@@ -38,12 +45,27 @@ class IdentityType extends AbstractType
                         'row_attr' => [
                             'class' => $row_class
                         ],
+                        'constraints' => [
+                            new NotNull(),
+                            new NotBlank(),
+                        ],
+                        'attr' => [
+                            'data-constraint' => 'app-UniqueMember',
+                        ],
                         'disabled' => $disabled,
                     ])
                     ->add('firstName', TextType::class, [
                         'label' => 'Prénom',
                         'row_attr' => [
                             'class' => $row_class,
+                        ],
+                        'constraints' => [
+                            new NotNull(),
+                            new NotBlank(),
+                        ],
+                        'attr' => [
+                            'data-constraint' => 'app-UniqueMember',
+                            'data-multiple-fields' => 1,
                         ],
                         'disabled' => $disabled,
                     ])
@@ -53,7 +75,10 @@ class IdentityType extends AbstractType
                             'class' => 'form-group-inline',
                         ],
                         'constraints' => [
-                            new Length(['min' => 10, 'max' => 10]),
+                            new Phone(),
+                        ],
+                        'attr' => [
+                            'data-constraint' => 'app-Phone'
                         ],
                     ]);
                     
@@ -66,13 +91,22 @@ class IdentityType extends AbstractType
                                     'class' => 'form-group-inline',
                                 ],
                                 'constraints' => [
-                                    new Length(['min' => 10, 'max' => 10]),
+                                    new Phone,
+                                ],
+                                'attr' => [
+                                    'data-constraint' => 'app-Phone'
                                 ],
                             ])
                             ->add('email', EmailType::class, [
                                 'label' => 'Adresse mail',
                                 'row_attr' => [
                                     'class' => 'form-group-inline'
+                                ],
+                                'constraints' => [
+                                    new Email(),
+                                ],
+                                'attr' => [
+                                    'data-constraint' => 'symfony-Email'
                                 ],
                             ])
                             ->add('birthDate', DateTimeType::class, [
@@ -83,11 +117,13 @@ class IdentityType extends AbstractType
                                 'attr' => [
                                     'class' => 'js-datepicker',
                                     'autocomplete' => "off",
+                                    'data-constraint' => 'app-BirthDate'
                                 ],
                                 'row_attr' => [
                                     'class' => $row_class,
                                 ],
                                 'disabled' => $disabled,
+                                'constraints' => [new BirthDate()],
                             ])
                         ;
                     }
@@ -98,6 +134,9 @@ class IdentityType extends AbstractType
                         'label' => 'Profession',
                         'row_attr' => [
                             'class' => 'form-group-inline'
+                        ],
+                        'attr' => [
+                            'data-constraint' => ''
                         ],
                         'required' => false,
                     ])
@@ -127,9 +166,13 @@ class IdentityType extends AbstractType
                         'row_attr' => [
                             'class' => 'form-group-inline'
                         ],
+                        'attr' => [
+                            'data-constraint' => ''
+                        ],
                     ]);
                     if (!$identity->hasAddress()) {
                         $addressClass .=' hidden';
+                        $addressRequired = '';
                     }
                 } else {
                     $form
@@ -138,12 +181,27 @@ class IdentityType extends AbstractType
                             'row_attr' => [
                                 'class' => $row_class,
                             ],
+                            'constraints' => [
+                                new NotNull(),
+                                new NotBlank(),
+                            ],
+                            'attr' => [
+                                'data-constraint' => ''
+                            ],
                         ])
                         ->add('birthDepartment', ChoiceType::class, [
                             'label' => 'Département de naissance',
+                            'placeholder' => 'Sélectinner un département',
                             'choices' => array_flip(json_decode(file_get_contents('../data/departments'), true)),
                             'row_attr' => [
                                 'class' => $row_class,
+                            ],
+                            'constraints' => [
+                                new NotNull(),
+                                new NotBlank(),
+                            ],
+                            'attr' => [
+                                'data-constraint' => ''
                             ],
                         ])
                         ->add('pictureFile', FileType::class, [
@@ -170,6 +228,7 @@ class IdentityType extends AbstractType
                 }
                 $form->add('address', AddressType::class, [
                     'row_class' => $addressClass,
+                    'required' => $addressRequired,
                 ]);
             }
         });

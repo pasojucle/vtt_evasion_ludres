@@ -153,10 +153,11 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
-.alert-warning, h2.alert-danger {
+.alert-warning:not(.form-group-inline, .form-group), h2.alert-danger, .alert-warning-color {
     color: var(--primary-color-darker);
 }
-.alert-warning::before {
+.alert-warning:not(.form-group-inline, .form-group)::before,
+.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
     content: '\f06a';
     color: var(--primary-color-darker);
     font-family: "Font Awesome 5 Free";
@@ -164,15 +165,24 @@ body > script {display: none !important;}
     margin-right: 10px;
 }
 
-.success {
+.success:not(.form-group-inline, .form-group) {
     color: var(--success-color);
 }
-.success::before {
+.success:not(.form-group-inline, .form-group)::before,
+.form-group-inline.success::after, .form-group.success::after {
     content: '\f058';
     color: var(--success-color);
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
+}
+.form-group-inline.success, .form-group-inline.alert-warning, .form-group.success, .form-group.alert-warning {
+    position: relative;
+}
+.form-group-inline.success::after, .form-group-inline.alert-warning::after, .form-group.success::after, .form-group.alert-warning::after {
+    position: absolute;
+    bottom: 6px;
+    right: 10px;
 }
 .success-test {
     color: var(--blue-color);
@@ -696,6 +706,8 @@ input[type="file"] {
     position: relative;
     margin: -10px -10px 20px -10px;
     padding: 10px 20px;
+}
+.admin .block .block-title {
     background-color: var(--primary-color);
     color: var(--white-color);
 }

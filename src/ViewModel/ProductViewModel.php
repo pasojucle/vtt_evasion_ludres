@@ -47,7 +47,7 @@ class ProductViewModel extends AbstractViewModel
         }
 
         if (null !== $user) {
-            if (!empty($user->getMember()) && $product->getCategory() === $user->getLastLicence()['category']) {
+            if (!empty($user->member) && $product->getCategory() === $user->lastLicence->category) {
                 $productView->sellingPrice = $product->getDiscountPrice();
                 $productView->discountPrice = number_format($product->getDiscountPrice(), 2).' €';
                 $productView->priceClass = 'throughed-price';

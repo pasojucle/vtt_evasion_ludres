@@ -106,6 +106,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         }
 
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+            if (preg_match('#\/mon-compte\/inscription\/#', $targetPath)) {
+                return new RedirectResponse($this->urlGenerator->generate('user_registration_form', ['step' => 1]));
+            }
             return new RedirectResponse($targetPath);
         }
 

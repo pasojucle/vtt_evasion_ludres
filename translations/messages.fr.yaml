@@ -64,6 +64,7 @@ approval:
   going_home_alone: Autorisé à rentrer seul
 
 form:
+  registration_document: Dossier d'inscription
   health_question: Questionaire de santé
   identity: Identité
   health: Santé enfant

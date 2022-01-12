@@ -1,7 +1,7 @@
 <div class="block background-primary background-color">{{ current.content | raw}}</div>
 <br>
 <div class="registration">
-    {% set licence = user.seasonLicence(licence_service.currentSeason) %}
+    {% set licence = user.seasonLicence %}
     <h3>Renseignements concernant l'adhérent</h3>
     <ul class="block background-ligth">
         <li class="row">
@@ -36,54 +36,68 @@
             </li>
             <li class="row">
                 <span class="col-md-4 col-sx-6"><b>Médecin traitant : </b></span><span class="col-md-8 col-sx-6">{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}</span>
-                <span class="col-md-4 col-sx-6"></span><span class="col-md-8 col-sx-6"><img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}</span>
+                <span class="col-md-4 col-sx-6"><b>Téléphone du médecin : </b></span><span class="col-md-8 col-sx-6">{{ user.health.doctorPhone }}</span>
             </li>
         </ul>
         {% if user.health.diseases is not empty %}
+            <h3>Informations sanitaires</h3>
             <ul class="block background-ligth">
                 {% for type, diseases in user.health.diseases %}
-                    <li>
-                        <b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b>
+                {% if diseases is not empty %}
+                    <li class="row">
+                        <span class="col-md-4 col-sx-4"><b>{{ constant('App\\Entity\\Disease::TYPES')[type]|trans }}</b></span>
+                        {% if type == constant('App\\Entity\\Disease::TYPE_DISEASE') %}
+                            <span class="col-md-4 col-sx-4"><b>Traitement actuel</b></span>
+                            <span class="col-md-4 col-sx-4"><b>Traitement d'urgence</b></span>
+                        {% elseif type == constant('App\\Entity\\Disease::TYPE_ALLERGY') %}
+                            <span class="col-md-4 col-sx-4"><b>Lesquelles</b></span>
+                            <span class="col-md-4 col-sx-4"><b>Traitement d'urgence</b></span>
+                        {% elseif type == constant('App\\Entity\\Disease::TYPE_INTOLERANCE') %}
+                            <span class="col-md-8 col-sx-8"><b>Lesquelles</b></span>
+                        {% endif %}
                     </li>
                     {% for disease in diseases %}
                         <li class="row">
-                            <span class="col-md-4 col-sx-6">
-                                {{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }} :
+                            {% set title = [constant('App\\Entity\\Disease::LABELS')[disease.label]|trans] %}
                             {% if disease.title is not null %}
-                                 {{ disease.title }}</span>
+                                {% set title = title|merge([disease.title]) %}
                             {% endif %}
-                            <span class="col-md-8 col-sx-6">
-                                {{ disease.curentTreatment }}
-                                {{ disease.emergencyTreatment }}
-                            </span>
+                            <span class="col-md-4 col-sx-4">{{ title|join(' ') }}</span>
+                            {% if type == constant('App\\Entity\\Disease::TYPE_INTOLERANCE') %}
+                                <span colspan="2">{{ disease.curentTreatment }}</span>
+                            {% else %}
+                                <span class="col-md-4 col-sx-4">{{ disease.curentTreatment }}</span>
+                                <span class="col-md-4 col-sx-4">{{ disease.emergencyTreatment }}</span>
+                            {% endif %}
                         </li>
                     {% endfor %}
-                {% endfor %}
+                {% endif %}
+            {% endfor %}
             </ul>
             <br>
         {% endif %}
 
     {% endif %}
 </div>
-{% if user.kinShip %}
+{% if user.kinship %}
 <h3>Autorisation parentale pour mineur</h3>
 <ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Non et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.fullName }} ({{ user.kinShip.type | trans  }})</span>
+        <span class="col-md-4 col-sx-6"><b>Non et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.fullName }} ({{ user.kinship.type | trans  }})</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.address.street }}, {{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}</span>
+        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.address.street }}, {{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</span>
 
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.email }}</span>
+        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.email }}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ user.kinShip.phone}}</span>
+        <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ user.kinship.phone}}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Second contact : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</span>
-        <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinShip.phone}}</span>
+        <span class="col-md-4 col-sx-6"><b>Second contact : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.fullName}} ({{ user.secondKinship.type|trans}})</span>
+        <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.phone}}</span>
     </li>
 </ul>
 <br>

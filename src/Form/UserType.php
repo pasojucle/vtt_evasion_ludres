@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class UserType extends AbstractType
 {
+    public const FORM_REGISTRATION_DOCUMENT = 0;
     public const FORM_HEALTH_QUESTION = 1;
     public const FORM_IDENTITY = 2;
     public const FORM_HEALTH = 3;
@@ -33,6 +34,7 @@ class UserType extends AbstractType
     public const FORM_KINSHIP = 11;
 
     public const FORMS = [
+        self::FORM_REGISTRATION_DOCUMENT => 'form.registration_document',
         self::FORM_HEALTH_QUESTION => 'form.health_question',
         self::FORM_IDENTITY => 'form.identity',
         self::FORM_HEALTH => 'form.health',
@@ -140,6 +142,10 @@ class UserType extends AbstractType
                         'row_attr' => [
                             'class' => 'form-group-inline'
                         ],
+                        'attr' => [
+                            'data-constraint' => 'app-Password',
+                            'data-multiple-fields' => 1,
+                        ],
                     ],
                     'required' => true,
                     'first_options'  => ['label' => 'Mot de passe (6 caractères minimum)'],
@@ -149,6 +155,7 @@ class UserType extends AbstractType
                         new NotBlank(['message' => 'Le mot de passe ne peut pas être vide']),
                         new Length(['min' => 6, 'minMessage' => 'Votre mot de passe doit faire au moins 6 caractères', 'max' => 10, 'maxMessage' => 'Votre mot de passe doit faire au plus 10 caractères']),
                     ],
+ 
                 ]);
             } else {
                 $form->add('plainPassword', HiddenType::class, [

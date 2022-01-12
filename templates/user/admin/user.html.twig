@@ -86,15 +86,15 @@
                             </ul>
                         </div>
                     {% endif %}
-                    {% if user.secondKinShip is not empty %}
+                    {% if user.secondKinship is not empty %}
                         <div class="col-md-6 col-xs-12">
                             <ul>
-                                <li><b>{{ user.secondKinShip.type | trans  }}</b> : {{ user.secondKinShip.fullName }} </li>
-                                <li><i class="fas fa-phone-square"></i> {{ user.secondKinShip.phone }}</li>
+                                <li><b>{{ user.secondKinship.type | trans  }}</b> : {{ user.secondKinship.fullName }} </li>
+                                <li><i class="fas fa-phone-square"></i> {{ user.secondKinship.phone }}</li>
                             </ul>
                         </div>
                     {% endif %}
-                    {% if is_granted('ROLE_REGISTER') and (user.secondKinShip is not empty or user.secondKinShip is not empty) %}
+                    {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
                         <div class="col-md-12 col-xs-12">
                             <a href="{{ path('admin_identity_edit', {'user': user.id, 'isKinship': 1}) }}"
                                 class="btn btn-secondary marging-bottom-20" title="Modifier">

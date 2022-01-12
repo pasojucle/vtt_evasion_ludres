@@ -73,9 +73,7 @@ class GetRegistrationCertificate
 
     private function getMemberData(UserViewModel $user, array $licence, string $today): array
     {
-        
-        $member = $user->getMember();
-        $address = $member['address']->toString();
+        $address = $user->member['address']->toString();
 
         $search  = [
             '{{ nom_prenom }}',
@@ -86,7 +84,7 @@ class GetRegistrationCertificate
             '{{ date }}'
         ];
         $replace = [
-            $member['fullName'], 
+            $user->member['fullName'], 
             $address,
             $licence['season'], 
             $user->getLicenceNumber(), 
@@ -99,9 +97,7 @@ class GetRegistrationCertificate
 
     private function getKinShipData(UserViewModel $user, array $licence, string $today): array
     {
-        $kinShip = $user->getKinShip();
-        $member = $user->getMember();
-        $address = $kinShip['address']->toString();
+        $address = $user->kinship['address']->toString();
 
         $search  = [
             '{{ nom_prenom_parent }}',
@@ -113,8 +109,8 @@ class GetRegistrationCertificate
             '{{ date }}'
         ];
         $replace = [
-            $kinShip['fullName'], 
-            $member['fullName'], 
+            $user->kinship['fullName'], 
+            $user->member['fullName'], 
             $address,
             $licence['season'], 
             $user->getLicenceNumber(), 

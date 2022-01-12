@@ -212,7 +212,7 @@ class EventController extends AbstractController
     public function userBikeRides(
         UserPresenter $presenter
     ): Response
-    {
+    {   
         $presenter->present($this->getUser());
         return $this->render('bike_ride/user_list.html.twig', [
             'user' => $presenter->viewModel(),

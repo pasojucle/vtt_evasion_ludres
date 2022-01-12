@@ -43,7 +43,7 @@
                 {% endfor %}
             {% endfor %}
         </div>
-        <main>
+        <main{% if isAdmin %} class="admin"{% endif %}>
             {% if isAdmin %}
                 <div class="header">
                     <h1>Administration du site</h1>
@@ -65,6 +65,7 @@
             crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="/js/app_20211204.js"></script>
+        <script src="/js/constraints.js"></script>
         <script src="/js/reveal.js"></script>
         <script src="/js/modal.js"></script>
         {% if isAdmin %}

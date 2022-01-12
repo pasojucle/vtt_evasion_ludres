@@ -579,8 +579,8 @@ class ToolController extends AbstractController
             $form = $this->createForm(LicenceNumberType::class, ['user' => $data['user'], 'content' => $content]);
             if ($buttonIsCliked) {
                 $result = $mailerService->sendMailToMember([
-                    'name' => $user->getMember()['name'],
-                    'firstName' => $user->getMember()['firstName'],
+                    'name' => $user->member['name'],
+                    'firstName' => $user->member['firstName'],
                     'email' => $user->getContactEmail(),
                     'subject' => 'Votre inscription au club de Vtt Évasion Ludres',
                     'licenceNumber' => $user->getLicenceNumber(),

@@ -1,6 +1,6 @@
 {% set approval = form.children.approvals %}
 
-{% set replaces = registration_service.replaces(user_entity) %}
+{% set replaces = [] %}
 
 {% set replaces = replaces | merge({'{{ bouton_droit_image }}': form_widget(approval[0])}) %}
 

@@ -1,81 +1,45 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
-    
     {% if template is not defined %}
         <main class="registration">
-        <div id="header">
-            <img src="./logos/logo-pdf.jpg" alt="vvt évasion Ludres" style="height:110px;  width: 120px">
-            <h1> {{ licence_service.registrationTitle(user_entity) }} - {{ licence_service.currentSeason }}</h1>
-            <img src="./logos/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
-        </div>
-        {% set key = constant('App\\Form\\UserType::FORM_MEMBER') %}
-        {% dump(registration_page_steps[key]) %}
-        {% if registration_page_steps[key] is defined %}
-            {% include('registration/form/pdf/member.html.twig') %}
+        {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
+        {% if registration_document_steps[key]is defined %}
+            {{ registration_document_steps[key]['header']|imgPath(media)|raw }}
         {% endif %}
-        {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
-        {% if registration_page_steps[key] is defined %}
-            {% include('registration/form/pdf/health.html.twig') %}
-        {% endif %}
+        {# <div class="block"> #}
+            {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
+            {% set health = registration_document_steps[key] is defined %}
+            {% set key = constant('App\\Form\\UserType::FORM_MEMBER') %}
+            {% if registration_document_steps[key] is defined %}
+                {% include('registration/form/pdf/member.html.twig') %}
+            {% endif %}
+            {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
+            {% if registration_document_steps[key] is defined %}
+                {% include('registration/form/pdf/health.html.twig') %}
+            {% endif %}
+        {# </div> #}
         {% set key = constant('App\\Form\\UserType::FORM_APPROVAL') %}
-        {% if registration_page_steps[key]is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_ADULT') %}
-            {{ registration_page_steps[key]|raw }}
+        {% if registration_document_steps[key]is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_ADULT') %}
+            {{ registration_document_steps[key]|raw }}
         {% endif %}
-        {% if user.kinShip %}
-        {% set key = constant('App\\Form\\UserType::FORM_KINSHIP') %}
-        {% if registration_page_steps[key] is defined %}
-            <div class="block">
-                {% include('registration/form/pdf/kinship.html.twig') %}
-                {% set key = constant('App\\Form\\UserType::FORM_APPROVAL') %}
-                {% if registration_page_steps[key] is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
-                    {{ registration_page_steps[key]|raw }}
-                {% endif %}
-            </div>
-            <table class="table-fixed">
-                <tr>
-                    <td><b>Second contact : </b>{{ user.secondKinShip.fullName}} ({{ user.secondKinShip.type|trans}})</td>
-                    <td>Téléphone : </b>{{ user.secondKinShip.phone}}</td>
-                </tr>
-            </table>
-        {% endif %}
-
-        <br>
-        {% endif %}
-        <table class="table-fixed">
-            <tr>
-                <td><b>Type de licence : </b>{{ licence.type|trans}}</td>
-                <td><b>Type d'assurance : </b>{{ licence.coverageStr|trans}}</td>
-            </tr>
-        </table>
-        <br>
-        <table class="table-fixed">
-            <tr>
-                <td>{{ membership_fee_service.amount(user) | raw }}</td>
-            </tr>
-            <tr>
-                <td>{{ user.isMedicalCertificateRequired(licence_service.currentSeason) }}</td>
-            </tr>
-        </table>
-        {% if not licence.isFinal %}
+        {% if user.kinship %}
+            {% set key = constant('App\\Form\\UserType::FORM_KINSHIP') %}
+            {% if registration_document_steps[key] is defined %}
+                {# <div class="block"> #}
+                    {% include('registration/form/pdf/kinship.html.twig') %}
+                    {% set key = constant('App\\Form\\UserType::FORM_APPROVAL') %}
+                    {% if registration_document_steps[key] is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+                        {{ registration_document_steps[key]|imgPath(media)|raw }}
+                    {% endif %}
+                {# </div> #}
+            {% endif %}
             <br>
-            <p>J'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site
-            www.vttevasionludres.fr</p>
-            <br>
-            <p>IL EST IMPERATIF DE SIGNER L'INFORMATION D'ASSURANCE GRATUITE JOINTE A CE DOCUMENT</p>
-        {% else %}
-            <br>
-            <p>J'atteste avoir répondu "NON" à toutes les questions du questionnaire de santé et ne
-            pas fournir de nouveau certificat médical pour ma réinscription (sauf pour la 1ère demande de licence ou date de validité).</p>
-            <p>Dans le cas contraire, je fournis un certificat de non contre-indication à la pratique du VTT, daté de -12 mois.</p>
         {% endif %}
-        <br>
-        <table class="table-fixed">
-            <tr>
-                <td>Fait à Ludres le {{ "now"|date("d/m/Y") }}</td>
-                <td class="float-right">Signature : (précédée de la mention ‘’Lu et approuvé’’)</td>
-            </tr>
-        </table>
+        {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
+        {% if registration_document_steps[key]is defined %}
+            {{ registration_document_steps[key]['footer']|raw }}
+        {% endif %}
     {% else %}
         <main>
         {% include(template) %}

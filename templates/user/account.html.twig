@@ -37,7 +37,7 @@
                                     <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step': 1})}}">S'inscrire</a>
                                 </li>
                             {% endif %}
-                            {% if user.seasonLicence is not empty and user.seasonLicence.status <= constant('App\\Entity\\Licence::STATUS_WAITING_VALIDATE') %}
+                            {% if user.seasonLicence is not empty and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
                                 <li>
                                     <b>Mon dossier d'inscription</b>
                                     <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.id})}}"><i class="fas fa-download"></i> Télécharger</a>

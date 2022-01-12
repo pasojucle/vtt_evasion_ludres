@@ -11,14 +11,11 @@
         <div class="wrapper background-ligth col-1-3 wrapper-full-width">
             <div class="progress-container">
                 {% set category = season_licence.category %}
-                <h1>{{ licence_service.registrationTitle(user_entity) }}</h1>
+                <h1>{{ licence_service.registrationTitle(user) }}</h1>
                 <ul class="StepProgress">
                     {% for step in steps %}
                         {%  if loop.index < maxStep + 1 %}
                             {% set route = 'user_registration_form' %}
-                            {% if user_entity.licences | length < 2 and loop.index < 4 %}
-                                {% set route = 'registration_form' %}
-                            {% endif %}
                             <li class="StepProgress-item {{ step.class }}">
                                 {% if app.user is not null and current.form != constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
                                     <a href="{{ path(route, {'step': loop.index }) }}"><strong>{{ step.title }}</strong></a>
@@ -49,30 +46,14 @@
                             </object>
                         </div>
                     {% endif %}
-                    {% if current.form is not null %}
-                        {% set template = 'registration/form/' ~ constant('App\\Form\\UserType::FORMS')[current.form] | replace({'form.':''}) ~ '.html.twig' %}
+                    {% if template is not null %}
                         {% include template %}
                     {% endif %}
                 </div>
-                {% set route = 'user_registration_form' %}
-                {% if user_entity.licences | length < 2 and step < 3 %}
-                    {% set route = 'registration_form' %}
-                {% endif %}
-                {% if form.children.licences is defined and form.children.identities is defined %}
-                    {% set additional_family_member = form.children.licences.children[0] %}
-                    {% if additional_family_member.additionalFamilyMember is defined %}
-                    <div class="form-group">
-                        <div class="inputGroup long check">
-                            {{ form_widget(additional_family_member.additionalFamilyMember )}}
-                            {{ form_label(additional_family_member.additionalFamilyMember )}}
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endif %}
                 <div class="block-footer">
                     <p>* champs obligatoires </p><br>
                     {% if prev is not null and current.form != constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
-                        <a class="btn btn-primary float-left" href="{{ path(route, {'step': prev }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
+                        <a class="btn btn-primary float-left" href="{{ path('user_registration_form', {'step': prev }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
                     {% endif %}
                     {% if next is not null %}
                         {% if form is not null and current.form not in [constant('App\\Form\\UserType::FORM_REGISTRATION_FILE'), constant('App\\Form\\UserType::FORM_MEMBERSHIP_FEE')] %}
@@ -84,7 +65,7 @@
                             {% endif %}
                             <button class="{{ btn_class }}" type="submit">{{ btn_label|raw }}</button>
                         {% else %}
-                            <a class="btn btn-primary float-right" href="{{ path(route, {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
+                            <a class="btn btn-primary float-right" href="{{ path('user_registration_form', {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
                         {% endif %}
                     {% endif %}
                 </div>

@@ -64,4 +64,5 @@ security:
         - { path: ^/ma-commande, roles: ROLE_USER, requires_channel: https }
         - { path: ^/mon-panier, roles: ROLE_USER, requires_channel: https }
         - { path: ^/mon-programme, roles: ROLE_USER, requires_channel: https }
+        - { path: '^/js', roles: PUBLIC_ACCESS, requires_channel: https }
         - { path: '^/', roles: PUBLIC_ACCESS, requires_channel: https }
