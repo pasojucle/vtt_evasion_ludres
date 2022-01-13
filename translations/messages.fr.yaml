@@ -141,3 +141,12 @@ menu:
     management: Gestion
     setting: Paramètrage
     tools: Outils
+
+vote:
+  response:
+    yes : Oui
+    no: Non
+    no_opinion: Ne se prononce pas
+  issue:
+    choice: oui/non/ne se prononce pas
+    string: Réponse libre

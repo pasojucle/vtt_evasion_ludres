@@ -71,6 +71,12 @@ class MenuAdminService
                  'pattern' => '/order/',
                  'role' => 'ROLE_ADMIN',
             ],
+            [
+                'label' => 'Votes AG',
+                 'route' => 'admin_votes',
+                 'pattern' => '/vote/',
+                 'role' => 'ROLE_ADMIN',
+            ],
         ];
     }
     private function getSettingMenu(): array
