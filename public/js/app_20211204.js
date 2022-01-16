@@ -345,12 +345,13 @@ const addFormToCollection = (e) => {
   };
 
   const addTagFormDeleteLink = (itemFormLi) => {
-    const collectionHolder = itemFormLi.closest('ul');
+    const row = $(itemFormLi).find('.row');
+    console.log(row);
     const removeFormButton = document.createElement('button');
-    removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger');
+    removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger', 'col-md-1', 'form-group');
     removeFormButton.innerHTML ='<i class="fas fa-times"></i>';
     
-    itemFormLi.append(removeFormButton);
+    row.append(removeFormButton);
 
     removeFormButton.addEventListener('click', (e) => {
         e.preventDefault()

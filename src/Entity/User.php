@@ -94,9 +94,9 @@ class User implements UserInterface
     private $orderHeaders;
 
     /**
-     * @ORM\OneToMany(targetEntity=VoteResponse::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=VoteUser::class, mappedBy="user")
      */
-    private $voteResponses;
+    private $votes;
 
     public function __construct()
     {
@@ -105,7 +105,7 @@ class User implements UserInterface
         $this->licences = new ArrayCollection();
         $this->sessions = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
-        $this->voteResponses = new ArrayCollection();
+        $this->votes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -464,29 +464,29 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|VoteResponse[]
+     * @return Collection|VoteUser[]
      */
-    public function getVoteResponses(): Collection
+    public function getVotes(): Collection
     {
-        return $this->voteResponses;
+        return $this->votes;
     }
 
-    public function addVoteResponse(VoteResponse $voteResponse): self
+    public function addVote(VoteUser $vote): self
     {
-        if (!$this->voteResponses->contains($voteResponse)) {
-            $this->voteResponses[] = $voteResponse;
-            $voteResponse->setUser($this);
+        if (!$this->votes->contains($vote)) {
+            $this->votes[] = $vote;
+            $vote->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeVoteResponse(VoteResponse $voteResponse): self
+    public function removeVoteUser(VoteUser $vote): self
     {
-        if ($this->voteResponses->removeElement($voteResponse)) {
+        if ($this->votes->removeElement($vote)) {
             // set the owning side to null (unless already changed)
-            if ($voteResponse->getUser() === $this) {
-                $voteResponse->setUser(null);
+            if ($vote->getUser() === $this) {
+                $vote->setUser(null);
             }
         }
 

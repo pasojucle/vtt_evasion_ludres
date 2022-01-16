@@ -518,7 +518,7 @@ span.select2-selection.select2-selection--single {
 input[type="file"] {
     opacity: 0;
 }
-.required:not(.value .required, .check .required, .ballot .required)::after {
+.required:not(.value .required, .check .required, .ballot .required, .radio-group .required)::after {
     content: ' *';
 }
 .badge {

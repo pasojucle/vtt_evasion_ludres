@@ -41,9 +41,14 @@ class ParameterType extends AbstractType
                 } elseif($type === Parameter::TYPE_ARRAY) {
                         $classType = CollectionType::class;
                         $fieldOptions = [
-                            // 'entry_type' => ParameterArrayType::class,
                             'entry_options' => [
                                 'label' => false,
+                                'row_attr' => [
+                                    'class' => 'row',
+                                ],
+                                'attr' => [
+                                    'class' => 'col-md-8 form-group',
+                                ],
                             ],
                             'allow_add' => true,
                             'allow_delete' => true,

@@ -43,9 +43,9 @@
                                 <div class="col-md-8">
                                     <ul class="collection_container {{ parameter.vars.value.name }}"
                                     data-index="{{ parameter|length > 0 ? parameter|last.vars.value|length + 1 : 0 }}" 
-                                    data-prototype="{{ form_widget(parameter.children.value.vars.prototype)|e('html_attr') }}">
+                                    data-prototype="{{ form_row(parameter.children.value.vars.prototype)|e('html_attr') }}">
                                         {% for item in parameter.value %}
-                                            <li>{{ form_widget(item) }}</li>
+                                            <li>{{ form_row(item) }}</li>
                                         {% endfor %}
                                     </ul>
                                 </div>

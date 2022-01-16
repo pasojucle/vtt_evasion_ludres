@@ -33,15 +33,14 @@ class VoteResponse
     private $voteIssue;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="text", nullable=true )
      */
-    private $value;
+    private ?string $value;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="voteResponses")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=23)
      */
-    private $user;
+    private $uuid;
 
     public function getId(): ?int
     {
@@ -60,26 +59,26 @@ class VoteResponse
         return $this;
     }
 
-    public function getValue(): ?int
+    public function getValue(): ?string
     {
         return $this->value;
     }
 
-    public function setValue(int $value): self
+    public function setValue(?string $value): self
     {
         $this->value = $value;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUuid(): ?string
     {
-        return $this->user;
+        return $this->uuid;
     }
 
-    public function setUser(?User $user): self
+    public function setUuid(string $uuid): self
     {
-        $this->user = $user;
+        $this->uuid = $uuid;
 
         return $this;
     }

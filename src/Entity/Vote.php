@@ -49,9 +49,15 @@ class Vote
      */
     private $disabled = 0;
 
+    /**
+     * @ORM\OneToMany(targetEntity=VoteUser::class, mappedBy="vote")
+     */
+    private $voteUsers;
+
     public function __construct()
     {
         $this->voteIssues = new ArrayCollection();
+        $this->voteUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,6 +151,36 @@ class Vote
     public function setDisabled(bool $disabled): self
     {
         $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|VoteUser[]
+     */
+    public function getVoteUsers(): Collection
+    {
+        return $this->voteUsers;
+    }
+
+    public function addVoteUser(VoteUser $voteUser): self
+    {
+        if (!$this->voteUsers->contains($voteUser)) {
+            $this->voteUsers[] = $voteUser;
+            $voteUser->setVote($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoteUser(VoteUser $voteUser): self
+    {
+        if ($this->voteUsers->removeElement($voteUser)) {
+            // set the owning side to null (unless already changed)
+            if ($voteUser->getVote() === $this) {
+                $voteUser->setVote(null);
+            }
+        }
 
         return $this;
     }

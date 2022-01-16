@@ -2,34 +2,38 @@
 
 namespace App\Form\Admin;
 
-use App\Entity\VoteResponse;
+use App\Entity\VoteIssue;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class VoteResponseType extends AbstractType
+class VoteIssueType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('value', ChoiceType::class, [
-                'choices' => array_flip(VoteResponse::VALUES),
+            ->add('content', TextType::class, [
                 'label' => false,
                 'row_attr' => [
-                    'class' => 'form-group-inline',
+                    'class' => 'col-md-5 form-group ',
                 ],
             ])
-            ->add('voteIssue', HiddenType::class)
-            ->add('uder', HiddenType::class)
+            ->add('responseType', ChoiceType::class, [
+                'label' => false,
+                'choices' => array_flip(VoteIssue::RESPONSE_TYPES),
+                'row_attr' => [
+                    'class' => 'col-md-5 form-group ',
+                ],
+            ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => VoteResponse::class,
+            'data_class' => VoteIssue::class,
         ]);
     }
 }

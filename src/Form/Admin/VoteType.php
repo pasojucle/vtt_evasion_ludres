@@ -60,8 +60,8 @@ class VoteType extends AbstractType
             'entry_type' => VoteIssueType::class,
             'entry_options' => [
                 'label' => false,
-                'row_attr' => [
-                    'class' => 'form-group row',
+                'attr' => [
+                    'class' => 'row',
                 ],
             ],
             'allow_add' => true,

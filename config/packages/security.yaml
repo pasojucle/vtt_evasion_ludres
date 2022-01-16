@@ -59,6 +59,7 @@ security:
         - { path: ^/admin/identite, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin/send, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
+        - { path: ^/vote, roles: ROLE_USER, requires_channel: https }
         - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
         - { path: ^/mes-commandes, roles: ROLE_USER, requires_channel: https }
         - { path: ^/ma-commande, roles: ROLE_USER, requires_channel: https }
