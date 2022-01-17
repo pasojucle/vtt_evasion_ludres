@@ -47,7 +47,7 @@ class ParameterType extends AbstractType
                                     'class' => 'row',
                                 ],
                                 'attr' => [
-                                    'class' => 'col-md-8 form-group',
+                                    'class' => 'col-md-11 form-group',
                                 ],
                             ],
                             'allow_add' => true,

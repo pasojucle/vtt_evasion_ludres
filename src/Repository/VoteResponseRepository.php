@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Vote;
 use App\Entity\VoteResponse;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method VoteResponse|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +21,29 @@ class VoteResponseRepository extends ServiceEntityRepository
         parent::__construct($registry, VoteResponse::class);
     }
 
-    // /**
-    //  * @return VoteResponse[] Returns an array of VoteResponse objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return VoteResponse[] Returns an array of VoteResponse objects
+     */
+
+    public function findResponsesByUuid(Vote $vote): array
     {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('v.id', 'ASC')
-            ->setMaxResults(10)
+        $responses = $this->createQueryBuilder('r')
+            ->join('r.voteIssue', 'i')
+            ->andWhere(
+                (new Expr())->eq('i.vote', ':vote')
+            )
+            ->setParameter('vote', $vote)
             ->getQuery()
             ->getResult()
         ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?VoteResponse
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $responsedByUuid = [];
+        if (!empty($responses)) {
+            foreach ($responses as $response) {
+                $responsedByUuid[$response->getUuid()]['responses'][] = $response;
+            }
+        }
+
+        return $responsedByUuid;
     }
-    */
 }

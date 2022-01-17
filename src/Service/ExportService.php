@@ -2,11 +2,17 @@
 
 namespace App\Service;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Entity\Vote;
+use App\Entity\VoteIssue;
+use App\Entity\VoteResponse;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExportService
 {
+    public function __construct(private TranslatorInterface $translator)
+    {
+        
+    }
     public function exportUsers(array $users): string
     {
         $content = [];

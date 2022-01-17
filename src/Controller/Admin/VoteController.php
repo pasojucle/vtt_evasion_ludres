@@ -5,12 +5,16 @@ namespace App\Controller\Admin;
 use App\Entity\Vote;
 use App\Entity\VoteIssue;
 use App\Form\Admin\VoteType;
-use App\Repository\VoteRepository;
+use App\UseCase\Vote\VoteExport;
 use App\Service\ParameterService;
+use App\Repository\VoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\VoteResponseRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('admin/vote')]
@@ -28,7 +32,7 @@ class VoteController extends AbstractController
         ]);
     }
 
-    #[Route('/{vote}', name: 'admin_vote_edit', methods: ['GET', 'POST'], defaults:['vote' => null])]
+    #[Route('/edite/{vote}', name: 'admin_vote_edit', methods: ['GET', 'POST'], defaults:['vote' => null])]
     public function edit(Request $request, ParameterService $parameterService, ?Vote $vote): Response
     {
         if (!$vote) {
@@ -60,15 +64,45 @@ class VoteController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{vote}', name: 'admin_vote_delete', methods: ['POST'])]
+    #[Route('export/{vote}', name: 'admin_vote_export', methods: ['GET'])]
+    public function export(VoteExport $voteExport, VoteResponseRepository $voteResponseRepository, Vote $vote): Response
+    {  
+        $content = $voteExport->execute($vote, $voteResponseRepository->findResponsesByUuid($vote));
+
+        $response = new Response($content);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            'export_vote_a_g.csv'
+        );
+        
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
+    }
+
+    #[Route('/disable/{vote}', name: 'admin_vote_disable', methods: ['GET','POST'])]
     public function delete(Request $request, Vote $vote): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$vote->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($vote);
-            $entityManager->flush();
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl('admin_vote_disable', 
+                [
+                    'vote'=> $vote->getId(),
+                ]
+            ),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $vote->setDisabled(true);
+            $this->entityManager->persist($vote);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_votes');
         }
 
-        return $this->redirectToRoute('admin_vote_list');
+        return $this->render('vote/admin/disable.modal.html.twig', [
+            'vote' => $vote,
+            'form' => $form->createView(),
+        ]);    
     }
 }

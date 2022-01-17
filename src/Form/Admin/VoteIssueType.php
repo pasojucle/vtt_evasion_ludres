@@ -17,14 +17,14 @@ class VoteIssueType extends AbstractType
             ->add('content', TextType::class, [
                 'label' => false,
                 'row_attr' => [
-                    'class' => 'col-md-5 form-group ',
+                    'class' => 'col-md-7 form-group ',
                 ],
             ])
             ->add('responseType', ChoiceType::class, [
                 'label' => false,
                 'choices' => array_flip(VoteIssue::RESPONSE_TYPES),
                 'row_attr' => [
-                    'class' => 'col-md-5 form-group ',
+                    'class' => 'col-md-4 form-group ',
                 ],
             ])
         ;
