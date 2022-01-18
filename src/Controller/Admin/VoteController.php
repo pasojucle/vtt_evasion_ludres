@@ -3,13 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Vote;
-use App\Entity\VoteIssue;
 use App\Form\Admin\VoteType;
-use App\UseCase\Vote\VoteExport;
-use App\Service\ParameterService;
+use App\UseCase\Vote\ExportVote;
 use App\Repository\VoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\VoteResponseRepository;
+use App\UseCase\Vote\GetVote;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,20 +32,9 @@ class VoteController extends AbstractController
     }
 
     #[Route('/edite/{vote}', name: 'admin_vote_edit', methods: ['GET', 'POST'], defaults:['vote' => null])]
-    public function edit(Request $request, ParameterService $parameterService, ?Vote $vote): Response
+    public function edit(Request $request, GetVote $getVote, ?Vote $vote): Response
     {
-        if (!$vote) {
-            $vote = new Vote();
-            $voteIssues = $parameterService->getParameterByName('VOTE_ISSUES');
-            $vote->setContent($parameterService->getParameterByName('VOTE_CONTENT'));
-            if (!empty($voteIssues)) {
-                foreach ($voteIssues as $voteIssue) {
-                    $issue = new VoteIssue();
-                    $issue->setContent($voteIssue);
-                    $vote->addVoteIssue($issue);
-                }
-            }
-        }
+        $getVote->execute($vote);
         $form = $this->createForm(VoteType::class, $vote);
         $form->handleRequest($request);
 
@@ -65,9 +53,9 @@ class VoteController extends AbstractController
     }
 
     #[Route('export/{vote}', name: 'admin_vote_export', methods: ['GET'])]
-    public function export(VoteExport $voteExport, VoteResponseRepository $voteResponseRepository, Vote $vote): Response
+    public function export(ExportVote $export, VoteResponseRepository $voteResponseRepository, Vote $vote): Response
     {  
-        $content = $voteExport->execute($vote, $voteResponseRepository->findResponsesByUuid($vote));
+        $content = $export->execute($vote, $voteResponseRepository->findResponsesByUuid($vote));
 
         $response = new Response($content);
         $disposition = HeaderUtils::makeDisposition(

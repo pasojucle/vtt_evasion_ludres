@@ -41,6 +41,7 @@ $(document).ready(function(){
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
     $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
+    $(document).on('click', '.fa-clipboard', clipboard);
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
@@ -317,6 +318,13 @@ function toggleDown(e) {
     document.cookie = "admin_menu_actived = "+cookieValue;
 }
 
+function clipboard(event) {
+    event.preventDefault();
+    console.log($(this).parent().attr('href'));
+    const value = $(this).parent().attr('href');
+    navigator.clipboard.writeText(value);
+}
+
 function addDown(e) {
     $(this).closest('div.block').find('i').removeClass('fa-caret-square-up').addClass('fa-caret-square-down');
 }
@@ -346,7 +354,6 @@ const addFormToCollection = (e) => {
 
   const addTagFormDeleteLink = (itemFormLi) => {
     const row = $(itemFormLi).find('.row');
-    console.log(row);
     const removeFormButton = document.createElement('button');
     removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger', 'col-md-1', 'form-group');
     removeFormButton.innerHTML ='<i class="fas fa-times"></i>';

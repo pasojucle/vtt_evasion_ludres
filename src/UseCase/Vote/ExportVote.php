@@ -7,7 +7,7 @@ use App\Entity\VoteIssue;
 use App\Entity\VoteResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class VoteExport
+class ExportVote
 {
     public function __construct(private TranslatorInterface $translator)
     {

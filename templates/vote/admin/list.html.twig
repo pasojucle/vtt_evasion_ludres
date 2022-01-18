@@ -17,8 +17,9 @@
                         <li>
                             <div>
                                 <div class="row row-list">
-                                    <div class="col-md-9 col-xs-8 background-ligth">{{ vote.title }}</div>
-                                    <div class="col-md-3 col-xs-4">
+                                    <div class="col-md-8 col-xs-6 background-ligth">{{ vote.title }}</div>
+                                    <div class="col-md-4 col-xs-6">
+                                        <a class="btn btn-success btn-ico" href="{{ absolute_url(path('vote', {'vote': vote.id} ))}}" title="Copier l'url"><i class="fas fa-clipboard"></i></a>
                                         <a class="btn btn-success btn-ico" href="{{ path('admin_vote_export', {'vote': vote.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
                                     {% if not vote.isDisabled %}
                                         <a class="btn btn-primary btn-ico" href="{{ path('admin_vote_edit', {'vote': vote.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
