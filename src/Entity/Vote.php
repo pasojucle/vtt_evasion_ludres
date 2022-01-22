@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\VoteRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\VoteRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=VoteRepository::class)
@@ -40,7 +40,7 @@ class Vote
     private $endAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=VoteIssue::class, mappedBy="vote", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=VoteIssue::class, mappedBy="vote", cascade={"persist", "remove"}, fetch="EAGER", orphanRemoval=true)
      */
     private $voteIssues;
 

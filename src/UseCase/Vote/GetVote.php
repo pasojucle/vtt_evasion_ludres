@@ -14,7 +14,7 @@ class GetVote
     {
         
     }
-    public function execute(Vote &$vote)
+    public function execute(?Vote &$vote)
     {
         if (!$vote) {
             $vote = new Vote();

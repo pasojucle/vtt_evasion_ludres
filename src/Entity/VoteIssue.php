@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\VoteIssueRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\VoteIssueRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=VoteIssueRepository::class)
@@ -28,7 +28,7 @@ class VoteIssue
 
     /**
      * @ORM\ManyToOne(targetEntity=Vote::class, inversedBy="voteIssues")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(name="vote_id", referencedColumnName="id", nullable=false)
      */
     private $vote;
 
@@ -38,7 +38,7 @@ class VoteIssue
     private $content;
 
     /**
-     * @ORM\OneToMany(targetEntity=VoteResponse::class, mappedBy="voteIssue")
+     * @ORM\OneToMany(targetEntity=VoteResponse::class, mappedBy="voteIssue", cascade={"persist", "remove"})
      */
     private $voteResponses;
 

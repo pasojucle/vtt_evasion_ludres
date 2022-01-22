@@ -320,7 +320,6 @@ function toggleDown(e) {
 
 function clipboard(event) {
     event.preventDefault();
-    console.log($(this).parent().attr('href'));
     const value = $(this).parent().attr('href');
     navigator.clipboard.writeText(value);
 }
