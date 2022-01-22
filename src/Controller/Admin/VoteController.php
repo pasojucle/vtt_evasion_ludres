@@ -4,11 +4,11 @@ namespace App\Controller\Admin;
 
 use App\Entity\Vote;
 use App\Form\Admin\VoteType;
+use App\UseCase\Vote\GetVote;
 use App\UseCase\Vote\ExportVote;
 use App\Repository\VoteRepository;
+use App\UseCase\Vote\GetVoteResults;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\VoteResponseRepository;
-use App\UseCase\Vote\GetVote;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,10 +52,21 @@ class VoteController extends AbstractController
         ]);
     }
 
+    #[Route('/{vote}/{tab}', name: 'admin_vote', methods: ['GET'], defaults: ['tab' => 0])]
+    public function show(GetVoteResults $getVoteResults, Vote $vote, int $tab): Response
+    {
+        return $this->renderForm('vote/admin/show.html.twig', [
+            'vote' => $vote,
+            'results' => $getVoteResults->execute($vote),
+            'tabs' => ['Réponses', 'Participants'],
+            'tab' => $tab,
+        ]);
+    }
+
     #[Route('export/{vote}', name: 'admin_vote_export', methods: ['GET'])]
-    public function export(ExportVote $export, VoteResponseRepository $voteResponseRepository, Vote $vote): Response
+    public function export(ExportVote $export, Vote $vote): Response
     {  
-        $content = $export->execute($vote, $voteResponseRepository->findResponsesByUuid($vote));
+        $content = $export->execute($vote);
 
         $response = new Response($content);
         $disposition = HeaderUtils::makeDisposition(

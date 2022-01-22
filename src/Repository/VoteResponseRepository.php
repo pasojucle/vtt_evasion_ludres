@@ -27,15 +27,7 @@ class VoteResponseRepository extends ServiceEntityRepository
 
     public function findResponsesByUuid(Vote $vote): array
     {
-        $responses = $this->createQueryBuilder('r')
-            ->join('r.voteIssue', 'i')
-            ->andWhere(
-                (new Expr())->eq('i.vote', ':vote')
-            )
-            ->setParameter('vote', $vote)
-            ->getQuery()
-            ->getResult()
-        ;
+        $responses = $this->findResponsesByVote($vote);
 
         $responsedByUuid = [];
         if (!empty($responses)) {
@@ -46,4 +38,32 @@ class VoteResponseRepository extends ServiceEntityRepository
 
         return $responsedByUuid;
     }
+    
+    public function findResponsesByIssues(Vote $vote): array
+    {
+        $responses = $this->findResponsesByVote($vote);
+
+        $responsedByIssue = [];
+        if (!empty($responses)) {
+            foreach ($responses as $response) {
+                $responsedByIssue[$response->getVoteIssue()->getId()][] = $response;
+            }
+        }
+
+        return $responsedByIssue;
+    }
+
+    public function findResponsesByVote(Vote $vote): array
+    {
+        return $this->createQueryBuilder('r')
+            ->join('r.voteIssue', 'i')
+            ->andWhere(
+                (new Expr())->eq('i.vote', ':vote')
+            )
+            ->setParameter('vote', $vote)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 }

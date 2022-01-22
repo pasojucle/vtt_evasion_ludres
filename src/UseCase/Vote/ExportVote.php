@@ -5,21 +5,26 @@ namespace App\UseCase\Vote;
 use App\Entity\Vote;
 use App\Entity\VoteIssue;
 use App\Entity\VoteResponse;
+use App\Repository\VoteResponseRepository;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExportVote
 {
-    public function __construct(private TranslatorInterface $translator)
+    public function __construct(
+        private TranslatorInterface $translator, 
+        private VoteResponseRepository $voteResponseRepository,
+    )
     {
         
     }
 
-    public function execute(Vote $vote, array $voteResponsesByUuid): string
+    public function execute(Vote $vote): string
     {
+        $voteResponsesByUuid = $this->voteResponseRepository->findResponsesByUuid($vote);
         $content = [];
         $today = new DateTime();
-        $content[] = 'Export du '.$today->format('d/m/Y H:i:s');
+        $content[] = 'Export du '.$today->format('d/m/Y H:i:s').' - '.$vote->getTitle();
         $content[] = '';
         $header = [];
         $header[0] = 'Identifiant';
@@ -68,22 +73,24 @@ class ExportVote
 
     private function GetResults(array $voteResponsesByUuid): array
     {
+        $values = [];
+        foreach(array_keys(VoteResponse::VALUES) as $choice) {
+            $values[$choice] = 0;
+        }
         $results = [];
         foreach ($voteResponsesByUuid as $data) {
             foreach ($data['responses'] as $response) {
                 if (VoteIssue::RESPONSE_TYPE_CHOICE === $response->getVoteIssue()->getResponseType()) {
                     $voteIssueId = $response->getVoteIssue()->getId();
-                    if (array_key_exists($response->getValue(), $results) && array_key_exists($voteIssueId, $results[$response->getValue()])) {
-                        ++$results[$response->getValue()][$voteIssueId];
-                    } else {
-                        $results[$response->getValue()][$voteIssueId] = 1;
+                    if (!array_key_exists($response->getValue(), $results)) {
+                        $results[$response->getValue()] = $values;
                     }
+                    ++$results[$response->getValue()][$voteIssueId];
                 } 
             }
         }
         return $results;
     }
-
     private function addRecap(array &$content, array $results, Vote $vote): void
     {
         $content[] = '';
@@ -98,8 +105,6 @@ class ExportVote
                     foreach ($vote->getVoteIssues() as $issue) {
                         if (array_key_exists($issue->getId(), $resultsByChoice)) {
                             $row[] = $resultsByChoice[$issue->getId()];
-                        } else {
-                            $row[] = '';
                         }
                     }
                 }
