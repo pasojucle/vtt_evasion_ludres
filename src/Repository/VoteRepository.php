@@ -2,9 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Vote;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Vote|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +22,44 @@ class VoteRepository extends ServiceEntityRepository
         parent::__construct($registry, Vote::class);
     }
 
-    // /**
-    //  * @return Vote[] Returns an array of Vote objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Vote[] Returns an array of Vote objects
+     */
+
+    public function findActiveQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere(
+                (new Expr())->eq('v.disabled', 0),
+                (new Expr())->lte('v.startAt', 'CURRENT_DATE()'),
+                (new Expr())->gte('v.endAt', 'CURRENT_DATE()'),
+            )
             ->orderBy('v.id', 'ASC')
-            ->setMaxResults(10)
+        ;
+    }
+
+    public function findActive()
+    {
+        $qb = $this->findActiveQuery();
+        return $qb
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Vote
+    public function findActiveVotesByUser(User $user): array
     {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
+        $qb = $this->findActiveQuery();
+        return $qb
+            ->join('v.voteUsers', 'vu')
+            ->andWhere(
+                (new Expr())->eq('vu.user', ':user'),
+            )
+            ->setParameters([
+                'user' => $user,
+            ])
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult()
+    ;
     }
-    */
 }

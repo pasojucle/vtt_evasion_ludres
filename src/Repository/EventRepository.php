@@ -8,8 +8,6 @@ use Doctrine\ORM\Query\Expr;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use Doctrine\DBAL\Query\QueryBuilder as QueryQueryBuilder;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**

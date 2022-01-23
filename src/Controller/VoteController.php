@@ -6,6 +6,7 @@ use App\Entity\Vote;
 use App\Entity\VoteResponse;
 use App\Entity\VoteUser;
 use App\Form\VoteResponsesType;
+use App\Repository\VoteRepository;
 use App\Repository\VoteUserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -87,6 +88,21 @@ class VoteController extends AbstractController
             'voteUser' => $voteUser,
             'form' => ($form) ? $form->createView(): $form,
             'message' => $message,
+        ]);
+    }
+
+
+    /**
+     * @Route("/mes_votes", name="user_votes")
+     */
+    public function votes(
+        VoteRepository $voteRepository
+    ): Response
+    {
+
+        return $this->render('vote/list.html.twig', [
+            'votes' => $voteRepository->findActive($this->getUser()),
+            'user_votes' => $voteRepository->findActiveVotesByUser($this->getUser()),
         ]);
     }
 }
