@@ -62,4 +62,17 @@ class MembershipFeeAmount
 
         return $this;
     }
+
+
+    public function getMembershipFee(): ?MembershipFee
+    {
+        return $this->membershipFee;
+    }
+
+    public function setMembershipFee(?MembershipFee $membershipFee): self
+    {
+        $this->membershipFee = $membershipFee;
+
+        return $this;
+    }
 }

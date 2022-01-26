@@ -367,12 +367,6 @@ button[type="submit"] {
     max-height: 200px;
     margin: 10px;
 }
-.align-center {
-    text-align: center;
-}
-.align-right {
-    text-align: right;
-}
 .table-border {
     border: 2px solid var(--background-color);
     border-collapse: collapse;

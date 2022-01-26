@@ -283,6 +283,21 @@ body > script {display: none !important;}
     min-width: 45px;
     text-align: center;
 }
+.btn-pencil {
+    position: relative;
+}
+
+.btn-pencil::after {
+    content: '\f303';
+    position: absolute;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 14px;
+    position: absolute;
+    color: var(--background-color);
+    top: -5px;
+    right: -5px;
+}
 .btn-ico:not(:last-child) {
     /* margin-right: 15px; */
 }
@@ -407,6 +422,12 @@ body {
 }
 .form-group-small {
     width: 100px;
+}
+.form-group-medium-width {
+    width: 100%;
+    margin: unset;
+    padding: 5% 20%;
+    box-sizing: border-box;
 }
 .hidden , .form-group-inline.hidden {
     display: none;
@@ -689,6 +710,12 @@ input[type="file"] {
 }
 .marging-bottom-20 {
     margin-bottom: 20px;
+}
+.align-center {
+    text-align: center;
+}
+.align-right {
+    text-align: right;
 }
 .info {
     color: var(--primary-color-darker);

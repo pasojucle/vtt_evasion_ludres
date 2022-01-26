@@ -13,16 +13,11 @@ use App\Service\UploadService;
 use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
-use App\Service\IdentityService;
 use App\Service\ParameterService;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
-use App\Repository\UserRepository;
 use App\Service\RegistrationService;
 use App\Repository\ContentRepository;
-use Symfony\Component\Form\FormError;
-use App\Repository\IdentityRepository;
-use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
 use App\UseCase\RegistrationStep\GetReplaces;
@@ -34,16 +29,12 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Repository\RegistrationStepGroupRepository;
 use App\Service\OrderByService;
-use App\Service\ReplaceKeywordsService;
 use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegistrationController extends AbstractController
 {

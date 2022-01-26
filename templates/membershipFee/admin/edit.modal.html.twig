@@ -1,0 +1,18 @@
+{% extends 'base_modal.html.twig' %}
+{% set button_href = path('admin_membership_fee_edit', {'amount' : amount.id}) %}
+{% block form %}{% set form = null%}{% endblock %}
+{% block modal_title %}Modifier{% endblock %}
+{% block body %}
+    <div class="form-group-medium-width">
+        <h3>{{ amount.membershipFee.title }}
+        {% if amount.coverage is not null %}
+            <br>{{ constant('App\\Entity\\Licence::COVERAGES')[amount.coverage]|trans }}
+        {% endif %}
+        </h3>
+        {{ form_row(form.amount) }}
+    </div>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Modifier' %}
+    {{ parent() }}
+{% endblock %}

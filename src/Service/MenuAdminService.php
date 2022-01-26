@@ -107,6 +107,12 @@ class MenuAdminService
                  'role' => 'ROLE_ADMIN',
             ],
             [
+                'label' => 'Tarifs',
+                 'route' => 'admin_membership_fee',
+                 'pattern' => '/tarifs/',
+                 'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Paramètres',
                  'route' => 'admin_groups_parameter',
                  'pattern' => '/parameter/',

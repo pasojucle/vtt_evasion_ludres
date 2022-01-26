@@ -16,13 +16,7 @@
                         {{ membership_fee.content }}
                     </td>
                     {% for membershipFeeAmount in membership_fee.membershipFeeAmounts %}
-                        {% if membershipFeeAmount.coverage == constant('App\\entity\\Licence::COVERAGE_MINI_GEAR') %}
-                            <td>{{ membershipFeeAmount.amount }} €</td>
-                        {% elseif membershipFeeAmount.coverage == constant('App\\entity\\Licence::COVERAGE_SMALL_GEAR') %}
-                            <td>{{ membershipFeeAmount.amount }} €</td>
-                        {% elseif membershipFeeAmount.coverage == constant('App\\entity\\Licence::COVERAGE_HIGH_GEAR') %}
-                            <td>{{ membershipFeeAmount.amount }} €</td>
-                        {% endif %}
+                        <td>{{ membershipFeeAmount.amount }} €</td>
                     {% endfor %}
                 {% else %}
                     <td colspan="4">{{ membership_fee.title }} : {{ membership_fee.membershipFeeAmounts[0].amount }} €/an</td>

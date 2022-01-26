@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\MembershipFeeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
+use App\Repository\MembershipFeeRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=MembershipFeeRepository::class)
@@ -36,6 +37,7 @@ class MembershipFee
 
     /**
      * @ORM\OneToMany(targetEntity=MembershipFeeAmount::class, mappedBy="membershipFee")
+     * @OrderBy({"coverage" = "ASC"})
      */
     private $membershipFeeAmounts;
 
