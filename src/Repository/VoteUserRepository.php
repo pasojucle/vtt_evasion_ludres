@@ -42,4 +42,32 @@ class VoteUserRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+    public function findActiveVotesByUser(User $user): array
+    {
+        $userVotes = $this->createQueryBuilder('vu')
+            ->join('vu.vote', 'v')
+            ->andWhere(
+                (new Expr())->eq('vu.user', ':user'),
+                (new Expr())->eq('v.disabled', 0),
+                (new Expr())->lte('v.startAt', 'CURRENT_DATE()'),
+                (new Expr())->gte('v.endAt', 'CURRENT_DATE()'),
+            )
+            ->setParameters([
+                'user' => $user,
+            ])
+            ->getQuery()
+            ->getResult()
+        ;
+        $votes = [];
+        $votesCreatedAt = [];
+        if (!empty($userVotes)) {
+            foreach ($userVotes as $userVote) {
+                $vote = $userVote->getVote();
+                $votes[] = $vote;
+                $votesCreatedAt[$vote->getId()] = $userVote->getCreatedAt();
+            }
+        }
+        return ['votes' => $votes, 'votesCreatedAt' => $votesCreatedAt];
+    }
 }

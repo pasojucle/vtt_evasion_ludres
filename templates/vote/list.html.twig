@@ -19,14 +19,18 @@
                                     <li>
                                         <div class="row">
                                             <div class="col-md-5"><b>{{ vote.title }}</b></div>
-                                            <div class="col-md-4">du {{ vote.startAt|date('d/m/Y') }} au {{ vote.endAt|date('d/m/Y') }}</div>
-                                            <div class="col-md-3">
-                                                {% if vote in user_votes %}
-                                                    <span class="info">Effectué</span>
-                                                {% else %}
+
+                                            {% if vote in user_votes.votes %}
+                                                <div class="col-md-7">
+                                                    <span class="info">Vote éffectué le {{ user_votes.votesCreatedAt[vote.id]|date('d/m/Y H:i:s') }}</span>
+                                                </div>
+                                            {% else %}
+                                                <div class="col-md-4">du {{ vote.startAt|date('d/m/Y') }} au {{ vote.endAt|date('d/m/Y') }}</div>
+                                                <div class="col-md-3">
                                                     <a href="{{ path('vote', {'vote': vote.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voter</a>
-                                                {% endif %}
-                                            </div>
+                                                </div>
+                                            {% endif %}
+                                            
                                         </div>
                                     </li>
                                 {% endfor %}

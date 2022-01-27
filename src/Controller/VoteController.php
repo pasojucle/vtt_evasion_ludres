@@ -96,13 +96,14 @@ class VoteController extends AbstractController
      * @Route("/mes_votes", name="user_votes")
      */
     public function votes(
-        VoteRepository $voteRepository
+        VoteRepository $voteRepository,
+        VoteUserRepository $voteUserRepository
     ): Response
     {
 
         return $this->render('vote/list.html.twig', [
             'votes' => $voteRepository->findActive($this->getUser()),
-            'user_votes' => $voteRepository->findActiveVotesByUser($this->getUser()),
+            'user_votes' => $voteUserRepository->findActiveVotesByUser($this->getUser()),
         ]);
     }
 }

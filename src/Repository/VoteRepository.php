@@ -46,20 +46,4 @@ class VoteRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-    public function findActiveVotesByUser(User $user): array
-    {
-        $qb = $this->findActiveQuery();
-        return $qb
-            ->join('v.voteUsers', 'vu')
-            ->andWhere(
-                (new Expr())->eq('vu.user', ':user'),
-            )
-            ->setParameters([
-                'user' => $user,
-            ])
-            ->getQuery()
-            ->getResult()
-    ;
-    }
 }

@@ -47,7 +47,6 @@ class MembershipFeeController extends AbstractController
         MembershipFeeAmount $amount
     ): Response
     {
-        dump($amount);
         $form = $this->createForm(MembershipFeeAmountType::class, $amount, [
             'action' => $this->generateUrl('admin_membership_fee_edit', 
                 [
