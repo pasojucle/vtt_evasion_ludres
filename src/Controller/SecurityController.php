@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\LoginType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,8 +25,9 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
+        $form = $this->createForm(LoginType::class, ['licenceNumber' => $lastUsername]);
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', ['form' => $form->createView(), 'error' => $error]);
     }
 
     /**
@@ -44,8 +46,6 @@ class SecurityController extends AbstractController
         FormFactoryInterface $formFactory
         )
     {
-
-
         $form = $formFactory->create();
         if ($request->isXmlHttpRequest()) {
             return $this->render('security/logout.modal.html.twig', [

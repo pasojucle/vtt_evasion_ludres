@@ -23,19 +23,26 @@ security:
     access_decision_manager:
         strategy: unanimous
         allow_if_all_abstain: false
-        
+    
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
-            guard:
-                authenticators:
-                    - App\Security\LoginFormAuthenticator
+            provider: app_user_provider
+            custom_authenticators:
+                - App\Security\LoginAuthenticator
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
             logout:
                 path: app_logout
+
+            remember_me:
+                secret:   '%kernel.secret%' # required
+                lifetime: 604800 # 1 week in seconds
             switch_user: 
                 provider: app_user_provider
 

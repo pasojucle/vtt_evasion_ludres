@@ -2,31 +2,37 @@
 
 namespace App\UseCase\Registration;
 
-use App\Entity\Identity;
 use DateTime;
 use DateInterval;
+use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Licence;
-use App\Entity\User;
+use App\Entity\Identity;
+use App\Service\MailerService;
 use App\Service\UploadService;
+use App\Service\LicenceService;
+use App\Validator\UniqueMember;
+use App\Service\IdentityService;
 use App\ViewModel\UserPresenter;
+use App\Service\ParameterService;
 use App\Repository\UserRepository;
+use App\Security\LoginAuthenticator;
 use Symfony\Component\Form\FormError;
 use App\Repository\IdentityRepository;
 use App\Security\LoginFormAuthenticator;
-use App\Service\IdentityService;
-use App\Service\LicenceService;
-use App\Service\MailerService;
-use App\Service\ParameterService;
-use App\Validator\UniqueMember;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Http\SecurityEvents;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class EditRegistration
 {
@@ -37,15 +43,16 @@ class EditRegistration
         private IdentityRepository $identityRepository,
         private UserPresenter $userPresenter,
         private UserPasswordHasherInterface $passwordHasher,
-        private GuardAuthenticatorHandler $guardHandler,
         private RequestStack $requestStack,
-        private LoginFormAuthenticator $authenticator,
+        private LoginAuthenticator $authenticator,
         private UrlGeneratorInterface $urlGenerator,
         private IdentityService $identityService,
         private LicenceService $licenceService,
         private ParameterService $parameterService,
         private MailerService $mailerService,
-        private ValidatorInterface $validator
+        private ValidatorInterface $validator,
+        private EventDispatcherInterface $dispatcher,
+        private TokenStorageInterface $tokenStorage
     )
     {
     }
@@ -182,12 +189,10 @@ class EditRegistration
 
     private function authenticating(Request $request, User $user):void
     {
-        $this->requestStack->getSession()->set('registrationPath', 'user_registration_form');
-        $this->guardHandler->authenticateUserAndHandleSuccess(
-            $user,
-            $request,
-            $this->authenticator,
-            'main'
-        );
+        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+        $this->tokenStorage->setToken($token);
+
+        $event = new SecurityEvents($request);
+        $this->dispatcher->dispatch($event, SecurityEvents::INTERACTIVE_LOGIN);
     }
 }

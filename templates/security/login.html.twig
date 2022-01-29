@@ -10,6 +10,7 @@
         </div>
         <div class="block background-green block-small background-color reveal">
             <div class="block-body">
+                {{ form_start(form) }}
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
@@ -19,35 +20,21 @@
                         Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
                     </div>
                 {% endif %}
-                <div class="form-group">
-                    <label for="inputLicenceNumber">Numéro de licence</label>
-                    <input type="licenceNumber" value="{{ last_username }}" name="licenceNumber" id="inputLicenceNumber" class="form-control" autocomplete="userName" required autofocus>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword">Mot de passe</label>
-                    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-                </div>
-                <input type="hidden" name="_csrf_token"
-                    value="{{ csrf_token('authenticate') }}"
-                >
-                <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié</a><br>
-                <a href="{{ path('login_help') }}">Aide à la connexion</a>
-                {#
-                    Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-                    See https://symfony.com/doc/current/security/remember_me.html
+                {{ form_row(form.licenceNumber) }}
+                {{ form_row(form.password) }}
+                {{ form_row(form._rememberMe) }}
 
-                    <div class="checkbox mb-3">
-                        <label>
-                            <input type="checkbox" name="_remember_me"> Remember me
-                        </label>
-                    </div>
-                #}
                 <div class="block-footer">
+                    <div class="float-left">
+                        <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié</a><br>
+                        <a href="{{ path('login_help') }}">Aide à la connexion</a>
+                    </div>
 
                     <button class="btn btn-primary float-right" type="submit">
                         <i class="fas fa-check-circle"></i> Se connecter
                     </button>
                 </div>
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
