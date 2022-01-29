@@ -23,6 +23,7 @@ class OrderViewModel extends AbstractViewModel
         $orderView->user = UserViewModel::fromUser($orderHeader->getUser(),  $services);
         $orderView->status = $orderHeader->getStatus();
         $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $orderView->user, $services);
+        $orderView->amount = $orderView->getAmount();
 
         return $orderView;
     }
