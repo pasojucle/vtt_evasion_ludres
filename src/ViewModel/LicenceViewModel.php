@@ -36,35 +36,37 @@ class LicenceViewModel extends AbstractViewModel
         Licence::STATUS_VALID => 'success',
     ];
 
-    public static function fromLicence(Licence $licence, bool $isNewMember, array $services)
+    public static function fromLicence(?Licence $licence, bool $isNewMember, array $services)
     {
-        $status = $licence->getStatus();
-        if ($licence->getSeason() !== $services['currentSeason']) {
-            if ($services['seasonsStatus'][Licence::STATUS_NONE] >= $licence->getSeason()) {
-                $status = Licence::STATUS_NONE;
-            }
-            if ($services['seasonsStatus'][Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
-                $status = Licence::STATUS_WAITING_RENEW;
-            }
-        }
         $licenceView = new self();
-        $licenceView->entity = $licence;
-        $licenceView->services = $services;
-        $licenceView->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
-        $licenceView->season = $licence->getSeason();
-        $licenceView->isFinal = $licence->isFinal();
-        $licenceView->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
-        $licenceView->coverageStr = (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
-        $licenceView->hasFamilyMember = $licence->getAdditionalFamilyMember();
-        $licenceView->category = $licence->getCategory();
-        $licenceView->statusClass = self:: STATUS_CLASS[$status];
-        $licenceView->status = $status;
-        $licenceView->statusStr = Licence::STATUS[$status];
-        $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
-        $licenceView->lock = $licence->getSeason() !== $services['currentSeason'];
+        if ($licence) {
+            $status = $licence->getStatus();
+            if ($licence->getSeason() !== $services['currentSeason']) {
+                if ($services['seasonsStatus'][Licence::STATUS_NONE] >= $licence->getSeason()) {
+                    $status = Licence::STATUS_NONE;
+                }
+                if ($services['seasonsStatus'][Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
+                    $status = Licence::STATUS_WAITING_RENEW;
+                }
+            }
+            $licenceView->entity = $licence;
+            $licenceView->services = $services;
+            $licenceView->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
+            $licenceView->season = $licence->getSeason();
+            $licenceView->isFinal = $licence->isFinal();
+            $licenceView->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
+            $licenceView->coverageStr = (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
+            $licenceView->hasFamilyMember = $licence->getAdditionalFamilyMember();
+            $licenceView->category = $licence->getCategory();
+            $licenceView->statusClass = self:: STATUS_CLASS[$status];
+            $licenceView->status = $status;
+            $licenceView->statusStr = Licence::STATUS[$status];
+            $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
+            $licenceView->lock = $licence->getSeason() !== $services['currentSeason'];
 
-        $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';  
-        $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
+            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';  
+            $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
+        }
 
         return $licenceView;
     }

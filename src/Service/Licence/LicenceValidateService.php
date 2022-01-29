@@ -27,7 +27,7 @@ class LicenceValidateService
         $status = ($licence->isFinal()) ? Licence::STATUS_VALID : Licence::STATUS_TESTING;
         $licence->setStatus($status);
         $this->entityManager->persist($licence);
-        $data = $request->request->get('licence_validate');
+        $data = $request->request->all('licence_validate');
         $this->setLicenceNumber($data, $user);
         $this->sendMail($licenceNumber, $user);
         $this->setMedicalCertificateDate($data, $user);

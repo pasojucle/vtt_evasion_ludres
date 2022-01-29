@@ -4,12 +4,8 @@ namespace App\UseCase\FormValidator;
 
 use DateTime;
 use Twig\Environment;
-use App\Validator\Phone;
-use App\Validator\Password;
 use App\Validator\BirthDate;
-use App\Validator\PostalCode;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
