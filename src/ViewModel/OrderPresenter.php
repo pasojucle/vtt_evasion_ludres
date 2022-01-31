@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
 use App\Entity\OrderHeader;
-use App\ViewModel\OrderViewModel;
 
 class OrderPresenter extends AbstractPresenter
 {
@@ -16,10 +17,8 @@ class OrderPresenter extends AbstractPresenter
         }
     }
 
-
     public function viewModel(): OrderViewModel
     {
         return $this->viewModel;
     }
-
 }

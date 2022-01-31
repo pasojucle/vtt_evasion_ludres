@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 
 class ToolImportType extends AbstractType
 {
@@ -17,7 +18,7 @@ class ToolImportType extends AbstractType
             ->add('userList', FileType::class, [
                 'label' => 'Fichier',
                 'attr' => [
-                    'accept' => '.csv'
+                    'accept' => '.csv',
                 ],
                 'block_prefix' => 'custom_file',
                 // 'constraints' => [
@@ -32,9 +33,10 @@ class ToolImportType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Importer',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
             ;
-        
     }
 }

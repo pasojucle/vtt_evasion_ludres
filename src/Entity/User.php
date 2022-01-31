@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use DateTime;
-use App\Entity\Identity;
-use App\Validator\UniqueMember;
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -19,6 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const APPROVAL_RIGHT_TO_THE_IMAGE = 1;
+
     public const APPROVAL_GOING_HOME_ALONE = 2;
 
     public const APPROVALS = [
@@ -136,8 +136,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->licenceNumber;
     }
 
-        /**
-     * The public representation of the user (e.g. a username, an email address, etc.)
+    /**
+     * The public representation of the user (e.g. a username, an email address, etc.).
      *
      * @see UserInterface
      */
@@ -167,16 +167,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addRole(string $role): self
     {
-        if (!in_array($role, $this->roles)) {
+        if (! in_array($role, $this->roles, true)) {
             $this->roles[] = $role;
         }
-        
+
         return $this;
     }
 
     public function removeRole(string $role): self
     {
-        $key = array_search($role, $this->roles);
+        $key = array_search($role, $this->roles, true);
 
         if (false !== $key) {
             unset($this->roles[$key]);
@@ -187,7 +187,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function hasRole(string $role): bool
     {
-        return in_array($role, $this->roles);
+        return in_array($role, $this->roles, true);
     }
 
     /**
@@ -247,7 +247,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addIdentity(Identity $identity): self
     {
-        if (!$this->identities->contains($identity)) {
+        if (! $this->identities->contains($identity)) {
             $this->identities[] = $identity;
             $identity->setUser($this);
         }
@@ -269,9 +269,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFirstIdentity(): ?Identity
     {
-        if (!$this->identities->isEmpty()) {
+        if (! $this->identities->isEmpty()) {
             return $this->identities->first();
         }
+
         return null;
     }
 
@@ -288,7 +289,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Approval[]
+     * @return Approval[]|Collection
      */
     public function getApprovals(): Collection
     {
@@ -297,7 +298,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addApproval(Approval $approval): self
     {
-        if (!$this->approvals->contains($approval)) {
+        if (! $this->approvals->contains($approval)) {
             $this->approvals[] = $approval;
             $approval->setUser($this);
         }
@@ -327,7 +328,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addLicence(Licence $licence): self
     {
-        if (!$this->licences->contains($licence)) {
+        if (! $this->licences->contains($licence)) {
             $this->licences[] = $licence;
             $licence->setUser($this);
         }
@@ -349,10 +350,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getSeasonLicence(int $season): ?licence
     {
-        if (!$this->licences->isEmpty()) {
+        if (! $this->licences->isEmpty()) {
             foreach ($this->licences as $licence) {
                 if ($season === $licence->getSeason()) {
-                    return $licence; 
+                    return $licence;
                 }
             }
         }
@@ -361,14 +362,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getLastLicence(): ?licence
-    {;
+    {
         $lastSeason = 1900;
         $lastLicence = null;
-        if (!$this->licences->isEmpty()) {
+        if (! $this->licences->isEmpty()) {
             foreach ($this->licences as $licence) {
                 if ($licence->getSeason() > $lastSeason) {
-                    $lastSeason = $licence->getSeason(); 
-                    $lastLicence = $licence; 
+                    $lastSeason = $licence->getSeason();
+                    $lastLicence = $licence;
                 }
             }
         }
@@ -386,7 +387,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addSession(Session $session): self
     {
-        if (!$this->sessions->contains($session)) {
+        if (! $this->sessions->contains($session)) {
             $this->sessions[] = $session;
             $session->setUser($this);
         }
@@ -411,8 +412,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->eq('isPresent', true))
         ;
-        return $this->sessions->matching($criteria);
 
+        return $this->sessions->matching($criteria);
     }
 
     public function getLevel(): ?Level
@@ -454,7 +455,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addOrderHeader(OrderHeader $orderHeader): self
     {
-        if (!$this->orderHeaders->contains($orderHeader)) {
+        if (! $this->orderHeaders->contains($orderHeader)) {
             $this->orderHeaders[] = $orderHeader;
             $orderHeader->setUser($this);
         }
@@ -484,7 +485,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addVote(VoteUser $vote): self
     {
-        if (!$this->votes->contains($vote)) {
+        if (! $this->votes->contains($vote)) {
             $this->votes[] = $vote;
             $vote->setUser($this);
         }

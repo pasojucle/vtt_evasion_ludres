@@ -1,32 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\FormValidator;
 
-use DateTime;
-use Twig\Environment;
 use App\Validator\BirthDate;
+use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig\Environment;
 
 class Validate
 {
     public function __construct(
         private ValidatorInterface $validator,
         private Environment $twig
-    )
-    {
-
+    ) {
     }
 
     public function execute(Request $request): array
     {
         $current = $request->request->get('current');
-        $value = $this-> getValue($request->request->get('value'), $current);
+        $value = $this->getValue($request->request->get('value'), $current);
         $constraintClass = $request->request->get('constraint');
-        $required = !empty($request->request->get('required'));
-        
+        $required = ! empty($request->request->get('required'));
+
         $constraints = $this->getConstraints($constraintClass, $required, $value);
 
         $violations = $this->validator->validate($value, $constraints);
@@ -35,18 +35,23 @@ class Validate
         ]);
 
         $status = $this->getStatus($violations, empty($value));
-        return ['status' => $status, 'html' => $render, 'multiple' => is_array($value)];
+
+        return [
+            'status' => $status,
+            'html' => $render,
+            'multiple' => is_array($value),
+        ];
     }
 
     private function getConstraints(?string $constraintClass, bool $required, array|string &$value): array
     {
         $constraints = [];
-        if (!empty($constraintClass)) {
+        if (! empty($constraintClass)) {
             list($namespace, $constraintClass) = explode('-', $constraintClass);
-            $constraintClass =  ('symfony' === $namespace) 
+            $constraintClass = ('symfony' === $namespace)
                 ? 'Symfony\Component\Validator\Constraints\\'.$constraintClass
                 : 'App\Validator\\'.$constraintClass;
-            $constraint = new $constraintClass;
+            $constraint = new $constraintClass();
             $constraints[] = $constraint;
             if ($constraint instanceof BirthDate) {
                 $value = DateTime::createFromFormat('d/m/Y', $value);
@@ -55,18 +60,20 @@ class Validate
         if ($required) {
             $constraints[] = new NotBlank();
         }
+
         return $constraints;
     }
 
     private function getStatus(ConstraintViolationListInterface $violations, bool $isEmptyValue): ?string
     {
-        if (!empty((string) $violations)) {
+        if (! empty((string) $violations)) {
             $status = 'ALERT_WARNING';
-        } elseif (empty((string) $violations) && !$isEmptyValue) {
+        } elseif (empty((string) $violations) && ! $isEmptyValue) {
             $status = 'SUCCESS';
         } else {
             $status = null;
         }
+
         return $status;
     }
 
@@ -74,20 +81,20 @@ class Validate
     {
         if (is_string($value)) {
             return $value;
-        } else {
-            $values = [];
-            foreach($value as $name => $val) {
-                if ($name === $current && empty($val)) {
-                    return $val;
-                } elseif ($name === $current || !empty($val)) {
-                    $values[$name] = $val;
-                }
+        }
+        $values = [];
+        foreach ($value as $name => $val) {
+            if ($name === $current && empty($val)) {
+                return $val;
             }
-            if (1 < count($values)) {
-                return $values;
-            } else {
-                return array_shift($values);
+            if ($name === $current || ! empty($val)) {
+                $values[$name] = $val;
             }
         }
+        if (1 < count($values)) {
+            return $values;
+        }
+
+        return array_shift($values);
     }
 }

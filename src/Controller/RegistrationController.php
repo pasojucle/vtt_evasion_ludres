@@ -1,40 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-use DateTime;
-use DateInterval;
-use App\Form\UserType;
 use App\Entity\Licence;
-use App\Service\PdfService;
-use App\Service\UserService;
-use App\Service\MailerService;
-use App\Service\UploadService;
-use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
-use App\Service\ParameterService;
 use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
-use App\Service\RegistrationService;
+use App\Form\UserType;
 use App\Repository\ContentRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\MembershipFeeRepository;
-use App\UseCase\RegistrationStep\GetReplaces;
-use Symfony\Component\HttpFoundation\Request;
-use App\Repository\RegistrationStepRepository;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RequestStack;
 use App\Repository\RegistrationStepGroupRepository;
+use App\Repository\RegistrationStepRepository;
+use App\Service\LicenceService;
+use App\Service\MailerService;
 use App\Service\OrderByService;
+use App\Service\ParameterService;
+use App\Service\PdfService;
+use App\Service\RegistrationService;
+use App\Service\UploadService;
+use App\Service\UserService;
 use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
+use App\UseCase\RegistrationStep\GetReplaces;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class RegistrationController extends AbstractController
 {
@@ -46,13 +47,12 @@ class RegistrationController extends AbstractController
         private LicenceService $licenceService,
         private MailerService $mailerService,
         private UserService $userService,
-        private UploadService $uploadService, 
+        private UploadService $uploadService,
         private GetReplaces $getReplaces,
         private OrderByService $orderByService,
         private RegistrationService $registrationService,
         private GetProgress $getProgress
-    )
-    {
+    ) {
     }
 
     /**
@@ -60,8 +60,7 @@ class RegistrationController extends AbstractController
      */
     public function registrationDetail(
         ContentRepository $contentRepository
-    ): Response
-    {
+    ): Response {
         return $this->render('registration/detail.html.twig', [
             'content' => $contentRepository->findOneByRoute('registration_detail'),
         ]);
@@ -72,8 +71,7 @@ class RegistrationController extends AbstractController
      */
     public function registrationMemberShipFee(
         MembershipFeeRepository $membershipFeeRepository
-    ): Response
-    {
+    ): Response {
         return $this->render('registration/membership_fee_page.html.twig', [
             'all_membership_fee' => $membershipFeeRepository->findAll(),
         ]);
@@ -89,33 +87,36 @@ class RegistrationController extends AbstractController
         ParameterService $parameterService,
         EditRegistration $editRegistration,
         int $step
-    ): Response
-    {
+    ): Response {
         if ((int) $this->requestStack->getSession()->get('registrationMaxStep') < $step) {
             $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
 
         $progress = $this->getProgress->execute($step);
-        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus() && $progress['current']->form !== UserType::FORM_REGISTRATION_FILE) {
-            return $this->redirectToRoute('registration_download', ['user' => $progress['user']->getId()]);
+        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus() && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
+            return $this->redirectToRoute('registration_download', [
+                'user' => $progress['user']->getId(),
+            ]);
         }
         $form = $progress['current']->formObject;
 
         $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress['user']);
-        if (!$schoolTestingRegistration['value'] && $progress['current']->form === UserType::FORM_MEMBER && !$progress['user']->getId()) {
+        if (! $schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress['current']->form && ! $progress['user']->getId()) {
             $this->addFlash('success', $schoolTestingRegistration['message']);
         }
         $maxStep = $step;
-        $this->requestStack->getSession()->set('registrationMaxStep',  $maxStep);
+        $this->requestStack->getSession()->set('registrationMaxStep', $maxStep);
 
         if (null !== $form) {
             $form->handleRequest($request);
-        } 
+        }
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $editRegistration->execute($request, $form, $progress);
             if ($form->isValid()) {
-                return $this->redirectToRoute('user_registration_form', ['step' => $progress['nextIndex']]);
+                return $this->redirectToRoute('user_registration_form', [
+                    'step' => $progress['nextIndex'],
+                ]);
             }
         }
 
@@ -140,9 +141,11 @@ class RegistrationController extends AbstractController
      */
     public function adminRegistrationSteps(
         Request $request
-    ): Response
-    {
-        $isFinalValues = ['essai' => false, 'final' =>true];
+    ): Response {
+        $isFinalValues = [
+            'essai' => false,
+            'final' => true,
+        ];
         $renders = [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE];
         $registrationByTypes = [];
         $labels = [];
@@ -150,7 +153,7 @@ class RegistrationController extends AbstractController
             $labels['categories'][] = Licence::CATEGORIES[$category];
             foreach ($isFinalValues as $isFinalLabel => $isFinal) {
                 $labels['isFinalLabels'][] = $isFinalLabel;
-                foreach($renders as $render) {
+                foreach ($renders as $render) {
                     $labels['render'][$category][$isFinal][] = (RegistrationStep::RENDER_VIEW === $render)
                         ? '<i class="fas fa-desktop"></i>'
                         : '<i class="fas fa-file-pdf"></i>';
@@ -172,8 +175,7 @@ class RegistrationController extends AbstractController
     public function adminregistrationStepGroupOrder(
         Request $request,
         RegistrationStepGroup $group
-    ): Response
-    {
+    ): Response {
         $newOrder = $request->request->get('newOrder');
         $regitrationStepGroups = $this->registrationStepGroupRepository->findAll();
 
@@ -182,15 +184,13 @@ class RegistrationController extends AbstractController
         return $this->redirectToRoute('admin_registration_steps');
     }
 
-
     /**
      * @Route("/admin/registrationStep/ordonner/{step}", name="admin_registration_step_order", options={"expose"=true},)
      */
     public function adminregistrationStepOrder(
         Request $request,
         RegistrationStep $step
-    ): Response
-    {
+    ): Response {
         $newOrder = $request->request->get('newOrder');
         $regitrationSteps = $this->registrationStepRepository->findByGroup($step->getRegistrationStepGroup());
 
@@ -206,8 +206,7 @@ class RegistrationController extends AbstractController
         Request $request,
         EditRegistrationStep $editRegistrationStep,
         RegistrationStep $step
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(RegistrationStepType::class, $step);
 
         $form->handleRequest($request);
@@ -226,10 +225,9 @@ class RegistrationController extends AbstractController
      */
     public function registrationDownload(
         UserEntity $user
-    ): Response
-    {
+    ): Response {
         $season = $this->licenceService->getCurrentSeason();
-        
+
         return $this->render('registration/download.html.twig', [
             'user_entity' => $user,
             'licence' => $user->getSeasonLicence($season),
@@ -245,8 +243,7 @@ class RegistrationController extends AbstractController
         UserPresenter $presenter,
         RegistrationStepPresenter $registrationStepPresenter,
         UserEntity $user
-    ): Response
-    {
+    ): Response {
         $season = $this->licenceService->getCurrentSeason();
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
@@ -268,15 +265,18 @@ class RegistrationController extends AbstractController
             UserType::FORM_HEALTH,
             UserType::FORM_APPROVAL,
         ];
-        if (!empty($steps)) {
-            foreach($steps as $key => $step) {
+        if (! empty($steps)) {
+            foreach ($steps as $key => $step) {
                 $registrationStepPresenter->present($step, $presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
                 $step = $registrationStepPresenter->viewModel();
                 if (null !== $step->filename) {
                     $filename = './files/'.$step->filename;
-                    $files[] = ['filename' => $filename, 'form' => $step->form];
+                    $files[] = [
+                        'filename' => $filename,
+                        'form' => $step->form,
+                    ];
                 }
-                if (in_array($step->form, $registrationDocumentForms)) {
+                if (in_array($step->form, $registrationDocumentForms, true)) {
                     $registrationDocumentSteps[$step->form] = $step->content;
                 } elseif (null !== $step->content) {
                     $html = null;
@@ -296,12 +296,15 @@ class RegistrationController extends AbstractController
 
                     if (null !== $html) {
                         $pdfFilepath = $pdfService->makePdf($html, $step->title);
-                        $files[] = ['filename' => $pdfFilepath, 'form' => $step->form];
+                        $files[] = [
+                            'filename' => $pdfFilepath,
+                            'form' => $step->form,
+                        ];
                     }
                 }
             }
         }
-        if (!empty($registrationDocumentSteps)) {
+        if (! empty($registrationDocumentSteps)) {
             $registration = $this->renderView('registration/registrationPdf.html.twig', [
                 'user' => $presenter->viewModel(),
                 'user_entity' => $user,
@@ -311,7 +314,10 @@ class RegistrationController extends AbstractController
                 'media' => RegistrationStep::RENDER_FILE,
             ]);
             $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
-            array_unshift($files, ['filename' => $pdfFilepath, 'form' => null]);
+            array_unshift($files, [
+                'filename' => $pdfFilepath,
+                'form' => null,
+            ]);
         }
 
         $filename = $pdfService->joinPdf($files, $user);
@@ -323,7 +329,7 @@ class RegistrationController extends AbstractController
             HeaderUtils::DISPOSITION_ATTACHMENT,
             'inscription_vtt_evasion_ludres.pdf'
         );
-        
+
         $response->headers->set('Content-Disposition', $disposition);
         $response->headers->set('Content-Type', 'application/pdf');
 

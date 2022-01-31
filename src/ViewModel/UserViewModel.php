@@ -1,29 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use DateTime;
-use App\Entity\User;
+use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Entity\Identity;
-use App\ViewModel\LicenceViewModel;
+use App\Entity\User;
+use DateTime;
 
 class UserViewModel extends AbstractViewModel
 {
     public ?int $id;
+
     public ?User $entity;
+
     public ?array $lines;
+
     public ?LicenceViewModel $lastLicence;
+
     public ?LicenceViewModel $seasonLicence;
+
     public ?IdentityViewModel $member;
+
     public ?IdentityViewModel $kinship;
+
     public ?IdentityViewModel $secondKinship;
-    private ?int $currentSeason;
-    private array $services;
+
     public ?string $licenceNumber;
+
     public ?bool $isNewMember;
+
     public ?HealthViewModel $health;
+
+    private ?int $currentSeason;
+
+    private array $services;
 
     public static function fromUser(User $user, array $services)
     {
@@ -52,7 +65,6 @@ class UserViewModel extends AbstractViewModel
             foreach ($identities as $identity) {
                 if (null === $identity->getKinship()) {
                     $this->member = $this->getMember($identity);
-
                 } else {
                     if (null !== $identity->getBirthDate() && null !== $identity->getEmail()) {
                         $this->kinship = $this->getKinship($identity);
@@ -61,7 +73,7 @@ class UserViewModel extends AbstractViewModel
                     }
                 }
             }
-        } elseif(0 < $identities->count()) {
+        } elseif (0 < $identities->count()) {
             $this->member = $this->getMember($identities->first());
             $this->kinship = null;
         } else {
@@ -84,6 +96,7 @@ class UserViewModel extends AbstractViewModel
                 ? $this->kinship->name.' '.$this->kinship->firstName
                 : $this->member->name.' '.$this->member->firstName;
         }
+
         return '';
     }
 
@@ -92,6 +105,7 @@ class UserViewModel extends AbstractViewModel
         if ($this->kinship && $this->member) {
             return $this->member->name.' '.$this->member->firstName;
         }
+
         return '';
     }
 
@@ -101,8 +115,10 @@ class UserViewModel extends AbstractViewModel
             $birthDate = ($this->kinship)
                 ? $this->kinship->birthDate
                 : $this->member->birthDate;
+
             return ($birthDate) ? $birthDate : null;
         }
+
         return '';
     }
 
@@ -110,54 +126,18 @@ class UserViewModel extends AbstractViewModel
     {
         if ($this->kinship && $this->member) {
             $birthDate = $this->member->birthDate;
+
             return ($birthDate) ? $birthDate : null;
         }
+
         return '';
     }
 
     public function getCoverage(): ?int
     {
         $seasonLicence = $this->entity->getSeasonLicence($this->currentSeason);
+
         return (null !== $seasonLicence) ? $seasonLicence->getCoverage() : null;
-    }
-
-    private function getSeasonLicence(): LicenceViewModel
-    {
-        $licence = $this->entity->getSeasonLicence($this->currentSeason);
-        
-        return LicenceViewModel::fromLicence($licence, $this->isNewMember, $this->services);
-    }
-
-    private function getLastLicence(): LicenceViewModel
-    {
-        $licence = $this->entity->getLastLicence();
-
-        return LicenceViewModel::fromLicence($licence, $this->isNewMember, $this->services);
-    }
-
-    private function getKinship(Identity $identity): ?IdentityViewModel
-    {
-        if ($identity) {
-            $address = (null !== $identity->getAddress() && !$identity->getAddress()->isEmpty()) ? $identity->getAddress() : $this->member->address->entity;
-            return IdentityViewModel::fromIdentity($identity, $this->services, $address);
-        }
-        return null;
-    }
-
-    private function getSecondKinShip(Identity $identity): ?IdentityViewModel
-    {
-        if ($identity) {
-            return IdentityViewModel::fromIdentity($identity, $this->services);
-        }
-        return null;
-    }
-
-    private function getMember(Identity $identity): ?IdentityViewModel
-    {
-        if ($identity) {
-            return IdentityViewModel::fromIdentity($identity, $this->services);
-        }
-        return null;
     }
 
     public function isNewMember(): bool
@@ -173,20 +153,27 @@ class UserViewModel extends AbstractViewModel
         if (null !== $licence && $licence->isMedicalCertificateRequired()) {
             $message = 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
         }
+
         return $message;
     }
 
     public function getApprovals()
     {
         $approvals = [];
-        if (!$this->entity->getApprovals()->isEmpty()) {
+        if (! $this->entity->getApprovals()->isEmpty()) {
             foreach ($this->entity->getApprovals() as $approval) {
                 $string = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
-                if (User::APPROVAL_GOING_HOME_ALONE == $approval->getType()) {
-                    $approvals['goingHomeAlone'] = ['value' => $approval->getValue(), 'string' => $string];
+                if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
+                    $approvals['goingHomeAlone'] = [
+                        'value' => $approval->getValue(),
+                        'string' => $string,
+                    ];
                 }
-                if (User::APPROVAL_RIGHT_TO_THE_IMAGE == $approval->getType()) {
-                    $approvals['rightToImage'] =  ['value' => $approval->getValue(), 'string' => $string];
+                if (User::APPROVAL_RIGHT_TO_THE_IMAGE === $approval->getType()) {
+                    $approvals['rightToImage'] = [
+                        'value' => $approval->getValue(),
+                        'string' => $string,
+                    ];
                 }
             }
         }
@@ -197,15 +184,22 @@ class UserViewModel extends AbstractViewModel
     public function getApprovalGoingHome(): ?array
     {
         $approvalGoingHome = null;
-        if (!$this->entity->getApprovals()->isEmpty()) {
+        if (! $this->entity->getApprovals()->isEmpty()) {
             foreach ($this->entity->getApprovals() as $approval) {
-                if (User::APPROVAL_GOING_HOME_ALONE == $approval->getType()) {
-                    $approvalGoingHome = ($approval->getValue()) 
-                        ? ['class' => 'success', 'message' => 'Autorisé à rentrer seul']
-                        : ['class' => 'alert-danger', 'message' => 'Pas autorisé à rentrer seul'];
+                if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
+                    $approvalGoingHome = ($approval->getValue())
+                        ? [
+                            'class' => 'success',
+                            'message' => 'Autorisé à rentrer seul',
+                        ]
+                        : [
+                            'class' => 'alert-danger',
+                            'message' => 'Pas autorisé à rentrer seul',
+                        ];
                 }
             }
         }
+
         return $approvalGoingHome;
     }
 
@@ -225,7 +219,7 @@ class UserViewModel extends AbstractViewModel
         $today = new DateTime();
 
         $sessions = $this->entity->getSessions();
-        if (!$sessions->isEmpty()) {
+        if (! $sessions->isEmpty()) {
             foreach ($sessions as $session) {
                 $event = $session->getCluster()->getEvent();
                 $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $event->getStartAt()->format('Y-m-d').' 14:00:00');
@@ -245,32 +239,34 @@ class UserViewModel extends AbstractViewModel
     public function isMember(): bool
     {
         $type = (null !== $this->entity->getLevel()) ? $this->entity->getLevel()->getType() : null;
-        return $type === Level::TYPE_MEMBER;
+
+        return Level::TYPE_MEMBER === $type;
     }
 
     public function isFramer(): bool
     {
         $type = (null !== $this->entity->getLevel()) ? $this->entity->getLevel()->getType() : null;
-        return $type === Level::TYPE_FRAME;
+
+        return Level::TYPE_FRAME === $type;
     }
 
     public function isEndTesting(): bool
     {
-        if (!$this->seasonLicence->isFinal) {
+        if (! $this->seasonLicence->isFinal) {
             $count = (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
-            
+
             return 2 < $count;
         }
+
         return false;
     }
 
     public function testingBikeRides(): ?int
     {
-        if (!$this->seasonLicence->isFinal) {
-            $count = (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
-
-            return $count;
+        if (! $this->seasonLicence->isFinal) {
+            return (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
         }
+
         return null;
     }
 
@@ -278,7 +274,7 @@ class UserViewModel extends AbstractViewModel
     {
         $member = $this->member;
         $licence = $this->getLastLicence();
-        if ($licence->category === Licence::CATEGORY_MINOR) {
+        if (Licence::CATEGORY_MINOR === $licence->category) {
             $member = $this->kinship;
         }
 
@@ -288,6 +284,50 @@ class UserViewModel extends AbstractViewModel
     public function mustProvideRegistration(): bool
     {
         $lastLicence = $this->getLastLicence();
-        return $this->entity->getLicences()->count() === 1 && $lastLicence->season === $this->currentSeason && $lastLicence['isFinal'] && $lastLicence['status'] === Licence::STATUS_WAITING_VALIDATE;
+
+        return 1 === $this->entity->getLicences()->count() && $lastLicence->season === $this->currentSeason && $lastLicence['isFinal'] && Licence::STATUS_WAITING_VALIDATE === $lastLicence['status'];
+    }
+
+    private function getSeasonLicence(): LicenceViewModel
+    {
+        $licence = $this->entity->getSeasonLicence($this->currentSeason);
+
+        return LicenceViewModel::fromLicence($licence, $this->isNewMember, $this->services);
+    }
+
+    private function getLastLicence(): LicenceViewModel
+    {
+        $licence = $this->entity->getLastLicence();
+
+        return LicenceViewModel::fromLicence($licence, $this->isNewMember, $this->services);
+    }
+
+    private function getKinship(Identity $identity): ?IdentityViewModel
+    {
+        if ($identity) {
+            $address = (null !== $identity->getAddress() && ! $identity->getAddress()->isEmpty()) ? $identity->getAddress() : $this->member->address->entity;
+
+            return IdentityViewModel::fromIdentity($identity, $this->services, $address);
+        }
+
+        return null;
+    }
+
+    private function getSecondKinShip(Identity $identity): ?IdentityViewModel
+    {
+        if ($identity) {
+            return IdentityViewModel::fromIdentity($identity, $this->services);
+        }
+
+        return null;
+    }
+
+    private function getMember(Identity $identity): ?IdentityViewModel
+    {
+        if ($identity) {
+            return IdentityViewModel::fromIdentity($identity, $this->services);
+        }
+
+        return null;
     }
 }

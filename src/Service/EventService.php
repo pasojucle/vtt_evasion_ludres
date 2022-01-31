@@ -1,45 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
-use DateTime;
-use DatePeriod;
-use DateInterval;
+use App\Entity\Cluster;
 use App\Entity\Event;
 use App\Entity\Level;
-use IntlDateFormatter;
-use App\Entity\Cluster;
 use App\Form\EventFilterType;
-use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use DateInterval;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class EventService
 {
     private PaginatorService $paginator;
+
     private RequestStack $requestStack;
+
     private FormFactoryInterface $formFactory;
+
     private EventRepository $eventRepository;
+
     private LevelRepository $levelRepository;
+
     private EntityManagerInterface $entityManager;
+
     private ParameterRepository $parameterRepository;
 
     public function __construct(
         PaginatorService $paginator,
-        RequestStack $requestStack, 
-        FormFactoryInterface $formFactory, 
+        RequestStack $requestStack,
+        FormFactoryInterface $formFactory,
         EventRepository $eventRepository,
         LevelRepository $levelRepository,
         EntityManagerInterface $entityManager,
         ParameterRepository $parameterRepository
-    )
-    {
+    ) {
         $this->paginator = $paginator;
         $this->requestStack = $requestStack;
         $this->formFactory = $formFactory;
@@ -48,10 +52,10 @@ class EventService
         $this->entityManager = $entityManager;
         $this->parameterRepository = $parameterRepository;
     }
-    
-    
-    public function getFiltersByParam(?string $period, ?int $year, ?int $month, ?int $day, string $route) {
-        $date = (null === $year && null === $month && null === $day) ? new DateTime(): DateTime::createFromFormat('Y-m-d', "$year-$month-$day");
+
+    public function getFiltersByParam(?string $period, ?int $year, ?int $month, ?int $day, string $route)
+    {
+        $date = (null === $year && null === $month && null === $day) ? new DateTime() : DateTime::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
         if (null === $period) {
             $period = ('admin_events' === $route) ? Event::PERIOD_WEEK : Event::PERIOD_NEXT;
         }
@@ -59,7 +63,8 @@ class EventService
         return $this->getFilters($period, $date);
     }
 
-    public function getFiltersByData(array $data) {
+    public function getFiltersByData(array $data)
+    {
         $period = $data['period'];
         $date = new DateTime($data['date']);
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
@@ -67,12 +72,13 @@ class EventService
         return $this->getFilters($period, $date, $direction);
     }
 
-    public function getFilters(string $period, DateTime $date, ?int $direction = null) {
-        if (null !== $direction && !in_array($period, [Event::PERIOD_ALL, Event::PERIOD_NEXT])) {
+    public function getFilters(string $period, DateTime $date, ?int $direction = null)
+    {
+        if (null !== $direction && ! in_array($period, [Event::PERIOD_ALL, Event::PERIOD_NEXT], true)) {
             $intervals = [
-                Event::PERIOD_DAY => "P1D",
-                Event::PERIOD_WEEK => "P1W",
-                Event::PERIOD_MONTH => "P1M1D",
+                Event::PERIOD_DAY => 'P1D',
+                Event::PERIOD_WEEK => 'P1W',
+                Event::PERIOD_MONTH => 'P1M1D',
             ];
             if (Event::DIRECTION_PREV === $direction) {
                 $date->sub(new DateInterval($intervals[$period]));
@@ -88,39 +94,41 @@ class EventService
             case Event::PERIOD_DAY:
                 $startAt = $startAt;
                 $endAt = $endAt;
+
                 break;
-            
             case Event::PERIOD_WEEK:
-                $startAt =  $startAt->modify('monday this week');
+                $startAt = $startAt->modify('monday this week');
                 $endAt = $endAt->modify('sunday this week');
+
                 break;
-            
             case Event::PERIOD_MONTH:
-                $startAt =  $startAt->modify('first day of this month');
+                $startAt = $startAt->modify('first day of this month');
                 $endAt = $endAt->modify('last day of this month');
+
                 break;
-            
             case Event::PERIOD_NEXT:
                 $startAt = $startAt;
                 $endAt = null;
                 $limit = 6;
+
                 break;
             default:
                 $startAt = null;
                 $endAt = null;
         }
         if (null !== $startAt) {
-            $startAt =  DateTime::createFromFormat('Y-m-d H:i:s', $startAt->format('Y-m-d').' 00:00:00');
+            $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $startAt->format('Y-m-d').' 00:00:00');
         }
         if (null !== $endAt) {
-            $endAt =  DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d').' 23:59:59');
+            $endAt = DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d').' 23:59:59');
         }
 
-        return ['startAt' => $startAt,
-            'endAt' => $endAt, 
-            'period' => $period, 
-            'year' => $date->format('Y'), 
-            'month' => $date->format('m'), 
+        return [
+            'startAt' => $startAt,
+            'endAt' => $endAt,
+            'period' => $period,
+            'year' => $date->format('Y'),
+            'month' => $date->format('m'),
             'day' => $date->format('d'),
             'date' => $date->format('y-m-d'),
             'limit' => $limit,
@@ -149,25 +157,31 @@ class EventService
 
             $filters = $this->getFiltersByData($data);
             $this->requestStack->getSession()->set('admin_events_filters', $filters);
-            return ['redirect' => $route, 'filters' => $filters];
+
+            return [
+                'redirect' => $route,
+                'filters' => $filters,
+            ];
         }
         $parameters = [];
-        if (null == $filters['limit']) {
+        if (null === $filters['limit']) {
             $query = $this->eventRepository->findAllQuery($filters);
-            $events =  $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+            $events = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
             $parameters['lastPage'] = $this->paginator->lastPage($events);
         } else {
-            $events =  $this->eventRepository->findAllFiltered($filters);
+            $events = $this->eventRepository->findAllFiltered($filters);
             $parameters['lastPage'] = null;
         }
-        
+
         $parameters += [
             'form' => $form->createView(),
             'events' => $events,
             'current_filters' => $filters,
         ];
 
-        return ['parameters' => $parameters];
+        return [
+            'parameters' => $parameters,
+        ];
     }
 
     public function createClusters($event)
@@ -176,7 +190,8 @@ class EventService
             case Event::TYPE_SCHOOL:
                 $cluster = new Cluster();
                 $cluster->setTitle(Cluster::CLUSTER_FRAME)
-                    ->setRole('ROLE_FRAME');
+                    ->setRole('ROLE_FRAME')
+                ;
                 $event->addCluster($cluster);
                 $this->entityManager->persist($cluster);
                 $levels = $this->levelRepository->findAllTypeMember();
@@ -185,11 +200,13 @@ class EventService
                         $cluster = new Cluster();
                         $cluster->setTitle($level->getTitle())
                             ->setLevel($level)
-                            ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS);
+                            ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
+                        ;
                         $event->addCluster($cluster);
                         $this->entityManager->persist($cluster);
                     }
                 }
+
                 break;
             case Event::TYPE_HOLIDAYS:
                 break;
@@ -231,7 +248,7 @@ class EventService
     public function getEventWithPresentsByCluster(Event $event): array
     {
         $clusters = [];
-        if (!$event->getClusters()->isEmpty()) {
+        if (! $event->getClusters()->isEmpty()) {
             foreach ($event->getClusters() as $cluster) {
                 $clusters[] = [
                     'cluster' => $cluster,
@@ -253,15 +270,16 @@ class EventService
     public function getCountOfPresents(Collection $sessions): int
     {
         $presentSessions = [];
-        if (!$sessions->isEmpty()) {
+        if (! $sessions->isEmpty()) {
             foreach ($sessions as $session) {
                 $level = $session->getUser()->getLevel();
                 $levelType = (null !== $level) ? $level->getType() : Level::TYPE_MEMBER;
-                if ($session->isPresent() && $levelType === Level::TYPE_MEMBER ) {
+                if ($session->isPresent() && Level::TYPE_MEMBER === $levelType) {
                     $presentSessions[] = $session;
                 }
             }
         }
+
         return count($presentSessions);
     }
 }

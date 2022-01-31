@@ -1,34 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Order;
 
-use DateTime;
-use App\Entity\User;
-use App\Entity\Product;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
-use App\Service\UploadService;
-use Symfony\Component\Form\Form;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Product;
+use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Security;
 
 class OrderAddService
 {
     private EntityManagerInterface $entityManager;
+
     private OrderHeaderRepository $orderHeaderRepository;
+
     private Security $security;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         OrderHeaderRepository $orderHeaderRepository,
         Security $security
-    )
-    {
-        $this->entityManager =$entityManager;
+    ) {
+        $this->entityManager = $entityManager;
         $this->orderHeaderRepository = $orderHeaderRepository;
         $this->security = $security;
     }
+
     public function execute(Product $product, Form &$form): void
     {
         $user = $this->security->getUser();
@@ -37,7 +40,6 @@ class OrderAddService
 
         $orderLine->setProduct($product);
         $orderLine = $this->setOrderLine($orderHeader, $orderLine);
-        
 
         if ($form->isValid()) {
             $this->entityManager->persist($orderLine);
@@ -62,18 +64,19 @@ class OrderAddService
 
     private function setOrderLine(OrderHeader $orderHeader, OrderLine $orderLine): OrderLine
     {
-        if (!$orderHeader->getOrderLines()->isEmpty()) {
+        if (! $orderHeader->getOrderLines()->isEmpty()) {
             foreach ($orderHeader->getOrderLines() as $line) {
                 if ($line->getProduct() === $orderLine->getProduct() && $line->getSize() === $orderLine->getSize()) {
                     $quantity = $line->getQuantity() + $orderLine->getQuantity();
                     $line->setQuantity($quantity);
-                    
+
                     return $line;
                 }
             }
         }
 
         $orderLine->setOrderHeader($orderHeader);
+
         return $orderLine;
     }
 }

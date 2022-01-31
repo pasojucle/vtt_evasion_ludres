@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
-use App\Form\VoteResponseType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class VoteResponsesType extends AbstractType
 {
@@ -24,8 +24,8 @@ class VoteResponsesType extends AbstractType
             ->add('submit', SubmitType::class, [
                 'label' => 'Voter',
                 'attr' => [
-                    'class' => 'btn btn-primary float-right'
-                ]
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
             ;
     }

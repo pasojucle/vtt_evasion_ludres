@@ -1,17 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use ReflectionClass;
 use App\Entity\Disease;
 
 class DiseaseViewModel extends AbstractViewModel
 {
     public ?string $label;
+
     public ?string $title;
+
     public ?int $type;
+
     public ?string $curentTreatment;
+
     public ?string $emergencyTreatment;
+
     public ?Disease $entity;
 
     public static function fromDisease(Disease $disease)

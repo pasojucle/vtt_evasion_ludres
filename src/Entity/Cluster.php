@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ClusterRepository;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ClusterRepository::class)
@@ -14,7 +16,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Cluster
 {
     public const SCHOOL_MAX_MEMEBERS = 6;
+
     public const CLUSTER_FRAME = 'Encadrement';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -94,7 +98,7 @@ class Cluster
 
     public function addSession(Session $session): self
     {
-        if (!$this->sessions->contains($session)) {
+        if (! $this->sessions->contains($session)) {
             $this->sessions[] = $session;
             $session->setCluster($this);
         }
@@ -119,7 +123,7 @@ class Cluster
         $memberSessions = [];
         foreach ($this->sessions as $session) {
             $roles = $session->getUser()->getRoles();
-            if (in_array('USER', $roles)) {
+            if (in_array('USER', $roles, true)) {
                 $memberSessions[] = $session->getUser();
             }
         }
@@ -183,18 +187,20 @@ class Cluster
         $sessions = $this->sessions->matching($criteria);
 
         $sortedSessions = [];
-        if (!$sessions->isEmpty()) {
+        if (! $sessions->isEmpty()) {
             $sortedSessions = $sessions->toArray();
-            usort($sortedSessions, function($a, $b){
-                $a =  strtolower($a->getUser()->getFirstIdentity()->getName());
-                $b =  strtolower($b->getUser()->getFirstIdentity()->getName());
+            usort($sortedSessions, function ($a, $b) {
+                $a = strtolower($a->getUser()->getFirstIdentity()->getName());
+                $b = strtolower($b->getUser()->getFirstIdentity()->getName());
 
-                if ( $a == $b) {
+                if ($a === $b) {
                     return 0;
                 }
+
                 return ($a < $b) ? -1 : 1;
             });
         }
+
         return new ArrayCollection($sortedSessions);
     }
 

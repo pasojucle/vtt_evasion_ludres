@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use App\ViewModel\ProductViewModel;
 use Doctrine\Common\Collections\Collection;
 
 class OrderLinesViewModel extends AbstractViewModel
@@ -12,8 +13,8 @@ class OrderLinesViewModel extends AbstractViewModel
     public static function fromOrderLines(collection $orderLines, UserViewModel $orderUser, array $services)
     {
         $linesView = new self();
-        if (!$orderLines->isEmpty()) {
-            foreach($orderLines as $line) {
+        if (! $orderLines->isEmpty()) {
+            foreach ($orderLines as $line) {
                 $product = ProductViewModel::fromProduct($line->getProduct(), $services, $orderUser);
                 $amount = $line->getQuantity() * $product->sellingPrice;
                 $linesView->lines[] = [

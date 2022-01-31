@@ -1,27 +1,29 @@
 <?php
 
-namespace App\Service;
+declare(strict_types=1);
 
+namespace App\Service;
 
 class LinkService
 {
-    public function getUrlData($url) {
+    public function getUrlData($url)
+    {
         $result = false;
-        
+
         $contents = $this->getUrlContents($url);
 
         if (isset($contents) && is_string($contents)) {
             $title = null;
             $metaTags = null;
-        
+
             preg_match('/<title>([^>]*)<\/title>/si', $contents, $match);
-        
+
             if (isset($match) && is_array($match) && count($match) > 0) {
                 $title = strip_tags($match[1]);
             }
 
             $charset = null;
-            preg_match_all('/<[\s]*meta[\s]*http-equiv="?' . '([^>"]*)"?[\s]*' . 'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+            preg_match_all('/<[\s]*meta[\s]*http-equiv="?'.'([^>"]*)"?[\s]*'.'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             $httpEquiv = $this->getTags($match);
             $contentType = (array_key_exists('Content-Type', $httpEquiv)) ? $httpEquiv['Content-Type']['value'] : null;
             if (null !== $contentType) {
@@ -29,23 +31,23 @@ class LinkService
                 $values = $this->getTags($match);
                 $charset = (array_key_exists('charset', $values)) ? $values['charset']['value'] : null;
             }
-        
-            preg_match_all('/<[\s]*meta[\s]*name="?' . '([^>"]*)"?[\s]*' . 'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+
+            preg_match_all('/<[\s]*meta[\s]*name="?'.'([^>"]*)"?[\s]*'.'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             $metaTags = $this->getTags($match);
             $description = (array_key_exists('description', $metaTags)) ? $metaTags['description']['value'] : null;
-            
-            preg_match_all('/<[\s]*meta[\s]*property="?' . '([^>"]*)"?[\s]*' . 'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+
+            preg_match_all('/<[\s]*meta[\s]*property="?'.'([^>"]*)"?[\s]*'.'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             $properties = $this->getTags($match);
             $image = (array_key_exists('og:image', $properties)) ? $properties['og:image']['value'] : null;
 
-            preg_match_all('/<[\s]*link[\s]*rel="?' . '([^>"]*)"?[\s]*' . 'href="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+            preg_match_all('/<[\s]*link[\s]*rel="?'.'([^>"]*)"?[\s]*'.'href="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             if (empty($match[0])) {
-                preg_match_all('/<[\s]*link[\s]*href="?' . '([^>"]*)"?[\s]*' . 'rel="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+                preg_match_all('/<[\s]*link[\s]*href="?'.'([^>"]*)"?[\s]*'.'rel="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             }
             $links = $this->getTags($match);
             if (array_key_exists('https://api.w.org/', $links)) {
                 $content = json_decode(file_get_contents($links['https://api.w.org/']['value'], true));
-                if(null !== $content && array_key_exists('description', $content)) {
+                if (null !== $content && array_key_exists('description', $content)) {
                     $description = $content->description;
                 }
             }
@@ -53,12 +55,12 @@ class LinkService
                 $image = $links['image_src']['value'];
             }
             // if ('iso-8859-1' === $charset) {
-                $title = utf8_encode($title);
-                $description = utf8_encode($description);
+            $title = utf8_encode($title);
+            $description = utf8_encode($description);
             // }
 
             $result = [
-                'title' => substr(html_entity_decode($title), 0, 100) ,
+                'title' => substr(html_entity_decode($title), 0, 100),
                 'description' => html_entity_decode((string) $description),
                 'image' => $image,
             ];
@@ -67,51 +69,50 @@ class LinkService
         return $result;
     }
 
-
-
-    private function getTags($match) {
+    private function getTags($match)
+    {
         $metaTags = [];
 
-        if (isset($match) && is_array($match) && count($match) == 3) {
+        if (isset($match) && is_array($match) && 3 === count($match)) {
             $originals = $match[0];
             $names = $match[1];
             $values = $match[2];
-    
-            if (count($originals) == count($names) && count($names) == count($values)) {
-                for ($i = 0, $limiti = count($names); $i < $limiti; $i++) {
-                    $metaTags[strtolower($names[$i])] = array(
+
+            if (count($originals) === count($names) && count($names) === count($values)) {
+                for ($i = 0, $limiti = count($names); $i < $limiti; ++$i) {
+                    $metaTags[strtolower($names[$i])] = [
                         'html' => htmlentities($originals[$i]),
-                        'value' => $values[$i]
-                    );
+                        'value' => $values[$i],
+                    ];
                 }
             }
         }
 
         return $metaTags;
     }
-        
-    private function getUrlContents($url, $maximumRedirections = null, $currentRedirection = 0) {
+
+    private function getUrlContents($url, $maximumRedirections = null, $currentRedirection = 0)
+    {
         $result = false;
-        
+
         $contents = @file_get_contents($url);
 
-        
         // Check if we need to go somewhere else
-        
+
         if (isset($contents) && is_string($contents)) {
-            preg_match_all('/<[\s]*meta[\s]*http-equiv="?REFRESH"?' . '[\s]*content="?[0-9]*;[\s]*URL[\s]*=[\s]*([^>"]*)"?' . '[\s]*[\/]?[\s]*>/si', $contents, $match);
-        
-            if (isset($match) && is_array($match) && count($match) == 2 && count($match[1]) == 1) {
-                if (!isset($maximumRedirections) || $currentRedirection < $maximumRedirections) {
+            preg_match_all('/<[\s]*meta[\s]*http-equiv="?REFRESH"?'.'[\s]*content="?[0-9]*;[\s]*URL[\s]*=[\s]*([^>"]*)"?'.'[\s]*[\/]?[\s]*>/si', $contents, $match);
+
+            if (isset($match) && is_array($match) && 2 === count($match) && 1 === count($match[1])) {
+                if (! isset($maximumRedirections) || $currentRedirection < $maximumRedirections) {
                     return $this->getUrlContents($match[1][0], $maximumRedirections, ++$currentRedirection);
                 }
-        
+
                 $result = false;
             } else {
                 $result = $contents;
             }
         }
-        
+
         return $contents;
     }
 

@@ -1,22 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
-use DateTime;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use App\DataTransferObject\User as UserDto;
+use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Entity\Licence;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use setasign\Fpdi\Fpdi;
-use App\DataTransferObject\User as UserDto;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class PdfService
 {
     private FilenameService $filenameService;
+
     private LicenceService $licenceService;
+
     private KernelInterface $kernel;
+
     private UserService $userService;
 
     public function __construct(
@@ -24,15 +28,14 @@ class PdfService
         LicenceService $licenceService,
         KernelInterface $kernel,
         UserService $userService
-    )
-    {
+    ) {
         $this->filenameService = $filenameService;
         $this->licenceService = $licenceService;
         $this->kernel = $kernel;
         $this->userService = $userService;
     }
 
-    public function makePdf(string $html, string $filename, string $directory = '../data/licences', string $paper = "A4")
+    public function makePdf(string $html, string $filename, string $directory = '../data/licences', string $paper = 'A4')
     {
         $options = new Options();
         $options->setIsHtml5ParserEnabled(true);
@@ -42,23 +45,23 @@ class PdfService
         $dompdf->setPaper($paper, 'portrait');
         $dompdf->render();
         $output = $dompdf->output();
-        
-        if (!is_dir('../data')) {
+
+        if (! is_dir('../data')) {
             mkdir('../data');
         }
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory);
         }
-        $pdfFilepath =  $directory.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
+        $pdfFilepath = $directory.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
 
         file_put_contents($pdfFilepath, $output);
 
         return $pdfFilepath;
     }
 
-    public function addData(Fpdi &$pdf, User $user )
+    public function addData(Fpdi &$pdf, User $user)
     {
-        /**@var UserDto $userDto */
+        /** @var UserDto $userDto */
         $userDto = $this->userService->convertToUser($user);
 
         $coverage = [
@@ -68,15 +71,51 @@ class PdfService
         ];
 
         $fields = [
-            ['value' => $userDto->getFullName(), 'x' => 35, 'y' => 208],
-            ['value' => $userDto->getBirthDate(), 'x' => 165, 'y' => 208],
-            ['value' => $userDto->getFullNameChildren(), 'x' => 60, 'y' => 213],
-            ['value' => $userDto->getBirthDateChildren(), 'x' => 165, 'y' => 213],
-            ['value' => 'VTT EVASION LUDRES', 'x' => 65, 'y' => 219],
-            ['value' => 'X', 'x' => $coverage[$userDto->getCoverage($this->licenceService->getCurrentSeason())], 'y' => 247.5],
-            ['value' => 'X', 'x' => 81, 'y' => 257.5],
-            ['value' => 'Ludres', 'x' => 20, 'y' => 262],
-            ['value' => $userDto->getSeasonLicence()['createdAt'], 'x' => 75, 'y' => 262]
+            [
+                'value' => $userDto->getFullName(),
+                'x' => 35,
+                'y' => 208,
+            ],
+            [
+                'value' => $userDto->getBirthDate(),
+                'x' => 165,
+                'y' => 208,
+            ],
+            [
+                'value' => $userDto->getFullNameChildren(),
+                'x' => 60,
+                'y' => 213,
+            ],
+            [
+                'value' => $userDto->getBirthDateChildren(),
+                'x' => 165,
+                'y' => 213,
+            ],
+            [
+                'value' => 'VTT EVASION LUDRES',
+                'x' => 65,
+                'y' => 219,
+            ],
+            [
+                'value' => 'X',
+                'x' => $coverage[$userDto->getCoverage($this->licenceService->getCurrentSeason())],
+                'y' => 247.5,
+            ],
+            [
+                'value' => 'X',
+                'x' => 81,
+                'y' => 257.5,
+            ],
+            [
+                'value' => 'Ludres',
+                'x' => 20,
+                'y' => 262,
+            ],
+            [
+                'value' => $userDto->getSeasonLicence()['createdAt'],
+                'x' => 75,
+                'y' => 262,
+            ],
         ];
 
         $pdf->SetFont('Helvetica');
@@ -88,15 +127,15 @@ class PdfService
         return $pdf;
     }
 
-    public function joinPdf(array $files, ?User $user=null, $filename = '../data/pdf_temp.pdf'): string
+    public function joinPdf(array $files, ?User $user = null, $filename = '../data/pdf_temp.pdf'): string
     {
         // initiate FPDI
         $pdf = new Fpdi();
         // iterate through the files
-        foreach ($files AS $file) {
+        foreach ($files as $file) {
             $pageCount = $pdf->setSourceFile($file['filename']);
             // iterate through all pages
-            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+            for ($pageNo = 1; $pageNo <= $pageCount; ++$pageNo) {
                 // import a page
                 $templateId = $pdf->importPage($pageNo);
                 // get the size of the imported page
@@ -107,7 +146,7 @@ class PdfService
 
                 // use the imported page
                 $pdf->useTemplate($templateId);
-                if (null !== $user && 3 == $pageNo && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
+                if (null !== $user && 3 === $pageNo && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
                     $this->addData($pdf, $user);
                 }
             }

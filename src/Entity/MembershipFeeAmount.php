@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\MembershipFeeAmountRepository;
@@ -26,7 +28,6 @@ class MembershipFeeAmount
      * @ORM\Column(type="integer", nullable=true)
      */
     private $coverage;
-
 
     /**
      * @ORM\ManyToOne(targetEntity=MembershipFee::class, inversedBy="membershipFeeAmounts")
@@ -62,7 +63,6 @@ class MembershipFeeAmount
 
         return $this;
     }
-
 
     public function getMembershipFee(): ?MembershipFee
     {

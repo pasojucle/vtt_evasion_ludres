@@ -1,30 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\Error;
 
-use DateTime;
-use ErrorException;
 use App\Entity\LogError;
 use App\Service\ParameterService;
-use Twig\Error\RuntimeError;
 use App\ViewModel\UserPresenter;
+use DateTime;
+use ErrorException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Security;
+use Twig\Error\RuntimeError;
 
 class GetError
 {
     private Security $security;
+
     private UserPresenter $presenter;
+
     private ParameterService $parameterService;
 
     public function __construct(
         Security $security,
         UserPresenter $presenter,
         ParameterService $parameterService
-    )
-    {
+    ) {
         $this->security = $security;
         $this->presenter = $presenter;
         $this->parameterService = $parameterService;
@@ -55,7 +58,8 @@ class GetError
 
             if (403 === $statusCode) {
                 $logError->setRoute($exception->getPrevious()->getSubject()->attributes->get('_route'))
-                    ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.');
+                    ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.')
+                ;
             }
             if (404 === $statusCode) {
                 $logError->setMessage('La page recherchée n\'existe pas.');
@@ -64,7 +68,7 @@ class GetError
         $this->addUser($logError);
 
         $this->setPersist($logError);
-        
+
         return $logError;
     }
 

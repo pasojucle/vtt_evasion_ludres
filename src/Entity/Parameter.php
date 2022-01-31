@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ParameterRepository;
@@ -11,8 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Parameter
 {
     public const TYPE_TEXT = 1;
+
     public const TYPE_INTEGER = 2;
+
     public const TYPE_BOOL = 3;
+
     public const TYPE_ARRAY = 4;
 
     public const TYPES = [
@@ -21,6 +26,7 @@ class Parameter
         self::TYPE_BOOL => 'parameter.type.bool',
         self::TYPE_ARRAY => 'parameter.type.array',
     ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

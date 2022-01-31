@@ -1,40 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use ReflectionClass;
-use App\Entity\Address;
 use App\Entity\Licence;
-use App\Entity\Identity;
 
 class LicenceViewModel extends AbstractViewModel
 {
-
-    public ?Licence $entity;
-    public ?string $createdAt;
-    public ?string $season;
-    public ?bool $isFinal;
-    public ?int $coverage;
-    public ?string $coverageStr;
-    public ?bool $hasFamilyMember;
-    public ?int $category;
-    public ?string $statusClass;
-    public ?int $status;
-    public ?string $statusStr;
-    public ?string $type;
-    public ?bool $lock;
-    public ?string $amount;
-    public ?string $amountStr;
-    private array $services;
-
     private const STATUS_CLASS = [
         Licence::STATUS_NONE => 'alert-black',
         Licence::STATUS_WAITING_RENEW => 'alert-danger',
-        Licence::STATUS_IN_PROCESSING=> 'alert-warning',
+        Licence::STATUS_IN_PROCESSING => 'alert-warning',
         Licence::STATUS_WAITING_VALIDATE => 'alert-warning',
         Licence::STATUS_TESTING => 'success-test',
         Licence::STATUS_VALID => 'success',
     ];
+    public ?Licence $entity;
+
+    public ?string $createdAt;
+
+    public ?string $season;
+
+    public ?bool $isFinal;
+
+    public ?int $coverage;
+
+    public ?string $coverageStr;
+
+    public ?bool $hasFamilyMember;
+
+    public ?int $category;
+
+    public ?string $statusClass;
+
+    public ?int $status;
+
+    public ?string $statusStr;
+
+    public ?string $type;
+
+    public ?bool $lock;
+
+    public ?string $amount;
+
+    public ?string $amountStr;
+
+    private array $services;
 
     public static function fromLicence(?Licence $licence, bool $isNewMember, array $services)
     {
@@ -55,16 +67,16 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->season = $licence->getSeason();
             $licenceView->isFinal = $licence->isFinal();
             $licenceView->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
-            $licenceView->coverageStr = (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
+            $licenceView->coverageStr = (! empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
             $licenceView->hasFamilyMember = $licence->getAdditionalFamilyMember();
             $licenceView->category = $licence->getCategory();
             $licenceView->statusClass = self:: STATUS_CLASS[$status];
             $licenceView->status = $status;
             $licenceView->statusStr = Licence::STATUS[$status];
-            $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
+            $licenceView->type = (! empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
             $licenceView->lock = $licence->getSeason() !== $services['currentSeason'];
 
-            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';  
+            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';
             $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
         }
 
@@ -85,12 +97,15 @@ class LicenceViewModel extends AbstractViewModel
             }
             if (null !== $amount) {
                 $coverageSrt = $this->services['translator']->trans(Licence::COVERAGES[$this->coverage]);
-                $amountStr = "Le montant de votre inscription pour la formule d'assurance $coverageSrt est de $amount €";
+                $amountStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount} €";
             }
         } else {
             $amountStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";
         }
 
-        return ['value' => $amount, 'str' => $amountStr];
+        return [
+            'value' => $amount,
+            'str' => $amountStr,
+        ];
     }
 }

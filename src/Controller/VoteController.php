@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Vote;
@@ -10,17 +12,18 @@ use App\Repository\VoteRepository;
 use App\Repository\VoteUserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class VoteController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
-        
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {
     }
+
     #[Route('vote/{vote}', name: 'vote', methods: ['GET', 'POST'])]
     public function show(Request $request, VoteUserRepository $voteUserRepository, Vote $vote): Response
     {
@@ -40,7 +43,7 @@ class VoteController extends AbstractController
                 'content' => 'Le vote est clôturé depuis le '.$vote->getEndAt()->format('d/m/Y'),
             ];
         }
-        if (!$message) {
+        if (! $message) {
             $voteUser = $voteUserRepository->findOneByVoteAndUser($vote, $user);
         }
         if ($voteUser) {
@@ -49,22 +52,25 @@ class VoteController extends AbstractController
                 'content' => 'Votre participation au vote a déja été prise en compte le '.$voteUser->getCreatedAt()->format('d/m/Y').' a '.$voteUser->getCreatedAt()->format('H\hi'),
             ];
         }
-        if (!$message) {
+        if (! $message) {
             $uuid = uniqid('', true);
-            if (!$vote->getVoteIssues()->isEmpty()) {
-                foreach($vote->getVoteIssues() as $issue) {
+            if (! $vote->getVoteIssues()->isEmpty()) {
+                foreach ($vote->getVoteIssues() as $issue) {
                     $response = new VoteResponse();
                     $response->setVoteIssue($issue)
-                        ->setUuid($uuid);
+                        ->setUuid($uuid)
+                    ;
                     $voteResponses[] = $response;
                 }
             }
-            $form = $this->createForm(VoteResponsesType::class, ['voteResponses' => $voteResponses]);
+            $form = $this->createForm(VoteResponsesType::class, [
+                'voteResponses' => $voteResponses,
+            ]);
             $form->handleRequest($request);
 
             if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
                 $data = $form->getData();
-                if (!empty($data['voteResponses'])) {
+                if (! empty($data['voteResponses'])) {
                     foreach ($data['voteResponses'] as $response) {
                         $this->entityManager->persist($response);
                     }
@@ -72,7 +78,8 @@ class VoteController extends AbstractController
                 $voteUser = new VoteUser();
                 $voteUser->setUser($user)
                     ->setVote($vote)
-                    ->setCreatedAt($now);
+                    ->setCreatedAt($now)
+                ;
                 $this->entityManager->persist($voteUser);
                 $this->entityManager->flush();
 
@@ -86,11 +93,10 @@ class VoteController extends AbstractController
         return $this->render('vote/vote_responses.html.twig', [
             'vote' => $vote,
             'voteUser' => $voteUser,
-            'form' => ($form) ? $form->createView(): $form,
+            'form' => ($form) ? $form->createView() : $form,
             'message' => $message,
         ]);
     }
-
 
     /**
      * @Route("/mes_votes", name="user_votes")
@@ -98,9 +104,7 @@ class VoteController extends AbstractController
     public function votes(
         VoteRepository $voteRepository,
         VoteUserRepository $voteUserRepository
-    ): Response
-    {
-
+    ): Response {
         return $this->render('vote/list.html.twig', [
             'votes' => $voteRepository->findActive($this->getUser()),
             'user_votes' => $voteUserRepository->findActiveVotesByUser($this->getUser()),

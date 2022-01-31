@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
 use App\Entity\LogError;
@@ -7,13 +9,21 @@ use App\Entity\LogError;
 class LogErrorViewModel extends AbstractViewModel
 {
     public ?int $id;
+
     public ?string $createdAt;
+
     public ?int $statusCode;
+
     public ?string $errorMessage;
+
     public ?string $message;
+
     public ?string $userAgent;
+
     public ?string $route;
+
     public ?string $url;
+
     public ?UserViewModel $user;
 
     public static function fromLogError(LogError $logError, array $services)
@@ -31,7 +41,7 @@ class LogErrorViewModel extends AbstractViewModel
         $logErrorView->fileName = $logError->getFileName();
         $logErrorView->line = $logError->getLine();
         $logErrorView->user = ($logError->getUser())
-            ? UserViewModel::fromUser($logError->getUser(),  $services)
+            ? UserViewModel::fromUser($logError->getUser(), $services)
             : null;
 
         return $logErrorView;

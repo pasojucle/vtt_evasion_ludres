@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Approval;
@@ -18,7 +20,7 @@ class ApprovalType extends AbstractType
             ->add('value', ChoiceType::class, [
                 'label' => false,
                 'choices' => [
-                    'Accepter'=> true,
+                    'Accepter' => true,
                     'Refuser' => false,
                 ],
                 'expanded' => true,

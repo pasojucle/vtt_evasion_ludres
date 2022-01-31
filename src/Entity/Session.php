@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\SessionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,7 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Session
 {
     public const AVAILABILITY_REGISTERED = 1;
+
     public const AVAILABILITY_AVAILABLE = 2;
+
     public const AVAILABILITY_UNAVAILABLE = 3;
 
     public const AVAILABILITIES = [
@@ -21,6 +23,7 @@ class Session
         self::AVAILABILITY_AVAILABLE => 'session.availability.available',
         self::AVAILABILITY_UNAVAILABLE => 'session.availability.unavailable',
     ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -118,7 +121,7 @@ class Session
                 'text' => Session::AVAILABILITIES[$this->availability],
             ];
         }
-        
+
         return $availability;
     }
 }

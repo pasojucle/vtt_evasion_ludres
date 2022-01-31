@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -16,28 +18,41 @@ class ChangePasswordFormType extends AbstractType
     {
         $builder
             ->add('plainPassword', RepeatedType::class, [
-            'type' => PasswordType::class,
-            'invalid_message' => 'Le mot de passe ne correspond pas.',
-            'options' => [
-                'row_attr' => [
-                    'class' => 'form-group'
+                'type' => PasswordType::class,
+                'invalid_message' => 'Le mot de passe ne correspond pas.',
+                'options' => [
+                    'row_attr' => [
+                        'class' => 'form-group',
+                    ],
                 ],
-            ],
-            'required' => true,
-            'first_options'  => [
-                'label' => 'Nouveau mot de passe (6 caractères minimum)',
-                'attr' => ['autocomplete' => 'new-password'],
-                'constraints' => [
-                    new NotBlank(['message' => 'Le mot de passe ne peut pas être vide']),
-                    new Length(['min' => 6, 'minMessage' => 'Votre mot de passe doit faire au moins 6 caractères', 'max' => 10, 'maxMessage' => 'Votre mot de passe doit faire au plus 10 caractères']),
+                'required' => true,
+                'first_options' => [
+                    'label' => 'Nouveau mot de passe (6 caractères minimum)',
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                    ],
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Le mot de passe ne peut pas être vide',
+                        ]),
+                        new Length(
+                            [
+                                'min' => 6,
+                                'minMessage' => 'Votre mot de passe doit faire au moins 6 caractères',
+                                'max' => 10,
+                                'maxMessage' => 'Votre mot de passe doit faire au plus 10 caractères',
+                            ]
+                        ),
+                    ],
                 ],
-            ],
-            'second_options' => [
-                'label' => 'Confirmation du mot de passe',
-                'attr' => ['autocomplete' => 'new-password'],
-            ],
-            'mapped' => false,
-        ]);
+                'second_options' => [
+                    'label' => 'Confirmation du mot de passe',
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                    ],
+                ],
+                'mapped' => false,
+            ])
         ;
     }
 

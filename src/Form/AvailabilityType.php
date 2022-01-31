@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Form;
+declare(strict_types=1);
 
+namespace App\Form;
 
 use App\Entity\Session;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class AvailabilityType extends AbstractType
 {

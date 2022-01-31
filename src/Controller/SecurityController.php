@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Form\LoginType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -25,9 +27,14 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
-        $form = $this->createForm(LoginType::class, ['licenceNumber' => $lastUsername]);
+        $form = $this->createForm(LoginType::class, [
+            'licenceNumber' => $lastUsername,
+        ]);
 
-        return $this->render('security/login.html.twig', ['form' => $form->createView(), 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error,
+        ]);
     }
 
     /**
@@ -44,8 +51,7 @@ class SecurityController extends AbstractController
     public function checkLogout(
         Request $request,
         FormFactoryInterface $formFactory
-        )
-    {
+    ) {
         $form = $formFactory->create();
         if ($request->isXmlHttpRequest()) {
             return $this->render('security/logout.modal.html.twig', [

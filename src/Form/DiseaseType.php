@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Disease;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DiseaseType extends AbstractType
@@ -18,12 +20,12 @@ class DiseaseType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $disease = $event->getData();
             $form = $event->getForm();
-            $isActive = !empty($disease->getCurentTreatment()) || !empty($disease->getEmergencyTreatment());
+            $isActive = ! empty($disease->getCurentTreatment()) || ! empty($disease->getEmergencyTreatment());
 
-            $curentTreatmentClass ='widget-inline widget-curent-treatment';
-            $currentTraitementLabel = (Disease::TYPE_DISEASE === $disease->getType()) ? 'Traitement actuel' :'Lesquelles';
+            $curentTreatmentClass = 'widget-inline widget-curent-treatment';
+            $currentTraitementLabel = (Disease::TYPE_DISEASE === $disease->getType()) ? 'Traitement actuel' : 'Lesquelles';
             if (Disease::LABEL_POLLEN_BEES >= $disease->getLabel()) {
-                $curentTreatmentClass ='widget-inline';
+                $curentTreatmentClass = 'widget-inline';
                 $form
                     ->add('emergencyTreatment', TextType::class, [
                         'attr' => [
@@ -31,7 +33,8 @@ class DiseaseType extends AbstractType
                             'placeholder' => "Traitement d'urgence",
                         ],
                         'required' => $isActive,
-                    ]);
+                    ])
+                ;
             }
             $form
                 ->add('curentTreatment', TextType::class, [
@@ -55,13 +58,13 @@ class DiseaseType extends AbstractType
                 $form
                     ->add('title', TextType::class, [
                         'attr' => [
-                            'class' => 'widget-inline'
+                            'class' => 'widget-inline',
                         ],
                         'required' => $isActive,
-                        'disabled' => !$isActive,
-                    ]);
+                        'disabled' => ! $isActive,
+                    ])
+                ;
             }
-
         });
     }
 

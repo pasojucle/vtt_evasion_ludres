@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\LogError;
+use App\Repository\LogErrorRepository;
 use App\Service\PaginatorService;
 use App\ViewModel\LogErrorPresenter;
 use App\ViewModel\LogErrorsPresenter;
-use App\Repository\LogErrorRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LogErrorController extends AbstractController
 {
@@ -24,8 +26,7 @@ class LogErrorController extends AbstractController
         LogErrorsPresenter $presenter,
         LogErrorRepository $logErrorRepository,
         int $statusCode
-    ): Response
-    {
+    ): Response {
         $query = $logErrorRepository->findLogErrorQuery($statusCode);
         $errors = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($errors);
@@ -45,8 +46,7 @@ class LogErrorController extends AbstractController
     public function show(
         LogErrorPresenter $presenter,
         LogError $error
-    ): Response
-    {
+    ): Response {
         $presenter->present($error);
 
         return $this->render('log_error/admin/show.html.twig', [
@@ -64,8 +64,7 @@ class LogErrorController extends AbstractController
         LogErrorRepository $logErrorRepository,
         Request $request,
         LogError $error
-    ): Response
-    {
+    ): Response {
         $statusCode = $error->getStatusCode();
 
         $entityManager->remove($error);
@@ -82,7 +81,9 @@ class LogErrorController extends AbstractController
             'lastPage' => $paginator->lastPage($errors),
             'count' => $paginator->total($errors),
             'target_route' => 'admin_log_errors',
-            'current_Filters' => ['statusCode' => $statusCode],
+            'current_Filters' => [
+                'statusCode' => $statusCode,
+            ],
         ]);
     }
 }

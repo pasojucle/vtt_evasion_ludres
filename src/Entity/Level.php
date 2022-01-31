@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\LevelRepository;
@@ -13,15 +15,20 @@ use Doctrine\ORM\Mapping as ORM;
 class Level
 {
     public const TYPE_MEMBER = 1;
+
     public const TYPE_FRAME = 2;
+
     public const TYPE_ALL_MEMBER = 'ALL_MEMBER ';
+
     public const TYPE_ALL_FRAME = 'ALL_FRAME';
+
     public const TYPE_ADULT = 'ADULT';
 
     public const TYPES = [
         self::TYPE_MEMBER => 'level.type.member',
         self::TYPE_FRAME => 'level.type.frame',
     ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -39,7 +46,7 @@ class Level
      */
     private $content;
 
-        /**
+    /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="level")
      */
     private $users;
@@ -48,7 +55,6 @@ class Level
      * @ORM\Column(type="string", length=7, nullable=true)
      */
     private $color;
-
 
     /**
      * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="level")
@@ -80,7 +86,7 @@ class Level
         $this->users = new ArrayCollection();
         $this->clusters = new ArrayCollection();
     }
-    
+
     public function __toString()
     {
         return $this->title;
@@ -125,7 +131,7 @@ class Level
 
     public function addUser(User $user): self
     {
-        if (!$this->users->contains($user)) {
+        if (! $this->users->contains($user)) {
             $this->users[] = $user;
             $user->setLevel($this);
         }
@@ -158,7 +164,7 @@ class Level
     }
 
     /**
-     * @return Collection|Cluster[]
+     * @return Cluster[]|Collection
      */
     public function getClusters(): Collection
     {
@@ -167,7 +173,7 @@ class Level
 
     public function addCluster(Cluster $cluster): self
     {
-        if (!$this->clusters->contains($cluster)) {
+        if (! $this->clusters->contains($cluster)) {
             $this->clusters[] = $cluster;
             $cluster->setLevel($this);
         }

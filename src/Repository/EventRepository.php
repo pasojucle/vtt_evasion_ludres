@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Event;
 use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
-
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
- * @method Event|null find($id, $lockMode = null, $lockVersion = null)
- * @method Event|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Event find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Event findOneBy(array $criteria, array $orderBy = null)
  * @method Event[]    findAll()
  * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -26,7 +27,6 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[] Returns an array of Event objects
      */
-
     public function findAllQuery(array $filters): QueryBuilder
     {
         $qb = $this->createQueryBuilder('e');
@@ -43,7 +43,7 @@ class EventRepository extends ServiceEntityRepository
             $qb->setParameter('endAt', $filters['endAt']);
         }
 
-        if (!empty($andX->getParts())) {
+        if (! empty($andX->getParts())) {
             $qb->andWhere($andX);
         }
 
@@ -60,27 +60,25 @@ class EventRepository extends ServiceEntityRepository
         $qb = $this->findAllQuery($filters);
 
         return $qb->getQuery()->getResult();
-    } 
-
+    }
 
     /**
      * @return User[] Returns an array of enent objects
      */
-
     public function findEnableView(): array
     {
         $today = new DateTime();
-        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 23:59:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 23:59:00');
 
         return $this->createQueryBuilder('e')
             ->andWhere(
-                (new Expr)->gte('e.startAt', ':today'),
+                (new Expr())->gte('e.startAt', ':today'),
             )
             ->setParameter('today', $today)
             ->orderBy('e.startAt', 'ASC')
             ->andHaving("DATE_SUB(e.startAt, e.displayDuration, 'DAY') <= :today")
             ->getQuery()
-            ->getResult();
+            ->getResult()
         ;
     }
 }

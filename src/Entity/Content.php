@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ContentRepository;
@@ -45,7 +47,6 @@ class Content
      * @ORM\Column(type="text")
      */
     private $content;
-
 
     /**
      * @ORM\Column(type="datetime", nullable=true)

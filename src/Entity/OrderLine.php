@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\OrderLineRepository;
@@ -50,7 +52,7 @@ class OrderLine
     public function setLineId(int $lineId): self
     {
         $this->lineId = $lineId;
-        
+
         return $this;
     }
 

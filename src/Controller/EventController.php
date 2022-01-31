@@ -1,34 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-use DateTime;
-use DateInterval;
 use App\Entity\Event;
 use App\Entity\Session;
-use App\Service\UserService;
 use App\Form\Admin\EventType;
-use App\Service\EventService;
-use App\Service\PaginatorService;
 use App\Repository\EventRepository;
 use App\Repository\LevelRepository;
-use App\Repository\SessionRepository;
 use App\Repository\ParameterRepository;
+use App\Repository\SessionRepository;
+use App\Service\EventService;
 use App\Service\FilenameService;
+use App\Service\PaginatorService;
+use App\Service\UserService;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EventController extends AbstractController
 {
     private EventRepository $eventRepository;
+
     private EntityManagerInterface $entityManager;
+
     private RequestStack $requestStack;
+
     private EventService $eventService;
 
     public function __construct(
@@ -36,15 +39,13 @@ class EventController extends AbstractController
         RequestStack $requestStack,
         EntityManagerInterface $entityManager,
         EventService $eventService
-    )
-    {
+    ) {
         $this->eventRepository = $eventRepository;
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
         $this->eventService = $eventService;
     }
 
-    
     /**
      * @Route(
      *  "/admin/",
@@ -68,13 +69,13 @@ class EventController extends AbstractController
         ?int $year,
         ?int $month,
         ?int $day
-    ): Response
-    {
+    ): Response {
         $response = $this->eventService->getSchedule($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);
         }
+
         return $this->render('bike_ride/admin/list.html.twig', $response['parameters']);
     }
 
@@ -86,18 +87,16 @@ class EventController extends AbstractController
         LevelRepository $levelRepository,
         ParameterRepository $parameterRepository,
         ?Event $event
-    ): Response
-    {
-        if (null == $event) {
+    ): Response {
+        if (null === $event) {
             $event = new Event();
         }
         $event = $this->eventService->setDefaultContent($request, $event);
         $filters = $this->requestStack->getSession()->get('admin_events_filters');
         $form = $this->createForm(EventType::class, $event);
-      
-        ;
-        if (!$request->isXmlHttpRequest()) {
-            $form->handleRequest($request); 
+
+        if (! $request->isXmlHttpRequest()) {
+            $form->handleRequest($request);
         }
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $event = $form->getData();
@@ -130,14 +129,15 @@ class EventController extends AbstractController
         Request $request,
         EventService $eventService,
         Event $event
-    ): Response
-    {
+    ): Response {
         $filters = $this->requestStack->getSession()->get('admin_events_filters');
-        $this->requestStack->getSession()->set('user_return', $this->generateUrl('admin_event_cluster_show', ['event' => $event->getId()]));
-        
+        $this->requestStack->getSession()->set('user_return', $this->generateUrl('admin_event_cluster_show', [
+            'event' => $event->getId(),
+        ]));
+
         return $this->render('event/cluster_show.html.twig', [
             'event' => $eventService->getEventWithPresentsByCluster($event),
-            'events_filters' =>  ($filters) ? $filters : [],
+            'events_filters' => ($filters) ? $filters : [],
         ]);
     }
 
@@ -149,8 +149,7 @@ class EventController extends AbstractController
         UserService $userService,
         FilenameService $filenameService,
         Event $event
-    ): Response
-    {
+    ): Response {
         $sessions = $sessionRepository->findByEvent($event);
         $separator = ',';
         $fileContent = [];
@@ -158,8 +157,8 @@ class EventController extends AbstractController
         $fileContent[] = '';
         $row = ['n° de Licence', 'Nom', 'Prénom', 'Présent', 'Niveau'];
         $fileContent[] = implode($separator, $row);
-        if (!empty($sessions)) {
-            foreach($sessions as $session) {
+        if (! empty($sessions)) {
+            foreach ($sessions as $session) {
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
                     $user = $userService->convertToUser($session->getUser());
                     $member = $user->getMember();
@@ -176,7 +175,7 @@ class EventController extends AbstractController
             HeaderUtils::DISPOSITION_ATTACHMENT,
             $filename,
         );
-        
+
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
@@ -195,8 +194,7 @@ class EventController extends AbstractController
         ?int $year,
         ?int $month,
         ?int $day
-    ): Response
-    {
+    ): Response {
         $response = $this->eventService->getSchedule($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
@@ -206,14 +204,14 @@ class EventController extends AbstractController
         return $this->render('bike_ride/list.html.twig', $response['parameters']);
     }
 
-       /**
+    /**
      * @Route("/mon_programme", name="user_bike_rides")
      */
     public function userBikeRides(
         UserPresenter $presenter
-    ): Response
-    {   
+    ): Response {
         $presenter->present($this->getUser());
+
         return $this->render('bike_ride/user_list.html.twig', [
             'user' => $presenter->viewModel(),
         ]);

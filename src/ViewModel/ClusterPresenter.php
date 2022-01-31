@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
 use App\Entity\Cluster;
-use App\ViewModel\ClusterViewModel;
-
 
 class ClusterPresenter extends AbstractPresenter
 {
@@ -16,7 +16,6 @@ class ClusterPresenter extends AbstractPresenter
             $this->viewModel = new ClusterViewModel();
         }
     }
-
 
     public function viewModel(): ClusterViewModel
     {

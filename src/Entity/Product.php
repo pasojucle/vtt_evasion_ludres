@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProductRepository;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -144,7 +146,7 @@ class Product
 
     public function addOrderLine(OrderLine $orderLine): self
     {
-        if (!$this->orderLines->contains($orderLine)) {
+        if (! $this->orderLines->contains($orderLine)) {
             $this->orderLines[] = $orderLine;
             $orderLine->setProduct($this);
         }
@@ -182,14 +184,17 @@ class Product
     public function getSizes(): Collection
     {
         $criteria = Criteria::create()
-        ->orderBy(['id' => Criteria::ASC]);
+            ->orderBy([
+                'id' => Criteria::ASC,
+            ])
+        ;
 
         return $this->sizes->matching($criteria);
     }
 
     public function addSize(Size $size): self
     {
-        if (!$this->sizes->contains($size)) {
+        if (! $this->sizes->contains($size)) {
             $this->sizes[] = $size;
         }
 

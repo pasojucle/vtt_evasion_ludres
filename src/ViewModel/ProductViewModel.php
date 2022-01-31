@@ -1,28 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use App\Entity\User;
-use ReflectionClass;
 use App\Entity\Product;
-use App\Service\LicenceService;
 use Doctrine\Common\Collections\Collection;
 
 class ProductViewModel extends AbstractViewModel
 {
     public ?int $id;
+
     public ?string $name;
+
     public ?string $content;
+
     public ?string $price;
+
     public ?string $priceClass;
+
     public ?string $discountPrice;
+
     public ?string $discountTitle;
+
     public ?float $sellingPrice;
+
     public ?string $ref;
+
     public ?string $filename;
-    private ?Collection $productSizes;
+
     public ?string $pathName = null;
+
     public ?array $sizes;
+
+    private ?Collection $productSizes;
 
     public static function fromProduct(Product $product, array $services, UserViewModel $user = null)
     {
@@ -43,11 +54,11 @@ class ProductViewModel extends AbstractViewModel
         $productView->discountTitle = null;
 
         if (null === $user && $services['user']) {
-            $user = UserViewModel::fromUser($services['user'],  $services);
+            $user = UserViewModel::fromUser($services['user'], $services);
         }
 
         if (null !== $user) {
-            if (!empty($user->member) && $product->getCategory() === $user->lastLicence->category) {
+            if (! empty($user->member) && $product->getCategory() === $user->lastLicence->category) {
                 $productView->sellingPrice = $product->getDiscountPrice();
                 $productView->discountPrice = number_format($product->getDiscountPrice(), 2).' €';
                 $productView->priceClass = 'throughed-price';
@@ -61,8 +72,8 @@ class ProductViewModel extends AbstractViewModel
     public function getSizes(): array
     {
         $sizes = [];
-        if (!$this->productSizes->isEmpty()) {
-            foreach($this->productSizes as $size) {
+        if (! $this->productSizes->isEmpty()) {
+            foreach ($this->productSizes as $size) {
                 $sizes[] = $size->getName();
             }
         }

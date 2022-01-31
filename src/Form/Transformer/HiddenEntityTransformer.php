@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Transformer;
 
 use Doctrine\Persistence\ObjectManager;
@@ -14,10 +16,9 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 class HiddenEntityTransformer implements DataTransformerInterface
 {
     private ObjectManager $objectManager;
+
     private $entityClass;
-    /**
-     * EntityHiddenType constructor.
-     */
+
     public function __construct(ObjectManager $objectManager, $entityClass)
     {
         $this->objectManager = $objectManager;
@@ -35,7 +36,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
     /**
      * Transforms an object (entity) to a string (number).
      *
-     * @param object|null $entity
+     * @param null|object $entity
      *
      * @return string
      */
@@ -53,19 +54,20 @@ class HiddenEntityTransformer implements DataTransformerInterface
      *
      * @param string $identifier
      *
-     * @return object|null
-     *
      * @throws TransformationFailedException if object (entity) is not found
+     *
+     * @return null|object
      */
     public function reverseTransform($identifier)
     {
-        if (!$identifier) {
+        if (! $identifier) {
             return null;
         }
 
         $entity = $this->getObjectManager()
             ->getRepository($this->entityClass)
-            ->find($identifier);
+            ->find($identifier)
+        ;
 
         if (null === $entity) {
             // causes a validation error

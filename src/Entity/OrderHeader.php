@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\OrderHeaderRepository;
@@ -13,18 +15,23 @@ use Doctrine\ORM\Mapping as ORM;
 class OrderHeader
 {
     public const STATUS_IN_PROGRESS = 1;
+
     public const STATUS_ORDERED = 2;
-    public const STATUS_VALIDED= 3;
+
+    public const STATUS_VALIDED = 3;
+
     public const STATUS_COMPLETED = 4;
+
     public const STATUS_CANCELED = 9;
-    
-    public CONST STATUS = [
+
+    public const STATUS = [
         self::STATUS_IN_PROGRESS => 'order.in_progress',
         self::STATUS_ORDERED => 'order.ordered',
         self::STATUS_VALIDED => 'order.valided',
         self::STATUS_COMPLETED => 'order.completed',
         self::STATUS_CANCELED => 'order.canceled',
     ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -73,7 +80,7 @@ class OrderHeader
 
     public function addOrderLine(OrderLine $orderLine): self
     {
-        if (!$this->orderLines->contains($orderLine)) {
+        if (! $this->orderLines->contains($orderLine)) {
             $this->orderLines[] = $orderLine;
             $orderLine->setOrderHeader($this);
         }

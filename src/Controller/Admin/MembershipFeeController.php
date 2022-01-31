@@ -1,56 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
-use App\Entity\Product;
-use App\Form\Admin\ProductType;
-use App\Service\PaginatorService;
 use App\Entity\MembershipFeeAmount;
-use App\ViewModel\ProductPresenter;
-use App\Repository\ProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Form\Admin\MembershipFeeAmountType;
 use App\Repository\MembershipFeeRepository;
-use App\Service\Product\ProductEditService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MembershipFeeController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
-     /**
+    /**
      * @Route("/admin/tarifs", name="admin_membership_fee")
      */
     public function adminList(
         MembershipFeeRepository $membershipFeeRepository
-    ): Response
-    {
-
+    ): Response {
         return $this->render('membershipFee/admin/list.html.twig', [
             'all_membership_fee' => $membershipFeeRepository->findAll(),
         ]);
     }
 
-     /**
+    /**
      * @Route("/admin/membership/fee/edit/{amount}", name="admin_membership_fee_edit")
      */
     public function adminEdit(
         Request $request,
         MembershipFeeAmount $amount
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(MembershipFeeAmountType::class, $amount, [
-            'action' => $this->generateUrl('admin_membership_fee_edit', 
+            'action' => $this->generateUrl(
+                'admin_membership_fee_edit',
                 [
-                    'amount'=> $amount->getId(),
+                    'amount' => $amount->getId(),
                 ]
             ),
         ]);

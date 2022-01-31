@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
 use App\Entity\Address;
-
 
 class AddressPresenter extends AbstractPresenter
 {
@@ -15,7 +16,6 @@ class AddressPresenter extends AbstractPresenter
             $this->viewModel = new AddressViewModel();
         }
     }
-
 
     public function viewModel(): AddressViewModel
     {

@@ -1,22 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Admin;
 
-use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Form\IdentityType;
-use App\Form\Admin\LicenceType;
+use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
@@ -42,14 +40,15 @@ class UserType extends AbstractType
                 'class' => Level::class,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('l')
-                    ->addOrderBy('l.type', 'ASC')
-                    ->addOrderBy('l.orderBy', 'ASC');
+                        ->addOrderBy('l.type', 'ASC')
+                        ->addOrderBy('l.orderBy', 'ASC')
+                    ;
                 },
-                'group_by' => function($choice, $key, $value) {
-                    if ($choice->getType() === Level::TYPE_MEMBER) {
+                'group_by' => function ($choice, $key, $value) {
+                    if (Level::TYPE_MEMBER === $choice->getType()) {
                         return 'Adhérent';
                     }
-            
+
                     return 'Encadrement';
                 },
                 'placeholder' => 'Aucun',
@@ -63,10 +62,11 @@ class UserType extends AbstractType
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Modifier',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
         ;
-
     }
 
     public function configureOptions(OptionsResolver $resolver)

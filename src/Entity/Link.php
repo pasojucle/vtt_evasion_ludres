@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\LinkRepository;
@@ -10,13 +12,16 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Link
 {
-    const POSITION_LINK_PAGE = 1;
-    const POSITION_HOME_FOOTER = 2;
-    const POSITION_HOME_BIKE_RIDE = 3;
-    const POSITIONS = [
-        SELF::POSITION_LINK_PAGE => 'link.position.link_page',
-        SELF::POSITION_HOME_FOOTER => 'link.position.home_footer',
-        SELF::POSITION_HOME_BIKE_RIDE => 'link.position.home_bike_ride',
+    public const POSITION_LINK_PAGE = 1;
+
+    public const POSITION_HOME_FOOTER = 2;
+
+    public const POSITION_HOME_BIKE_RIDE = 3;
+
+    public const POSITIONS = [
+        self::POSITION_LINK_PAGE => 'link.position.link_page',
+        self::POSITION_HOME_FOOTER => 'link.position.home_footer',
+        self::POSITION_HOME_BIKE_RIDE => 'link.position.home_bike_ride',
     ];
 
     /**

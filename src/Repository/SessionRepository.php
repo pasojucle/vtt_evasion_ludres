@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Session;
-use DateTime;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Session|null find($id, $lockMode = null, $lockVersion = null)
- * @method Session|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Session find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Session findOneBy(array $criteria, array $orderBy = null)
  * @method Session[]    findAll()
  * @method Session[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -28,8 +29,8 @@ class SessionRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('s')
             ->andWhere(
-                (new Expr)->in('s.cluster', ':clusers'),
-                (new Expr)->eq('s.user', ':user'),
+                (new Expr())->in('s.cluster', ':clusers'),
+                (new Expr())->eq('s.user', ':user'),
             )
             ->setParameter('clusers', $clusers)
             ->setParameter('user', $user)
@@ -43,7 +44,7 @@ class SessionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->leftJoin('s.cluster', 'c')
             ->andWhere(
-                (new Expr)->eq('c.event', ':event'),
+                (new Expr())->eq('c.event', ':event'),
             )
             ->setParameter('event', $event)
             ->getQuery()

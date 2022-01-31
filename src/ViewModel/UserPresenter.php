@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
 use App\Entity\User;
-use App\ViewModel\UserViewModel;
 
 class UserPresenter extends AbstractPresenter
 {
@@ -20,5 +21,4 @@ class UserPresenter extends AbstractPresenter
     {
         return $this->viewModel;
     }
-
 }

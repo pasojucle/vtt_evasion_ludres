@@ -1,24 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Admin;
 
-
-use App\Entity\User;
 use App\Entity\Session;
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
-
 
 class SessionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    $builder
-        ->add('user', Select2EntityType::class, [
+        $builder
+            ->add('user', Select2EntityType::class, [
                 'multiple' => false,
                 'remote_route' => 'user_list_select2',
                 'class' => User::class,
@@ -29,7 +29,8 @@ class SessionType extends AbstractType
                 'allow_clear' => true,
                 'delay' => 250,
                 'cache' => true,
-                'cache_timeout' => 60000, // if 'cache' is true
+                'cache_timeout' => 60000,
+                // if 'cache' is true
                 'language' => 'fr',
                 'placeholder' => 'Saisisez un nom et prénom',
                 'width' => '100%',
@@ -40,7 +41,9 @@ class SessionType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
             ;
     }

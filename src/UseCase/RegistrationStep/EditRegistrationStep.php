@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\RegistrationStep;
 
 use App\Service\UploadService;
@@ -12,8 +14,7 @@ class EditRegistrationStep
     public function __construct(
         private EntityManagerInterface $entityManager,
         private UploadService $uploadService
-    )
-    {
+    ) {
     }
 
     public function execute(Request $request, FormInterface $form): void

@@ -1,22 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Repository\LevelRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Security\Core\Security;
 
 class UserFilterType extends AbstractType
 {
     private LevelRepository $levelRepository;
+
     private Security $security;
+
     public function __construct(LevelRepository $levelRepository, Security $security)
     {
         $this->levelRepository = $levelRepository;
@@ -46,13 +49,15 @@ class UserFilterType extends AbstractType
             ->add('status', ChoiceType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
-                'choices' => ['Licence' => array_flip($statusChoices)],
+                'choices' => [
+                    'Licence' => array_flip($statusChoices),
+                ],
                 'attr' => [
                     'class' => 'btn',
                 ],
                 'required' => false,
             ])
-        
+
             ->add('level', ChoiceType::class, [
                 'label' => false,
                 'choices' => $this->getLevelChoices(),
@@ -66,8 +71,8 @@ class UserFilterType extends AbstractType
                 'label' => '<i class="fas fa-search"></i>',
                 'label_html' => true,
                 'attr' => [
-                    'class' => 'btn btn-ico'
-                ]
+                    'class' => 'btn btn-ico',
+                ],
             ])
             ;
     }
@@ -80,9 +85,9 @@ class UserFilterType extends AbstractType
         $levelChoices['Adultes']['Adultes hors encadrement'] = Level::TYPE_ADULT;
         $levels = $this->levelRepository->findAll();
 
-        if (!empty($levels)) {
-            foreach($levels as $level) {
-                $type = ($level->getType() === Level::TYPE_MEMBER) ? 'École VTT' : 'Encadrement';
+        if (! empty($levels)) {
+            foreach ($levels as $level) {
+                $type = (Level::TYPE_MEMBER === $level->getType()) ? 'École VTT' : 'Encadrement';
                 $levelChoices[$type][$level->getTitle()] = $level->getId();
             }
         }

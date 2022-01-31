@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Content;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentType extends AbstractType
 {
@@ -27,13 +29,15 @@ class ContentType extends AbstractType
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregister',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
             ->add('route', HiddenType::class, [
                 'empty_data' => 'home',
             ])
         ;
-        
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $content = $event->getData();
             $form = $event->getForm();
@@ -52,7 +56,7 @@ class ContentType extends AbstractType
                         'format' => 'dd/MM/yyyy',
                         'attr' => [
                             'class' => 'js-datepicker',
-                            'autocomplete' => "off",
+                            'autocomplete' => 'off',
                         ],
                         'row_attr' => [
                             'class' => 'form-group-inline',
@@ -66,7 +70,7 @@ class ContentType extends AbstractType
                         'format' => 'dd/MM/yyyy',
                         'attr' => [
                             'class' => 'js-datepicker',
-                            'autocomplete' => "off",
+                            'autocomplete' => 'off',
                         ],
                         'row_attr' => [
                             'class' => 'form-group-inline',

@@ -1,32 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-use DateTime;
-use App\Form\OrderType;
 use App\Entity\OrderHeader;
-use App\Service\PdfService;
 use App\Form\Admin\OrderFilterType;
-use App\Service\PaginatorService;
-use App\ViewModel\OrderPresenter;
-use App\ViewModel\OrdersPresenter;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Form\OrderType;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
 use App\Service\Order\OrderValidateService;
+use App\Service\PaginatorService;
+use App\Service\PdfService;
+use App\ViewModel\OrderPresenter;
+use App\ViewModel\OrdersPresenter;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OrderController extends AbstractController
 {
     private OrderPresenter $presenter;
+
     private OrderHeaderRepository $orderHeaderRepository;
+
     private EntityManagerInterface $entityManager;
+
     private RequestStack $requestStack;
 
     public function __construct(
@@ -34,14 +38,14 @@ class OrderController extends AbstractController
         OrderHeaderRepository $orderHeaderRepository,
         EntityManagerInterface $entityManager,
         RequestStack $requestStack
-    )
-    {
+    ) {
         $this->presenter = $presenter;
         $this->orderHeaderRepository = $orderHeaderRepository;
         $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
         $this->session = $this->requestStack->getSession();
     }
+
     /**
      * @Route("/mon-panier", name="order_edit")
      */
@@ -49,8 +53,7 @@ class OrderController extends AbstractController
         OrderLinesSetService $orderLinesSetService,
         OrderValidateService $orderValidateService,
         Request $request
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
         if (null === $user) {
             return $this->redirectToRoute('home');
@@ -61,15 +64,17 @@ class OrderController extends AbstractController
         }
         $form = $this->createForm(OrderType::class, $orderHeader);
 
-        if(!$request->isXmlHttpRequest() && $request->isMethod('POST')) {
+        if (! $request->isXmlHttpRequest() && $request->isMethod('POST')) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $orderValidateService->execute($form);
 
-                return $this->redirectToRoute('order', ['orderHeader' => $orderHeader->getId()]);
+                return $this->redirectToRoute('order', [
+                    'orderHeader' => $orderHeader->getId(),
+                ]);
             }
         }
-        
+
         $this->presenter->present($orderHeader);
 
         return $this->render('order/edit.html.twig', [
@@ -83,12 +88,11 @@ class OrderController extends AbstractController
      */
     public function order(
         ?OrderHeader $orderHeader
-    ): Response
-    {
+    ): Response {
         $this->presenter->present($orderHeader);
 
         return $this->render('order/show.html.twig', [
-            'order' => $this->presenter->viewModel()
+            'order' => $this->presenter->viewModel(),
         ]);
     }
 
@@ -98,13 +102,12 @@ class OrderController extends AbstractController
     public function orderAcknowledgement(
         PdfService $pdfService,
         OrderHeader $orderHeader
-    ): Response
-    {
+    ): Response {
         $this->presenter->present($orderHeader);
         $orderAcknowledgement = $this->renderView('order/acknowledgement.html.twig', [
             'order' => $this->presenter->viewModel(),
         ]);
-        $pdfFilepath = $pdfService->makePdf($orderAcknowledgement, 'order_acknowledgement_temp','../data/');
+        $pdfFilepath = $pdfService->makePdf($orderAcknowledgement, 'order_acknowledgement_temp', '../data/');
 
         $fileContent = file_get_contents($pdfFilepath);
 
@@ -113,7 +116,7 @@ class OrderController extends AbstractController
             HeaderUtils::DISPOSITION_ATTACHMENT,
             'commande_vtt_evasion_ludres.pdf'
         );
-        
+
         $response->headers->set('Content-Disposition', $disposition);
         $response->headers->set('Content-Type', 'application/pdf');
 
@@ -127,12 +130,12 @@ class OrderController extends AbstractController
         Request $request,
         OrderPresenter $presenter,
         OrderHeader $orderHeader
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('order_delete', 
+            'action' => $this->generateUrl(
+                'order_delete',
                 [
-                    'orderHeader'=> $orderHeader->getId(),
+                    'orderHeader' => $orderHeader->getId(),
                 ]
             ),
         ]);
@@ -147,6 +150,7 @@ class OrderController extends AbstractController
         }
 
         $presenter->present($orderHeader);
+
         return $this->render('order/delete.modal.html.twig', [
             'order_header' => $presenter->viewModel(),
             'form' => $form->createView(),
@@ -160,8 +164,7 @@ class OrderController extends AbstractController
         OrdersPresenter $presenter,
         PaginatorService $paginator,
         Request $request
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
         $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
@@ -182,9 +185,8 @@ class OrderController extends AbstractController
         PaginatorService $paginator,
         Request $request,
         bool $filtered
-    ): Response
-    {
-        $filters = ($filtered) ? $this->session->get('admin_orders_filters'): [];
+    ): Response {
+        $filters = ($filtered) ? $this->session->get('admin_orders_filters') : [];
 
         $form = $this->createForm(OrderFilterType::class, $filters);
         $form->handleRequest($request);
@@ -193,9 +195,14 @@ class OrderController extends AbstractController
             $filters = $form->getData();
             $this->session->set('admin_orders_filters', $filters);
             $request->query->set('p', 1);
-            return $this->redirectToRoute('admin_orders', ['filtered' => true]);
+
+            return $this->redirectToRoute('admin_orders', [
+                'filtered' => true,
+            ]);
         }
-        $this->requestStack->getSession()->set('order_return', $this->generateUrl('admin_orders', ['filtered' => (int) $filtered]));
+        $this->requestStack->getSession()->set('order_return', $this->generateUrl('admin_orders', [
+            'filtered' => (int) $filtered,
+        ]));
 
         $query = $this->orderHeaderRepository->findOrdersQuery($filters);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
@@ -209,6 +216,7 @@ class OrderController extends AbstractController
             'count' => $paginator->total($orders),
         ]);
     }
+
     /**
      * @Route("/admin/command/status/{orderHeader}/{status}", name="admin_order_status")
      */
@@ -219,8 +227,7 @@ class OrderController extends AbstractController
         Request $request,
         OrderHeader $orderHeader,
         int $status
-    ): Response
-    {
+    ): Response {
         $filters = $this->session->get('admin_orders_filters');
         $orderHeader->setStatus($status);
         $this->entityManager->flush();
@@ -233,10 +240,11 @@ class OrderController extends AbstractController
             'lastPage' => $paginator->lastPage($orders),
             'count' => $paginator->total($orders),
             'target_route' => 'admin_orders',
-            'current_Filters' => ['filterd' => true],
+            'current_Filters' => [
+                'filterd' => true,
+            ],
         ]);
     }
-
 
     /**
      * @Route("/admin/commande/{orderHeader}", name="admin_order")
@@ -244,13 +252,14 @@ class OrderController extends AbstractController
     public function admin_order(
         Request $request,
         ?OrderHeader $orderHeader
-    ): Response
-    {
+    ): Response {
         $this->presenter->present($orderHeader);
-        $request->getSession()->set('user_return', $this->generateUrl('admin_order', ['orderHeader' => $orderHeader->getId()]));
+        $request->getSession()->set('user_return', $this->generateUrl('admin_order', [
+            'orderHeader' => $orderHeader->getId(),
+        ]));
 
         return $this->render('order/admin/show.html.twig', [
-            'order' => $this->presenter->viewModel()
+            'order' => $this->presenter->viewModel(),
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ParameterGroupRepository;
@@ -95,7 +97,7 @@ class ParameterGroup
 
     public function addParameter(Parameter $parameter): self
     {
-        if (!$this->parameters->contains($parameter)) {
+        if (! $this->parameters->contains($parameter)) {
             $this->parameters[] = $parameter;
             $parameter->setParameterGroup($this);
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\RegistrationStepRepository;
@@ -13,9 +15,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class RegistrationStep
 {
     public const RENDER_NONE = 0;
+
     public const RENDER_VIEW = 1;
+
     public const RENDER_FILE = 2;
+
     public const RENDER_FILE_AND_VIEW = 3;
+
     public const RENDERS = [
         self::RENDER_NONE => 'registration_step.render.none',
         self::RENDER_VIEW => 'registration_step.render.view',
@@ -78,7 +84,6 @@ class RegistrationStep
      * @ORM\Column(type="integer")
      */
     private $finalRender;
-
 
     public function __construct()
     {

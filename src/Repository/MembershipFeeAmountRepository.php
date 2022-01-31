@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use Doctrine\ORM\Query\Expr;
 use App\Entity\MembershipFeeAmount;
-use Doctrine\ORM\NoResultException;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method MembershipFeeAmount|null find($id, $lockMode = null, $lockVersion = null)
- * @method MembershipFeeAmount|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|MembershipFeeAmount find($id, $lockMode = null, $lockVersion = null)
+ * @method null|MembershipFeeAmount findOneBy(array $criteria, array $orderBy = null)
  * @method MembershipFeeAmount[]    findAll()
  * @method MembershipFeeAmount[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -27,9 +29,9 @@ class MembershipFeeAmountRepository extends ServiceEntityRepository
             return $this->createQueryBuilder('mfa')
                 ->join('mfa.membershipFee', 'mf')
                 ->andWhere(
-                    (new Expr)->eq('mf.newMember', ':isNewMember'),
-                    (new Expr)->eq('mfa.coverage', ':coverage'),
-                    (new Expr)->eq('mf.additionalFamilyMember', ':hasFamilyMember'),
+                    (new Expr())->eq('mf.newMember', ':isNewMember'),
+                    (new Expr())->eq('mfa.coverage', ':coverage'),
+                    (new Expr())->eq('mf.additionalFamilyMember', ':hasFamilyMember'),
                 )
                 ->setParameter('isNewMember', $isNewMember)
                 ->setParameter('coverage', $coverage)

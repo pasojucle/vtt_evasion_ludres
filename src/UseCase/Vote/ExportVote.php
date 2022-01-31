@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\Vote;
 
 use App\Entity\Vote;
@@ -12,11 +14,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ExportVote
 {
     public function __construct(
-        private TranslatorInterface $translator, 
+        private TranslatorInterface $translator,
         private VoteResponseRepository $voteResponseRepository,
-    )
-    {
-        
+    ) {
     }
 
     public function execute(Vote $vote): string
@@ -28,15 +28,15 @@ class ExportVote
         $content[] = '';
         $header = [];
         $header[0] = 'Identifiant';
-        
-        if (!$vote->getVoteIssues()->isEmpty()) {
+
+        if (! $vote->getVoteIssues()->isEmpty()) {
             foreach ($vote->getVoteIssues() as $issue) {
                 $header[] = $this->addQuote($issue->getContent());
             }
         }
         $content[] = implode(',', $header);
-        
-        if (!empty($voteResponsesByUuid)) {
+
+        if (! empty($voteResponsesByUuid)) {
             $this->addResponses($content, $voteResponsesByUuid);
             $results = $this->getResults($voteResponsesByUuid);
             $this->addRecap($content, $results, $vote);
@@ -48,9 +48,10 @@ class ExportVote
 
     private function addQuote(?string $string): string
     {
-        if (!$string) {
+        if (! $string) {
             $string = '';
         }
+
         return '"'.$string.'"';
     }
 
@@ -72,29 +73,31 @@ class ExportVote
     }
 
     private function GetResults(array $voteResponsesByUuid): array
-    {   
+    {
         $results = [];
-        foreach(array_keys(VoteResponse::VALUES) as $choice) {
+        foreach (array_keys(VoteResponse::VALUES) as $choice) {
             $results[$choice] = [];
         }
-        
+
         foreach ($voteResponsesByUuid as $data) {
             foreach ($data['responses'] as $response) {
                 if (VoteIssue::RESPONSE_TYPE_CHOICE === $response->getVoteIssue()->getResponseType()) {
                     $voteIssueId = $response->getVoteIssue()->getId();
 
-                    if (!array_key_exists($voteIssueId, $results[$response->getValue()])) {
-                        foreach(array_keys(VoteResponse::VALUES) as $choice) {
+                    if (! array_key_exists($voteIssueId, $results[$response->getValue()])) {
+                        foreach (array_keys(VoteResponse::VALUES) as $choice) {
                             $results[$choice][$voteIssueId] = 0;
                         }
                     }
-                    
+
                     ++$results[$response->getValue()][$voteIssueId];
-                } 
+                }
             }
         }
+
         return $results;
     }
+
     private function addRecap(array &$content, array $results, Vote $vote): void
     {
         $content[] = '';
@@ -105,7 +108,7 @@ class ExportVote
             foreach ($results as $choice => $resultsByChoice) {
                 $row = [];
                 $row[] = $this->translator->trans(VoteResponse::VALUES[$choice]);
-                if (!$vote->getVoteIssues()->isEmpty()) {
+                if (! $vote->getVoteIssues()->isEmpty()) {
                     foreach ($vote->getVoteIssues() as $issue) {
                         if (array_key_exists($issue->getId(), $resultsByChoice)) {
                             $row[] = $resultsByChoice[$issue->getId()];
@@ -120,16 +123,15 @@ class ExportVote
     private function addVoteUsers(array &$content, Vote $vote): void
     {
         $content[] = '';
-        if (!$vote->getVoteUsers()->isEmpty()) {
-            $content[] = 'Horodateur,Participants - '. $vote->getVoteUsers()->count();
-            foreach($vote->getVoteUsers() as $voteUser) {
+        if (! $vote->getVoteUsers()->isEmpty()) {
+            $content[] = 'Horodateur,Participants - '.$vote->getVoteUsers()->count();
+            foreach ($vote->getVoteUsers() as $voteUser) {
                 $row = [];
                 $identity = $voteUser->getUser()->getFirstIdentity();
                 $row[] = $voteUser->getCreatedAt()->format('d/m/Y H:i');
                 $row[] = $identity->getName().' '.$identity->getFirstName();
                 $content[] = implode(',', $row);
             }
-            
         } else {
             $content[] = 'Aucun participant';
         }

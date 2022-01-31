@@ -1,32 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use App\Entity\Licence;
-use App\Form\UserType;
 use App\Entity\RegistrationStep;
-use App\Entity\User;
+use App\Form\UserType;
 use Symfony\Component\Form\FormInterface;
 
 class RegistrationStepViewModel extends AbstractViewModel
 {
     public ?FormInterface $formObject;
+
     public ?string $template;
+
     public ?string $class;
+
     public null|string|array $content;
+
     public ?string $filename;
+
     public ?string $title;
+
     public ?int $form;
 
     public static function fromRegistrationStep(
-        RegistrationStep $registrationStep, 
+        RegistrationStep $registrationStep,
         array $services,
         ?UserViewModel $user,
         int $step,
         int $render,
         ?string $class = null
-    )
-    {
+    ) {
         $registrationStepView = new self();
         $registrationStepView->class = $class;
         $registrationStepView->title = $registrationStep->getTitle();
@@ -55,11 +60,13 @@ class RegistrationStepViewModel extends AbstractViewModel
         $route = (null === $user->entity->getId()) ? 'registration_form' : 'user_registration_form';
         if (null !== $registrationStep->getForm() && UserType::FORM_REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
             $form = $formFactory->create(UserType::class, $user->entity, [
-                'attr' =>[
-                    'action' => $router->generate($route, ['step' => $step]),
+                'attr' => [
+                    'action' => $router->generate($route, [
+                        'step' => $step,
+                    ]),
                 ],
                 'current' => $registrationStep,
-                'is_kinship' => $registrationStep->getForm() === UserType::FORM_KINSHIP,
+                'is_kinship' => UserType::FORM_KINSHIP === $registrationStep->getForm(),
                 'category' => $seasonLicence->getCategory(),
                 'season_licence' => $seasonLicence,
             ]);
@@ -74,6 +81,7 @@ class RegistrationStepViewModel extends AbstractViewModel
         if (UserType::FORM_REGISTRATION_DOCUMENT === $form) {
             return null;
         }
-        return 'registration/form/'. str_replace('form.','', UserType::FORMS[$form]).'.html.twig';
+
+        return 'registration/form/'.str_replace('form.', '', UserType::FORMS[$form]).'.html.twig';
     }
 }

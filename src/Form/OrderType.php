@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\OrderHeader;
-use App\Form\OrderLineType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class OrderType extends AbstractType
 {
@@ -22,7 +23,9 @@ class OrderType extends AbstractType
             ->add('save', SubmitType::class, [
                 'label' => '<i class="fas fa-check"></i> Valider la commande',
                 'label_html' => true,
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
         ;
     }

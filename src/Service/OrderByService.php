@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -9,17 +11,15 @@ class OrderByService
     private EntityManagerInterface $entityManager;
 
     public function __construct(
-
         EntityManagerInterface $entityManager
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
     }
 
     public function setNewOrders($current, ?array $entities, int $newOrder)
     {
         $oldOrder = $current->getOrderBy();
-        if (null !== $newOrder && null !== $entities) {           
+        if (null !== $newOrder && null !== $entities) {
             $startOrder = $oldOrder;
             $endOrder = $newOrder;
             $order = $startOrder;
@@ -31,8 +31,8 @@ class OrderByService
                 ++$order;
             }
 
-            foreach($entities as $entity) {
-                if ($entity !== $current && $startOrder <= $entity->getOrderBy() && $entity->getOrderBy() <= $endOrder ) {
+            foreach ($entities as $entity) {
+                if ($entity !== $current && $startOrder <= $entity->getOrderBy() && $entity->getOrderBy() <= $endOrder) {
                     $entity->setOrderBy($order);
                     ++$order;
                 }
@@ -44,11 +44,11 @@ class OrderByService
 
     public function ResetOrders(?array $entities)
     {
-        if (null !== $entities) {           
+        if (null !== $entities) {
             $order = 0;
-            foreach($entities as $entity) {
-                    $entity->setOrderBy($order);
-                    ++$order;
+            foreach ($entities as $entity) {
+                $entity->setOrderBy($order);
+                ++$order;
             }
 
             $this->entityManager->flush();

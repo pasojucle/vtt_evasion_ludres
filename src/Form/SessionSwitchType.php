@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Cluster;
 use App\Entity\Session;
 use App\Repository\ClusterRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class SessionSwitchType extends AbstractType
 {
     private ClusterRepository $clusterRepository;
+
     public function __construct(ClusterRepository $clusterRepository)
     {
         $this->clusterRepository = $clusterRepository;
@@ -26,16 +29,18 @@ class SessionSwitchType extends AbstractType
         $builder
             ->add('save', SubmitType::class, [
                 'label' => 'Enregister',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
             ;
-            
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $session = $event->getData();
             $form = $event->getForm();
             $form->add('cluster', EntityType::class, [
                 'label' => false,
-                'class' => Cluster::class, 
+                'class' => Cluster::class,
                 'choices' => $this->getChoices($session),
                 'expanded' => true,
                 'multiple' => false,
@@ -49,7 +54,7 @@ class SessionSwitchType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Session::class,
-            'session' => null
+            'session' => null,
         ]);
     }
 

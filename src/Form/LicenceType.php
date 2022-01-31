@@ -1,39 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Licence;
-use App\Repository\LicenceRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class LicenceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $licence = $event->getData();
             $form = $event->getForm();
-            
+
             if ($licence === $options['season_licence']) {
                 $choicesCoverage = array_flip(Licence::COVERAGES);
-                if ($options['category'] === Licence::CATEGORY_MINOR) {
+                if (Licence::CATEGORY_MINOR === $options['category']) {
                     array_shift($choicesCoverage);
-                } 
-                if ($options['category'] === Licence::CATEGORY_ADULT && $licence->isFinal() && UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
+                }
+                if (Licence::CATEGORY_ADULT === $options['category'] && $licence->isFinal() && UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
                     $form
-                    ->add('type', ChoiceType::class, [
-                        'label' => 'Sélectionnez un type de licence avec les 3 boutons Balade, Rando et Sportive',
-                        'choices' => array_flip(Licence::TYPES),
-                        'expanded' => true,
-                        'multiple' => false,
-                        'block_prefix' => 'customcheck',
-                    ]);
+                        ->add('type', ChoiceType::class, [
+                            'label' => 'Sélectionnez un type de licence avec les 3 boutons Balade, Rando et Sportive',
+                            'choices' => array_flip(Licence::TYPES),
+                            'expanded' => true,
+                            'multiple' => false,
+                            'block_prefix' => 'customcheck',
+                        ])
+                    ;
                 }
                 if (UserType::FORM_LICENCE_COVERAGE === $options['current']->getForm()) {
                     $form

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\AddressRepository;
@@ -43,7 +45,6 @@ class Address
     {
         $this->identities = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -96,7 +97,7 @@ class Address
 
     public function addIdentity(Identity $identity): self
     {
-        if (!$this->identities->contains($identity)) {
+        if (! $this->identities->contains($identity)) {
             $this->identities[] = $identity;
             $identity->setAddress($this);
         }

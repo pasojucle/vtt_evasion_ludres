@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\HealthRepository;
@@ -27,8 +29,7 @@ class Health
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-
-     private $mutualCompany;
+    private $mutualCompany;
 
     /**
      * @ORM\Column(type="string", length=25, nullable=true)
@@ -209,7 +210,7 @@ class Health
 
     public function addHealthQuestion(HealthQuestion $healthQuestion): self
     {
-        if (!$this->healthQuestions->contains($healthQuestion)) {
+        if (! $this->healthQuestions->contains($healthQuestion)) {
             $this->healthQuestions[] = $healthQuestion;
             $healthQuestion->setHealth($this);
         }
@@ -239,7 +240,7 @@ class Health
 
     public function addDisease(Disease $disease): self
     {
-        if (!$this->diseases->contains($disease)) {
+        if (! $this->diseases->contains($disease)) {
             $this->diseases[] = $disease;
             $disease->setHealth($this);
         }
@@ -262,13 +263,14 @@ class Health
     public function isMedicalCertificateRequired(): ?bool
     {
         $isMedicalCertificateRequired = false;
-        if (!$this->healthQuestions->isEmpty()) {
+        if (! $this->healthQuestions->isEmpty()) {
             foreach ($this->healthQuestions as $question) {
-                if ($question->getValue() === true) {
+                if (true === $question->getValue()) {
                     $isMedicalCertificateRequired = true;
                 }
             }
         }
+
         return $isMedicalCertificateRequired;
     }
 

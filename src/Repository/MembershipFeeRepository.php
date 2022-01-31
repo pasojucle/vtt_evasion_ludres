@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use Doctrine\ORM\Query\Expr;
 use App\Entity\MembershipFee;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NoResultException;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method MembershipFee|null find($id, $lockMode = null, $lockVersion = null)
- * @method MembershipFee|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|MembershipFee find($id, $lockMode = null, $lockVersion = null)
+ * @method null|MembershipFee findOneBy(array $criteria, array $orderBy = null)
  * @method MembershipFee[]    findAll()
  * @method MembershipFee[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

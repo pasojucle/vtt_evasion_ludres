@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\HealthQuestion;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class HealthQuestionType extends AbstractType
 {
@@ -22,7 +24,9 @@ class HealthQuestionType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
-                'attr' => ['class' => 'value'],
+                'attr' => [
+                    'class' => 'value',
+                ],
                 'constraints' => [
                     new NotNull(),
                 ],

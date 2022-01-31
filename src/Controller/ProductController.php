@@ -1,23 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-
 use App\Entity\Product;
-use App\Service\PaginatorService;
-use App\ViewModel\ProductPresenter;
 use App\Form\OrderLineAddType;
-use App\ViewModel\ProductsPresenter;
 use App\Repository\ProductRepository;
 use App\Service\Order\OrderAddService;
+use App\Service\PaginatorService;
+use App\ViewModel\ProductPresenter;
+use App\ViewModel\ProductsPresenter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductController extends AbstractController
 {
-     /**
+    /**
      * @Route("/boutique", name="products")
      */
     public function list(
@@ -25,10 +26,9 @@ class ProductController extends AbstractController
         ProductRepository $productRepository,
         ProductsPresenter $presenter,
         Request $request
-    ): Response
-    {
-        $query =  $productRepository->findAllQuery();
-        $products =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+    ): Response {
+        $query = $productRepository->findAllQuery();
+        $products = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($products);
 
         return $this->render('product/list.html.twig', [
@@ -37,7 +37,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-         /**
+    /**
      * @Route("/boutique/produit/{product}", name="product_show")
      */
     public function show(
@@ -45,8 +45,7 @@ class ProductController extends AbstractController
         ProductPresenter $presenter,
         Request $request,
         Product $product
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(OrderLineAddType::class);
 
         $form->handleRequest($request);
@@ -57,6 +56,7 @@ class ProductController extends AbstractController
             }
         }
         $presenter->present($product);
+
         return $this->render('product/show.html.twig', [
             'product' => $presenter->viewModel(),
             'form' => $form->createView(),

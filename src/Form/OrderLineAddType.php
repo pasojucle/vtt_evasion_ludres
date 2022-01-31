@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
-use App\Entity\Size;
 use App\Entity\OrderLine;
-use App\Form\QuantityType;
+use App\Entity\Size;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderLineAddType extends AbstractType
 {
@@ -39,7 +40,9 @@ class OrderLineAddType extends AbstractType
             ->add('save', SubmitType::class, [
                 'label' => '<i class="fas fa-shopping-cart"></i> Ajouter au panier',
                 'label_html' => true,
-                'attr' => ['class' => 'btn btn-primary'],
+                'attr' => [
+                    'class' => 'btn btn-primary',
+                ],
             ])
         ;
     }

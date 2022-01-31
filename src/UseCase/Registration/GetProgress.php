@@ -1,29 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\Registration;
 
-use App\Entity\User;
-use App\Entity\Health;
 use App\Entity\Address;
-use App\Entity\Disease;
-use App\Entity\Licence;
 use App\Entity\Approval;
-use App\Entity\Identity;
+use App\Entity\Disease;
+use App\Entity\Health;
 use App\Entity\HealthQuestion;
-use App\Service\LicenceService;
+use App\Entity\Identity;
+use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use App\ViewModel\UserPresenter;
+use App\Entity\User;
 use App\Repository\LevelRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\Collections\Collection;
-use App\ViewModel\RegistrationStepPresenter;
-use Symfony\Component\Security\Core\Security;
 use App\Repository\RegistrationStepRepository;
+use App\Service\LicenceService;
+use App\ViewModel\RegistrationStepPresenter;
+use App\ViewModel\UserPresenter;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Security;
 
 class GetProgress
 {
     private ?User $user;
+
     private int $season;
+
     public function __construct(
         private LicenceService $licenceService,
         private RegistrationStepRepository $registrationStepRepository,
@@ -32,8 +36,7 @@ class GetProgress
         private UserPresenter $userPresenter,
         private Security $security,
         private EntityManagerInterface $entityManager
-    )
-    {
+    ) {
         $this->season = $this->licenceService->getCurrentSeason();
     }
 
@@ -44,7 +47,7 @@ class GetProgress
 
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
-        
+
         $stepIndex0 = $step - 1;
         $progress = [];
         $progress['prevIndex'] = null;
@@ -53,7 +56,7 @@ class GetProgress
         $progress['steps'] = null;
         $progress['max_step'] = count($steps);
 
-        foreach($steps as $key => $registrationStep) {
+        foreach ($steps as $key => $registrationStep) {
             $index = $key + 1;
             $class = null;
             if ($key < $stepIndex0) {
@@ -102,7 +105,7 @@ class GetProgress
         if ($healthQuestionCount > $formQuestionCount) {
             $this->removeHealthQuestions($this->user->getHealth()->getHealthQuestions(), $formQuestionCount);
         }
-        
+
         if ($this->user->getIdentities()->isEmpty()) {
             $this->createIdentityMember();
         }
@@ -126,37 +129,51 @@ class GetProgress
             }
         } else {
             // si on passe du status de mineur à majeur
-            if (!$this->user->getApprovals()->isEmpty()) {
+            if (! $this->user->getApprovals()->isEmpty()) {
                 $this->removeMinorApprovals();
             }
-            
-            if (!$this->user->getIdentities()->isEmpty()) {
+
+            if (! $this->user->getIdentities()->isEmpty()) {
                 $this->removeKinship();
             }
             // $this->user->setLevel(null);
         }
     }
 
-    private function createUser():void
+    public function updateStatus(): void
+    {
+        $licence = $this->seasonLicence;
+        if (! $licence->isFinal() &&
+            ((0 < count($this->user->getDoneSessions()) && Licence::CATEGORY_MINOR === $licence->getCategory())
+            || (0 < count($this->user->getSessions()) && Licence::CATEGORY_ADULT === $licence->getCategory()))) {
+            $this->seasonLicence->setFinal(true)
+                ->setStatus(Licence::STATUS_IN_PROCESSING)
+            ;
+        }
+    }
+
+    private function createUser(): void
     {
         $this->user = new User();
         $this->user->setRoles(['ROLE_USER']);
         $this->entityManager->persist($this->user);
     }
 
-    private function createNewLicence():void
+    private function createNewLicence(): void
     {
         $this->seasonLicence = new Licence();
         $this->seasonLicence->setSeason($this->season);
-        if (!$this->user->getLicences()->isEmpty()) {
+        if (! $this->user->getLicences()->isEmpty()) {
             $this->seasonLicence->setFinal(true)
-                ->setType(Licence::TYPE_HIKE);
+                ->setType(Licence::TYPE_HIKE)
+            ;
         } else {
             $this->seasonLicence->setFinal(false)
                 ->setType(Licence::TYPE_HIKE)
-                ->setCoverage(Licence::COVERAGE_MINI_GEAR);
+                ->setCoverage(Licence::COVERAGE_MINI_GEAR)
+            ;
         }
-        if (!$this->user->getIdentities()->isEmpty()) {
+        if (! $this->user->getIdentities()->isEmpty()) {
             $category = $this->licenceService->getCategory($this->user);
             $this->seasonLicence->setCategory($category);
         }
@@ -164,14 +181,14 @@ class GetProgress
         $this->user->addLicence($this->seasonLicence);
     }
 
-    private function createHealth():void
+    private function createHealth(): void
     {
         $health = new Health();
         $this->user->setHealth($health);
         $this->entityManager->persist($health);
     }
 
-    private function createHealthQuestions(int $healthQuestionCount, int $formQuestionCount):void
+    private function createHealthQuestions(int $healthQuestionCount, int $formQuestionCount): void
     {
         foreach (range($healthQuestionCount, $formQuestionCount) as $number) {
             $healthQuestion = new HealthQuestion();
@@ -181,7 +198,7 @@ class GetProgress
         }
     }
 
-    private function removeHealthQuestions(Collection $healthQuestions, int $formQuestionCount):void
+    private function removeHealthQuestions(Collection $healthQuestions, int $formQuestionCount): void
     {
         foreach ($healthQuestions as $key => $healthQuestion) {
             if ($formQuestionCount < $key) {
@@ -191,7 +208,7 @@ class GetProgress
         $this->entityManager->flush();
     }
 
-    private function createIdentityMember():void
+    private function createIdentityMember(): void
     {
         $identity = new Identity();
         $this->user->addIdentity($identity);
@@ -201,19 +218,21 @@ class GetProgress
 
     private function createIdentitiesKinship(): Identity
     {
-        foreach([
+        foreach ([
             Identity::TYPE_KINSHIP => Identity::KINSHIP_FATHER,
             Identity::TYPE_SECOND_CONTACT => Identity::KINSHIP_MOTHER,
         ] as $type => $kinShip) {
             $identity = new Identity();
             $identity->setKinship($kinShip)
-                ->setType($type);
+                ->setType($type)
+            ;
             $this->user->addIdentity($identity);
-            if ($type === Identity::TYPE_KINSHIP) {
+            if (Identity::TYPE_KINSHIP === $type) {
                 $this->createAddress($identity);
             }
             $this->entityManager->persist($identity);
         }
+
         return $identity;
     }
 
@@ -244,7 +263,8 @@ class GetProgress
             }
             $disease = new Disease();
             $disease->setType($type)
-                ->setLabel($label);
+                ->setLabel($label)
+            ;
             $this->entityManager->persist($disease);
             $this->user->getHealth()->addDisease($disease);
         }
@@ -260,7 +280,7 @@ class GetProgress
     private function removeMinorApprovals(): void
     {
         foreach ($this->user->getApprovals() as $approval) {
-            if ($approval->getType() === User::APPROVAL_GOING_HOME_ALONE) {
+            if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
                 $this->user->removeApproval($approval);
                 $this->entityManager->remove($approval);
             }
@@ -269,7 +289,7 @@ class GetProgress
 
     private function removeKinship(): void
     {
-        foreach($this->user->getIdentities() as $identity) {
+        foreach ($this->user->getIdentities() as $identity) {
             if (null !== $identity->getKinship()) {
                 if ($identity->isEmpty()) {
                     $address = $identity->getAddress();
@@ -281,17 +301,6 @@ class GetProgress
                     $this->entityManager->remove($identity);
                 }
             }
-        }
-    }
-
-    public function updateStatus(): void
-    {
-        $licence = $this->seasonLicence;
-        if (!$licence->isFinal() && 
-            ((0 < count($this->user->getDoneSessions()) && $licence->getCategory() === Licence::CATEGORY_MINOR)
-            || (0 < count($this->user->getSessions()) && $licence->getCategory() === Licence::CATEGORY_ADULT))) {
-            $this->seasonLicence->setFinal(true)
-                ->setStatus(Licence::STATUS_IN_PROCESSING);
         }
     }
 }

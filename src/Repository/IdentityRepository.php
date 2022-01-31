@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Identity;
 use App\Entity\User;
-use Doctrine\ORM\NoResultException;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Identity|null find($id, $lockMode = null, $lockVersion = null)
- * @method Identity|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Identity find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Identity findOneBy(array $criteria, array $orderBy = null)
  * @method Identity[]    findAll()
  * @method Identity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -58,13 +59,13 @@ class IdentityRepository extends ServiceEntityRepository
     public function findKinShipsByUser(User $user): array
     {
         return $this->createQueryBuilder('i')
-        ->andWhere(
-            (new Expr())->eq('i.user', ':user'),
-            (new Expr())->isNotNull('i.kinship')
-        )
-        ->setParameter('user', $user)
-        ->getQuery()
-        ->getResult()
+            ->andWhere(
+                (new Expr())->eq('i.user', ':user'),
+                (new Expr())->isNotNull('i.kinship')
+            )
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
     ;
     }
 }

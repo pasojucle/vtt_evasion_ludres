@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\LogError;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method LogError|null find($id, $lockMode = null, $lockVersion = null)
- * @method LogError|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|LogError find($id, $lockMode = null, $lockVersion = null)
+ * @method null|LogError findOneBy(array $criteria, array $orderBy = null)
  * @method LogError[]    findAll()
  * @method LogError[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -24,12 +26,11 @@ class LogErrorRepository extends ServiceEntityRepository
     /**
      * @return LogError[] Returns an array of LogError objects
      */
-
     public function findLogErrorQuery(int $statusCode): QueryBuilder
     {
         return $this->createQueryBuilder('l')
             ->andWhere(
-                (new Expr)->eq('l.statusCode', ':statusCode')
+                (new Expr())->eq('l.statusCode', ':statusCode')
             )
             ->setParameter('statusCode', $statusCode)
             ->orderBy('l.createdAt', 'DESC')

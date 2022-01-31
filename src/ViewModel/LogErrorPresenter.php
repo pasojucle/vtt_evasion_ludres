@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
 use App\Entity\LogError;
-use App\ViewModel\OrderViewModel;
 
 class LogErrorPresenter extends AbstractPresenter
 {
@@ -18,10 +19,8 @@ class LogErrorPresenter extends AbstractPresenter
         }
     }
 
-
     public function viewModel(): LogErrorViewModel
     {
         return $this->viewModel;
     }
-
 }

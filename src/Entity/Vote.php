@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\VoteRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=VoteRepository::class)
@@ -111,7 +113,7 @@ class Vote
 
     public function addVoteIssue(VoteIssue $voteIssue): self
     {
-        if (!$this->voteIssues->contains($voteIssue)) {
+        if (! $this->voteIssues->contains($voteIssue)) {
             $this->voteIssues[] = $voteIssue;
             $voteIssue->setVote($this);
         }
@@ -165,7 +167,7 @@ class Vote
 
     public function addVoteUser(VoteUser $voteUser): self
     {
-        if (!$this->voteUsers->contains($voteUser)) {
+        if (! $this->voteUsers->contains($voteUser)) {
             $this->voteUsers[] = $voteUser;
             $voteUser->setVote($this);
         }

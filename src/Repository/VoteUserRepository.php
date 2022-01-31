@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\User;
 use App\Entity\Vote;
 use App\Entity\VoteUser;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
- * @method VoteUser|null find($id, $lockMode = null, $lockVersion = null)
- * @method VoteUser|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|VoteUser find($id, $lockMode = null, $lockVersion = null)
+ * @method null|VoteUser findOneBy(array $criteria, array $orderBy = null)
  * @method VoteUser[]    findAll()
  * @method VoteUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -61,13 +63,17 @@ class VoteUserRepository extends ServiceEntityRepository
         ;
         $votes = [];
         $votesCreatedAt = [];
-        if (!empty($userVotes)) {
+        if (! empty($userVotes)) {
             foreach ($userVotes as $userVote) {
                 $vote = $userVote->getVote();
                 $votes[] = $vote;
                 $votesCreatedAt[$vote->getId()] = $userVote->getCreatedAt();
             }
         }
-        return ['votes' => $votes, 'votesCreatedAt' => $votesCreatedAt];
+
+        return [
+            'votes' => $votes,
+            'votesCreatedAt' => $votesCreatedAt,
+        ];
     }
 }

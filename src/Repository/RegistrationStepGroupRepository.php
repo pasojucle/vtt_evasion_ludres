@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\RegistrationStepGroup;
@@ -7,8 +9,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method RegistrationStepGroup|null find($id, $lockMode = null, $lockVersion = null)
- * @method RegistrationStepGroup|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|RegistrationStepGroup find($id, $lockMode = null, $lockVersion = null)
+ * @method null|RegistrationStepGroup findOneBy(array $criteria, array $orderBy = null)
  * @method RegistrationStepGroup[]    findAll()
  * @method RegistrationStepGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -19,12 +21,9 @@ class RegistrationStepGroupRepository extends ServiceEntityRepository
         parent::__construct($registry, RegistrationStepGroup::class);
     }
 
-    
-
     /**
-    * @return RegistrationStepGroup[] Returns an array of RegistrationStep objects
-    */
-
+     * @return RegistrationStepGroup[] Returns an array of RegistrationStep objects
+     */
     public function findAll(): array
     {
         return $this->createQueryBuilder('rsg')

@@ -1,41 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-use App\Entity\Link;
 use App\Entity\Content;
+use App\Entity\Link;
 use App\Form\ContactType;
 use App\Form\ContentType;
+use App\Repository\ContentRepository;
+use App\Repository\EventRepository;
+use App\Repository\LevelRepository;
+use App\Repository\LinkRepository;
 use App\Service\MailerService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Repository\LinkRepository;
-use App\Repository\EventRepository;
-use App\Repository\LevelRepository;
-use App\Repository\ContentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ContentController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+
     private OrderByService $orderByService;
+
     private ContentRepository $contentRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         OrderByService $orderByService,
         ContentRepository $contentRepository
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->orderByService = $orderByService;
         $this->contentRepository = $contentRepository;
     }
+
     /**
      * @Route("/admin/page/accueil/contenus/{isFlash}", name="admin_home_contents", defaults={"route"="home", "isFlash"=true})
      * @Route("/admin/contenus", name="admin_contents", defaults={"route"=null, "isFlash"=false})
@@ -45,20 +49,21 @@ class ContentController extends AbstractController
         Request $request,
         ?string $route,
         bool $isFlash
-    ): Response
-    {
-        $query =  $this->contentRepository->findContentQuery($route, $isFlash);
-        $contents =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+    ): Response {
+        $query = $this->contentRepository->findContentQuery($route, $isFlash);
+        $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('content/admin/list.html.twig', [
             'contents' => $contents,
             'lastPage' => $paginator->lastPage($contents),
             'current_route' => $route,
             'is_flash' => $isFlash,
-            'current_filters' => ['route' => $route, 'isFlash' => $isFlash],
+            'current_filters' => [
+                'route' => $route,
+                'isFlash' => $isFlash,
+            ],
         ]);
     }
-
 
     /**
      * @Route("/admin/page/accueil/contenu/{content}", name="admin_home_content_edit", defaults={"content"=null})
@@ -67,27 +72,29 @@ class ContentController extends AbstractController
     public function adminContentEdit(
         Request $request,
         ?Content $content
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(ContentType::class, $content);
-        
+
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $content = $form->getData();
             if (null === $content->getOrderBy()) {
                 $content->setOrderBy(0);
                 $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
-                $content->setOrderBy($order); 
+                $content->setOrderBy($order);
             }
 
             $this->entityManager->persist($content);
             $this->entityManager->flush();
 
             if ('home' === $content->getRoute()) {
-                $contents = $this->contentRepository->findByRoute('home', !$content->isFlash());
+                $contents = $this->contentRepository->findByRoute('home', ! $content->isFlash());
                 $this->orderByService->resetOrders($contents);
 
-                return $this->redirectToRoute('admin_home_contents', ['route' => $content->getRoute(), 'isFlash' => (int) $content->isFlash()]);
+                return $this->redirectToRoute('admin_home_contents', [
+                    'route' => $content->getRoute(),
+                    'isFlash' => (int) $content->isFlash(),
+                ]);
             }
 
             return $this->redirectToRoute('admin_contents');
@@ -105,12 +112,12 @@ class ContentController extends AbstractController
     public function adminContentDelete(
         Request $request,
         Content $content
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_content_delete', 
+            'action' => $this->generateUrl(
+                'admin_content_delete',
                 [
-                    'content'=> $content->getId(),
+                    'content' => $content->getId(),
                 ]
             ),
         ]);
@@ -125,7 +132,9 @@ class ContentController extends AbstractController
             $contents = $this->contentRepository->findByRoute($route, $isFlash);
             $this->orderByService->ResetOrders($contents);
 
-            return $this->redirectToRoute('admin_home_contents', ['isFlash' => (int) $isFlash]);
+            return $this->redirectToRoute('admin_home_contents', [
+                'isFlash' => (int) $isFlash,
+            ]);
         }
 
         return $this->render('content/admin/delete.modal.html.twig', [
@@ -140,8 +149,7 @@ class ContentController extends AbstractController
     public function adminContentOrder(
         Request $request,
         Content $content
-    ): Response
-    {
+    ): Response {
         $route = $content->getRoute();
         $isFlash = $content->isFlash();
         $newOrder = $request->request->get('newOrder');
@@ -155,12 +163,11 @@ class ContentController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function home (
+    public function home(
         LinkRepository $linkRepository,
         ContentRepository $contentRepository,
         EventRepository $eventRepository
-    ): Response
-    {
+    ): Response {
         $homeContents = $contentRepository->findHomeContents();
         $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
         $linksFooter = $linkRepository->findByPosition(Link::POSITION_HOME_FOOTER);
@@ -174,12 +181,11 @@ class ContentController extends AbstractController
         ]);
     }
 
-     /**
+    /**
      * @Route("/club", name="club")
      */
     public function club(): Response
     {
-
         return $this->render('content/club.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('club'),
         ]);
@@ -190,9 +196,7 @@ class ContentController extends AbstractController
      */
     public function schoolPractices(
         LevelRepository $levelRepository
-    ): Response
-    {
-
+    ): Response {
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_practices'),
             'levels' => $levelRepository->findAllTypeMemberNotProtected(),
@@ -206,9 +210,7 @@ class ContentController extends AbstractController
      */
     public function schoolOverview(
         LevelRepository $levelRepository
-    ): Response
-    {
-
+    ): Response {
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_overview'),
             'background_color' => 'green',
@@ -221,40 +223,34 @@ class ContentController extends AbstractController
      */
     public function schoolOperating(
         LevelRepository $levelRepository
-    ): Response
-    {
-
+    ): Response {
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_operating'),
             'background_color' => 'blue',
             'background_img' => 'ecole_vtt_fonctionnement.jpg',
         ]);
     }
-    
 
     /**
      * @Route("/ecole_vtt/equipement", name="school_equipment")
      */
     public function schoolEquipment(
         LevelRepository $levelRepository
-    ): Response
-    {
-
+    ): Response {
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_equipment'),
             'background_color' => 'green',
             'background_img' => 'ecole_vtt_equipement.jpg',
         ]);
     }
-    
+
     /**
      * @Route("/contact", name="contact")
      */
     public function contact(
         Request $request,
         MailerService $mailerService
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);
 
@@ -263,6 +259,7 @@ class ContentController extends AbstractController
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
             if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_FORM_CONTACT')) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
+
                 return $this->redirectToRoute('contact');
             }
             $this->addFlash('danger', 'Une erreure est survenue');

@@ -1,30 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Level;
-use App\Form\Admin\UserType;
-use App\Form\UserFilterType;
-use App\Service\UserService;
-use App\Service\ExportService;
-use App\Service\MailerService;
-use App\Service\LicenceService;
-use App\Service\PaginatorService;
-use App\Repository\UserRepository;
-use App\ViewModel\OrdersPresenter;
 use App\Entity\User as  UserEntity;
-use App\Form\ChangePasswordFormType;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\OrderHeaderRepository;
 use App\Form\Admin\RegistrationFilterType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Form\Admin\UserType;
+use App\Form\ChangePasswordFormType;
+use App\Form\UserFilterType;
+use App\Repository\OrderHeaderRepository;
+use App\Repository\UserRepository;
+use App\Service\ExportService;
+use App\Service\LicenceService;
+use App\Service\MailerService;
+use App\Service\PaginatorService;
+use App\Service\UserService;
+use App\ViewModel\OrdersPresenter;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
@@ -33,8 +35,7 @@ class UserController extends AbstractController
         private UserService $userService,
         private RequestStack $requestStack,
         private EntityManagerInterface $entityManager
-    )
-    {
+    ) {
         $this->session = $this->requestStack->getSession();
     }
 
@@ -45,9 +46,8 @@ class UserController extends AbstractController
         PaginatorService $paginator,
         Request $request,
         bool $filtered
-    ): Response
-    {
-        $filters = ($filtered) ? $this->session->get('admin_users_filters'): null;
+    ): Response {
+        $filters = ($filtered) ? $this->session->get('admin_users_filters') : null;
 
         $form = $this->createForm(UserFilterType::class, $filters);
         $form->handleRequest($request);
@@ -57,18 +57,23 @@ class UserController extends AbstractController
             $filtered = true;
             $request->query->set('p', 1);
         }
-        
+
         $this->session->set('admin_users_filters', $filters);
         $query = $this->userRepository->findMemberQuery($filters);
         $users = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $this->session->set('user_return', $this->generateUrl('admin_users', ['filtered' => true, 'p' => $request->query->get('p')]));
+        $this->session->set('user_return', $this->generateUrl('admin_users', [
+            'filtered' => true,
+            'p' => $request->query->get('p'),
+        ]));
 
         return $this->render('user/admin/users.html.twig', [
             'users' => $this->userService->convertPaginatorToUsers($users),
             'lastPage' => $paginator->lastPage($users),
             'form' => $form->createView(),
-            'current_filters' => ['filtered' => (int) $filtered],
+            'current_filters' => [
+                'filtered' => (int) $filtered,
+            ],
             'count' => $paginator->total($users),
         ]);
     }
@@ -78,8 +83,7 @@ class UserController extends AbstractController
      */
     public function adminUsersExport(
         ExportService $exportService
-    ): Response
-    {
+    ): Response {
         $filters = $this->session->get('admin_users_filters');
 
         $query = $this->userRepository->findMemberQuery($filters);
@@ -91,19 +95,18 @@ class UserController extends AbstractController
             HeaderUtils::DISPOSITION_ATTACHMENT,
             'export_email.csv'
         );
-        
+
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
     }
+
     /**
      * @Route("/admin/adherent/{user}", name="admin_user")
      */
     public function adminUser(
         UserEntity $user
-    ): Response
-    {
-
+    ): Response {
         return $this->render('user/admin/user.html.twig', [
             'user' => $this->userService->convertToUser($user),
             'referer' => $this->session->get('user_return'),
@@ -117,8 +120,7 @@ class UserController extends AbstractController
         Request $request,
         LicenceService $licenceService,
         UserEntity $user
-    ): Response
-    {
+    ): Response {
         $licence = $user->getLastLicence();
         $form = $this->createForm(UserType::class, $user, [
             'category' => $licence->getCategory(),
@@ -129,15 +131,19 @@ class UserController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
 
-            if (null !== $user->getLevel() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
+            if (null !== $user->getLevel() && Level::TYPE_FRAME === $user->getLevel()->getType()) {
                 $user->addRole('ROLE_FRAME');
             } else {
                 $user->removeRole('ROLE_FRAME');
             }
-            
+
             $this->entityManager->flush();
-            return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
+
+            return $this->redirectToRoute('admin_user', [
+                'user' => $user->getId(),
+            ]);
         }
+
         return $this->render('user/admin/edit.html.twig', [
             'user' => $this->userService->convertToUser($user),
             'form' => $form->createView(),
@@ -151,9 +157,8 @@ class UserController extends AbstractController
         PaginatorService $paginator,
         Request $request,
         bool $filtered
-    ): Response
-    {
-        $filters = ($filtered) ? $this->session->get('admin_registrations_filters'): null;
+    ): Response {
+        $filters = ($filtered) ? $this->session->get('admin_registrations_filters') : null;
 
         $form = $this->createForm(RegistrationFilterType::class, $filters);
         $form->handleRequest($request);
@@ -165,14 +170,19 @@ class UserController extends AbstractController
             $request->query->set('p', 1);
         }
 
-        $query =  $this->userRepository->findUserLicenceInProgressQuery($filters);
-        $users =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $this->session->set('user_return', $this->generateUrl('admin_registrations', ['filtered' => true, 'p' => $request->query->get('p')]));
+        $query = $this->userRepository->findUserLicenceInProgressQuery($filters);
+        $users = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $this->session->set('user_return', $this->generateUrl('admin_registrations', [
+            'filtered' => true,
+            'p' => $request->query->get('p'),
+        ]));
 
         return $this->render('user/admin/registrations.html.twig', [
             'users' => $this->userService->convertPaginatorToUsers($users),
             'lastPage' => $paginator->lastPage($users),
-            'current_filters' => ['filtered' => (int) $filtered],
+            'current_filters' => [
+                'filtered' => (int) $filtered,
+            ],
             'count' => $paginator->total($users),
             'form' => $form->createView(),
         ]);
@@ -184,8 +194,7 @@ class UserController extends AbstractController
     public function adminSendLicence(
         MailerService $mailerService,
         UserEntity $user
-    ): Response
-    {
+    ): Response {
         $identity = $user->getFirstIdentity();
         $mailerService->sendMailToMember([
             'subject' => 'Votre numero de licence',
@@ -197,7 +206,9 @@ class UserController extends AbstractController
 
         $this->addFlash('success', 'Le messsage à été envoyé avec succès');
 
-        return $this->redirectToRoute('admin_user_edit', ['user' => $user->getId()]);
+        return $this->redirectToRoute('admin_user_edit', [
+            'user' => $user->getId(),
+        ]);
     }
 
     /**
@@ -208,14 +219,14 @@ class UserController extends AbstractController
         PaginatorService $paginator,
         OrdersPresenter $ordersPresenter,
         Request $request
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
 
         $query = $ordersHeaderRepository->findOrdersByUserQuery($user);
         $ordersHeader = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $ordersPresenter->present($ordersHeader);
+
         return $this->render('user/account.html.twig', [
             'user' => $this->userService->convertToUser($user),
             'orders' => $ordersPresenter->viewModel()->orders,
@@ -223,14 +234,12 @@ class UserController extends AbstractController
     }
 
     /**
-     *
      * @Route("/mot_de_passe/modifier", name="change_password")
      */
     public function changePassword(
-        Request $request, 
+        Request $request,
         UserPasswordHasherInterface $passwordHasher
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
 
         if (null === $user) {
@@ -247,7 +256,8 @@ class UserController extends AbstractController
             );
 
             $user->setPassword($encodedPassword)
-                ->setPasswordMustBeChanged(false);
+                ->setPasswordMustBeChanged(false)
+            ;
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('succes', 'Votre mot de passe a bien été modifé.');

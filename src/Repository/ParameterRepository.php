@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Parameter;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
- * @method Parameter|null find($id, $lockMode = null, $lockVersion = null)
- * @method Parameter|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Parameter find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Parameter findOneBy(array $criteria, array $orderBy = null)
  * @method Parameter[]    findAll()
  * @method Parameter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -25,16 +27,15 @@ class ParameterRepository extends ServiceEntityRepository
     {
         try {
             return $this->createQueryBuilder('p')
-            ->andWhere(
-                (new Expr) ->eq('p.name', ':name')
-            )
-            ->setParameter('name', $name)
-            ->getQuery()
-            ->getOneOrNullResult()
+                ->andWhere(
+                    (new Expr())->eq('p.name', ':name')
+                )
+                ->setParameter('name', $name)
+                ->getQuery()
+                ->getOneOrNullResult()
         ;
-        } catch(NonUniqueResultException $e) {
+        } catch (NonUniqueResultException $e) {
             return null;
         }
     }
-
 }

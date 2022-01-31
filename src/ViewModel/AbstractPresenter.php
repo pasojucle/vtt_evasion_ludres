@@ -1,32 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use ReflectionClass;
-use App\Service\LicenceService;
-use Symfony\Component\Security\Core\Security;
 use App\Repository\MembershipFeeAmountRepository;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Service\LicenceService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AbstractPresenter 
+class AbstractPresenter
 {
-    private LicenceService $licenceService;
-    private ParameterBagInterface $parameterBag;
-    private Security $security;
-    private MembershipFeeAmountRepository $membershipFeeAmountRepository;
-    private TranslatorInterface $translator;
-    private $viewModel;
     public array $service;
+    private LicenceService $licenceService;
+
+    private ParameterBagInterface $parameterBag;
+
+    private Security $security;
+
+    private MembershipFeeAmountRepository $membershipFeeAmountRepository;
+
+    private TranslatorInterface $translator;
+
+    private $viewModel;
 
     public function __construct(
-        LicenceService $licenceService, 
+        LicenceService $licenceService,
         ParameterBagInterface $parameterBag,
         Security $security,
         MembershipFeeAmountRepository $membershipFeeAmountRepository,
         TranslatorInterface $translator
-    )
-    {
+    ) {
         $this->licenceService = $licenceService;
         $this->parameterBag = $parameterBag;
         $this->security = $security;
@@ -46,5 +51,4 @@ class AbstractPresenter
             'translator' => $this->translator,
         ];
     }
-
 }

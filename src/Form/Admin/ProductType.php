@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Admin;
 
-use App\Entity\Size;
 use App\Entity\Product;
+use App\Entity\Size;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ProductType extends AbstractType
 {
@@ -38,7 +40,7 @@ class ProductType extends AbstractType
                 'required' => false,
                 'block_prefix' => 'custom_file',
                 'attr' => [
-                    'accept' => '.bmp,.jpeg,.jpg,.png'
+                    'accept' => '.bmp,.jpeg,.jpg,.png',
                 ],
                 'constraints' => [
                     new File([
@@ -49,7 +51,7 @@ class ProductType extends AbstractType
                             'image/png',
                         ],
                         'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
-                    ])
+                    ]),
                 ],
             ])
             ->add('ref', TextType::class, [
@@ -73,7 +75,8 @@ class ProductType extends AbstractType
                 'class' => Size::class,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('s')
-                        ->orderBy('s.name', 'ASC');
+                        ->orderBy('s.name', 'ASC')
+                    ;
                 },
                 'choice_label' => 'name',
                 'expanded' => true,
@@ -81,7 +84,9 @@ class ProductType extends AbstractType
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregister',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
         ;
     }

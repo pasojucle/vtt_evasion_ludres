@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Repository\RegistrationStepGroupRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Repository\RegistrationStepGroupRepository;
 
 /**
  * @ORM\Entity(repositoryClass=RegistrationStepGroupRepository::class)
@@ -80,7 +82,7 @@ class RegistrationStepGroup
 
     public function addRegistrationStep(RegistrationStep $registrationStep): self
     {
-        if (!$this->registrationSteps->contains($registrationStep)) {
+        if (! $this->registrationSteps->contains($registrationStep)) {
             $this->registrationSteps[] = $registrationStep;
             $registrationStep->setRegistrationStepGroup($this);
         }

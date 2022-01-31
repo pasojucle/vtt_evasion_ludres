@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\VoteIssueRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=VoteIssueRepository::class)
@@ -13,12 +15,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 class VoteIssue
 {
     public const RESPONSE_TYPE_STRING = 1;
+
     public const RESPONSE_TYPE_CHOICE = 2;
+
     public const RESPONSE_TYPES = [
         self::RESPONSE_TYPE_STRING => 'vote.issue.string',
         self::RESPONSE_TYPE_CHOICE => 'vote.issue.choice',
     ];
-    
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -91,7 +95,7 @@ class VoteIssue
 
     public function addVoteResponse(VoteResponse $voteResponse): self
     {
-        if (!$this->voteResponses->contains($voteResponse)) {
+        if (! $this->voteResponses->contains($voteResponse)) {
             $this->voteResponses[] = $voteResponse;
             $voteResponse->setVoteIssue($this);
         }

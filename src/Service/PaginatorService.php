@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Doctrine\ORM\Query;
@@ -12,10 +14,8 @@ class PaginatorService
     public const PAGINATOR_PER_PAGE = 15;
 
     /**
-     * @param QueryBuilder|Query $query
-     * @param Request $request
-     * @param int $limit
-     * @return Paginator
+     * @param Query|QueryBuilder $query
+     * @param Request            $request
      */
     public function paginate($query, $request, int $limit): Paginator
     {
@@ -30,31 +30,18 @@ class PaginatorService
         return new Paginator($query);
     }
 
-    /**
-     * @param Paginator $paginator
-     * @return int
-     */
     public function lastPage(Paginator $paginator): int
     {
-        return ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
-
+        return (int) ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
     }
 
-    /**
-     * @param Paginator $paginator
-     * @return int
-     */
     public function total(Paginator $paginator): int
     {
         return $paginator->count();
     }
 
-    /**
-     * @param Paginator $paginator
-     * @return bool
-     */
     public function currentPageHasNoResult(Paginator $paginator): bool
     {
-        return !$paginator->getIterator()->count();
+        return ! $paginator->getIterator()->count();
     }
 }

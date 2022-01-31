@@ -1,25 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\Tool;
 
-
-use DateTime;
-use App\Entity\User;
-use Twig\Environment;
 use App\Entity\Licence;
-use App\Service\PdfService;
+use App\Entity\User;
 use App\Service\FilenameService;
+use App\Service\ParameterService;
+use App\Service\PdfService;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UserViewModel;
-use App\Service\ParameterService;
+use DateTime;
 use Symfony\Component\HttpFoundation\Request;
+use Twig\Environment;
 
 class GetRegistrationCertificate
 {
     private UserPresenter $presenter;
+
     private PdfService $pdfService;
+
     private FilenameService $filenameService;
+
     private Environment $twig;
+
     private ParameterService $parameterService;
 
     public function __construct(
@@ -28,8 +33,7 @@ class GetRegistrationCertificate
         FilenameService $filenameService,
         Environment $twig,
         ParameterService $parameterService
-    )
-    {
+    ) {
         $this->presenter = $presenter;
         $this->pdfService = $pdfService;
         $this->filenameService = $filenameService;
@@ -45,10 +49,10 @@ class GetRegistrationCertificate
             $user = $this->presenter->viewModel();
             $licence = $user->getSeasonLicence();
         }
-        if (!$content) {
+        if (! $content) {
             $content = $this->getContent($user, $licence);
         }
-        if (!$request->isXmlHttpRequest() && $content) {
+        if (! $request->isXmlHttpRequest() && $content) {
             $filename = $this->makePdf($content);
         }
 
@@ -60,7 +64,7 @@ class GetRegistrationCertificate
         $today = new DateTime();
         $todayStr = $today->format('d/m/Y');
 
-        if ($licence['category'] === Licence::CATEGORY_ADULT) {
+        if (Licence::CATEGORY_ADULT === $licence['category']) {
             $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_ADULT');
             list($search, $replace) = $this->getMemberData($user, $licence, $todayStr);
         } else {
@@ -75,23 +79,23 @@ class GetRegistrationCertificate
     {
         $address = $user->member['address']->toString();
 
-        $search  = [
+        $search = [
             '{{ nom_prenom }}',
             '{{ adresse }}',
             '{{ saison }}',
             '{{ numero_licence }}',
             '{{ montant }}',
-            '{{ date }}'
+            '{{ date }}',
         ];
         $replace = [
-            $user->member['fullName'], 
+            $user->member['fullName'],
             $address,
-            $licence['season'], 
-            $user->getLicenceNumber(), 
-            $licence['amount'], 
+            $licence['season'],
+            $user->getLicenceNumber(),
+            $licence['amount'],
             $today,
         ];
-        
+
         return [$search, $replace];
     }
 
@@ -99,25 +103,25 @@ class GetRegistrationCertificate
     {
         $address = $user->kinship['address']->toString();
 
-        $search  = [
+        $search = [
             '{{ nom_prenom_parent }}',
             '{{ nom_prenom_enfant }}',
             '{{ adresse_parent }}',
             '{{ saison }}',
             '{{ numero_licence }}',
             '{{ montant }}',
-            '{{ date }}'
+            '{{ date }}',
         ];
         $replace = [
-            $user->kinship['fullName'], 
-            $user->member['fullName'], 
+            $user->kinship['fullName'],
+            $user->member['fullName'],
             $address,
-            $licence['season'], 
-            $user->getLicenceNumber(), 
-            $licence['amount'], 
+            $licence['season'],
+            $user->getLicenceNumber(),
+            $licence['amount'],
             $today,
         ];
-        
+
         return [$search, $replace];
     }
 

@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use Doctrine\ORM\Query\Expr;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
-use Doctrine\ORM\Query\QueryException;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method RegistrationStep|null find($id, $lockMode = null, $lockVersion = null)
- * @method RegistrationStep|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|RegistrationStep find($id, $lockMode = null, $lockVersion = null)
+ * @method null|RegistrationStep findOneBy(array $criteria, array $orderBy = null)
  * @method RegistrationStep[]    findAll()
  * @method RegistrationStep[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -23,13 +24,13 @@ class RegistrationStepRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return RegistrationStep[] Returns an array of RegistrationStep objects
-    */
-
-    public function findByCategoryAndFinal(? int $category, bool $final, int $render): array
+     * @return RegistrationStep[] Returns an array of RegistrationStep objects
+     */
+    public function findByCategoryAndFinal(?int $category, bool $final, int $render): array
     {
         $qb = $this->createQueryBuilder('r')
-            ->join('r.registrationStepGroup', 'rsg');
+            ->join('r.registrationStepGroup', 'rsg')
+        ;
         $andX = $qb->expr()->andX();
         $orX = $qb->expr()->orx();
         $orX->add($qb->expr()->isNull('r.category'));
@@ -41,7 +42,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
         $render = (RegistrationStep::RENDER_FILE === $render)
             ? [RegistrationStep::RENDER_FILE, RegistrationStep::RENDER_FILE_AND_VIEW]
             : [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE_AND_VIEW];
-        if (!$final) {
+        if (! $final) {
             $andX->add($qb->expr()->in('r.testingRender', ':render'));
         } else {
             $andX->add($qb->expr()->in('r.finalRender', ':render'));
@@ -61,7 +62,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('r')
             ->andWhere(
-                (new Expr)->eq('r.registrationStepGroup', ':group')
+                (new Expr())->eq('r.registrationStepGroup', ':group')
             )
             ->setParameter('group', $group)
             ->orderBy('r.orderBy', 'ASC')

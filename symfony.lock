@@ -631,6 +631,9 @@
             "config/packages/reset_password.yaml"
         ]
     },
+    "symplify/easy-coding-standard": {
+        "version": "10.0.20"
+    },
     "tetranz/select2entity-bundle": {
         "version": "v3.1.0"
     },

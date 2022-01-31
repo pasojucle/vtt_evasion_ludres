@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Cluster;
-use App\Service\PdfService;
 use App\Service\EventService;
 use App\Service\FilenameService;
+use App\Service\PdfService;
 use App\ViewModel\ClusterPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ClusterController extends AbstractController
 {
@@ -23,9 +25,8 @@ class ClusterController extends AbstractController
         EntityManagerInterface $entityManager,
         EventService $eventService,
         Cluster $cluster
-    ): Response
-    {
-        $cluster->setIsComplete(!$cluster->isComplete());
+    ): Response {
+        $cluster->setIsComplete(! $cluster->isComplete());
         $entityManager->flush();
 
         $event = $cluster->getEvent();
@@ -44,23 +45,24 @@ class ClusterController extends AbstractController
         ClusterPresenter $presenter,
         FilenameService $filenameService,
         Cluster $cluster
-    ): Response
-    {
+    ): Response {
         $presenter->present($cluster);
         $files = [];
         $dirName = '../data/'.$filenameService->clean($presenter->viewModel()->title);
-        if (!is_dir($dirName)) {
+        if (! is_dir($dirName)) {
             mkdir($dirName);
         }
-        if (!empty($presenter->viewModel()->sessions)) {
-            foreach($presenter->viewModel()->sessions as $session) {
+        if (! empty($presenter->viewModel()->sessions)) {
+            foreach ($presenter->viewModel()->sessions as $session) {
                 if ($session['isPresent']) {
                     $render = $this->renderView('cluster/export.html.twig', [
                         'user' => $session['user'],
                     ]);
                     $tmp = $session['user']->id.'_tmp';
                     $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName, 'B6');
-                    $files[] = ['filename' => $pdfFilepath];
+                    $files[] = [
+                        'filename' => $pdfFilepath,
+                    ];
                 }
             }
         }
@@ -75,7 +77,7 @@ class ClusterController extends AbstractController
             $fileName
         );
 
-        (new Filesystem)->remove($dirName);
+        (new Filesystem())->remove($dirName);
         $response->headers->set('Content-Disposition', $disposition);
         $response->headers->set('Content-Type', 'application/pdf');
 

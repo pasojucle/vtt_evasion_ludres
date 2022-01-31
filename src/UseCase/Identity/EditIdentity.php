@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\Identity;
 
 use App\Entity\User;
-use App\Service\UploadService;
 use App\Service\IdentityService;
+use App\Service\UploadService;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
@@ -13,8 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 class EditIdentity
 {
     private UserPresenter $presenter;
+
     private EntityManagerInterface $entityManager;
+
     private IdentityService $identityService;
+
     private UploadService $uploadService;
 
     public function __construct(
@@ -22,8 +27,7 @@ class EditIdentity
         EntityManagerInterface $entityManager,
         IdentityService $identityService,
         UploadService $uploadService
-    )
-    {
+    ) {
         $this->presenter = $presenter;
         $this->entityManager = $entityManager;
         $this->identityService = $identityService;
@@ -39,7 +43,7 @@ class EditIdentity
             $pictureFile = $request->files->get('identities')['identities'][0]['pictureFile'];
             $newFilename = $this->uploadService->uploadFile($pictureFile);
             if (null !== $newFilename) {
-                foreach($identities as $identity) {
+                foreach ($identities as $identity) {
                     if (null === $identity[0]->getKinship()) {
                         $identity[0]->setPicture($newFilename);
                     }

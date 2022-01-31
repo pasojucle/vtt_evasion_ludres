@@ -1,35 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Link;
 use App\Form\LinkType;
+use App\Repository\LinkRepository;
 use App\Service\LinkService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Repository\LinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class LinkController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+
     private LinkRepository $linkRepository;
+
     private OrderByService $orderByService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         LinkRepository $linkRepository,
         OrderByService $orderByService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->linkRepository = $linkRepository;
         $this->orderByService = $orderByService;
@@ -40,8 +42,7 @@ class LinkController extends AbstractController
      */
     public function list(
         LinkService $linkService
-    ): Response
-    {
+    ): Response {
         $links = $this->linkRepository->findByPosition(Link::POSITION_LINK_PAGE);
 
         return $this->render('link/list.html.twig', [
@@ -56,16 +57,17 @@ class LinkController extends AbstractController
         PaginatorService $paginator,
         Request $request,
         int $position
-    ): Response
-    {
-        $query =  $this->linkRepository->findLinkQuery($position);
-        $links =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+    ): Response {
+        $query = $this->linkRepository->findLinkQuery($position);
+        $links = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('link/admin/list.html.twig', [
             'links' => $links,
             'lastPage' => $paginator->lastPage($links),
             'current_position' => $position,
-            'current_filters' => ['position' => (int) $position],
+            'current_filters' => [
+                'position' => (int) $position,
+            ],
         ]);
     }
 
@@ -77,22 +79,22 @@ class LinkController extends AbstractController
         LinkService $linkService,
         SluggerInterface $slugger,
         ?Link $link
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(LinkType::class, $link);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $link = $form->getData();
 
-            $isNew = null === $link->getTitle() && null === $link->getDescription() &&null === $link->getImage();
+            $isNew = null === $link->getTitle() && null === $link->getDescription() && null === $link->getImage();
             if (null !== $link->getUrl() && ($isNew || ($form->has('search') && $form->get('search')->isClicked()))) {
                 $data = $linkService->getUrlData($link->getUrl());
 
                 if ($data) {
                     $link->setTitle($data['title'])
                         ->setDescription($data['description'])
-                        ->setImage($data['image']);
+                        ->setImage($data['image'])
+                    ;
                 }
             }
             if ($request->files->get('link')) {
@@ -101,9 +103,10 @@ class LinkController extends AbstractController
                     $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $slugger->slug($originalFilename);
                     $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
-                    if (!is_dir($this->getParameter('uploads_directory_path'))) {
+                    if (! is_dir($this->getParameter('uploads_directory_path'))) {
                         mkdir($this->getParameter('uploads_directory_path'));
                     }
+
                     try {
                         $pictureFile->move(
                             $this->getParameter('uploads_directory_path'),
@@ -122,9 +125,14 @@ class LinkController extends AbstractController
             $this->entityManager->persist($link);
             $this->entityManager->flush();
             if ($isNew) {
-                return $this->redirectToRoute('admin_link_edit', ['link' => $link->getId()]);
+                return $this->redirectToRoute('admin_link_edit', [
+                    'link' => $link->getId(),
+                ]);
             }
-            return $this->redirectToRoute('admin_links', ['position' => $link->getPosition()]);
+
+            return $this->redirectToRoute('admin_links', [
+                'position' => $link->getPosition(),
+            ]);
         }
 
         return $this->render('link/admin/edit.html.twig', [
@@ -139,12 +147,12 @@ class LinkController extends AbstractController
     public function adminLinkDelete(
         Request $request,
         Link $link
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_link_delete', 
+            'action' => $this->generateUrl(
+                'admin_link_delete',
                 [
-                    'link'=> $link->getId(),
+                    'link' => $link->getId(),
                 ]
             ),
         ]);
@@ -158,7 +166,9 @@ class LinkController extends AbstractController
             $links = $this->linkRepository->findByPosition($position);
             $this->orderByService->ResetOrders($links);
 
-            return $this->redirectToRoute('admin_links', ['position' => $position]);
+            return $this->redirectToRoute('admin_links', [
+                'position' => $position,
+            ]);
         }
 
         return $this->render('link/admin/delete.modal.html.twig', [
@@ -173,8 +183,7 @@ class LinkController extends AbstractController
     public function adminLinkOrder(
         Request $request,
         Link $link
-    ): Response
-    {
+    ): Response {
         $position = $link->getPosition();
         $newOrder = $request->request->get('newOrder');
         $links = $this->linkRepository->findByPosition($position);

@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Health;
-use App\Form\DiseaseType;
-use App\Form\HealthQuestionType;
 use App\Validator\Phone;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class HealthType extends AbstractType
 {
@@ -26,50 +25,50 @@ class HealthType extends AbstractType
                 ->add('socialSecurityNumber', TextType::class, [
                     'label' => 'Numéro de sécurité sociale',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'constraints' => [
                         new NotNull(),
                         new NotBlank(),
                     ],
                     'attr' => [
-                        'data-constraint' => ''
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('mutualCompany', TextType::class, [
                     'label' => 'Mutuelle',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'constraints' => [
                         new NotNull(),
                         new NotBlank(),
                     ],
                     'attr' => [
-                        'data-constraint' => ''
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('mutualNumber', TextType::class, [
                     'label' => 'Numéro',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'constraints' => [
                         new NotNull(),
                         new NotBlank(),
                     ],
                     'attr' => [
-                        'data-constraint' => ''
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('bloodGroup', TextType::class, [
                     'label' => 'Groupe sanguin',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'required' => false,
                     'attr' => [
-                        'data-constraint' => ''
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('tetanusBooster', DateType::class, [
@@ -79,64 +78,64 @@ class HealthType extends AbstractType
                     'format' => 'dd/MM/yyyy',
                     'attr' => [
                         'class' => 'js-datepicker',
-                        'autocomplete' => "off",
+                        'autocomplete' => 'off',
                     ],
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'constraints' => [
                         new NotNull(),
                         new NotBlank(),
                     ],
                     'attr' => [
-                        'data-constraint' => ''
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('doctorName', TextType::class, [
                     'label' => 'Nom du médecin traitant',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
-                                        'attr' => [
-                        'data-constraint' => ''
+                    'attr' => [
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('doctorAddress', TextType::class, [
                     'label' => 'Adresse du medecin traitant',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'constraints' => [
                         new NotNull(),
                         new NotBlank(),
-                    ],  
+                    ],
                     'attr' => [
-                        'data-constraint' => ''
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('doctorTown', TextType::class, [
                     'label' => 'Ville du medecin traitant',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'constraints' => [
                         new NotNull(),
                         new NotBlank(),
                     ],
                     'attr' => [
-                        'data-constraint' => ''
+                        'data-constraint' => '',
                     ],
                 ])
                 ->add('doctorPhone', TextType::class, [
                     'label' => 'Télephone du medecin traitant',
                     'row_attr' => [
-                        'class' => 'form-group-inline'
+                        'class' => 'form-group-inline',
                     ],
                     'constraints' => [
                         new Phone(),
                     ],
                     'attr' => [
-                        'data-constraint' => 'app-Phone'
+                        'data-constraint' => 'app-Phone',
                     ],
                 ])
                 ;
@@ -157,16 +156,19 @@ class HealthType extends AbstractType
                 ->add('healthQuestions', CollectionType::class, [
                     'label' => false,
                     'entry_type' => HealthQuestionType::class,
-                ]);
+                ])
             ;
         }
 
-        if (null == $options['current']) {
+        if (null === $options['current']) {
             $builder
                 ->add('save', SubmitType::class, [
                     'label' => 'Modifier',
-                    'attr' => ['class' => 'btn btn-primary float-right'],
-                ]);
+                    'attr' => [
+                        'class' => 'btn btn-primary float-right',
+                    ],
+                ])
+            ;
         }
     }
 

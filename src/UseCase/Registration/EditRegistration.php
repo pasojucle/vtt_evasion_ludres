@@ -1,38 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\UseCase\Registration;
 
-use DateTime;
-use DateInterval;
+use App\Entity\Identity;
+use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Entity\Licence;
-use App\Entity\Identity;
-use App\Service\MailerService;
-use App\Service\UploadService;
-use App\Service\LicenceService;
-use App\Validator\UniqueMember;
-use App\Service\IdentityService;
-use App\ViewModel\UserPresenter;
-use App\Service\ParameterService;
+use App\Repository\IdentityRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginAuthenticator;
-use Symfony\Component\Form\FormError;
-use App\Repository\IdentityRepository;
-use App\Security\LoginFormAuthenticator;
+use App\Service\IdentityService;
+use App\Service\LicenceService;
+use App\Service\MailerService;
+use App\Service\ParameterService;
+use App\Service\UploadService;
+use App\Validator\UniqueMember;
+use App\ViewModel\UserPresenter;
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\SecurityEvents;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class EditRegistration
 {
@@ -53,8 +52,7 @@ class EditRegistration
         private ValidatorInterface $validator,
         private EventDispatcherInterface $dispatcher,
         private TokenStorageInterface $tokenStorage
-    )
-    {
+    ) {
     }
 
     public function execute(Request $request, FormInterface $form, array $progress): void
@@ -86,7 +84,7 @@ class EditRegistration
         $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
         if ($form->isValid()) {
-            if ($progress['current']->form === UserType::FORM_OVERVIEW) {
+            if (UserType::FORM_OVERVIEW === $progress['current']->form) {
                 $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
                 $this->sendMailToClub($user);
             }
@@ -112,15 +110,19 @@ class EditRegistration
         $identity = $user->getFirstIdentity();
         $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
         $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
+
         return $identity;
     }
 
     private function uniqueMemberValidator(FormInterface &$form, Identity $identity): void
     {
-        $values = ['name' => $identity->getName(), 'firstName' => $identity->getFirstName()];
+        $values = [
+            'name' => $identity->getName(),
+            'firstName' => $identity->getFirstName(),
+        ];
         $violations = $this->validator->validate($values, [new UniqueMember()]);
 
-        if (!empty((string) $violations)) {
+        if (! empty((string) $violations)) {
             $form->addError(new FormError((string) $violations));
         }
     }
@@ -128,12 +130,12 @@ class EditRegistration
     private function schoolTestingRegistrationValidator(FormInterface &$form, array $progress)
     {
         $schoolTestingRegistration = $this->parameterService->getSchoolTestingRegistration($progress['user']);
-                if (!$schoolTestingRegistration['value'] && !$progress['seasonLicence']->isFinal()) {
-                    $form->addError(new FormError($schoolTestingRegistration['message']));
-                }
+        if (! $schoolTestingRegistration['value'] && ! $progress['seasonLicence']->isFinal()) {
+            $form->addError(new FormError($schoolTestingRegistration['message']));
+        }
     }
 
-    private function sendMail(User $user):void
+    private function sendMail(User $user): void
     {
         $this->userPresenter->present($user);
         $user = $this->userPresenter->viewModel();
@@ -143,7 +145,8 @@ class EditRegistration
             'firstName' => $user->member->firstName,
             'email' => $email,
             'subject' => 'Création de compte sur le site VTT Evasion Ludres',
-            'licenceNumber' => $user->licenceNumber,], 'EMAIL_REGISTRATION');  
+            'licenceNumber' => $user->licenceNumber,
+        ], 'EMAIL_REGISTRATION');
     }
 
     private function isMedicalCertificateRequired(array $progress): bool
@@ -151,19 +154,20 @@ class EditRegistration
         $isMedicalCertificateRequired = false;
         $seasonLicence = $progress['seasonLicence'];
         $user = $progress['user']->entity;
-        if ($seasonLicence->getType() !== Licence::TYPE_RIDE) {
+        if (Licence::TYPE_RIDE !== $seasonLicence->getType()) {
             $medicalCertificateDate = $user->getHealth()->getMedicalCertificateDate();
-            $medicalCertificateDuration = ($seasonLicence->getType() === Licence::TYPE_HIKE) ? 5 : 3;
+            $medicalCertificateDuration = (Licence::TYPE_HIKE === $seasonLicence->getType()) ? 5 : 3;
             $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
             $today = new DateTime();
             if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->getHealth()->isMedicalCertificateRequired()) {
                 $isMedicalCertificateRequired = true;
             }
         }
+
         return $isMedicalCertificateRequired;
     }
 
-    Private function UploadFile(Request $request, User $user): void
+    private function UploadFile(Request $request, User $user): void
     {
         $requestFile = $request->files->get('user');
         if (null !== $requestFile && array_key_exists('identities', $requestFile) && null !== $requestFile['identities'][0]['pictureFile']) {
@@ -183,11 +187,13 @@ class EditRegistration
             'firstName' => $identity->getFirstName(),
             'email' => $identity->getEmail(),
             'subject' => 'Nouvelle Inscription sur le site VTT Evasion Ludres',
-            'registration' => $this->urlGenerator->generate('registration_file', ['user' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'registration' => $this->urlGenerator->generate('registration_file', [
+                'user' => $user->getId(),
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
     }
 
-    private function authenticating(Request $request, User $user):void
+    private function authenticating(Request $request, User $user): void
     {
         $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
         $this->tokenStorage->setToken($token);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\SizeRepository;
@@ -28,7 +30,6 @@ class Size
      * @ORM\ManyToMany(targetEntity=Product::class, mappedBy="sizes")
      */
     private $products;
-
 
     public function __construct()
     {
@@ -62,7 +63,7 @@ class Size
 
     public function addProduct(Product $product): self
     {
-        if (!$this->products->contains($product)) {
+        if (! $this->products->contains($product)) {
             $this->products[] = $product;
             $product->addSize($this);
         }

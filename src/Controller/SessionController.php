@@ -1,45 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\Session;
-use App\Service\UserService;
-use App\Form\SessionEditType;
-use App\Service\EventService;
 use App\Form\Admin\SessionType;
-use App\Form\SessionSwitchType;
-use App\Service\SessionService;
-use App\Repository\UserRepository;
 use App\Form\SessionAvailabilityType;
+use App\Form\SessionEditType;
+use App\Form\SessionSwitchType;
 use App\Repository\ClusterRepository;
 use App\Repository\SessionRepository;
+use App\Service\EventService;
+use App\Service\SessionService;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class SessionController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager, 
-        private RequestStack $requestStack, 
-        private SessionService $sessionService)
-    {
+        private EntityManagerInterface $entityManager,
+        private RequestStack $requestStack,
+        private SessionService $sessionService
+    ) {
     }
+
     /**
      * @Route("/admin/seance/{session}", name="admin_session_present")
      */
     public function adminPresent(
         Session $session,
         EventService $eventService
-    ): Response
-    {
-        $isPresent = !$session->isPresent();
+    ): Response {
+        $isPresent = ! $session->isPresent();
 
         $session->setIsPresent($isPresent);
         $this->entityManager->flush();
@@ -58,9 +59,7 @@ class SessionController extends AbstractController
         ClusterRepository $clusterRepository,
         Request $request,
         Session $session
-    ): Response
-    {
-
+    ): Response {
         $event = $session->getCluster()->getEvent();
         $form = $this->createForm(SessionSwitchType::class, $session);
 
@@ -69,9 +68,11 @@ class SessionController extends AbstractController
             $session = $form->getData();
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_event_cluster_show', ['event' => $event->getId()]);
+            return $this->redirectToRoute('admin_event_cluster_show', [
+                'event' => $event->getId(),
+            ]);
         }
-        
+
         return $this->render('session/switch.html.twig', [
             'event' => $event,
             'session' => $session,
@@ -89,8 +90,7 @@ class SessionController extends AbstractController
         EventService $eventService,
         UserService $userService,
         Event $event
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
 
         $clusters = $event->getClusters();
@@ -112,7 +112,8 @@ class SessionController extends AbstractController
 
             $userSession = new Session();
             $userSession->setUser($user)
-                ->setCluster($userCluster);
+                ->setCluster($userCluster)
+            ;
         }
 
         $form = $this->createForm(SessionEditType::class, $userSession, [
@@ -146,7 +147,6 @@ class SessionController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route("/admin/rando/inscription/{event}",
      * name="admin_session_add")
@@ -155,8 +155,7 @@ class SessionController extends AbstractController
         Request $request,
         SessionRepository $sessionRepository,
         Event $event
-    ): Response
-    {
+    ): Response {
         $clusters = $event->getClusters();
 
         $form = $this->createForm(SessionType::class);
@@ -168,7 +167,7 @@ class SessionController extends AbstractController
             if ($sessionRepository->findByUserAndClusters($user, $clusters)) {
                 $form->addError(new FormError('Cet adhérent est déjà inscrit'));
             }
-    
+
             if ($form->isValid()) {
                 $userCluster = $this->sessionService->getCluster($event, $user, $clusters);
                 $userSession->setCluster($userCluster);
@@ -180,9 +179,10 @@ class SessionController extends AbstractController
 
                 $this->sessionService->checkEndTesting($user);
 
-                return $this->redirectToRoute('admin_event_cluster_show', ['event' => $event->getId()]);
+                return $this->redirectToRoute('admin_event_cluster_show', [
+                    'event' => $event->getId(),
+                ]);
             }
-            
         }
 
         return $this->render('session/admin/add.html.twig', [
@@ -198,8 +198,7 @@ class SessionController extends AbstractController
     public function sessionAvailabilityEdit(
         Request $request,
         Session $session
-    )
-    {
+    ) {
         $event = $session->getCluster()->getEvent();
         $form = $this->createForm(SessionAvailabilityType::class, $session);
         $form->handleRequest($request);
@@ -224,7 +223,6 @@ class SessionController extends AbstractController
         ]);
     }
 
-        
     /**
      * @Route("/mon-compte/rando/supprime/{session}",
      * name="session_delete")
@@ -233,8 +231,7 @@ class SessionController extends AbstractController
         FormFactoryInterface $formFactory,
         Request $request,
         Session $session
-    )
-    {
+    ) {
         $form = $formFactory->create();
         $form->handleRequest($request);
 
@@ -260,8 +257,7 @@ class SessionController extends AbstractController
     public function adminSessionDelete(
         UserService $userService,
         Session $session
-    )
-    {
+    ) {
         $user = $userService->convertToUser($session->getUser());
         $event = $session->getCluster()->getEvent();
 
@@ -270,7 +266,8 @@ class SessionController extends AbstractController
 
         $this->addFlash('success', $user->getMember()['fullName'].' à bien été désincrit');
 
-        return $this->redirectToRoute('admin_event_cluster_show', ['event' => $event->getId()]);
-
+        return $this->redirectToRoute('admin_event_cluster_show', [
+            'event' => $event->getId(),
+        ]);
     }
 }

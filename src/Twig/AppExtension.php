@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Twig;
 
-use DateInterval;
-use Twig\TwigFilter;
-use IntlDateFormatter;
 use App\Entity\RegistrationStep;
+use IntlDateFormatter;
 use Twig\Extension\AbstractExtension;
-
+use Twig\TwigFilter;
 
 class AppExtension extends AbstractExtension
 {
@@ -26,7 +26,7 @@ class AppExtension extends AbstractExtension
             $replace = '$1 src="./images$2';
             $count = preg_match_all($pattern, $content);
             if ($count) {
-                for ($i = 0; $i < $count; $i++) {
+                for ($i = 0; $i < $count; ++$i) {
                     $content = preg_replace($pattern, $replace, $content);
                 }
             }
@@ -35,8 +35,8 @@ class AppExtension extends AbstractExtension
         return $content;
     }
 
-    public function formatDateLong($date):string
-    {   
+    public function formatDateLong($date): string
+    {
         $formatter = new IntlDateFormatter('fr_fr', IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
         $formatter->setPattern('EEEE');
 

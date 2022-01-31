@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Parameter;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ParameterType extends AbstractType
 {
@@ -25,34 +27,33 @@ class ParameterType extends AbstractType
                 $label = $parameter?->getLabel();
                 $form = $event->getForm();
                 $fieldOptions = [];
-                if ($type === Parameter::TYPE_BOOL) {
+                if (Parameter::TYPE_BOOL === $type) {
                     $classType = CheckboxType::class;
                     $fieldOptions = [
-                        'data' => (bool)$value,
+                        'data' => (bool) $value,
                         'block_prefix' => 'switch',
                         'required' => false,
                     ];
-                } elseif($type === Parameter::TYPE_TEXT) {
+                } elseif (Parameter::TYPE_TEXT === $type) {
                     $classType = CKEditorType::class;
                     $fieldOptions = [
                         'config_name' => 'minimum_config',
-                        
                     ];
-                } elseif($type === Parameter::TYPE_ARRAY) {
-                        $classType = CollectionType::class;
-                        $fieldOptions = [
-                            'entry_options' => [
-                                'label' => false,
-                                'row_attr' => [
-                                    'class' => 'row',
-                                ],
-                                'attr' => [
-                                    'class' => 'col-md-11 form-group',
-                                ],
+                } elseif (Parameter::TYPE_ARRAY === $type) {
+                    $classType = CollectionType::class;
+                    $fieldOptions = [
+                        'entry_options' => [
+                            'label' => false,
+                            'row_attr' => [
+                                'class' => 'row',
                             ],
-                            'allow_add' => true,
-                            'allow_delete' => true,
-                        ];
+                            'attr' => [
+                                'class' => 'col-md-11 form-group',
+                            ],
+                        ],
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                    ];
                 } else {
                     $classType = TextType::class;
                 }
@@ -66,7 +67,7 @@ class ParameterType extends AbstractType
                 $form
                     ->add('value', $classType, $fieldOptions)
                 ;
-            }    
+            }
         });
     }
 

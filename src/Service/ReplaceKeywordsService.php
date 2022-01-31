@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
-use DateTime;
 use App\Entity\RegistrationStep;
 use App\ViewModel\UserViewModel;
+use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReplaceKeywordsService
@@ -12,9 +14,7 @@ class ReplaceKeywordsService
     public function __construct(
         private LicenceService $licenceService,
         private TranslatorInterface $translator
-    )
-    {
-        
+    ) {
     }
 
     public function replace(UserViewModel $user, ?string $content, int $render = RegistrationStep::RENDER_VIEW): null|string|array
@@ -28,8 +28,8 @@ class ReplaceKeywordsService
                 $content = str_replace($this->search(), $this->replaces($user), $content);
                 $content = $this->splitHeaderAndFooter($content);
             }
-            
         }
+
         return $content;
     }
 
@@ -38,11 +38,11 @@ class ReplaceKeywordsService
         $pages = preg_split('#{{ saut_page }}#', $content);
         if (1 < count($pages)) {
             $content = '';
-            foreach($pages as $page) {
+            foreach ($pages as $page) {
                 $content .= '<div class="page_break">'.$page.'</div>';
             }
-            
         }
+
         return $content;
     }
 
@@ -50,8 +50,11 @@ class ReplaceKeywordsService
     {
         $pattern = '#^<p>{{ entete }}</p>([\s\w\W]*)<p>{{ entete }}</p>([\s\w\W]*)<p>{{ pied_page }}</p>([\s\w\W]*)<p>{{ pied_page }}</p>$#im';
         preg_match($pattern, $content, $matches);
-        if(!empty($matches)) {
-            return ['header' => $matches[1], 'footer' => $matches[3]];
+        if (! empty($matches)) {
+            return [
+                'header' => $matches[1],
+                'footer' => $matches[3],
+            ];
         }
 
         return $content;
@@ -98,11 +101,11 @@ class ReplaceKeywordsService
         $licence = $user->seasonLicence;
 
         return [
-            $user->member->fullName, 
+            $user->member->fullName,
             $address,
-            $licence->season, 
-            $user->getLicenceNumber(), 
-            $licence->amountStr, 
+            $licence->season,
+            $user->getLicenceNumber(),
+            $licence->amountStr,
             $today->format('d/m/Y'),
             $user->getFullName(),
             $user->getBirthDate(),
@@ -113,7 +116,7 @@ class ReplaceKeywordsService
             $this->translator->trans($licence->type),
             $this->translator->trans($licence->coverageStr),
             $user->isMedicalCertificateRequired(),
-            '<br>'
+            '<br>',
         ];
     }
 }

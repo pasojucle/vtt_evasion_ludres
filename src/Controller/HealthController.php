@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Health;
+use App\Entity\User;
 use App\Form\HealthType;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HealthController extends AbstractController
 {
@@ -22,8 +24,7 @@ class HealthController extends AbstractController
         UserPresenter $presenter,
         EntityManagerInterface $entityManager,
         User $user
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(HealthType::class, $user->getHealth());
         $form->handleRequest($request);
 
@@ -32,9 +33,12 @@ class HealthController extends AbstractController
             $entityManager->persist($health);
             $entityManager->flush();
 
-            return $this->redirectToRoute('admin_user', ['user' => $user->getId()]);
+            return $this->redirectToRoute('admin_user', [
+                'user' => $user->getId(),
+            ]);
         }
         $presenter->present($user);
+
         return $this->render('health/edit.html.twig', [
             'user' => $presenter->viewModel(),
             'form' => $form->createView(),

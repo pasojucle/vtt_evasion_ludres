@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Approval;
@@ -7,8 +9,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Approval|null find($id, $lockMode = null, $lockVersion = null)
- * @method Approval|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Approval find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Approval findOneBy(array $criteria, array $orderBy = null)
  * @method Approval[]    findAll()
  * @method Approval[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

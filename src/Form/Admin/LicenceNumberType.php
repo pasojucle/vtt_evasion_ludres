@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Admin;
 
 use App\Entity\User;
-use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class LicenceNumberType extends AbstractType
@@ -26,16 +28,19 @@ class LicenceNumberType extends AbstractType
                 'allow_clear' => true,
                 'delay' => 250,
                 'cache' => true,
-                'cache_timeout' => 60000, // if 'cache' is true
+                'cache_timeout' => 60000,
+                // if 'cache' is true
                 'language' => 'fr',
                 'placeholder' => 'Saisisez un nom et prénom',
                 'width' => '100%',
                 'label' => 'Adhérent',
-                'remote_params' => ['has_current_season' => true],
+                'remote_params' => [
+                    'has_current_season' => true,
+                ],
                 'required' => true,
                 'attr' => [
                     'class' => 'submit-asynchronous',
-                ]
+                ],
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Message',
@@ -43,10 +48,13 @@ class LicenceNumberType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Supprimer',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
         ;
     }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

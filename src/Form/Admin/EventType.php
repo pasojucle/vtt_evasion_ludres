@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Admin;
 
 use App\Entity\Event;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class EventType extends AbstractType
 {
@@ -46,7 +48,7 @@ class EventType extends AbstractType
                 'format' => 'dd/MM/yyyy',
                 'attr' => [
                     'class' => 'js-datepicker',
-                    'autocomplete' => "off",
+                    'autocomplete' => 'off',
                 ],
                 'row_attr' => [
                     'class' => 'form-group-inline',
@@ -65,7 +67,7 @@ class EventType extends AbstractType
                     'format' => 'dd/MM/yyyy',
                     'attr' => [
                         'class' => 'js-datepicker',
-                        'autocomplete' => "off",
+                        'autocomplete' => 'off',
                     ],
                     'row_attr' => [
                         'class' => 'form-group-inline',
@@ -111,7 +113,9 @@ class EventType extends AbstractType
                 ])
                 ->add('save', SubmitType::class, [
                     'label' => 'Enregister',
-                    'attr' => ['class' => 'btn btn-primary float-right'],
+                    'attr' => [
+                        'class' => 'btn btn-primary float-right',
+                    ],
                 ])
             ;
         };
@@ -128,7 +132,6 @@ class EventType extends AbstractType
             }
         );
     }
-
 
     public function configureOptions(OptionsResolver $resolver)
     {

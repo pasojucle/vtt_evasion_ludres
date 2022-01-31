@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use App\Entity\User;
 use App\Entity\OrderHeader;
-use App\Service\LicenceService;
 
 class OrderViewModel extends AbstractViewModel
 {
     public ?int $id;
+
     public ?UserViewModel $user;
+
     public ?OrderLinesViewModel $orderLines;
+
     public ?int $status;
+
     public ?string $amount;
 
     public static function fromOrderHeader(OrderHeader $orderHeader, array $services)
@@ -20,7 +24,7 @@ class OrderViewModel extends AbstractViewModel
         $orderView->id = $orderHeader->getId();
         $createdAt = $orderHeader->getCreatedAt();
         $orderView->createdAt = $createdAt->format('d/m/Y');
-        $orderView->user = UserViewModel::fromUser($orderHeader->getUser(),  $services);
+        $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $services);
         $orderView->status = $orderHeader->getStatus();
         $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $orderView->user, $services);
         $orderView->amount = $orderView->getAmount();
@@ -31,8 +35,8 @@ class OrderViewModel extends AbstractViewModel
     public function getAmount(): string
     {
         $amount = 0;
-        if (!empty($this->orderLines->lines)) {
-            foreach($this->orderLines->lines as $line) {
+        if (! empty($this->orderLines->lines)) {
+            foreach ($this->orderLines->lines as $line) {
                 $amount += $line['amount_float'];
             }
         }

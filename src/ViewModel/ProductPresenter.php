@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
 use App\Entity\Product;
@@ -15,10 +17,8 @@ class ProductPresenter extends AbstractPresenter
         }
     }
 
-
     public function viewModel(): ProductViewModel
     {
         return $this->viewModel;
     }
-
 }

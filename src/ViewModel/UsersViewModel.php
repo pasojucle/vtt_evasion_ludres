@@ -1,19 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ViewModel;
 
-use App\Service\LicenceService;
-
-class UsersViewModel 
+class UsersViewModel
 {
     public ?array $users;
 
     public static function fromUsers(array $users, array $services): UsersViewModel
     {
         $usersViewModel = [];
-        if (!empty($users)) {
+        if (! empty($users)) {
             foreach ($users as $user) {
-                $usersViewModel[] = UserViewModel::fromUser($user,  $services);
+                $usersViewModel[] = UserViewModel::fromUser($user, $services);
             }
         }
 

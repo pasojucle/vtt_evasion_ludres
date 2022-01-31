@@ -1,17 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use App\Entity\User;
 use App\Entity\Licence;
-use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\NoResultException;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Licence|null find($id, $lockMode = null, $lockVersion = null)
- * @method Licence|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Licence find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Licence findOneBy(array $criteria, array $orderBy = null)
  * @method Licence[]    findAll()
  * @method Licence[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

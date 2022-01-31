@@ -1,28 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
-use App\Entity\Licence;
 use App\Entity\Identity;
+use App\Entity\Licence;
 use App\Validator\BirthDate;
 use App\Validator\Phone;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
-
 
 class IdentityType extends AbstractType
 {
@@ -33,17 +33,17 @@ class IdentityType extends AbstractType
             $form = $event->getForm();
             $type = $identity->getType();
             $kinship = $identity->getKinship();
-            $disabled = ($options['season_licence']->isFinal() && $type === Identity::TYPE_MEMBER) ? 'disabled' : '';
-            $addressClass = ($type !== Identity::TYPE_SECOND_CONTACT) ? ' identity-address' : '';
+            $disabled = ($options['season_licence']->isFinal() && Identity::TYPE_MEMBER === $type) ? 'disabled' : '';
+            $addressClass = (Identity::TYPE_SECOND_CONTACT !== $type) ? ' identity-address' : '';
             $addressRequired = 'required';
-            $row_class =  ($kinship) ? 'form-group-inline' : 'form-group';
+            $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
 
-            if ((!$options['is_kinship'] && !$kinship) || ($options['is_kinship'] && $kinship)) {
+            if ((! $options['is_kinship'] && ! $kinship) || ($options['is_kinship'] && $kinship)) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
                         'row_attr' => [
-                            'class' => $row_class
+                            'class' => $row_class,
                         ],
                         'constraints' => [
                             new NotNull(),
@@ -78,74 +78,75 @@ class IdentityType extends AbstractType
                             new Phone(),
                         ],
                         'attr' => [
-                            'data-constraint' => 'app-Phone'
+                            'data-constraint' => 'app-Phone',
                         ],
-                    ]);
-                    
-                    if ($type !== Identity::TYPE_SECOND_CONTACT) {
-                        $form
-                            ->add('phone', TextType::class, [
-                                'label' => 'Téléphone fixe',
-                                'required' => false,
-                                'row_attr' => [
-                                    'class' => 'form-group-inline',
-                                ],
-                                'constraints' => [
-                                    new Phone,
-                                ],
-                                'attr' => [
-                                    'data-constraint' => 'app-Phone'
-                                ],
-                            ])
-                            ->add('email', EmailType::class, [
-                                'label' => 'Adresse mail',
-                                'row_attr' => [
-                                    'class' => 'form-group-inline'
-                                ],
-                                'constraints' => [
-                                    new Email(),
-                                ],
-                                'attr' => [
-                                    'data-constraint' => 'symfony-Email'
-                                ],
-                            ])
-                            ->add('birthDate', DateTimeType::class, [
-                                'label' => 'Date de naissance',
-                                'widget' => 'single_text',
-                                'html5' => false,
-                                'format' => 'dd/MM/yyyy',
-                                'attr' => [
-                                    'class' => 'js-datepicker',
-                                    'autocomplete' => "off",
-                                    'data-constraint' => 'app-BirthDate'
-                                ],
-                                'row_attr' => [
-                                    'class' => $row_class,
-                                ],
-                                'disabled' => $disabled,
-                                'constraints' => [new BirthDate()],
-                            ])
+                    ])
+                ;
+
+                if (Identity::TYPE_SECOND_CONTACT !== $type) {
+                    $form
+                        ->add('phone', TextType::class, [
+                            'label' => 'Téléphone fixe',
+                            'required' => false,
+                            'row_attr' => [
+                                'class' => 'form-group-inline',
+                            ],
+                            'constraints' => [
+                                new Phone(),
+                            ],
+                            'attr' => [
+                                'data-constraint' => 'app-Phone',
+                            ],
+                        ])
+                        ->add('email', EmailType::class, [
+                            'label' => 'Adresse mail',
+                            'row_attr' => [
+                                'class' => 'form-group-inline',
+                            ],
+                            'constraints' => [
+                                new Email(),
+                            ],
+                            'attr' => [
+                                'data-constraint' => 'symfony-Email',
+                            ],
+                        ])
+                        ->add('birthDate', DateTimeType::class, [
+                            'label' => 'Date de naissance',
+                            'widget' => 'single_text',
+                            'html5' => false,
+                            'format' => 'dd/MM/yyyy',
+                            'attr' => [
+                                'class' => 'js-datepicker',
+                                'autocomplete' => 'off',
+                                'data-constraint' => 'app-BirthDate',
+                            ],
+                            'row_attr' => [
+                                'class' => $row_class,
+                            ],
+                            'disabled' => $disabled,
+                            'constraints' => [new BirthDate()],
+                        ])
                         ;
-                    }
+                }
 
                 if (Licence::CATEGORY_ADULT === $options['category']) {
                     $form
-                    ->add('profession', TextType::class, [
-                        'label' => 'Profession',
-                        'row_attr' => [
-                            'class' => 'form-group-inline'
-                        ],
-                        'attr' => [
-                            'data-constraint' => ''
-                        ],
-                        'required' => false,
-                    ])
+                        ->add('profession', TextType::class, [
+                            'label' => 'Profession',
+                            'row_attr' => [
+                                'class' => 'form-group-inline',
+                            ],
+                            'attr' => [
+                                'data-constraint' => '',
+                            ],
+                            'required' => false,
+                        ])
                     ;
                 }
 
                 if ($kinship) {
                     $kinshipChoices = Identity::KINSHIPS;
-                    if ($type !== Identity::TYPE_SECOND_CONTACT) {
+                    if (Identity::TYPE_SECOND_CONTACT !== $type) {
                         unset($kinshipChoices[Identity::KINSHIP_OTHER]);
                         $form
                             ->add('otherAddress', CheckboxType::class, [
@@ -160,18 +161,19 @@ class IdentityType extends AbstractType
                             ;
                     }
                     $form
-                    ->add('kinship', ChoiceType::class, [
-                        'label' => 'Parenté',
-                        'choices' => array_flip($kinshipChoices),
-                        'row_attr' => [
-                            'class' => 'form-group-inline'
-                        ],
-                        'attr' => [
-                            'data-constraint' => ''
-                        ],
-                    ]);
-                    if (!$identity->hasAddress()) {
-                        $addressClass .=' hidden';
+                        ->add('kinship', ChoiceType::class, [
+                            'label' => 'Parenté',
+                            'choices' => array_flip($kinshipChoices),
+                            'row_attr' => [
+                                'class' => 'form-group-inline',
+                            ],
+                            'attr' => [
+                                'data-constraint' => '',
+                            ],
+                        ])
+                    ;
+                    if (! $identity->hasAddress()) {
+                        $addressClass .= ' hidden';
                         $addressRequired = '';
                     }
                 } else {
@@ -186,7 +188,7 @@ class IdentityType extends AbstractType
                                 new NotBlank(),
                             ],
                             'attr' => [
-                                'data-constraint' => ''
+                                'data-constraint' => '',
                             ],
                         ])
                         ->add('birthDepartment', ChoiceType::class, [
@@ -201,7 +203,7 @@ class IdentityType extends AbstractType
                                 new NotBlank(),
                             ],
                             'attr' => [
-                                'data-constraint' => ''
+                                'data-constraint' => '',
                             ],
                         ])
                         ->add('pictureFile', FileType::class, [
@@ -210,7 +212,7 @@ class IdentityType extends AbstractType
                             'required' => false,
                             'block_prefix' => 'custom_file',
                             'attr' => [
-                                'accept' => '.bmp,.jpeg,.jpg,.png'
+                                'accept' => '.bmp,.jpeg,.jpg,.png',
                             ],
                             'constraints' => [
                                 new File([
@@ -221,7 +223,7 @@ class IdentityType extends AbstractType
                                         'image/png',
                                     ],
                                     'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
-                                ])
+                                ]),
                             ],
                         ])
                         ;

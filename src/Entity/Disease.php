@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\DiseaseRepository;
@@ -11,7 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Disease
 {
     public const TYPE_DISEASE = 1;
+
     public const TYPE_ALLERGY = 2;
+
     public const TYPE_INTOLERANCE = 3;
 
     public const TYPES = [
@@ -20,18 +24,9 @@ class Disease
         self::TYPE_INTOLERANCE => 'disease.type.intolerances',
     ];
 
-    private const LABEL_ENURESIS = 1;
-    private const LABEL_TETANY = 2;
-    private const LABEL_ASTHMA = 3;
-    private const LABEL_HEMOPHILIA = 4;
-    private const LABEL_EPILEPSY = 5;
-    private const LABEL_DIABETES = 6;
     public const LABEL_OTHER = 7;
-    private const LABEL_DIETARY = 8;
-    private const LABEL_MEDICATED = 9;
+
     public const LABEL_POLLEN_BEES = 10;
-    private const LABEL_FOOD = 11;
-    private const LABEL_MEDICINES = 12;
 
     public const LABELS = [
         self::LABEL_ENURESIS => 'disease.label.enuresis',
@@ -47,6 +42,26 @@ class Disease
         self::LABEL_FOOD => 'disease.label.food',
         self::LABEL_MEDICINES => 'disease.label.medicines',
     ];
+
+    private const LABEL_ENURESIS = 1;
+
+    private const LABEL_TETANY = 2;
+
+    private const LABEL_ASTHMA = 3;
+
+    private const LABEL_HEMOPHILIA = 4;
+
+    private const LABEL_EPILEPSY = 5;
+
+    private const LABEL_DIABETES = 6;
+
+    private const LABEL_DIETARY = 8;
+
+    private const LABEL_MEDICATED = 9;
+
+    private const LABEL_FOOD = 11;
+
+    private const LABEL_MEDICINES = 12;
 
     /**
      * @ORM\Id
@@ -74,7 +89,6 @@ class Disease
      * @ORM\Column(type="text", nullable=true)
      */
     private $emergencyTreatment;
-
 
     /**
      * @ORM\Column(type="integer")

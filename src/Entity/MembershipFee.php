@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Repository\MembershipFeeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
-use App\Repository\MembershipFeeRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=MembershipFeeRepository::class)
@@ -78,7 +80,7 @@ class MembershipFee
 
     public function addMembershipFeeAmount(MembershipFeeAmount $membershipFeeAmount): self
     {
-        if (!$this->membershipFeeAmounts->contains($membershipFeeAmount)) {
+        if (! $this->membershipFeeAmounts->contains($membershipFeeAmount)) {
             $this->membershipFeeAmounts[] = $membershipFeeAmount;
             $membershipFeeAmount->setMembershipFee($this);
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\LicenceRepository;
@@ -11,7 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Licence
 {
     public const TYPE_RIDE = 1;
+
     public const TYPE_HIKE = 2;
+
     public const TYPE_SPORT = 3;
 
     public const TYPES = [
@@ -21,8 +25,10 @@ class Licence
     ];
 
     public const COVERAGE_MINI_GEAR = 1;
-    public const COVERAGE_SMALL_GEAR  = 2;
-    public const COVERAGE_HIGH_GEAR  = 3;
+
+    public const COVERAGE_SMALL_GEAR = 2;
+
+    public const COVERAGE_HIGH_GEAR = 3;
 
     public const COVERAGES = [
         self::COVERAGE_MINI_GEAR => 'licence.coverage.mini_gear',
@@ -31,7 +37,8 @@ class Licence
     ];
 
     public const CATEGORY_MINOR = 1;
-    public const CATEGORY_ADULT  = 2;
+
+    public const CATEGORY_ADULT = 2;
 
     public const CATEGORIES = [
         self::CATEGORY_MINOR => 'licence.category.minor',
@@ -39,14 +46,21 @@ class Licence
     ];
 
     public const STATUS_NONE = 0;
+
     public const STATUS_WAITING_RENEW = 1;
+
     public const STATUS_IN_PROCESSING = 2;
+
     public const STATUS_WAITING_VALIDATE = 3;
+
     public const STATUS_TESTING = 4;
-    public const STATUS_VALID  = 5;
+
+    public const STATUS_VALID = 5;
 
     public const STATUS_TESTING_IN_PROGRESS = 6;
+
     public const STATUS_TESTING_COMPLETE = 7;
+
     public const ALL_USERS = 99;
 
     public const STATUS = [
@@ -57,6 +71,7 @@ class Licence
         self::STATUS_TESTING => 'licence.status.testing',
         self::STATUS_VALID => 'licence.status.valid',
     ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -123,7 +138,7 @@ class Licence
      * @ORM\Column(type="integer")
      */
     private $status = self::STATUS_IN_PROCESSING;
-    
+
     public function getId(): ?int
     {
         return $this->id;

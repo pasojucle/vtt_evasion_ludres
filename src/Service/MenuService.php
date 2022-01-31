@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -7,8 +9,11 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class MenuService
 {
     private array $menus;
+
     private array $menusAdmin;
+
     private array $footer;
+
     private ParameterBagInterface $parameterBag;
 
     public function __construct(ParameterBagInterface $parameterBag)
@@ -26,18 +31,26 @@ class MenuService
                 'route' => null,
                 'pattern' => '/school/',
                 'subMenus' => [
-                    ['label' => 'Présentation',
-                    'route' => 'school_overview',
-                    'pattern' => '/school_overview/',],
-                    ['label' => 'Les disciplines',
-                    'route' => 'school_practices',
-                    'pattern' => '/school_practices/',],
-                    ['label' => 'Fonctionnement',
-                    'route' => 'school_operating',
-                    'pattern' => '/school_operating/',],
-                    ['label' => 'Équipement',
-                    'route' => 'school_equipment',
-                    'pattern' => '/school_equipment/',],
+                    [
+                        'label' => 'Présentation',
+                        'route' => 'school_overview',
+                        'pattern' => '/school_overview/',
+                    ],
+                    [
+                        'label' => 'Les disciplines',
+                        'route' => 'school_practices',
+                        'pattern' => '/school_practices/',
+                    ],
+                    [
+                        'label' => 'Fonctionnement',
+                        'route' => 'school_operating',
+                        'pattern' => '/school_operating/',
+                    ],
+                    [
+                        'label' => 'Équipement',
+                        'route' => 'school_equipment',
+                        'pattern' => '/school_equipment/',
+                    ],
                 ],
             ],
             [
@@ -51,12 +64,16 @@ class MenuService
                 'route' => null,
                 'pattern' => '/registration/',
                 'subMenus' => [
-                    ['label' => 'S\'inscrire',
-                    'route' => 'registration_detail',
-                    'pattern' => '/registration_detail/',],
-                    ['label' => 'Les tarifs',
-                    'route' => 'registration_membership_fee',
-                    'pattern' => '/registration_membership_fee/',],
+                    [
+                        'label' => 'S\'inscrire',
+                        'route' => 'registration_detail',
+                        'pattern' => '/registration_detail/',
+                    ],
+                    [
+                        'label' => 'Les tarifs',
+                        'route' => 'registration_membership_fee',
+                        'pattern' => '/registration_membership_fee/',
+                    ],
                 ],
             ],
             [
@@ -108,11 +125,11 @@ class MenuService
     {
         $routes = [];
         $allMenus = array_merge($this->getMenus(), $this->getFooter());
-        foreach($allMenus as $menu) {
+        foreach ($allMenus as $menu) {
             if (empty($menu['subMenus'])) {
                 $routes[] = $menu['route'];
             } else {
-                foreach($menu['subMenus'] as $subMenu) {
+                foreach ($menu['subMenus'] as $subMenu) {
                     $routes[] = $subMenu['route'];
                 }
             }

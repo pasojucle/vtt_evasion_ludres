@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Address;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 class AddressType extends AbstractType
 {
@@ -19,20 +21,24 @@ class AddressType extends AbstractType
                 'label' => 'Adresse',
                 'row_attr' => [
                     'class' => 'form-group-inline full-width'.$options['row_class'],
-                ],                            
+                ],
                 'attr' => [
-                    'data-constraint' => ''
+                    'data-constraint' => '',
                 ],
                 'required' => $required,
             ])
             ->add('postalCode', TextType::class, [
                 'label' => 'Code postal',
-                'constraints' => [new Length(['min' => 5, 'max' => 5])],
+                'constraints' => [
+                    new Length([
+                        'min' => 5,
+                        'max' => 5,
+                    ]), ],
                 'row_attr' => [
                     'class' => 'form-group-inline'.$options['row_class'],
                 ],
                 'attr' => [
-                    'data-constraint' => 'app-PostalCode'
+                    'data-constraint' => 'app-PostalCode',
                 ],
                 'required' => $required,
             ])
@@ -42,7 +48,7 @@ class AddressType extends AbstractType
                     'class' => 'form-group-inline'.$options['row_class'],
                 ],
                 'attr' => [
-                    'data-constraint' => ''
+                    'data-constraint' => '',
                 ],
                 'required' => $required,
             ])

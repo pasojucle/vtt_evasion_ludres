@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Link;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Validator\Constraints\File;
 
 class LinkType extends AbstractType
 {
@@ -29,7 +31,9 @@ class LinkType extends AbstractType
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregister',
-                'attr' => ['class' => 'btn btn-primary float-right'],
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
             ])
             ;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -63,7 +67,7 @@ class LinkType extends AbstractType
                         'required' => false,
                         'block_prefix' => 'custom_file',
                         'attr' => [
-                            'accept' => '.bmp,.jpeg,.jpg,.png,.gif,.svg'
+                            'accept' => '.bmp,.jpeg,.jpg,.png,.gif,.svg',
                         ],
                         'row_attr' => [
                             'class' => 'form-group-inline',
@@ -79,7 +83,7 @@ class LinkType extends AbstractType
                                     'image/svg+xml',
                                 ],
                                 'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
-                            ])
+                            ]),
                         ],
                     ])
                     ->add('position', ChoiceType::class, [
@@ -91,7 +95,9 @@ class LinkType extends AbstractType
                     ])
                     ->add('search', SubmitType::class, [
                         'label' => 'Rechercher les infos SEO',
-                        'attr' => ['class' => 'btn btn-secondary  float-right'],
+                        'attr' => [
+                            'class' => 'btn btn-secondary  float-right',
+                        ],
                     ])
                 ;
             }

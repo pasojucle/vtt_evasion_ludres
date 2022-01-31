@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\IdentityRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=IdentityRepository::class)
@@ -12,12 +13,17 @@ use App\Repository\IdentityRepository;
 class Identity
 {
     public const TYPE_MEMBER = 1;
+
     public const TYPE_KINSHIP = 2;
+
     public const TYPE_SECOND_CONTACT = 3;
 
     public const KINSHIP_FATHER = 1;
+
     public const KINSHIP_MOTHER = 2;
+
     public const KINSHIP_GUARDIANSHIP = 3;
+
     public const KINSHIP_OTHER = 4;
 
     public const KINSHIPS = [
@@ -104,7 +110,6 @@ class Identity
      * @ORM\Column(type="integer", options={"default":1}))
      */
     private $type = self::TYPE_MEMBER;
-
 
     public function getId(): ?int
     {
@@ -257,13 +262,12 @@ class Identity
 
     public function hasAddress(): bool
     {
-        return (null !== $this->address) ? !$this->address->isEmpty() : false;
+        return (null !== $this->address) ? ! $this->address->isEmpty() : false;
     }
-
 
     public function isEmpty()
     {
-        return null === $this->name && null === $this->firstName; 
+        return null === $this->name && null === $this->firstName;
     }
 
     public function getBirthDepartment(): ?string

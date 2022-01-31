@@ -1,19 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
-use App\Entity\Size;
 use App\Entity\OrderLine;
-use App\Form\QuantityType;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderLineType extends AbstractType
 {
@@ -23,14 +21,14 @@ class OrderLineType extends AbstractType
             $orderLine = $event->getData();
             $form = $event->getForm();
             $form
-                ->add('quantity', QuantityType::class,[
+                ->add('quantity', QuantityType::class, [
                     'label' => false,
                     'row_attr' => [
                         'class' => 'form-group',
                     ],
                     'attr' => [
                         'class' => 'orderline-quantity',
-                      ],
+                    ],
                 ])
                 ->add('remove', SubmitType::class, [
                     'label' => 'supprimer',

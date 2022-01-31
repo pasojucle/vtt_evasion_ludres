@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EventRepository;
 use DateInterval;
 use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
@@ -15,12 +17,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Event
 {
     public const PERIOD_DAY = 'jour';
+
     public const PERIOD_WEEK = 'semaine';
+
     public const PERIOD_MONTH = 'mois';
+
     public const PERIOD_NEXT = 'prochainement';
+
     public const PERIOD_ALL = 'tous';
 
     public const DIRECTION_PREV = 1;
+
     public const DIRECTION_NEXT = 2;
 
     public const PERIODS = [
@@ -32,9 +39,13 @@ class Event
     ];
 
     public const TYPE_CASUAL = 1;
+
     public const TYPE_SCHOOL = 2;
+
     public const TYPE_ADULT = 3;
+
     public const TYPE_HOLIDAYS = 4;
+
     public const TYPES = [
         self::TYPE_CASUAL => 'event.type.casual',
         self::TYPE_SCHOOL => 'event.type.school',
@@ -177,7 +188,7 @@ class Event
     }
 
     /**
-     * @return Collection|Cluster[]
+     * @return Cluster[]|Collection
      */
     public function getClusters(): Collection
     {
@@ -186,7 +197,7 @@ class Event
 
     public function addCluster(Cluster $cluster): self
     {
-        if (!$this->clusters->contains($cluster)) {
+        if (! $this->clusters->contains($cluster)) {
             $this->clusters[] = $cluster;
             $cluster->setEvent($this);
         }
@@ -215,8 +226,8 @@ class Event
         $today = new DateTime();
         $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
         $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
-        $displayAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
-        $closingAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
+        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
+        $closingAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
 
         return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
     }
@@ -226,20 +237,20 @@ class Event
         if (self::TYPE_HOLIDAYS === $this->type) {
             return false;
         }
-        
-        $today = new DateTime();
-        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
-        
-        $level = (null !== $user) ? $user->getLevel() : null;
-        $type =  (null !== $level) ? $level->getType() : null;
 
-        return $type == Level::TYPE_FRAME && $this->type === self::TYPE_SCHOOL && $today <= $this->startAt;
+        $today = new DateTime();
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+
+        $level = (null !== $user) ? $user->getLevel() : null;
+        $type = (null !== $level) ? $level->getType() : null;
+
+        return Level::TYPE_FRAME === $type && self::TYPE_SCHOOL === $this->type && $today <= $this->startAt;
     }
 
     public function isOver(): bool
     {
         $today = new DateTime();
-        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
 
         return $this->startAt < $today;
     }
@@ -247,12 +258,12 @@ class Event
     public function isNext(): bool
     {
         $today = new DateTime();
-        $today =  DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
-        $startAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
-        $displayAt =  DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+        $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
+        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
         $interval = new DateInterval('P'.$this->displayDuration.'D');
 
-        return  $displayAt->sub($interval) <= $today && $today <= $startAt;
+        return $displayAt->sub($interval) <= $today && $today <= $startAt;
     }
 
     public function getType(): ?int

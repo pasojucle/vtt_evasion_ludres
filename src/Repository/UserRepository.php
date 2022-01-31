@@ -1,25 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use DateTime;
-use DateInterval;
-use App\Entity\User;
-use App\Entity\Event;
 use App\Entity\Level;
 use App\Entity\Licence;
-use Doctrine\ORM\QueryBuilder;
+use App\Entity\User;
 use App\Service\LicenceService;
-use Doctrine\ORM\NoResultException;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use DateInterval;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
- * @method User|null find($id, $lockMode = null, $lockVersion = null)
- * @method User|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|User find($id, $lockMode = null, $lockVersion = null)
+ * @method null|User findOneBy(array $criteria, array $orderBy = null)
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -38,7 +39,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newEncodedPassword): void
     {
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
         }
 
@@ -55,25 +56,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->innerJoin('u.licences', 'li')
             ;
 
-        if (!empty($filters)) {
+        if (! empty($filters)) {
             if (null !== $filters['fullName']) {
                 $qb->andWhere(
-                        $qb->expr()->orX(
-                            $qb->expr()->like('i.name', $qb->expr()->literal('%'.$filters['fullName'].'%')),
-                            $qb->expr()->like('i.firstName', $qb->expr()->literal('%'.$filters['fullName'].'%')),
-                        )
+                    $qb->expr()->orX(
+                        $qb->expr()->like('i.name', $qb->expr()->literal('%'.$filters['fullName'].'%')),
+                        $qb->expr()->like('i.firstName', $qb->expr()->literal('%'.$filters['fullName'].'%')),
                     )
+                )
                     ;
             }
             if (null !== $filters['level']) {
                 $type = null;
-                if ($filters['level'] === Level::TYPE_ALL_MEMBER) {
+                if (Level::TYPE_ALL_MEMBER === $filters['level']) {
                     $type = Level::TYPE_MEMBER;
                 }
-                if ($filters['level'] === Level::TYPE_ALL_FRAME) {
+                if (Level::TYPE_ALL_FRAME === $filters['level']) {
                     $type = Level::TYPE_FRAME;
                 }
-                if ($filters['level'] === Level::TYPE_ADULT) {
+                if (Level::TYPE_ADULT === $filters['level']) {
                     $qb
                         ->andWhere(
                             $qb->expr()->isNull('u.level'),
@@ -95,28 +96,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                         ->setParameter('level', $filters['level'])
                         ;
                 }
-
             }
             if (null !== $filters['status']) {
-                if ($filters['status'] == Licence::STATUS_NONE) {
+                if (Licence::STATUS_NONE === $filters['status']) {
                     $maxSeason = $this->licenceService->getSeasonByStatus(Licence::STATUS_NONE);
                     $qb
                         ->groupBy('u.id')
                         ->having('MAX(li.season) < :maxSeason')
                         ->setParameter('maxSeason', $maxSeason)
                         ;
-                } elseif ($filters['status'] === Licence::STATUS_WAITING_RENEW) {
+                } elseif (Licence::STATUS_WAITING_RENEW === $filters['status']) {
                     $season = $this->licenceService->getSeasonByStatus(Licence::STATUS_WAITING_RENEW);
-                    $qb 
+                    $qb
                         ->groupBy('u.id')
                         ->having('MAX(li.season) = :season')
-                        ->setParameter('season', $season);
-                } elseif (in_array($filters['status'],[Licence::STATUS_TESTING_IN_PROGRESS, Licence::STATUS_TESTING_COMPLETE])) {
+                        ->setParameter('season', $season)
+                    ;
+                } elseif (in_array($filters['status'], [Licence::STATUS_TESTING_IN_PROGRESS, Licence::STATUS_TESTING_COMPLETE], true)) {
                     $having = 'COUNT(s.id) BETWEEN 1 and 2';
                     $andX = $qb->expr()->andX();
                     $andX->add($qb->expr()->eq('li.season', ':season'));
                     $andX->add($qb->expr()->eq('li.final', ':final'));
-                    if ($filters['status'] === Licence::STATUS_TESTING_COMPLETE) {
+                    if (Licence::STATUS_TESTING_COMPLETE === $filters['status']) {
                         $andX->add($qb->expr()->eq('s.isPresent', 1));
                         $having = 'COUNT(s.id) > 2';
                     }
@@ -128,12 +129,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                         ->setParameter('season', $currentSeason)
                         ->setParameter('final', 0)
                     ;
-                } elseif ($filters['status'] === Licence::ALL_USERS) {
+                } elseif (Licence::ALL_USERS === $filters['status']) {
                     return $qb->andWhere(
                         $qb->expr()->isNull('i.kinship'),
                     )
-                    ->orderBy('i.name', 'ASC');
-                } elseif ($filters['status'] === Licence::STATUS_VALID) {
+                        ->orderBy('i.name', 'ASC')
+                    ;
+                } elseif (Licence::STATUS_VALID === $filters['status']) {
                     $qb
                         ->andWhere(
                             $qb->expr()->eq('li.season', ':season'),
@@ -147,6 +149,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 }
             }
         }
+
         return $qb
             ->andWhere(
                 $qb->expr()->isNull('i.kinship'),
@@ -168,7 +171,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->getSingleResult()
             ;
             $maxId = (int) $result['idMax'];
-            return ++ $maxId;
+
+            return ++$maxId;
         } catch (NoResultException $e) {
             return 0;
         }
@@ -177,14 +181,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findByFullName(?string $fullName, ?bool $hasCurrentSeason = false): array
     {
         $qb = $this->createQueryBuilder('u')
-            ->innerJoin('u.identities', 'i');
+            ->innerJoin('u.identities', 'i')
+        ;
         if (null !== $fullName) {
             $qb->andWhere(
-                    $qb->expr()->orX(
-                        $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
-                        $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
-                    )
-                );
+                $qb->expr()->orX(
+                    $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
+                    $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
+                )
+            );
         }
 
         if (true === $hasCurrentSeason) {
@@ -193,14 +198,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->andWhere(
                     $qb->expr()->eq('l.season', ':currentSeason')
                 )
-                ->setParameter('currentSeason', $currentSeason);
+                ->setParameter('currentSeason', $currentSeason)
+            ;
         }
+
         return $qb->andWhere(
-                $qb->expr()->isNull('i.kinship')
-            )
+            $qb->expr()->isNull('i.kinship')
+        )
             ->orderBy('i.name')
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
 
     public function findUserLicenceInProgressQuery(?array $filters): QueryBuilder
@@ -209,14 +217,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i')
-            ->innerJoin('u.licences', 'li');
+            ->innerJoin('u.licences', 'li')
+        ;
         if (null !== $filters && array_key_exists('isFinal', $filters) && null !== $filters['isFinal']) {
             $qb->andWhere(
                 $qb->expr()->eq('li.final', ':isFinal')
             )
-            ->setParameter('isFinal', $filters['isFinal'])
+                ->setParameter('isFinal', $filters['isFinal'])
             ;
         }
+
         return $qb
             ->andWhere(
                 $qb->expr()->isNull('i.kinship'),
@@ -233,22 +243,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i')
-            ->innerJoin('u.licences', 'l');
+            ->innerJoin('u.licences', 'l')
+        ;
 
-            $limit = new DateTime();
-            $limit->sub(new DateInterval('P18Y'));
-   
+        $limit = new DateTime();
+        $limit->sub(new DateInterval('P18Y'));
 
-            return $qb->andWhere(
-                $qb->expr()->isNull('i.kinship'),
-                $qb->expr()->gte('i.birthDate', ':limit'),
-                $qb->expr()->gte('l.season', ':season'),
-            )
+        return $qb->andWhere(
+            $qb->expr()->isNull('i.kinship'),
+            $qb->expr()->gte('i.birthDate', ':limit'),
+            $qb->expr()->gte('l.season', ':season'),
+        )
             ->setParameter('limit', $limit)
             ->setParameter('season', 2021)
             ->orderBy('i.name')
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
-
 }

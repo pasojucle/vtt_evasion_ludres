@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Licence;
 
-use DateTime;
-use App\Entity\User;
 use App\Entity\Licence;
+use App\Entity\User;
 use App\Service\MailerService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class LicenceValidateService
 {
     private EntityManagerInterface $entityManager;
+
     private MailerService $mailerService;
 
     public function __construct(EntityManagerInterface $entityManager, MailerService $mailerService)
@@ -31,7 +34,7 @@ class LicenceValidateService
         $this->setLicenceNumber($data, $user);
         $this->sendMail($licenceNumber, $user);
         $this->setMedicalCertificateDate($data, $user);
-        
+
         $this->entityManager->flush();
     }
 
@@ -39,18 +42,18 @@ class LicenceValidateService
     {
         if (array_key_exists('licenceNumber', $data)) {
             $licenceNumber = $data['licenceNumber'];
-            if(!empty($licenceNumber)) {
+            if (! empty($licenceNumber)) {
                 $user->setLicenceNumber($licenceNumber);
                 $this->entityManager->persist($user);
             }
-        }  
+        }
     }
 
     private function setMedicalCertificateDate(array $data, User $user)
     {
         if (array_key_exists('medicalCertificateDate', $data)) {
             $medicalCertificateDate = $data['medicalCertificateDate'];
-            if(!empty($medicalCertificateDate)) {
+            if (! empty($medicalCertificateDate)) {
                 $health = $user->getHealth();
                 $medicalCertificateDate = DateTime::createFromFormat('d/m/Y', $medicalCertificateDate);
                 $health->setMedicalCertificateDate($medicalCertificateDate);

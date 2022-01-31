@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Content;
 use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 
 /**
- * @method Content|null find($id, $lockMode = null, $lockVersion = null)
- * @method Content|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Content find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Content findOneBy(array $criteria, array $orderBy = null)
  * @method Content[]    findAll()
  * @method Content[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -26,7 +28,7 @@ class ContentRepository extends ServiceEntityRepository
     public function findContentQuery(?string $route = null, ?bool $isFlash = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('c');
-        
+
         $andX = $qb->expr()->andX();
         if (null !== $route) {
             $andX->add($qb->expr()->eq('c.route', ':route'));
@@ -34,12 +36,12 @@ class ContentRepository extends ServiceEntityRepository
             $andX->add($qb->expr()->neq('c.route', ':route'));
             $route = 'home';
         }
-        
+
         if (null !== $isFlash) {
             $andX->add($qb->expr()->eq('c.isFlash', ':isFlash'));
             $qb->setParameter('isFlash', $isFlash);
         }
-        
+
         return $qb
             ->andWhere($andX)
             ->setParameter('route', $route)
@@ -60,13 +62,13 @@ class ContentRepository extends ServiceEntityRepository
         $maxOrder = $this->createQueryBuilder('c')
             ->select('MAX(c.orderBy)')
             ->andWhere(
-                (new Expr)->eq('c.route', ':route'),
-                (new Expr)->eq('c.isFlash', ':isFlash')
+                (new Expr())->eq('c.route', ':route'),
+                (new Expr())->eq('c.isFlash', ':isFlash')
             )
             ->setParameter('route', $route)
             ->setParameter('isFlash', $isFlash)
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getSingleScalarResult()
         ;
 
         if (null !== $maxOrder) {
@@ -81,13 +83,14 @@ class ContentRepository extends ServiceEntityRepository
     {
         try {
             return $this->createQueryBuilder('l')
-            ->andWhere(
-                (new Expr)->eq('l.route', ':route')
-            )
-            ->setParameter('route', $route)
-            ->getQuery()
-            ->getOneOrNullResult();
-        } catch(NonUniqueResultException $e) {
+                ->andWhere(
+                    (new Expr())->eq('l.route', ':route')
+                )
+                ->setParameter('route', $route)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException $e) {
             return null;
         }
     }
@@ -96,7 +99,7 @@ class ContentRepository extends ServiceEntityRepository
     {
         $today = new DateTime();
         $qb = $this->createQueryBuilder('c');
-        
+
         $contents = $qb
             ->andWhere(
                 $qb->expr()->eq('c.route', ':route'),
@@ -124,6 +127,7 @@ class ContentRepository extends ServiceEntityRepository
                 $homeContents[$type][] = $content;
             }
         }
-         return $homeContents;
+
+        return $homeContents;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\VoteResponseRepository;
@@ -11,8 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 class VoteResponse
 {
     public const VALUE_NO = 0;
+
     public const VALUE_YES = 1;
+
     public const VALUE_NO_OPINION = 2;
+
     public const VALUES = [
         self::VALUE_NO => 'vote.response.no',
         self::VALUE_YES => 'vote.response.yes',

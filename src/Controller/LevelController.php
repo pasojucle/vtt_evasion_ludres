@@ -1,36 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
+use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LevelController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+
     private LevelRepository $levelRepository;
+
     private OrderByService $orderByService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         LevelRepository $levelRepository,
         OrderByService $orderByService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->levelRepository = $levelRepository;
         $this->orderByService = $orderByService;
     }
-    
+
     /**
      * @Route("/admin/niveaux/{type}", name="admin_levels", defaults={"type"=1})
      */
@@ -38,16 +41,17 @@ class LevelController extends AbstractController
         PaginatorService $paginator,
         Request $request,
         int $type
-    ): Response
-    {
-        $query =  $this->levelRepository->findLevelQuery($type);
-        $levels =  $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+    ): Response {
+        $query = $this->levelRepository->findLevelQuery($type);
+        $levels = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('level/admin/list.html.twig', [
             'levels' => $levels,
             'lastPage' => $paginator->lastPage($levels),
             'current_type' => $type,
-            'current_filters' => ['type' => (int) $type],
+            'current_filters' => [
+                'type' => (int) $type,
+            ],
         ]);
     }
 
@@ -57,15 +61,13 @@ class LevelController extends AbstractController
     public function adminLevelEdit(
         Request $request,
         ?Level $level
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(LevelType::class, $level);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $level = $form->getData();
 
-            
             if (null === $level->getOrderBy() && null !== $level->getType()) {
                 $order = $this->levelRepository->findNexOrderByType($level->getType());
                 $level->setOrderBy($order);
@@ -73,7 +75,9 @@ class LevelController extends AbstractController
             $this->entityManager->persist($level);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_levels', ['type' => $level->getType()]);
+            return $this->redirectToRoute('admin_levels', [
+                'type' => $level->getType(),
+            ]);
         }
 
         return $this->render('level/admin/edit.html.twig', [
@@ -88,12 +92,12 @@ class LevelController extends AbstractController
     public function adminLevelDelete(
         Request $request,
         Level $level
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_level_delete', 
+            'action' => $this->generateUrl(
+                'admin_level_delete',
                 [
-                    'level'=> $level->getId(),
+                    'level' => $level->getId(),
                 ]
             ),
         ]);
@@ -108,7 +112,9 @@ class LevelController extends AbstractController
             $levels = $this->levelRepository->findByType($type);
             $this->orderByService->ResetOrders($levels);
 
-            return $this->redirectToRoute('admin_levels', ['type' => $type]);
+            return $this->redirectToRoute('admin_levels', [
+                'type' => $type,
+            ]);
         }
 
         return $this->render('level/admin/delete.modal.html.twig', [
@@ -123,8 +129,7 @@ class LevelController extends AbstractController
     public function adminLevelOrder(
         Request $request,
         Level $level
-    ): Response
-    {
+    ): Response {
         $type = $level->getType();
         $newOrder = $request->request->get('newOrder');
         $levels = $this->levelRepository->findByType($type);
