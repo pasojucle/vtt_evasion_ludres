@@ -1,0 +1,3 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    error_controller: App\Controller\ErrorController::show
