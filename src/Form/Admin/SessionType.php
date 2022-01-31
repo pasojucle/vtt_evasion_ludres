@@ -7,8 +7,8 @@ use App\Entity\User;
 use App\Entity\Session;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
@@ -33,7 +33,10 @@ class SessionType extends AbstractType
                 'language' => 'fr',
                 'placeholder' => 'Saisisez un nom et prénom',
                 'width' => '100%',
-                'label' => 'Participant'
+                'label' => 'Participant',
+                'constraints' => [
+                    new NotBlank(),
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter',
