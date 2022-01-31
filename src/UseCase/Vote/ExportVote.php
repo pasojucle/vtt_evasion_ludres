@@ -72,19 +72,23 @@ class ExportVote
     }
 
     private function GetResults(array $voteResponsesByUuid): array
-    {
-        $values = [];
-        foreach(array_keys(VoteResponse::VALUES) as $choice) {
-            $values[$choice] = 0;
-        }
+    {   
         $results = [];
+        foreach(array_keys(VoteResponse::VALUES) as $choice) {
+            $results[$choice] = [];
+        }
+        
         foreach ($voteResponsesByUuid as $data) {
             foreach ($data['responses'] as $response) {
                 if (VoteIssue::RESPONSE_TYPE_CHOICE === $response->getVoteIssue()->getResponseType()) {
                     $voteIssueId = $response->getVoteIssue()->getId();
-                    if (!array_key_exists($response->getValue(), $results)) {
-                        $results[$response->getValue()] = $values;
+
+                    if (!array_key_exists($voteIssueId, $results[$response->getValue()])) {
+                        foreach(array_keys(VoteResponse::VALUES) as $choice) {
+                            $results[$choice][$voteIssueId] = 0;
+                        }
                     }
+                    
                     ++$results[$response->getValue()][$voteIssueId];
                 } 
             }
