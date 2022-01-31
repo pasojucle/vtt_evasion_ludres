@@ -822,6 +822,8 @@ nav.nav-tab a {
     border-left: 1px solid var(--gray-color);
     border-right: 1px solid var(--gray-color);
     border-radius: 5px 5px 0 0;
+    line-height: 30px;
+    height: 30px;
 }
 nav.nav-tab a:hover, nav.nav-tab a.active {
     color: var(--white-color);

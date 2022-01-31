@@ -15,7 +15,9 @@
             <div>
             <nav  class="nav-tab">
                 {% for key, label in tabs %}
-                    <a href="{{ path('admin_vote', {'vote': vote.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>{{ label|trans}}</a>
+                    <a href="{{ path('admin_vote', {'vote': vote.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>
+                        {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ vote.voteUsers|length }}</span>{% endif %}
+                    </a>
                 {% endfor %}
             </nav>
         </div>
