@@ -23,7 +23,7 @@ class OrderGetService
     public function getOrderByUser(): ?OrderHeader
     {
         $user = $this->security->getUser();
-        if (! $user) {
+        if (!$user) {
             return null;
         }
 

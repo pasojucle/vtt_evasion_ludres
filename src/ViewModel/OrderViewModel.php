@@ -35,13 +35,13 @@ class OrderViewModel extends AbstractViewModel
     public function getAmount(): string
     {
         $amount = 0;
-        if (! empty($this->orderLines->lines)) {
+        if (!empty($this->orderLines->lines)) {
             foreach ($this->orderLines->lines as $line) {
                 $amount += $line['amount_float'];
             }
         }
 
-        return number_format($amount, 2).' €';
+        return number_format($amount, 2) . ' €';
     }
 
     public function getMemberFullName(): string

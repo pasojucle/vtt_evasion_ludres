@@ -85,7 +85,7 @@ class UserFilterType extends AbstractType
         $levelChoices['Adultes']['Adultes hors encadrement'] = Level::TYPE_ADULT;
         $levels = $this->levelRepository->findAll();
 
-        if (! empty($levels)) {
+        if (!empty($levels)) {
             foreach ($levels as $level) {
                 $type = (Level::TYPE_MEMBER === $level->getType()) ? 'École VTT' : 'Encadrement';
                 $levelChoices[$type][$level->getTitle()] = $level->getId();

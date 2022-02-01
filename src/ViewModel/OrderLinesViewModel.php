@@ -13,7 +13,7 @@ class OrderLinesViewModel extends AbstractViewModel
     public static function fromOrderLines(collection $orderLines, UserViewModel $orderUser, array $services)
     {
         $linesView = new self();
-        if (! $orderLines->isEmpty()) {
+        if (!$orderLines->isEmpty()) {
             foreach ($orderLines as $line) {
                 $product = ProductViewModel::fromProduct($line->getProduct(), $services, $orderUser);
                 $amount = $line->getQuantity() * $product->sellingPrice;
@@ -22,7 +22,7 @@ class OrderLinesViewModel extends AbstractViewModel
                     'quantity' => $line->getQuantity(),
                     'size' => $line->getSize()->getName(),
                     'amount_float' => $amount,
-                    'amount' => number_format($amount, 2).' €',
+                    'amount' => number_format($amount, 2) . ' €',
                 ];
             }
         }

@@ -25,8 +25,8 @@ class UploadService
         if ($pictureFile) {
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
-            if (! is_dir($this->params->get($dir))) {
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $pictureFile->guessExtension();
+            if (!is_dir($this->params->get($dir))) {
                 mkdir($this->params->get($dir));
             }
 

@@ -262,7 +262,7 @@ class Identity
 
     public function hasAddress(): bool
     {
-        return (null !== $this->address) ? ! $this->address->isEmpty() : false;
+        return (null !== $this->address) ? !$this->address->isEmpty() : false;
     }
 
     public function isEmpty()

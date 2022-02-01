@@ -83,7 +83,7 @@ class SessionService
             if (null === $userCluster) {
                 $cluster = new Cluster();
                 $count = count($clustersLevelAsUser) + 1;
-                $cluster->setTitle($userLevel->getTitle().' '.$count)
+                $cluster->setTitle($userLevel->getTitle() . ' ' . $count)
                     ->setLevel($userLevel)
                     ->setEvent($event)
                     ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)

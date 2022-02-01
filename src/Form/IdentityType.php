@@ -38,7 +38,7 @@ class IdentityType extends AbstractType
             $addressRequired = 'required';
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
 
-            if ((! $options['is_kinship'] && ! $kinship) || ($options['is_kinship'] && $kinship)) {
+            if ((!$options['is_kinship'] && !$kinship) || ($options['is_kinship'] && $kinship)) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
@@ -172,7 +172,7 @@ class IdentityType extends AbstractType
                             ],
                         ])
                     ;
-                    if (! $identity->hasAddress()) {
+                    if (!$identity->hasAddress()) {
                         $addressClass .= ' hidden';
                         $addressRequired = '';
                     }

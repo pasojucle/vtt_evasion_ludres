@@ -80,7 +80,7 @@ class MembershipFee
 
     public function addMembershipFeeAmount(MembershipFeeAmount $membershipFeeAmount): self
     {
-        if (! $this->membershipFeeAmounts->contains($membershipFeeAmount)) {
+        if (!$this->membershipFeeAmounts->contains($membershipFeeAmount)) {
             $this->membershipFeeAmounts[] = $membershipFeeAmount;
             $membershipFeeAmount->setMembershipFee($this);
         }

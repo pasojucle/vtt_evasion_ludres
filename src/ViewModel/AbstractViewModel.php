@@ -13,7 +13,7 @@ class AbstractViewModel
     {
         $reflectionClass = new ReflectionClass($this);
         $properties = $reflectionClass->getProperties();
-        if (! empty($properties)) {
+        if (!empty($properties)) {
             foreach ($properties as $property) {
                 if (ReflectionProperty::IS_PUBLIC === $property->getModifiers()) {
                     $propertyName = $property->getName();
@@ -29,7 +29,7 @@ class AbstractViewModel
 
         $properties = $reflectionClass->getProperties();
         $entity = [];
-        if (! empty($properties)) {
+        if (!empty($properties)) {
             foreach ($properties as $property) {
                 if ('id' !== $property->getName()) {
                     $propertyName = $property->getName();

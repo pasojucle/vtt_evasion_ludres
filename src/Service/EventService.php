@@ -74,7 +74,7 @@ class EventService
 
     public function getFilters(string $period, DateTime $date, ?int $direction = null)
     {
-        if (null !== $direction && ! in_array($period, [Event::PERIOD_ALL, Event::PERIOD_NEXT], true)) {
+        if (null !== $direction && !in_array($period, [Event::PERIOD_ALL, Event::PERIOD_NEXT], true)) {
             $intervals = [
                 Event::PERIOD_DAY => 'P1D',
                 Event::PERIOD_WEEK => 'P1W',
@@ -117,10 +117,10 @@ class EventService
                 $endAt = null;
         }
         if (null !== $startAt) {
-            $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $startAt->format('Y-m-d').' 00:00:00');
+            $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $startAt->format('Y-m-d') . ' 00:00:00');
         }
         if (null !== $endAt) {
-            $endAt = DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d').' 23:59:59');
+            $endAt = DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d') . ' 23:59:59');
         }
 
         return [
@@ -248,7 +248,7 @@ class EventService
     public function getEventWithPresentsByCluster(Event $event): array
     {
         $clusters = [];
-        if (! $event->getClusters()->isEmpty()) {
+        if (!$event->getClusters()->isEmpty()) {
             foreach ($event->getClusters() as $cluster) {
                 $clusters[] = [
                     'cluster' => $cluster,
@@ -270,7 +270,7 @@ class EventService
     public function getCountOfPresents(Collection $sessions): int
     {
         $presentSessions = [];
-        if (! $sessions->isEmpty()) {
+        if (!$sessions->isEmpty()) {
             foreach ($sessions as $session) {
                 $level = $session->getUser()->getLevel();
                 $levelType = (null !== $level) ? $level->getType() : Level::TYPE_MEMBER;

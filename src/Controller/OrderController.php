@@ -64,7 +64,7 @@ class OrderController extends AbstractController
         }
         $form = $this->createForm(OrderType::class, $orderHeader);
 
-        if (! $request->isXmlHttpRequest() && $request->isMethod('POST')) {
+        if (!$request->isXmlHttpRequest() && $request->isMethod('POST')) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $orderValidateService->execute($form);

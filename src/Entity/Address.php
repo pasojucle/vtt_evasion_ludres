@@ -97,7 +97,7 @@ class Address
 
     public function addIdentity(Identity $identity): self
     {
-        if (! $this->identities->contains($identity)) {
+        if (!$this->identities->contains($identity)) {
             $this->identities[] = $identity;
             $identity->setAddress($this);
         }

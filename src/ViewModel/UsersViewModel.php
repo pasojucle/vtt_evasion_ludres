@@ -11,7 +11,7 @@ class UsersViewModel
     public static function fromUsers(array $users, array $services): UsersViewModel
     {
         $usersViewModel = [];
-        if (! empty($users)) {
+        if (!empty($users)) {
             foreach ($users as $user) {
                 $usersViewModel[] = UserViewModel::fromUser($user, $services);
             }

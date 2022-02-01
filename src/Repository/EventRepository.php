@@ -43,7 +43,7 @@ class EventRepository extends ServiceEntityRepository
             $qb->setParameter('endAt', $filters['endAt']);
         }
 
-        if (! empty($andX->getParts())) {
+        if (!empty($andX->getParts())) {
             $qb->andWhere($andX);
         }
 
@@ -68,7 +68,7 @@ class EventRepository extends ServiceEntityRepository
     public function findEnableView(): array
     {
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 23:59:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 23:59:00');
 
         return $this->createQueryBuilder('e')
             ->andWhere(

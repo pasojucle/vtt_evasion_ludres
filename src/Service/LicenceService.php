@@ -40,7 +40,7 @@ class LicenceService
         $licence = $user->seasonLicence;
         $title = 'registration_step.type.';
         if (null !== $licence) {
-            if (! $licence->isFinal) {
+            if (!$licence->isFinal) {
                 $title .= 'testing';
             } else {
                 $category = $licence->category;

@@ -26,7 +26,7 @@ class OrderLinesSetService
     {
         /** @var array order */
         $order = $request->request->all('order');
-        if ($order && array_key_exists('orderLines', $order) && ! empty($order['orderLines'])) {
+        if ($order && array_key_exists('orderLines', $order) && !empty($order['orderLines'])) {
             foreach ($order['orderLines'] as $line) {
                 $orderLine = $this->orderLineRepository->find($line['lineId']);
                 if (array_key_exists('quantity', $line)) {

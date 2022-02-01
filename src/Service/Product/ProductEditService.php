@@ -54,15 +54,15 @@ class ProductEditService
     {
         $sizesIds = [];
         if (null === $product) {
-            if (! $product->getSizes()->isEmpty()) {
+            if (!$product->getSizes()->isEmpty()) {
                 foreach ($product->getSizes() as $size) {
                     $sizesIds[] = $size->getId();
                 }
             }
 
-            if (! $originalProduct->getSizes()->isEmpty()) {
+            if (!$originalProduct->getSizes()->isEmpty()) {
                 foreach ($originalProduct->getSizes() as $size) {
-                    if (! in_array($size->getId(), $sizesIds, true)) {
+                    if (!in_array($size->getId(), $sizesIds, true)) {
                         $this->entityManager->remove($size);
                     }
                 }

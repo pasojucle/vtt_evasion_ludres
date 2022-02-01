@@ -25,7 +25,7 @@ class ErrorController extends AbstractController
         $logError = $getError->execute($request);
 
         if ($logError->getPersist()) {
-            if (! $entityManager->isOpen()) {
+            if (!$entityManager->isOpen()) {
                 $entityManager = $entityManager->create(
                     $entityManager->getConnection(),
                     $entityManager->getConfiguration()

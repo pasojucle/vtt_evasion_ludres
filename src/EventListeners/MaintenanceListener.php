@@ -31,7 +31,7 @@ class MaintenanceListener
         // This will detect if we are in dev environment (app_dev.php)
         // $debug = in_array($this->container->get('kernel')->getEnvironment(), ['dev']);
         // If maintenance is active and in prod environment
-        if ($maintenance and ! in_array($currentIP, $this->ipAuthorized, true)) {
+        if ($maintenance and !in_array($currentIP, $this->ipAuthorized, true)) {
             // We load our maintenance template
 
             $template = $this->environment->render('maintenance/maintenance.html.twig');

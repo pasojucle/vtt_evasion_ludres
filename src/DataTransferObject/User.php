@@ -65,8 +65,8 @@ class User
     {
         if ($this->memberIdentity) {
             return ($this->kinshipIdentity)
-                ? $this->kinshipIdentity->getName().' '.$this->kinshipIdentity->getFirstName()
-                : $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName();
+                ? $this->kinshipIdentity->getName() . ' ' . $this->kinshipIdentity->getFirstName()
+                : $this->memberIdentity->getName() . ' ' . $this->memberIdentity->getFirstName();
         }
 
         return '';
@@ -75,7 +75,7 @@ class User
     public function getFullNameChildren()
     {
         if ($this->kinshipIdentity && $this->memberIdentity) {
-            return $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName();
+            return $this->memberIdentity->getName() . ' ' . $this->memberIdentity->getFirstName();
         }
 
         return '';
@@ -130,9 +130,9 @@ class User
     {
         $kinShip = [];
         if ($this->kinshipIdentity) {
-            $address = (null !== $this->kinshipIdentity->getAddress() && ! $this->kinshipIdentity->getAddress()->isEmpty()) ? $this->kinshipIdentity->getAddress() : $this->getMemberIdentity()->getAddress();
+            $address = (null !== $this->kinshipIdentity->getAddress() && !$this->kinshipIdentity->getAddress()->isEmpty()) ? $this->kinshipIdentity->getAddress() : $this->getMemberIdentity()->getAddress();
             $kinShip = [
-                'fullName' => $this->kinshipIdentity->getName().' '.$this->kinshipIdentity->getFirstName(),
+                'fullName' => $this->kinshipIdentity->getName() . ' ' . $this->kinshipIdentity->getFirstName(),
                 'type' => Identity::KINSHIPS[$this->kinshipIdentity->getKinShip()],
                 'address' => $address,
                 'email' => $this->kinshipIdentity->getEmail(),
@@ -148,7 +148,7 @@ class User
         $kinShip = [];
         if ($this->secondKinshipIdentity) {
             $kinShip = [
-                'fullName' => $this->secondKinshipIdentity->getName().' '.$this->secondKinshipIdentity->getFirstName(),
+                'fullName' => $this->secondKinshipIdentity->getName() . ' ' . $this->secondKinshipIdentity->getFirstName(),
                 'type' => Identity::KINSHIPS[$this->secondKinshipIdentity->getKinShip()],
                 'phone' => $this->secondKinshipIdentity->getMobile(),
             ];
@@ -165,9 +165,9 @@ class User
             $member = [
                 'name' => $this->memberIdentity->getName(),
                 'firstName' => $this->memberIdentity->getFirstName(),
-                'fullName' => $this->memberIdentity->getName().' '.$this->memberIdentity->getFirstName(),
+                'fullName' => $this->memberIdentity->getName() . ' ' . $this->memberIdentity->getFirstName(),
                 'birthDate' => ($bithDate) ? $bithDate->format('d/m/Y') : null,
-                'birthPlace' => $this->memberIdentity->getBirthPlace().' ('.$this->memberIdentity->getBirthDepartment().')',
+                'birthPlace' => $this->memberIdentity->getBirthPlace() . ' (' . $this->memberIdentity->getBirthDepartment() . ')',
                 'address' => $this->memberIdentity->getAddress(),
                 'email' => $this->memberIdentity->getEmail(),
                 'phone' => implode(' - ', array_filter([$this->memberIdentity->getMobile(), $this->memberIdentity->getPhone()])),
@@ -236,7 +236,7 @@ class User
     public function getApprovals()
     {
         $approvals = [];
-        if (! $this->user->getApprovals()->isEmpty()) {
+        if (!$this->user->getApprovals()->isEmpty()) {
             foreach ($this->user->getApprovals() as $approval) {
                 $string = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
                 if (UserEntity::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
@@ -260,7 +260,7 @@ class User
     public function getApprovalGoingHome(): ?array
     {
         $approvalGoingHome = null;
-        if (! $this->user->getApprovals()->isEmpty()) {
+        if (!$this->user->getApprovals()->isEmpty()) {
             foreach ($this->user->getApprovals() as $approval) {
                 if (UserEntity::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
                     $approvalGoingHome = ($approval->getValue())
@@ -295,10 +295,10 @@ class User
         $today = new DateTime();
 
         $sessions = $this->user->getSessions();
-        if (! $sessions->isEmpty()) {
+        if (!$sessions->isEmpty()) {
             foreach ($sessions as $session) {
                 $event = $session->getCluster()->getEvent();
-                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $event->getStartAt()->format('Y-m-d').' 14:00:00');
+                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $event->getStartAt()->format('Y-m-d') . ' 14:00:00');
                 if ($today <= $startAt) {
                     $bikeRides[] = [
                         'event' => $session->getCluster()->getEvent(),
@@ -328,7 +328,7 @@ class User
 
     public function isEndTesting(): bool
     {
-        if (! empty($this->getSeasonLicence()) && ! $this->getSeasonLicence()['isFinal']) {
+        if (!empty($this->getSeasonLicence()) && !$this->getSeasonLicence()['isFinal']) {
             $count = (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
 
             return 2 < $count;
@@ -339,7 +339,7 @@ class User
 
     public function testingBikeRides(): ?int
     {
-        if (! empty($this->getSeasonLicence()) && ! $this->getSeasonLicence()['isFinal']) {
+        if (!empty($this->getSeasonLicence()) && !$this->getSeasonLicence()['isFinal']) {
             return (null !== $this->user->getSessions()) ? $this->user->getSessions()->count() : 0;
         }
 
@@ -350,7 +350,7 @@ class User
     {
         $member = $this->getMember();
         $licence = $this->getLastLicence();
-        if (! empty($licence) && Licence::CATEGORY_MINOR === $licence['category']) {
+        if (!empty($licence) && Licence::CATEGORY_MINOR === $licence['category']) {
             $member = $this->getKinShip();
         }
 
@@ -393,13 +393,13 @@ class User
                 'season' => $licence->getSeason(),
                 'isFinal' => $licence->isFinal(),
                 'coverage' => (null !== $licence->getCoverage()) ? $licence->getCoverage() : null,
-                'coverageStr' => (! empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null,
+                'coverageStr' => (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null,
                 'hasFamilyMember' => $licence->getAdditionalFamilyMember(),
                 'category' => $licence->getCategory(),
                 'statusClass' => $statusClassArray[$status],
                 'status' => $status,
                 'statusStr' => Licence::STATUS[$status],
-                'type' => (! empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null,
+                'type' => (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null,
                 'lock' => $licence->getSeason() !== $this->currentSeason,
             ];
         }

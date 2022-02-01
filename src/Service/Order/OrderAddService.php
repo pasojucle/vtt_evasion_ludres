@@ -64,7 +64,7 @@ class OrderAddService
 
     private function setOrderLine(OrderHeader $orderHeader, OrderLine $orderLine): OrderLine
     {
-        if (! $orderHeader->getOrderLines()->isEmpty()) {
+        if (!$orderHeader->getOrderLines()->isEmpty()) {
             foreach ($orderHeader->getOrderLines() as $line) {
                 if ($line->getProduct() === $orderLine->getProduct() && $line->getSize() === $orderLine->getSize()) {
                     $quantity = $line->getQuantity() + $orderLine->getQuantity();

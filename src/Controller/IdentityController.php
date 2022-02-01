@@ -28,7 +28,7 @@ class IdentityController extends AbstractController
         bool $isKinship
     ): Response {
         $licence = $user->getLastLicence();
-        if (! $isKinship) {
+        if (!$isKinship) {
             $identity = $identityRepository->findMemberByUser($user);
             $identities = [$identity];
         } else {

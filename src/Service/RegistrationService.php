@@ -50,7 +50,7 @@ class RegistrationService
             return null;
         }
 
-        return 'registration/form/'.str_replace('form.', '', UserType::FORMS[$form]).'.html.twig';
+        return 'registration/form/' . str_replace('form.', '', UserType::FORMS[$form]) . '.html.twig';
     }
 
     public function getSeason(): int
@@ -79,7 +79,7 @@ class RegistrationService
                 if ($licence->isFinal() && Licence::STATUS_IN_PROCESSING < $licence->getStatus()) {
                     $isAllreadyRegistered = true;
                 }
-                if (! $licence->isFinal() && 1 > count(${$user}->getSessionsDone())) {
+                if (!$licence->isFinal() && 1 > count(${$user}->getSessionsDone())) {
                     $isAllreadyRegistered = true;
                 }
             }

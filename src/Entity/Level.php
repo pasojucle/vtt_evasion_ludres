@@ -131,7 +131,7 @@ class Level
 
     public function addUser(User $user): self
     {
-        if (! $this->users->contains($user)) {
+        if (!$this->users->contains($user)) {
             $this->users[] = $user;
             $user->setLevel($this);
         }
@@ -173,7 +173,7 @@ class Level
 
     public function addCluster(Cluster $cluster): self
     {
-        if (! $this->clusters->contains($cluster)) {
+        if (!$this->clusters->contains($cluster)) {
             $this->clusters[] = $cluster;
             $cluster->setLevel($this);
         }

@@ -24,19 +24,19 @@ class ExportVote
         $voteResponsesByUuid = $this->voteResponseRepository->findResponsesByUuid($vote);
         $content = [];
         $today = new DateTime();
-        $content[] = 'Export du '.$today->format('d/m/Y H:i:s').' - '.$vote->getTitle();
+        $content[] = 'Export du ' . $today->format('d/m/Y H:i:s') . ' - ' . $vote->getTitle();
         $content[] = '';
         $header = [];
         $header[0] = 'Identifiant';
 
-        if (! $vote->getVoteIssues()->isEmpty()) {
+        if (!$vote->getVoteIssues()->isEmpty()) {
             foreach ($vote->getVoteIssues() as $issue) {
                 $header[] = $this->addQuote($issue->getContent());
             }
         }
         $content[] = implode(',', $header);
 
-        if (! empty($voteResponsesByUuid)) {
+        if (!empty($voteResponsesByUuid)) {
             $this->addResponses($content, $voteResponsesByUuid);
             $results = $this->getResults($voteResponsesByUuid);
             $this->addRecap($content, $results, $vote);
@@ -48,11 +48,11 @@ class ExportVote
 
     private function addQuote(?string $string): string
     {
-        if (! $string) {
+        if (!$string) {
             $string = '';
         }
 
-        return '"'.$string.'"';
+        return '"' . $string . '"';
     }
 
     private function addResponses(array &$content, array $voteResponsesByUuid): void
@@ -84,7 +84,7 @@ class ExportVote
                 if (VoteIssue::RESPONSE_TYPE_CHOICE === $response->getVoteIssue()->getResponseType()) {
                     $voteIssueId = $response->getVoteIssue()->getId();
 
-                    if (! array_key_exists($voteIssueId, $results[$response->getValue()])) {
+                    if (!array_key_exists($voteIssueId, $results[$response->getValue()])) {
                         foreach (array_keys(VoteResponse::VALUES) as $choice) {
                             $results[$choice][$voteIssueId] = 0;
                         }
@@ -108,7 +108,7 @@ class ExportVote
             foreach ($results as $choice => $resultsByChoice) {
                 $row = [];
                 $row[] = $this->translator->trans(VoteResponse::VALUES[$choice]);
-                if (! $vote->getVoteIssues()->isEmpty()) {
+                if (!$vote->getVoteIssues()->isEmpty()) {
                     foreach ($vote->getVoteIssues() as $issue) {
                         if (array_key_exists($issue->getId(), $resultsByChoice)) {
                             $row[] = $resultsByChoice[$issue->getId()];
@@ -123,13 +123,13 @@ class ExportVote
     private function addVoteUsers(array &$content, Vote $vote): void
     {
         $content[] = '';
-        if (! $vote->getVoteUsers()->isEmpty()) {
-            $content[] = 'Horodateur,Participants - '.$vote->getVoteUsers()->count();
+        if (!$vote->getVoteUsers()->isEmpty()) {
+            $content[] = 'Horodateur,Participants - ' . $vote->getVoteUsers()->count();
             foreach ($vote->getVoteUsers() as $voteUser) {
                 $row = [];
                 $identity = $voteUser->getUser()->getFirstIdentity();
                 $row[] = $voteUser->getCreatedAt()->format('d/m/Y H:i');
-                $row[] = $identity->getName().' '.$identity->getFirstName();
+                $row[] = $identity->getName() . ' ' . $identity->getFirstName();
                 $content[] = implode(',', $row);
             }
         } else {

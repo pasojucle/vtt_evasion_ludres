@@ -167,7 +167,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addRole(string $role): self
     {
-        if (! in_array($role, $this->roles, true)) {
+        if (!in_array($role, $this->roles, true)) {
             $this->roles[] = $role;
         }
 
@@ -247,7 +247,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addIdentity(Identity $identity): self
     {
-        if (! $this->identities->contains($identity)) {
+        if (!$this->identities->contains($identity)) {
             $this->identities[] = $identity;
             $identity->setUser($this);
         }
@@ -269,7 +269,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFirstIdentity(): ?Identity
     {
-        if (! $this->identities->isEmpty()) {
+        if (!$this->identities->isEmpty()) {
             return $this->identities->first();
         }
 
@@ -298,7 +298,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addApproval(Approval $approval): self
     {
-        if (! $this->approvals->contains($approval)) {
+        if (!$this->approvals->contains($approval)) {
             $this->approvals[] = $approval;
             $approval->setUser($this);
         }
@@ -328,7 +328,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addLicence(Licence $licence): self
     {
-        if (! $this->licences->contains($licence)) {
+        if (!$this->licences->contains($licence)) {
             $this->licences[] = $licence;
             $licence->setUser($this);
         }
@@ -350,7 +350,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getSeasonLicence(int $season): ?licence
     {
-        if (! $this->licences->isEmpty()) {
+        if (!$this->licences->isEmpty()) {
             foreach ($this->licences as $licence) {
                 if ($season === $licence->getSeason()) {
                     return $licence;
@@ -365,7 +365,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $lastSeason = 1900;
         $lastLicence = null;
-        if (! $this->licences->isEmpty()) {
+        if (!$this->licences->isEmpty()) {
             foreach ($this->licences as $licence) {
                 if ($licence->getSeason() > $lastSeason) {
                     $lastSeason = $licence->getSeason();
@@ -387,7 +387,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addSession(Session $session): self
     {
-        if (! $this->sessions->contains($session)) {
+        if (!$this->sessions->contains($session)) {
             $this->sessions[] = $session;
             $session->setUser($this);
         }
@@ -442,7 +442,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullName(): string
     {
-        return $this->getFirstIdentity()->getName().' '.$this->getFirstIdentity()->getfirstName();
+        return $this->getFirstIdentity()->getName() . ' ' . $this->getFirstIdentity()->getfirstName();
     }
 
     /**
@@ -455,7 +455,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addOrderHeader(OrderHeader $orderHeader): self
     {
-        if (! $this->orderHeaders->contains($orderHeader)) {
+        if (!$this->orderHeaders->contains($orderHeader)) {
             $this->orderHeaders[] = $orderHeader;
             $orderHeader->setUser($this);
         }
@@ -485,7 +485,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addVote(VoteUser $vote): self
     {
-        if (! $this->votes->contains($vote)) {
+        if (!$this->votes->contains($vote)) {
             $this->votes[] = $vote;
             $vote->setUser($this);
         }

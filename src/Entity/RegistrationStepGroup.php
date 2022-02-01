@@ -82,7 +82,7 @@ class RegistrationStepGroup
 
     public function addRegistrationStep(RegistrationStep $registrationStep): self
     {
-        if (! $this->registrationSteps->contains($registrationStep)) {
+        if (!$this->registrationSteps->contains($registrationStep)) {
             $this->registrationSteps[] = $registrationStep;
             $registrationStep->setRegistrationStepGroup($this);
         }

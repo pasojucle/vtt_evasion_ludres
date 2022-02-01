@@ -40,19 +40,19 @@ class PdfService
         $options = new Options();
         $options->setIsHtml5ParserEnabled(true);
         $dompdf = new Dompdf($options);
-        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir().'/public');
+        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir() . '/public');
         $dompdf->loadHtml($html);
         $dompdf->setPaper($paper, 'portrait');
         $dompdf->render();
         $output = $dompdf->output();
 
-        if (! is_dir('../data')) {
+        if (!is_dir('../data')) {
             mkdir('../data');
         }
-        if (! is_dir($directory)) {
+        if (!is_dir($directory)) {
             mkdir($directory);
         }
-        $pdfFilepath = $directory.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
+        $pdfFilepath = $directory . DIRECTORY_SEPARATOR . $this->filenameService->clean($filename) . '.pdf';
 
         file_put_contents($pdfFilepath, $output);
 

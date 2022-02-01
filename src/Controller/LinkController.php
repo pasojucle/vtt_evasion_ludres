@@ -102,8 +102,8 @@ class LinkController extends AbstractController
                 if ($pictureFile) {
                     $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
-                    if (! is_dir($this->getParameter('uploads_directory_path'))) {
+                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $pictureFile->guessExtension();
+                    if (!is_dir($this->getParameter('uploads_directory_path'))) {
                         mkdir($this->getParameter('uploads_directory_path'));
                     }
 

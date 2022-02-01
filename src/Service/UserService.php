@@ -62,7 +62,7 @@ class UserService
         ];
         foreach ($allData as $data) {
             foreach ($data['methods'] as $method) {
-                if (! $data['entity']->{$method}()->isEmpty()) {
+                if (!$data['entity']->{$method}()->isEmpty()) {
                     foreach ($data['entity']->{$method}() as $entity) {
                         $this->entityManager->remove($entity);
                     }
@@ -76,7 +76,7 @@ class UserService
     private function convertUsers($users): array
     {
         $usersDto = [];
-        if (! empty($users)) {
+        if (!empty($users)) {
             foreach ($users as $user) {
                 $usersDto[] = new User(
                     $user,

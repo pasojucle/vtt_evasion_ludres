@@ -67,16 +67,16 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->season = $licence->getSeason();
             $licenceView->isFinal = $licence->isFinal();
             $licenceView->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
-            $licenceView->coverageStr = (! empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
+            $licenceView->coverageStr = (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
             $licenceView->hasFamilyMember = $licence->getAdditionalFamilyMember();
             $licenceView->category = $licence->getCategory();
             $licenceView->statusClass = self:: STATUS_CLASS[$status];
             $licenceView->status = $status;
             $licenceView->statusStr = Licence::STATUS[$status];
-            $licenceView->type = (! empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
+            $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
             $licenceView->lock = $licence->getSeason() !== $services['currentSeason'];
 
-            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';
+            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'] . ' €';
             $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
         }
 

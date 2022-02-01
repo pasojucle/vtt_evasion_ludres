@@ -108,8 +108,8 @@ class EditRegistration
 
         $nextId = $this->userRepository->findNextId();
         $identity = $user->getFirstIdentity();
-        $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
-        $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
+        $fullName = strtoupper($identity->getName()) . ucfirst($identity->getFirstName());
+        $user->setLicenceNumber(substr($fullName, 0, 20) . $nextId);
 
         return $identity;
     }
@@ -122,7 +122,7 @@ class EditRegistration
         ];
         $violations = $this->validator->validate($values, [new UniqueMember()]);
 
-        if (! empty((string) $violations)) {
+        if (!empty((string) $violations)) {
             $form->addError(new FormError((string) $violations));
         }
     }
@@ -130,7 +130,7 @@ class EditRegistration
     private function schoolTestingRegistrationValidator(FormInterface &$form, array $progress)
     {
         $schoolTestingRegistration = $this->parameterService->getSchoolTestingRegistration($progress['user']);
-        if (! $schoolTestingRegistration['value'] && ! $progress['seasonLicence']->isFinal()) {
+        if (!$schoolTestingRegistration['value'] && !$progress['seasonLicence']->isFinal()) {
             $form->addError(new FormError($schoolTestingRegistration['message']));
         }
     }
@@ -157,7 +157,7 @@ class EditRegistration
         if (Licence::TYPE_RIDE !== $seasonLicence->getType()) {
             $medicalCertificateDate = $user->getHealth()->getMedicalCertificateDate();
             $medicalCertificateDuration = (Licence::TYPE_HIKE === $seasonLicence->getType()) ? 5 : 3;
-            $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
+            $intervalDuration = new DateInterval('P' . $medicalCertificateDuration . 'Y');
             $today = new DateTime();
             if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->getHealth()->isMedicalCertificateRequired()) {
                 $isMedicalCertificateRequired = true;

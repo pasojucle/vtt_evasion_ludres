@@ -20,7 +20,7 @@ class DiseaseType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $disease = $event->getData();
             $form = $event->getForm();
-            $isActive = ! empty($disease->getCurentTreatment()) || ! empty($disease->getEmergencyTreatment());
+            $isActive = !empty($disease->getCurentTreatment()) || !empty($disease->getEmergencyTreatment());
 
             $curentTreatmentClass = 'widget-inline widget-curent-treatment';
             $currentTraitementLabel = (Disease::TYPE_DISEASE === $disease->getType()) ? 'Traitement actuel' : 'Lesquelles';
@@ -39,7 +39,7 @@ class DiseaseType extends AbstractType
             $form
                 ->add('curentTreatment', TextType::class, [
                     'attr' => [
-                        'class' => ($isActive) ? $curentTreatmentClass : $curentTreatmentClass.' disabled',
+                        'class' => ($isActive) ? $curentTreatmentClass : $curentTreatmentClass . ' disabled',
                         'placeholder' => $currentTraitementLabel,
                     ],
                     'required' => $isActive,
@@ -61,7 +61,7 @@ class DiseaseType extends AbstractType
                             'class' => 'widget-inline',
                         ],
                         'required' => $isActive,
-                        'disabled' => ! $isActive,
+                        'disabled' => !$isActive,
                     ])
                 ;
             }

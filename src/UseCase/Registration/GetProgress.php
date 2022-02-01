@@ -129,11 +129,11 @@ class GetProgress
             }
         } else {
             // si on passe du status de mineur à majeur
-            if (! $this->user->getApprovals()->isEmpty()) {
+            if (!$this->user->getApprovals()->isEmpty()) {
                 $this->removeMinorApprovals();
             }
 
-            if (! $this->user->getIdentities()->isEmpty()) {
+            if (!$this->user->getIdentities()->isEmpty()) {
                 $this->removeKinship();
             }
             // $this->user->setLevel(null);
@@ -143,7 +143,7 @@ class GetProgress
     public function updateStatus(): void
     {
         $licence = $this->seasonLicence;
-        if (! $licence->isFinal() &&
+        if (!$licence->isFinal() &&
             ((0 < count($this->user->getDoneSessions()) && Licence::CATEGORY_MINOR === $licence->getCategory())
             || (0 < count($this->user->getSessions()) && Licence::CATEGORY_ADULT === $licence->getCategory()))) {
             $this->seasonLicence->setFinal(true)
@@ -163,7 +163,7 @@ class GetProgress
     {
         $this->seasonLicence = new Licence();
         $this->seasonLicence->setSeason($this->season);
-        if (! $this->user->getLicences()->isEmpty()) {
+        if (!$this->user->getLicences()->isEmpty()) {
             $this->seasonLicence->setFinal(true)
                 ->setType(Licence::TYPE_HIKE)
             ;
@@ -173,7 +173,7 @@ class GetProgress
                 ->setCoverage(Licence::COVERAGE_MINI_GEAR)
             ;
         }
-        if (! $this->user->getIdentities()->isEmpty()) {
+        if (!$this->user->getIdentities()->isEmpty()) {
             $category = $this->licenceService->getCategory($this->user);
             $this->seasonLicence->setCategory($category);
         }

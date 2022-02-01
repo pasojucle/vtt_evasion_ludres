@@ -113,7 +113,7 @@ class Vote
 
     public function addVoteIssue(VoteIssue $voteIssue): self
     {
-        if (! $this->voteIssues->contains($voteIssue)) {
+        if (!$this->voteIssues->contains($voteIssue)) {
             $this->voteIssues[] = $voteIssue;
             $voteIssue->setVote($this);
         }
@@ -167,7 +167,7 @@ class Vote
 
     public function addVoteUser(VoteUser $voteUser): self
     {
-        if (! $this->voteUsers->contains($voteUser)) {
+        if (!$this->voteUsers->contains($voteUser)) {
             $this->voteUsers[] = $voteUser;
             $voteUser->setVote($this);
         }

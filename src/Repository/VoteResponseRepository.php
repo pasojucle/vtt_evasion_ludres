@@ -31,7 +31,7 @@ class VoteResponseRepository extends ServiceEntityRepository
         $responses = $this->findResponsesByVote($vote);
 
         $responsedByUuid = [];
-        if (! empty($responses)) {
+        if (!empty($responses)) {
             foreach ($responses as $response) {
                 $responsedByUuid[$response->getUuid()]['responses'][] = $response;
             }
@@ -45,7 +45,7 @@ class VoteResponseRepository extends ServiceEntityRepository
         $responses = $this->findResponsesByVote($vote);
 
         $responsedByIssue = [];
-        if (! empty($responses)) {
+        if (!empty($responses)) {
             foreach ($responses as $response) {
                 $responsedByIssue[$response->getVoteIssue()->getId()][] = $response;
             }

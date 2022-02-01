@@ -80,7 +80,7 @@ class OrderHeader
 
     public function addOrderLine(OrderLine $orderLine): self
     {
-        if (! $this->orderLines->contains($orderLine)) {
+        if (!$this->orderLines->contains($orderLine)) {
             $this->orderLines[] = $orderLine;
             $orderLine->setOrderHeader($this);
         }

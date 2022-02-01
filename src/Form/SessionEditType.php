@@ -33,7 +33,7 @@ class SessionEditType extends AbstractType
             $form = $event->getForm();
             $submitLabel = null;
 
-            if (! $options['is_already_registered'] && ! $options['is_end_testing']) {
+            if (!$options['is_already_registered'] && !$options['is_end_testing']) {
                 if (null !== $options['event'] && $options['event']->getAccessAvailabity($this->security->getUser())) {
                     $submitLabel = 'Enregister';
                     $form
@@ -68,7 +68,7 @@ class SessionEditType extends AbstractType
                 if (null !== $submitLabel) {
                     $form
                         ->add('submit', SubmitType::class, [
-                            'label' => '<i class="fas fa-chevron-circle-right"></i> '.$submitLabel,
+                            'label' => '<i class="fas fa-chevron-circle-right"></i> ' . $submitLabel,
                             'label_html' => true,
                             'attr' => [
                                 'class' => 'btn btn-primary float-right',

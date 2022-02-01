@@ -95,7 +95,7 @@ class EventController extends AbstractController
         $filters = $this->requestStack->getSession()->get('admin_events_filters');
         $form = $this->createForm(EventType::class, $event);
 
-        if (! $request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest()) {
             $form->handleRequest($request);
         }
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -153,11 +153,11 @@ class EventController extends AbstractController
         $sessions = $sessionRepository->findByEvent($event);
         $separator = ',';
         $fileContent = [];
-        $fileContent[] = $event->getTitle().' - '.$event->getStartAt()->format('d/m/Y');
+        $fileContent[] = $event->getTitle() . ' - ' . $event->getStartAt()->format('d/m/Y');
         $fileContent[] = '';
         $row = ['n° de Licence', 'Nom', 'Prénom', 'Présent', 'Niveau'];
         $fileContent[] = implode($separator, $row);
-        if (! empty($sessions)) {
+        if (!empty($sessions)) {
             foreach ($sessions as $session) {
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
                     $user = $userService->convertToUser($session->getUser());
@@ -168,8 +168,8 @@ class EventController extends AbstractController
                 }
             }
         }
-        $filename = $event->getTitle().'_'.$event->getStartAt()->format('Y_m_d');
-        $filename = $filenameService->clean($filename).'.csv';
+        $filename = $event->getTitle() . '_' . $event->getStartAt()->format('Y_m_d');
+        $filename = $filenameService->clean($filename) . '.csv';
         $response = new Response(implode(PHP_EOL, $fileContent));
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

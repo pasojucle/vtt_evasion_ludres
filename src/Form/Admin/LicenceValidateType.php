@@ -15,7 +15,7 @@ class LicenceValidateType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $disabled = count($options['licences']) > 1 || ! $options['is_final'];
+        $disabled = count($options['licences']) > 1 || !$options['is_final'];
 
         $builder
             ->add('licenceNumber', TextType::class, [

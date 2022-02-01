@@ -39,7 +39,7 @@ class ReplaceKeywordsService
         if (1 < count($pages)) {
             $content = '';
             foreach ($pages as $page) {
-                $content .= '<div class="page_break">'.$page.'</div>';
+                $content .= '<div class="page_break">' . $page . '</div>';
             }
         }
 
@@ -50,7 +50,7 @@ class ReplaceKeywordsService
     {
         $pattern = '#^<p>{{ entete }}</p>([\s\w\W]*)<p>{{ entete }}</p>([\s\w\W]*)<p>{{ pied_page }}</p>([\s\w\W]*)<p>{{ pied_page }}</p>$#im';
         preg_match($pattern, $content, $matches);
-        if (! empty($matches)) {
+        if (!empty($matches)) {
             return [
                 'header' => $matches[1],
                 'footer' => $matches[3],

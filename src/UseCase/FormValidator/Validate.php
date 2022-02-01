@@ -25,7 +25,7 @@ class Validate
         $current = $request->request->get('current');
         $value = $this->getValue($request->request->get('value'), $current);
         $constraintClass = $request->request->get('constraint');
-        $required = ! empty($request->request->get('required'));
+        $required = !empty($request->request->get('required'));
 
         $constraints = $this->getConstraints($constraintClass, $required, $value);
 
@@ -46,11 +46,11 @@ class Validate
     private function getConstraints(?string $constraintClass, bool $required, array|string &$value): array
     {
         $constraints = [];
-        if (! empty($constraintClass)) {
+        if (!empty($constraintClass)) {
             list($namespace, $constraintClass) = explode('-', $constraintClass);
             $constraintClass = ('symfony' === $namespace)
-                ? 'Symfony\Component\Validator\Constraints\\'.$constraintClass
-                : 'App\Validator\\'.$constraintClass;
+                ? 'Symfony\Component\Validator\Constraints\\' . $constraintClass
+                : 'App\Validator\\' . $constraintClass;
             $constraint = new $constraintClass();
             $constraints[] = $constraint;
             if ($constraint instanceof BirthDate) {
@@ -66,9 +66,9 @@ class Validate
 
     private function getStatus(ConstraintViolationListInterface $violations, bool $isEmptyValue): ?string
     {
-        if (! empty((string) $violations)) {
+        if (!empty((string) $violations)) {
             $status = 'ALERT_WARNING';
-        } elseif (empty((string) $violations) && ! $isEmptyValue) {
+        } elseif (empty((string) $violations) && !$isEmptyValue) {
             $status = 'SUCCESS';
         } else {
             $status = null;
@@ -87,7 +87,7 @@ class Validate
             if ($name === $current && empty($val)) {
                 return $val;
             }
-            if ($name === $current || ! empty($val)) {
+            if ($name === $current || !empty($val)) {
                 $values[$name] = $val;
             }
         }

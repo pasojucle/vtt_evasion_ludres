@@ -42,7 +42,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
         $render = (RegistrationStep::RENDER_FILE === $render)
             ? [RegistrationStep::RENDER_FILE, RegistrationStep::RENDER_FILE_AND_VIEW]
             : [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE_AND_VIEW];
-        if (! $final) {
+        if (!$final) {
             $andX->add($qb->expr()->in('r.testingRender', ':render'));
         } else {
             $andX->add($qb->expr()->in('r.finalRender', ':render'));

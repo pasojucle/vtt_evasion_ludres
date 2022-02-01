@@ -34,27 +34,27 @@ class VoteController extends AbstractController
         if ($now < $vote->getStartAt()) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le vote sera accessible à partir du '.$vote->getStartAt()->format('d/m/Y'),
+                'content' => 'Le vote sera accessible à partir du ' . $vote->getStartAt()->format('d/m/Y'),
             ];
         }
         if ($vote->getEndAt() < $now) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le vote est clôturé depuis le '.$vote->getEndAt()->format('d/m/Y'),
+                'content' => 'Le vote est clôturé depuis le ' . $vote->getEndAt()->format('d/m/Y'),
             ];
         }
-        if (! $message) {
+        if (!$message) {
             $voteUser = $voteUserRepository->findOneByVoteAndUser($vote, $user);
         }
         if ($voteUser) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Votre participation au vote a déja été prise en compte le '.$voteUser->getCreatedAt()->format('d/m/Y').' a '.$voteUser->getCreatedAt()->format('H\hi'),
+                'content' => 'Votre participation au vote a déja été prise en compte le ' . $voteUser->getCreatedAt()->format('d/m/Y') . ' a ' . $voteUser->getCreatedAt()->format('H\hi'),
             ];
         }
-        if (! $message) {
+        if (!$message) {
             $uuid = uniqid('', true);
-            if (! $vote->getVoteIssues()->isEmpty()) {
+            if (!$vote->getVoteIssues()->isEmpty()) {
                 foreach ($vote->getVoteIssues() as $issue) {
                     $response = new VoteResponse();
                     $response->setVoteIssue($issue)
@@ -70,7 +70,7 @@ class VoteController extends AbstractController
 
             if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
                 $data = $form->getData();
-                if (! empty($data['voteResponses'])) {
+                if (!empty($data['voteResponses'])) {
                     foreach ($data['voteResponses'] as $response) {
                         $this->entityManager->persist($response);
                     }

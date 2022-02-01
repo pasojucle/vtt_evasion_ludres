@@ -42,9 +42,9 @@ class IdentityViewModel extends AbstractViewModel
         $identityView->entity = $identity;
         $identityView->name = $identity->getName();
         $identityView->firstName = $identity->getFirstName();
-        $identityView->fullName = $identity->getName().' '.$identity->getFirstName();
+        $identityView->fullName = $identity->getName() . ' ' . $identity->getFirstName();
         $identityView->birthDate = ($bithDate) ? $bithDate->format('d/m/Y') : null;
-        $identityView->birthPlace = $identity->getBirthPlace().' ('.$identity->getBirthDepartment().')';
+        $identityView->birthPlace = $identity->getBirthPlace() . ' (' . $identity->getBirthDepartment() . ')';
         $identityView->address = (null !== $address) ? AddressViewModel::fromAddress($address, $services) : null;
         $identityView->email = $identity->getEmail();
         $identityView->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));

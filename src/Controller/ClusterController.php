@@ -26,7 +26,7 @@ class ClusterController extends AbstractController
         EventService $eventService,
         Cluster $cluster
     ): Response {
-        $cluster->setIsComplete(! $cluster->isComplete());
+        $cluster->setIsComplete(!$cluster->isComplete());
         $entityManager->flush();
 
         $event = $cluster->getEvent();
@@ -48,17 +48,17 @@ class ClusterController extends AbstractController
     ): Response {
         $presenter->present($cluster);
         $files = [];
-        $dirName = '../data/'.$filenameService->clean($presenter->viewModel()->title);
-        if (! is_dir($dirName)) {
+        $dirName = '../data/' . $filenameService->clean($presenter->viewModel()->title);
+        if (!is_dir($dirName)) {
             mkdir($dirName);
         }
-        if (! empty($presenter->viewModel()->sessions)) {
+        if (!empty($presenter->viewModel()->sessions)) {
             foreach ($presenter->viewModel()->sessions as $session) {
                 if ($session['isPresent']) {
                     $render = $this->renderView('cluster/export.html.twig', [
                         'user' => $session['user'],
                     ]);
-                    $tmp = $session['user']->id.'_tmp';
+                    $tmp = $session['user']->id . '_tmp';
                     $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName, 'B6');
                     $files[] = [
                         'filename' => $pdfFilepath,
@@ -67,9 +67,9 @@ class ClusterController extends AbstractController
             }
         }
 
-        $fileName = $cluster->getTitle().'_'.$cluster->getEvent()->getStartAt()->format('Ymd');
-        $fileName = $filenameService->clean($fileName).'.pdf';
-        $pathName = $pdfService->joinPdf($files, null, '../data/'.$filenameService->clean($cluster->getTitle()).'.pdf');
+        $fileName = $cluster->getTitle() . '_' . $cluster->getEvent()->getStartAt()->format('Ymd');
+        $fileName = $filenameService->clean($fileName) . '.pdf';
+        $pathName = $pdfService->joinPdf($files, null, '../data/' . $filenameService->clean($cluster->getTitle()) . '.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(

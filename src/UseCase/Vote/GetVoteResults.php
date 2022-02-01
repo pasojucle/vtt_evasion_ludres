@@ -30,7 +30,7 @@ class GetVoteResults
             foreach ($responses as $response) {
                 if (VoteIssue::RESPONSE_TYPE_CHOICE === $response->getVoteIssue()->getResponseType()) {
                     $voteIssueId = $response->getVoteIssue()->getId();
-                    if (! array_key_exists($voteIssueId, $results)) {
+                    if (!array_key_exists($voteIssueId, $results)) {
                         $results[$voteIssueId]['results'] = $values;
                         $results[$voteIssueId]['content'] = $response->getVoteIssue()->getContent();
                     }

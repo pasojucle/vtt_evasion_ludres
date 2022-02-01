@@ -17,11 +17,11 @@ class GetVote
 
     public function execute(?Vote &$vote)
     {
-        if (! $vote) {
+        if (!$vote) {
             $vote = new Vote();
             $voteIssues = $this->parameterService->getParameterByName('VOTE_ISSUES');
             $vote->setContent($this->parameterService->getParameterByName('VOTE_CONTENT'));
-            if (! empty($voteIssues)) {
+            if (!empty($voteIssues)) {
                 foreach ($voteIssues as $voteIssue) {
                     $issue = new VoteIssue();
                     $issue->setContent($voteIssue);

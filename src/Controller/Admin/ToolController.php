@@ -155,7 +155,7 @@ class ToolController extends AbstractController
 
                         $user->setLicenceNumber($licenceNumber)
                             ->setActive(true)
-                            ->setLevel((! empty($levelId)) ? $levels[(int) $levelId] : null)
+                            ->setLevel((!empty($levelId)) ? $levels[(int) $levelId] : null)
                             ->setPassword($passwordHasher->hashPassword($user, $plainPassword))
                             ->setRoles([$role])
                             ->addApproval($approval)
@@ -253,7 +253,7 @@ class ToolController extends AbstractController
                             $licence->setType($licenceType);
                             $this->entityManager->persist($user);
                         }
-                        $user->setLevel((! empty($levelId)) ? $levels[(int) $levelId] : null);
+                        $user->setLevel((!empty($levelId)) ? $levels[(int) $levelId] : null);
                     }
                     fclose($handle);
                     $this->entityManager->flush();
@@ -446,7 +446,7 @@ class ToolController extends AbstractController
             if ($request->files->get('tool_import')) {
                 $userListFile = $request->files->get('tool_import')['userList'];
                 $handle = fopen($userListFile, 'r');
-                if ( $handle !== false) {
+                if ($handle !== false) {
                     while (($row = fgetcsv($handle, 1000, ',')) !== false) {
                         list(
                             $licenceNumber,
@@ -518,7 +518,7 @@ class ToolController extends AbstractController
                 'licenceNumber' => $licenceNumber,
             ]);
             if (null !== $user) {
-                $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
+                $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
                 $userService->deleteUser($user);
                 $this->addFlash('success', "Les données de l'utilisateur {$fullName} ont bien été supprimées");
 
@@ -634,7 +634,7 @@ class ToolController extends AbstractController
                         if (preg_match('#^(NUMÉRO)$#', $number)) {
                             continue;
                         }
-                        $departments[$name] = $number.' - '.$name;
+                        $departments[$name] = $number . ' - ' . $name;
                     }
                     fclose($handle);
                     file_put_contents('../data/departments', json_encode($departments));
@@ -660,11 +660,11 @@ class ToolController extends AbstractController
         $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
-        if (! empty($users)) {
+        if (!empty($users)) {
             foreach ($users as $user) {
                 $identity = $user->getFirstIdentity();
                 $licence = $user->getLastLicence();
-                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), ! $licence->isFinal()];
+                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->isFinal()];
                 $content[] = implode(',', $row);
             }
         }

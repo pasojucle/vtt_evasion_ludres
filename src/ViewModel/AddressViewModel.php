@@ -32,6 +32,6 @@ class AddressViewModel extends AbstractViewModel
 
     public function toString(): string
     {
-        return $this->street.', '.$this->postalCode.' '.$this->town;
+        return $this->street . ', ' . $this->postalCode . ' ' . $this->town;
     }
 }

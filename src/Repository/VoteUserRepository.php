@@ -63,7 +63,7 @@ class VoteUserRepository extends ServiceEntityRepository
         ;
         $votes = [];
         $votesCreatedAt = [];
-        if (! empty($userVotes)) {
+        if (!empty($userVotes)) {
             foreach ($userVotes as $userVote) {
                 $vote = $userVote->getVote();
                 $votes[] = $vote;

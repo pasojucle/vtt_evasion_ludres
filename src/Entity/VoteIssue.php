@@ -95,7 +95,7 @@ class VoteIssue
 
     public function addVoteResponse(VoteResponse $voteResponse): self
     {
-        if (! $this->voteResponses->contains($voteResponse)) {
+        if (!$this->voteResponses->contains($voteResponse)) {
             $this->voteResponses[] = $voteResponse;
             $voteResponse->setVoteIssue($this);
         }

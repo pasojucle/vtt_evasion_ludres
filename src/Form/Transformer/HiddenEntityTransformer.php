@@ -60,7 +60,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
      */
     public function reverseTransform($identifier)
     {
-        if (! $identifier) {
+        if (!$identifier) {
             return null;
         }
 

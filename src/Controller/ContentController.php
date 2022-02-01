@@ -88,7 +88,7 @@ class ContentController extends AbstractController
             $this->entityManager->flush();
 
             if ('home' === $content->getRoute()) {
-                $contents = $this->contentRepository->findByRoute('home', ! $content->isFlash());
+                $contents = $this->contentRepository->findByRoute('home', !$content->isFlash());
                 $this->orderByService->resetOrders($contents);
 
                 return $this->redirectToRoute('admin_home_contents', [

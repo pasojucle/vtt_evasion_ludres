@@ -12,7 +12,7 @@ class PhoneValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (! $constraint instanceof Phone) {
+        if (!$constraint instanceof Phone) {
             throw new UnexpectedTypeException($constraint, Phone::class);
         }
 
@@ -20,7 +20,7 @@ class PhoneValidator extends ConstraintValidator
             return;
         }
 
-        if (! preg_match('#^\d{10}$#', $value)) {
+        if (!preg_match('#^\d{10}$#', $value)) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation()
             ;

@@ -39,7 +39,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newEncodedPassword): void
     {
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
         }
 
@@ -56,12 +56,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->innerJoin('u.licences', 'li')
             ;
 
-        if (! empty($filters)) {
+        if (!empty($filters)) {
             if (null !== $filters['fullName']) {
                 $qb->andWhere(
                     $qb->expr()->orX(
-                        $qb->expr()->like('i.name', $qb->expr()->literal('%'.$filters['fullName'].'%')),
-                        $qb->expr()->like('i.firstName', $qb->expr()->literal('%'.$filters['fullName'].'%')),
+                        $qb->expr()->like('i.name', $qb->expr()->literal('%' . $filters['fullName'] . '%')),
+                        $qb->expr()->like('i.firstName', $qb->expr()->literal('%' . $filters['fullName'] . '%')),
                     )
                 )
                     ;
@@ -186,8 +186,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if (null !== $fullName) {
             $qb->andWhere(
                 $qb->expr()->orX(
-                    $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
-                    $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
+                    $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%' . strtolower($fullName) . '%')),
+                    $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%' . strtolower($fullName) . '%')),
                 )
             );
         }

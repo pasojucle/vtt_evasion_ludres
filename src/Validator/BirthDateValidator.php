@@ -14,7 +14,7 @@ class BirthDateValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (! $constraint instanceof BirthDate) {
+        if (!$constraint instanceof BirthDate) {
             throw new UnexpectedTypeException($constraint, BirthDate::class);
         }
 
@@ -26,7 +26,7 @@ class BirthDateValidator extends ConstraintValidator
         if (null === $value || '' === $value) {
             return;
         }
-        if (! ($minLimit < $value && $value < $maxLimit)) {
+        if (!($minLimit < $value && $value < $maxLimit)) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation()
             ;

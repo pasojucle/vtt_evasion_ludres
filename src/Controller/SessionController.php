@@ -40,7 +40,7 @@ class SessionController extends AbstractController
         Session $session,
         EventService $eventService
     ): Response {
-        $isPresent = ! $session->isPresent();
+        $isPresent = !$session->isPresent();
 
         $session->setIsPresent($isPresent);
         $this->entityManager->flush();
@@ -264,7 +264,7 @@ class SessionController extends AbstractController
         $this->entityManager->remove($session);
         $this->entityManager->flush();
 
-        $this->addFlash('success', $user->getMember()['fullName'].' à bien été désincrit');
+        $this->addFlash('success', $user->getMember()['fullName'] . ' à bien été désincrit');
 
         return $this->redirectToRoute('admin_event_cluster_show', [
             'event' => $event->getId(),

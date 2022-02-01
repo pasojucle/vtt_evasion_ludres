@@ -101,7 +101,7 @@ class RegistrationController extends AbstractController
         $form = $progress['current']->formObject;
 
         $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress['user']);
-        if (! $schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress['current']->form && ! $progress['user']->getId()) {
+        if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress['current']->form && !$progress['user']->getId()) {
             $this->addFlash('success', $schoolTestingRegistration['message']);
         }
         $maxStep = $step;
@@ -265,12 +265,12 @@ class RegistrationController extends AbstractController
             UserType::FORM_HEALTH,
             UserType::FORM_APPROVAL,
         ];
-        if (! empty($steps)) {
+        if (!empty($steps)) {
             foreach ($steps as $key => $step) {
                 $registrationStepPresenter->present($step, $presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
                 $step = $registrationStepPresenter->viewModel();
                 if (null !== $step->filename) {
-                    $filename = './files/'.$step->filename;
+                    $filename = './files/' . $step->filename;
                     $files[] = [
                         'filename' => $filename,
                         'form' => $step->form,
@@ -304,7 +304,7 @@ class RegistrationController extends AbstractController
                 }
             }
         }
-        if (! empty($registrationDocumentSteps)) {
+        if (!empty($registrationDocumentSteps)) {
             $registration = $this->renderView('registration/registrationPdf.html.twig', [
                 'user' => $presenter->viewModel(),
                 'user_entity' => $user,

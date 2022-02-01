@@ -197,7 +197,7 @@ class Event
 
     public function addCluster(Cluster $cluster): self
     {
-        if (! $this->clusters->contains($cluster)) {
+        if (!$this->clusters->contains($cluster)) {
             $this->clusters[] = $cluster;
             $cluster->setEvent($this);
         }
@@ -224,10 +224,10 @@ class Event
         }
 
         $today = new DateTime();
-        $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
-        $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
-        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
-        $closingAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
+        $intervalDisplay = new DateInterval('P' . $this->displayDuration . 'D');
+        $intervalClosing = new DateInterval('P' . $this->closingDuration . 'D');
+        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 00:00:00');
+        $closingAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 23:59:59');
 
         return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
     }
@@ -239,7 +239,7 @@ class Event
         }
 
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 00:00:00');
 
         $level = (null !== $user) ? $user->getLevel() : null;
         $type = (null !== $level) ? $level->getType() : null;
@@ -250,7 +250,7 @@ class Event
     public function isOver(): bool
     {
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 00:00:00');
 
         return $this->startAt < $today;
     }
@@ -258,10 +258,10 @@ class Event
     public function isNext(): bool
     {
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
-        $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
-        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
-        $interval = new DateInterval('P'.$this->displayDuration.'D');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 00:00:00');
+        $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 23:59:59');
+        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 00:00:00');
+        $interval = new DateInterval('P' . $this->displayDuration . 'D');
 
         return $displayAt->sub($interval) <= $today && $today <= $startAt;
     }

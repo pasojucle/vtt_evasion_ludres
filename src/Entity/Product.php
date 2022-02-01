@@ -146,7 +146,7 @@ class Product
 
     public function addOrderLine(OrderLine $orderLine): self
     {
-        if (! $this->orderLines->contains($orderLine)) {
+        if (!$this->orderLines->contains($orderLine)) {
             $this->orderLines[] = $orderLine;
             $orderLine->setProduct($this);
         }
@@ -194,7 +194,7 @@ class Product
 
     public function addSize(Size $size): self
     {
-        if (! $this->sizes->contains($size)) {
+        if (!$this->sizes->contains($size)) {
             $this->sizes[] = $size;
         }
 

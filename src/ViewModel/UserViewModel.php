@@ -93,8 +93,8 @@ class UserViewModel extends AbstractViewModel
     {
         if (null !== $this->member) {
             return ($this->kinship)
-                ? $this->kinship->name.' '.$this->kinship->firstName
-                : $this->member->name.' '.$this->member->firstName;
+                ? $this->kinship->name . ' ' . $this->kinship->firstName
+                : $this->member->name . ' ' . $this->member->firstName;
         }
 
         return '';
@@ -103,7 +103,7 @@ class UserViewModel extends AbstractViewModel
     public function getFullNameChildren()
     {
         if ($this->kinship && $this->member) {
-            return $this->member->name.' '.$this->member->firstName;
+            return $this->member->name . ' ' . $this->member->firstName;
         }
 
         return '';
@@ -160,7 +160,7 @@ class UserViewModel extends AbstractViewModel
     public function getApprovals()
     {
         $approvals = [];
-        if (! $this->entity->getApprovals()->isEmpty()) {
+        if (!$this->entity->getApprovals()->isEmpty()) {
             foreach ($this->entity->getApprovals() as $approval) {
                 $string = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
                 if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
@@ -184,7 +184,7 @@ class UserViewModel extends AbstractViewModel
     public function getApprovalGoingHome(): ?array
     {
         $approvalGoingHome = null;
-        if (! $this->entity->getApprovals()->isEmpty()) {
+        if (!$this->entity->getApprovals()->isEmpty()) {
             foreach ($this->entity->getApprovals() as $approval) {
                 if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
                     $approvalGoingHome = ($approval->getValue())
@@ -219,10 +219,10 @@ class UserViewModel extends AbstractViewModel
         $today = new DateTime();
 
         $sessions = $this->entity->getSessions();
-        if (! $sessions->isEmpty()) {
+        if (!$sessions->isEmpty()) {
             foreach ($sessions as $session) {
                 $event = $session->getCluster()->getEvent();
-                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $event->getStartAt()->format('Y-m-d').' 14:00:00');
+                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $event->getStartAt()->format('Y-m-d') . ' 14:00:00');
                 if ($today <= $startAt) {
                     $bikeRides[] = [
                         'event' => $session->getCluster()->getEvent(),
@@ -252,7 +252,7 @@ class UserViewModel extends AbstractViewModel
 
     public function isEndTesting(): bool
     {
-        if (! $this->seasonLicence->isFinal) {
+        if (!$this->seasonLicence->isFinal) {
             $count = (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
 
             return 2 < $count;
@@ -263,7 +263,7 @@ class UserViewModel extends AbstractViewModel
 
     public function testingBikeRides(): ?int
     {
-        if (! $this->seasonLicence->isFinal) {
+        if (!$this->seasonLicence->isFinal) {
             return (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
         }
 
@@ -305,7 +305,7 @@ class UserViewModel extends AbstractViewModel
     private function getKinship(Identity $identity): ?IdentityViewModel
     {
         if ($identity) {
-            $address = (null !== $identity->getAddress() && ! $identity->getAddress()->isEmpty()) ? $identity->getAddress() : $this->member->address->entity;
+            $address = (null !== $identity->getAddress() && !$identity->getAddress()->isEmpty()) ? $identity->getAddress() : $this->member->address->entity;
 
             return IdentityViewModel::fromIdentity($identity, $this->services, $address);
         }

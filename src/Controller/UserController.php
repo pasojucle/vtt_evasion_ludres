@@ -290,7 +290,7 @@ class UserController extends AbstractController
         foreach ($users as $user) {
             $response[] = [
                 'id' => $user->getId(),
-                'text' => $user->GetFirstIdentity()->getName().' '.$user->GetFirstIdentity()->getFirstName(),
+                'text' => $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName(),
             ];
         }
 

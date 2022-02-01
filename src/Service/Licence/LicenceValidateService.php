@@ -42,7 +42,7 @@ class LicenceValidateService
     {
         if (array_key_exists('licenceNumber', $data)) {
             $licenceNumber = $data['licenceNumber'];
-            if (! empty($licenceNumber)) {
+            if (!empty($licenceNumber)) {
                 $user->setLicenceNumber($licenceNumber);
                 $this->entityManager->persist($user);
             }
@@ -53,7 +53,7 @@ class LicenceValidateService
     {
         if (array_key_exists('medicalCertificateDate', $data)) {
             $medicalCertificateDate = $data['medicalCertificateDate'];
-            if (! empty($medicalCertificateDate)) {
+            if (!empty($medicalCertificateDate)) {
                 $health = $user->getHealth();
                 $medicalCertificateDate = DateTime::createFromFormat('d/m/Y', $medicalCertificateDate);
                 $health->setMedicalCertificateDate($medicalCertificateDate);

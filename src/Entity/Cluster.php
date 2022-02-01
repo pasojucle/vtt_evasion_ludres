@@ -98,7 +98,7 @@ class Cluster
 
     public function addSession(Session $session): self
     {
-        if (! $this->sessions->contains($session)) {
+        if (!$this->sessions->contains($session)) {
             $this->sessions[] = $session;
             $session->setCluster($this);
         }
@@ -187,7 +187,7 @@ class Cluster
         $sessions = $this->sessions->matching($criteria);
 
         $sortedSessions = [];
-        if (! $sessions->isEmpty()) {
+        if (!$sessions->isEmpty()) {
             $sortedSessions = $sessions->toArray();
             usort($sortedSessions, function ($a, $b) {
                 $a = strtolower($a->getUser()->getFirstIdentity()->getName());

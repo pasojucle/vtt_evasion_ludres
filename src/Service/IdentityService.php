@@ -21,7 +21,7 @@ class IdentityService
         foreach ($user->getIdentities() as $identity) {
             if (null !== $identity->getKinShip()) {
                 $addressKinShip = $identity->getAddress();
-                if (! $identity->hasAddress() && null !== $addressKinShip) {
+                if (!$identity->hasAddress() && null !== $addressKinShip) {
                     $identity->setAddress(null);
                     $this->entityManager->remove($addressKinShip);
                 }

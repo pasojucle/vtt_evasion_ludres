@@ -42,6 +42,6 @@ class PaginatorService
 
     public function currentPageHasNoResult(Paginator $paginator): bool
     {
-        return ! $paginator->getIterator()->count();
+        return !$paginator->getIterator()->count();
     }
 }

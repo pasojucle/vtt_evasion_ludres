@@ -13,7 +13,7 @@ class ProductsViewModel
     public static function fromProducts(Paginator $products, array $services): ProductsViewModel
     {
         $productsViewModel = [];
-        if (! empty($products)) {
+        if (!empty($products)) {
             foreach ($products as $product) {
                 $productsViewModel[] = ProductViewModel::fromProduct($product, $services);
             }
