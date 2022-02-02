@@ -12,7 +12,7 @@ class AddressViewModel extends AbstractViewModel
 
     public ?string $street;
 
-    public ?int $postalCode;
+    public ?string $postalCode;
 
     public ?string $town;
 

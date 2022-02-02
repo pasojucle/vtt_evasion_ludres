@@ -20,7 +20,7 @@ class LicenceViewModel extends AbstractViewModel
 
     public ?string $createdAt;
 
-    public ?string $season;
+    public ?int $season;
 
     public ?bool $isFinal;
 

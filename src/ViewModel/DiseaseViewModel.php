@@ -8,7 +8,7 @@ use App\Entity\Disease;
 
 class DiseaseViewModel extends AbstractViewModel
 {
-    public ?string $label;
+    public ?int $label;
 
     public ?string $title;
 
