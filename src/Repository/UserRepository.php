@@ -52,8 +52,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $currentSeason = $this->licenceService->getCurrentSeason();
         $qb = $this->createQueryBuilder('u')
-            ->innerJoin('u.identities', 'i')
-            ->innerJoin('u.licences', 'li')
+            ->Join('u.identities', 'i')
+            ->Join('u.licences', 'li')
+            ->leftjoin('u.level', 'l')
             ;
 
         if (!empty($filters)) {
@@ -67,85 +68,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     ;
             }
             if (null !== $filters['level']) {
-                $type = null;
-                if (Level::TYPE_ALL_MEMBER === $filters['level']) {
-                    $type = Level::TYPE_MEMBER;
-                }
-                if (Level::TYPE_ALL_FRAME === $filters['level']) {
-                    $type = Level::TYPE_FRAME;
-                }
-                if (Level::TYPE_ADULT === $filters['level']) {
-                    $qb
-                        ->andWhere(
-                            $qb->expr()->isNull('u.level'),
-                        )
-                    ;
-                } elseif (null !== $type) {
-                    $qb
-                        ->join('u.level', 'l')
-                        ->andWhere(
-                            $qb->expr()->eq('l.type', ':type'),
-                        )
-                        ->setParameter('type', $type)
-                        ;
-                } else {
-                    $qb
-                        ->andWhere(
-                            $qb->expr()->eq('u.level', ':level'),
-                        )
-                        ->setParameter('level', $filters['level'])
-                        ;
-                }
+                $this->addCriteriaByLevel($qb, $filters['level']);
             }
             if (null !== $filters['status']) {
-                if (Licence::STATUS_NONE === $filters['status']) {
-                    $maxSeason = $this->licenceService->getSeasonByStatus(Licence::STATUS_NONE);
-                    $qb
-                        ->groupBy('u.id')
-                        ->having('MAX(li.season) < :maxSeason')
-                        ->setParameter('maxSeason', $maxSeason)
-                        ;
-                } elseif (Licence::STATUS_WAITING_RENEW === $filters['status']) {
-                    $season = $this->licenceService->getSeasonByStatus(Licence::STATUS_WAITING_RENEW);
-                    $qb
-                        ->groupBy('u.id')
-                        ->having('MAX(li.season) = :season')
-                        ->setParameter('season', $season)
-                    ;
-                } elseif (in_array($filters['status'], [Licence::STATUS_TESTING_IN_PROGRESS, Licence::STATUS_TESTING_COMPLETE], true)) {
-                    $having = 'COUNT(s.id) BETWEEN 1 and 2';
-                    $andX = $qb->expr()->andX();
-                    $andX->add($qb->expr()->eq('li.season', ':season'));
-                    $andX->add($qb->expr()->eq('li.final', ':final'));
-                    if (Licence::STATUS_TESTING_COMPLETE === $filters['status']) {
-                        $andX->add($qb->expr()->eq('s.isPresent', 1));
-                        $having = 'COUNT(s.id) > 2';
-                    }
-                    $qb
-                        ->join('u.sessions', 's')
-                        ->andWhere($andX)
-                        ->groupBy('u.id')
-                        ->having($having)
-                        ->setParameter('season', $currentSeason)
-                        ->setParameter('final', 0)
-                    ;
-                } elseif (Licence::ALL_USERS === $filters['status']) {
-                    return $qb->andWhere(
-                        $qb->expr()->isNull('i.kinship'),
-                    )
-                        ->orderBy('i.name', 'ASC')
-                    ;
-                } elseif (Licence::STATUS_VALID === $filters['status']) {
-                    $qb
-                        ->andWhere(
-                            $qb->expr()->eq('li.season', ':season'),
-                            $qb->expr()->eq('li.status', ':status'),
-                            $qb->expr()->eq('li.final', ':final'),
-                        )
-                        ->setParameter('status', $filters['status'])
-                        ->setParameter('season', $currentSeason)
-                        ->setParameter('final', 1)
-                    ;
+                
+                if (is_string($filters['status']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
+                    $this->addCriteriaBySeason($qb, (int) $matches[1]);
+                } elseif($filters['status'] === Licence::STATUS_TESTING_IN_PROGRESS) {
+                    $this->addCriteriaTestinInProgress($qb, $currentSeason);
+                }elseif($filters['status'] === Licence::STATUS_TESTING_COMPLETE) {
+                    $this->addCriteriaTestinComplete($qb, $currentSeason);
                 }
             }
         }
@@ -153,13 +85,105 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb
             ->andWhere(
                 $qb->expr()->isNull('i.kinship'),
-                $qb->expr()->gt('li.status', ':inProgress')
             )
-            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE)
             ->orderBy('i.name', 'ASC')
         ;
+    }
 
-        return $qb;
+    private function addCriteriaByLevel(QueryBuilder &$qb, int|string $level): void
+    {
+        $type = null;
+        if (Level::TYPE_ALL_MEMBER === $level) {
+            $type = Level::TYPE_MEMBER;
+        }
+        if (Level::TYPE_ALL_FRAME === $level) {
+            $type = Level::TYPE_FRAME;
+        }
+        if (Level::TYPE_ADULT === $level) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->isNull('u.level'),
+                )
+            ;
+        } elseif (null !== $type) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('l.type', ':type'),
+                )
+                ->setParameter('type', $type)
+                ;
+        } else {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('u.level', ':level'),
+                )
+                ->setParameter('level', $level)
+                ;
+        }
+    }
+
+    private function addCriteriaBySeason(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->gte('li.status', ':status'),
+                $qb->expr()->eq('li.final', ':final'),
+            )
+            ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('season', $season)
+            ->setParameter('final', 1)
+            ->groupBy('u.id')
+            ->having(
+                $qb->expr()->eq($qb->expr()->max('li.season'), ':season')
+            )
+        ;
+    }
+
+    private function addCriteriaTestinInProgress(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->join('u.sessions', 's')
+            ->andWhere(
+                $qb->expr()->gte('li.status', ':status'),
+                $qb->expr()->eq('li.final', ':final'),
+            )
+            ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('season', $season)
+            ->setParameter('final', 0)
+            ->groupBy('u.id')
+            ->having(
+                $qb->expr()->eq($qb->expr()->max('li.season'), ':season'),
+                $qb->expr()->in($qb->expr()->count('s.id'), [1,2])
+            )
+        ;
+    }
+
+    private function addCriteriaTestinComplete(QueryBuilder &$qb, int $season): void
+    {                        
+        $qb
+            ->leftjoin('u.sessions', 's')
+            ->andWhere(
+                $qb->expr()->gte('li.status', ':status'),
+                $qb->expr()->eq('li.final', ':final'),
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('s.isPresent', 1),
+                        $qb->expr()->eq('l.type', ':type')
+                    ),
+                    $qb->expr()->neq('l.type', ':type'),
+                    $qb->expr()->isnull('u.level')
+                )
+            )
+            ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('season', $season)
+            ->setParameter('final', 0)
+            ->setParameter('type', Level::TYPE_ALL_MEMBER)
+            ->groupBy('u.id')
+            ->having(
+                $qb->expr()->eq($qb->expr()->max('li.season'), ':season'),
+                $qb->expr()->gt($qb->expr()->count('s.id'), 2)
+            )
+        ;
     }
 
     public function findNextId(): int

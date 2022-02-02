@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Repository\LevelRepository;
+use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -28,16 +29,14 @@ class UserFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $statusChoices = [
-            Licence::STATUS_VALID => 'licence.status.valid',
-            Licence::STATUS_WAITING_RENEW => 'licence.status.waiting_renew',
-            Licence::STATUS_NONE => 'licence.status.none',
-            Licence::STATUS_TESTING_IN_PROGRESS => 'licence.status.testing_in_processing',
-            Licence::STATUS_TESTING_COMPLETE => 'licence.status.testing_complete',
-        ];
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
-            $statusChoices[Licence::ALL_USERS] = 'licence.all_users';
+        $today = new DateTime();
+        $statusChoices = [];
+        foreach (range(2021, (int) $today->format('Y')) as $season) {
+            $statusChoices['Saison '.$season] = 'SEASON_'.$season;
         }
+        $statusChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;
+        $statusChoices['licence.status.testing_complete'] = Licence::STATUS_TESTING_COMPLETE;
+
         $builder
             ->add('fullName', TextType::class, [
                 'label' => false,
@@ -50,7 +49,7 @@ class UserFilterType extends AbstractType
                 'label' => false,
                 'placeholder' => 'Tous',
                 'choices' => [
-                    'Licence' => array_flip($statusChoices),
+                    'Licence' => $statusChoices,
                 ],
                 'attr' => [
                     'class' => 'btn',
