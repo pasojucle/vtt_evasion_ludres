@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/jpg" href="/favicon.ico">
+        <link rel="apple-touch-icon-precomposed" href="/favicon.jpg">
+        <title>{% block title %}{% endblock %}</title>
+        {# Run `composer require symfony/webpack-encore-bundle`
+           and uncomment the following Encore helpers to start using Symfony UX #}
+        {% block stylesheets %}
+            <link rel="stylesheet" type="text/css" href="/css/player_web.css">
+            
+        {% endblock %}
+    </head>
+    <body>
+        <div id="affidyl_player_test" class="affidyl-player" data-uuid="test" data-height="220" data-width="390">
+            <div id="container_test" class="container"></div>
+        </div>
+
+        <div id="affidyl_player_toto" class="affidyl-player" data-uuid="toto" data-height="220" data-width="390">
+            <div id="container_toto" class="container"></div>
+        </div>
+    </body>
+    {% block javascripts %}
+        <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+        <script src="/js/player_web.js"></script>
+        {#{{ encore_entry_script_tags('app') }}#}
+    {% endblock %}
+</html>

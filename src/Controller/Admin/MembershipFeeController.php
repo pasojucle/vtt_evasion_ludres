@@ -22,9 +22,7 @@ class MembershipFeeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @Route("/admin/tarifs", name="admin_membership_fee")
-     */
+    #[Route('/admin/tarifs', name: 'admin_membership_fee', methods: ['GET'])]
     public function adminList(
         MembershipFeeRepository $membershipFeeRepository
     ): Response {
@@ -33,9 +31,7 @@ class MembershipFeeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/membership/fee/edit/{amount}", name="admin_membership_fee_edit")
-     */
+    #[Route('/admin/membership/fee/edit/{amount}', name: 'admin_membership_fee_edit', methods: ['GET', 'POST'])]
     public function adminEdit(
         Request $request,
         MembershipFeeAmount $amount

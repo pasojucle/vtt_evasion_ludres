@@ -75,14 +75,14 @@
                             </a>
                         {% endif %}
                     </div>
-                    {% if user.kinShip is not empty %}
+                    {% if user.kinship is not empty %}
                         <div class="col-md-6 col-xs-12">
                             <ul>
-                                <li><b>{{ user.kinShip.type | trans  }}</b> : {{ user.kinShip.fullName }} </li>
-                                <li><i class="fas fa-map-marker-alt"></i> {{ user.kinShip.address.street }}</li>
-                                <li>{{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}</li>
-                                <li><i class="fas fa-at"></i> {{ user.kinShip.email }}</li>
-                                <li><i class="fas fa-phone-square"></i> {{ user.kinShip.phone }}</li>
+                                <li><b>{{ user.kinship.type | trans  }}</b> : {{ user.kinship.fullName }} </li>
+                                <li><i class="fas fa-map-marker-alt"></i> {{ user.kinship.address.street }}</li>
+                                <li>{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</li>
+                                <li><i class="fas fa-at"></i> {{ user.kinship.email }}</li>
+                                <li><i class="fas fa-phone-square"></i> {{ user.kinship.phone }}</li>
                             </ul>
                         </div>
                     {% endif %}

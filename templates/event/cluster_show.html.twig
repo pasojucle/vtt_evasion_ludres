@@ -39,7 +39,7 @@
                             {% else %}
                                 <div class="row row-list">
                                     <div class="col-md-9 col-xs-6">
-                                        <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete">
+                                        <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete" data-cluster-id="{{ cluster.id }}">
                                             <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
                                         </a>
                                     </div>

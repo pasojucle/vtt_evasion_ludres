@@ -25,9 +25,7 @@ class ProductController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @Route("/admin/produits", name="admin_products")
-     */
+    #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]
     public function adminList(
         PaginatorService $paginator,
         ProductRepository $productRepository,
@@ -42,9 +40,8 @@ class ProductController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/produit/{product}", name="admin_product", defaults={"product"=null})
-     */
+
+    #[Route('/admin/produit/{product}', name: 'admin_product', methods: ['GET', 'POST'], defaults:['product' => null])]
     public function adminEdit(
         ProductEditService $productEditService,
         Request $request,
@@ -55,7 +52,7 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $productEditService->execute($form, $product, $request);
+            $productEditService->execute($form, $request);
             if ($form->isValid()) {
                 return $this->redirectToRoute('admin_products');
             }
@@ -68,9 +65,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/supprimer/produit/{product}", name="admin_product_delete")
-     */
+    #[Route('/admin/supprimer/produit/{product}', name: 'admin_product_delete', methods: ['GET', 'POST'])]
     public function adminProduitDelete(
         Request $request,
         ProductPresenter $presenter,

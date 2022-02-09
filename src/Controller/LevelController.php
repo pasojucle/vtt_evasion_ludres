@@ -124,7 +124,7 @@ class LevelController extends AbstractController
     }
 
     /**
-     * @Route("/admin/ordonner/niveau/{level}", name="admin_level_order", options={"expose"=true},)
+     * @Route("/admin/ordonner/niveau/{level}", name="admin_level_order", options={"expose"=true})
      */
     public function adminLevelOrder(
         Request $request,

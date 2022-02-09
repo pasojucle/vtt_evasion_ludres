@@ -54,6 +54,7 @@ class Product
 
     /**
      * @ORM\ManyToMany(targetEntity=Size::class, inversedBy="products")
+     * @ORM\JoinColumn(name="vote_id", referencedColumnName="id", nullable=false)
      */
     private $sizes;
 

@@ -27,7 +27,7 @@ class Size
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Product::class, mappedBy="sizes")
+     * @ORM\ManyToMany(targetEntity=Product::class, mappedBy="sizes", cascade={"persist", "remove"}, fetch="EAGER", orphanRemoval=true)
      */
     private $products;
 

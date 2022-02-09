@@ -47,9 +47,7 @@ class ToolController extends AbstractController
         $this->licenceService = $licenceService;
     }
 
-    /**
-     * @Route("/admin/outil/import", name="admin_import_users")
-     */
+    #[Route('/admin/outil/import', name: 'admin_import_users', methods: ['GET', 'POST'])]
     public function adminUsers(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
@@ -185,9 +183,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/outil/licence/type", name="admin_update_licence_type")
-     */
+    #[Route('/admin/outil/licence/type', name: 'admin_update_licence_type', methods: ['GET', 'POST'])]
     public function adminUpdateLicenceType(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
@@ -268,9 +264,8 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/outil/newsession/{event}", name="admin_newsession")
-     */
+
+    #[Route('/admin/outil/newsession/{event}', name: 'admin_newsession', methods: ['GET', 'POST'])]
     public function adminNewSession(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
@@ -358,9 +353,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/outil/phone", name="admin_update_phone")
-     */
+    #[Route('/admin/outil/phone', name: 'admin_update_phone', methods: ['GET', 'POST'])]
     public function adminUpdatePhone(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
@@ -431,9 +424,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/send/login", name="admin_send_login")
-     */
+    #[Route('/admin/send/login', name: 'admin_send_login', methods: ['GET', 'POST'])]
     public function adminSendLogin(
         Request $request,
         MailerService $mailerService
@@ -501,9 +492,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/tool/delete/user", name="admin_tool_delete_user")
-     */
+    #[Route('/admin/tool/delete/user', name: 'admin_tool_delete_user', methods: ['GET', 'POST'])]
     public function adminDeleteUser(
         Request $request,
         UserService $userService
@@ -532,9 +521,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/registration/certificate", name="admin_registration_certificate")
-     */
+    #[Route('/admin/registration/certificate', name: 'admin_registration_certificate', methods: ['GET', 'POST'])]
     public function adminRegistrationCertificate(
         Request $request,
         GetRegistrationCertificate $getRegistrationCertificate,
@@ -559,9 +546,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/registration/error", name="admin_registration_error")
-     */
+    #[Route('/admin/registration/error', name: 'admin_registration_error', methods: ['GET', 'POST'])]
     public function adminRegistrationError(
         Request $request,
         MailerService $mailerService,
@@ -610,9 +595,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/outil/departements", name="admin_departments")
-     */
+    #[Route('/admin/outil/departements', name: 'admin_departments', methods: ['GET', 'POST'])]
     public function adminDepartments(
         Request $request
     ): Response {
@@ -649,9 +632,7 @@ class ToolController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/outil/export_email", name="admin_export_email")
-     */
+    #[Route('/admin/outil/export_email', name: 'admin_export_email', methods: ['GET', 'POST'])]
     public function adminExportEmail(
         UserRepository $userRepository
     ): Response {

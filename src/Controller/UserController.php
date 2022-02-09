@@ -39,9 +39,7 @@ class UserController extends AbstractController
         $this->session = $this->requestStack->getSession();
     }
 
-    /**
-     * @Route("/admin/adherents/{filtered}", name="admin_users", defaults={"filtered"=0})
-     */
+    #[Route('/admin/adherents/{filtered}', name: 'admin_users', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     public function adminUsers(
         PaginatorService $paginator,
         Request $request,
@@ -78,9 +76,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/export/adherents", name="admin_users_export")
-     */
+
+    #[Route('/admin/export/adherents', name: 'admin_users_export', methods: ['GET'])]
     public function adminUsersExport(
         ExportService $exportService
     ): Response {
@@ -101,9 +98,7 @@ class UserController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/admin/adherent/{user}", name="admin_user")
-     */
+    #[Route('/admin/adherent/{user}', name: 'admin_user', methods: ['GET'])]
     public function adminUser(
         UserEntity $user
     ): Response {
@@ -113,9 +108,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/adherent/edit/{user}", name="admin_user_edit")
-     */
+    #[Route('/admin/adherent/edit/{user}', name: 'admin_user_edit', methods: ['GET', 'POST'])]
     public function adminUserEdit(
         Request $request,
         LicenceService $licenceService,
@@ -150,9 +143,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/inscriptions/{filtered}", name="admin_registrations", defaults={"filtered"=0})
-     */
+    #[Route('/admin/inscriptions/{filtered}', name: 'admin_registrations', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     public function adminRegistration(
         PaginatorService $paginator,
         Request $request,
@@ -188,9 +179,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/send/numberlicence/{user}", name="admin_send_number_licence")
-     */
+    #[Route('/admin/send/numberlicence/{user}', name: 'admin_send_number_licence', methods: ['GET'])]
     public function adminSendLicence(
         MailerService $mailerService,
         UserEntity $user
@@ -211,9 +200,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/mon-compte", name="user_account")
-     */
+    #[Route('/mon-compte', name: 'user_account', methods: ['GET'])]
     public function userAccount(
         OrderHeaderRepository $ordersHeaderRepository,
         PaginatorService $paginator,
@@ -233,9 +220,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/mot_de_passe/modifier", name="change_password")
-     */
+    #[Route('/mot_de_passe/modifier', name: 'change_password', methods: ['GET', 'POST'])]
     public function changePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher
@@ -270,18 +255,13 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route(
-     *     "/utilisateur/list/select2",
-     *     name="user_list_select2"
-     * )
-     */
+    #[Route('/utilisateur/list/select2', name: 'user_list_select2', methods: ['GET'])]
     public function userListSelect2(
         UserRepository $userRepository,
         Request $request
     ): JsonResponse {
         $query = $request->query->get('q');
-        $hasCurrentSeason = $request->query->get('has_current_season');
+        $hasCurrentSeason = (bool) $request->query->get('has_current_season');
 
         $users = $userRepository->findByFullName($query, $hasCurrentSeason);
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Cluster;
 use App\Service\EventService;
@@ -18,9 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClusterController extends AbstractController
 {
-    /**
-     * @Route("/admin/groupe/complete/{cluster}", name="admin_cluster_complete", options={"expose"=true})
-     */
+    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true],  methods: ['GET'])]
     public function adminClusterComplete(
         EntityManagerInterface $entityManager,
         EventService $eventService,
@@ -37,9 +35,7 @@ class ClusterController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/groupe/export/{cluster}", name="admin_cluster_export")
-     */
+    #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]
     public function adminClusterExport(
         PdfService $pdfService,
         ClusterPresenter $presenter,

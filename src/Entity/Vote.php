@@ -49,7 +49,7 @@ class Vote
     /**
      * @ORM\Column(type="boolean")
      */
-    private $disabled = 0;
+    private $disabled = false;
 
     /**
      * @ORM\OneToMany(targetEntity=VoteUser::class, mappedBy="vote")
@@ -145,7 +145,7 @@ class Vote
         return $this;
     }
 
-    public function isDisabled(): ?bool
+    public function isDisabled(): bool
     {
         return $this->disabled;
     }

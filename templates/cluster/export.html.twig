@@ -72,33 +72,33 @@
                 {% endif %}
             {% endif %}
         </div>
-        {% if user.kinShip %}
+        {% if user.kinship %}
             <table class="table-border table-fixed">
                 <tr>
                     <td></td>
-                    <td><b>{{ user.kinShip.type | trans  }}</b></td>
+                    <td><b>{{ user.kinship.type | trans  }}</b></td>
                     <td><b>{{ user.secondKinShip.type|trans}}</b></td>
                 </tr>
                 <tr>
                     <td style="width: 150px">Non et prénom</td>
-                    <td>{{ user.kinShip.fullName }}</td>
+                    <td>{{ user.kinship.fullName }}</td>
                     <td>{{ user.secondKinShip.fullName}}</td>
                 </tr>
                 <tr>
                     <td>Téléphone</td>
-                    <td>{{ user.kinShip.phone}}</td>
+                    <td>{{ user.kinship.phone}}</td>
                     <td>{{ user.secondKinShip.phone}}</td>
                 </tr>
                 <tr>
                     <td>Adresse</td>
                     <td>
-                        {{ user.kinShip.address.street }}<br>{{ user.kinShip.address.postalCode }} {{ user.kinShip.address.town }}
+                        {{ user.kinship.address.street }}<br>{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}
                     </td>
                     <td></td>
                 </tr>
                 <tr>
                     <td>Courriel</td>
-                    <td>{{ user.kinShip.email }}</td>
+                    <td>{{ user.kinship.email }}</td>
                     <td></td>
                 </tr>
             </table>
