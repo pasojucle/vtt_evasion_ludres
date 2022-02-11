@@ -24,7 +24,6 @@ class ContentController extends AbstractController
         private OrderByService $orderByService,
         private ContentRepository $contentRepository
     ) {
-
     }
 
     #[Route('/page/accueil/contenus/{isFlash}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'isFlash' => true])]

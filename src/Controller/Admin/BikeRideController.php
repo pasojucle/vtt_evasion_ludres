@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Event;
 use App\Entity\Session;
@@ -15,7 +15,6 @@ use App\Service\EventService;
 use App\Service\FilenameService;
 use App\Service\PaginatorService;
 use App\Service\UserService;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -24,44 +23,24 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EventController extends AbstractController
+#[Route('/admin')]
+class BikeRideController extends AbstractController
 {
-    private EventRepository $eventRepository;
-
-    private EntityManagerInterface $entityManager;
-
-    private RequestStack $requestStack;
-
-    private EventService $eventService;
-
     public function __construct(
-        EventRepository $eventRepository,
-        RequestStack $requestStack,
-        EntityManagerInterface $entityManager,
-        EventService $eventService
+        private EventRepository $eventRepository,
+        private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager,
+        private EventService $eventService
     ) {
-        $this->eventRepository = $eventRepository;
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-        $this->eventService = $eventService;
     }
 
-    /**
-     * @Route(
-     *  "/admin/",
-     *  name="admin_home")
-     */
+    #[Route('/', name: 'admin_home', methods: ['GET'])]
     public function adminHome()
     {
         return $this->redirectToRoute('admin_events');
     }
 
-    /**
-     * @Route(
-     *  "/admin/calendrier/{period}/{year}/{month}/{day}",
-     *  name="admin_events",
-     *  defaults={"period"=null, "year"=null, "month"=null, "day"=null})
-     */
+    #[Route('/calendrier/{period}/{year}/{month}/{day}', name: 'admin_events', methods: ['GET', 'POST'], defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null])]
     public function adminList(
         PaginatorService $paginator,
         Request $request,
@@ -78,10 +57,8 @@ class EventController extends AbstractController
 
         return $this->render('bike_ride/admin/list.html.twig', $response['parameters']);
     }
-
-    /**
-     * @Route("/admin/sortie/{event}", name="admin_event_edit", defaults={"event"=null})
-     */
+    
+    #[Route('/sortie/{event}', name: 'admin_event_edit', methods: ['GET', 'POST'], defaults:['event' => null])]
     public function adminEdit(
         Request $request,
         LevelRepository $levelRepository,
@@ -121,10 +98,8 @@ class EventController extends AbstractController
             'events_filters' => ($filters) ? $filters : [],
         ]);
     }
-
-    /**
-     * @Route("/admin/sortie/groupe/{event}", name="admin_event_cluster_show")
-     */
+   
+    #[Route('/sortie/groupe/{event}', name: 'admin_event_cluster_show', methods: ['GET'])]
     public function adminClusterShow(
         Request $request,
         EventService $eventService,
@@ -140,10 +115,8 @@ class EventController extends AbstractController
             'events_filters' => ($filters) ? $filters : [],
         ]);
     }
-
-    /**
-     * @Route("/admin/sortie/export/{event}", name="admin_event_export")
-     */
+    
+    #[Route('/sortie/export/{event}', name: 'admin_event_export', methods: ['GET', 'POST'], defaults:[])]
     public function adminEventExport(
         SessionRepository $sessionRepository,
         UserService $userService,
@@ -179,41 +152,5 @@ class EventController extends AbstractController
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
-    }
-
-    /**
-     * @Route(
-     *  "/programme/{period}/{year}/{month}/{day}",
-     *  name="schedule",
-     *  defaults={"period"=null, "year"=null, "month"=null, "day"=null})
-     */
-    public function list(
-        PaginatorService $paginator,
-        Request $request,
-        ?string $period,
-        ?int $year,
-        ?int $month,
-        ?int $day
-    ): Response {
-        $response = $this->eventService->getSchedule($request, $period, $year, $month, $day);
-
-        if (array_key_exists('redirect', $response)) {
-            return $this->redirectToRoute($response['redirect'], $response['filters']);
-        }
-
-        return $this->render('bike_ride/list.html.twig', $response['parameters']);
-    }
-
-    /**
-     * @Route("/mon_programme", name="user_bike_rides")
-     */
-    public function userBikeRides(
-        UserPresenter $presenter
-    ): Response {
-        $presenter->present($this->getUser());
-
-        return $this->render('bike_ride/user_list.html.twig', [
-            'user' => $presenter->viewModel(),
-        ]);
     }
 }

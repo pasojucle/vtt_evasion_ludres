@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClusterController extends AbstractController
 {
-    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true],  methods: ['GET'])]
+    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET'])]
     public function adminClusterComplete(
         EntityManagerInterface $entityManager,
         EventService $eventService,

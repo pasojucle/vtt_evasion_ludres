@@ -12,9 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ErrorController extends AbstractController
 {
-    /**
-     * @Route("/erreur", name="error")
-     */
+    #[Route('/erreur', name: 'error', methods: ['GET'])]
     public function show(Request $request, EntityManagerInterface $entityManager, GetError $getError)
     {
         if ('dev' === $this->getParameter('environment')) {

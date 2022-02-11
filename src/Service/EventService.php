@@ -221,7 +221,7 @@ class EventService
     public function setDefaultContent(Request $request, Event $event): Event
     {
         $eventRequest = $request->request->all('event');
-        if (null !== $eventRequest) {
+        if (null !== $eventRequest && array_key_exists('type', $eventRequest)) {
             $type = (int) $eventRequest['type'];
             $event->setType($type);
             $parameterName = null;

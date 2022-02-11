@@ -32,7 +32,6 @@ class ContentController extends AbstractController
         private OrderByService $orderByService,
         private ContentRepository $contentRepository
     ) {
-
     }
 
     #[Route('/', name: 'home', methods: ['GET'])]

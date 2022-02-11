@@ -32,7 +32,7 @@ class UserFilterType extends AbstractType
         $today = new DateTime();
         $statusChoices = [];
         foreach (range(2021, (int) $today->format('Y')) as $season) {
-            $statusChoices['Saison '.$season] = 'SEASON_'.$season;
+            $statusChoices['Saison ' . $season] = 'SEASON_' . $season;
         }
         $statusChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;
         $statusChoices['licence.status.testing_complete'] = Licence::STATUS_TESTING_COMPLETE;

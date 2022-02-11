@@ -71,12 +71,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $this->addCriteriaByLevel($qb, $filters['level']);
             }
             if (null !== $filters['status']) {
-                
                 if (is_string($filters['status']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                     $this->addCriteriaBySeason($qb, (int) $matches[1]);
-                } elseif($filters['status'] === Licence::STATUS_TESTING_IN_PROGRESS) {
+                } elseif ($filters['status'] === Licence::STATUS_TESTING_IN_PROGRESS) {
                     $this->addCriteriaTestinInProgress($qb, $currentSeason);
-                }elseif($filters['status'] === Licence::STATUS_TESTING_COMPLETE) {
+                } elseif ($filters['status'] === Licence::STATUS_TESTING_COMPLETE) {
                     $this->addCriteriaTestinComplete($qb, $currentSeason);
                 }
             }
@@ -153,13 +152,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->groupBy('u.id')
             ->having(
                 $qb->expr()->eq($qb->expr()->max('li.season'), ':season'),
-                $qb->expr()->in($qb->expr()->count('s.id'), [1,2])
+                $qb->expr()->in($qb->expr()->count('s.id'), [1, 2])
             )
         ;
     }
 
     private function addCriteriaTestinComplete(QueryBuilder &$qb, int $season): void
-    {                        
+    {
         $qb
             ->leftjoin('u.sessions', 's')
             ->andWhere(
