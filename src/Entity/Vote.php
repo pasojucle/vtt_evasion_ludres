@@ -4,57 +4,43 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
 use App\Repository\VoteRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=VoteRepository::class)
- */
+#[Entity(repositoryClass: VoteRepository::class)]
 class Vote
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=30)
-     */
-    private $title;
+    #[Column(type: "string", length: 30)]
+    private string $title;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $content;
+    #[Column(type: "text")]
+    private string $content;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $startAt;
+    #[Column(type: "datetime")]
+    private DateTime $startAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $endAt;
+    #[Column(type: "datetime")]
+    private DateTime $endAt;
 
-    /**
-     * @ORM\OneToMany(targetEntity=VoteIssue::class, mappedBy="vote", cascade={"persist", "remove"}, fetch="EAGER", orphanRemoval=true)
-     */
-    private $voteIssues;
+    #[OneToMany(targetEntity: VoteIssue::class, mappedBy: "vote", cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
+    private Collection $voteIssues;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $disabled = false;
+    #[Column(type: "boolean")]
+    private bool $disabled = false;
 
-    /**
-     * @ORM\OneToMany(targetEntity=VoteUser::class, mappedBy="vote")
-     */
-    private $voteUsers;
+    #[OneToMany(targetEntity: VoteUser::class, mappedBy: "vote")]
+    private Collection $voteUsers;
 
     public function __construct()
     {

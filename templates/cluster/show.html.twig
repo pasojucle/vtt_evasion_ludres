@@ -1,33 +1,33 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ event.title }}{% endblock %}
+{% block title %}{{ bikeRide.title }}{% endblock %}
 
 {% block body %}
  <div class="wrapper">
     <div class="block">
         <div class="block-title">
-            <h2>{{ event.title }} - 
-                {% if event.endAt is null %}
-                    {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
+            <h2>{{ bikeRide.title }} - 
+                {% if bikeRide.endAt is null %}
+                    {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
                 {% else %}
-                    du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                    du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
                 {% endif %}
             </h2>
             <span class="tools">
-                <a href="{{ path('admin_events', events_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+                <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
         <div id="sessions_container" class="block-body">
-            {% for cluster in event.clusters %}
+            {% for cluster in bikeRide.clusters %}
                 {% set presentCount = cluster.presentCount %}
                 {% set cluster = cluster.cluster %}
-                {% set hasGroups = event.clusters| length > 1 %}
+                {% set hasGroups = bikeRide.clusters| length > 1 %}
                 {% if hasGroups %}
                     <h3 class="padding-10">{{ cluster.title }} - <span class="badge badge-info">{{ presentCount }}</span></h3>
                 {% endif %} 
                 {% if cluster.sessions | length > 0 %}
                     <ul>
                         {% for session in cluster.sessionAvailable %}             
-                            {% include ('event/session.html.twig')%}
+                            {% include ('session/admin/list.html.twig')%}
                         {% endfor %}
                     </ul>
                     {% if hasGroups and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
@@ -60,6 +60,6 @@
         </div>
     </div>
     <div class="padding-10">
-        <a class="btn btn-primary" href="{{ path('admin_session_add', {'event': event.id}) }}">Ajouter un participant</a>
+        <a class="btn btn-primary" href="{{ path('admin_session_add', {'bikeRide': bikeRide.id}) }}">Ajouter un participant</a>
     </div>
 {% endblock %}

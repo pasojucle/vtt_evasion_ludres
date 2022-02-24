@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
 use App\Repository\DiseaseRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=DiseaseRepository::class)
- */
+
+#[Entity(repositoryClass: DiseaseRepository::class)]
 class Disease
 {
     public const TYPE_DISEASE = 1;
@@ -63,43 +67,28 @@ class Disease
 
     private const LABEL_MEDICINES = 12;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $type;
+    #[Column(type: "integer")]
+    private int $type;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $title;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $title;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $curentTreatment;
+    #[Column(type: "text", nullable: true)]
+    private ?string $curentTreatment;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $emergencyTreatment;
+    #[Column(type: "text", nullable: true)]
+    private ?string $emergencyTreatment;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $label;
+    #[Column(type: "integer")]
+    private int $label;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Health::class, inversedBy="diseases")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $health;
+    #[ManyToOne(targetEntity: Health::class, inversedBy: "diseases")]
+    #[JoinColumn(nullable: false)]
+    private Health $health;
 
     public function getId(): ?int
     {

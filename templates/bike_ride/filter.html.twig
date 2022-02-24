@@ -3,7 +3,7 @@
         {% if form.prev is defined and form.today is defined and form.next is defined %}
             <span>
                 <b>
-                {% if current_filters.period == constant('App\\Entity\\Event::PERIOD_DAY') %}
+                {% if current_filters.period == constant('App\\Entity\\BikeRide::PERIOD_DAY') %}
                     Du {{ current_filters.startAt | date('d/m/Y')}}
                 {% else %}
                     Du {{ current_filters.startAt | date('d/m/Y')}} au  {{ current_filters.endAt | date('d/m/Y')}} 

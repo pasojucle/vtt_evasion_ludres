@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use App\Entity\Session;
-use App\Form\Admin\EventType;
-use App\Repository\EventRepository;
+use App\Form\Admin\BikeRideType;
+use App\Repository\BikeRideRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
 use App\Repository\SessionRepository;
-use App\Service\EventService;
+use App\Service\BikeRideService;
 use App\Service\FilenameService;
 use App\Service\PaginatorService;
 use App\Service\UserService;
@@ -27,10 +27,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class BikeRideController extends AbstractController
 {
     public function __construct(
-        private EventRepository $eventRepository,
+        private BikeRideRepository $bikeRideRepository,
         private RequestStack $requestStack,
         private EntityManagerInterface $entityManager,
-        private EventService $eventService
+        private BikeRideService $bikeRideService
     ) {
     }
 
@@ -44,7 +44,7 @@ class BikeRideController extends AbstractController
         ?int $month,
         ?int $day
     ): Response {
-        $response = $this->eventService->getSchedule($request, $period, $year, $month, $day);
+        $response = $this->bikeRideService->getSchedule($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);

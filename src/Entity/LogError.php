@@ -4,70 +4,53 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\LogErrorRepository;
+use DateTime;
 use DateTimeInterface;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use App\Repository\LogErrorRepository;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=LogErrorRepository::class)
- */
+#[Entity(repositoryClass: LogErrorRepository::class)]
 class LogError
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $url;
+    #[Column(type: "string", length: 255)]
+    private string $url;
 
-    private $message;
+    private ?string $message = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $userAgent;
+    #[Column(type: "string", length: 255)]
+    private string $userAgent;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $fileName;
+    #[Column(type: "string", length: 255, nullable: true)]
+    private ?string $fileName;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $line;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $line;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $statusCode;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $statusCode;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $route;
+    #[Column(type: "string", length: 255, nullable: true)]
+    private ?string $route;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $errorMessage;
+    #[Column(type: "text")]
+    private string $errorMessage;
 
     private $persist = true;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     */
-    private $user;
+    #[ManyToOne(targetEntity: User::class)]
+    private ?User $user;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    #[Column(type: "datetime")]
+    private DateTime $createdAt;
 
     public function getId(): ?int
     {

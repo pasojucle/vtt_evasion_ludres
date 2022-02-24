@@ -10,47 +10,47 @@
         <div class="wrapper-body">
             {% include('bike_ride/filter.html.twig') %}
             <div class="bike-rides"> 
-                {% for event in events %}
+                {% for bikeRide in bikeRides %}
                     {% set class = '' %}    
-                    {% if event.isNext %}
+                    {% if bikeRide.isNext %}
                         {% set class = 'active' %}  
-                    {% elseif event.over %}
+                    {% elseif bikeRide.over %}
                         {% set class = 'disable' %}  
                     {% endif %}
                     {% set btn_label = 'S\'incrire' %}
-                    {% if event.accessAvailabity(app.user) %}
+                    {% if bikeRide.accessAvailabity(app.user) %}
                         {% set btn_label = 'Disponibilité' %}
                     {% endif %}
-                    {% set isRegistrable = event.isRegistrable %}
-                    {% if isRegistrable and app.user is not null and event.id == 51 and app.user.firstIdentity.birthDate|date('Y') %}
+                    {% set isRegistrable = bikeRide.isRegistrable %}
+                    {% if isRegistrable and app.user is not null and bikeRide.id == 51 and app.user.firstIdentity.birthDate|date('Y') %}
                         {% set userAge = app.user.firstIdentity.birthDate|date('Y') %}
                         {% set isRegistrable = 2010 > userAge %}
                     {% endif %}
                     <div class="bike-ride-date item-center align-center {{ class }} reveal">
                         <div>
-                            {% if event.endAt is null %}
-                                {{ event.startAt | formatDateLong }}
+                            {% if bikeRide.endAt is null %}
+                                {{ bikeRide.startAt | formatDateLong }}
                             {% else %}
-                                du {{ event.startAt | formatDateLong }} au {{ event.endAt | formatDateLong }} 
+                                du {{ bikeRide.startAt | formatDateLong }} au {{ bikeRide.endAt | formatDateLong }} 
                             {% endif %}
-                            {% if isRegistrable or event.accessAvailabity(app.user) %}
+                            {% if isRegistrable or bikeRide.accessAvailabity(app.user) %}
                                 <div class="bike-ride-date-btn">
                                     <br>
-                                    <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
+                                    <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                     <div class="bike-ride-detail {{ class }} reveal">
-                        <h3>{{ event.title }}</h3>
-                        {% if event.minAge is not null %}
-                            <p class='info'>A partir de {{ event.minAge }} ans</p>
+                        <h3>{{ bikeRide.title }}</h3>
+                        {% if bikeRide.minAge is not null %}
+                            <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
                         {% endif %}
-                        <p>{{ event.content |raw }}</p>
+                        <p>{{ bikeRide.content |raw }}</p>
                     </div>
-                    {% if isRegistrable or event.accessAvailabity(app.user) %}
+                    {% if isRegistrable or bikeRide.accessAvailabity(app.user) %}
                         <div class="bike-ride-btn item-center align-center {{ class }} reveal">
-                            <a href="{{ path('session_add', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
+                            <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
                         </div>
                     {% endif %}
                 {% endfor %}

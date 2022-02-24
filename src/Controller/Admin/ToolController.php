@@ -6,7 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Address;
 use App\Entity\Approval;
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use App\Entity\Health;
 use App\Entity\HealthQuestion;
 use App\Entity\Identity;
@@ -35,16 +35,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ToolController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    private LicenceService $licenceService;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        LicenceService $licenceService
+        private EntityManagerInterface $entityManager,
+        private LicenceService $licenceService
     ) {
-        $this->entityManager = $entityManager;
-        $this->licenceService = $licenceService;
     }
 
     #[Route('/admin/outil/import', name: 'admin_import_users', methods: ['GET', 'POST'])]
@@ -265,12 +259,12 @@ class ToolController extends AbstractController
     }
 
 
-    #[Route('/admin/outil/newsession/{event}', name: 'admin_newsession', methods: ['GET', 'POST'])]
+    #[Route('/admin/outil/newsession/{bikeRide}', name: 'admin_newsession', methods: ['GET', 'POST'])]
     public function adminNewSession(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         LevelRepository $levelRepository,
-        Event $event
+        BikeRide $bikeRide
     ): Response {
         $form = $this->createForm(ToolImportType::class);
         $form->handleRequest($request);
@@ -320,7 +314,7 @@ class ToolController extends AbstractController
                         ]);
                         $clustersLevelAsUser = [];
                         $availability = null;
-                        foreach ($event->getClusters() as $cluster) {
+                        foreach ($bikeRide->getClusters() as $cluster) {
                             if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
                                 $clustersLevelAsUser[] = $cluster;
                                 if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {

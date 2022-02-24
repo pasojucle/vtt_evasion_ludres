@@ -19,15 +19,15 @@
                                 <div class="row">
                                     <div class="col-md-5 col-xs-12">
                                         <b>
-                                        {% if bikeRide.event.endAt is null %}
-                                            {{ bikeRide.event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
+                                        {% if bikeRide.bikeRide.endAt is null %}
+                                            {{ bikeRide.bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
                                         {% else %}
-                                            du {{ bikeRide.event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeRide.event.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}} 
+                                            du {{ bikeRide.bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeRide.bikeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}} 
                                         {% endif %}
                                         </b>
                                     </div>
                                     <div class="col-md-5 col-xs-8">
-                                        {{ bikeRide.event.title }}
+                                        {{ bikeRide.bikeRide.title }}
                                         {% if bikeRide.availability is not empty %}
                                             <br><span class="{{ bikeRide.availability.class }}">{{ bikeRide.availability.text|trans }}</span>
                                         {% endif %}

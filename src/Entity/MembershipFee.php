@@ -4,49 +4,39 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\MembershipFeeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use App\Repository\MembershipFeeRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=MembershipFeeRepository::class)
- */
+
+#[Entity(repositoryClass: MembershipFeeRepository::class)]
 class MembershipFee
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $title;
+    #[Column(type: "string", length: 100)]
+    private string $title;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $additionalFamilyMember;
+    #[Column(type: "boolean", nullable: true)]
+    private ?bool $additionalFamilyMember;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $newMember;
+    #[Column(type: "boolean", nullable: true)]
+    private ?bool $newMember;
 
-    /**
-     * @ORM\OneToMany(targetEntity=MembershipFeeAmount::class, mappedBy="membershipFee")
-     * @OrderBy({"coverage" = "ASC"})
-     */
-    private $membershipFeeAmounts;
+    #[OneToMany(targetEntity: MembershipFeeAmount::class, mappedBy: "membershipFee")]
+    #[OrderBy(["coverage" => "ASC"])]
+    private Collection $membershipFeeAmounts;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $content;
+    #[Column(type: "text")]
+    private string $content;
 
     public function __construct()
     {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Cluster;
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use App\Entity\User as UserEntity;
 use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
@@ -33,11 +33,11 @@ class SessionService
         $this->mailerService = $mailerService;
     }
 
-    public function getSessionsBytype(Event $event, ?UserEntity $user = null): array
+    public function getSessionsBytype(BikeRide $bikeRide, ?UserEntity $user = null): array
     {
         $members = [];
         $framers = [];
-        $sessions = $this->sessionRepository->findByEvent($event);
+        $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
 
         if (null !== $sessions) {
             foreach ($sessions as $session) {
@@ -61,13 +61,13 @@ class SessionService
         return [$framers, $members];
     }
 
-    public function getCluster(Event $event, UserEntity $user, Collection $clusters)
+    public function getCluster(BikeRide $bikeRide, UserEntity $user, Collection $clusters)
     {
         $userCluster = null;
-        if (Event::TYPE_SCHOOL === $event->getType()) {
+        if (BikeRide::TYPE_SCHOOL === $bikeRide->getType()) {
             $clustersLevelAsUser = [];
             $userLevel = (null !== $user->getLevel()) ? $user->getLevel() : $this->levelRepository->findAwaitingEvaluation();
-            foreach ($event->getClusters() as $cluster) {
+            foreach ($bikeRide->getClusters() as $cluster) {
                 if (null !== $cluster->getLevel() && $cluster->getLevel() === $userLevel) {
                     $clustersLevelAsUser[] = $cluster;
                     if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {
@@ -85,7 +85,7 @@ class SessionService
                 $count = count($clustersLevelAsUser) + 1;
                 $cluster->setTitle($userLevel->getTitle() . ' ' . $count)
                     ->setLevel($userLevel)
-                    ->setEvent($event)
+                    ->setBikeRide($bikeRide)
                     ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
                 ;
             }

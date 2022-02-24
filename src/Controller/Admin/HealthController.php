@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
-use App\Entity\Health;
 use App\Entity\User;
 use App\Form\HealthType;
 use App\ViewModel\UserPresenter;
@@ -16,9 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HealthController extends AbstractController
 {
-    /**
-     * @Route("/admin/sante/edit/{user}", name="admin_health_edit")
-     */
+    #[Route('/admin/sante/edit/{user}', name: 'admin_health_edit', methods: ['GET', 'POST'])]
     public function adminEdit(
         Request $request,
         UserPresenter $presenter,

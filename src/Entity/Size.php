@@ -5,31 +5,27 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SizeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=SizeRepository::class)
- */
+
+#[Entity(repositoryClass: SizeRepository::class)]
 class Size
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=15)
-     */
-    private $name;
+    #[Column(type: "string", length: 15)]
+    private string $name;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Product::class, mappedBy="sizes", cascade={"persist", "remove"}, fetch="EAGER", orphanRemoval=true)
-     */
-    private $products;
+    #[ManyToMany(targetEntity: Product::class, mappedBy: "sizes", cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
+    private Collection $products;
 
     public function __construct()
     {

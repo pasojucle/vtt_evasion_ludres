@@ -4,39 +4,34 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\RegistrationStepGroupRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\RegistrationStepGroupRepository;
 
-/**
- * @ORM\Entity(repositoryClass=RegistrationStepGroupRepository::class)
- */
+
+#[Entity(repositoryClass: RegistrationStepGroupRepository::class)]
 class RegistrationStepGroup
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $title;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $orderBy;
+    #[Column(type: "string", length: 50)]
+    private string $title;
 
-    /**
-     * @ORM\OneToMany(targetEntity=RegistrationStep::class, mappedBy="registrationStepGroup")
-     * @ORM\OrderBy({"orderBy" = "ASC"})
-     */
-    private $registrationSteps;
+    #[Column(type: "integer")]
+    private int $orderBy;
+
+    #[OneToMany(targetEntity: RegistrationStep::class, mappedBy: "registrationStepGroup")]
+    #[OrderBy(["orderBy" => "ASC"])]
+    private Collection $registrationSteps;
 
     public function __construct()
     {

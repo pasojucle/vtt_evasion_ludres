@@ -4,35 +4,28 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use App\Repository\ApprovalRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\ManyToOne;
 
-/**
- * @ORM\Entity(repositoryClass=ApprovalRepository::class)
- */
+#[Entity(repositoryClass: ApprovalRepository::class)]
 class Approval
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $type;
+    #[Column(type: "integer")]
+    private int $type;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $value;
+    #[Column(type: "boolean", nullable: true)]
+    private ?bool $value;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="approvals")
-     */
-    private $user;
+    #[ManyToOne(targetEntity: User::class, inversedBy: "approvals")]
+    private User $user;
 
     public function getId(): ?int
     {

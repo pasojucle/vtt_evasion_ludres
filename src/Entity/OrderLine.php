@@ -5,42 +5,35 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\OrderLineRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=OrderLineRepository::class)
- */
+
+#[Entity(repositoryClass: OrderLineRepository::class)]
 class OrderLine
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=OrderHeader::class, inversedBy="orderLines")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $orderHeader;
+    #[ManyToOne(targetEntity: OrderHeader::class, inversedBy: "orderLines")]
+    #[JoinColumn(nullable: false)]
+    private OrderHeader $orderHeader;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="orderLines")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $product;
+    #[ManyToOne(targetEntity: Product::class, inversedBy: "orderLines")]
+    #[JoinColumn(nullable: false)]
+    private Product $product;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Size::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $size;
+    #[ManyToOne(targetEntity: Size::class)]
+    #[JoinColumn(nullable: false)]
+    private Size $size;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $quantity;
+    #[Column(type: "integer")]
+    private int $quantity;
 
     private $lineId;
 

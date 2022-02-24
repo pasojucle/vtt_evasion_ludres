@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\OrderHeader;
-use App\Form\Admin\OrderFilterType;
 use App\Form\OrderType;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
@@ -25,30 +24,16 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class OrderController extends AbstractController
 {
-    private OrderPresenter $presenter;
-
-    private OrderHeaderRepository $orderHeaderRepository;
-
-    private EntityManagerInterface $entityManager;
-
-    private RequestStack $requestStack;
-
     public function __construct(
-        OrderPresenter $presenter,
-        OrderHeaderRepository $orderHeaderRepository,
-        EntityManagerInterface $entityManager,
-        RequestStack $requestStack
+        private OrderPresenter $presenter,
+        private OrderHeaderRepository $orderHeaderRepository,
+        private EntityManagerInterface $entityManager,
+        private RequestStack $requestStack
     ) {
-        $this->presenter = $presenter;
-        $this->orderHeaderRepository = $orderHeaderRepository;
-        $this->entityManager = $entityManager;
-        $this->requestStack = $requestStack;
-        $this->session = $this->requestStack->getSession();
     }
 
-    /**
-     * @Route("/mon-panier", name="order_edit")
-     */
+
+    #[Route('/mon-panier', name: 'order_edit', methods: ['GET', 'POST'])]
     public function orderEdit(
         OrderLinesSetService $orderLinesSetService,
         OrderValidateService $orderValidateService,
@@ -83,9 +68,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/ma-commande/{orderHeader}", name="order")
-     */
+    #[Route('/ma-commande/{orderHeader}', name: 'order', methods: ['GET'])]
     public function order(
         ?OrderHeader $orderHeader
     ): Response {
@@ -96,9 +79,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/confirmation-commande/{orderHeader}", name="order_acknowledgement")
-     */
+    #[Route('/confirmation-commande/{orderHeader}', name: 'order_acknowledgement', methods: ['GET'])]
     public function orderAcknowledgement(
         PdfService $pdfService,
         OrderHeader $orderHeader
@@ -123,9 +104,7 @@ class OrderController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/commande/supprimer/{orderHeader}", name="order_delete")
-     */
+    #[Route('/commande/supprimer/{orderHeader}', name: 'order_delete', methods: ['GET', 'POST'])]
     public function orderDelete(
         Request $request,
         OrderPresenter $presenter,
@@ -157,9 +136,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/mes-commandes", name="user_orders")
-     */
+    #[Route('/mes-commandes', name: 'user_orders', methods: ['GET'])]
     public function userOrders(
         OrdersPresenter $presenter,
         PaginatorService $paginator,
@@ -174,92 +151,6 @@ class OrderController extends AbstractController
 
         return $this->render('order/list.html.twig', [
             'orders' => $presenter->viewModel()->orders,
-        ]);
-    }
-
-    /**
-     * @Route("/admin/commandes/{filtered}", name="admin_orders", defaults={"filtered"=0})
-     */
-    public function adminOrders(
-        OrdersPresenter $presenter,
-        PaginatorService $paginator,
-        Request $request,
-        bool $filtered
-    ): Response {
-        $filters = ($filtered) ? $this->session->get('admin_orders_filters') : [];
-
-        $form = $this->createForm(OrderFilterType::class, $filters);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $filters = $form->getData();
-            $this->session->set('admin_orders_filters', $filters);
-            $request->query->set('p', 1);
-
-            return $this->redirectToRoute('admin_orders', [
-                'filtered' => true,
-            ]);
-        }
-        $this->requestStack->getSession()->set('order_return', $this->generateUrl('admin_orders', [
-            'filtered' => (int) $filtered,
-        ]));
-
-        $query = $this->orderHeaderRepository->findOrdersQuery($filters);
-        $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $presenter->present($orders);
-
-        return $this->render('order/admin/list.html.twig', [
-            'form' => $form->createView(),
-            'orders' => $presenter->viewModel()->orders,
-            'lastPage' => $paginator->lastPage($orders),
-            'current_filters' => $filters,
-            'count' => $paginator->total($orders),
-        ]);
-    }
-
-    /**
-     * @Route("/admin/command/status/{orderHeader}/{status}", name="admin_order_status")
-     */
-    public function adminOrderValidate(
-        OrdersPresenter $presenter,
-        OrderPresenter $orderPresenter,
-        PaginatorService $paginator,
-        Request $request,
-        OrderHeader $orderHeader,
-        int $status
-    ): Response {
-        $filters = $this->session->get('admin_orders_filters');
-        $orderHeader->setStatus($status);
-        $this->entityManager->flush();
-        $query = $this->orderHeaderRepository->findOrdersQuery($filters);
-        $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $presenter->present($orders);
-
-        return $this->render('order/admin/list.html.twig', [
-            'orders' => $presenter->viewModel()->orders,
-            'lastPage' => $paginator->lastPage($orders),
-            'count' => $paginator->total($orders),
-            'target_route' => 'admin_orders',
-            'current_Filters' => [
-                'filterd' => true,
-            ],
-        ]);
-    }
-
-    /**
-     * @Route("/admin/commande/{orderHeader}", name="admin_order")
-     */
-    public function admin_order(
-        Request $request,
-        ?OrderHeader $orderHeader
-    ): Response {
-        $this->presenter->present($orderHeader);
-        $request->getSession()->set('user_return', $this->generateUrl('admin_order', [
-            'orderHeader' => $orderHeader->getId(),
-        ]));
-
-        return $this->render('order/admin/show.html.twig', [
-            'order' => $this->presenter->viewModel(),
         ]);
     }
 }

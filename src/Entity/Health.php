@@ -4,82 +4,58 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OneToMany;
 use App\Repository\HealthRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=HealthRepository::class)
- */
+#[Entity(repositoryClass: HealthRepository::class)]
 class Health
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=15, nullable=true)
-     */
-    private $socialSecurityNumber;
+    #[Column(type: "string", length: 15, nullable: true)]
+    private ?string $socialSecurityNumber;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $mutualCompany;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $mutualCompany;
 
-    /**
-     * @ORM\Column(type="string", length=25, nullable=true)
-     */
-    private $mutualNumber;
+    #[Column(type: "string", length: 25, nullable: true)]
+    private ?string $mutualNumber;
 
-    /**
-     * @ORM\Column(type="string", length=5, nullable=true)
-     */
-    private $bloodGroup;
+    #[Column(type: "string", length: 5, nullable: true)]
+    private ?string $bloodGroup;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $tetanusBooster;
+    #[Column(type: "datetime", nullable: true)]
+    private ?DateTime $tetanusBooster;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $doctorName;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $doctorName;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $doctorAddress;
+    #[Column(type: "string", length: 255, nullable: true)]
+    private ?string $doctorAddress;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $doctorTown;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $doctorTown;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     */
-    private $doctorPhone;
+    #[Column(type: "string", length: 10, nullable: true)]
+    private ?string $doctorPhone;
 
-    /**
-     * @ORM\OneToMany(targetEntity=HealthQuestion::class, mappedBy="health")
-     */
-    private $healthQuestions;
+    #[OneToMany(targetEntity: HealthQuestion::class, mappedBy: "health")]
+    private Collection $healthQuestions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Disease::class, mappedBy="health")
-     */
-    private $diseases;
+    #[OneToMany(targetEntity: Disease::class, mappedBy: "health")]
+    private Collection $diseases;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $medicalCertificateDate;
+    #[Column(type: "datetime", nullable: true)]
+    private DateTime $medicalCertificateDate;
 
     public function __construct()
     {

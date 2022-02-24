@@ -4,37 +4,33 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
 use App\Repository\VoteUserRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=VoteUserRepository::class)
- */
+
+#[Entity(repositoryClass: VoteUserRepository::class)]
 class VoteUser
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Vote::class, inversedBy="voteUsers")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $vote;
+    #[ManyToOne(targetEntity: Vote::class, inversedBy: "voteUsers")]
+    #[JoinColumn(nullable: false)]
+    private Vote $vote;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="votes")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
+    #[ManyToOne(targetEntity: User::class, inversedBy: "votes")]
+    #[JoinColumn(nullable: false)]
+    private User $user;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    #[Column(type: "datetime")]
+    private DateTime $createdAt;
 
     public function getId(): ?int
     {

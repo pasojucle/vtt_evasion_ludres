@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use App\Repository\LevelRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=LevelRepository::class)
- */
+
+#[Entity(repositoryClass: LevelRepository::class)]
 class Level
 {
     public const TYPE_MEMBER = 1;
@@ -29,57 +32,36 @@ class Level
         self::TYPE_FRAME => 'level.type.frame',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $title;
+    #[Column(type: "string", length: 50)]
+    private string $title;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $content;
+    #[Column(type: "text")]
+    private string $content;
 
-    /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="level")
-     */
-    private $users;
+    #[OneToMany(targetEntity: User::class, mappedBy: "level")]
+    private Collection $users;
 
-    /**
-     * @ORM\Column(type="string", length=7, nullable=true)
-     */
-    private $color;
+    #[Column(type: "string", length: 7, nullable: true)]
+    private ?string $color;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="level")
-     */
-    private $clusters;
+    #[OneToMany(targetEntity: Cluster::class, mappedBy: "level")]
+    private Collection $clusters;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $orderBy;
+    #[Column(type: "integer")]
+    private int $orderBy;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $type;
+    #[Column(type: "integer")]
+    private int $type;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isProtected = false;
+    #[Column(type: "boolean")]
+    private bool $isProtected = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isDeleted;
+    #[Column(type: "boolean")]
+    private bool $isDeleted;
 
     public function __construct()
     {

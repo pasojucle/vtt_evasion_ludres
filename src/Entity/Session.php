@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SessionRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=SessionRepository::class)
- */
+#[Entity(repositoryClass: SessionRepository::class)]
 class Session
 {
     public const AVAILABILITY_REGISTERED = 1;
@@ -24,34 +27,23 @@ class Session
         self::AVAILABILITY_UNAVAILABLE => 'session.availability.unavailable',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="sessions")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
+    #[ManyToOne(targetEntity: User::class, inversedBy: "sessions")]
+    #[JoinColumn(nullable: false)]
+    private User $user;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cluster::class, inversedBy="sessions")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $cluster;
+    #[ManyToOne(targetEntity: Cluster::class, inversedBy: "sessions")]
+    #[JoinColumn(nullable: false)]
+    private Cluster $cluster;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isPresent = false;
+    #[Column(type: "boolean")]
+    private bool $isPresent = false;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $availability;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $availability;
 
     public function getId(): ?int
     {

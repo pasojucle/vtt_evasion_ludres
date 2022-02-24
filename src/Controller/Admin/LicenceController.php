@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Licence;
 use App\Form\Admin\LicenceValidateType;
@@ -16,16 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LicenceController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
-    /**
-     * @Route("/admin/delete/licence/{licence}", name="admin_delete_licence")
-     */
+    #[Route('/admin/inscription/delete/{licence}', name: 'admin_delete_licence', methods: ['GET', 'POST'])]
     public function adminDeleteLicence(
         Request $request,
         Licence $licence
@@ -61,9 +56,7 @@ class LicenceController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/inscription/validate/{licence}", name="admin_registration_validate")
-     */
+    #[Route('/admin/inscription/validate/{licence}', name: 'admin_registration_validate', methods: ['GET', 'POST'])]
     public function adminRegistartionValidate(
         Request $request,
         LicenceValidateService $licenceValidateService,

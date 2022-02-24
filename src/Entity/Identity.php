@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
 use App\Repository\IdentityRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=IdentityRepository::class)
- */
+
+#[Entity(repositoryClass: IdentityRepository::class)]
 class Identity
 {
     public const TYPE_MEMBER = 1;
@@ -33,83 +38,52 @@ class Identity
         self::KINSHIP_OTHER => 'identity.kinship.other',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $name;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $name;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $firstName;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $firstName;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $birthDate;
+    #[Column(type: "datetime", nullable: true)]
+    private ?DateTime $birthDate;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $birthplace;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $birthplace;
+  
+    #[Column(type: "string", length: 10, nullable: true)]
+    private ?string $phone;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     */
-    private $phone;
+    #[Column(type: "string", length: 10, nullable: true)]
+    private ?string $mobile;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     */
-    private $mobile;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $profession;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $profession;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $kinship;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $kinship;
+    #[ManyToOne(targetEntity: User::class, inversedBy: "identities")]
+    #[JoinColumn(nullable: false)]
+    private User $user;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="identities")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $email;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $email;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $picture;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $picture;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="identities", cascade={"persist"})
-     */
+    #[ManyToOne(targetEntity: Address::class, inversedBy: "identities", cascade: ["persist"])]
     private $address;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $birthDepartment;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $birthDepartment;
 
-    /**
-     * @ORM\Column(type="integer", options={"default":1}))
-     */
-    private $type = self::TYPE_MEMBER;
+    #[Column(type: "integer", options: ['default' => 1])]
+    private int $type = self::TYPE_MEMBER;
 
     public function getId(): ?int
     {

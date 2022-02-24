@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use App\Repository\RegistrationStepRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/**
- * @ORM\Entity(repositoryClass=RegistrationStepRepository::class)
- */
+
+#[Entity(repositoryClass: RegistrationStepRepository::class)]
 class RegistrationStep
 {
     public const RENDER_NONE = 0;
@@ -29,61 +32,40 @@ class RegistrationStep
         self::RENDER_FILE_AND_VIEW => 'registration_step.render.file_and_view',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $title;
+    #[Column(type: "string", length: 255)]
+    private string $title;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $filename;
+    #[Column(type: "string", length: 255, nullable: true)]
+    private ?string $filename;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $form;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $form;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $orderBy;
+    #[Column(type: "integer")]
+    private int $orderBy;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $content;
+    #[Column(type: "text", nullable: true)]
+    private ?string $content;
 
-    private $class;
+    private ?string $class;
 
-    private $file;
+    private UploadedFile $file;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $category;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $category;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $testingRender;
+    #[Column(type: "integer")]
+    private int $testingRender;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=RegistrationStepGroup::class, inversedBy="registrationSteps")
-     */
-    private $registrationStepGroup;
+    #[ManyToOne(targetEntity: RegistrationStepGroup::class, inversedBy: "registrationSteps")]
+    private RegistrationStepGroup $registrationStepGroup;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $finalRender;
+    #[Column(type: "integer")]
+    private int $finalRender;
 
     public function __construct()
     {

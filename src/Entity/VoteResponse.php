@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\VoteResponseRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=VoteResponseRepository::class)
- */
+
+#[Entity(repositoryClass: VoteResponseRepository::class)]
 class VoteResponse
 {
     public const VALUE_NO = 0;
@@ -24,28 +28,19 @@ class VoteResponse
         self::VALUE_NO_OPINION => 'vote.response.no_opinion',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=VoteIssue::class, inversedBy="voteResponses")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ManyToOne(targetEntity: VoteIssue::class, inversedBy: "voteResponses")]
+    #[JoinColumn(nullable: false)]
     private $voteIssue;
 
-    /**
-     * @ORM\Column(type="text", nullable=true )
-     */
+    #[Column(type: "text", nullable: true)]
     private ?string $value;
 
-    /**
-     * @ORM\Column(type="string", length=23)
-     */
-    private $uuid;
+    #[Column(type: "string", length: 23)]
+    private string $uuid;
 
     public function getId(): ?int
     {

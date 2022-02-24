@@ -12,9 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FormValidatorController extends AbstractController
 {
-    /**
-     * @Route("form/validator", name="form_validator", options={"expose"=true},)
-     */
+    #[Route('form/validator', name: 'form_validator', methods: ['POST'], options:['expose' => true])]
     public function formValidator(
         Request $request,
         Validate $validate

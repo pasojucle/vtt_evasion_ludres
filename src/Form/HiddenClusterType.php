@@ -15,11 +15,9 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class HiddenClusterType extends HiddenType
 {
-    private EntityManagerInterface $manager;
-
-    public function __construct(EntityManagerInterface $manager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        $this->manager = $manager;
+
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -27,6 +25,6 @@ class HiddenClusterType extends HiddenType
         // attach the specified model transformer for this entity list field
         // this will convert data between object and string formats
 
-        $builder->addModelTransformer(new HiddenEntityTransformer($this->manager, Cluster::class));
+        $builder->addModelTransformer(new HiddenEntityTransformer($this->entityManager, Cluster::class));
     }
 }

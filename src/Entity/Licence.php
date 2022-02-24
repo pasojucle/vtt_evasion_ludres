@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
 use App\Repository\LicenceRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=LicenceRepository::class)
- */
+
+#[Entity(repositoryClass: LicenceRepository::class)]
 class Licence
 {
     public const TYPE_RIDE = 1;
@@ -72,72 +76,45 @@ class Licence
         self::STATUS_VALID => 'licence.status.valid',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $type;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $type;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $coverage;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $coverage;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $magazineSubscription = false;
+    #[Column(type: "boolean")]
+    private bool $magazineSubscription = false;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private $subscriptionAmount;
+    #[Column(type: "float", nullable: true)]
+    private ?float $subscriptionAmount;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $additionalFamilyMember = false;
+    #[Column(type: "boolean")]
+    private bool $additionalFamilyMember = false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $medicalCertificateRequired = false;
+    #[Column(type: "boolean")]
+    private bool $medicalCertificateRequired = false;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $category;
+    #[Column(type: "integer")]
+    private int $category;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="licences")
-     */
-    private $user;
+    #[ManyToOne(targetEntity: User::class, inversedBy: "licences")]
+    private User $user;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $season;
+    #[Column(type: "integer")]
+    private int $season;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $createdAt;
+    #[Column(type: "datetime", nullable: true)]
+    private ?DateTime $createdAt;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default":true})
-     */
-    private $final = false;
+    #[Column(type: "boolean", options:['default' => true])]
+    private ?bool $final = false;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $status = self::STATUS_IN_PROCESSING;
+    #[Column(type: "integer")]
+    private int $status = self::STATUS_IN_PROCESSING;
 
     public function getId(): ?int
     {

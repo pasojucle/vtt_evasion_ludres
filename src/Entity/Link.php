@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use App\Repository\LinkRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=LinkRepository::class)
- */
+
+#[Entity(repositoryClass: LinkRepository::class)]
 class Link
 {
     public const POSITION_LINK_PAGE = 1;
@@ -24,42 +26,28 @@ class Link
         self::POSITION_HOME_BIKE_RIDE => 'link.position.home_bike_ride',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $url;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $title;
+    #[Column(type: "string", length: 255)]
+    private string $url;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $description;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ?string $title;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $image;
+    #[Column(type: "text", nullable: true)]
+    private ?string $description;
 
-    /**
-     * @ORM\Column(type="integer", options={"default":1})
-     */
-    private $position = 1;
+    #[Column(type: "string", length: 255, nullable: true)]
+    private ?string $image;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $orderBy;
+    #[Column(type: "integer", options:['default' => 1])]
+    private int $position = 1;
+
+    #[Column(type: "integer")]
+    private int $orderBy;
 
     public function getId(): ?int
     {

@@ -4,63 +4,50 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinColumn;
 use App\Repository\ClusterRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=ClusterRepository::class)
- */
+#[Entity(repositoryClass: ClusterRepository::class)]
 class Cluster
 {
     public const SCHOOL_MAX_MEMEBERS = 6;
 
     public const CLUSTER_FRAME = 'Encadrement';
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $title;
+    #[Column(type: "string", length: 100)]
+    private string $title;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="cluster")
-     */
-    private $sessions;
+    #[OneToMany(targetEntity: Session::class, mappedBy: "cluster")]
+    private Collection $sessions;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="clusters")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $event;
+    #[ManyToOne(targetEntity: BikeRide::class, inversedBy: "clusters")]
+    #[JoinColumn(nullable: false)]
+    private BikeRide $bikeRide;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $maxUsers;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $maxUsers;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Level::class, inversedBy="clusters")
-     */
-    private $level;
+    #[ManyToOne(targetEntity: Level::class, inversedBy: "clusters")]
+    private Level $level;
 
-    /**
-     * @ORM\Column(type="string", length=25, nullable=true)
-     */
-    private $role;
+    #[Column(type: "string", length: 25, nullable: true)]
+    private ?string $role;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default":0})
-     */
-    private $isComplete = false;
+    #[Column(type: "boolean", options: ["default" => false])]
+    private bool $isComplete = false;
 
     public function __construct()
     {
@@ -131,14 +118,14 @@ class Cluster
         return new ArrayCollection($memberSessions);
     }
 
-    public function getEvent(): ?Event
+    public function getBikeRide(): ?BikeRide
     {
-        return $this->event;
+        return $this->bikeRide;
     }
 
-    public function setEvent(?Event $event): self
+    public function setBikeRide(?BikeRide $bikeRide): self
     {
-        $this->event = $event;
+        $this->bikeRide = $bikeRide;
 
         return $this;
     }

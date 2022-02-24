@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -39,14 +39,14 @@ class SessionRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByEvent(Event $event): array
+    public function findByBikeRide(BikeRide $bikeRide): array
     {
         return $this->createQueryBuilder('s')
             ->leftJoin('s.cluster', 'c')
             ->andWhere(
-                (new Expr())->eq('c.event', ':event'),
+                (new Expr())->eq('c.bikeRide', ':bikeRide'),
             )
-            ->setParameter('event', $event)
+            ->setParameter('bikeRide', $bikeRide)
             ->getQuery()
             ->getResult()
         ;

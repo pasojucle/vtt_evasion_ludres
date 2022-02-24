@@ -254,7 +254,7 @@ p + p {
     padding: 15px;
     /* height: calc(100% - 150px); */
 }
-.card-event .card-body p {
+.card-bike-ride .card-body p {
     text-align: center;
 }
 .card h3 {
@@ -344,7 +344,7 @@ p + p {
 .news-container {
     grid-area: news;
 }
-.events-container {
+.bike-rides-container {
     grid-area: events;
 }
 .links-container {
@@ -526,7 +526,7 @@ button[type="submit"] {
     .bike-rides .bike-ride-date-btn {
         display: none;
     }
-    .events-container, .links-container {
+    .bike-rides-container, .links-container {
         margin-top: 25px;
     }
 }

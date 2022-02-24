@@ -297,11 +297,11 @@ class User
         $sessions = $this->user->getSessions();
         if (!$sessions->isEmpty()) {
             foreach ($sessions as $session) {
-                $event = $session->getCluster()->getEvent();
-                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $event->getStartAt()->format('Y-m-d') . ' 14:00:00');
+                $bikeRide = $session->getCluster()->getBikeRide();
+                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $bikeRide->getStartAt()->format('Y-m-d') . ' 14:00:00');
                 if ($today <= $startAt) {
                     $bikeRides[] = [
-                        'event' => $session->getCluster()->getEvent(),
+                        'bikeRide' => $session->getCluster()->getBikeRide(),
                         'availability' => $session->getAvailabilityToView(),
                         'sessionId' => $session->getId(),
                     ];

@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\VoteIssueRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=VoteIssueRepository::class)
- */
+
+#[Entity(repositoryClass: VoteIssueRepository::class)]
 class VoteIssue
 {
     public const RESPONSE_TYPE_STRING = 1;
@@ -23,33 +28,22 @@ class VoteIssue
         self::RESPONSE_TYPE_CHOICE => 'vote.issue.choice',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Vote::class, inversedBy="voteIssues")
-     * @ORM\JoinColumn(name="vote_id", referencedColumnName="id", nullable=false)
-     */
-    private $vote;
+    #[ManyToOne(targetEntity: Vote::class, inversedBy: "voteIssues")]
+    #[JoinColumn(name: "vote_id", referencedColumnName: "id", nullable: false)]
+    private Vote $vote;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $content;
+    #[Column(type: "string", length: 255)]
+    private string $content;
 
-    /**
-     * @ORM\OneToMany(targetEntity=VoteResponse::class, mappedBy="voteIssue", cascade={"persist", "remove"})
-     */
-    private $voteResponses;
+    #[OneToMany(targetEntity: VoteResponse::class, mappedBy: "voteIssue", cascade: ["persist", "remove"])]
+    private Collection $voteResponses;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $responseType;
+    #[Column(type: "integer")]
+    private int $responseType;
 
     public function __construct()
     {

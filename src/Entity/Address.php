@@ -4,42 +4,33 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OneToMany;
 use App\Repository\AddressRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=AddressRepository::class)
- */
+#[Entity(repositoryClass: AddressRepository::class)]
 class Address
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $street;
+    #[Column(type: "string", length: 255)]
+    private string $street;
 
-    /**
-     * @ORM\Column(type="string", length=5)
-     */
-    private $postalCode;
+    #[Column(type: "string", length: 5)]
+    private string $postalCode;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $town;
+    #[Column(type: "string", length: 100)]
+    private string $town;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Identity::class, mappedBy="address")
-     */
-    private $identities;
+    #[OneToMany(targetEntity: Identity::class, mappedBy: "address")]
+    private Collection $identities;
 
     public function __construct()
     {

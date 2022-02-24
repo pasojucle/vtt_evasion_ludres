@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Cluster;
-use App\Service\EventService;
+use App\Service\BikeRideService;
 use App\Service\FilenameService;
 use App\Service\PdfService;
 use App\ViewModel\ClusterPresenter;
@@ -21,17 +21,17 @@ class ClusterController extends AbstractController
     #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET'])]
     public function adminClusterComplete(
         EntityManagerInterface $entityManager,
-        EventService $eventService,
+        BikeRideService $bikeRideService,
         Cluster $cluster
     ): Response {
         $cluster->setIsComplete(!$cluster->isComplete());
         $entityManager->flush();
 
-        $event = $cluster->getEvent();
+        $bikeRide = $cluster->getBikeRide();
 
-        return $this->render('event/cluster_show.html.twig', [
-            'event' => $eventService->getEventWithPresentsByCluster($event),
-            'events_filters' => [],
+        return $this->render('cluster/show.html.twig', [
+            'bikeRide' => $bikeRideService->getBikeRideWithPresentsByCluster($bikeRide),
+            'bike-rides_filters' => [],
         ]);
     }
 
@@ -63,7 +63,7 @@ class ClusterController extends AbstractController
             }
         }
 
-        $fileName = $cluster->getTitle() . '_' . $cluster->getEvent()->getStartAt()->format('Ymd');
+        $fileName = $cluster->getTitle() . '_' . $cluster->getBikeRide()->getStartAt()->format('Ymd');
         $fileName = $filenameService->clean($fileName) . '.pdf';
         $pathName = $pdfService->joinPdf($files, null, '../data/' . $filenameService->clean($cluster->getTitle()) . '.pdf');
         $fileContent = file_get_contents($pathName);

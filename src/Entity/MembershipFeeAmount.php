@@ -4,36 +4,31 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use App\Repository\MembershipFeeAmountRepository;
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MembershipFeeAmountRepository::class)
- */
+
+#[Entity(repositoryClass: MembershipFeeAmountRepository::class)]
 class MembershipFeeAmount
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $amount;
+    #[Column(type: "float")]
+    private float $amount;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $coverage;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $coverage;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=MembershipFee::class, inversedBy="membershipFeeAmounts")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $membershipFee;
+    #[ManyToOne(targetEntity: MembershipFee::class, inversedBy: "membershipFeeAmounts")]
+    #[JoinColumn(nullable: false)]
+    private MembershipFee $membershipFee;
 
     public function getId(): ?int
     {

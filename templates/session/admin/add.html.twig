@@ -1,20 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ event.title }}{% endblock %}
+{% block title %}{{ bikeRide.title }}{% endblock %}
 
 {% block body %}
  <div class="wrapper">
     <div class="block">
         {{ form_start(form) }}
         <div class="block-title">
-            <h2>{{ event.title }} - 
-                {% if event.endAt is null %}
-                    {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
+            <h2>{{ bikeRide.title }} - 
+                {% if bikeRide.endAt is null %}
+                    {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
                 {% else %}
-                    du {{ event.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeventeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+                    du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikbikeRideeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
                 {% endif %}
                 <span class="tools">
-                    <a href="{{ path('admin_events', {'event': event.id}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+                    <a href="{{ path('admin_bikeRides', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
                 </span>
             </h2>
         </div>

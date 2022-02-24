@@ -15,13 +15,10 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class HiddenEntityTransformer implements DataTransformerInterface
 {
-    private ObjectManager $objectManager;
-
     private $entityClass;
 
-    public function __construct(ObjectManager $objectManager, $entityClass)
+    public function __construct(private ObjectManager $objectManager, $entityClass)
     {
-        $this->objectManager = $objectManager;
         $this->entityClass = $entityClass;
     }
 

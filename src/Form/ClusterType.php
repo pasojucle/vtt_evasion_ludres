@@ -15,7 +15,7 @@ class ClusterType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('event')
+            ->add('bikeRide')
             ->add('usersPerCluster', IntegerType::class, [
                 'label' => 'Nombre de personne par groupe hors encardrement (optionnel)',
                 'required' => false,

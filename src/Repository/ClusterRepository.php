@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Cluster;
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,13 +26,13 @@ class ClusterRepository extends ServiceEntityRepository
     /**
      * @return Cluster[] Returns an array of Cluster objects
      */
-    public function findByEvent(Event $event)
+    public function findByBikeRide(BikeRide $bikeRide)
     {
         return $this->createQueryBuilder('c')
             ->andWhere(
-                (new Expr())->eq('c.event', ':event')
+                (new Expr())->eq('c.bikeRide', ':bikeRide')
             )
-            ->setParameter('event', $event)
+            ->setParameter('bikeRide', $bikeRide)
             ->getQuery()
             ->getResult()
         ;

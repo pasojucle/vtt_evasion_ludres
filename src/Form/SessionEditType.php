@@ -34,7 +34,7 @@ class SessionEditType extends AbstractType
             $submitLabel = null;
 
             if (!$options['is_already_registered'] && !$options['is_end_testing']) {
-                if (null !== $options['event'] && $options['event']->getAccessAvailabity($this->security->getUser())) {
+                if (null !== $options['bikeRide'] && $options['bikeRide']->getAccessAvailabity($this->security->getUser())) {
                     $submitLabel = 'Enregister';
                     $form
                         ->add('availability', ChoiceType::class, [
@@ -94,7 +94,7 @@ class SessionEditType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Session::class,
             'clusters' => [],
-            'event' => null,
+            'bikeRide' => null,
             'is_already_registered' => false,
             'is_end_testing' => false,
         ]);

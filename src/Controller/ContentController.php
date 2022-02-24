@@ -4,26 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Content;
 use App\Entity\Link;
 use App\Form\ContactType;
-use App\Form\ContentType;
 use App\Repository\ContentRepository;
-use App\Repository\EventRepository;
+use App\Repository\BikeRideRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\MailerService;
 use App\Service\OrderByService;
-use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Json;
-use Symfony\Component\Validator\Constraints\Uuid;
 
 class ContentController extends AbstractController
 {
@@ -38,17 +31,17 @@ class ContentController extends AbstractController
     public function home(
         LinkRepository $linkRepository,
         ContentRepository $contentRepository,
-        EventRepository $eventRepository
+        BikeRideRepository $bikeRideRepository
     ): Response {
         $homeContents = $contentRepository->findHomeContents();
         $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
         $linksFooter = $linkRepository->findByPosition(Link::POSITION_HOME_FOOTER);
-        $events = $eventRepository->findEnableView();
+        $bikeRides = $bikeRideRepository->findEnableView();
 
         return $this->render('content/home.html.twig', [
             'links_bike_ride' => $linksBikeRide,
             'links_footer' => $linksFooter,
-            'events' => $events,
+            'bikeRides' => $bikeRides,
             'home_contents' => $homeContents,
         ]);
     }

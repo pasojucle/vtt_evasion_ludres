@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Cluster;
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use App\Entity\Level;
-use App\Form\EventFilterType;
-use App\Repository\EventRepository;
+use App\Form\BikeRideFilterType;
+use App\Repository\BikeRideRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
 use DateInterval;
@@ -19,45 +19,24 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class EventService
+class BikeRideService
 {
-    private PaginatorService $paginator;
-
-    private RequestStack $requestStack;
-
-    private FormFactoryInterface $formFactory;
-
-    private EventRepository $eventRepository;
-
-    private LevelRepository $levelRepository;
-
-    private EntityManagerInterface $entityManager;
-
-    private ParameterRepository $parameterRepository;
-
     public function __construct(
-        PaginatorService $paginator,
-        RequestStack $requestStack,
-        FormFactoryInterface $formFactory,
-        EventRepository $eventRepository,
-        LevelRepository $levelRepository,
-        EntityManagerInterface $entityManager,
-        ParameterRepository $parameterRepository
+        private PaginatorService $paginator,
+        private RequestStack $requestStack,
+        private FormFactoryInterface $formFactory,
+        private BikeRideRepository $bikeRideRepository,
+        private LevelRepository $levelRepository,
+        private EntityManagerInterface $entityManager,
+        private ParameterRepository $parameterRepository
     ) {
-        $this->paginator = $paginator;
-        $this->requestStack = $requestStack;
-        $this->formFactory = $formFactory;
-        $this->eventRepository = $eventRepository;
-        $this->levelRepository = $levelRepository;
-        $this->entityManager = $entityManager;
-        $this->parameterRepository = $parameterRepository;
     }
 
     public function getFiltersByParam(?string $period, ?int $year, ?int $month, ?int $day, string $route)
     {
         $date = (null === $year && null === $month && null === $day) ? new DateTime() : DateTime::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
         if (null === $period) {
-            $period = ('admin_events' === $route) ? Event::PERIOD_WEEK : Event::PERIOD_NEXT;
+            $period = ('admin_events' === $route) ? BikeRide::PERIOD_WEEK : BikeRide::PERIOD_NEXT;
         }
 
         return $this->getFilters($period, $date);
@@ -74,16 +53,16 @@ class EventService
 
     public function getFilters(string $period, DateTime $date, ?int $direction = null)
     {
-        if (null !== $direction && !in_array($period, [Event::PERIOD_ALL, Event::PERIOD_NEXT], true)) {
+        if (null !== $direction && !in_array($period, [BikeRide::PERIOD_ALL, BikeRide::PERIOD_NEXT], true)) {
             $intervals = [
-                Event::PERIOD_DAY => 'P1D',
-                Event::PERIOD_WEEK => 'P1W',
-                Event::PERIOD_MONTH => 'P1M1D',
+                BikeRide::PERIOD_DAY => 'P1D',
+                BikeRide::PERIOD_WEEK => 'P1W',
+                BikeRide::PERIOD_MONTH => 'P1M1D',
             ];
-            if (Event::DIRECTION_PREV === $direction) {
+            if (BikeRide::DIRECTION_PREV === $direction) {
                 $date->sub(new DateInterval($intervals[$period]));
             }
-            if (Event::DIRECTION_NEXT === $direction) {
+            if (BikeRide::DIRECTION_NEXT === $direction) {
                 $date->add(new DateInterval($intervals[$period]));
             }
         }
@@ -91,22 +70,22 @@ class EventService
         $endAt = clone $date;
         $limit = null;
         switch ($period) {
-            case Event::PERIOD_DAY:
+            case BikeRide::PERIOD_DAY:
                 $startAt = $startAt;
                 $endAt = $endAt;
 
                 break;
-            case Event::PERIOD_WEEK:
+            case BikeRide::PERIOD_WEEK:
                 $startAt = $startAt->modify('monday this week');
                 $endAt = $endAt->modify('sunday this week');
 
                 break;
-            case Event::PERIOD_MONTH:
+            case BikeRide::PERIOD_MONTH:
                 $startAt = $startAt->modify('first day of this month');
                 $endAt = $endAt->modify('last day of this month');
 
                 break;
-            case Event::PERIOD_NEXT:
+            case BikeRide::PERIOD_NEXT:
                 $startAt = $startAt;
                 $endAt = null;
                 $limit = 6;
@@ -139,16 +118,16 @@ class EventService
     {
         $route = $request->get('_route');
         $filters = $this->getFiltersByParam($period, $year, $month, $day, $route);
-        $form = $this->formFactory->create(EventFilterType::class, $filters);
+        $form = $this->formFactory->create(BikeRideFilterType::class, $filters);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             if ($form->has('next') && $form->get('next')->isClicked()) {
-                $data['direction'] = Event::DIRECTION_NEXT;
+                $data['direction'] = BikeRide::DIRECTION_NEXT;
             }
             if ($form->has('prev') && $form->get('prev')->isClicked()) {
-                $data['direction'] = Event::DIRECTION_PREV;
+                $data['direction'] = BikeRide::DIRECTION_PREV;
             }
             if ($form->has('today') && $form->get('today')->isClicked()) {
                 $today = new DateTime();
@@ -156,7 +135,7 @@ class EventService
             }
 
             $filters = $this->getFiltersByData($data);
-            $this->requestStack->getSession()->set('admin_events_filters', $filters);
+            $this->requestStack->getSession()->set('admin_bike_rides_filters', $filters);
 
             return [
                 'redirect' => $route,
@@ -165,17 +144,17 @@ class EventService
         }
         $parameters = [];
         if (null === $filters['limit']) {
-            $query = $this->eventRepository->findAllQuery($filters);
-            $events = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-            $parameters['lastPage'] = $this->paginator->lastPage($events);
+            $query = $this->bikeRideRepository->findAllQuery($filters);
+            $bikeRides = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+            $parameters['lastPage'] = $this->paginator->lastPage($bikeRides);
         } else {
-            $events = $this->eventRepository->findAllFiltered($filters);
+            $bikeRides = $this->bikeRideRepository->findAllFiltered($filters);
             $parameters['lastPage'] = null;
         }
 
         $parameters += [
             'form' => $form->createView(),
-            'events' => $events,
+            'bikeRides' => $bikeRides,
             'current_filters' => $filters,
         ];
 
@@ -184,15 +163,15 @@ class EventService
         ];
     }
 
-    public function createClusters($event)
+    public function createClusters($bikeRide)
     {
-        switch ($event->getType()) {
-            case Event::TYPE_SCHOOL:
+        switch ($bikeRide->getType()) {
+            case BikeRide::TYPE_SCHOOL:
                 $cluster = new Cluster();
                 $cluster->setTitle(Cluster::CLUSTER_FRAME)
                     ->setRole('ROLE_FRAME')
                 ;
-                $event->addCluster($cluster);
+                $bikeRide->addCluster($cluster);
                 $this->entityManager->persist($cluster);
                 $levels = $this->levelRepository->findAllTypeMember();
                 if (null !== $levels) {
@@ -202,54 +181,54 @@ class EventService
                             ->setLevel($level)
                             ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
                         ;
-                        $event->addCluster($cluster);
+                        $bikeRide->addCluster($cluster);
                         $this->entityManager->persist($cluster);
                     }
                 }
 
                 break;
-            case Event::TYPE_HOLIDAYS:
+            case BikeRide::TYPE_HOLIDAYS:
                 break;
             default:
                 $cluster = new Cluster();
                 $cluster->setTitle('1er Groupe');
-                $event->addCluster($cluster);
+                $bikeRide->addCluster($cluster);
                 $this->entityManager->persist($cluster);
         }
     }
 
-    public function setDefaultContent(Request $request, Event $event): Event
+    public function setDefaultContent(Request $request, BikeRide $bikeRide): BikeRide
     {
-        $eventRequest = $request->request->all('event');
-        if (null !== $eventRequest && array_key_exists('type', $eventRequest)) {
-            $type = (int) $eventRequest['type'];
-            $event->setType($type);
+        $bikeRideRequest = $request->request->all('bike_ride');
+        if (null !== $bikeRideRequest && array_key_exists('type', $bikeRideRequest)) {
+            $type = (int) $bikeRideRequest['type'];
+            $bikeRide->setType($type);
             $parameterName = null;
-            if (Event::TYPE_SCHOOL === $type) {
+            if (BikeRide::TYPE_SCHOOL === $type) {
                 $parameterName = 'EVENT_SCHOOL_CONTENT';
             }
-            if (Event::TYPE_ADULT === $type) {
+            if (BikeRide::TYPE_ADULT === $type) {
                 $parameterName = 'EVENT_ADULT_CONTENT';
             }
-            if (Event::TYPE_HOLIDAYS === $type) {
+            if (BikeRide::TYPE_HOLIDAYS === $type) {
                 $parameterName = 'EVENT_HOLIDAYS_CONTENT';
             }
             if (null !== $parameterName) {
                 $parameter = $this->parameterRepository->findOneByName($parameterName);
                 if (null !== $parameter) {
-                    $event->setTitle($parameter->getLabel())->setContent($parameter->getValue());
+                    $bikeRide->setTitle($parameter->getLabel())->setContent($parameter->getValue());
                 }
             }
         }
 
-        return $event;
+        return $bikeRide;
     }
 
-    public function getEventWithPresentsByCluster(Event $event): array
+    public function getBikeRideWithPresentsByCluster(BikeRide $bikeRide): array
     {
         $clusters = [];
-        if (!$event->getClusters()->isEmpty()) {
-            foreach ($event->getClusters() as $cluster) {
+        if (!$bikeRide->getClusters()->isEmpty()) {
+            foreach ($bikeRide->getClusters() as $cluster) {
                 $clusters[] = [
                     'cluster' => $cluster,
                     'presentCount' => $this->getCountOfPresents($cluster->getSessions()),
@@ -258,11 +237,11 @@ class EventService
         }
 
         return [
-            'title' => $event->getTitle(),
-            'startAt' => $event->getStartAt(),
-            'endAt' => $event->getEndAt(),
-            'type' => $event->getType(),
-            'id' => $event->getId(),
+            'title' => $bikeRide->getTitle(),
+            'startAt' => $bikeRide->getStartAt(),
+            'endAt' => $bikeRide->getEndAt(),
+            'type' => $bikeRide->getType(),
+            'id' => $bikeRide->getId(),
             'clusters' => $clusters,
         ];
     }

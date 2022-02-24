@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\ParameterGroup;
 use App\Form\ParameterGroupType;
@@ -15,9 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ParameterController extends AbstractController
 {
-    /**
-     * @Route("/admin/parameters/{parameterGroup}", name="admin_groups_parameter", defaults={"parameterGroup"=null})
-     */
+    #[Route('/admin/parameters/{parameterGroup}', name: 'admin_groups_parameter', methods: ['GET', 'POST'], defaults:['parameterGroup' => null])]
     public function list(
         ParameterGroupRepository $parameterGroupRepository,
         Request $request,

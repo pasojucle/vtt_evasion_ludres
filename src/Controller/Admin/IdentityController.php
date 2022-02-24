@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Form\IdentitiesType;
@@ -16,9 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IdentityController extends AbstractController
 {
-    /**
-     * @Route("/admin/identite/edit/{user}/{isKinship}", name="admin_identity_edit", defaults={"isKinship"=0})
-     */
+    #[Route('/admin/identite/edit/{user}/{isKinship}', name: 'admin_identity_edit', methods: ['GET', 'POST'], defaults:['isKinship' => 0])]
     public function adminEdit(
         Request $request,
         IdentityRepository $identityRepository,

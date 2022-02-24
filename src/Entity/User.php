@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use App\Repository\SizeRepository;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- */
+
+#[Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const APPROVAL_RIGHT_TO_THE_IMAGE = 1;
@@ -26,78 +33,51 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::APPROVAL_GOING_HOME_ALONE => 'approval.going_home_alone',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=25, unique=true)
-     */
-    private $licenceNumber;
+    #[Column(type: "string", length: 25, unique: true)]
+    private string $licenceNumber;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    #[Column(type: "json")]
+    private array $roles = [];
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
      */
-    private $password;
+    #[Column(type: "string")]
+    private string $password;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $active = true;
+    #[Column(type: "boolean")]
+    private bool $active = true;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Identity::class, mappedBy="user")
-     */
-    private $identities;
+    #[OneToMany(targetEntity: Identity::class, mappedBy: "user")]
+    private Collection $identities;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Health::class, cascade={"persist", "remove"})
-     */
-    private $health;
+    #[OneToOne(targetEntity: Health::class, cascade: ["persist", "remove"])]
+    private ?Health $health;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Approval::class, mappedBy="user")
-     */
+    #[OneToMany(targetEntity: Approval::class, mappedBy: "user")]
     private $approvals;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Licence::class, mappedBy="user")
-     */
-    private $licences;
+    #[OneToMany(targetEntity: Licence::class, mappedBy: "user")]
+    private Collection $licences;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Session::class, mappedBy="user")
-     */
-    private $sessions;
+    #[OneToMany(targetEntity: Session::class, mappedBy: "user")]
+    private Collection $sessions;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Level::class, inversedBy="users")
-     */
-    private $level;
+    #[ManyToOne(targetEntity: Level::class, inversedBy: "users")]
+    private ?Level $level;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default":0})
-     */
+    #[Column(type: "boolean", options:['default' => false])]
     private $passwordMustBeChanged = false;
 
-    /**
-     * @ORM\OneToMany(targetEntity=OrderHeader::class, mappedBy="user")
-     */
-    private $orderHeaders;
+    #[OneToMany(targetEntity: OrderHeader::class, mappedBy: "user")]
+    private Collection $orderHeaders;
 
-    /**
-     * @ORM\OneToMany(targetEntity=VoteUser::class, mappedBy="user")
-     */
-    private $votes;
+    #[OneToMany(targetEntity: VoteUser::class, mappedBy: "user")]
+    private Collection $votes;
 
     public function __construct()
     {

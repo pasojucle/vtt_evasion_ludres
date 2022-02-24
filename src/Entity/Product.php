@@ -4,79 +4,59 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToMany;
 use App\Repository\ProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=ProductRepository::class)
- */
+#[Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[Column(type: "string", length: 255)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $content;
+    #[Column(type: "text")]
+    private string $content;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $filename;
+    #[Column(type: "string", length: 255)]
+    private string $filename;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private $price;
+    #[Column(type: "float", nullable: true)]
+    private ?float $price;
 
-    /**
-     * @ORM\OneToMany(targetEntity=OrderLine::class, mappedBy="product")
-     */
-    private $orderLines;
+    #[OneToMany(targetEntity: OrderLine::class, mappedBy: "product")]
+    private Collection $orderLines;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isDisabled = false;
+    #[Column(type: "boolean")]
+    private bool $isDisabled = false;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Size::class, inversedBy="products")
-     * @ORM\JoinColumn(name="vote_id", referencedColumnName="id", nullable=false)
-     */
-    private $sizes;
+    #[ManyToMany(targetEntity: Size::class, inversedBy: "products")]
+    #[JoinColumn(name: "size_id", referencedColumnName: "id", nullable: false)]
+    #[OrderBy(["id" => "ASC"])]
+    private Collection $sizes;
 
-    /**
-     * @ORM\Column(type="string", length=25)
-     */
-    private $ref;
+    #[Column(type: "string", length: 25)]
+    private string $ref;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private $discountPrice;
+    #[Column(type: "float", nullable: true)]
+    private ?float $discountPrice;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $discountTitle;
+    #[Column(type: "string", length: 255, nullable: true)]
+    private ?string $discountTitle;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $category;
+    #[Column(type: "integer", nullable: true)]
+    private ?int $category;
 
     public function __construct()
     {
@@ -184,13 +164,7 @@ class Product
      */
     public function getSizes(): Collection
     {
-        $criteria = Criteria::create()
-            ->orderBy([
-                'id' => Criteria::ASC,
-            ])
-        ;
-
-        return $this->sizes->matching($criteria);
+        return $this->sizes;
     }
 
     public function addSize(Size $size): self

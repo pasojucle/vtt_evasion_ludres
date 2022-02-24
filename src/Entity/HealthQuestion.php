@@ -4,36 +4,32 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
 use App\Repository\HealthQuestionRepository;
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=HealthQuestionRepository::class)
- */
+
+#[Entity(repositoryClass: HealthQuestionRepository::class)]
 class HealthQuestion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $field;
+    #[Column(type: "integer")]
+    private int $field;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $value;
+    #[Column(type: "boolean", nullable: true)]
+    private ?bool $value;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Health::class, inversedBy="healthQuestions")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $health;
+    #[ManyToOne(targetEntity: Health::class, inversedBy: "healthQuestions")]
+    #[JoinColumn(nullable: false)]
+    private Collection $health;
 
     public function getId(): ?int
     {

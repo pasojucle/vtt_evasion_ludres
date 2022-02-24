@@ -13,12 +13,12 @@
         </div>
         {{ form_start(form) }}
         <div class="block-body">
-            <p>{{ event.title }}</p>
+            <p>{{ bikeRide.title }}</p>
             <p>{{ session.user.firstIdentity.name }}</p>
             {{ form_row(form.cluster) }}
         </div>
         <div class="block-footer">
-            <a href="{{ path('admin_event_cluster_show', {'event': event.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour aux participants</a>
+            <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-left"></i> Retour aux participants</a>
             {{ form_widget(form.save) }}
         </div>
         {{ form_end(form) }}

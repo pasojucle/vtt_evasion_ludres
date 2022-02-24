@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use App\Repository\OrderHeaderRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=OrderHeaderRepository::class)
- */
+
+#[Entity(repositoryClass: OrderHeaderRepository::class)]
 class OrderHeader
 {
     public const STATUS_IN_PROGRESS = 1;
@@ -32,33 +38,22 @@ class OrderHeader
         self::STATUS_CANCELED => 'order.canceled',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\OneToMany(targetEntity=OrderLine::class, mappedBy="orderHeader")
-     */
-    private $orderLines;
+    #[OneToMany(targetEntity: OrderLine::class, mappedBy: "orderHeader")]
+    private Collection $orderLines;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orderHeaders")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
+    #[ManyToOne(targetEntity: User::class, inversedBy: "orderHeaders")]
+    #[JoinColumn(nullable: false)]
+    private User $user;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $status;
+    #[Column(type: "integer")]
+    private int $status;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    #[Column(type: "datetime")]
+    private DateTime $createdAt;
 
     public function __construct()
     {

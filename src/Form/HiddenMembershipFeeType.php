@@ -15,11 +15,9 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class HiddenMembershipFeeType extends HiddenType
 {
-    private EntityManagerInterface $manager;
-
-    public function __construct(EntityManagerInterface $manager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        $this->manager = $manager;
+
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -27,6 +25,6 @@ class HiddenMembershipFeeType extends HiddenType
         // attach the specified model transformer for this entity list field
         // this will convert data between object and string formats
 
-        $builder->addModelTransformer(new HiddenEntityTransformer($this->manager, MembershipFee::class));
+        $builder->addModelTransformer(new HiddenEntityTransformer($this->entityManager, MembershipFee::class));
     }
 }

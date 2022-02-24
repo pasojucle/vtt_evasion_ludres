@@ -3,7 +3,7 @@
     <div class="row row-list">
         <div class="col-md-9 col-xs-7">
             {% set btn_color = '' %}
-            {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') and session.availability is null and session.user.level is not null %}
+            {% if bikeRide.type == constant('App\\Entity\\BikeRide::TYPE_SCHOOL') and session.availability is null and session.user.level is not null %}
                 {% set btn_color = ' style = background-color:' ~ session.user.level.color ~ ';' %}
             {% endif %}
             <a href="{{ path('admin_user', {'user': session.user.id}) }}" class="btn btn-list btn-light"{{ btn_color }} title="Informatons sur l'adhérent">
@@ -28,7 +28,7 @@
             </a>
         </div>
         <div class="col-md-3 col-xs-5">
-            {% if event.type == constant('App\\Entity\\Event::TYPE_SCHOOL') %}
+            {% if bikeRide.type == constant('App\\Entity\\BikeRide::TYPE_SCHOOL') %}
                 {% if not cluster.isComplete %}
                     {% if not session.isPresent %}
                         <a href="{{ path('admin_session_present', {'session': session.id}) }}" 
@@ -44,7 +44,7 @@
                 {% endif %}
             {% endif %}
             {% if hasGroups and not cluster.isComplete and (session.availability is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
-                <a href="{{ path('admin_event_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
+                <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
                     <i class="fas fa-exchange-alt"></i>
                 </a>
             {% endif %}

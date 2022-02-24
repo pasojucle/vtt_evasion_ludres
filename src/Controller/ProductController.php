@@ -18,9 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-    /**
-     * @Route("/boutique", name="products")
-     */
+    #[Route('/boutique', name: 'products', methods: ['GET'])]
     public function list(
         PaginatorService $paginator,
         ProductRepository $productRepository,
@@ -37,9 +35,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/boutique/produit/{product}", name="product_show")
-     */
+    #[Route('/boutique/produit/{product}', name: 'product_show', methods: ['GET', 'POST'])]
     public function show(
         OrderAddService $orderAddService,
         ProductPresenter $presenter,

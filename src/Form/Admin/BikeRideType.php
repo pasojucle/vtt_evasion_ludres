@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -18,14 +18,14 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EventType extends AbstractType
+class BikeRideType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('type', ChoiceType::class, [
                 'label' => 'Type de randonnée',
-                'choices' => array_flip(Event::TYPES),
+                'choices' => array_flip(BikeRide::TYPES),
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
@@ -57,7 +57,7 @@ class EventType extends AbstractType
         ;
 
         $formModifier = function (FormInterface $form, int $type) {
-            $isDiabled = (Event::TYPE_HOLIDAYS === $type) ? 'disabled' : '';
+            $isDiabled = (BikeRide::TYPE_HOLIDAYS === $type) ? 'disabled' : '';
 
             $form
                 ->add('endAt', DateTimeType::class, [
@@ -119,9 +119,9 @@ class EventType extends AbstractType
                 ])
             ;
         };
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
-            $data = $event->getData();
-            $formModifier($event->getForm(), $data->getType());
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $bikeRide) use ($formModifier) {
+            $data = $bikeRide->getData();
+            $formModifier($bikeRide->getForm(), $data->getType());
         });
 
         $builder->get('type')->addEventListener(
@@ -136,7 +136,7 @@ class EventType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Event::class,
+            'data_class' => BikeRide::class,
         ]);
     }
 }

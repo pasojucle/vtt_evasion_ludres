@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
@@ -18,25 +18,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LevelController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    private LevelRepository $levelRepository;
-
-    private OrderByService $orderByService;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        LevelRepository $levelRepository,
-        OrderByService $orderByService
+        private EntityManagerInterface $entityManager,
+        private LevelRepository $levelRepository,
+        private OrderByService $orderByService
     ) {
-        $this->entityManager = $entityManager;
-        $this->levelRepository = $levelRepository;
-        $this->orderByService = $orderByService;
+
     }
 
-    /**
-     * @Route("/admin/niveaux/{type}", name="admin_levels", defaults={"type"=1})
-     */
+    #[Route('/admin/niveaux/{type}', name: 'admin_levels', methods: ['GET'], defaults:['type' => 1])]
     public function adminList(
         PaginatorService $paginator,
         Request $request,
@@ -55,9 +45,7 @@ class LevelController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/niveau/{level}", name="admin_level_edit", defaults={"level"=null})
-     */
+    #[Route('/admin/niveau/{level}', name: 'admin_level_edit', methods: ['GET', 'POST'], defaults:['level' => null])]
     public function adminLevelEdit(
         Request $request,
         ?Level $level
@@ -86,9 +74,7 @@ class LevelController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/supprimer/niveau/{level}", name="admin_level_delete")
-     */
+    #[Route('/admin/supprimer/niveau/{level}', name: 'admin_level_delete', methods: ['GET', 'POST'])]
     public function adminLevelDelete(
         Request $request,
         Level $level
@@ -123,9 +109,7 @@ class LevelController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/ordonner/niveau/{level}", name="admin_level_order", options={"expose"=true})
-     */
+    #[Route('/admin/ordonner/niveau/{level}', name: 'admin_level_order', methods: ['POST'], options:['expose' => true])]
     public function adminLevelOrder(
         Request $request,
         Level $level

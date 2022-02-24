@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Event;
+use App\Entity\BikeRide;
 use App\Entity\Session;
-use App\Form\Admin\SessionType;
 use App\Form\SessionAvailabilityType;
 use App\Form\SessionEditType;
-use App\Form\SessionSwitchType;
-use App\Repository\ClusterRepository;
 use App\Repository\SessionRepository;
-use App\Service\EventService;
+use App\Service\BikeRideService;
 use App\Service\SessionService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -33,71 +29,21 @@ class SessionController extends AbstractController
     ) {
     }
 
-    /**
-     * @Route("/admin/seance/{session}", name="admin_session_present")
-     */
-    public function adminPresent(
-        Session $session,
-        EventService $eventService
-    ): Response {
-        $isPresent = !$session->isPresent();
-
-        $session->setIsPresent($isPresent);
-        $this->entityManager->flush();
-        $event = $session->getCluster()->getEvent();
-
-        return $this->render('event/cluster_show.html.twig', [
-            'event' => $eventService->getEventWithPresentsByCluster($event),
-            'events_filters' => [],
-        ]);
-    }
-
-    /**
-     * @Route("/admin/groupe/change/{session}", name="admin_event_switch_cluster")
-     */
-    public function adminClusterSwitch(
-        ClusterRepository $clusterRepository,
-        Request $request,
-        Session $session
-    ): Response {
-        $event = $session->getCluster()->getEvent();
-        $form = $this->createForm(SessionSwitchType::class, $session);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $session = $form->getData();
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_event_cluster_show', [
-                'event' => $event->getId(),
-            ]);
-        }
-
-        return $this->render('session/switch.html.twig', [
-            'event' => $event,
-            'session' => $session,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/mon-compte/rando/inscription/{event}",
-     * name="session_add")
-     */
+    #[Route('/mon-compte/rando/inscription/{bikeRide}', name: 'session_add', methods: ['GET', 'POST'])]
     public function sessionAdd(
         Request $request,
         SessionRepository $sessionRepository,
-        EventService $eventService,
+        BikeRideService $bikeRideService,
         UserService $userService,
-        Event $event
+        BikeRide $bikeRide
     ): Response {
         $user = $this->getUser();
 
-        $clusters = $event->getClusters();
+        $clusters = $bikeRide->getClusters();
         if ($clusters->isEmpty()) {
-            $eventService->createClusters($event);
+            $bikeRideService->createClusters($bikeRide);
             $this->entityManager->flush();
-            $clusters = $event->getClusters();
+            $clusters = $bikeRide->getClusters();
         }
         $userSession = $sessionRepository->findByUserAndClusters($user, $clusters);
         $isAlreadyRegistered = ($userSession) ? true : false;
@@ -105,10 +51,10 @@ class SessionController extends AbstractController
         $domaineUser = $userService->convertToUser($user);
         $isEndTesting = $domaineUser->isEndTesting();
 
-        list($framers, $members) = $this->sessionService->getSessionsBytype($event);
+        list($framers, $members) = $this->sessionService->getSessionsBytype($bikeRide);
 
         if (null === $userSession) {
-            $userCluster = $this->sessionService->getCluster($event, $user, $clusters);
+            $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
 
             $userSession = new Session();
             $userSession->setUser($user)
@@ -118,7 +64,7 @@ class SessionController extends AbstractController
 
         $form = $this->createForm(SessionEditType::class, $userSession, [
             'clusters' => $clusters,
-            'event' => $event,
+            'bikeRide' => $bikeRide,
             'is_already_registered' => $isAlreadyRegistered,
             'is_end_testing' => $isEndTesting,
         ]);
@@ -139,7 +85,7 @@ class SessionController extends AbstractController
 
         return $this->render('session/add.html.twig', [
             'form' => $form->createView(),
-            'event' => $event,
+            'bikeRide' => $bikeRide,
             'framers' => $framers,
             'members' => $members,
             'is_already_registered' => $isAlreadyRegistered,
@@ -147,63 +93,16 @@ class SessionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/rando/inscription/{event}",
-     * name="admin_session_add")
-     */
-    public function adminSessionAdd(
-        Request $request,
-        SessionRepository $sessionRepository,
-        Event $event
-    ): Response {
-        $clusters = $event->getClusters();
-
-        $form = $this->createForm(SessionType::class);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $userSession = $form->getData();
-            $user = $userSession->getUser();
-            if ($sessionRepository->findByUserAndClusters($user, $clusters)) {
-                $form->addError(new FormError('Cet adhérent est déjà inscrit'));
-            }
-
-            if ($form->isValid()) {
-                $userCluster = $this->sessionService->getCluster($event, $user, $clusters);
-                $userSession->setCluster($userCluster);
-                $user->addSession($userSession);
-                $this->entityManager->persist($userSession);
-
-                $this->entityManager->flush();
-                $this->addFlash('success', 'Le participant à bien été inscrit');
-
-                $this->sessionService->checkEndTesting($user);
-
-                return $this->redirectToRoute('admin_event_cluster_show', [
-                    'event' => $event->getId(),
-                ]);
-            }
-        }
-
-        return $this->render('session/admin/add.html.twig', [
-            'form' => $form->createView(),
-            'event' => $event,
-        ]);
-    }
-
-    /**
-     * @Route("/mon-compte/rando/disponibilte/{session}",
-     * name="session_availability_edit")
-     */
+    #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
     public function sessionAvailabilityEdit(
         Request $request,
         Session $session
     ) {
-        $event = $session->getCluster()->getEvent();
+        $bikeRide = $session->getCluster()->getBikeRide();
         $form = $this->createForm(SessionAvailabilityType::class, $session);
         $form->handleRequest($request);
 
-        list($framers, $members) = $this->sessionService->getSessionsBytype($event, $session->getUser());
+        list($framers, $members) = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $session = $form->getData();
@@ -217,16 +116,13 @@ class SessionController extends AbstractController
 
         return $this->render('session/edit.html.twig', [
             'form' => $form->createView(),
-            'event' => $event,
+            'bikeRide' => $bikeRide,
             'framers' => $framers,
             'members' => $members,
         ]);
     }
 
-    /**
-     * @Route("/mon-compte/rando/supprime/{session}",
-     * name="session_delete")
-     */
+    #[Route('/mon-compte/rando/supprime/{session}', name: 'session_delete', methods: ['GET', 'POST'])]
     public function sessionDelete(
         FormFactoryInterface $formFactory,
         Request $request,
@@ -247,27 +143,6 @@ class SessionController extends AbstractController
         return $this->render('session/delete.html.twig', [
             'form' => $form->createView(),
             'session' => $session,
-        ]);
-    }
-
-    /**
-     * @Route("/admin/rando/supprime/{session}",
-     * name="admin_session_delete")
-     */
-    public function adminSessionDelete(
-        UserService $userService,
-        Session $session
-    ) {
-        $user = $userService->convertToUser($session->getUser());
-        $event = $session->getCluster()->getEvent();
-
-        $this->entityManager->remove($session);
-        $this->entityManager->flush();
-
-        $this->addFlash('success', $user->getMember()['fullName'] . ' à bien été désincrit');
-
-        return $this->redirectToRoute('admin_event_cluster_show', [
-            'event' => $event->getId(),
         ]);
     }
 }

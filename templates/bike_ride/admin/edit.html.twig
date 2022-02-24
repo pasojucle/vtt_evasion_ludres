@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set title = (event is null) ? 'Ajouter une sortie' : 'Modifier une sortie' %}
+{% set title = (bikeRide is null) ? 'Ajouter une sortie' : 'Modifier une sortie' %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -11,10 +11,10 @@
             <div class="block-title">
                 <h2>{{ title }}</h2>
                 <span class="tools">
-                    <a href="{{ path('admin_events', events_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+                    <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
                 </span>
             </div>
-            <div id="event_container" class="block-body">
+            <div id="bike_ride_container" class="block-body">
                 <div class="form-group">
                     {{ form_row(form.type) }}
                 </div>

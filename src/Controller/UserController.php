@@ -243,7 +243,7 @@ class UserController extends AbstractController
             $user->setPassword($encodedPassword)
                 ->setPasswordMustBeChanged(false)
             ;
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             $this->addFlash('succes', 'Votre mot de passe a bien été modifé.');
 

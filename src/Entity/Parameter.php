@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ParameterRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=ParameterRepository::class)
- */
+#[Entity(repositoryClass: ParameterRepository::class)]
 class Parameter
 {
     public const TYPE_TEXT = 1;
@@ -27,38 +30,26 @@ class Parameter
         self::TYPE_ARRAY => 'parameter.type.array',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $name;
+    #[Column(type: "string", length: 100)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="string", length=150)
-     */
-    private $label;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $type = self::TYPE_TEXT;
+    #[Column(type: "string", length: 150)]
+    private string $label;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $value;
+    #[Column(type: "integer")]
+    private int $type = self::TYPE_TEXT;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ParameterGroup::class, inversedBy="parameters")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $parameterGroup;
+    #[Column(type: "text")]
+    private string $value;
+
+    #[ManyToOne(targetEntity: ParameterGroup::class, inversedBy: "parameters")]
+    #[JoinColumn(nullable: false)]
+    private ParameterGroup $parameterGroup;
 
     public function getId(): ?int
     {

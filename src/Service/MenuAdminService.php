@@ -54,8 +54,8 @@ class MenuAdminService
         return [
             [
                 'label' => 'Programme',
-                'route' => 'admin_events',
-                'pattern' => '/event/',
+                'route' => 'admin_bike_rides',
+                'pattern' => '/bike_ride/',
                 'role' => 'ROLE_FRAME',
             ],
             [

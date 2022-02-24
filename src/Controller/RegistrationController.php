@@ -6,9 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use App\Entity\RegistrationStepGroup;
 use App\Entity\User as UserEntity;
-use App\Form\RegistrationStepType;
 use App\Form\UserType;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
@@ -24,7 +22,6 @@ use App\Service\UploadService;
 use App\Service\UserService;
 use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
-use App\UseCase\RegistrationStep\EditRegistrationStep;
 use App\UseCase\RegistrationStep\GetReplaces;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
@@ -54,10 +51,8 @@ class RegistrationController extends AbstractController
         private GetProgress $getProgress
     ) {
     }
-
-    /**
-     * @Route("/inscription/info", name="registration_detail")
-     */
+   
+    #[Route('/inscription/info', name: 'registration_detail', methods: ['GET'])]
     public function registrationDetail(
         ContentRepository $contentRepository
     ): Response {
@@ -66,9 +61,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/inscription/taris", name="registration_membership_fee")
-     */
+    #[Route('/inscription/tarifs', name: 'registration_membership_fee', methods: ['GET'])]
     public function registrationMemberShipFee(
         MembershipFeeRepository $membershipFeeRepository
     ): Response {
@@ -77,10 +70,8 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/inscription", name="registration_form", defaults={"step"=1})
-     * @Route("/mon-compte/inscription/{step}", name="user_registration_form")
-     */
+    #[Route('/inscription"', name: 'registration_form', methods: ['GET', 'POST'], defaults:['step' => 1])]
+    #[Route('/mon-compte/inscription/{step}', name: 'user_registration_form', methods: ['GET', 'POST'])]
     public function registerForm(
         Request $request,
         MembershipFeeRepository $membershipFeeRepository,
@@ -136,93 +127,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/param_inscription/", name="admin_registration_steps")
-     */
-    public function adminRegistrationSteps(
-        Request $request
-    ): Response {
-        $isFinalValues = [
-            'essai' => false,
-            'final' => true,
-        ];
-        $renders = [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE];
-        $registrationByTypes = [];
-        $labels = [];
-        foreach (array_keys(Licence::CATEGORIES) as $category) {
-            $labels['categories'][] = Licence::CATEGORIES[$category];
-            foreach ($isFinalValues as $isFinalLabel => $isFinal) {
-                $labels['isFinalLabels'][] = $isFinalLabel;
-                foreach ($renders as $render) {
-                    $labels['render'][$category][$isFinal][] = (RegistrationStep::RENDER_VIEW === $render)
-                        ? '<i class="fas fa-desktop"></i>'
-                        : '<i class="fas fa-file-pdf"></i>';
-                    $registrationByTypes[$category][$isFinal][$render] = $this->registrationStepRepository->findByCategoryAndFinal($category, $isFinal, $render);
-                }
-            }
-        }
-
-        return $this->render('registration/admin/registrationList.html.twig', [
-            'registrationStepGroups' => $this->registrationStepGroupRepository->findAll(),
-            'registrationByTypes' => $registrationByTypes,
-            'labels' => $labels,
-        ]);
-    }
-
-    /**
-     * @Route("/admin/registrationStepGroup/ordonner/{group}", name="admin_registration_step_group_order", options={"expose"=true},)
-     */
-    public function adminregistrationStepGroupOrder(
-        Request $request,
-        RegistrationStepGroup $group
-    ): Response {
-        $newOrder = $request->request->get('newOrder');
-        $regitrationStepGroups = $this->registrationStepGroupRepository->findAll();
-
-        $this->orderByService->setNewOrders($group, $regitrationStepGroups, $newOrder);
-
-        return $this->redirectToRoute('admin_registration_steps');
-    }
-
-    /**
-     * @Route("/admin/registrationStep/ordonner/{step}", name="admin_registration_step_order", options={"expose"=true},)
-     */
-    public function adminregistrationStepOrder(
-        Request $request,
-        RegistrationStep $step
-    ): Response {
-        $newOrder = $request->request->get('newOrder');
-        $regitrationSteps = $this->registrationStepRepository->findByGroup($step->getRegistrationStepGroup());
-
-        $this->orderByService->setNewOrders($step, $regitrationSteps, $newOrder);
-
-        return $this->redirectToRoute('admin_registration_steps');
-    }
-
-    /**
-     * @Route("/admin/param_inscription/{step}", name="admin_registration_step")
-     */
-    public function adminRegistrationStep(
-        Request $request,
-        EditRegistrationStep $editRegistrationStep,
-        RegistrationStep $step
-    ): Response {
-        $form = $this->createForm(RegistrationStepType::class, $step);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $editRegistrationStep->execute($request, $form);
-        }
-
-        return $this->render('registration/admin/registrationStep.html.twig', [
-            'registrationStep' => $step,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/inscription/telechargement/{user}", name="registration_download")
-     */
+    #[Route('/inscription/telechargement/{user}', name: 'registration_download', methods: ['GET'])]
     public function registrationDownload(
         UserEntity $user
     ): Response {
@@ -234,9 +139,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/inscription/file/{user}", name="registration_file")
-     */
+    #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
     public function registrationFile(
         MembershipFeeRepository $membershipFeeRepository,
         PdfService $pdfService,

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use App\Repository\ContentRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=ContentRepository::class)
- */
+
+#[Entity(repositoryClass: ContentRepository::class)]
 class Content
 {
     public const IS_FLASH = [
@@ -31,52 +34,33 @@ class Content
         'login_help' => 'content.route.login_help',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $route;
+    #[Column(type: "string", length: 100)]
+    private string $route;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $content;
+    #[Column(type: "text")]
+    private string $content;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $startAt;
+    #[Column(type: "datetime", nullable: true)]
+    private ?DateTime $startAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $endAt;
+    #[Column(type: "datetime", nullable: true)]
+    private ?DateTime $endAt;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $orderBy;
+    #[Column(type: "integer")]
+    private int $orderBy;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isActive = true;
+    #[Column(type: "boolean")]
+    private bool $isActive = true;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isFlash = false;
+    #[Column(type: "boolean")]
+    private bool $isFlash = false;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $title;
+    #[Column(type: "string", length: 100, nullable: true)]
+    private ? string $title;
 
     public function getId(): ?int
     {

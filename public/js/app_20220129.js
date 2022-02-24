@@ -30,10 +30,10 @@ $(document).ready(function(){
     $('.js-datepicker').datepicker({
         format: 'yyyy-mm-dd hh:ii',
     });
-    $(document).on('change', '#event_filter_period, #user_filter_status, #user_filter_level, #registration_filter_isFinal, #order_filter_status', submitFom);
+    $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_level, #registration_filter_isFinal, #order_filter_status', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
-    $(document).on('change', '#event_type', modifierEvent);
+    $(document).on('change', '#bike_ride_type', modifierBikeRide);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
@@ -122,6 +122,7 @@ function toggleMenu(e) {
     $('.fa-angle-up').each(function() {
         $(this).removeClass('fa-angle-up').addClass('fa-angle-down');
     });
+    console.log('toggleMenu');
 }
 function buildSortable() {
     let error = false;
@@ -182,7 +183,7 @@ function getFile(e) {
     return false;
 }
 
-function modifierEvent() {
+function modifierBikeRide() {
     var form = $(this).closest('form');
     var data = {};
     $.each(form[0].elements,function() {
@@ -196,8 +197,8 @@ function modifierEvent() {
         type: form.attr('method'),
         data : data,
         success: function(html) {
-          $('#event_container').replaceWith(
-            $(html).find('#event_container')
+          $('#bike_ride_container').replaceWith(
+            $(html).find('#bike_ride_container')
           );
           $('.js-datepicker').datepicker({
             format: 'yyyy-mm-dd hh:ii',
@@ -297,6 +298,7 @@ function submitAsynchronous(e) {
 
 function toggleDown(e) {
     e.preventDefault();
+    console.log('toggleDown');
     const button = $(this);
     const block = $(this).closest('[data-toggle]');
     const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
@@ -315,7 +317,15 @@ function toggleDown(e) {
         }
     });
     const cookieValue =  (block.hasClass('nav-group') && blockBody.hasClass('down')) ? block.data('group') : null;
-    document.cookie = "admin_menu_actived = "+cookieValue;
+    // document.cookie = "admin_menu_actived = "+cookieValue;
+    setCookie('admin_menu_actived', cookieValue, 30);
+    console.log(document.cookie);
+}
+function setCookie(cName, cValue, expDays) {
+    let date = new Date();
+    date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/"; ;
 }
 
 function clipboard(event) {

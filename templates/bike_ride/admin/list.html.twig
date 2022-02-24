@@ -9,36 +9,36 @@
                 <h2>Programme des sorties</h2>
                 <span class="tools">
                 {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('admin_event_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter une sortie"><i class="fas fa-plus"></i></a>
+                    <a href="{{ path('admin_bike_ride_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter une sortie"><i class="fas fa-plus"></i></a>
                 {% endif %}
                 </span>
             </div>
             <div class="block-body">
                 {% include('bike_ride/filter.html.twig') %}
                 <ul>
-                    {% for event in events %}                      
+                    {% for bikeRide in bikeRides %}                      
                         <li class="li-long">
                             <div class="row row-list">
                                 <div class="col-md-10 col-xs-9">
-                                    {% set event_content %}
+                                    {% set bikeRide_content %}
                                         <div class="row one-line">
-                                            <div class="col-md-3 col-xs-5">{{ event.startAt | date('d/m/y') }}</div>
-                                            <div class="col-md-9 col-xs-7">{{ event.title }}</div>
+                                            <div class="col-md-3 col-xs-5">{{ bikeRide.startAt | date('d/m/y') }}</div>
+                                            <div class="col-md-9 col-xs-7">{{ bikeRide.title }}</div>
                                         </div>
                                     {% endset %}
-                                    {% if event.type != constant('App\\Entity\\Event::TYPE_HOLIDAYS') %}
-                                        <a class="btn btn-list btn-light" href="{{ path('admin_event_cluster_show', {'event' : event.id}) }}" title="Voir les participants">
-                                            {{ event_content }}
+                                    {% if bikeRide.type != constant('App\\Entity\\BikeRide::TYPE_HOLIDAYS') %}
+                                        <a class="btn btn-list btn-light" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.id}) }}" title="Voir les participants">
+                                            {{ bikeRide_content }}
                                         </a>
                                     {% else %}
-                                        {{ event_content }}
+                                        {{ bikeRide_content }}
                                     {% endif %}
                                 </div>
                                 <div class="col-md-2 col-xs-2">
                                     {% if is_granted('ROLE_ADMIN') %}
-                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_event_edit', {'event' : event.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                        {% if event.startAt <= date() %}
-                                            <a href="{{ path('admin_event_export', {'event': event.id}) }}" class="btn btn-success btn-ico" title="Exporter la séance">
+                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                        {% if bikeRide.startAt <= date() %}
+                                            <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.id}) }}" class="btn btn-success btn-ico" title="Exporter la séance">
                                                 <i class="fas fa-file-download"></i>
                                             </a>
                                         {% endif %}

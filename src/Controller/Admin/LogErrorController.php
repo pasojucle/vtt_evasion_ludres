@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\LogError;
 use App\Repository\LogErrorRepository;
@@ -17,9 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LogErrorController extends AbstractController
 {
-    /**
-     * @Route("/admin/log/errors/{statusCode}", name="admin_log_errors", defaults = {"statusCode"=500})
-     */
+    #[Route('/admin/log/errors/{statusCode}', name: 'admin_log_errors', methods: ['GET'], defaults:['statusCode' => 500])]
     public function list(
         PaginatorService $paginator,
         Request $request,
@@ -40,9 +38,7 @@ class LogErrorController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/log/error/show/{error}", name="admin_log_error")
-     */
+    #[Route('/admin/log/error/show/{error}', name: 'admin_log_error', methods: ['GET'])]
     public function show(
         LogErrorPresenter $presenter,
         LogError $error
@@ -54,9 +50,7 @@ class LogErrorController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/log/error/delete/{error}", name="admin_log_error_delete")
-     */
+    #[Route('/admin/log/error/delete/{error}', name: 'admin_log_error_delete', methods: ['GET'])]
     public function delete(
         EntityManagerInterface $entityManager,
         PaginatorService $paginator,

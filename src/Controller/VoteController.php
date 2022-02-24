@@ -98,9 +98,8 @@ class VoteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/mes_votes", name="user_votes")
-     */
+
+    #[Route('/mes_votes', name: 'user_votes', methods: ['GET'])]
     public function votes(
         VoteRepository $voteRepository,
         VoteUserRepository $voteUserRepository

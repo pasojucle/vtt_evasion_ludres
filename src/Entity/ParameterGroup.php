@@ -7,38 +7,29 @@ namespace App\Entity;
 use App\Repository\ParameterGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
-/**
- * @ORM\Entity(repositoryClass=ParameterGroupRepository::class)
- */
+#[Entity(repositoryClass: ParameterGroupRepository::class)]
 class ParameterGroup
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $name;
+    #[Column(type: "string", length: 50)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $label;
+    #[Column(type: "string", length: 255)]
+    private string $label;
 
-    /**
-     * @ORM\Column(type="string", length=25)
-     */
-    private $role;
+    #[Column(type: "string", length: 25)]
+    private string $role;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Parameter::class, mappedBy="parameterGroup")
-     */
+    #[OneToMany(targetEntity: Parameter::class, mappedBy: "parameterGroup")]
     private $parameters;
 
     public function __construct()

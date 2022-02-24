@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\EventRepository;
-use DateInterval;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateInterval;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OneToMany;
+use App\Repository\BikeRideRepository;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass=EventRepository::class)
- */
-class Event
+#[Entity(repositoryClass: BikeRideRepository::class)]
+class BikeRide
 {
     public const PERIOD_DAY = 'jour';
 
@@ -31,11 +34,11 @@ class Event
     public const DIRECTION_NEXT = 2;
 
     public const PERIODS = [
-        self::PERIOD_DAY => 'event.period.day',
-        self::PERIOD_WEEK => 'event.period.week',
-        self::PERIOD_MONTH => 'event.period.month',
-        self::PERIOD_NEXT => 'event.period.next',
-        self::PERIOD_ALL => 'event.period.all',
+        self::PERIOD_DAY => 'bike_ride.period.day',
+        self::PERIOD_WEEK => 'bike_ride.period.week',
+        self::PERIOD_MONTH => 'bike_ride.period.month',
+        self::PERIOD_NEXT => 'bike_ride.period.next',
+        self::PERIOD_ALL => 'bike_ride.period.all',
     ];
 
     public const TYPE_CASUAL = 1;
@@ -47,62 +50,41 @@ class Event
     public const TYPE_HOLIDAYS = 4;
 
     public const TYPES = [
-        self::TYPE_CASUAL => 'event.type.casual',
-        self::TYPE_SCHOOL => 'event.type.school',
-        self::TYPE_ADULT => 'event.type.adult',
-        self::TYPE_HOLIDAYS => 'event.type.holidays',
+        self::TYPE_CASUAL => 'bike_ride.type.casual',
+        self::TYPE_SCHOOL => 'bike_ride.type.school',
+        self::TYPE_ADULT => 'bike_ride.type.adult',
+        self::TYPE_HOLIDAYS => 'bike_ride.type.holidays',
     ];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[Column(type: "integer")]
+    #[Id, GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=150)
-     */
-    private $title;
+    #[Column(type: "string", length: 150)]
+    private string $title;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $content;
+    #[Column(type: "text", nullable: true)]
+    private ?string $content;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $startAt;
+    #[Column(type: "datetime")]
+    private DateTime $startAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $endAt;
+    #[Column(type: "datetime", nullable: true)]
+    private ?DateTime $endAt;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $displayDuration = 8;
+    #[Column(type: "integer")]
+    private int $displayDuration = 8;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[Column(type: "integer", nullable: true)]
     private $minAge;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cluster::class, mappedBy="event")
-     */
-    private $clusters;
+    #[OneToMany(targetEntity: Cluster::class, mappedBy: "bikeRide")]
+    private Collection $clusters;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $type = self::TYPE_CASUAL;
+    #[Column(type: "integer")]
+    private int $type = self::TYPE_CASUAL;
 
-    /**
-     * @ORM\Column(type="integer", options={"default":1})
-     */
+    #[Column(type: "integer", options: ["default" => 1])]
     private $closingDuration = 1;
 
     public function __construct()
@@ -199,7 +181,7 @@ class Event
     {
         if (!$this->clusters->contains($cluster)) {
             $this->clusters[] = $cluster;
-            $cluster->setEvent($this);
+            $cluster->setBikeRide($this);
         }
 
         return $this;
@@ -209,8 +191,8 @@ class Event
     {
         if ($this->clusters->removeElement($cluster)) {
             // set the owning side to null (unless already changed)
-            if ($cluster->getEvent() === $this) {
-                $cluster->setEvent(null);
+            if ($cluster->getBikeRide() === $this) {
+                $cluster->setBikeRide(null);
             }
         }
 
