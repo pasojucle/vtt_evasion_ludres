@@ -86,7 +86,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/registrationStepGroup/ordonner/{group}', name: 'admin_registration_step_group_order', methods: ['GET', 'POST'],  options:['expose' => true])]
+    #[Route('/admin/registrationStepGroup/ordonner/{group}', name: 'admin_registration_step_group_order', methods: ['GET', 'POST'], options:['expose' => true])]
     public function adminregistrationStepGroupOrder(
         Request $request,
         RegistrationStepGroup $group

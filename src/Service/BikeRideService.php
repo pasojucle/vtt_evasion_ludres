@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Cluster;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;

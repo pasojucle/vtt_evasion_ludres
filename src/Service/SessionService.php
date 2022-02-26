@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Cluster;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
 use App\Entity\User as UserEntity;
 use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;

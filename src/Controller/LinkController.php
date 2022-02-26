@@ -18,7 +18,8 @@ class LinkController extends AbstractController
     }
 
     #[Route('/liens', name: 'links', methods: ['GET'])]
-    public function list(): Response {
+    public function list(): Response
+    {
         $links = $this->linkRepository->findByPosition(Link::POSITION_LINK_PAGE);
 
         return $this->render('link/list.html.twig', [

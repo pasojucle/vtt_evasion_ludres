@@ -23,7 +23,6 @@ class LevelController extends AbstractController
         private LevelRepository $levelRepository,
         private OrderByService $orderByService
     ) {
-
     }
 
     #[Route('/admin/niveaux/{type}', name: 'admin_levels', methods: ['GET'], defaults:['type' => 1])]

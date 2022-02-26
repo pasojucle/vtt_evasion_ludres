@@ -17,7 +17,6 @@ class HiddenClusterType extends HiddenType
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
-
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

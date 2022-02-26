@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping\Id;
+use App\Repository\RegistrationStepGroupRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\OrderBy;
-use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Repository\RegistrationStepGroupRepository;
-
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OrderBy;
 
 #[Entity(repositoryClass: RegistrationStepGroupRepository::class)]
 class RegistrationStepGroup
 {
-
     #[Column(type: "integer")]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;

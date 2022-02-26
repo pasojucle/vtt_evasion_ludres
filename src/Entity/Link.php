@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping\Id;
+use App\Repository\LinkRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use App\Repository\LinkRepository;
 use Doctrine\ORM\Mapping\GeneratedValue;
-
+use Doctrine\ORM\Mapping\Id;
 
 #[Entity(repositoryClass: LinkRepository::class)]
 class Link

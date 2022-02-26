@@ -27,12 +27,10 @@ class ResetPasswordController extends AbstractController
     use ResetPasswordControllerTrait;
 
     public function __construct(
-        private ResetPasswordHelperInterface $resetPasswordHelper, 
+        private ResetPasswordHelperInterface $resetPasswordHelper,
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository
-    )
-    {
-
+    ) {
     }
 
     #[Route('mot_de_passe', name: 'app_forgot_password_request', methods: ['GET', 'POST'])]

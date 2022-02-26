@@ -6,8 +6,8 @@ namespace App\Controller;
 
 use App\Entity\Link;
 use App\Form\ContactType;
-use App\Repository\ContentRepository;
 use App\Repository\BikeRideRepository;
+use App\Repository\ContentRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\MailerService;

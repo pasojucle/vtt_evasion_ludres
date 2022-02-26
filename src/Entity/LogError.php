@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\LogErrorRepository;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\ManyToOne;
-use App\Repository\LogErrorRepository;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(repositoryClass: LogErrorRepository::class)]
 class LogError
