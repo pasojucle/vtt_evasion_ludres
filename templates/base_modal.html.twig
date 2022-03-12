@@ -1,8 +1,10 @@
 <div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog{% if app.request.attributes.get('_route') == 'flash_info_show'%} modal-xl{% endif %}" role="document">
         <div class="modal-content">
             {% block form %}{% endblock %}
-            {{ form_start(form, {'action': button_href})}}
+            {% if form is defined %}
+                {{ form_start(form, {'action': button_href})}}
+            {% endif %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">{% block modal_title %}{% endblock %}</h4>
@@ -12,15 +14,20 @@
             </div>
             {% block footer %}
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default close" data-dismiss="modal">Annuler</button>
-                    <button 
-                    {% if button_href is defined %} href="{{ button_href }}"{% endif %}
-                    type="submit" class="btn">
-                    {% if button_text is defined %}{{ button_text }}{% endif %}
-                    </button>
+                    {% set button_close = (button_close is defined) ? button_close : 'Annuler' %}
+                    <button type="button" class="btn btn-default close" data-dismiss="modal">{{ button_close }}</button>
+                    {% if button_text is defined or button_href is defined %}
+                        <button 
+                        {% if button_href is defined %} href="{{ button_href }}"{% endif %}
+                        type="submit" class="btn">
+                        {% if button_text is defined %}{{ button_text }}{% endif %}
+                        </button>
+                    {% endif %}
                 </div>
             {% endblock %}
-            {{ form_end(form)}}
+            {% if form is defined %}
+                {{ form_end(form)}}
+            {% endif %}
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

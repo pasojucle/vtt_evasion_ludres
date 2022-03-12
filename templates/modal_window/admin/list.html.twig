@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion de la pop'up{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="block">
+            <div class="block-title">
+                <h2>Gestion de la pop'up</h2>
+                <span class="tools">
+                    <a href="{{ path('admin_modal_window_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter une info"><i class="fas fa-plus"></i></a>
+                </span>
+            </div>
+            <div class="block-body">
+                <ul class="sortable padding-10" data-route="admin_level_order" data-parameter="level">
+                    {% for modal_window in modal_window_list %}     
+                        <li>
+                            <div>
+                                <div class="row row-list">
+                                    <div class="col-md-10 col-xs-8 background-ligth">{{ modal_window.title }}</div>
+                                    <div class="col-md-2 col-xs-4">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_modal_window_edit', {'modalWindow': modal_window.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                        {% if not modal_window.isDisabled %}
+                                            <a class="btn btn-success btn-ico" href="{{ path('admin_modal_window_toggle_disable', {'modalWindow': modal_window.id})}}" title="Désactiver"><i class="fas fa-toggle-on"></i></a>
+                                        {% else %}
+                                            <a class="btn btn-danger btn-ico" href="{{ path('admin_modal_window_toggle_disable', {'modalWindow': modal_window.id})}}" title="Activer"><i class="fas fa-toggle-off"></i></a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -21,7 +21,7 @@
     transition: top .8s ease;
 }
 .modal-open {
-    top: 25vh
+    top: 15vh
 }
 .modal-header {
     background-color: var(--light-color);
@@ -32,6 +32,14 @@
     line-height: 50px;
     border-bottom: 1px solid var(--color-element);
     font-size: 18px;
+}
+.modal-xl .modal-body {
+    overflow-y: scroll;
+    height: calc(100vh - 350px);
+}
+.modal-xl{
+    width: 800px;
+    left: calc((100% - 800px) /2);
 }
 .bg-danger {
     background-color: var(--light-color);
@@ -57,6 +65,11 @@
         left: 0;
     }
     .modal-open {
-        top: 150px;
+        top: 50px;
+    }
+    .modal-xl .modal-body {
+        overflow-y: scroll;
+        height: calc(100vh - 200px);
+        width: 100%;
     }
 }

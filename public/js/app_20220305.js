@@ -53,6 +53,9 @@ $(document).ready(function(){
     collectionItems.forEach((item) => {
             addTagFormDeleteLink(item)
     })
+    if ($('#modal_window_show').length > 0) {
+        $('#modal_window_show').click();
+    }
 });
 
 jQuery(function($){

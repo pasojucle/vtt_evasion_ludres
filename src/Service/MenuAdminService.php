@@ -83,7 +83,7 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
-                'label' => 'Votes AG',
+                'label' => 'Votes',
                 'route' => 'admin_votes',
                 'pattern' => '/vote/',
                 'role' => 'ROLE_ADMIN',
@@ -104,6 +104,13 @@ class MenuAdminService
                 'label' => 'Contenu des pages',
                 'route' => 'admin_contents',
                 'pattern' => '/admin_content/',
+                'role' => 'ROLE_ADMIN',
+            ],
+
+            [
+                'label' => 'Pop up',
+                'route' => 'admin_modal_window_list',
+                'pattern' => '/popup/',
                 'role' => 'ROLE_ADMIN',
             ],
             [
