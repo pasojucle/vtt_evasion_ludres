@@ -39,7 +39,7 @@ class ReplaceKeywordsService
         if (1 < count($pages)) {
             $content = '';
             foreach ($pages as $page) {
-                $content .= '<div class="page_break">' . $page . '</div>';
+                $content .= '<div class="page_break">'.$page.'</div>';
             }
         }
 

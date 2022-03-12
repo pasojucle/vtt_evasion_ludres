@@ -2,16 +2,16 @@
 
 namespace App\Form\Admin;
 
-use App\Validator\Period;
 use App\Entity\ModalWindow;
-use Symfony\Component\Form\AbstractType;
+use App\Validator\Period;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class ModalWindowType extends AbstractType
 {

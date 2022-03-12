@@ -17,18 +17,18 @@ use Doctrine\ORM\Mapping\OrderBy;
 #[Entity(repositoryClass: RegistrationStepGroupRepository::class)]
 class RegistrationStepGroup
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 50)]
+    #[Column(type: 'string', length: 50)]
     private string $title;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $orderBy;
 
-    #[OneToMany(targetEntity: RegistrationStep::class, mappedBy: "registrationStepGroup")]
-    #[OrderBy(["orderBy" => "ASC"])]
+    #[OneToMany(targetEntity: RegistrationStep::class, mappedBy: 'registrationStepGroup')]
+    #[OrderBy(['orderBy' => 'ASC'])]
     private Collection $registrationSteps;
 
     public function __construct()

@@ -15,15 +15,15 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: OrderLineRepository::class)]
 class OrderLine
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: OrderHeader::class, inversedBy: "orderLines")]
+    #[ManyToOne(targetEntity: OrderHeader::class, inversedBy: 'orderLines')]
     #[JoinColumn(nullable: false)]
     private OrderHeader $orderHeader;
 
-    #[ManyToOne(targetEntity: Product::class, inversedBy: "orderLines")]
+    #[ManyToOne(targetEntity: Product::class, inversedBy: 'orderLines')]
     #[JoinColumn(nullable: false)]
     private Product $product;
 
@@ -31,7 +31,7 @@ class OrderLine
     #[JoinColumn(nullable: false)]
     private Size $size;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $quantity;
 
     private $lineId;

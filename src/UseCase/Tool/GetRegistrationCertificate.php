@@ -17,28 +17,13 @@ use Twig\Environment;
 
 class GetRegistrationCertificate
 {
-    private UserPresenter $presenter;
-
-    private PdfService $pdfService;
-
-    private FilenameService $filenameService;
-
-    private Environment $twig;
-
-    private ParameterService $parameterService;
-
     public function __construct(
-        UserPresenter $presenter,
-        PdfService $pdfService,
-        FilenameService $filenameService,
-        Environment $twig,
-        ParameterService $parameterService
+        private UserPresenter $presenter,
+        private PdfService $pdfService,
+        private FilenameService $filenameService,
+        private Environment $twig,
+        private ParameterService $parameterService
     ) {
-        $this->presenter = $presenter;
-        $this->pdfService = $pdfService;
-        $this->filenameService = $filenameService;
-        $this->twig = $twig;
-        $this->parameterService = $parameterService;
     }
 
     public function execute(Request $request, ?User $user, ?string $content = null): array
@@ -132,8 +117,8 @@ class GetRegistrationCertificate
         ]);
         $filename = 'Attestation d\'inscription';
         $dirname = 'registration_certificate';
-        $this->pdfService->makePdf($renderPdf, $filename, '../public/' . $dirname);
+        $this->pdfService->makePdf($renderPdf, $filename, '../public/'.$dirname);
 
-        return DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $this->filenameService->clean($filename) . '.pdf';
+        return DIRECTORY_SEPARATOR.$dirname.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
     }
 }

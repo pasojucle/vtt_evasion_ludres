@@ -6,34 +6,23 @@ namespace App\Service;
 
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
-use App\Entity\User as UserEntity;
+use App\Entity\User;
 use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
+use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
 
 class SessionService
 {
-    private SessionRepository $sessionRepository;
-
-    private UserService $userService;
-
-    private LevelRepository $levelRepository;
-
-    private MailerService $mailerService;
-
     public function __construct(
-        SessionRepository $sessionRepository,
-        UserService $userService,
-        LevelRepository $levelRepository,
-        MailerService $mailerService
+        private SessionRepository $sessionRepository,
+        private UserPresenter $userPresenter,
+        private LevelRepository $levelRepository,
+        private MailerService $mailerService
     ) {
-        $this->sessionRepository = $sessionRepository;
-        $this->userService = $userService;
-        $this->levelRepository = $levelRepository;
-        $this->mailerService = $mailerService;
     }
 
-    public function getSessionsBytype(BikeRide $bikeRide, ?UserEntity $user = null): array
+    public function getSessionsBytype(BikeRide $bikeRide, ?User $user = null): array
     {
         $members = [];
         $framers = [];
@@ -49,8 +38,9 @@ class SessionService
                     $members[$levelId]['title'] = $levelTitle;
                 } else {
                     if ($user !== $session->getUser()) {
+                        $this->userPresenter->present($session->getUser());
                         $framers[] = [
-                            'user' => $this->userService->convertToUser($session->getUser()),
+                            'user' => $this->userPresenter->viewModel(),
                             'availability' => $session->getAvailabilityToView(),
                         ];
                     }
@@ -61,7 +51,7 @@ class SessionService
         return [$framers, $members];
     }
 
-    public function getCluster(BikeRide $bikeRide, UserEntity $user, Collection $clusters)
+    public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters)
     {
         $userCluster = null;
         if (BikeRide::TYPE_SCHOOL === $bikeRide->getType()) {
@@ -83,7 +73,7 @@ class SessionService
             if (null === $userCluster) {
                 $cluster = new Cluster();
                 $count = count($clustersLevelAsUser) + 1;
-                $cluster->setTitle($userLevel->getTitle() . ' ' . $count)
+                $cluster->setTitle($userLevel->getTitle().' '.$count)
                     ->setLevel($userLevel)
                     ->setBikeRide($bikeRide)
                     ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
@@ -98,15 +88,15 @@ class SessionService
         return $userCluster;
     }
 
-    public function checkEndTesting(UserEntity $entityUser): void
+    public function checkEndTesting(User $user): void
     {
-        $user = $this->userService->convertToUser($entityUser);
+        $this->userPresenter->present($user);
 
-        if ($user->isEndTesting()) {
+        if ($this->userPresenter->viewModel()->isEndTesting()) {
             $this->mailerService->sendMailToMember([
-                'name' => $user->getMember()['name'],
-                'firstName' => $user->getMember()['firstName'],
-                'email' => $user->getContactEmail(),
+                'name' => $this->userPresenter->viewModel()->member['name'],
+                'firstName' => $this->userPresenter->viewModel()->member['firstName'],
+                'email' => $$this->userPresenter->viewModel()->getContactEmail(),
                 'subject' => 'Fin de la période d\'essai',
                 'testing_end' => true,
             ], 'EMAIL_END_TESTING');

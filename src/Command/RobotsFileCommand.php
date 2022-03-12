@@ -53,11 +53,11 @@ class RobotsFileCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $content = "User-agent : *\n"
-                . "\n"
-                . 'Sitemap : ' . $this->requestContext->getScheme() . '://' . $this->requestContext->getHost() . '/sitemap.xml'
+                ."\n"
+                .'Sitemap : '.$this->requestContext->getScheme().'://'.$this->requestContext->getHost().'/sitemap.xml'
                 ;
         // Écrit le résultat dans le fichier
-        file_put_contents($this->publicDir . DIRECTORY_SEPARATOR . 'robots.txt', $content);
+        file_put_contents($this->publicDir.DIRECTORY_SEPARATOR.'robots.txt', $content);
 
         $this->makeSiteMape();
 
@@ -74,6 +74,6 @@ class RobotsFileCommand extends Command
             $rN = $mainNode->addChild('url');
             $rN->addChild('loc', $this->urlGenerator->generate($route, [], UrlGeneratorInterface::ABSOLUTE_URL));
         }
-        $mainNode->asXML($this->publicDir . DIRECTORY_SEPARATOR . 'sitemap.xml');
+        $mainNode->asXML($this->publicDir.DIRECTORY_SEPARATOR.'sitemap.xml');
     }
 }

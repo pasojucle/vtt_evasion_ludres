@@ -49,8 +49,8 @@ class Validate
         if (!empty($constraintClass)) {
             list($namespace, $constraintClass) = explode('-', $constraintClass);
             $constraintClass = ('symfony' === $namespace)
-                ? 'Symfony\Component\Validator\Constraints\\' . $constraintClass
-                : 'App\Validator\\' . $constraintClass;
+                ? 'Symfony\Component\Validator\Constraints\\'.$constraintClass
+                : 'App\Validator\\'.$constraintClass;
             $constraint = new $constraintClass();
             $constraints[] = $constraint;
             if ($constraint instanceof BirthDate) {

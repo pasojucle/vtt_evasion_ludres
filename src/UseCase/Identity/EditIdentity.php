@@ -14,24 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class EditIdentity
 {
-    private UserPresenter $presenter;
-
-    private EntityManagerInterface $entityManager;
-
-    private IdentityService $identityService;
-
-    private UploadService $uploadService;
-
     public function __construct(
-        UserPresenter $presenter,
-        EntityManagerInterface $entityManager,
-        IdentityService $identityService,
-        UploadService $uploadService
+        private UserPresenter $presenter,
+        private EntityManagerInterface $entityManager,
+        private IdentityService $identityService,
+        private UploadService $uploadService
     ) {
-        $this->presenter = $presenter;
-        $this->entityManager = $entityManager;
-        $this->identityService = $identityService;
-        $this->uploadService = $uploadService;
     }
 
     public function execute(Request $request, ?User $user, FormInterface $form): void

@@ -4,51 +4,32 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DataTransferObject\User;
-use App\Entity\User as EntityUser;
+use App\Entity\User;
+use App\ViewModel\UserPresenter;
+use App\ViewModel\UserViewModel;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UserService
 {
-    private ParameterBagInterface $params;
-
-    private SluggerInterface $slugger;
-
-    private LicenceService $licenceService;
-
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(ParameterBagInterface $params, SluggerInterface $slugger, LicenceService $licenceService, EntityManagerInterface $entityManager)
-    {
-        $this->params = $params;
-        $this->slugger = $slugger;
-        $this->licenceService = $licenceService;
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private ParameterBagInterface $params,
+        private SluggerInterface $slugger,
+        private LicenceService $licenceService,
+        private EntityManagerInterface $entityManager,
+        private UserPresenter $userPresenter
+    ) {
     }
 
-    public function convertPaginatorToUsers(Paginator $users): array
+    public function convertToUser(User $user): UserViewModel
     {
-        return $this->convertUsers($users);
+        $this->userPresenter->present($user);
+
+        return $this->userPresenter->viewModel();
     }
 
-    public function convertArrayToUsers(array $users): array
-    {
-        return $this->convertUsers($users);
-    }
-
-    public function convertToUser(EntityUser $user): User
-    {
-        return $usersDto[] = new User(
-            $user,
-            $this->licenceService->getCurrentSeason(),
-            $this->licenceService->getSeasonsStatus()
-        );
-    }
-
-    public function deleteUser(EntityUser $user): void
+    public function deleteUser(User $user): void
     {
         $allData = [
             [

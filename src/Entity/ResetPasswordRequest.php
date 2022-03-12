@@ -19,7 +19,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 {
     use ResetPasswordRequestTrait;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 

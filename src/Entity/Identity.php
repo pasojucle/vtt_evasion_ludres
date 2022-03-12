@@ -37,51 +37,51 @@ class Identity
         self::KINSHIP_OTHER => 'identity.kinship.other',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $name;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $name = null;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $firstName;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $firstName = null;
 
-    #[Column(type: "datetime", nullable: true)]
-    private ?DateTime $birthDate;
+    #[Column(type: 'datetime', nullable: true)]
+    private ?DateTime $birthDate = null;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $birthplace;
-  
-    #[Column(type: "string", length: 10, nullable: true)]
-    private ?string $phone;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $birthplace = null;
 
-    #[Column(type: "string", length: 10, nullable: true)]
-    private ?string $mobile;
+    #[Column(type: 'string', length: 10, nullable: true)]
+    private ?string $phone = null;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $profession;
+    #[Column(type: 'string', length: 10, nullable: true)]
+    private ?string $mobile = null;
 
-    #[Column(type: "integer", nullable: true)]
-    private ?int $kinship;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $profession = null;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: "identities")]
+    #[Column(type: 'integer', nullable: true)]
+    private ?int $kinship = null;
+
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'identities')]
     #[JoinColumn(nullable: false)]
     private User $user;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $email;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $email = null;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $picture;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $picture = null;
 
-    #[ManyToOne(targetEntity: Address::class, inversedBy: "identities", cascade: ["persist"])]
+    #[ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
     private $address;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $birthDepartment;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $birthDepartment = null;
 
-    #[Column(type: "integer", options: ['default' => 1])]
+    #[Column(type: 'integer', options: ['default' => 1])]
     private int $type = self::TYPE_MEMBER;
 
     public function getId(): ?int

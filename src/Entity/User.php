@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\SizeRepository;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +12,6 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
@@ -32,50 +30,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::APPROVAL_GOING_HOME_ALONE => 'approval.going_home_alone',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 25, unique: true)]
-    private string $licenceNumber;
+    #[Column(type: 'string', length: 25, unique: true)]
+    private string $licenceNumber = '';
 
-    #[Column(type: "json")]
+    #[Column(type: 'json')]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[Column(type: "string")]
+    #[Column(type: 'string')]
     private string $password;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $active = true;
 
-    #[OneToMany(targetEntity: Identity::class, mappedBy: "user")]
+    #[OneToMany(targetEntity: Identity::class, mappedBy: 'user')]
     private Collection $identities;
 
-    #[OneToOne(targetEntity: Health::class, cascade: ["persist", "remove"])]
+    #[OneToOne(targetEntity: Health::class, cascade: ['persist', 'remove'])]
     private ?Health $health;
 
-    #[OneToMany(targetEntity: Approval::class, mappedBy: "user")]
+    #[OneToMany(targetEntity: Approval::class, mappedBy: 'user')]
     private $approvals;
 
-    #[OneToMany(targetEntity: Licence::class, mappedBy: "user")]
+    #[OneToMany(targetEntity: Licence::class, mappedBy: 'user')]
     private Collection $licences;
 
-    #[OneToMany(targetEntity: Session::class, mappedBy: "user")]
+    #[OneToMany(targetEntity: Session::class, mappedBy: 'user')]
     private Collection $sessions;
 
-    #[ManyToOne(targetEntity: Level::class, inversedBy: "users")]
+    #[ManyToOne(targetEntity: Level::class, inversedBy: 'users')]
     private ?Level $level;
 
-    #[Column(type: "boolean", options:['default' => false])]
+    #[Column(type: 'boolean', options:['default' => false])]
     private $passwordMustBeChanged = false;
 
-    #[OneToMany(targetEntity: OrderHeader::class, mappedBy: "user")]
+    #[OneToMany(targetEntity: OrderHeader::class, mappedBy: 'user')]
     private Collection $orderHeaders;
 
-    #[OneToMany(targetEntity: VoteUser::class, mappedBy: "user")]
+    #[OneToMany(targetEntity: VoteUser::class, mappedBy: 'user')]
     private Collection $votes;
 
     public function __construct()
@@ -86,6 +84,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->sessions = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
         $this->votes = new ArrayCollection();
+        $this->health = null;
     }
 
     public function getId(): ?int
@@ -421,7 +420,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullName(): string
     {
-        return $this->getFirstIdentity()->getName() . ' ' . $this->getFirstIdentity()->getfirstName();
+        return $this->getFirstIdentity()->getName().' '.$this->getFirstIdentity()->getfirstName();
     }
 
     /**

@@ -76,7 +76,7 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
             $licenceView->lock = $licence->getSeason() !== $services['currentSeason'];
 
-            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'] . ' €';
+            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';
             $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
         }
 

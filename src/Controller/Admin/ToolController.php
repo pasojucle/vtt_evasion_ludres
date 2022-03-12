@@ -258,7 +258,6 @@ class ToolController extends AbstractController
         ]);
     }
 
-
     #[Route('/admin/outil/newsession/{bikeRide}', name: 'admin_newsession', methods: ['GET', 'POST'])]
     public function adminNewSession(
         Request $request,
@@ -280,7 +279,7 @@ class ToolController extends AbstractController
             if ($request->files->get('tool_import')) {
                 $userListFile = $request->files->get('tool_import')['userList'];
                 $handle = fopen($userListFile, 'r');
-                if ($handle !== false) {
+                if (false !== $handle) {
                     while (($row = fgetcsv($handle, 1000, ',')) !== false) {
                         list(
                             $licenceNumber,
@@ -367,7 +366,7 @@ class ToolController extends AbstractController
             if ($request->files->get('tool_import')) {
                 $userListFile = $request->files->get('tool_import')['userList'];
                 $handle = fopen($userListFile, 'r');
-                if ($handle !== false) {
+                if (false !== $handle) {
                     while (($row = fgetcsv($handle, 1000, ',')) !== false) {
                         list(
                             $licenceNumber,
@@ -431,7 +430,7 @@ class ToolController extends AbstractController
             if ($request->files->get('tool_import')) {
                 $userListFile = $request->files->get('tool_import')['userList'];
                 $handle = fopen($userListFile, 'r');
-                if ($handle !== false) {
+                if (false !== $handle) {
                     while (($row = fgetcsv($handle, 1000, ',')) !== false) {
                         list(
                             $licenceNumber,
@@ -501,7 +500,7 @@ class ToolController extends AbstractController
                 'licenceNumber' => $licenceNumber,
             ]);
             if (null !== $user) {
-                $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
+                $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
                 $userService->deleteUser($user);
                 $this->addFlash('success', "Les données de l'utilisateur {$fullName} ont bien été supprimées");
 
@@ -611,7 +610,7 @@ class ToolController extends AbstractController
                         if (preg_match('#^(NUMÉRO)$#', $number)) {
                             continue;
                         }
-                        $departments[$name] = $number . ' - ' . $name;
+                        $departments[$name] = $number.' - '.$name;
                     }
                     fclose($handle);
                     file_put_contents('../data/departments', json_encode($departments));

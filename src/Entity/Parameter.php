@@ -30,24 +30,23 @@ class Parameter
         self::TYPE_ARRAY => 'parameter.type.array',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 100)]
+    #[Column(type: 'string', length: 100)]
     private string $name;
 
-
-    #[Column(type: "string", length: 150)]
+    #[Column(type: 'string', length: 150)]
     private string $label;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $type = self::TYPE_TEXT;
 
-    #[Column(type: "text")]
+    #[Column(type: 'text')]
     private string $value;
 
-    #[ManyToOne(targetEntity: ParameterGroup::class, inversedBy: "parameters")]
+    #[ManyToOne(targetEntity: ParameterGroup::class, inversedBy: 'parameters')]
     #[JoinColumn(nullable: false)]
     private ParameterGroup $parameterGroup;
 

@@ -12,6 +12,7 @@ use App\Service\Product\ProductEditService;
 use App\ViewModel\ProductPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,7 +40,6 @@ class ProductController extends AbstractController
             'lastPage' => $paginator->lastPage($products),
         ]);
     }
-
 
     #[Route('/admin/produit/{product}', name: 'admin_product', methods: ['GET', 'POST'], defaults:['product' => null])]
     public function adminEdit(

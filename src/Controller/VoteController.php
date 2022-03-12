@@ -34,13 +34,13 @@ class VoteController extends AbstractController
         if ($now < $vote->getStartAt()) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le vote sera accessible à partir du ' . $vote->getStartAt()->format('d/m/Y'),
+                'content' => 'Le vote sera accessible à partir du '.$vote->getStartAt()->format('d/m/Y'),
             ];
         }
         if ($vote->getEndAt() < $now) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le vote est clôturé depuis le ' . $vote->getEndAt()->format('d/m/Y'),
+                'content' => 'Le vote est clôturé depuis le '.$vote->getEndAt()->format('d/m/Y'),
             ];
         }
         if (!$message) {
@@ -49,7 +49,7 @@ class VoteController extends AbstractController
         if ($voteUser) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Votre participation au vote a déja été prise en compte le ' . $voteUser->getCreatedAt()->format('d/m/Y') . ' a ' . $voteUser->getCreatedAt()->format('H\hi'),
+                'content' => 'Votre participation au vote a déja été prise en compte le '.$voteUser->getCreatedAt()->format('d/m/Y').' a '.$voteUser->getCreatedAt()->format('H\hi'),
             ];
         }
         if (!$message) {
@@ -97,7 +97,6 @@ class VoteController extends AbstractController
             'message' => $message,
         ]);
     }
-
 
     #[Route('/mes_votes', name: 'user_votes', methods: ['GET'])]
     public function votes(

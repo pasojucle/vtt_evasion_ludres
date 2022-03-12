@@ -13,6 +13,7 @@ use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
 use App\Service\SessionService;
 use App\Service\UserService;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -117,15 +118,16 @@ class SessionController extends AbstractController
     #[Route('/admin/rando/supprime/{session}', name: 'admin_session_delete', methods: ['GET'])]
     public function adminSessionDelete(
         UserService $userService,
-        Session $session
+        Session $session,
+        UserPresenter $userPresenter
     ) {
-        $user = $userService->convertToUser($session->getUser());
+        $userPresenter->present($session->getUser());
         $bikeRide = $session->getCluster()->getBikeRide();
 
         $this->entityManager->remove($session);
         $this->entityManager->flush();
 
-        $this->addFlash('success', $user->getMember()['fullName'] . ' à bien été désincrit');
+        $this->addFlash('success', $userPresenter->viewModel()->member['fullName'].' à bien été désincrit');
 
         return $this->redirectToRoute('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),

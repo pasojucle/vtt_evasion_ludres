@@ -16,19 +16,19 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: VoteUserRepository::class)]
 class VoteUser
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: Vote::class, inversedBy: "voteUsers")]
+    #[ManyToOne(targetEntity: Vote::class, inversedBy: 'voteUsers')]
     #[JoinColumn(nullable: false)]
     private Vote $vote;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: "votes")]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'votes')]
     #[JoinColumn(nullable: false)]
     private User $user;
 
-    #[Column(type: "datetime")]
+    #[Column(type: 'datetime')]
     private DateTime $createdAt;
 
     public function getId(): ?int

@@ -11,8 +11,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method null|Vote find($id, $lockMode = null, $lockVersion = null)
- * @method null|Vote findOneBy(array $criteria, array $orderBy = null)
+ * @method Vote|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Vote|null findOneBy(array $criteria, array $orderBy = null)
  * @method Vote[]    findAll()
  * @method Vote[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -38,7 +38,7 @@ class VoteRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findActive()
+    public function findActive(): array
     {
         $qb = $this->findActiveQuery();
 

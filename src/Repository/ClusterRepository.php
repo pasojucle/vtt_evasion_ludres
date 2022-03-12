@@ -11,8 +11,8 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method null|Cluster find($id, $lockMode = null, $lockVersion = null)
- * @method null|Cluster findOneBy(array $criteria, array $orderBy = null)
+ * @method Cluster|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Cluster|null findOneBy(array $criteria, array $orderBy = null)
  * @method Cluster[]    findAll()
  * @method Cluster[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -37,16 +37,4 @@ class ClusterRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-    /*
-    public function findOneBySomeField($value): ?Cluster
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

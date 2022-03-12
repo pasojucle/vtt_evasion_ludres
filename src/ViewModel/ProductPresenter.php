@@ -8,6 +8,8 @@ use App\Entity\Product;
 
 class ProductPresenter extends AbstractPresenter
 {
+    private $viewModel;
+
     public function present(?Product $product): void
     {
         if (null !== $product) {

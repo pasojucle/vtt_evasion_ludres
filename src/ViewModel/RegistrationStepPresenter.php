@@ -21,6 +21,9 @@ use Symfony\Component\Security\Core\Security;
 
 class RegistrationStepPresenter
 {
+    private $viewModel;
+    private int $season;
+
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
         private Security $security,
@@ -70,7 +73,6 @@ class RegistrationStepPresenter
             'requestStack' => $this->requestStack,
             'entityManager' => $this->entityManager,
             'userRepository' => $this->userRepository,
-            'entityManager' => $this->entityManager,
             'licenceRepository' => $this->licenceRepository,
             'licenceService' => $this->licenceService,
             'levelRepository' => $this->levelRepository,

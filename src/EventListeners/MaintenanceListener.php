@@ -11,22 +11,21 @@ use Twig\Environment;
 
 class MaintenanceListener
 {
-    private Environment $environment;
+    private bool $maintenanceMode;
+    private array $ipAuthorized;
 
-    private ParameterService $parameterService;
-
-    public function __construct($maintenance, Environment $environment, ParameterService $parameterService)
+    public function __construct(array $maintenance, private Environment $environment, private ParameterService $parameterService)
     {
         $this->environment = $environment;
         $this->parameterService = $parameterService;
-        $this->maintenance = $this->parameterService->getParameterByName('MAINTENANCE_MODE');
+        $this->maintenanceMode = $this->parameterService->getParameterByName('MAINTENANCE_MODE');
         $this->ipAuthorized = $maintenance['ipAuthorized'];
     }
 
     public function onKernelRequest(RequestEvent $event)
     {
         // This will get the value of our maintenance parameter
-        $maintenance = $this->maintenance;
+        $maintenance = $this->maintenanceMode;
         $currentIP = $_SERVER['REMOTE_ADDR'];
         // This will detect if we are in dev environment (app_dev.php)
         // $debug = in_array($this->container->get('kernel')->getEnvironment(), ['dev']);

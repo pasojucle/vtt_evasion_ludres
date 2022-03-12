@@ -17,24 +17,24 @@ use Doctrine\ORM\Mapping\OrderBy;
 #[Entity(repositoryClass: MembershipFeeRepository::class)]
 class MembershipFee
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 100)]
+    #[Column(type: 'string', length: 100)]
     private string $title;
 
-    #[Column(type: "boolean", nullable: true)]
+    #[Column(type: 'boolean', nullable: true)]
     private ?bool $additionalFamilyMember;
 
-    #[Column(type: "boolean", nullable: true)]
+    #[Column(type: 'boolean', nullable: true)]
     private ?bool $newMember;
 
-    #[OneToMany(targetEntity: MembershipFeeAmount::class, mappedBy: "membershipFee")]
-    #[OrderBy(["coverage" => "ASC"])]
+    #[OneToMany(targetEntity: MembershipFeeAmount::class, mappedBy: 'membershipFee')]
+    #[OrderBy(['coverage' => 'ASC'])]
     private Collection $membershipFeeAmounts;
 
-    #[Column(type: "text")]
+    #[Column(type: 'text')]
     private string $content;
 
     public function __construct()
@@ -109,18 +109,6 @@ class MembershipFee
     public function setNewMember(bool $newMember): self
     {
         $this->newMember = $newMember;
-
-        return $this;
-    }
-
-    public function getMembershipFee(): ?MembershipFee
-    {
-        return $this->membershipFee;
-    }
-
-    public function setMembershipFee(?MembershipFee $membershipFee): self
-    {
-        $this->membershipFee = $membershipFee;
 
         return $this;
     }

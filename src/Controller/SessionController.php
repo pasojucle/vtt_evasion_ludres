@@ -4,28 +4,30 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\BikeRide;
 use App\Entity\Session;
-use App\Form\SessionAvailabilityType;
-use App\Form\SessionEditType;
-use App\Repository\SessionRepository;
-use App\Service\BikeRideService;
-use App\Service\SessionService;
+use App\Entity\BikeRide;
 use App\Service\UserService;
+use App\Form\SessionEditType;
+use App\Service\SessionService;
+use App\Service\BikeRideService;
+use App\ViewModel\UserPresenter;
+use App\Form\SessionAvailabilityType;
+use App\Repository\SessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
-        private SessionService $sessionService
+        private SessionService $sessionService, 
+        private UserPresenter $userPresenter
     ) {
     }
 
@@ -48,8 +50,8 @@ class SessionController extends AbstractController
         $userSession = $sessionRepository->findByUserAndClusters($user, $clusters);
         $isAlreadyRegistered = ($userSession) ? true : false;
 
-        $domaineUser = $userService->convertToUser($user);
-        $isEndTesting = $domaineUser->isEndTesting();
+        $this->userPresenter->present($user);
+        $isEndTesting = $this->userPresenter->viewModel()->isEndTesting();
 
         list($framers, $members) = $this->sessionService->getSessionsBytype($bikeRide);
 

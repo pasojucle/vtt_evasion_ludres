@@ -16,14 +16,14 @@ use Doctrine\ORM\Mapping\ManyToMany;
 #[Entity(repositoryClass: SizeRepository::class)]
 class Size
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 15)]
+    #[Column(type: 'string', length: 15)]
     private string $name;
 
-    #[ManyToMany(targetEntity: Product::class, mappedBy: "sizes", cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
+    #[ManyToMany(targetEntity: Product::class, mappedBy: 'sizes', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     private Collection $products;
 
     public function __construct()

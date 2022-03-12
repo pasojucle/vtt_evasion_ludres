@@ -17,45 +17,45 @@ use Doctrine\ORM\Mapping\OneToMany;
 #[Entity(repositoryClass: HealthRepository::class)]
 class Health
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 15, nullable: true)]
-    private ?string $socialSecurityNumber;
+    #[Column(type: 'string', length: 15, nullable: true)]
+    private ?string $socialSecurityNumber = null;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $mutualCompany;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $mutualCompany = null;
 
-    #[Column(type: "string", length: 25, nullable: true)]
-    private ?string $mutualNumber;
+    #[Column(type: 'string', length: 25, nullable: true)]
+    private ?string $mutualNumber = null;
 
-    #[Column(type: "string", length: 5, nullable: true)]
-    private ?string $bloodGroup;
+    #[Column(type: 'string', length: 5, nullable: true)]
+    private ?string $bloodGroup = null;
 
-    #[Column(type: "datetime", nullable: true)]
-    private ?DateTime $tetanusBooster;
+    #[Column(type: 'datetime', nullable: true)]
+    private ?DateTime $tetanusBooster = null;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $doctorName;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $doctorName = null;
 
-    #[Column(type: "string", length: 255, nullable: true)]
-    private ?string $doctorAddress;
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private ?string $doctorAddress = null;
 
-    #[Column(type: "string", length: 100, nullable: true)]
-    private ?string $doctorTown;
+    #[Column(type: 'string', length: 100, nullable: true)]
+    private ?string $doctorTown = null;
 
-    #[Column(type: "string", length: 10, nullable: true)]
-    private ?string $doctorPhone;
+    #[Column(type: 'string', length: 10, nullable: true)]
+    private ?string $doctorPhone = null;
 
-    #[OneToMany(targetEntity: HealthQuestion::class, mappedBy: "health")]
+    #[OneToMany(targetEntity: HealthQuestion::class, mappedBy: 'health')]
     private Collection $healthQuestions;
 
-    #[OneToMany(targetEntity: Disease::class, mappedBy: "health")]
+    #[OneToMany(targetEntity: Disease::class, mappedBy: 'health')]
     private Collection $diseases;
 
-    #[Column(type: "datetime", nullable: true)]
-    private DateTime $medicalCertificateDate;
+    #[Column(type: 'datetime', nullable: true)]
+    private ?DateTime $medicalCertificateDate = null;
 
     public function __construct()
     {

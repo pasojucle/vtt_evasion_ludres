@@ -8,12 +8,11 @@ use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
-use App\Repository\LevelRepository;
-use App\Repository\ParameterRepository;
 use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
 use App\Service\FilenameService;
 use App\Service\UserService;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -29,7 +28,8 @@ class BikeRideController extends AbstractController
         private BikeRideRepository $bikeRideRepository,
         private RequestStack $requestStack,
         private EntityManagerInterface $entityManager,
-        private BikeRideService $bikeRideService
+        private BikeRideService $bikeRideService, 
+        private UserPresenter $userPresenter
     ) {
     }
 
@@ -55,7 +55,7 @@ class BikeRideController extends AbstractController
 
         return $this->render('bike_ride/admin/list.html.twig', $response['parameters']);
     }
-    
+
     #[Route('/sortie/{bikeRide}', name: 'admin_bike_ride_edit', methods: ['GET', 'POST'], defaults:['bikeRide' => null])]
     public function adminEdit(
         Request $request,
@@ -95,7 +95,7 @@ class BikeRideController extends AbstractController
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }
-   
+
     #[Route('/sortie/groupe/{bikeRide}', name: 'admin_bike_ride_cluster_show', methods: ['GET'])]
     public function adminClusterShow(
         BikeRideService $bikeRideService,
@@ -111,7 +111,7 @@ class BikeRideController extends AbstractController
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }
-    
+
     #[Route('/sortie/export/{bikeRide}', name: 'admin_bike_ride_export', methods: ['GET', 'POST'], defaults:[])]
     public function adminBikeRideExport(
         SessionRepository $sessionRepository,
@@ -122,23 +122,24 @@ class BikeRideController extends AbstractController
         $sessions = $sessionRepository->findByBikeRide($bikeRide);
         $separator = ',';
         $fileContent = [];
-        $fileContent[] = $bikeRide->getTitle() . ' - ' . $bikeRide->getStartAt()->format('d/m/Y');
+        $fileContent[] = $bikeRide->getTitle().' - '.$bikeRide->getStartAt()->format('d/m/Y');
         $fileContent[] = '';
         $row = ['n° de Licence', 'Nom', 'Prénom', 'Présent', 'Niveau'];
         $fileContent[] = implode($separator, $row);
         if (!empty($sessions)) {
             foreach ($sessions as $session) {
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
-                    $user = $userService->convertToUser($session->getUser());
-                    $member = $user->getMember();
+                    $this->userPresenter->present($session->getUser());
+
+                    $member = $this->userPresenter->viewModel()->getMember();
                     $present = ($session->isPresent()) ? 'oui' : 'non';
-                    $row = [$user->getLicenceNumber(), $member['name'], $member['firstName'], $present, $user->getLevel()];
+                    $row = [$this->userPresenter->viewModel()->getLicenceNumber(), $member['name'], $member['firstName'], $present, $this->userPresenter->viewModel()->getLevel()];
                     $fileContent[] = implode($separator, $row);
                 }
             }
         }
-        $filename = $bikeRide->getTitle() . '_' . $bikeRide->getStartAt()->format('Y_m_d');
-        $filename = $filenameService->clean($filename) . '.csv';
+        $filename = $bikeRide->getTitle().'_'.$bikeRide->getStartAt()->format('Y_m_d');
+        $filename = $filenameService->clean($filename).'.csv';
         $response = new Response(implode(PHP_EOL, $fileContent));
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

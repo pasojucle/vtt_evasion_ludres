@@ -7,7 +7,6 @@ namespace App\Entity;
 use App\Repository\LogErrorRepository;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -17,31 +16,31 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: LogErrorRepository::class)]
 class LogError
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 255)]
+    #[Column(type: 'string', length: 255)]
     private string $url;
 
     private ?string $message = null;
 
-    #[Column(type: "string", length: 255)]
+    #[Column(type: 'string', length: 255)]
     private string $userAgent;
 
-    #[Column(type: "string", length: 255, nullable: true)]
+    #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $fileName;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $line;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $statusCode;
 
-    #[Column(type: "string", length: 255, nullable: true)]
+    #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $route;
 
-    #[Column(type: "text")]
+    #[Column(type: 'text')]
     private string $errorMessage;
 
     private $persist = true;
@@ -49,7 +48,7 @@ class LogError
     #[ManyToOne(targetEntity: User::class)]
     private ?User $user;
 
-    #[Column(type: "datetime")]
+    #[Column(type: 'datetime')]
     private DateTime $createdAt;
 
     public function getId(): ?int

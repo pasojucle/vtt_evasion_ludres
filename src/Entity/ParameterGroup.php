@@ -16,20 +16,20 @@ use Doctrine\ORM\Mapping\OneToMany;
 #[Entity(repositoryClass: ParameterGroupRepository::class)]
 class ParameterGroup
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 50)]
+    #[Column(type: 'string', length: 50)]
     private string $name;
 
-    #[Column(type: "string", length: 255)]
+    #[Column(type: 'string', length: 255)]
     private string $label;
 
-    #[Column(type: "string", length: 25)]
+    #[Column(type: 'string', length: 25)]
     private string $role;
 
-    #[OneToMany(targetEntity: Parameter::class, mappedBy: "parameterGroup")]
+    #[OneToMany(targetEntity: Parameter::class, mappedBy: 'parameterGroup')]
     private $parameters;
 
     public function __construct()

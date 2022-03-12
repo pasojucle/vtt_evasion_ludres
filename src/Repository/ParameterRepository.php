@@ -11,8 +11,8 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method null|Parameter find($id, $lockMode = null, $lockVersion = null)
- * @method null|Parameter findOneBy(array $criteria, array $orderBy = null)
+ * @method Parameter|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Parameter|null findOneBy(array $criteria, array $orderBy = null)
  * @method Parameter[]    findAll()
  * @method Parameter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

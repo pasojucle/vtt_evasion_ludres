@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 class UsersPresenter extends AbstractPresenter
 {
-    public function present(array $users): void
+    private $viewModel;
+
+    public function present(array|Paginator $users): void
     {
         if (!empty($users)) {
             $this->viewModel = UsersViewModel::fromUsers($users, $this->services);

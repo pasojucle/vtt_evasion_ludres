@@ -8,6 +8,8 @@ use App\Entity\OrderHeader;
 
 class OrderPresenter extends AbstractPresenter
 {
+    private $viewModel;
+
     public function present(?OrderHeader $orderHeader): void
     {
         if (null !== $orderHeader) {

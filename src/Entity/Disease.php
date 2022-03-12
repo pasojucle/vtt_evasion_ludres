@@ -66,26 +66,26 @@ class Disease
 
     private const LABEL_MEDICINES = 12;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $type;
 
-    #[Column(type: "string", length: 100, nullable: true)]
+    #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $title;
 
-    #[Column(type: "text", nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     private ?string $curentTreatment;
 
-    #[Column(type: "text", nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     private ?string $emergencyTreatment;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $label;
 
-    #[ManyToOne(targetEntity: Health::class, inversedBy: "diseases")]
+    #[ManyToOne(targetEntity: Health::class, inversedBy: 'diseases')]
     #[JoinColumn(nullable: false)]
     private Health $health;
 

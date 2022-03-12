@@ -42,6 +42,7 @@ class BikeRideType extends AbstractType
                 'required' => false,
             ])
             ->add('startAt', DateTimeType::class, [
+                'input' => 'datetime_immutable',
                 'label' => 'Date de départ',
                 'widget' => 'single_text',
                 'html5' => false,
@@ -61,6 +62,7 @@ class BikeRideType extends AbstractType
 
             $form
                 ->add('endAt', DateTimeType::class, [
+                    'input' => 'datetime_immutable',
                     'label' => 'Date de fin (optionnel)',
                     'widget' => 'single_text',
                     'html5' => false,

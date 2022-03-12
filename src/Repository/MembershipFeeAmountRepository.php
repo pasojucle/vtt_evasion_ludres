@@ -11,8 +11,8 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method null|MembershipFeeAmount find($id, $lockMode = null, $lockVersion = null)
- * @method null|MembershipFeeAmount findOneBy(array $criteria, array $orderBy = null)
+ * @method MembershipFeeAmount|null find($id, $lockMode = null, $lockVersion = null)
+ * @method MembershipFeeAmount|null findOneBy(array $criteria, array $orderBy = null)
  * @method MembershipFeeAmount[]    findAll()
  * @method MembershipFeeAmount[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

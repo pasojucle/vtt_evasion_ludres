@@ -8,6 +8,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class LogErrorsPresenter extends AbstractPresenter
 {
+    private $viewModel;
+
     public function present(Paginator $logErrors): void
     {
         if (!empty($logErrors)) {

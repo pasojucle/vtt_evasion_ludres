@@ -11,8 +11,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method null|Link find($id, $lockMode = null, $lockVersion = null)
- * @method null|Link findOneBy(array $criteria, array $orderBy = null)
+ * @method Link|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Link|null findOneBy(array $criteria, array $orderBy = null)
  * @method Link[]    findAll()
  * @method Link[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

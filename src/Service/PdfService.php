@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DataTransferObject\User as UserDto;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\UserType;
+use App\ViewModel\UserPresenter;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use setasign\Fpdi\Fpdi;
@@ -15,24 +15,12 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class PdfService
 {
-    private FilenameService $filenameService;
-
-    private LicenceService $licenceService;
-
-    private KernelInterface $kernel;
-
-    private UserService $userService;
-
     public function __construct(
-        FilenameService $filenameService,
-        LicenceService $licenceService,
-        KernelInterface $kernel,
-        UserService $userService
+        private FilenameService $filenameService,
+        private LicenceService $licenceService,
+        private KernelInterface $kernel,
+        private UserPresenter $userPresenter
     ) {
-        $this->filenameService = $filenameService;
-        $this->licenceService = $licenceService;
-        $this->kernel = $kernel;
-        $this->userService = $userService;
     }
 
     public function makePdf(string $html, string $filename, string $directory = '../data/licences', string $paper = 'A4')
@@ -40,7 +28,7 @@ class PdfService
         $options = new Options();
         $options->setIsHtml5ParserEnabled(true);
         $dompdf = new Dompdf($options);
-        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir() . '/public');
+        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir().'/public');
         $dompdf->loadHtml($html);
         $dompdf->setPaper($paper, 'portrait');
         $dompdf->render();
@@ -52,7 +40,7 @@ class PdfService
         if (!is_dir($directory)) {
             mkdir($directory);
         }
-        $pdfFilepath = $directory . DIRECTORY_SEPARATOR . $this->filenameService->clean($filename) . '.pdf';
+        $pdfFilepath = $directory.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
 
         file_put_contents($pdfFilepath, $output);
 
@@ -61,8 +49,7 @@ class PdfService
 
     public function addData(Fpdi &$pdf, User $user)
     {
-        /** @var UserDto $userDto */
-        $userDto = $this->userService->convertToUser($user);
+        $this->userPresenter->present($user);
 
         $coverage = [
             Licence::COVERAGE_MINI_GEAR => 50.5,
@@ -72,22 +59,22 @@ class PdfService
 
         $fields = [
             [
-                'value' => $userDto->getFullName(),
+                'value' => $this->userPresenter->viewModel()->getFullName(),
                 'x' => 35,
                 'y' => 208,
             ],
             [
-                'value' => $userDto->getBirthDate(),
+                'value' => $this->userPresenter->viewModel()->getBirthDate(),
                 'x' => 165,
                 'y' => 208,
             ],
             [
-                'value' => $userDto->getFullNameChildren(),
+                'value' => $this->userPresenter->viewModel()->getFullNameChildren(),
                 'x' => 60,
                 'y' => 213,
             ],
             [
-                'value' => $userDto->getBirthDateChildren(),
+                'value' => $this->userPresenter->viewModel()->getBirthDateChildren(),
                 'x' => 165,
                 'y' => 213,
             ],
@@ -98,7 +85,7 @@ class PdfService
             ],
             [
                 'value' => 'X',
-                'x' => $coverage[$userDto->getCoverage($this->licenceService->getCurrentSeason())],
+                'x' => $coverage[$this->userPresenter->viewModel()->getCoverage($this->licenceService->getCurrentSeason())],
                 'y' => 247.5,
             ],
             [
@@ -112,7 +99,7 @@ class PdfService
                 'y' => 262,
             ],
             [
-                'value' => $userDto->getSeasonLicence()['createdAt'],
+                'value' => $this->userPresenter->viewModel()->seasonLicence['createdAt'],
                 'x' => 75,
                 'y' => 262,
             ],

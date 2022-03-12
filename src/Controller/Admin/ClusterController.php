@@ -44,7 +44,7 @@ class ClusterController extends AbstractController
     ): Response {
         $presenter->present($cluster);
         $files = [];
-        $dirName = '../data/' . $filenameService->clean($presenter->viewModel()->title);
+        $dirName = '../data/'.$filenameService->clean($presenter->viewModel()->title);
         if (!is_dir($dirName)) {
             mkdir($dirName);
         }
@@ -54,7 +54,7 @@ class ClusterController extends AbstractController
                     $render = $this->renderView('cluster/export.html.twig', [
                         'user' => $session['user'],
                     ]);
-                    $tmp = $session['user']->id . '_tmp';
+                    $tmp = $session['user']->id.'_tmp';
                     $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName, 'B6');
                     $files[] = [
                         'filename' => $pdfFilepath,
@@ -63,9 +63,9 @@ class ClusterController extends AbstractController
             }
         }
 
-        $fileName = $cluster->getTitle() . '_' . $cluster->getBikeRide()->getStartAt()->format('Ymd');
-        $fileName = $filenameService->clean($fileName) . '.pdf';
-        $pathName = $pdfService->joinPdf($files, null, '../data/' . $filenameService->clean($cluster->getTitle()) . '.pdf');
+        $fileName = $cluster->getTitle().'_'.$cluster->getBikeRide()->getStartAt()->format('Ymd');
+        $fileName = $filenameService->clean($fileName).'.pdf';
+        $pathName = $pdfService->joinPdf($files, null, '../data/'.$filenameService->clean($cluster->getTitle()).'.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(

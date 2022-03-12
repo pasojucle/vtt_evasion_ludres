@@ -7,9 +7,9 @@ namespace App\Entity;
 use App\Repository\BikeRideRepository;
 use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -56,35 +56,35 @@ class BikeRide
         self::TYPE_HOLIDAYS => 'bike_ride.type.holidays',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 150)]
+    #[Column(type: 'string', length: 150)]
     private string $title;
 
-    #[Column(type: "text", nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     private ?string $content;
 
-    #[Column(type: "datetime")]
-    private DateTime $startAt;
+    #[Column(type: 'datetime')]
+    private DateTimeImmutable $startAt;
 
-    #[Column(type: "datetime", nullable: true)]
-    private ?DateTime $endAt;
+    #[Column(type: 'datetime', nullable: true)]
+    private ?DateTimeImmutable $endAt;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $displayDuration = 8;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private $minAge;
 
-    #[OneToMany(targetEntity: Cluster::class, mappedBy: "bikeRide")]
+    #[OneToMany(targetEntity: Cluster::class, mappedBy: 'bikeRide')]
     private Collection $clusters;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $type = self::TYPE_CASUAL;
 
-    #[Column(type: "integer", options: ["default" => 1])]
+    #[Column(type: 'integer', options: ['default' => 1])]
     private $closingDuration = 1;
 
     public function __construct()
@@ -121,24 +121,24 @@ class BikeRide
         return $this;
     }
 
-    public function getStartAt(): ?\DateTimeInterface
+    public function getStartAt(): ?DateTimeImmutable
     {
         return $this->startAt;
     }
 
-    public function setStartAt(?\DateTimeInterface $startAt): self
+    public function setStartAt(?DateTimeImmutable $startAt): self
     {
         $this->startAt = $startAt;
 
         return $this;
     }
 
-    public function getEndAt(): ?\DateTimeInterface
+    public function getEndAt(): ?DateTimeImmutable
     {
         return $this->endAt;
     }
 
-    public function setEndAt(?\DateTimeInterface $endAt): self
+    public function setEndAt(?DateTimeImmutable $endAt): self
     {
         $this->endAt = $endAt;
 
@@ -206,10 +206,10 @@ class BikeRide
         }
 
         $today = new DateTime();
-        $intervalDisplay = new DateInterval('P' . $this->displayDuration . 'D');
-        $intervalClosing = new DateInterval('P' . $this->closingDuration . 'D');
-        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 00:00:00');
-        $closingAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 23:59:59');
+        $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
+        $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
+        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
+        $closingAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
 
         return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
     }
@@ -221,7 +221,7 @@ class BikeRide
         }
 
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 00:00:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
 
         $level = (null !== $user) ? $user->getLevel() : null;
         $type = (null !== $level) ? $level->getType() : null;
@@ -232,7 +232,7 @@ class BikeRide
     public function isOver(): bool
     {
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 00:00:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
 
         return $this->startAt < $today;
     }
@@ -240,10 +240,10 @@ class BikeRide
     public function isNext(): bool
     {
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 00:00:00');
-        $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 23:59:59');
-        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d') . ' 00:00:00');
-        $interval = new DateInterval('P' . $this->displayDuration . 'D');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
+        $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
+        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
+        $interval = new DateInterval('P'.$this->displayDuration.'D');
 
         return $displayAt->sub($interval) <= $today && $today <= $startAt;
     }

@@ -8,6 +8,8 @@ use App\Entity\Address;
 
 class AddressPresenter extends AbstractPresenter
 {
+    private $viewModel;
+
     public function present(?Address $address): void
     {
         if (null !== $address) {

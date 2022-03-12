@@ -33,7 +33,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
     /**
      * Transforms an object (entity) to a string (number).
      *
-     * @param null|object $entity
+     * @param object|null $entity
      *
      * @return string
      */
@@ -53,7 +53,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException if object (entity) is not found
      *
-     * @return null|object
+     * @return object|null
      */
     public function reverseTransform($identifier)
     {

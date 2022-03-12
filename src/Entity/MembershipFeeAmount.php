@@ -15,17 +15,17 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: MembershipFeeAmountRepository::class)]
 class MembershipFeeAmount
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "float")]
+    #[Column(type: 'float')]
     private float $amount;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $coverage;
 
-    #[ManyToOne(targetEntity: MembershipFee::class, inversedBy: "membershipFeeAmounts")]
+    #[ManyToOne(targetEntity: MembershipFee::class, inversedBy: 'membershipFeeAmounts')]
     #[JoinColumn(nullable: false)]
     private MembershipFee $membershipFee;
 

@@ -68,7 +68,7 @@ class SessionEditType extends AbstractType
                 if (null !== $submitLabel) {
                     $form
                         ->add('submit', SubmitType::class, [
-                            'label' => '<i class="fas fa-chevron-circle-right"></i> ' . $submitLabel,
+                            'label' => '<i class="fas fa-chevron-circle-right"></i> '.$submitLabel,
                             'label_html' => true,
                             'attr' => [
                                 'class' => 'btn btn-primary float-right',

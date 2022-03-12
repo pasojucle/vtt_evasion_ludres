@@ -8,6 +8,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class OrdersPresenter extends AbstractPresenter
 {
+    private $viewModel;
+
     public function present(Paginator $ordrers): void
     {
         if (!empty($ordrers)) {

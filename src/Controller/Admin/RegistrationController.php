@@ -7,31 +7,20 @@ namespace App\Controller\Admin;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
-use App\Entity\User as UserEntity;
 use App\Form\RegistrationStepType;
-use App\Form\UserType;
-use App\Repository\ContentRepository;
-use App\Repository\MembershipFeeRepository;
 use App\Repository\RegistrationStepGroupRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\OrderByService;
-use App\Service\ParameterService;
-use App\Service\PdfService;
 use App\Service\RegistrationService;
 use App\Service\UploadService;
 use App\Service\UserService;
-use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
 use App\UseCase\RegistrationStep\GetReplaces;
-use App\ViewModel\RegistrationStepPresenter;
-use App\ViewModel\UserPresenter;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,7 +43,7 @@ class RegistrationController extends AbstractController
         private GetProgress $getProgress
     ) {
     }
-   
+
     #[Route('/admin/param_inscription', name: 'admin_registration_steps', methods: ['GET'])]
     public function adminRegistrationSteps(
         Request $request

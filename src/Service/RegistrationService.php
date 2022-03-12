@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DataTransferObject\User as UserDto;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
@@ -14,6 +13,7 @@ use App\Repository\LicenceRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -26,6 +26,7 @@ class RegistrationService
     private ?User $user;
 
     private int $season;
+    private ?Licence $seasonLicence;
 
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
@@ -38,7 +39,7 @@ class RegistrationService
         private LicenceRepository $licenceRepository,
         private LicenceService $licenceService,
         private LevelRepository $levelRepository,
-        private UserService $userService,
+        private UserPresenter $userPresenter,
         private SessionRepository $sessionRepository
     ) {
         $this->season = $this->licenceService->getCurrentSeason();
@@ -50,7 +51,7 @@ class RegistrationService
             return null;
         }
 
-        return 'registration/form/' . str_replace('form.', '', UserType::FORMS[$form]) . '.html.twig';
+        return 'registration/form/'.str_replace('form.', '', UserType::FORMS[$form]).'.html.twig';
     }
 
     public function getSeason(): int
@@ -60,8 +61,8 @@ class RegistrationService
 
     public function getReplaces(User $user)
     {
-        /** @var UserDto $userDto */
-        $user = $this->userService->convertToUser($user);
+        $this->userPresenter->present($user);
+        $user = $this->userPresenter->viewModel();
 
         return [
             '{{ prenom_nom }}' => $user->getFullName(),
@@ -102,8 +103,7 @@ class RegistrationService
                 'current' => $registrationStep,
                 'is_kinship' => $isKinship,
                 'category' => $category,
-                'season_licence' => $this->
-seasonLicence,
+                'season_licence' => $this->seasonLicence,
             ]);
         }
 

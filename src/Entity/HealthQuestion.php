@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\HealthQuestionRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -16,19 +15,19 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: HealthQuestionRepository::class)]
 class HealthQuestion
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $field;
 
-    #[Column(type: "boolean", nullable: true)]
+    #[Column(type: 'boolean', nullable: true)]
     private ?bool $value;
 
-    #[ManyToOne(targetEntity: Health::class, inversedBy: "healthQuestions")]
+    #[ManyToOne(targetEntity: Health::class, inversedBy: 'healthQuestions')]
     #[JoinColumn(nullable: false)]
-    private Collection $health;
+    private Health $health;
 
     public function getId(): ?int
     {
@@ -59,12 +58,12 @@ class HealthQuestion
         return $this;
     }
 
-    public function getHealth(): ?Health
+    public function getHealth(): Health
     {
         return $this->health;
     }
 
-    public function setHealth(?Health $health): self
+    public function setHealth(Health $health): self
     {
         $this->health = $health;
 

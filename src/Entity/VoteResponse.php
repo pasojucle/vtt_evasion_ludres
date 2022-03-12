@@ -27,18 +27,18 @@ class VoteResponse
         self::VALUE_NO_OPINION => 'vote.response.no_opinion',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: VoteIssue::class, inversedBy: "voteResponses")]
+    #[ManyToOne(targetEntity: VoteIssue::class, inversedBy: 'voteResponses')]
     #[JoinColumn(nullable: false)]
     private $voteIssue;
 
-    #[Column(type: "text", nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     private ?string $value;
 
-    #[Column(type: "string", length: 23)]
+    #[Column(type: 'string', length: 23)]
     private string $uuid;
 
     public function getId(): ?int

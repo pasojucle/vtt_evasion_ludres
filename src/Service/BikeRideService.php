@@ -96,10 +96,10 @@ class BikeRideService
                 $endAt = null;
         }
         if (null !== $startAt) {
-            $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $startAt->format('Y-m-d') . ' 00:00:00');
+            $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $startAt->format('Y-m-d').' 00:00:00');
         }
         if (null !== $endAt) {
-            $endAt = DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d') . ' 23:59:59');
+            $endAt = DateTime::createFromFormat('Y-m-d H:i:s', $endAt->format('Y-m-d').' 23:59:59');
         }
 
         return [

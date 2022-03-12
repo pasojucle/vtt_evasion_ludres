@@ -32,7 +32,6 @@ class OrderController extends AbstractController
     ) {
     }
 
-
     #[Route('/mon-panier', name: 'order_edit', methods: ['GET', 'POST'])]
     public function orderEdit(
         OrderLinesSetService $orderLinesSetService,

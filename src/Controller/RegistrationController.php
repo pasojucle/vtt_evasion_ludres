@@ -51,7 +51,7 @@ class RegistrationController extends AbstractController
         private GetProgress $getProgress
     ) {
     }
-   
+
     #[Route('/inscription/info', name: 'registration_detail', methods: ['GET'])]
     public function registrationDetail(
         ContentRepository $contentRepository
@@ -173,7 +173,7 @@ class RegistrationController extends AbstractController
                 $registrationStepPresenter->present($step, $presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
                 $step = $registrationStepPresenter->viewModel();
                 if (null !== $step->filename) {
-                    $filename = './files/' . $step->filename;
+                    $filename = './files/'.$step->filename;
                     $files[] = [
                         'filename' => $filename,
                         'form' => $step->form,

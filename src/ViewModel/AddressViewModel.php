@@ -8,8 +8,6 @@ use App\Entity\Address;
 
 class AddressViewModel extends AbstractViewModel
 {
-    public ?int $id;
-
     public ?string $street;
 
     public ?string $postalCode;
@@ -22,7 +20,6 @@ class AddressViewModel extends AbstractViewModel
     {
         $addressViewModel = new self();
         $addressViewModel->entity = $address;
-        $addressViewModel->id = $address->getId();
         $addressViewModel->street = $address->getStreet();
         $addressViewModel->postalCode = $address->getPostalCode();
         $addressViewModel->town = $address->getTown();
@@ -32,6 +29,6 @@ class AddressViewModel extends AbstractViewModel
 
     public function toString(): string
     {
-        return $this->street . ', ' . $this->postalCode . ' ' . $this->town;
+        return $this->street.', '.$this->postalCode.' '.$this->town;
     }
 }

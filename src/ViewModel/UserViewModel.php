@@ -12,8 +12,6 @@ use DateTime;
 
 class UserViewModel extends AbstractViewModel
 {
-    public ?int $id;
-
     public ?User $entity;
 
     public ?array $lines;
@@ -41,7 +39,6 @@ class UserViewModel extends AbstractViewModel
     public static function fromUser(User $user, array $services)
     {
         $userView = new self();
-        $userView->id = $user->getId();
         $userView->entity = $user;
         $userView->isNewMember = $userView->isNewMember();
         $userView->services = $services;
@@ -93,8 +90,8 @@ class UserViewModel extends AbstractViewModel
     {
         if (null !== $this->member) {
             return ($this->kinship)
-                ? $this->kinship->name . ' ' . $this->kinship->firstName
-                : $this->member->name . ' ' . $this->member->firstName;
+                ? $this->kinship->name.' '.$this->kinship->firstName
+                : $this->member->name.' '.$this->member->firstName;
         }
 
         return '';
@@ -103,7 +100,7 @@ class UserViewModel extends AbstractViewModel
     public function getFullNameChildren()
     {
         if ($this->kinship && $this->member) {
-            return $this->member->name . ' ' . $this->member->firstName;
+            return $this->member->name.' '.$this->member->firstName;
         }
 
         return '';
@@ -218,11 +215,11 @@ class UserViewModel extends AbstractViewModel
         $bikeRides = [];
         $today = new DateTime();
 
-        $sessions = $this->entity->getSessions();
-        if (!$sessions->isEmpty()) {
+        $sessions = $this->entity?->getSessions();
+        if (!$sessions?->isEmpty()) {
             foreach ($sessions as $session) {
                 $bikeRide = $session->getCluster()->getBikeRide();
-                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $bikeRide->getStartAt()->format('Y-m-d') . ' 14:00:00');
+                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $bikeRide->getStartAt()->format('Y-m-d').' 14:00:00');
                 if ($today <= $startAt) {
                     $bikeRides[] = [
                         'bikeRide' => $session->getCluster()->getBikeRide(),

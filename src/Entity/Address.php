@@ -16,20 +16,20 @@ use Doctrine\ORM\Mapping\OneToMany;
 #[Entity(repositoryClass: AddressRepository::class)]
 class Address
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 255)]
-    private string $street;
+    #[Column(type: 'string', length: 255)]
+    private string $street = '';
 
-    #[Column(type: "string", length: 5)]
-    private string $postalCode;
+    #[Column(type: 'string', length: 5)]
+    private string $postalCode = '';
 
-    #[Column(type: "string", length: 100)]
-    private string $town;
+    #[Column(type: 'string', length: 100)]
+    private string $town = '';
 
-    #[OneToMany(targetEntity: Identity::class, mappedBy: "address")]
+    #[OneToMany(targetEntity: Identity::class, mappedBy: 'address')]
     private Collection $identities;
 
     public function __construct()

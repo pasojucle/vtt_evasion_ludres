@@ -14,17 +14,17 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: ApprovalRepository::class)]
 class Approval
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $type;
 
-    #[Column(type: "boolean", nullable: true)]
+    #[Column(type: 'boolean', nullable: true)]
     private ?bool $value;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: "approvals")]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'approvals')]
     private User $user;
 
     public function getId(): ?int

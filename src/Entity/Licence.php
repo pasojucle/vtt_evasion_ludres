@@ -75,44 +75,44 @@ class Licence
         self::STATUS_VALID => 'licence.status.valid',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $type;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $coverage;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $magazineSubscription = false;
 
-    #[Column(type: "float", nullable: true)]
+    #[Column(type: 'float', nullable: true)]
     private ?float $subscriptionAmount;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $additionalFamilyMember = false;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $medicalCertificateRequired = false;
 
-    #[Column(type: "integer")]
-    private int $category;
+    #[Column(type: 'integer')]
+    private int $category = self::CATEGORY_ADULT;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: "licences")]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'licences')]
     private User $user;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $season;
 
-    #[Column(type: "datetime", nullable: true)]
-    private ?DateTime $createdAt;
+    #[Column(type: 'datetime', nullable: true)]
+    private ?DateTime $createdAt = null;
 
-    #[Column(type: "boolean", options:['default' => true])]
+    #[Column(type: 'boolean', options:['default' => true])]
     private ?bool $final = false;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $status = self::STATUS_IN_PROCESSING;
 
     public function getId(): ?int

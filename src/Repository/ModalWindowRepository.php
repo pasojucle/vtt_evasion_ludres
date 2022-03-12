@@ -2,11 +2,11 @@
 
 namespace App\Repository;
 
-use DateTime;
 use App\Entity\ModalWindow;
+use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method ModalWindow|null find($id, $lockMode = null, $lockVersion = null)
@@ -24,7 +24,6 @@ class ModalWindowRepository extends ServiceEntityRepository
     /**
      * @return FlashInfo[] Returns an array of FlashInfo objects
      */
-
     public function findAllDesc(): array
     {
         return $this->createQueryBuilder('m')
@@ -37,7 +36,6 @@ class ModalWindowRepository extends ServiceEntityRepository
     /**
      * @return FlashInfo[] Returns an array of FlashInfo objects
      */
-
     public function findLastByAge(?int $age): array
     {
         $today = new DateTime();
@@ -47,22 +45,20 @@ class ModalWindowRepository extends ServiceEntityRepository
                 (new Expr())->gte('m.endAt', ':today'),
             )
             ->setParameter('today', $today->format('Y-m-d H:i:s'));
-            if (null !== $age) {
-                $qb->andWhere(
-                    (new Expr())->lte('m.minAge', ':age'),
-                    (new Expr())->gte('m.maxAge', ':age')
-                )
+        if (null !== $age) {
+            $qb->andWhere(
+                (new Expr())->lte('m.minAge', ':age'),
+                (new Expr())->gte('m.maxAge', ':age')
+            )
                 ->setParameter('age', $age)
                 ;
-            }
+        }
 
-            return $qb
+        return $qb
                 ->orderBy('m.id', 'DESC')
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getResult()
         ;
     }
-
-
 }

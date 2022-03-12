@@ -41,15 +41,15 @@ class ProductViewModel extends AbstractViewModel
         $productView->id = $product->getId();
         $productView->name = $product->getName();
         $productView->content = $product->getContent();
-        $productView->price = number_format($product->getPrice(), 2) . ' €';
+        $productView->price = number_format($product->getPrice(), 2).' €';
         $productView->priceClass = 'price';
         $productView->ref = $product->getRef();
         $productView->filename = $product->getFilename();
         $productView->productSizes = $product->getSizes();
-        $productView->pathName = DIRECTORY_SEPARATOR . $services['productDirectory'] . DIRECTORY_SEPARATOR . $productView->filename;
-        $productView->pathNameForPdf = $services['productDirectory'] . DIRECTORY_SEPARATOR . $productView->filename;
+        $productView->pathName = DIRECTORY_SEPARATOR.$services['productDirectory'].DIRECTORY_SEPARATOR.$productView->filename;
+        $productView->pathNameForPdf = $services['productDirectory'].DIRECTORY_SEPARATOR.$productView->filename;
         $productView->sellingPrice = $product->getPrice();
-        $productView->price = number_format($product->getPrice(), 2) . ' €';
+        $productView->price = number_format($product->getPrice(), 2).' €';
         $productView->discountPrice = null;
         $productView->discountTitle = null;
 
@@ -60,7 +60,7 @@ class ProductViewModel extends AbstractViewModel
         if (null !== $user) {
             if (!empty($user->member) && $product->getCategory() === $user->lastLicence->category) {
                 $productView->sellingPrice = $product->getDiscountPrice();
-                $productView->discountPrice = number_format($product->getDiscountPrice(), 2) . ' €';
+                $productView->discountPrice = number_format($product->getDiscountPrice(), 2).' €';
                 $productView->priceClass = 'throughed-price';
                 $productView->discountTitle = $product->getDiscountTitle();
             }

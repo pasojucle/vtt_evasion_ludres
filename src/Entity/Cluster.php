@@ -23,30 +23,30 @@ class Cluster
 
     public const CLUSTER_FRAME = 'Encadrement';
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 100)]
+    #[Column(type: 'string', length: 100)]
     private string $title;
 
-    #[OneToMany(targetEntity: Session::class, mappedBy: "cluster")]
+    #[OneToMany(targetEntity: Session::class, mappedBy: 'cluster')]
     private Collection $sessions;
 
-    #[ManyToOne(targetEntity: BikeRide::class, inversedBy: "clusters")]
+    #[ManyToOne(targetEntity: BikeRide::class, inversedBy: 'clusters')]
     #[JoinColumn(nullable: false)]
     private BikeRide $bikeRide;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $maxUsers;
 
-    #[ManyToOne(targetEntity: Level::class, inversedBy: "clusters")]
+    #[ManyToOne(targetEntity: Level::class, inversedBy: 'clusters')]
     private Level $level;
 
-    #[Column(type: "string", length: 25, nullable: true)]
+    #[Column(type: 'string', length: 25, nullable: true)]
     private ?string $role;
 
-    #[Column(type: "boolean", options: ["default" => false])]
+    #[Column(type: 'boolean', options: ['default' => false])]
     private bool $isComplete = false;
 
     public function __construct()

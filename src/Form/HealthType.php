@@ -79,6 +79,7 @@ class HealthType extends AbstractType
                     'attr' => [
                         'class' => 'js-datepicker',
                         'autocomplete' => 'off',
+                        'data-constraint' => '',
                     ],
                     'row_attr' => [
                         'class' => 'form-group-inline',
@@ -86,9 +87,6 @@ class HealthType extends AbstractType
                     'constraints' => [
                         new NotNull(),
                         new NotBlank(),
-                    ],
-                    'attr' => [
-                        'data-constraint' => '',
                     ],
                 ])
                 ->add('doctorName', TextType::class, [

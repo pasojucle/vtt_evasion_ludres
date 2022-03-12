@@ -14,10 +14,9 @@ class MenuService
 
     private array $footer;
 
-    private ParameterBagInterface $parameterBag;
-
-    public function __construct(ParameterBagInterface $parameterBag)
-    {
+    public function __construct(
+        private ParameterBagInterface $parameterBag
+    ) {
         $this->parameterBag = $parameterBag;
         $this->menus = [
             [

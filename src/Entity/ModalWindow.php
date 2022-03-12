@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ModalWindowRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ModalWindowRepository::class)]
@@ -63,26 +64,26 @@ class ModalWindow
         return $this;
     }
 
-    public function getStartAt(): ?\DateTimeImmutable
+    public function getStartAt(): ?DateTimeImmutable
     {
         return $this->startAt;
     }
 
-    public function setStartAt(?\DateTimeImmutable $startAt): self
+    public function setStartAt(?DateTimeImmutable $startAt): self
     {
-        $this->startAt = $startAt->setTime(0,0,0);
+        $this->startAt = $startAt->setTime(0, 0, 0);
 
         return $this;
     }
 
-    public function getEndAt(): ?\DateTimeImmutable
+    public function getEndAt(): ?DateTimeImmutable
     {
         return $this->endAt;
     }
 
-    public function setEndAt(\DateTimeImmutable $endAt): self
+    public function setEndAt(DateTimeImmutable $endAt): self
     {
-        $this->endAt = $endAt->setTime(23,59,59);
+        $this->endAt = $endAt->setTime(23, 59, 59);
 
         return $this;
     }

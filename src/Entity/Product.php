@@ -19,43 +19,43 @@ use Doctrine\ORM\Mapping\OrderBy;
 #[Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 255)]
+    #[Column(type: 'string', length: 255)]
     private string $name;
 
-    #[Column(type: "text")]
+    #[Column(type: 'text')]
     private string $content;
 
-    #[Column(type: "string", length: 255)]
+    #[Column(type: 'string', length: 255)]
     private string $filename;
 
-    #[Column(type: "float", nullable: true)]
+    #[Column(type: 'float', nullable: true)]
     private ?float $price;
 
-    #[OneToMany(targetEntity: OrderLine::class, mappedBy: "product")]
+    #[OneToMany(targetEntity: OrderLine::class, mappedBy: 'product')]
     private Collection $orderLines;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $isDisabled = false;
 
-    #[ManyToMany(targetEntity: Size::class, inversedBy: "products")]
-    #[JoinColumn(name: "size_id", referencedColumnName: "id", nullable: false)]
-    #[OrderBy(["id" => "ASC"])]
+    #[ManyToMany(targetEntity: Size::class, inversedBy: 'products')]
+    #[JoinColumn(name: 'size_id', referencedColumnName: 'id', nullable: false)]
+    #[OrderBy(['id' => 'ASC'])]
     private Collection $sizes;
 
-    #[Column(type: "string", length: 25)]
+    #[Column(type: 'string', length: 25)]
     private string $ref;
 
-    #[Column(type: "float", nullable: true)]
+    #[Column(type: 'float', nullable: true)]
     private ?float $discountPrice;
 
-    #[Column(type: "string", length: 255, nullable: true)]
+    #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $discountTitle;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $category;
 
     public function __construct()

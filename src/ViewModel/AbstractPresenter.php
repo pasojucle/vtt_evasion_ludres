@@ -12,25 +12,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AbstractPresenter
 {
-    public array $service;
-    private LicenceService $licenceService;
-
-    private ParameterBagInterface $parameterBag;
-
-    private Security $security;
-
-    private MembershipFeeAmountRepository $membershipFeeAmountRepository;
-
-    private TranslatorInterface $translator;
-
-    private $viewModel;
+    public array $services;
 
     public function __construct(
-        LicenceService $licenceService,
-        ParameterBagInterface $parameterBag,
-        Security $security,
-        MembershipFeeAmountRepository $membershipFeeAmountRepository,
-        TranslatorInterface $translator
+        private LicenceService $licenceService,
+        private ParameterBagInterface $parameterBag,
+        private Security $security,
+        private MembershipFeeAmountRepository $membershipFeeAmountRepository,
+        private TranslatorInterface $translator
     ) {
         $this->licenceService = $licenceService;
         $this->parameterBag = $parameterBag;

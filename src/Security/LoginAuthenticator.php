@@ -20,7 +20,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -62,7 +61,7 @@ class LoginAuthenticator extends AbstractAuthenticator
             && $request->isMethod('POST');
     }
 
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
+    public function createAuthenticatedToken(Passport $passport, string $firewallName): TokenInterface
     {
         return new UsernamePasswordToken($passport->getUser(), null, $firewallName, $passport->getUser()->getRoles());
     }

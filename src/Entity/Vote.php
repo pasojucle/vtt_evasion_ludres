@@ -17,29 +17,29 @@ use Doctrine\ORM\Mapping\OneToMany;
 #[Entity(repositoryClass: VoteRepository::class)]
 class Vote
 {
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 30)]
+    #[Column(type: 'string', length: 30)]
     private string $title;
 
-    #[Column(type: "text")]
+    #[Column(type: 'text')]
     private string $content;
 
-    #[Column(type: "datetime")]
+    #[Column(type: 'datetime')]
     private DateTime $startAt;
 
-    #[Column(type: "datetime")]
+    #[Column(type: 'datetime')]
     private DateTime $endAt;
 
-    #[OneToMany(targetEntity: VoteIssue::class, mappedBy: "vote", cascade: ["persist", "remove"], fetch: "EAGER", orphanRemoval: true)]
+    #[OneToMany(targetEntity: VoteIssue::class, mappedBy: 'vote', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     private Collection $voteIssues;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $disabled = false;
 
-    #[OneToMany(targetEntity: VoteUser::class, mappedBy: "vote")]
+    #[OneToMany(targetEntity: VoteUser::class, mappedBy: 'vote')]
     private Collection $voteUsers;
 
     public function __construct()

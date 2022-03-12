@@ -13,11 +13,12 @@ use App\Form\UserFilterType;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\UserRepository;
 use App\Service\ExportService;
-use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\PaginatorService;
 use App\Service\UserService;
 use App\ViewModel\OrdersPresenter;
+use App\ViewModel\UserPresenter;
+use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -34,9 +35,10 @@ class UserController extends AbstractController
         private UserRepository $userRepository,
         private UserService $userService,
         private RequestStack $requestStack,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private UsersPresenter $usersPresenter,
+        private UserPresenter $userPresenter
     ) {
-        $this->session = $this->requestStack->getSession();
     }
 
     #[Route('/admin/adherents/{filtered}', name: 'admin_users', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
@@ -45,7 +47,8 @@ class UserController extends AbstractController
         Request $request,
         bool $filtered
     ): Response {
-        $filters = ($filtered) ? $this->session->get('admin_users_filters') : null;
+        $session = $request->getSession();
+        $filters = ($filtered) ? $session->get('admin_users_filters') : null;
 
         $form = $this->createForm(UserFilterType::class, $filters);
         $form->handleRequest($request);
@@ -56,17 +59,19 @@ class UserController extends AbstractController
             $request->query->set('p', 1);
         }
 
-        $this->session->set('admin_users_filters', $filters);
+        $session->set('admin_users_filters', $filters);
         $query = $this->userRepository->findMemberQuery($filters);
         $users = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $this->session->set('user_return', $this->generateUrl('admin_users', [
+        $session->set('user_return', $this->generateUrl('admin_users', [
             'filtered' => true,
             'p' => $request->query->get('p'),
         ]));
 
+        $this->usersPresenter->present($users);
+
         return $this->render('user/admin/users.html.twig', [
-            'users' => $this->userService->convertPaginatorToUsers($users),
+            'users' => $this->usersPresenter->viewModel()->users,
             'lastPage' => $paginator->lastPage($users),
             'form' => $form->createView(),
             'current_filters' => [
@@ -76,12 +81,13 @@ class UserController extends AbstractController
         ]);
     }
 
-
     #[Route('/admin/export/adherents', name: 'admin_users_export', methods: ['GET'])]
     public function adminUsersExport(
-        ExportService $exportService
+        ExportService $exportService,
+        Request $request
     ): Response {
-        $filters = $this->session->get('admin_users_filters');
+        $session = $request->getSession();
+        $filters = $session->get('admin_users_filters');
 
         $query = $this->userRepository->findMemberQuery($filters);
         $users = $query->getQuery()->getResult();
@@ -100,18 +106,21 @@ class UserController extends AbstractController
 
     #[Route('/admin/adherent/{user}', name: 'admin_user', methods: ['GET'])]
     public function adminUser(
-        UserEntity $user
+        UserEntity $user,
+        Request $request
     ): Response {
+        $session = $request->getSession();
+        $this->userPresenter->present($user);
+
         return $this->render('user/admin/user.html.twig', [
-            'user' => $this->userService->convertToUser($user),
-            'referer' => $this->session->get('user_return'),
+            'user' => $this->userPresenter->viewModel(),
+            'referer' => $session->get('user_return'),
         ]);
     }
 
     #[Route('/admin/adherent/edit/{user}', name: 'admin_user_edit', methods: ['GET', 'POST'])]
     public function adminUserEdit(
         Request $request,
-        LicenceService $licenceService,
         UserEntity $user
     ): Response {
         $licence = $user->getLastLicence();
@@ -136,9 +145,10 @@ class UserController extends AbstractController
                 'user' => $user->getId(),
             ]);
         }
+        $this->userPresenter->present($user);
 
         return $this->render('user/admin/edit.html.twig', [
-            'user' => $this->userService->convertToUser($user),
+            'user' => $this->userPresenter->viewModel(),
             'form' => $form->createView(),
         ]);
     }
@@ -149,27 +159,30 @@ class UserController extends AbstractController
         Request $request,
         bool $filtered
     ): Response {
-        $filters = ($filtered) ? $this->session->get('admin_registrations_filters') : null;
+        $session = $request->getSession();
+        $filters = ($filtered) ? $session->get('admin_registrations_filters') : null;
 
         $form = $this->createForm(RegistrationFilterType::class, $filters);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
-            $this->session->set('admin_registrations_filters', $filters);
+            $session->set('admin_registrations_filters', $filters);
             $filtered = true;
             $request->query->set('p', 1);
         }
 
         $query = $this->userRepository->findUserLicenceInProgressQuery($filters);
         $users = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $this->session->set('user_return', $this->generateUrl('admin_registrations', [
+        $session->set('user_return', $this->generateUrl('admin_registrations', [
             'filtered' => true,
             'p' => $request->query->get('p'),
         ]));
 
+        $this->usersPresenter->present($users);
+
         return $this->render('user/admin/registrations.html.twig', [
-            'users' => $this->userService->convertPaginatorToUsers($users),
+            'users' => $this->usersPresenter->viewModel()->users,
             'lastPage' => $paginator->lastPage($users),
             'current_filters' => [
                 'filtered' => (int) $filtered,
@@ -213,9 +226,10 @@ class UserController extends AbstractController
         $ordersHeader = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $ordersPresenter->present($ordersHeader);
+        $this->userPresenter->present($user);
 
         return $this->render('user/account.html.twig', [
-            'user' => $this->userService->convertToUser($user),
+            'user' => $this->userPresenter->viewModel(),
             'orders' => $ordersPresenter->viewModel()->orders,
         ]);
     }
@@ -270,7 +284,7 @@ class UserController extends AbstractController
         foreach ($users as $user) {
             $response[] = [
                 'id' => $user->getId(),
-                'text' => $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName(),
+                'text' => $user->GetFirstIdentity()->getName().' '.$user->GetFirstIdentity()->getFirstName(),
             ];
         }
 

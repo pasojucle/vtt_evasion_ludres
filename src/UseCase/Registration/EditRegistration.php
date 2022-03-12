@@ -108,8 +108,8 @@ class EditRegistration
 
         $nextId = $this->userRepository->findNextId();
         $identity = $user->getFirstIdentity();
-        $fullName = strtoupper($identity->getName()) . ucfirst($identity->getFirstName());
-        $user->setLicenceNumber(substr($fullName, 0, 20) . $nextId);
+        $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
+        $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
 
         return $identity;
     }
@@ -157,7 +157,7 @@ class EditRegistration
         if (Licence::TYPE_RIDE !== $seasonLicence->getType()) {
             $medicalCertificateDate = $user->getHealth()->getMedicalCertificateDate();
             $medicalCertificateDuration = (Licence::TYPE_HIKE === $seasonLicence->getType()) ? 5 : 3;
-            $intervalDuration = new DateInterval('P' . $medicalCertificateDuration . 'Y');
+            $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
             $today = new DateTime();
             if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->getHealth()->isMedicalCertificateRequired()) {
                 $isMedicalCertificateRequired = true;
@@ -195,10 +195,11 @@ class EditRegistration
 
     private function authenticating(Request $request, User $user): void
     {
-        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+        $token = new UsernamePasswordToken($user, '', $user->getRoles());
         $this->tokenStorage->setToken($token);
 
-        $event = new SecurityEvents($request);
+        // $event = new SecurityEvents($request);
+        $event = new SecurityEvents();
         $this->dispatcher->dispatch($event, SecurityEvents::INTERACTIVE_LOGIN);
     }
 }

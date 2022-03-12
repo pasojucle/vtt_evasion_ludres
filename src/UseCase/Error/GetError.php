@@ -17,20 +17,12 @@ use Twig\Error\RuntimeError;
 
 class GetError
 {
-    private Security $security;
-
-    private UserPresenter $presenter;
-
-    private ParameterService $parameterService;
-
     public function __construct(
-        Security $security,
-        UserPresenter $presenter,
-        ParameterService $parameterService
+        private Security $security,
+        private UserPresenter $presenter,
+        private ParameterService $parameterService
     ) {
-        $this->security = $security;
-        $this->presenter = $presenter;
-        $this->parameterService = $parameterService;
+
     }
 
     public function execute(Request $request): LogError
@@ -39,7 +31,7 @@ class GetError
         $logError = new LogError();
 
         $logError->setUrl($request->getRequestUri())
-            ->setErrorMessage($exception->getMessage() . ' / ' . get_class($exception))
+            ->setErrorMessage($exception->getMessage().' / '.get_class($exception))
             ->setMessage('Une erreur est survenue !<br>Si le problème persite, contacter le club')
             ->setUserAgent($request->headers->get('user-agent'))
             ->setCreatedAt(new DateTime())

@@ -11,8 +11,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @method null|ParameterGroup find($id, $lockMode = null, $lockVersion = null)
- * @method null|ParameterGroup findOneBy(array $criteria, array $orderBy = null)
+ * @method ParameterGroup|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ParameterGroup|null findOneBy(array $criteria, array $orderBy = null)
  * @method ParameterGroup[]    findAll()
  * @method ParameterGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

@@ -57,7 +57,7 @@ class RegistrationStepViewModel extends AbstractViewModel
         $seasonLicence = $user->entity->getSeasonLicence($currentSeason);
         $formFactory = $services['formFactory'];
         $router = $services['router'];
-        $route = (null === $user->entity->getId()) ? 'registration_form' : 'user_registration_form';
+        $route = (empty($user->entity->getLicenceNumber())) ? 'registration_form' : 'user_registration_form';
         if (null !== $registrationStep->getForm() && UserType::FORM_REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
             $form = $formFactory->create(UserType::class, $user->entity, [
                 'attr' => [
@@ -82,6 +82,6 @@ class RegistrationStepViewModel extends AbstractViewModel
             return null;
         }
 
-        return 'registration/form/' . str_replace('form.', '', UserType::FORMS[$form]) . '.html.twig';
+        return 'registration/form/'.str_replace('form.', '', UserType::FORMS[$form]).'.html.twig';
     }
 }

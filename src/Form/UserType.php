@@ -148,7 +148,7 @@ class UserType extends AbstractType
             $user = $event->getData();
             $form = $event->getForm();
 
-            if (null === $user->getId() && self::FORM_MEMBER === $options['current']->getForm()) {
+            if (empty($user->getLicenceNumber()) && self::FORM_MEMBER === $options['current']->getForm()) {
                 $form->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'invalid_message' => 'Le mot de passe ne correspond pas.',

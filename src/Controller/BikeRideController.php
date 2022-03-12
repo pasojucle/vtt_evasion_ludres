@@ -4,21 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\BikeRide;
-use App\Entity\Session;
-use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
-use App\Repository\LevelRepository;
-use App\Repository\ParameterRepository;
-use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
-use App\Service\FilenameService;
 use App\Service\PaginatorService;
-use App\Service\UserService;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +25,6 @@ class BikeRideController extends AbstractController
     ) {
     }
 
- 
     #[Route('/programme/{period}/{year}/{month}/{day}', name: 'schedule', methods: ['GET', 'POST'], defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null])]
     public function list(
         PaginatorService $paginator,
@@ -52,7 +42,7 @@ class BikeRideController extends AbstractController
 
         return $this->render('bike_ride/list.html.twig', $response['parameters']);
     }
- 
+
     #[Route('/mon_programme', name: 'user_bike_rides', methods: ['GET'])]
     public function userBikeRides(
         UserPresenter $presenter

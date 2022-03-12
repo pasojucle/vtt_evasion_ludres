@@ -27,21 +27,21 @@ class VoteIssue
         self::RESPONSE_TYPE_CHOICE => 'vote.issue.choice',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: Vote::class, inversedBy: "voteIssues")]
-    #[JoinColumn(name: "vote_id", referencedColumnName: "id", nullable: false)]
+    #[ManyToOne(targetEntity: Vote::class, inversedBy: 'voteIssues')]
+    #[JoinColumn(name: 'vote_id', referencedColumnName: 'id', nullable: false)]
     private Vote $vote;
 
-    #[Column(type: "string", length: 255)]
+    #[Column(type: 'string', length: 255)]
     private string $content;
 
-    #[OneToMany(targetEntity: VoteResponse::class, mappedBy: "voteIssue", cascade: ["persist", "remove"])]
+    #[OneToMany(targetEntity: VoteResponse::class, mappedBy: 'voteIssue', cascade: ['persist', 'remove'])]
     private Collection $voteResponses;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $responseType;
 
     public function __construct()

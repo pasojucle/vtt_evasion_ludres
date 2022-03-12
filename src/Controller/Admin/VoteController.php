@@ -86,7 +86,7 @@ class VoteController extends AbstractController
         return $response;
     }
 
-    #[Route('/disable/{vote}', name: 'admin_vote_disable', methods: ['GET', 'POST'])]
+    #[Route('disable/{vote}', name: 'admin_vote_disable', methods: ['GET', 'POST'])]
     public function delete(Request $request, Vote $vote): Response
     {
         $form = $this->createForm(FormType::class, null, [

@@ -8,6 +8,8 @@ use App\Entity\User;
 
 class UserPresenter extends AbstractPresenter
 {
+    private $viewModel;
+
     public function present(?User $user): void
     {
         if (null !== $user) {

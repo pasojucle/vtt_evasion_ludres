@@ -25,27 +25,26 @@ class Link
         self::POSITION_HOME_BIKE_RIDE => 'link.position.home_bike_ride',
     ];
 
-
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 255)]
+    #[Column(type: 'string', length: 255)]
     private string $url;
 
-    #[Column(type: "string", length: 100, nullable: true)]
+    #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $title;
 
-    #[Column(type: "text", nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     private ?string $description;
 
-    #[Column(type: "string", length: 255, nullable: true)]
+    #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $image;
 
-    #[Column(type: "integer", options:['default' => 1])]
+    #[Column(type: 'integer', options:['default' => 1])]
     private int $position = 1;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $orderBy;
 
     public function getId(): ?int

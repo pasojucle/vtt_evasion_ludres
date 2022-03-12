@@ -24,7 +24,7 @@ class ExportVote
         $voteResponsesByUuid = $this->voteResponseRepository->findResponsesByUuid($vote);
         $content = [];
         $today = new DateTime();
-        $content[] = 'Export du ' . $today->format('d/m/Y H:i:s') . ' - ' . $vote->getTitle();
+        $content[] = 'Export du '.$today->format('d/m/Y H:i:s').' - '.$vote->getTitle();
         $content[] = '';
         $header = [];
         $header[0] = 'Identifiant';
@@ -52,7 +52,7 @@ class ExportVote
             $string = '';
         }
 
-        return '"' . $string . '"';
+        return '"'.$string.'"';
     }
 
     private function addResponses(array &$content, array $voteResponsesByUuid): void
@@ -124,12 +124,12 @@ class ExportVote
     {
         $content[] = '';
         if (!$vote->getVoteUsers()->isEmpty()) {
-            $content[] = 'Horodateur,Participants - ' . $vote->getVoteUsers()->count();
+            $content[] = 'Horodateur,Participants - '.$vote->getVoteUsers()->count();
             foreach ($vote->getVoteUsers() as $voteUser) {
                 $row = [];
                 $identity = $voteUser->getUser()->getFirstIdentity();
                 $row[] = $voteUser->getCreatedAt()->format('d/m/Y H:i');
-                $row[] = $identity->getName() . ' ' . $identity->getFirstName();
+                $row[] = $identity->getName().' '.$identity->getFirstName();
                 $content[] = implode(',', $row);
             }
         } else {

@@ -26,7 +26,7 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
+        $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl(
                 'admin_delete_licence',
@@ -63,7 +63,7 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
+        $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
         $data = [
             'licenceNumber' => $user->getLicenceNumber(),
             'medicalCertificateDate' => $user->getHealth()->getMedicalCertificateDate(),

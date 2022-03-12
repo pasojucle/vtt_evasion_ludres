@@ -37,21 +37,21 @@ class OrderHeader
         self::STATUS_CANCELED => 'order.canceled',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[OneToMany(targetEntity: OrderLine::class, mappedBy: "orderHeader")]
+    #[OneToMany(targetEntity: OrderLine::class, mappedBy: 'orderHeader')]
     private Collection $orderLines;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: "orderHeaders")]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'orderHeaders')]
     #[JoinColumn(nullable: false)]
     private User $user;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $status;
 
-    #[Column(type: "datetime")]
+    #[Column(type: 'datetime')]
     private DateTime $createdAt;
 
     public function __construct()

@@ -13,8 +13,8 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method null|Session find($id, $lockMode = null, $lockVersion = null)
- * @method null|Session findOneBy(array $criteria, array $orderBy = null)
+ * @method Session|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Session|null findOneBy(array $criteria, array $orderBy = null)
  * @method Session[]    findAll()
  * @method Session[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

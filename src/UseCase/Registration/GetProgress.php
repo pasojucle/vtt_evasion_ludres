@@ -27,6 +27,7 @@ class GetProgress
     private ?User $user;
 
     private int $season;
+    private ?Licence $seasonLicence;
 
     public function __construct(
         private LicenceService $licenceService,

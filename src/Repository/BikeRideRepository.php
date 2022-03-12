@@ -12,8 +12,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method null|BikeRide find($id, $lockMode = null, $lockVersion = null)
- * @method null|BikeRide findOneBy(array $criteria, array $orderBy = null)
+ * @method BikeRide|null find($id, $lockMode = null, $lockVersion = null)
+ * @method BikeRide|null findOneBy(array $criteria, array $orderBy = null)
  * @method BikeRide[]    findAll()
  * @method BikeRide[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -68,7 +68,7 @@ class BikeRideRepository extends ServiceEntityRepository
     public function findEnableView(): array
     {
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 23:59:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 23:59:00');
 
         return $this->createQueryBuilder('e')
             ->andWhere(

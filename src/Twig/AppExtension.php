@@ -40,6 +40,6 @@ class AppExtension extends AbstractExtension
         $formatter = new IntlDateFormatter('fr_fr', IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
         $formatter->setPattern('EEEE');
 
-        return ucfirst($formatter->format($date)) . ' ' . $date->format('d/m/Y');
+        return ucfirst($formatter->format($date)).' '.$date->format('d/m/Y');
     }
 }

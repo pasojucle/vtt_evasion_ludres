@@ -8,6 +8,8 @@ use App\Entity\Cluster;
 
 class ClusterPresenter extends AbstractPresenter
 {
+    private $viewModel;
+
     public function present(?Cluster $cluster): void
     {
         if (null !== $cluster) {

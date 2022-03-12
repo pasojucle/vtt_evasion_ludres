@@ -27,22 +27,22 @@ class Session
         self::AVAILABILITY_UNAVAILABLE => 'session.availability.unavailable',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: "sessions")]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'sessions')]
     #[JoinColumn(nullable: false)]
     private User $user;
 
-    #[ManyToOne(targetEntity: Cluster::class, inversedBy: "sessions")]
+    #[ManyToOne(targetEntity: Cluster::class, inversedBy: 'sessions')]
     #[JoinColumn(nullable: false)]
     private Cluster $cluster;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $isPresent = false;
 
-    #[Column(type: "integer", nullable: true)]
+    #[Column(type: 'integer', nullable: true)]
     private ?int $availability;
 
     public function getId(): ?int

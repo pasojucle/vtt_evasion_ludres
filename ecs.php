@@ -24,9 +24,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     // $containerConfigurator->import(SetList::SPACES);
     // $containerConfigurator->import(SetList::ARRAY);
     // $containerConfigurator->import(SetList::DOCBLOCK);
-    $containerConfigurator->import(SetList::PSR_12);
+    // $containerConfigurator->import(SetList::PSR_12);
     // $containerConfigurator->import(SetList::PHP_CS_FIXER);
     // $containerConfigurator->import(SetList::CONTROL_STRUCTURES);
-    // $containerConfigurator->import(SetList::SYMFONY);
+    $containerConfigurator->import(SetList::SYMFONY);
+
     // $containerConfigurator->import(SetList::STRICT);
 };

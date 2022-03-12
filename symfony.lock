@@ -183,6 +183,9 @@
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
     },
+    "phpstan/phpstan": {
+        "version": "1.4.6"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },

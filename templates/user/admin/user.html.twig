@@ -20,7 +20,7 @@
                 </span>
             </div>
             <div class="block-body row padding-10" style="align-items: flex-start;">
-                {% set licence = user.lastLicence(licence_service.currentSeason) %}
+                {% set licence = user.lastLicence %}
                 {% if user.member.picture %}
                     <div class="col-md-2 col-xs-4">
                         <img src="{{ '/uploads/' ~ user.member.picture }}" style="width: 100px;">

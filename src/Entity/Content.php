@@ -33,32 +33,32 @@ class Content
         'login_help' => 'content.route.login_help',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 100)]
+    #[Column(type: 'string', length: 100)]
     private string $route;
 
-    #[Column(type: "text")]
+    #[Column(type: 'text')]
     private string $content;
 
-    #[Column(type: "datetime", nullable: true)]
+    #[Column(type: 'datetime', nullable: true)]
     private ?DateTime $startAt;
 
-    #[Column(type: "datetime", nullable: true)]
+    #[Column(type: 'datetime', nullable: true)]
     private ?DateTime $endAt;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $orderBy;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $isActive = true;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $isFlash = false;
 
-    #[Column(type: "string", length: 100, nullable: true)]
+    #[Column(type: 'string', length: 100, nullable: true)]
     private ? string $title;
 
     public function getId(): ?int

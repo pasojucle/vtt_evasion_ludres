@@ -31,35 +31,35 @@ class Level
         self::TYPE_FRAME => 'level.type.frame',
     ];
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: "string", length: 50)]
+    #[Column(type: 'string', length: 50)]
     private string $title;
 
-    #[Column(type: "text")]
+    #[Column(type: 'text')]
     private string $content;
 
-    #[OneToMany(targetEntity: User::class, mappedBy: "level")]
+    #[OneToMany(targetEntity: User::class, mappedBy: 'level')]
     private Collection $users;
 
-    #[Column(type: "string", length: 7, nullable: true)]
+    #[Column(type: 'string', length: 7, nullable: true)]
     private ?string $color;
 
-    #[OneToMany(targetEntity: Cluster::class, mappedBy: "level")]
+    #[OneToMany(targetEntity: Cluster::class, mappedBy: 'level')]
     private Collection $clusters;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $orderBy;
 
-    #[Column(type: "integer")]
+    #[Column(type: 'integer')]
     private int $type;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $isProtected = false;
 
-    #[Column(type: "boolean")]
+    #[Column(type: 'boolean')]
     private bool $isDeleted;
 
     public function __construct()

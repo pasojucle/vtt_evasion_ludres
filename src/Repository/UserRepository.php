@@ -19,8 +19,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
- * @method null|User find($id, $lockMode = null, $lockVersion = null)
- * @method null|User findOneBy(array $criteria, array $orderBy = null)
+ * @method User|null find($id, $lockMode = null, $lockVersion = null)
+ * @method User|null findOneBy(array $criteria, array $orderBy = null)
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -61,8 +61,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['fullName']) {
                 $qb->andWhere(
                     $qb->expr()->orX(
-                        $qb->expr()->like('i.name', $qb->expr()->literal('%' . $filters['fullName'] . '%')),
-                        $qb->expr()->like('i.firstName', $qb->expr()->literal('%' . $filters['fullName'] . '%')),
+                        $qb->expr()->like('i.name', $qb->expr()->literal('%'.$filters['fullName'].'%')),
+                        $qb->expr()->like('i.firstName', $qb->expr()->literal('%'.$filters['fullName'].'%')),
                     )
                 )
                     ;
@@ -73,9 +73,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['status']) {
                 if (is_string($filters['status']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                     $this->addCriteriaBySeason($qb, (int) $matches[1]);
-                } elseif ($filters['status'] === Licence::STATUS_TESTING_IN_PROGRESS) {
+                } elseif (Licence::STATUS_TESTING_IN_PROGRESS === $filters['status']) {
                     $this->addCriteriaTestinInProgress($qb, $currentSeason);
-                } elseif ($filters['status'] === Licence::STATUS_TESTING_COMPLETE) {
+                } elseif (Licence::STATUS_TESTING_COMPLETE === $filters['status']) {
                     $this->addCriteriaTestinComplete($qb, $currentSeason);
                 }
             }
@@ -209,8 +209,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if (null !== $fullName) {
             $qb->andWhere(
                 $qb->expr()->orX(
-                    $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%' . strtolower($fullName) . '%')),
-                    $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%' . strtolower($fullName) . '%')),
+                    $qb->expr()->like('LOWER(i.name)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
+                    $qb->expr()->like('LOWER(i.firstName)', $qb->expr()->literal('%'.strtolower($fullName).'%')),
                 )
             );
         }
