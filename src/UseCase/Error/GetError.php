@@ -22,7 +22,6 @@ class GetError
         private UserPresenter $presenter,
         private ParameterService $parameterService
     ) {
-
     }
 
     public function execute(Request $request): LogError

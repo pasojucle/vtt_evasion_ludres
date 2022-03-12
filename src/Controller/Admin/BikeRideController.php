@@ -28,7 +28,7 @@ class BikeRideController extends AbstractController
         private BikeRideRepository $bikeRideRepository,
         private RequestStack $requestStack,
         private EntityManagerInterface $entityManager,
-        private BikeRideService $bikeRideService, 
+        private BikeRideService $bikeRideService,
         private UserPresenter $userPresenter
     ) {
     }
