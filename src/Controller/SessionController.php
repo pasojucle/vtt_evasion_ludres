@@ -37,7 +37,6 @@ class SessionController extends AbstractController
         Request $request,
         SessionRepository $sessionRepository,
         BikeRideService $bikeRideService,
-        UserService $userService,
         BikeRidePresenter $bikeRidePresenter,
         BikeRide $bikeRide
     ): Response {
@@ -62,7 +61,7 @@ class SessionController extends AbstractController
 
             $userSession = new Session();
             $userSession->setUser($user)
-                ->setCluster($userCluster)
+                ->setCluster($userCluster->entity)
             ;
         }
         $bikeRidePresenter->present($bikeRide);

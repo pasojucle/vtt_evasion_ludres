@@ -28,10 +28,10 @@ class ClusterController extends AbstractController
         $entityManager->flush();
 
         $bikeRide = $cluster->getBikeRide();
-
+        
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $bikeRideService->getBikeRideWithPresentsByCluster($bikeRide),
-            'bike-rides_filters' => [],
+            'bike_rides_filters' => [],
         ]);
     }
 

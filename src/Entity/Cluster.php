@@ -105,19 +105,6 @@ class Cluster
         return $this;
     }
 
-    public function getMemberSessions(): ArrayCollection
-    {
-        $memberSessions = [];
-        foreach ($this->sessions as $session) {
-            $roles = $session->getUser()->getRoles();
-            if (in_array('USER', $roles, true)) {
-                $memberSessions[] = $session->getUser();
-            }
-        }
-
-        return new ArrayCollection($memberSessions);
-    }
-
     public function getBikeRide(): ?BikeRide
     {
         return $this->bikeRide;
@@ -164,31 +151,6 @@ class Cluster
         $this->role = $role;
 
         return $this;
-    }
-
-    public function getSessionAvailable(): ArrayCollection
-    {
-        $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->neq('availability', Session::AVAILABILITY_UNAVAILABLE))
-        ;
-        $sessions = $this->sessions->matching($criteria);
-
-        $sortedSessions = [];
-        if (!$sessions->isEmpty()) {
-            $sortedSessions = $sessions->toArray();
-            usort($sortedSessions, function ($a, $b) {
-                $a = strtolower($a->getUser()->getFirstIdentity()->getName());
-                $b = strtolower($b->getUser()->getFirstIdentity()->getName());
-
-                if ($a === $b) {
-                    return 0;
-                }
-
-                return ($a < $b) ? -1 : 1;
-            });
-        }
-
-        return new ArrayCollection($sortedSessions);
     }
 
     public function isComplete(): ?bool

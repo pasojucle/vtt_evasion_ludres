@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\BikeRide;
-use App\Entity\Cluster;
-use App\Entity\Level;
-use App\Form\BikeRideFilterType;
-use App\Repository\BikeRideRepository;
-use App\Repository\LevelRepository;
-use App\Repository\ParameterRepository;
-use App\ViewModel\BikeRidesPresenter;
-use DateInterval;
 use DateTime;
+use DateInterval;
+use App\Entity\Level;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Cluster;
+use App\Entity\BikeRide;
+use App\Form\BikeRideFilterType;
+use App\Repository\LevelRepository;
+use App\ViewModel\ClusterPresenter;
+use App\ViewModel\BikeRidesPresenter;
+use App\Repository\BikeRideRepository;
+use App\Repository\ParameterRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class BikeRideService
@@ -31,7 +32,8 @@ class BikeRideService
         private LevelRepository $levelRepository,
         private EntityManagerInterface $entityManager,
         private ParameterRepository $parameterRepository,
-        private BikeRidesPresenter $bikeRidesPresenter
+        private BikeRidesPresenter $bikeRidesPresenter,
+        private ClusterPresenter $clusterPresenter
     ) {
     }
 
@@ -234,8 +236,9 @@ class BikeRideService
         $clusters = [];
         if (!$bikeRide->getClusters()->isEmpty()) {
             foreach ($bikeRide->getClusters() as $cluster) {
+                $this->clusterPresenter->present($cluster);
                 $clusters[] = [
-                    'cluster' => $cluster,
+                    'cluster' => $this->clusterPresenter->viewModel(),
                     'presentCount' => $this->getCountOfPresents($cluster->getSessions()),
                 ];
             }

@@ -22,6 +22,7 @@ use App\Service\MailerService;
 use App\Service\ParameterService;
 use App\Service\UserService;
 use App\UseCase\Tool\GetRegistrationCertificate;
+use App\ViewModel\ClusterPresenter;
 use App\ViewModel\UserPresenter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -263,6 +264,7 @@ class ToolController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         LevelRepository $levelRepository,
+        ClusterPresenter $clusterPresenter,
         BikeRide $bikeRide
     ): Response {
         $form = $this->createForm(ToolImportType::class);
@@ -314,13 +316,15 @@ class ToolController extends AbstractController
                         $clustersLevelAsUser = [];
                         $availability = null;
                         foreach ($bikeRide->getClusters() as $cluster) {
-                            if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
+                            $clusterPresenter->present($cluster);
+                            $cluster = $clusterPresenter->viewModel();
+                            if (null !== $cluster->level && $cluster->level === $user->getLevel()) {
                                 $clustersLevelAsUser[] = $cluster;
-                                if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {
+                                if (count($cluster->memberSessions) <= $cluster->maxUsers) {
                                     $userCluster = $cluster;
                                 }
                             }
-                            if (null !== $cluster->getRole() && 5 < $user->getLevel()->getId()) {
+                            if (null !== $cluster->role && 5 < $user->getLevel()->getId()) {
                                 $userCluster = $cluster;
                                 $availability = 1;
                             }

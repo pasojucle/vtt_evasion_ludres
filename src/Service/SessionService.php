@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\BikeRide;
-use App\Entity\Cluster;
 use App\Entity\User;
-use App\Repository\LevelRepository;
-use App\Repository\SessionRepository;
+use App\Entity\Cluster;
+use App\Entity\BikeRide;
 use App\ViewModel\UserPresenter;
+use App\Repository\LevelRepository;
+use App\ViewModel\ClusterPresenter;
+use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\Collection;
 
 class SessionService
@@ -18,7 +19,8 @@ class SessionService
         private SessionRepository $sessionRepository,
         private UserPresenter $userPresenter,
         private LevelRepository $levelRepository,
-        private MailerService $mailerService
+        private MailerService $mailerService,
+        private ClusterPresenter $clusterPresenter
     ) {
     }
 
@@ -58,14 +60,16 @@ class SessionService
             $clustersLevelAsUser = [];
             $userLevel = (null !== $user->getLevel()) ? $user->getLevel() : $this->levelRepository->findAwaitingEvaluation();
             foreach ($bikeRide->getClusters() as $cluster) {
-                if (null !== $cluster->getLevel() && $cluster->getLevel() === $userLevel) {
+                $this->clusterPresenter->present($cluster);
+                $cluster = $this->clusterPresenter->viewModel();
+                if (null !== $cluster->level && $cluster->level === $userLevel) {
                     $clustersLevelAsUser[] = $cluster;
-                    if (count($cluster->getMemberSessions()) <= $cluster->getMaxUsers()) {
+                    if (count($cluster->memberSessions) <= $cluster->maxUsers) {
                         $userCluster = $cluster;
                     }
                 }
 
-                if (null !== $cluster->getRole() && $user->hasRole($cluster->getRole())) {
+                if (null !== $cluster->role && $user->hasRole($cluster->role)) {
                     $userCluster = $cluster;
                 }
             }

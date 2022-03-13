@@ -4,34 +4,104 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
+use App\Entity\Level;
 use App\Entity\Cluster;
+use App\Entity\Session;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class ClusterViewModel extends AbstractViewModel
 {
     public ?int $id;
 
+    public ?Cluster $entity;
+
     public ?string $title;
+
+    public ?Level $level;
 
     public ?array $sessions;
 
+    public ?ArrayCollection $memberSessions;
+
+    public ?ArrayCollection $availableSessions;
+
+    public ?int $maxUsers;
+
+    public ?string $role;
+
+    public ?bool $isComplete;
+
+    private ?array $services;
+
     public static function fromCluster(Cluster $cluster, array $services)
     {
+        $clusterView = new self();
+        $clusterView->services = $services;
+        $clusterView->id = $cluster->getId();
+        $clusterView->entity = $cluster;
+        $clusterView->title = $cluster->getTitle();
+        $clusterView->level = $cluster->getLevel();
+        $clusterView->sessions = $clusterView->getSessions();
+        $clusterView->maxUsers = $cluster->getMaxUsers();
+        $clusterView->role = $cluster->getRole();
+        $clusterView->isComplete = $cluster->isComplete();
+        $clusterView->memberSessions = $clusterView->getMemberSessions();
+        $clusterView->availableSessions = $clusterView->getAvailableSessions();
+
+        return $clusterView;
+    }
+
+    private function getSessions(): array
+    {
         $sessions = [];
-        if (!$cluster->getSessions()->isEmpty()) {
-            foreach ($cluster->getSessions() as $session) {
+        if (!$this->entity->getSessions()->isEmpty()) {
+            foreach ($this->entity->getSessions() as $session) {
                 $sessions[] = [
-                    'user' => UserViewModel::fromUser($session->getUser(), $services),
+                    'user' => UserViewModel::fromUser($session->getUser(), $this->services),
                     'availability' => $session->getAvailability(),
                     'isPresent' => $session->isPresent(),
                 ];
             }
         }
+         return $sessions;
+    }
 
-        $clusterView = new self();
-        $clusterView->id = $cluster->getId();
-        $clusterView->title = $cluster->getTitle();
-        $clusterView->sessions = $sessions;
+    private function getMemberSessions(): ArrayCollection
+    {
+        $memberSessions = [];
+        if (!$this->entity->getSessions()->isEmpty()) {
+            foreach ($this->entity->getSessions() as $session) {
+                $roles = $session->getUser()->getRoles();
+                if (in_array('USER', $roles, true)) {
+                    $memberSessions[] = $session->getUser();
+                }
+            }
+        }
 
-        return $clusterView;
+        return new ArrayCollection($memberSessions);
+    }
+
+    public function getAvailableSessions(): ArrayCollection
+    {
+        $sortedSessions = [];
+        if (!$this->entity->getSessions()->isEmpty()) {
+            foreach ($this->entity->getSessions() as $session) {
+                if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
+                    $sortedSessions[] = $session;
+                }
+            }
+            usort($sortedSessions, function ($a, $b) {
+                $a = strtolower($a->getUser()->getFirstIdentity()->getName());
+                $b = strtolower($b->getUser()->getFirstIdentity()->getName());
+
+                if ($a === $b) {
+                    return 0;
+                }
+
+                return ($a < $b) ? -1 : 1;
+            });
+        }
+
+        return new ArrayCollection($sortedSessions);
     }
 }

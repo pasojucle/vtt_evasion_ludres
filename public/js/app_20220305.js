@@ -210,7 +210,8 @@ function modifierBikeRide() {
       });
 }
 
-function clusterComplete() {
+function clusterComplete(event) {
+    event.preventDefault();
     const parameters = {};
     parameters['cluster'] = $(this).data('cluster-id');
     const route = Routing.generate('admin_cluster_complete', parameters);

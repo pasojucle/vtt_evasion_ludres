@@ -41,6 +41,7 @@ class BikeRideViewModel extends AbstractViewModel
     public ?string $btnLabel;
 
     public ?string $period;
+    
 
     private ?DateTimeImmutable $today;
 
