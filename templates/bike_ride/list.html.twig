@@ -9,48 +9,29 @@
         </div>
         <div class="wrapper-body">
             {% include('bike_ride/filter.html.twig') %}
-            <div class="bike-rides"> 
+            <div class="bike-rides  reveal">
                 {% for bikeRide in bikeRides %}
-                    {% set class = '' %}    
-                    {% if bikeRide.isNext %}
-                        {% set class = 'active' %}  
-                    {% elseif bikeRide.over %}
-                        {% set class = 'disable' %}  
-                    {% endif %}
-                    {% set btn_label = 'S\'incrire' %}
-                    {% if bikeRide.accessAvailabity(app.user) %}
-                        {% set btn_label = 'Disponibilité' %}
-                    {% endif %}
-                    {% set isRegistrable = bikeRide.isRegistrable %}
-                    {% if isRegistrable and app.user is not null and bikeRide.id == 51 and app.user.firstIdentity.birthDate|date('Y') %}
-                        {% set userAge = app.user.firstIdentity.birthDate|date('Y') %}
-                        {% set isRegistrable = 2010 > userAge %}
-                    {% endif %}
-                    <div class="bike-ride-date item-center align-center {{ class }} reveal">
+                    <div class="bike-ride-date item-center align-center {{ bikeRide.displayClass }}">
                         <div>
-                            {% if bikeRide.endAt is null %}
-                                {{ bikeRide.startAt | formatDateLong }}
-                            {% else %}
-                                du {{ bikeRide.startAt | formatDateLong }} au {{ bikeRide.endAt | formatDateLong }} 
-                            {% endif %}
-                            {% if isRegistrable or bikeRide.accessAvailabity(app.user) %}
+                            {{ bikeRide.period }}
+                            {% if bikeRide.isRegistrable or bikeRide.accessAvailability %}
                                 <div class="bike-ride-date-btn">
                                     <br>
-                                    <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
+                                    <a href="{{ path('session_add', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
-                    <div class="bike-ride-detail {{ class }} reveal">
+                    <div class="bike-ride-detail {{ bikeRide.displayClass }}">
                         <h3>{{ bikeRide.title }}</h3>
                         {% if bikeRide.minAge is not null %}
                             <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
                         {% endif %}
                         <p>{{ bikeRide.content |raw }}</p>
                     </div>
-                    {% if isRegistrable or bikeRide.accessAvailabity(app.user) %}
-                        <div class="bike-ride-btn item-center align-center {{ class }} reveal">
-                            <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ btn_label }}</a>
+                    {% if bikeRide.isRegistrable or bikeRide.accessAvailability %}
+                        <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
+                            <a href="{{ path('session_add', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
                         </div>
                     {% endif %}
                 {% endfor %}

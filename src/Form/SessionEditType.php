@@ -34,7 +34,7 @@ class SessionEditType extends AbstractType
             $submitLabel = null;
 
             if (!$options['is_already_registered'] && !$options['is_end_testing']) {
-                if (null !== $options['bikeRide'] && $options['bikeRide']->getAccessAvailabity($this->security->getUser())) {
+                if (null !== $options['bikeRide'] && $options['bikeRide']->accessAvailability) {
                     $submitLabel = 'Enregister';
                     $form
                         ->add('availability', ChoiceType::class, [

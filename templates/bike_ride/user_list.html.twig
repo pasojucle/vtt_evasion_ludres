@@ -19,11 +19,7 @@
                                 <div class="row">
                                     <div class="col-md-5 col-xs-12">
                                         <b>
-                                        {% if bikeRide.bikeRide.endAt is null %}
-                                            {{ bikeRide.bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
-                                        {% else %}
-                                            du {{ bikeRide.bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeRide.bikeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}} 
-                                        {% endif %}
+                                        {{ bikeRide.bikeRide.period }}
                                         </b>
                                     </div>
                                     <div class="col-md-5 col-xs-8">

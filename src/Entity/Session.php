@@ -97,23 +97,4 @@ class Session
 
         return $this;
     }
-
-    public function getAvailabilityToView(): array
-    {
-        $availbilityColors = [
-            1 => 'success',
-            2 => 'alert-warning',
-            3 => 'alert-danger',
-        ];
-
-        $availability = [];
-        if (null !== $this->availability) {
-            $availability = [
-                'class' => $availbilityColors[$this->availability],
-                'text' => Session::AVAILABILITIES[$this->availability],
-            ];
-        }
-
-        return $availability;
-    }
 }

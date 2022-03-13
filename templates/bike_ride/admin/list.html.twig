@@ -27,7 +27,7 @@
                                         </div>
                                     {% endset %}
                                     {% if bikeRide.type != constant('App\\Entity\\BikeRide::TYPE_HOLIDAYS') %}
-                                        <a class="btn btn-list btn-light" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.id}) }}" title="Voir les participants">
+                                        <a class="btn btn-list btn-light" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.entity.id}) }}" title="Voir les participants">
                                             {{ bikeRide_content }}
                                         </a>
                                     {% else %}
@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="col-md-2 col-xs-2">
                                     {% if is_granted('ROLE_ADMIN') %}
-                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
                                         {% if bikeRide.startAt <= date() %}
                                             <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.id}) }}" class="btn btn-success btn-ico" title="Exporter la séance">
                                                 <i class="fas fa-file-download"></i>

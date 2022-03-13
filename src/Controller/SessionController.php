@@ -12,6 +12,7 @@ use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
 use App\Service\SessionService;
 use App\Service\UserService;
+use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +38,7 @@ class SessionController extends AbstractController
         SessionRepository $sessionRepository,
         BikeRideService $bikeRideService,
         UserService $userService,
+        BikeRidePresenter $bikeRidePresenter,
         BikeRide $bikeRide
     ): Response {
         $user = $this->getUser();
@@ -63,10 +65,10 @@ class SessionController extends AbstractController
                 ->setCluster($userCluster)
             ;
         }
-
+        $bikeRidePresenter->present($bikeRide);
         $form = $this->createForm(SessionEditType::class, $userSession, [
             'clusters' => $clusters,
-            'bikeRide' => $bikeRide,
+            'bikeRide' => $bikeRidePresenter->viewModel(),
             'is_already_registered' => $isAlreadyRegistered,
             'is_end_testing' => $isEndTesting,
         ]);

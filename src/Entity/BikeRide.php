@@ -66,10 +66,10 @@ class BikeRide
     #[Column(type: 'text', nullable: true)]
     private ?string $content;
 
-    #[Column(type: 'datetime')]
+    #[Column(type: 'datetime_immutable')]
     private DateTimeImmutable $startAt;
 
-    #[Column(type: 'datetime', nullable: true)]
+    #[Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $endAt;
 
     #[Column(type: 'integer')]
@@ -197,55 +197,6 @@ class BikeRide
         }
 
         return $this;
-    }
-
-    public function isRegistrable(): bool
-    {
-        if (self::TYPE_HOLIDAYS === $this->type) {
-            return false;
-        }
-
-        $today = new DateTime();
-        $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
-        $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
-        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
-        $closingAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
-
-        return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
-    }
-
-    public function getAccessAvailabity(?User $user): bool
-    {
-        if (self::TYPE_HOLIDAYS === $this->type) {
-            return false;
-        }
-
-        $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
-
-        $level = (null !== $user) ? $user->getLevel() : null;
-        $type = (null !== $level) ? $level->getType() : null;
-
-        return Level::TYPE_FRAME === $type && self::TYPE_SCHOOL === $this->type && $today <= $this->startAt;
-    }
-
-    public function isOver(): bool
-    {
-        $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
-
-        return $this->startAt < $today;
-    }
-
-    public function isNext(): bool
-    {
-        $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 00:00:00');
-        $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 23:59:59');
-        $displayAt = DateTime::createFromFormat('Y-m-d H:i:s', $this->startAt->format('Y-m-d').' 00:00:00');
-        $interval = new DateInterval('P'.$this->displayDuration.'D');
-
-        return $displayAt->sub($interval) <= $today && $today <= $startAt;
     }
 
     public function getType(): ?int

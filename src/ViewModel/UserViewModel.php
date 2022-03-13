@@ -32,6 +32,8 @@ class UserViewModel extends AbstractViewModel
 
     public ?HealthViewModel $health;
 
+    public ?array $bikeRides;
+
     private ?int $currentSeason;
 
     private array $services;
@@ -51,6 +53,7 @@ class UserViewModel extends AbstractViewModel
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);
+        $userView->bikeRides = $userView->getBikeRides();
 
         return $userView;
     }
@@ -218,18 +221,17 @@ class UserViewModel extends AbstractViewModel
         $sessions = $this->entity?->getSessions();
         if (!$sessions?->isEmpty()) {
             foreach ($sessions as $session) {
-                $bikeRide = $session->getCluster()->getBikeRide();
-                $startAt = DateTime::createFromFormat('Y-m-d H:i:s', $bikeRide->getStartAt()->format('Y-m-d').' 14:00:00');
-                if ($today <= $startAt) {
+                $session = SessionViewModel::fromSession($session, $this->services);
+                if ($today <= $session->bikeRide->startAt->setTime(14,0,0)) {
                     $bikeRides[] = [
-                        'bikeRide' => $session->getCluster()->getBikeRide(),
-                        'availability' => $session->getAvailabilityToView(),
-                        'sessionId' => $session->getId(),
+                        'bikeRide' => $session->bikeRide,
+                        'availability' => $session->availability,
+                        'sessionId' => $session->entity->getId(),
                     ];
                 }
             }
         }
-
+    
         return $bikeRides;
     }
 

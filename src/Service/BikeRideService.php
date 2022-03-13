@@ -11,8 +11,10 @@ use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
+use App\ViewModel\BikeRidesPresenter;
 use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -28,13 +30,14 @@ class BikeRideService
         private BikeRideRepository $bikeRideRepository,
         private LevelRepository $levelRepository,
         private EntityManagerInterface $entityManager,
-        private ParameterRepository $parameterRepository
+        private ParameterRepository $parameterRepository,
+        private BikeRidesPresenter $bikeRidesPresenter
     ) {
     }
 
     public function getFiltersByParam(?string $period, ?int $year, ?int $month, ?int $day, string $route)
     {
-        $date = (null === $year && null === $month && null === $day) ? new DateTime() : DateTime::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
+        $date = (null === $year && null === $month && null === $day) ? new DateTimeImmutable() : DateTimeImmutable::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
         if (null === $period) {
             $period = ('admin_events' === $route) ? BikeRide::PERIOD_WEEK : BikeRide::PERIOD_NEXT;
         }
@@ -45,13 +48,13 @@ class BikeRideService
     public function getFiltersByData(array $data)
     {
         $period = $data['period'];
-        $date = new DateTime($data['date']);
+        $date = new DateTimeImmutable($data['date']);
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
 
         return $this->getFilters($period, $date, $direction);
     }
 
-    public function getFilters(string $period, DateTime $date, ?int $direction = null)
+    public function getFilters(string $period, DateTimeImmutable $date, ?int $direction = null)
     {
         if (null !== $direction && !in_array($period, [BikeRide::PERIOD_ALL, BikeRide::PERIOD_NEXT], true)) {
             $intervals = [
@@ -152,9 +155,11 @@ class BikeRideService
             $parameters['lastPage'] = null;
         }
 
+        $this->bikeRidesPresenter->present($bikeRides);
+
         $parameters += [
             'form' => $form->createView(),
-            'bikeRides' => $bikeRides,
+            'bikeRides' => $this->bikeRidesPresenter->viewModel()->bikeRides,
             'current_filters' => $filters,
         ];
 

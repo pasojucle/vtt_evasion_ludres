@@ -6,6 +6,7 @@ namespace App\ViewModel;
 
 use App\Repository\MembershipFeeAmountRepository;
 use App\Service\LicenceService;
+use App\Twig\AppExtension;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -19,13 +20,9 @@ class AbstractPresenter
         private ParameterBagInterface $parameterBag,
         private Security $security,
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
-        private TranslatorInterface $translator
+        private TranslatorInterface $translator, 
+        private AppExtension $appExtension
     ) {
-        $this->licenceService = $licenceService;
-        $this->parameterBag = $parameterBag;
-        $this->security = $security;
-        $this->membershipFeeAmountRepository = $membershipFeeAmountRepository;
-        $this->translator = $translator;
         $this->services = $this->getServices();
     }
 
@@ -38,6 +35,7 @@ class AbstractPresenter
             'user' => $this->security->getUser(),
             'membershipFeeAmountRepository' => $this->membershipFeeAmountRepository,
             'translator' => $this->translator,
+            'appExtention' => $this->appExtension
         ];
     }
 }

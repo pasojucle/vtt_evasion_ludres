@@ -41,7 +41,7 @@ class Cluster
     private ?int $maxUsers;
 
     #[ManyToOne(targetEntity: Level::class, inversedBy: 'clusters')]
-    private Level $level;
+    private ?Level $level = null;
 
     #[Column(type: 'string', length: 25, nullable: true)]
     private ?string $role;

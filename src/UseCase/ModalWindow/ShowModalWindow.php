@@ -28,7 +28,7 @@ class ShowModalWindow
         if (null !== $user) {
             $user = $this->userService->convertToUser($user);
             if ($user->licenceNumber !== $modalWindow) {
-                $modalWindows = $this->modalWindowRepository->findLastByAge($user->member->age);
+                $modalWindows = $this->modalWindowRepository->findLastByAge($user->member?->age);
                 $session->set('show_modal_window', $user->licenceNumber);
             }
             if (!empty($modalWindows)) {
