@@ -236,20 +236,6 @@ class Health
         return $this;
     }
 
-    public function isMedicalCertificateRequired(): ?bool
-    {
-        $isMedicalCertificateRequired = false;
-        if (!$this->healthQuestions->isEmpty()) {
-            foreach ($this->healthQuestions as $question) {
-                if (true === $question->getValue()) {
-                    $isMedicalCertificateRequired = true;
-                }
-            }
-        }
-
-        return $isMedicalCertificateRequired;
-    }
-
     public function getMedicalCertificateDate(): ?\DateTimeInterface
     {
         return $this->medicalCertificateDate;

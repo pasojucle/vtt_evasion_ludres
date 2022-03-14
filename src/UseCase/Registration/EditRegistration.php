@@ -153,13 +153,13 @@ class EditRegistration
     {
         $isMedicalCertificateRequired = false;
         $seasonLicence = $progress['seasonLicence'];
-        $user = $progress['user']->entity;
+        $user = $progress['user'];
         if (Licence::TYPE_RIDE !== $seasonLicence->getType()) {
-            $medicalCertificateDate = $user->getHealth()->getMedicalCertificateDate();
+            $medicalCertificateDate = $user->health->medicalCertificateDateObject;
             $medicalCertificateDuration = (Licence::TYPE_HIKE === $seasonLicence->getType()) ? 5 : 3;
             $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
             $today = new DateTime();
-            if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->getHealth()->isMedicalCertificateRequired()) {
+            if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->health->isMedicalCertificateRequired) {
                 $isMedicalCertificateRequired = true;
             }
         }
