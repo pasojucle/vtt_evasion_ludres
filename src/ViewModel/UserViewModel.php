@@ -222,7 +222,7 @@ class UserViewModel extends AbstractViewModel
         if (!$sessions?->isEmpty()) {
             foreach ($sessions as $session) {
                 $session = SessionViewModel::fromSession($session, $this->services);
-                if ($today <= $session->bikeRide->startAt->setTime(14,0,0)) {
+                if ($today <= $session->bikeRide->startAt->setTime(14, 0, 0)) {
                     $bikeRides[] = [
                         'bikeRide' => $session->bikeRide,
                         'availability' => $session->availability,
@@ -231,7 +231,7 @@ class UserViewModel extends AbstractViewModel
                 }
             }
         }
-    
+
         return $bikeRides;
     }
 

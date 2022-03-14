@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
-use DateInterval;
-use App\Entity\User;
-use App\Entity\Level;
-use DateTimeImmutable;
 use App\Entity\BikeRide;
+use App\Entity\Level;
+use App\Entity\User;
 use App\Twig\AppExtension;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
 
 class BikeRideViewModel extends AbstractViewModel
 {
@@ -41,7 +41,6 @@ class BikeRideViewModel extends AbstractViewModel
     public ?string $btnLabel;
 
     public ?string $period;
-    
 
     private ?DateTimeImmutable $today;
 
@@ -61,9 +60,9 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->displayDuration = $bikeRide->getDisplayDuration();
 
         $today = new DateTimeImmutable();
-        $bikeRideView->today = $today->setTime(0,0,0);
-        $bikeRideView->displayAt = $bikeRideView->startAt->setTime(0,0,0);
-        $bikeRideView->closingAt = $bikeRideView->startAt->setTime(23,59,59);
+        $bikeRideView->today = $today->setTime(0, 0, 0);
+        $bikeRideView->displayAt = $bikeRideView->startAt->setTime(0, 0, 0);
+        $bikeRideView->closingAt = $bikeRideView->startAt->setTime(23, 59, 59);
         $bikeRideView->displayClass = $bikeRideView->getDisplayClass();
         $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($services['user']);
         $bikeRideView->period = $bikeRideView->getPeriod($services['appExtention']);
@@ -78,7 +77,7 @@ class BikeRideViewModel extends AbstractViewModel
         if (BikeRide::TYPE_HOLIDAYS === $this->type) {
             return false;
         }
-        
+
         $today = new DateTime();
         $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
         $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
@@ -88,7 +87,6 @@ class BikeRideViewModel extends AbstractViewModel
 
     private function getAccessAvailabity(?User $user): bool
     {
-
         if (BikeRide::TYPE_HOLIDAYS === $this->type) {
             return false;
         }
@@ -101,7 +99,6 @@ class BikeRideViewModel extends AbstractViewModel
 
     public function isOver(): bool
     {
-
         return $this->closingAt < $this->today;
     }
 
@@ -120,6 +117,7 @@ class BikeRideViewModel extends AbstractViewModel
         if ($this->isOver()) {
             return ' disable';
         }
+
         return '';
     }
 
@@ -128,12 +126,13 @@ class BikeRideViewModel extends AbstractViewModel
         if ($this->getAccessAvailabity($user)) {
             return 'Disponibilité';
         }
+
         return 'S\'incrire';
     }
 
     private function getPeriod(AppExtension $appExtension): string
     {
-        return  (null === $this->endAt) 
+        return  (null === $this->endAt)
             ? $appExtension->formatDateLong($this->startAt)
             : $appExtension->formatDateLong($this->startAt).' au '.$appExtension->formatDateLong($this->endAt);
     }

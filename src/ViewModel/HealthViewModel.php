@@ -78,8 +78,8 @@ class HealthViewModel extends AbstractViewModel
     private function isMedicalCertificateRequired(): ?bool
     {
         $isMedicalCertificateRequired = false;
-        if (!$this->healthQuestions->isEmpty()) {
-            foreach ($this->healthQuestions as $question) {
+        if (!$this->entity->getHealthQuestions()->isEmpty()) {
+            foreach ($this->entity->getHealthQuestions() as $question) {
                 if (true === $question->getValue()) {
                     $isMedicalCertificateRequired = true;
                 }

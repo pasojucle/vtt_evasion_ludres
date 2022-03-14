@@ -6,7 +6,6 @@ namespace App\ViewModel;
 
 use App\Entity\Session;
 
-
 class SessionViewModel extends AbstractViewModel
 {
     public ?Session $entity;
@@ -15,7 +14,6 @@ class SessionViewModel extends AbstractViewModel
 
     public ?BikeRideViewModel $bikeRide;
 
-    
     public static function fromSession(Session $session, array $services)
     {
         $sessionView = new self();

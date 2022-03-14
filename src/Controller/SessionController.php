@@ -11,7 +11,6 @@ use App\Form\SessionEditType;
 use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
 use App\Service\SessionService;
-use App\Service\UserService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;

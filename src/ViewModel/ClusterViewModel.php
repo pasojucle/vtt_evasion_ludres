@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\Level;
 use App\Entity\Cluster;
+use App\Entity\Level;
 use App\Entity\Session;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -63,7 +63,8 @@ class ClusterViewModel extends AbstractViewModel
                 ];
             }
         }
-         return $sessions;
+
+        return $sessions;
     }
 
     private function getMemberSessions(): ArrayCollection

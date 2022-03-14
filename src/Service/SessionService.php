@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\User;
-use App\Entity\Cluster;
 use App\Entity\BikeRide;
-use App\ViewModel\UserPresenter;
+use App\Entity\Cluster;
+use App\Entity\User;
 use App\Repository\LevelRepository;
-use App\ViewModel\ClusterPresenter;
 use App\Repository\SessionRepository;
+use App\ViewModel\ClusterPresenter;
+use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
 
 class SessionService

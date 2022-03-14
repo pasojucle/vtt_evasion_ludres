@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTime;
-use DateInterval;
-use App\Entity\Level;
-use DateTimeImmutable;
-use App\Entity\Cluster;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
+use App\Entity\Level;
 use App\Form\BikeRideFilterType;
-use App\Repository\LevelRepository;
-use App\ViewModel\ClusterPresenter;
-use App\ViewModel\BikeRidesPresenter;
 use App\Repository\BikeRideRepository;
+use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\ViewModel\BikeRidesPresenter;
+use App\ViewModel\ClusterPresenter;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class BikeRideService

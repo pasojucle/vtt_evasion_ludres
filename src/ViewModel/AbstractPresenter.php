@@ -20,7 +20,7 @@ class AbstractPresenter
         private ParameterBagInterface $parameterBag,
         private Security $security,
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
-        private TranslatorInterface $translator, 
+        private TranslatorInterface $translator,
         private AppExtension $appExtension
     ) {
         $this->services = $this->getServices();
@@ -35,7 +35,7 @@ class AbstractPresenter
             'user' => $this->security->getUser(),
             'membershipFeeAmountRepository' => $this->membershipFeeAmountRepository,
             'translator' => $this->translator,
-            'appExtention' => $this->appExtension
+            'appExtention' => $this->appExtension,
         ];
     }
 }
