@@ -171,8 +171,8 @@ function updateLinkOrder(item) {
 
 function getMediaScreen() {
     const width = screen.width;
-    let mediaScreen = (width > 800) ? 'md' : 'xs'; 
-    document.cookie = "media_screen = "+mediaScreen;
+    let mediaScreen = (width > 800) ? 'md' : 'xs';
+    setCookie('media_screen', mediaScreen, 30)
 }
 
 function getFile(e) {
@@ -329,7 +329,7 @@ function setCookie(cName, cValue, expDays) {
     let date = new Date();
     date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
     const expires = "expires=" + date.toUTCString();
-    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/"; ;
+    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/; url=" + location.hostname;
 }
 
 function clipboard(event) {
