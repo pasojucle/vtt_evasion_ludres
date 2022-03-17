@@ -61,32 +61,24 @@ class UserViewModel extends AbstractViewModel
     public function setIdentities(): self
     {
         $identities = $this->entity->getIdentities();
-        if (1 < $identities->count()) {
+        if (!$identities->isEmpty()) {
             foreach ($identities as $identity) {
-                if (null === $identity->getKinship()) {
+                if (Identity::TYPE_MEMBER === $identity->getType()) {
                     $this->member = $this->getMember($identity);
-                } else {
-                    if (null !== $identity->getBirthDate() && null !== $identity->getEmail()) {
-                        $this->kinship = $this->getKinship($identity);
-                    } else {
-                        $this->secondKinship = $this->getSecondKinShip($identity);
-                    }
+                }
+                if (Identity::TYPE_KINSHIP === $identity->getType()) {
+                    $this->kinship = $this->getKinship($identity);;
+                }
+                if (Identity::TYPE_SECOND_CONTACT=== $identity->getType()) {
+                    $this->secondKinship = $this->getSecondKinShip($identity);
                 }
             }
-        } elseif (0 < $identities->count()) {
-            $this->member = $this->getMember($identities->first());
-            $this->kinship = null;
         } else {
             $this->member = null;
             $this->kinship = null;
         }
 
         return $this;
-    }
-
-    public function getId(): ?int
-    {
-        return $this->entity?->getId();
     }
 
     public function getFullName(): string
@@ -304,9 +296,8 @@ class UserViewModel extends AbstractViewModel
     private function getKinship(Identity $identity): ?IdentityViewModel
     {
         if ($identity) {
-            $address = (null !== $identity->getAddress() && !$identity->getAddress()->isEmpty()) ? $identity->getAddress() : $this->member->address->entity;
 
-            return IdentityViewModel::fromIdentity($identity, $this->services, $address);
+            return IdentityViewModel::fromIdentity($identity, $this->services, $this->member);
         }
 
         return null;

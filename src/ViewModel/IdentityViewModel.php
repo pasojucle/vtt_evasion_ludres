@@ -34,12 +34,9 @@ class IdentityViewModel extends AbstractViewModel
 
     public ?int $age;
 
-    public static function fromIdentity(Identity $identity, array $services, ?Address $address = null)
+    public static function fromIdentity(Identity $identity, array $services, ?IdentityViewModel $member = null)
     {
         $bithDate = $identity->getBirthDate();
-        if (null === $address) {
-            $address = $identity->getAddress();
-        }
 
         $identityView = new self();
         $identityView->entity = $identity;
@@ -48,7 +45,7 @@ class IdentityViewModel extends AbstractViewModel
         $identityView->fullName = $identity->getName().' '.$identity->getFirstName();
         $identityView->birthDate = ($bithDate) ? $bithDate->format('d/m/Y') : null;
         $identityView->birthPlace = $identity->getBirthPlace().' ('.$identity->getBirthDepartment().')';
-        $identityView->address = (null !== $address) ? AddressViewModel::fromAddress($address, $services) : null;
+        $identityView->address = $identityView->getAddress($member, $services);
         $identityView->email = $identity->getEmail();
         $identityView->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
         $identityView->picture = $identity->getPicture();
@@ -70,5 +67,19 @@ class IdentityViewModel extends AbstractViewModel
         }
 
         return null;
+    }
+
+    private function getAddress(?IdentityViewModel $member, array $services): ?AddressViewModel
+    {
+        $address = $this->entity->getAddress();
+        if (Identity::TYPE_KINSHIP === $this->entity->getType() && (null === $address || $address->isEmpty())) {
+            $address = $member->address;
+        }
+
+        if (null !== $address && !$address instanceof AddressViewModel) {
+            $address = AddressViewModel::fromAddress($address, $services);
+        }
+
+        return  $address;        
     }
 }
