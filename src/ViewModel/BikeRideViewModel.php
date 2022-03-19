@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\BikeRide;
-use App\Entity\Level;
-use App\Entity\User;
-use App\Twig\AppExtension;
-use DateInterval;
 use DateTime;
+use DateInterval;
+use App\Entity\User;
+use App\Entity\Level;
 use DateTimeImmutable;
+use App\Entity\BikeRide;
+use App\Twig\AppExtension;
+use App\ViewModel\ClustersViewModel;
+use Doctrine\Common\Collections\Collection;
 
 class BikeRideViewModel extends AbstractViewModel
 {
@@ -48,11 +50,14 @@ class BikeRideViewModel extends AbstractViewModel
 
     private ?DateTimeImmutable $closingAt;
 
+    private ?array $services;
+
     public static function fromBikeRide(BikeRide $bikeRide, array $services)
     {
         $bikeRideView = new self();
         $bikeRideView->entity = $bikeRide;
         $bikeRideView->title = $bikeRide->getTitle();
+        $bikeRideView->type = $bikeRide->getType();
         $bikeRideView->content = $bikeRide->getContent();
         $bikeRideView->startAt = $bikeRide->getStartAt();
         $bikeRideView->endAt = $bikeRide->getEndAt();
@@ -68,6 +73,8 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->period = $bikeRideView->getPeriod($services['appExtention']);
         $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($services['user']);
         $bikeRideView->isRegistrable = $bikeRideView->isRegistrable();
+
+        $bikeRideView->services = $services;
 
         return $bikeRideView;
     }
@@ -135,5 +142,11 @@ class BikeRideViewModel extends AbstractViewModel
         return  (null === $this->endAt)
             ? $appExtension->formatDateLong($this->startAt)
             : $appExtension->formatDateLong($this->startAt).' au '.$appExtension->formatDateLong($this->endAt);
+    }
+
+    public function getClusters(): ClustersViewModel
+    {
+        return ClustersViewModel::fromClusters($this->entity->getClusters(), $this->services);
+
     }
 }

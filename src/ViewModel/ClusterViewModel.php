@@ -47,6 +47,7 @@ class ClusterViewModel extends AbstractViewModel
         $clusterView->isComplete = $cluster->isComplete();
         $clusterView->memberSessions = $clusterView->getMemberSessions();
         $clusterView->availableSessions = $clusterView->getAvailableSessions();
+        $clusterView->usersOnSiteCount = $clusterView->getUsersOnSiteCount();
 
         return $clusterView;
     }
@@ -88,12 +89,12 @@ class ClusterViewModel extends AbstractViewModel
         if (!$this->entity->getSessions()->isEmpty()) {
             foreach ($this->entity->getSessions() as $session) {
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
-                    $sortedSessions[] = $session;
+                    $sortedSessions[] = SessionViewModel::fromSession($session, $this->services);
                 }
             }
             usort($sortedSessions, function ($a, $b) {
-                $a = strtolower($a->getUser()->getFirstIdentity()->getName());
-                $b = strtolower($b->getUser()->getFirstIdentity()->getName());
+                $a = strtolower($a->user->member->name);
+                $b = strtolower($b->user->member->name);
 
                 if ($a === $b) {
                     return 0;
@@ -104,5 +105,21 @@ class ClusterViewModel extends AbstractViewModel
         }
 
         return new ArrayCollection($sortedSessions);
+    }
+
+    public function getUsersOnSiteCount(): int
+    {
+        $userOnSiteSessions = [];
+        if (!$this->entity->getSessions()->isEmpty()) {
+            foreach ($this->entity->getSessions() as $session) {
+                $level = $session->getUser()->getLevel();
+                $levelType = (null !== $level) ? $level->getType() : Level::TYPE_MEMBER;
+                if ($session->isPresent() && Level::TYPE_MEMBER === $levelType) {
+                    $userOnSiteSessions[] = $session;
+                }
+            }
+        }
+
+        return count($userOnSiteSessions);
     }
 }

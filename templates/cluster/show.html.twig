@@ -5,24 +5,16 @@
  <div class="wrapper">
     <div class="block">
         <div class="block-title">
-            <h2>{{ bikeRide.title }} - 
-                {% if bikeRide.endAt is null %}
-                    {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
-                {% else %}
-                    du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
-                {% endif %}
-            </h2>
+            <h2>{{ bikeRide.title }} - {{ bikeRide.period }}</h2>
             <span class="tools">
                 <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
         <div id="sessions_container" class="block-body">
-            {% for cluster in bikeRide.clusters %}
-                {% set presentCount = cluster.presentCount %}
-                {% set cluster = cluster.cluster %}
-                {% set hasGroups = bikeRide.clusters| length > 1 %}
-                {% if hasGroups %}
-                    <h3 class="padding-10">{{ cluster.title }} - <span class="badge badge-info">{{ presentCount }}</span></h3>
+            {% for cluster in bikeRide.getClusters().clusters %}
+                {% set hasClusters = bikeRide.getClusters().hasClusters %}
+                {% if hasClusters %}
+                    <h3 class="padding-10">{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h3>
                 {% endif %} 
                 {% if cluster.sessions | length > 0 %}
                     <ul>
@@ -30,7 +22,7 @@
                             {% include ('session/admin/list.html.twig')%}
                         {% endfor %}
                     </ul>
-                    {% if hasGroups and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+                    {% if hasClusters and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
                         <div class="padding-10">
                             {% if not cluster.isComplete %}
                                 <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete" data-cluster-id="{{ cluster.id }}" target="_blank">
@@ -60,6 +52,6 @@
         </div>
     </div>
     <div class="padding-10">
-        <a class="btn btn-primary" href="{{ path('admin_session_add', {'bikeRide': bikeRide.id}) }}">Ajouter un participant</a>
+        <a class="btn btn-primary" href="{{ path('admin_session_add', {'bikeRide': bikeRide.entity.id}) }}">Ajouter un participant</a>
     </div>
 {% endblock %}

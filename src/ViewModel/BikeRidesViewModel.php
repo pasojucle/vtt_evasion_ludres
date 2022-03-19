@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class BikeRidesViewModel
 {
     public ?array $bikeRides = [];
 
-    public static function fromBikeRides(array|Paginator $bikeRides, array $services): BikeRidesViewModel
+    public static function fromBikeRides(array|Paginator|Collection $bikeRides, array $services): BikeRidesViewModel
     {
         $bikeRidesViewModel = [];
         if (!empty($bikeRides)) {

@@ -13,6 +13,7 @@ use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
 use App\Service\SessionService;
 use App\Service\UserService;
+use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,17 +35,19 @@ class SessionController extends AbstractController
     #[Route('/admin/seance/{session}', name: 'admin_session_present', methods: ['GET'])]
     public function adminPresent(
         Session $session,
-        BikeRideService $bikeRideService
+        BikeRideService $bikeRideService,
+        BikeRidePresenter $bikeRidePresenter
     ): Response {
         $isPresent = !$session->isPresent();
 
         $session->setIsPresent($isPresent);
         $this->entityManager->flush();
-        $bikeRide = $session->getCluster()->getBikeRide();
+
+        $bikeRidePresenter->present($session->getCluster()->getBikeRide());
 
         return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $bikeRideService->getBikeRideWithPresentsByCluster($bikeRide),
-            'bike-rides_filters' => [],
+            'bikeRide' => $bikeRidePresenter->viewModel(),
+            'bike_rides_filters' => [],
         ]);
     }
 

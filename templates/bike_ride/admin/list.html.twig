@@ -38,7 +38,7 @@
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
                                         {% if bikeRide.startAt <= date() %}
-                                            <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.id}) }}" class="btn btn-success btn-ico" title="Exporter la séance">
+                                            <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-success btn-ico" title="Exporter la séance">
                                                 <i class="fas fa-file-download"></i>
                                             </a>
                                         {% endif %}

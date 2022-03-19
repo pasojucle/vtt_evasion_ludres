@@ -38,7 +38,7 @@
                         {% endif %}
                     </ul>
                   {% if is_granted('ROLE_REGISTER') %}
-                        <a href="{{ path('admin_identity_edit', {'user': user.id}) }}"
+                        <a href="{{ path('admin_identity_edit', {'user': user.entity.id}) }}"
                             class="btn btn-secondary marging-bottom-20" title="Modifier">
                             <i class="fas fa-edit"></i> Modifier
                         </a>
@@ -69,7 +69,7 @@
                             {% endif %}
                         </ul>
                         {% if is_granted('ROLE_REGISTER') %}
-                            <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
+                            <a href="{{ path('admin_user_edit', {'user': user.entity.id}) }}"
                                 class="btn btn-secondary marging-bottom-20" title="Modifier">
                                 <i class="fas fa-edit"></i> Modifier
                             </a>
@@ -96,7 +96,7 @@
                     {% endif %}
                     {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
                         <div class="col-md-12 col-xs-12">
-                            <a href="{{ path('admin_identity_edit', {'user': user.id, 'isKinship': 1}) }}"
+                            <a href="{{ path('admin_identity_edit', {'user': user.entity.id, 'isKinship': 1}) }}"
                                 class="btn btn-secondary marging-bottom-20" title="Modifier">
                                 <i class="fas fa-edit"></i> Modifier
                             </a>
@@ -134,7 +134,7 @@
                         {% endif %}
                         {% if is_granted('ROLE_REGISTER')  %}
                             <div class="col-md-12 col-xs-12">
-                            <a href="{{ path('admin_health_edit', {'user': user.id}) }}"
+                            <a href="{{ path('admin_health_edit', {'user': user.entity.id}) }}"
                                 class="btn btn-secondary marging-bottom-20" title="Modifier">
                                 <i class="fas fa-edit"></i> Modifier
                             </a>

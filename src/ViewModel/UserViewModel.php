@@ -32,8 +32,6 @@ class UserViewModel extends AbstractViewModel
 
     public ?HealthViewModel $health;
 
-    public ?array $bikeRides;
-
     private ?int $currentSeason;
 
     private array $services;
@@ -53,7 +51,6 @@ class UserViewModel extends AbstractViewModel
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);
-        $userView->bikeRides = $userView->getBikeRides();
 
         return $userView;
     }
@@ -276,7 +273,7 @@ class UserViewModel extends AbstractViewModel
     {
         $lastLicence = $this->getLastLicence();
 
-        return 1 === $this->entity->getLicences()->count() && $lastLicence->season === $this->currentSeason && $lastLicence['isFinal'] && Licence::STATUS_WAITING_VALIDATE === $lastLicence['status'];
+        return 1 === $this->entity->getLicences()->count() && $lastLicence->season === $this->currentSeason && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
     }
 
     private function getSeasonLicence(): LicenceViewModel

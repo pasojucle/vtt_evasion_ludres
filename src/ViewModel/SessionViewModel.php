@@ -6,6 +6,8 @@ namespace App\ViewModel;
 
 use App\Entity\Session;
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
+
 class SessionViewModel extends AbstractViewModel
 {
     public ?Session $entity;
@@ -14,12 +16,18 @@ class SessionViewModel extends AbstractViewModel
 
     public ?BikeRideViewModel $bikeRide;
 
+    public ?UserViewModel $user;
+
+    public ?bool $userIsOnSite;
+
     public static function fromSession(Session $session, array $services)
     {
         $sessionView = new self();
         $sessionView->entity = $session;
         $sessionView->availability = $sessionView->getAvailability();
         $sessionView->bikeRide = BikeRideViewModel::fromBikeRide($session->getCluster()->getBikeRide(), $services);
+        $sessionView->user = UserViewModel::fromUser($session->getUser(), $services);
+        $sessionView->userIsOnSite = $session->isPresent();
 
         return $sessionView;
     }

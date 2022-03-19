@@ -16,7 +16,6 @@ use App\ViewModel\ClusterPresenter;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -229,44 +228,5 @@ class BikeRideService
         }
 
         return $bikeRide;
-    }
-
-    public function getBikeRideWithPresentsByCluster(BikeRide $bikeRide): array
-    {
-        $clusters = [];
-        if (!$bikeRide->getClusters()->isEmpty()) {
-            foreach ($bikeRide->getClusters() as $cluster) {
-                $this->clusterPresenter->present($cluster);
-                $clusters[] = [
-                    'cluster' => $this->clusterPresenter->viewModel(),
-                    'presentCount' => $this->getCountOfPresents($cluster->getSessions()),
-                ];
-            }
-        }
-
-        return [
-            'title' => $bikeRide->getTitle(),
-            'startAt' => $bikeRide->getStartAt(),
-            'endAt' => $bikeRide->getEndAt(),
-            'type' => $bikeRide->getType(),
-            'id' => $bikeRide->getId(),
-            'clusters' => $clusters,
-        ];
-    }
-
-    public function getCountOfPresents(Collection $sessions): int
-    {
-        $presentSessions = [];
-        if (!$sessions->isEmpty()) {
-            foreach ($sessions as $session) {
-                $level = $session->getUser()->getLevel();
-                $levelType = (null !== $level) ? $level->getType() : Level::TYPE_MEMBER;
-                if ($session->isPresent() && Level::TYPE_MEMBER === $levelType) {
-                    $presentSessions[] = $session;
-                }
-            }
-        }
-
-        return count($presentSessions);
     }
 }
