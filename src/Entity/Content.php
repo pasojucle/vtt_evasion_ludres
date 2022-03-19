@@ -50,7 +50,7 @@ class Content
     private ?DateTime $endAt;
 
     #[Column(type: 'integer')]
-    private int $orderBy;
+    private int $orderBy = 0;
 
     #[Column(type: 'boolean')]
     private bool $isActive = true;
@@ -60,6 +60,12 @@ class Content
 
     #[Column(type: 'string', length: 100, nullable: true)]
     private ? string $title;
+
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private ?string $filename;
+
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private ?string $url;
 
     public function getId(): ?int
     {
@@ -158,6 +164,30 @@ class Content
     public function setTitle(?string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): self
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
 
         return $this;
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Content;
-use App\Form\ContentType;
+use App\Form\Admin\ContentType;
 use App\Repository\ContentRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;

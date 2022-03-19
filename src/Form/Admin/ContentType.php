@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Admin;
 
 use App\Entity\Content;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class ContentType extends AbstractType
 {
@@ -80,6 +82,37 @@ class ContentType extends AbstractType
                     ->add('isFlash', CheckboxType::class, [
                         'label' => 'Message flash',
                         'required' => false,
+                    ])
+                    ->add('file', FileType::class, [
+                        'label' => 'Fichier (optionnel)',
+                        'mapped' => false,
+                        'required' => false,
+                        'block_prefix' => 'custom_file',
+                        'attr' => [
+                            'accept' => '.bmp,.jpeg,.jpg,.png, .pdf',
+                        ],
+                        'row_attr' => [
+                            'class' => 'form-group-inline',
+                        ],
+                        'constraints' => [
+                            new File([
+                                'maxSize' => '1024k',
+                                'mimeTypes' => [
+                                    'image/bmp',
+                                    'image/jpeg',
+                                    'image/png',
+                                    'application/pdf',
+                                ],
+                                'mimeTypesMessage' => 'Format image bmp, jpeg, png ou pdf autorisé',
+                            ]),
+                        ],
+                    ])
+                    ->add('url', TextType::class, [
+                        'label' => 'Url du bouton (optionnel)',
+                        'required' => false,
+                        'row_attr' => [
+                            'class' => 'form-group-inline',
+                        ],
                     ])
                 ;
             }

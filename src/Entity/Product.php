@@ -42,7 +42,7 @@ class Product
     private bool $isDisabled = false;
 
     #[ManyToMany(targetEntity: Size::class, inversedBy: 'products')]
-    #[JoinColumn(name: 'size_id', referencedColumnName: 'id', nullable: false)]
+    #[JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false)]
     #[OrderBy(['id' => 'ASC'])]
     private Collection $sizes;
 
