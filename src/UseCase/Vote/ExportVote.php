@@ -8,6 +8,7 @@ use App\Entity\Vote;
 use App\Entity\VoteIssue;
 use App\Entity\VoteResponse;
 use App\Repository\VoteResponseRepository;
+use App\ViewModel\SurveyResponsePresenter;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -16,6 +17,7 @@ class ExportVote
     public function __construct(
         private TranslatorInterface $translator,
         private VoteResponseRepository $voteResponseRepository,
+        private SurveyResponsePresenter $surveyResponsePresenter
     ) {
     }
 
@@ -59,14 +61,15 @@ class ExportVote
     {
         foreach ($voteResponsesByUuid as $uuid => $data) {
             $row = [];
-            $row[] = $uuid;
-            foreach ($data['responses'] as $response) {
-                if (VoteIssue::RESPONSE_TYPE_CHOICE === $response->getVoteIssue()->getResponseType()) {
-                    $value = $this->translator->trans(VoteResponse::VALUES[$response->getValue()]);
-                } else {
-                    $value = $response->getValue();
+            
+            foreach ($data['responses'] as $key => $surveyResponse) {
+                $this->surveyResponsePresenter->present($surveyResponse);
+                $surveyResponse = $this->surveyResponsePresenter->viewModel();
+                if (0 === $key) {
+                    $row[] = $surveyResponse->user?->member->fullName ?? $uuid;
                 }
-                $row[] = $this->addQuote($value);
+                
+                $row[] = $this->addQuote($surveyResponse->value);
             }
             $content[] = implode(',', $row);
         }

@@ -6,17 +6,22 @@ namespace App\Controller\Admin;
 
 use App\Entity\Vote;
 use App\Form\Admin\VoteType;
-use App\Repository\VoteRepository;
-use App\UseCase\Vote\ExportVote;
 use App\UseCase\Vote\GetVote;
-use App\UseCase\Vote\GetVoteResults;
+use App\UseCase\Vote\ExportVote;
+use App\Repository\VoteRepository;
+use App\Form\Admin\SurveyFilterType;
+use App\UseCase\Vote\GetSurveyResults;
+use App\Repository\VoteIssueRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\UseCase\Vote\GetAnonymousSurveyResults;
+use App\ViewModel\SurveyResponsesPresenter;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/vote')]
 class VoteController extends AbstractController
@@ -57,23 +62,54 @@ class VoteController extends AbstractController
         ]);
     }
 
-    #[Route('/{vote}/{tab}', name: 'admin_vote', methods: ['GET'], defaults: [
+    #[Route('/{survey}', name: 'admin_surveys', methods: ['GET', 'POST'])]
+    public function show(
+        GetSurveyResults $getSurveyResults,
+        Request $request,
+        SurveyResponsesPresenter $surveyResponsesPresenter,
+        VoteIssueRepository $voteIssueRepository,
+        Vote $survey
+    ): Response
+    {
+        $issues = $voteIssueRepository->findByVote($survey);
+        
+        $filter = ['issue' => $issues[0]];
+        $form = $this->createForm(SurveyFilterType::class, $filter,  [
+            'issues' => $issues,
+        ]);
+        $form->handleRequest($request);
+        $responses = [];
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $filter = $form->getData();
+        }
+        $responses = $getSurveyResults->execute($filter);
+        $surveyResponsesPresenter->present($responses);
+        return $this->render('vote/admin/show.html.twig', [
+            'vote' => $survey,
+            'responses' => $surveyResponsesPresenter->viewModel()->surveyResponses,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/anonyme/{survey}/{tab}', name: 'admin_anonymous_surveys', methods: ['GET'], defaults: [
         'tab' => 0,
     ])]
-    public function show(GetVoteResults $getVoteResults, Vote $vote, int $tab): Response
+    public function showAnonymous(GetAnonymousSurveyResults $getAnonymousSurveyResults, Vote $survey, int $tab): Response
     {
-        return $this->renderForm('vote/admin/show.html.twig', [
-            'vote' => $vote,
-            'results' => $getVoteResults->execute($vote),
+
+        return $this->render('vote/admin/show_anonymous.html.twig', [
+            'vote' => $survey,
+            'results' => $getAnonymousSurveyResults->execute($survey),
             'tabs' => ['Réponses', 'Participants'],
             'tab' => $tab,
         ]);
     }
 
-    #[Route('export/{vote}', name: 'admin_vote_export', methods: ['GET'])]
-    public function export(ExportVote $export, Vote $vote): Response
+    #[Route('export/{survey}', name: 'admin_survey_export', methods: ['GET'])]
+    public function export(ExportVote $export, Vote $survey): Response
     {
-        $content = $export->execute($vote);
+        
+        $content = $export->execute($survey);
 
         $response = new Response($content);
         $disposition = HeaderUtils::makeDisposition(
@@ -111,5 +147,27 @@ class VoteController extends AbstractController
             'vote' => $vote,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/survey/issue/list/select2', name: 'survey_issue_list_select2', methods: ['GET'])]
+    public function userListSelect2(
+        VoteIssueRepository $voteIssueRepository,
+        Request $request
+    ): JsonResponse {
+        $query = $request->query->get('q');
+        $surveyId = (int) $request->query->get('surveyId');
+
+        $issues = $voteIssueRepository->findBySurveyAndContent($surveyId, $query);
+
+        $response = [];
+
+        foreach ($issues as $issue) {
+            $response[] = [
+                'id' => $issue->getId(),
+                'text' => $issue->getContent(),
+            ];
+        }
+
+        return new JsonResponse($response);
     }
 }

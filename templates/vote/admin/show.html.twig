@@ -8,65 +8,35 @@
             <div class="block-title">
                 <h2>{{ vote.title }}</h2>
                 <span class="tools">
-                    <a class="btn btn-success btn-ico" href="{{ path('admin_vote_export', {'vote': vote.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
+                    <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': vote.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
                     <a href="{{ path('admin_votes') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des votes"><i class="fas fa-chevron-left"></i></a>
                 </span>
             </div>
             <div>
-            <nav  class="nav-tab">
-                {% for key, label in tabs %}
-                    <a href="{{ path('admin_vote', {'vote': vote.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>
-                        {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ vote.voteUsers|length }}</span>{% endif %}
-                    </a>
-                {% endfor %}
-            </nav>
         </div>
         <div class="block-body">
-            {% if tab == 0 %}
-                {% if results is not empty %}
-                    <ul class="padding-10">
+                {{ form_start(form) }}
+                <div class="filters">
+                    <ul>
+                        <li>{{ form_widget(form.issue)}}</li>
+                        <li>{{ form_widget(form.value)}}</li>
+                        <li>{{ form_widget(form.submit)}}</li>
+                    </ul>
+                </div>
+                {{ form_end(form) }}
+            {% if responses is not empty %}
+                <ul class="padding-10">
+                    {% for response in responses %}
                         <li>
                             <div class="row row-list">
-                                <div class="col-md-6 col-xs-12"></div>
-                                {% for value in constant('App\\Entity\\VoteResponse::VALUES') %}
-                                    <div class="col-md-2 col-xs-4">
-                                        {{ value|trans }}
-                                    </div>
-                                {% endfor %}
+                                <div class="col-md-6 col-xs-6">{{ response.user.member.fullName }}</div>
+                                <div class="col-md-6 col-xs-6">
+                                    {{ response.value }}
+                                </div>
                             </div>
                         </li>
-                        {% for results_by_choice in results %}
-                            <li>
-                                <div class="row row-list">
-                                    <div class="col-md-6 col-xs-12">{{ results_by_choice.content }}</div>
-                                    {% for result in results_by_choice['results']  %}
-                                        <div class="col-md-2 col-xs-4">{{ result}}</div>
-                                    {% endfor %}
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Auncun resultat</p>
-                {% endif %}
-            {% else %}
-                {% if vote.voteUsers is not empty %}
-                    <ul class="padding-10">
-                        {% for vote_user in vote.voteUsers %}
-                            <li>
-                                <div class="row row-list">
-                                    <div class="col-md-6 col-xs-6">{{ vote_user.createdAt|date('d/m/Y H:i:s') }}</div>
-                                    <div class="col-md-6 col-xs-6">
-                                        {% set identity = vote_user.user.firstIdentity %}
-                                        {{ identity.name }} {{ identity.firstName }}
-                                    </div>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Auncun participant</p>
-                {% endif %}
+                    {% endfor %}
+                </ul>
             {% endif %}
         </div>
     </div>

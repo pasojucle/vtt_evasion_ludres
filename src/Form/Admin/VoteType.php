@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Vote;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class VoteType extends AbstractType
 {
@@ -69,6 +70,11 @@ class VoteType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
             ])
+            ->add('isAnonymous', CheckboxType::class, [
+                    'label' => 'Sondage doit être annomyme',
+                    'block_prefix' => 'switch',
+                    'required' => false,
+                ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistere',
                 'attr' => [

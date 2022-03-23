@@ -42,6 +42,9 @@ class Vote
     #[OneToMany(targetEntity: VoteUser::class, mappedBy: 'vote')]
     private Collection $voteUsers;
 
+    #[Column(type: 'boolean', options:['default' => true])]
+    private $isAnonymous = true;
+
     public function __construct()
     {
         $this->voteIssues = new ArrayCollection();
@@ -169,6 +172,18 @@ class Vote
                 $voteUser->setVote(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isAnonymous(): ?bool
+    {
+        return $this->isAnonymous;
+    }
+
+    public function setIsAnonymous(bool $isAnonymous): self
+    {
+        $this->isAnonymous = $isAnonymous;
 
         return $this;
     }

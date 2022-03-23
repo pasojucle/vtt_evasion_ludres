@@ -10,7 +10,7 @@ use App\Entity\VoteResponse;
 use App\Repository\VoteResponseRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class GetVoteResults
+class GetAnonymousSurveyResults
 {
     public function __construct(
         private TranslatorInterface $translator,
@@ -21,6 +21,7 @@ class GetVoteResults
     public function execute(Vote $vote): array
     {
         $voteResponsesByIssues = $this->voteResponseRepository->findResponsesByIssues($vote);
+        
         $results = [];
         $values = [];
         foreach (array_keys(VoteResponse::VALUES) as $choice) {

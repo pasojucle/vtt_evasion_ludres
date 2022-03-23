@@ -18,13 +18,14 @@
                             <div>
                                 <div class="row row-list">
                                     <div class="col-md-8 col-xs-6 background-ligth">
-                                        <a href="{{ path('admin_vote', {'vote': vote.id}) }}" class="btn btn-list" title="Résultats du vote">
+                                        {% set route = (vote.isAnonymous) ? 'admin_anonymous_surveys' : 'admin_surveys' %}
+                                        <a href="{{ path(route, {'survey': vote.id}) }}" class="btn btn-list" title="Résultats du vote">
                                             {{ vote.title }}
                                         </a>
                                     </div>
                                     <div class="col-md-4 col-xs-6">
                                         <a class="btn btn-success btn-ico" href="{{ absolute_url(path('vote', {'vote': vote.id} ))}}" title="Copier l'url"><i class="fas fa-clipboard"></i></a>
-                                        <a class="btn btn-success btn-ico" href="{{ path('admin_vote_export', {'vote': vote.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
+                                        <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': vote.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
                                     {% if not vote.isDisabled %}
                                         {% if vote.voteUsers is empty %}
                                             <a class="btn btn-primary btn-ico" href="{{ path('admin_vote_edit', {'vote': vote.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>

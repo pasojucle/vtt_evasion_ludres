@@ -72,6 +72,9 @@ class VoteController extends AbstractController
                 $data = $form->getData();
                 if (!empty($data['voteResponses'])) {
                     foreach ($data['voteResponses'] as $response) {
+                        if (!$vote->isAnonymous()) {
+                            $response->setUser($user);
+                        }
                         $this->entityManager->persist($response);
                     }
                 }

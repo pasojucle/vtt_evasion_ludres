@@ -32,8 +32,8 @@ class VoteIssue
     private int $id;
 
     #[ManyToOne(targetEntity: Vote::class, inversedBy: 'voteIssues')]
-    #[JoinColumn(name: 'vote_id', referencedColumnName: 'id', nullable: false)]
-    private Vote $vote;
+    #[JoinColumn(name: 'vote_id', referencedColumnName: 'id', nullable: true)]
+    private ?Vote $vote;
 
     #[Column(type: 'string', length: 255)]
     private string $content;

@@ -24,6 +24,9 @@
                     {{ form_row(form.startAt) }}
                     {{ form_row(form.endAt) }}
                 </div>
+                <div class="form-group">
+                    {{ form_row(form.isAnonymous) }}
+                </div>
                 <b>{{ form_label(form.voteIssues) }}</b>
                     <ul class="collection_container {{ form.voteIssues.vars.name }}"
                     data-index="{{ form.voteIssues|length > 0 ? form.voteIssues|last.vars.name + 1 : 0 }}" 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Vote;
+use App\Entity\VoteIssue;
 use App\Entity\VoteResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -63,6 +64,26 @@ class VoteResponseRepository extends ServiceEntityRepository
             )
             ->setParameter('vote', $vote)
             ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByFilter(array $filter): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere(
+                (new Expr())->eq('r.voteIssue', ':voteIssue')
+            )
+            ->setParameter('voteIssue', $filter['issue']);
+
+        if(isset($filter['value'])) {
+            $qb            
+                ->andWhere(
+                    (new Expr())->eq('r.value', ':value')
+                )
+                ->setParameter('value', $filter['value']);
+        }
+        return $qb->getQuery()
             ->getResult()
         ;
     }
