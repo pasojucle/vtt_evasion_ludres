@@ -9,20 +9,20 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class VoteResponsesType extends AbstractType
+class SurveyResponsesType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('voteResponses', CollectionType::class, [
+            ->add('surveyResponses', CollectionType::class, [
                 'label' => false,
-                'entry_type' => VoteResponseType::class,
+                'entry_type' => SurveyResponseType::class,
                 'entry_options' => [
                     'label' => false,
                 ],
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Voter',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],

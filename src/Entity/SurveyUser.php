@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\VoteUserRepository;
+use App\Repository\SurveyUserRepository;
 use DateTime;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -13,18 +13,18 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
-#[Entity(repositoryClass: VoteUserRepository::class)]
-class VoteUser
+#[Entity(repositoryClass: SurveyUserRepository::class)]
+class SurveyUser
 {
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: Vote::class, inversedBy: 'voteUsers')]
+    #[ManyToOne(targetEntity: Survey::class, inversedBy: 'surveyUsers')]
     #[JoinColumn(nullable: false)]
-    private Vote $vote;
+    private Survey $survey;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'votes')]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'surveys')]
     #[JoinColumn(nullable: false)]
     private User $user;
 
@@ -36,14 +36,14 @@ class VoteUser
         return $this->id;
     }
 
-    public function getVote(): ?Vote
+    public function getSurvey(): ?Survey
     {
-        return $this->vote;
+        return $this->survey;
     }
 
-    public function setVote(?Vote $vote): self
+    public function setSurvey(?Survey $survey): self
     {
-        $this->vote = $vote;
+        $this->survey = $survey;
 
         return $this;
     }

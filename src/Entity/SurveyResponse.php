@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\VoteResponseRepository;
+use App\Repository\SurveyResponseRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
-#[Entity(repositoryClass: VoteResponseRepository::class)]
-class VoteResponse
+#[Entity(repositoryClass: SurveyResponseRepository::class)]
+class SurveyResponse
 {
     public const VALUE_NO = 0;
 
@@ -22,18 +22,18 @@ class VoteResponse
     public const VALUE_NO_OPINION = 2;
 
     public const VALUES = [
-        self::VALUE_NO => 'vote.response.no',
-        self::VALUE_YES => 'vote.response.yes',
-        self::VALUE_NO_OPINION => 'vote.response.no_opinion',
+        self::VALUE_NO => 'survey.response.no',
+        self::VALUE_YES => 'survey.response.yes',
+        self::VALUE_NO_OPINION => 'survey.response.no_opinion',
     ];
 
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: VoteIssue::class, inversedBy: 'voteResponses')]
+    #[ManyToOne(targetEntity: SurveyIssue::class, inversedBy: 'surveyResponses')]
     #[JoinColumn(nullable: false)]
-    private $voteIssue;
+    private $surveyIssue;
 
     #[Column(type: 'text', nullable: true)]
     private ?string $value;
@@ -49,14 +49,14 @@ class VoteResponse
         return $this->id;
     }
 
-    public function getVoteIssue(): ?VoteIssue
+    public function getSurveyIssue(): ?SurveyIssue
     {
-        return $this->voteIssue;
+        return $this->surveyIssue;
     }
 
-    public function setVoteIssue(?VoteIssue $voteIssue): self
+    public function setSurveyIssue(?SurveyIssue $surveyIssue): self
     {
-        $this->voteIssue = $voteIssue;
+        $this->surveyIssue = $surveyIssue;
 
         return $this;
     }

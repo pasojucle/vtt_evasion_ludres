@@ -73,8 +73,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(targetEntity: OrderHeader::class, mappedBy: 'user')]
     private Collection $orderHeaders;
 
-    #[OneToMany(targetEntity: VoteUser::class, mappedBy: 'user')]
-    private Collection $votes;
+    #[OneToMany(targetEntity: SurveyUser::class, mappedBy: 'user')]
+    private Collection $surveys;
 
     public function __construct()
     {
@@ -83,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->licences = new ArrayCollection();
         $this->sessions = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
-        $this->votes = new ArrayCollection();
+        $this->surveys = new ArrayCollection();
         $this->health = null;
     }
 
@@ -454,29 +454,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|VoteUser[]
+     * @return Collection|SurveyUser[]
      */
-    public function getVotes(): Collection
+    public function getSurveys(): Collection
     {
-        return $this->votes;
+        return $this->surveys;
     }
 
-    public function addVote(VoteUser $vote): self
+    public function addSurvey(SurveyUser $survey): self
     {
-        if (!$this->votes->contains($vote)) {
-            $this->votes[] = $vote;
-            $vote->setUser($this);
+        if (!$this->surveys->contains($survey)) {
+            $this->surveys[] = $survey;
+            $survey->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeVoteUser(VoteUser $vote): self
+    public function removeSurveyUser(SurveyUser $survey): self
     {
-        if ($this->votes->removeElement($vote)) {
+        if ($this->surveys->removeElement($survey)) {
             // set the owning side to null (unless already changed)
-            if ($vote->getUser() === $this) {
-                $vote->setUser(null);
+            if ($survey->getUser() === $this) {
+                $survey->setUser(null);
             }
         }
 

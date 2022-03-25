@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\VoteResponse;
+use App\Entity\SurveyResponse;
 
 class SurveyResponsePresenter extends AbstractPresenter
 {
     private $viewModel;
 
-    public function present(?VoteResponse $surveyResponse): void
+    public function present(?SurveyResponse $surveyResponse): void
     {
         if (null !== $surveyResponse) {
             $this->viewModel = SurveyResponseViewModel::fromSurveyResponse($surveyResponse, $this->services);

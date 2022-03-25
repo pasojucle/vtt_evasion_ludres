@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\VoteIssue;
+use App\Entity\SurveyIssue;
 use App\Form\Transformer\HiddenEntityTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * Entity hidden custom type class definition.
  */
-class HiddenVoteIssueType extends HiddenType
+class HiddenSurveyIssueType extends HiddenType
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -24,6 +24,6 @@ class HiddenVoteIssueType extends HiddenType
         // attach the specified model transformer for this entity list field
         // this will convert data between object and string formats
 
-        $builder->addModelTransformer(new HiddenEntityTransformer($this->entityManager, VoteIssue::class));
+        $builder->addModelTransformer(new HiddenEntityTransformer($this->entityManager, SurveyIssue::class));
     }
 }

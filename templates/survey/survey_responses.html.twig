@@ -5,13 +5,13 @@
 {% block body %}
     <div class="wrapper wrapper-medium-width full-background">
         <div class="wrapper-title">
-            <h1>Vote assemblée Générale</h1>
+            <h1>Sondage</h1>
         </div>
         <div class="wrapper-body">
             <div class="block background-ligth">
                 <div class="block-title bike-ride-date active">
                     <h2>
-                        {{ vote.title }}
+                        {{ survey.title }}
                     </h2>
                 </div>
             {% if message is not null %}
@@ -25,10 +25,10 @@
                 {{ form_start(form) }}
 
                     <div class="block-body">
-                        {{ vote.content|raw }}
+                        {{ survey.content|raw }}
                         <div class="form-group row">
-                            {% for response in form.voteResponses %}
-                                <div class="col-md-6 col-xs-12">{{ response.vars.value.voteIssue.content }}</div>
+                            {% for response in form.surveyResponses %}
+                                <div class="col-md-6 col-xs-12">{{ response.vars.value.surveyIssue.content }}</div>
                                 <div class="col-md-6 col-xs-12">{{ form_widget(response)}}</div>
                             {% endfor %}
 

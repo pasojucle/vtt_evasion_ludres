@@ -1,33 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Votes{% endblock %}
+{% block title %}Surveys{% endblock %}
 
 {% block body %}
     <div class="wrapper wrapper-medium-width full-background">
         <div class="wrapper-title">
-            <h1>Votes</h1>
+            <h1>Sondages</h1>
         </div>
         <div class="wrapper-body">
                 <div class="block background-white">
                     <div class="block-title">
-                        <h2>Votes</h2>
+                        <h2>Sondages</h2>
                     </div>
                     <div class="block-body">
-                        {% if votes is not empty %}
+                        {% if surveys is not empty %}
                             <ul>
-                                {% for vote in votes %}
+                                {% for survey in surveys %}
                                     <li>
                                         <div class="row">
-                                            <div class="col-md-5"><b>{{ vote.title }}</b></div>
+                                            <div class="col-md-5"><b>{{ survey.title }}</b></div>
 
-                                            {% if vote in user_votes.votes %}
+                                            {% if survey in user_surveys.surveys %}
                                                 <div class="col-md-7">
-                                                    <span class="info">Vote éffectué le {{ user_votes.votesCreatedAt[vote.id]|date('d/m/Y H:i:s') }}</span>
+                                                    <span class="info">Sondage éffectué le {{ user_surveys.surveysCreatedAt[survey.id]|date('d/m/Y H:i:s') }}</span>
                                                 </div>
                                             {% else %}
-                                                <div class="col-md-4">du {{ vote.startAt|date('d/m/Y') }} au {{ vote.endAt|date('d/m/Y') }}</div>
+                                                <div class="col-md-4">du {{ survey.startAt|date('d/m/Y') }} au {{ survey.endAt|date('d/m/Y') }}</div>
                                                 <div class="col-md-3">
-                                                    <a href="{{ path('vote', {'vote': vote.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voter</a>
+                                                    <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Participer</a>
                                                 </div>
                                             {% endif %}
                                             
@@ -36,7 +36,7 @@
                                 {% endfor %}
                             </ul>
                         {% else %}
-                            <p>Auncun vote actif actuellement</p>
+                            <p>Auncun sondage actif actuellement</p>
                         {% endif %}
                     </div>    
                 </div>

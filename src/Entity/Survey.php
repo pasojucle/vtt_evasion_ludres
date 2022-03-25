@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\VoteRepository;
+use App\Repository\SurveyRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,8 +14,8 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
 
-#[Entity(repositoryClass: VoteRepository::class)]
-class Vote
+#[Entity(repositoryClass: SurveyRepository::class)]
+class Survey
 {
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
@@ -33,22 +33,22 @@ class Vote
     #[Column(type: 'datetime')]
     private DateTime $endAt;
 
-    #[OneToMany(targetEntity: VoteIssue::class, mappedBy: 'vote', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
-    private Collection $voteIssues;
+    #[OneToMany(targetEntity: SurveyIssue::class, mappedBy: 'survey', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
+    private Collection $surveyIssues;
 
     #[Column(type: 'boolean')]
     private bool $disabled = false;
 
-    #[OneToMany(targetEntity: VoteUser::class, mappedBy: 'vote')]
-    private Collection $voteUsers;
+    #[OneToMany(targetEntity: SurveyUser::class, mappedBy: 'survey')]
+    private Collection $surveyUsers;
 
     #[Column(type: 'boolean', options:['default' => true])]
     private $isAnonymous = true;
 
     public function __construct()
     {
-        $this->voteIssues = new ArrayCollection();
-        $this->voteUsers = new ArrayCollection();
+        $this->surveyIssues = new ArrayCollection();
+        $this->surveyUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,29 +93,29 @@ class Vote
     }
 
     /**
-     * @return Collection|VoteIssue[]
+     * @return Collection|SurveyIssue[]
      */
-    public function getVoteIssues(): Collection
+    public function getSurveyIssues(): Collection
     {
-        return $this->voteIssues;
+        return $this->surveyIssues;
     }
 
-    public function addVoteIssue(VoteIssue $voteIssue): self
+    public function addSurveyIssue(SurveyIssue $surveyIssue): self
     {
-        if (!$this->voteIssues->contains($voteIssue)) {
-            $this->voteIssues[] = $voteIssue;
-            $voteIssue->setVote($this);
+        if (!$this->surveyIssues->contains($surveyIssue)) {
+            $this->surveyIssues[] = $surveyIssue;
+            $surveyIssue->setSurvey($this);
         }
 
         return $this;
     }
 
-    public function removeVoteIssue(VoteIssue $voteIssue): self
+    public function removeSurveyIssue(SurveyIssue $surveyIssue): self
     {
-        if ($this->voteIssues->removeElement($voteIssue)) {
+        if ($this->surveyIssues->removeElement($surveyIssue)) {
             // set the owning side to null (unless already changed)
-            if ($voteIssue->getVote() === $this) {
-                $voteIssue->setVote(null);
+            if ($surveyIssue->getSurvey() === $this) {
+                $surveyIssue->setSurvey(null);
             }
         }
 
@@ -147,29 +147,29 @@ class Vote
     }
 
     /**
-     * @return Collection|VoteUser[]
+     * @return Collection|SurveyUser[]
      */
-    public function getVoteUsers(): Collection
+    public function getSurveyUsers(): Collection
     {
-        return $this->voteUsers;
+        return $this->surveyUsers;
     }
 
-    public function addVoteUser(VoteUser $voteUser): self
+    public function addSurveyUser(SurveyUser $surveyUser): self
     {
-        if (!$this->voteUsers->contains($voteUser)) {
-            $this->voteUsers[] = $voteUser;
-            $voteUser->setVote($this);
+        if (!$this->surveyUsers->contains($surveyUser)) {
+            $this->surveyUsers[] = $surveyUser;
+            $surveyUser->setSurvey($this);
         }
 
         return $this;
     }
 
-    public function removeVoteUser(VoteUser $voteUser): self
+    public function removeSurveyUser(SurveyUser $surveyUser): self
     {
-        if ($this->voteUsers->removeElement($voteUser)) {
+        if ($this->surveyUsers->removeElement($surveyUser)) {
             // set the owning side to null (unless already changed)
-            if ($voteUser->getVote() === $this) {
-                $voteUser->setVote(null);
+            if ($surveyUser->getSurvey() === $this) {
+                $surveyUser->setSurvey(null);
             }
         }
 

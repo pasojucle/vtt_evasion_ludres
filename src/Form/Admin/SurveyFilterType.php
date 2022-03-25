@@ -2,8 +2,8 @@
 
 namespace App\Form\Admin;
 
-use App\Entity\VoteIssue;
-use App\Entity\VoteResponse;
+use App\Entity\SurveyIssue;
+use App\Entity\SurveyResponse;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Symfony\Component\Form\AbstractType;
@@ -20,7 +20,7 @@ class SurveyFilterType extends AbstractType
         $builder
             ->add('issue', EntityType::class, [
                 'label' => 'Question',
-                'class' => VoteIssue::class,
+                'class' => SurveyIssue::class,
                 'choices' => $options['issues'],
                 'choice_label' => 'content',
                 'expanded' => false,
@@ -31,7 +31,7 @@ class SurveyFilterType extends AbstractType
             ])
             ->add('value', ChoiceType::class, [
                 'label' => 'Réponse',
-                'choices' => array_flip(VoteResponse::VALUES),
+                'choices' => array_flip(SurveyResponse::VALUES),
                 'placeholder' => 'Toutes',
                 'required' => false,
                 'attr' => [

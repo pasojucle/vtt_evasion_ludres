@@ -2,47 +2,47 @@
 
 declare(strict_types=1);
 
-namespace App\UseCase\Vote;
+namespace App\UseCase\Survey;
 
-use App\Entity\Vote;
-use App\Entity\VoteIssue;
-use App\Entity\VoteResponse;
-use App\Repository\VoteResponseRepository;
+use App\Entity\Survey;
+use App\Entity\SurveyIssue;
+use App\Entity\SurveyResponse;
+use App\Repository\SurveyResponseRepository;
 use App\ViewModel\SurveyResponsePresenter;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ExportVote
+class ExportSurvey
 {
     public function __construct(
         private TranslatorInterface $translator,
-        private VoteResponseRepository $voteResponseRepository,
+        private SurveyResponseRepository $surveyResponseRepository,
         private SurveyResponsePresenter $surveyResponsePresenter
     ) {
     }
 
-    public function execute(Vote $vote): string
+    public function execute(Survey $survey): string
     {
-        $voteResponsesByUuid = $this->voteResponseRepository->findResponsesByUuid($vote);
+        $surveyResponsesByUuid = $this->surveyResponseRepository->findResponsesByUuid($survey);
         $content = [];
         $today = new DateTime();
-        $content[] = 'Export du '.$today->format('d/m/Y H:i:s').' - '.$vote->getTitle();
+        $content[] = 'Export du '.$today->format('d/m/Y H:i:s').' - '.$survey->getTitle();
         $content[] = '';
         $header = [];
         $header[0] = 'Identifiant';
 
-        if (!$vote->getVoteIssues()->isEmpty()) {
-            foreach ($vote->getVoteIssues() as $issue) {
+        if (!$survey->getSurveyIssues()->isEmpty()) {
+            foreach ($survey->getSurveyIssues() as $issue) {
                 $header[] = $this->addQuote($issue->getContent());
             }
         }
         $content[] = implode(',', $header);
 
-        if (!empty($voteResponsesByUuid)) {
-            $this->addResponses($content, $voteResponsesByUuid);
-            $results = $this->getResults($voteResponsesByUuid);
-            $this->addRecap($content, $results, $vote);
-            $this->addVoteUsers($content, $vote);
+        if (!empty($surveyResponsesByUuid)) {
+            $this->addResponses($content, $surveyResponsesByUuid);
+            $results = $this->getResults($surveyResponsesByUuid);
+            $this->addRecap($content, $results, $survey);
+            $this->addSurveyUsers($content, $survey);
         }
 
         return implode(PHP_EOL, $content);
@@ -57,9 +57,9 @@ class ExportVote
         return '"'.$string.'"';
     }
 
-    private function addResponses(array &$content, array $voteResponsesByUuid): void
+    private function addResponses(array &$content, array $surveyResponsesByUuid): void
     {
-        foreach ($voteResponsesByUuid as $uuid => $data) {
+        foreach ($surveyResponsesByUuid as $uuid => $data) {
             $row = [];
             
             foreach ($data['responses'] as $key => $surveyResponse) {
@@ -75,25 +75,25 @@ class ExportVote
         }
     }
 
-    private function GetResults(array $voteResponsesByUuid): array
+    private function GetResults(array $surveyResponsesByUuid): array
     {
         $results = [];
-        foreach (array_keys(VoteResponse::VALUES) as $choice) {
+        foreach (array_keys(SurveyResponse::VALUES) as $choice) {
             $results[$choice] = [];
         }
 
-        foreach ($voteResponsesByUuid as $data) {
+        foreach ($surveyResponsesByUuid as $data) {
             foreach ($data['responses'] as $response) {
-                if (VoteIssue::RESPONSE_TYPE_CHOICE === $response->getVoteIssue()->getResponseType()) {
-                    $voteIssueId = $response->getVoteIssue()->getId();
+                if (SurveyIssue::RESPONSE_TYPE_CHOICE === $response->getSurveyIssue()->getResponseType()) {
+                    $surveyIssueId = $response->getSurveyIssue()->getId();
 
-                    if (!array_key_exists($voteIssueId, $results[$response->getValue()])) {
-                        foreach (array_keys(VoteResponse::VALUES) as $choice) {
-                            $results[$choice][$voteIssueId] = 0;
+                    if (!array_key_exists($surveyIssueId, $results[$response->getValue()])) {
+                        foreach (array_keys(SurveyResponse::VALUES) as $choice) {
+                            $results[$choice][$surveyIssueId] = 0;
                         }
                     }
 
-                    ++$results[$response->getValue()][$voteIssueId];
+                    ++$results[$response->getValue()][$surveyIssueId];
                 }
             }
         }
@@ -101,7 +101,7 @@ class ExportVote
         return $results;
     }
 
-    private function addRecap(array &$content, array $results, Vote $vote): void
+    private function addRecap(array &$content, array $results, Survey $survey): void
     {
         $content[] = '';
         $header[0] = 'Récapitulatif';
@@ -110,9 +110,9 @@ class ExportVote
             ksort($results);
             foreach ($results as $choice => $resultsByChoice) {
                 $row = [];
-                $row[] = $this->translator->trans(VoteResponse::VALUES[$choice]);
-                if (!$vote->getVoteIssues()->isEmpty()) {
-                    foreach ($vote->getVoteIssues() as $issue) {
+                $row[] = $this->translator->trans(SurveyResponse::VALUES[$choice]);
+                if (!$survey->getSurveyIssues()->isEmpty()) {
+                    foreach ($survey->getSurveyIssues() as $issue) {
                         if (array_key_exists($issue->getId(), $resultsByChoice)) {
                             $row[] = $resultsByChoice[$issue->getId()];
                         }
@@ -123,15 +123,15 @@ class ExportVote
         }
     }
 
-    private function addVoteUsers(array &$content, Vote $vote): void
+    private function addSurveyUsers(array &$content, Survey $survey): void
     {
         $content[] = '';
-        if (!$vote->getVoteUsers()->isEmpty()) {
-            $content[] = 'Horodateur,Participants - '.$vote->getVoteUsers()->count();
-            foreach ($vote->getVoteUsers() as $voteUser) {
+        if (!$survey->getSurveyUsers()->isEmpty()) {
+            $content[] = 'Horodateur,Participants - '.$survey->getSurveyUsers()->count();
+            foreach ($survey->getSurveyUsers() as $surveyUser) {
                 $row = [];
-                $identity = $voteUser->getUser()->getFirstIdentity();
-                $row[] = $voteUser->getCreatedAt()->format('d/m/Y H:i');
+                $identity = $surveyUser->getUser()->getFirstIdentity();
+                $row[] = $surveyUser->getCreatedAt()->format('d/m/Y H:i');
                 $row[] = $identity->getName().' '.$identity->getFirstName();
                 $content[] = implode(',', $row);
             }

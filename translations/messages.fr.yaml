@@ -142,7 +142,7 @@ menu:
     setting: Paramètrage
     tools: Outils
 
-vote:
+survey:
   response:
     yes : Oui
     no: Non

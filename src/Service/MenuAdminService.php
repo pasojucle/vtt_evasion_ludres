@@ -83,9 +83,9 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
-                'label' => 'Votes',
-                'route' => 'admin_votes',
-                'pattern' => '/vote/',
+                'label' => 'Sondages',
+                'route' => 'admin_surveys',
+                'pattern' => '/survey/',
                 'role' => 'ROLE_ADMIN',
             ],
         ];

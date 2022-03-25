@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Vote;
+use App\Entity\Survey;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
-class VoteType extends AbstractType
+class SurveyType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -57,9 +57,9 @@ class VoteType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('voteIssues', CollectionType::class, [
+            ->add('surveyIssues', CollectionType::class, [
                 'label' => false,
-                'entry_type' => VoteIssueType::class,
+                'entry_type' => SurveyIssueType::class,
                 'entry_options' => [
                     'label' => false,
                     'attr' => [
@@ -87,7 +87,7 @@ class VoteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Vote::class,
+            'data_class' => Survey::class,
         ]);
     }
 }

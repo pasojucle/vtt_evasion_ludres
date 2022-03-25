@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\VoteIssueRepository;
+use App\Repository\SurveyIssueRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -15,38 +15,38 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 
-#[Entity(repositoryClass: VoteIssueRepository::class)]
-class VoteIssue
+#[Entity(repositoryClass: SurveyIssueRepository::class)]
+class SurveyIssue
 {
     public const RESPONSE_TYPE_STRING = 1;
 
     public const RESPONSE_TYPE_CHOICE = 2;
 
     public const RESPONSE_TYPES = [
-        self::RESPONSE_TYPE_STRING => 'vote.issue.string',
-        self::RESPONSE_TYPE_CHOICE => 'vote.issue.choice',
+        self::RESPONSE_TYPE_STRING => 'survey.issue.string',
+        self::RESPONSE_TYPE_CHOICE => 'survey.issue.choice',
     ];
 
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: Vote::class, inversedBy: 'voteIssues')]
-    #[JoinColumn(name: 'vote_id', referencedColumnName: 'id', nullable: true)]
-    private ?Vote $vote;
+    #[ManyToOne(targetEntity: Survey::class, inversedBy: 'surveyIssues')]
+    #[JoinColumn(name: 'survey_id', referencedColumnName: 'id', nullable: true)]
+    private ?Survey $survey;
 
     #[Column(type: 'string', length: 255)]
     private string $content;
 
-    #[OneToMany(targetEntity: VoteResponse::class, mappedBy: 'voteIssue', cascade: ['persist', 'remove'])]
-    private Collection $voteResponses;
+    #[OneToMany(targetEntity: SurveyResponse::class, mappedBy: 'surveyIssue', cascade: ['persist', 'remove'])]
+    private Collection $surveyResponses;
 
     #[Column(type: 'integer')]
     private int $responseType;
 
     public function __construct()
     {
-        $this->voteResponses = new ArrayCollection();
+        $this->surveyResponses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -54,14 +54,14 @@ class VoteIssue
         return $this->id;
     }
 
-    public function getVote(): ?Vote
+    public function getSurvey(): ?Survey
     {
-        return $this->vote;
+        return $this->survey;
     }
 
-    public function setVote(?Vote $vote): self
+    public function setSurvey(?Survey $survey): self
     {
-        $this->vote = $vote;
+        $this->survey = $survey;
 
         return $this;
     }
@@ -79,29 +79,29 @@ class VoteIssue
     }
 
     /**
-     * @return Collection|VoteResponse[]
+     * @return Collection|SurveyResponse[]
      */
-    public function getVoteResponses(): Collection
+    public function getSurveyResponses(): Collection
     {
-        return $this->voteResponses;
+        return $this->surveyResponses;
     }
 
-    public function addVoteResponse(VoteResponse $voteResponse): self
+    public function addSurveyResponse(SurveyResponse $surveyResponse): self
     {
-        if (!$this->voteResponses->contains($voteResponse)) {
-            $this->voteResponses[] = $voteResponse;
-            $voteResponse->setVoteIssue($this);
+        if (!$this->surveyResponses->contains($surveyResponse)) {
+            $this->surveyResponses[] = $surveyResponse;
+            $surveyResponse->setSurveyIssue($this);
         }
 
         return $this;
     }
 
-    public function removeVoteResponse(VoteResponse $voteResponse): self
+    public function removeSurveyResponse(SurveyResponse $surveyResponse): self
     {
-        if ($this->voteResponses->removeElement($voteResponse)) {
+        if ($this->surveyResponses->removeElement($surveyResponse)) {
             // set the owning side to null (unless already changed)
-            if ($voteResponse->getVoteIssue() === $this) {
-                $voteResponse->setVoteIssue(null);
+            if ($surveyResponse->getSurveyIssue() === $this) {
+                $surveyResponse->setSurveyIssue(null);
             }
         }
 

@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Vote;
-use App\Form\Admin\VoteType;
-use App\UseCase\Vote\GetVote;
-use App\UseCase\Vote\ExportVote;
-use App\Repository\VoteRepository;
+use App\Entity\Survey;
+use App\Form\Admin\SurveyType;
+use App\UseCase\Survey\GetSurvey;
+use App\UseCase\Survey\ExportSurvey;
+use App\Repository\SurveyRepository;
 use App\Form\Admin\SurveyFilterType;
-use App\UseCase\Vote\GetSurveyResults;
-use App\Repository\VoteIssueRepository;
+use App\UseCase\Survey\GetSurveyResults;
+use App\Repository\SurveyIssueRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\UseCase\Vote\GetAnonymousSurveyResults;
+use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\ViewModel\SurveyResponsesPresenter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -23,55 +23,55 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/vote')]
-class VoteController extends AbstractController
+#[Route('/admin/sondage')]
+class SurveyController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager
     ) {
     }
 
-    #[Route('s', name: 'admin_votes', methods: ['GET'])]
-    public function list(VoteRepository $voteRepository): Response
+    #[Route('s', name: 'admin_surveys', methods: ['GET'])]
+    public function list(SurveyRepository $surveyRepository): Response
     {
-        return $this->render('vote/admin/list.html.twig', [
-            'votes' => $voteRepository->findAll(),
+        return $this->render('survey/admin/list.html.twig', [
+            'surveys' => $surveyRepository->findAll(),
         ]);
     }
 
-    #[Route('/edite/{vote}', name: 'admin_vote_edit', methods: ['GET', 'POST'], defaults:[
-        'vote' => null,
+    #[Route('/edite/{survey}', name: 'admin_survey_edit', methods: ['GET', 'POST'], defaults:[
+        'survey' => null,
     ])]
-    public function edit(Request $request, GetVote $getVote, ?Vote $vote): Response
+    public function edit(Request $request, GetSurvey $getSurvey, ?Survey $survey): Response
     {
-        $getVote->execute($vote);
-        $form = $this->createForm(VoteType::class, $vote);
+        $getSurvey->execute($survey);
+        $form = $this->createForm(SurveyType::class, $survey);
         $form->handleRequest($request);
 
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $vote = $form->getData();
-            $this->entityManager->persist($vote);
+            $survey = $form->getData();
+            $this->entityManager->persist($survey);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_votes');
+            return $this->redirectToRoute('admin_surveys');
         }
 
-        return $this->renderForm('vote/admin/edit.html.twig', [
-            'vote' => $vote,
+        return $this->renderForm('survey/admin/edit.html.twig', [
+            'survey' => $survey,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{survey}', name: 'admin_surveys', methods: ['GET', 'POST'])]
+    #[Route('/{survey}', name: 'admin_survey', methods: ['GET', 'POST'])]
     public function show(
         GetSurveyResults $getSurveyResults,
         Request $request,
         SurveyResponsesPresenter $surveyResponsesPresenter,
-        VoteIssueRepository $voteIssueRepository,
-        Vote $survey
+        SurveyIssueRepository $surveyIssueRepository,
+        Survey $survey
     ): Response
     {
-        $issues = $voteIssueRepository->findByVote($survey);
+        $issues = $surveyIssueRepository->findBySurvey($survey);
         
         $filter = ['issue' => $issues[0]];
         $form = $this->createForm(SurveyFilterType::class, $filter,  [
@@ -84,21 +84,21 @@ class VoteController extends AbstractController
         }
         $responses = $getSurveyResults->execute($filter);
         $surveyResponsesPresenter->present($responses);
-        return $this->render('vote/admin/show.html.twig', [
-            'vote' => $survey,
+        return $this->render('survey/admin/show.html.twig', [
+            'survey' => $survey,
             'responses' => $surveyResponsesPresenter->viewModel()->surveyResponses,
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/anonyme/{survey}/{tab}', name: 'admin_anonymous_surveys', methods: ['GET'], defaults: [
+    #[Route('/anonyme/{survey}/{tab}', name: 'admin_anonymous_survey', methods: ['GET'], defaults: [
         'tab' => 0,
     ])]
-    public function showAnonymous(GetAnonymousSurveyResults $getAnonymousSurveyResults, Vote $survey, int $tab): Response
+    public function showAnonymous(GetAnonymousSurveyResults $getAnonymousSurveyResults, Survey $survey, int $tab): Response
     {
 
-        return $this->render('vote/admin/show_anonymous.html.twig', [
-            'vote' => $survey,
+        return $this->render('survey/admin/show_anonymous.html.twig', [
+            'survey' => $survey,
             'results' => $getAnonymousSurveyResults->execute($survey),
             'tabs' => ['Réponses', 'Participants'],
             'tab' => $tab,
@@ -106,7 +106,7 @@ class VoteController extends AbstractController
     }
 
     #[Route('export/{survey}', name: 'admin_survey_export', methods: ['GET'])]
-    public function export(ExportVote $export, Vote $survey): Response
+    public function export(ExportSurvey $export, Survey $survey): Response
     {
         
         $content = $export->execute($survey);
@@ -114,7 +114,7 @@ class VoteController extends AbstractController
         $response = new Response($content);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            'export_vote_a_g.csv'
+            'export_survey_a_g.csv'
         );
 
         $response->headers->set('Content-Disposition', $disposition);
@@ -122,42 +122,42 @@ class VoteController extends AbstractController
         return $response;
     }
 
-    #[Route('disable/{vote}', name: 'admin_vote_disable', methods: ['GET', 'POST'])]
-    public function delete(Request $request, Vote $vote): Response
+    #[Route('disable/{survey}', name: 'admin_survey_disable', methods: ['GET', 'POST'])]
+    public function delete(Request $request, Survey $survey): Response
     {
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl(
-                'admin_vote_disable',
+                'admin_survey_disable',
                 [
-                    'vote' => $vote->getId(),
+                    'survey' => $survey->getId(),
                 ]
             ),
         ]);
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $vote->setDisabled(true);
-            $this->entityManager->persist($vote);
+            $survey->setDisabled(true);
+            $this->entityManager->persist($survey);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_votes');
+            return $this->redirectToRoute('admin_surveys');
         }
 
-        return $this->render('vote/admin/disable.modal.html.twig', [
-            'vote' => $vote,
+        return $this->render('survey/admin/disable.modal.html.twig', [
+            'survey' => $survey,
             'form' => $form->createView(),
         ]);
     }
 
     #[Route('/survey/issue/list/select2', name: 'survey_issue_list_select2', methods: ['GET'])]
     public function userListSelect2(
-        VoteIssueRepository $voteIssueRepository,
+        SurveyIssueRepository $surveyIssueRepository,
         Request $request
     ): JsonResponse {
         $query = $request->query->get('q');
         $surveyId = (int) $request->query->get('surveyId');
 
-        $issues = $voteIssueRepository->findBySurveyAndContent($surveyId, $query);
+        $issues = $surveyIssueRepository->findBySurveyAndContent($surveyId, $query);
 
         $response = [];
 

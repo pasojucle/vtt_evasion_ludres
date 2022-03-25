@@ -4,32 +4,32 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Vote;
-use App\Entity\VoteIssue;
-use App\Entity\VoteResponse;
+use App\Entity\Survey;
+use App\Entity\SurveyIssue;
+use App\Entity\SurveyResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method VoteResponse|null find($id, $lockMode = null, $lockVersion = null)
- * @method VoteResponse|null findOneBy(array $criteria, array $orderBy = null)
- * @method VoteResponse[]    findAll()
- * @method VoteResponse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SurveyResponse|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SurveyResponse|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SurveyResponse[]    findAll()
+ * @method SurveyResponse[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class VoteResponseRepository extends ServiceEntityRepository
+class SurveyResponseRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, VoteResponse::class);
+        parent::__construct($registry, SurveyResponse::class);
     }
 
     /**
-     * @return VoteResponse[] Returns an array of VoteResponse objects
+     * @return SurveyResponse[] Returns an array of SurveyResponse objects
      */
-    public function findResponsesByUuid(Vote $vote): array
+    public function findResponsesByUuid(Survey $survey): array
     {
-        $responses = $this->findResponsesByVote($vote);
+        $responses = $this->findResponsesBySurvey($survey);
 
         $responsedByUuid = [];
         if (!empty($responses)) {
@@ -41,28 +41,28 @@ class VoteResponseRepository extends ServiceEntityRepository
         return $responsedByUuid;
     }
 
-    public function findResponsesByIssues(Vote $vote): array
+    public function findResponsesByIssues(Survey $survey): array
     {
-        $responses = $this->findResponsesByVote($vote);
+        $responses = $this->findResponsesBySurvey($survey);
 
         $responsedByIssue = [];
         if (!empty($responses)) {
             foreach ($responses as $response) {
-                $responsedByIssue[$response->getVoteIssue()->getId()][] = $response;
+                $responsedByIssue[$response->getSurveyIssue()->getId()][] = $response;
             }
         }
 
         return $responsedByIssue;
     }
 
-    public function findResponsesByVote(Vote $vote): array
+    public function findResponsesBySurvey(Survey $survey): array
     {
         return $this->createQueryBuilder('r')
-            ->join('r.voteIssue', 'i')
+            ->join('r.surveyIssue', 'i')
             ->andWhere(
-                (new Expr())->eq('i.vote', ':vote')
+                (new Expr())->eq('i.survey', ':survey')
             )
-            ->setParameter('vote', $vote)
+            ->setParameter('survey', $survey)
             ->getQuery()
             ->getResult()
         ;
@@ -72,9 +72,9 @@ class VoteResponseRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('r')
             ->andWhere(
-                (new Expr())->eq('r.voteIssue', ':voteIssue')
+                (new Expr())->eq('r.surveyIssue', ':surveyIssue')
             )
-            ->setParameter('voteIssue', $filter['issue']);
+            ->setParameter('surveyIssue', $filter['issue']);
 
         if(isset($filter['value'])) {
             $qb            

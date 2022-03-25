@@ -1,9 +1,9 @@
 {% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_vote_disable', {'vote' : vote.id}) %}
+{% set button_href = path('admin_survey_disable', {'survey' : survey.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Cloturer un vote{{ vote.title }}{% endblock %}
+{% block modal_title %}Cloturer un vote{{ survey.title }}{% endblock %}
 {% block body %}
-    <p>Etes-vous de cloturer le vote {{ vote.title }} ?</p>
+    <p>Etes-vous de cloturer le vote {{ survey.title }} ?</p>
 {% endblock %}
 {% block footer %}
     {% set button_text = 'Colturer' %}

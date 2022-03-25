@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\VoteIssue;
-use App\Entity\VoteResponse;
+use App\Entity\SurveyIssue;
+use App\Entity\SurveyResponse;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -15,18 +15,18 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class VoteResponseType extends AbstractType
+class SurveyResponseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-            $voteResponse = $event->getData();
+            $surveyResponse = $event->getData();
             $form = $event->getForm();
 
-            if (VoteIssue::RESPONSE_TYPE_CHOICE === $voteResponse->getVoteIssue()->getResponseType()) {
+            if (SurveyIssue::RESPONSE_TYPE_CHOICE === $surveyResponse->getSurveyIssue()->getResponseType()) {
                 $form
                     ->add('value', ChoiceType::class, [
-                        'choices' => array_flip(VoteResponse::VALUES),
+                        'choices' => array_flip(SurveyResponse::VALUES),
                         'expanded' => true,
                         'label' => false,
                         'row_attr' => [
@@ -47,7 +47,7 @@ class VoteResponseType extends AbstractType
             }
         });
         $builder
-            ->add('voteIssue', HiddenVoteIssueType::class)
+            ->add('surveyIssue', HiddenSurveyIssueType::class)
             ->add('uuid', HiddenType::class)
         ;
     }
@@ -55,7 +55,7 @@ class VoteResponseType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => VoteResponse::class,
+            'data_class' => SurveyResponse::class,
         ]);
     }
 }

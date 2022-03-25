@@ -1,22 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des votes{% endblock %}
+{% block title %}Gestion des surveys{% endblock %}
 
 {% block body %}
  <div class="wrapper">
         <div class="block">
             <div class="block-title">
-                <h2>{{ vote.title }}</h2>
+                <h2>{{ survey.title }}</h2>
                 <span class="tools">
-                    <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': vote.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
-                    <a href="{{ path('admin_votes') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des votes"><i class="fas fa-chevron-left"></i></a>
+                    <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
+                    <a href="{{ path('admin_surveys') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
                 </span>
             </div>
             <div>
             <nav  class="nav-tab">
                 {% for key, label in tabs %}
-                    <a href="{{ path('admin_anonymous_surveys', {'survey': vote.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>
-                        {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ vote.voteUsers|length }}</span>{% endif %}
+                    <a href="{{ path('admin_anonymous_survey', {'survey': survey.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>
+                        {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ survey.surveyUsers|length }}</span>{% endif %}
                     </a>
                 {% endfor %}
             </nav>
@@ -28,7 +28,7 @@
                         <li>
                             <div class="row row-list">
                                 <div class="col-md-6 col-xs-12"></div>
-                                {% for value in constant('App\\Entity\\VoteResponse::VALUES') %}
+                                {% for value in constant('App\\Entity\\SurveyResponse::VALUES') %}
                                     <div class="col-md-2 col-xs-4">
                                         {{ value|trans }}
                                     </div>
@@ -50,14 +50,14 @@
                     <p>Auncun resultat</p>
                 {% endif %}
             {% else %}
-                {% if vote.voteUsers is not empty %}
+                {% if survey.surveyUsers is not empty %}
                     <ul class="padding-10">
-                        {% for vote_user in vote.voteUsers %}
+                        {% for survey_user in survey.surveyUsers %}
                             <li>
                                 <div class="row row-list">
-                                    <div class="col-md-6 col-xs-6">{{ vote_user.createdAt|date('d/m/Y H:i:s') }}</div>
+                                    <div class="col-md-6 col-xs-6">{{ survey_user.createdAt|date('d/m/Y H:i:s') }}</div>
                                     <div class="col-md-6 col-xs-6">
-                                        {% set identity = vote_user.user.firstIdentity %}
+                                        {% set identity = survey_user.user.firstIdentity %}
                                         {{ identity.name }} {{ identity.firstName }}
                                     </div>
                                 </div>
