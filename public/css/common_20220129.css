@@ -935,12 +935,16 @@ nav.nav-tab {
     width: 80px;
     overflow: hidden;
 }
-.maintenance {
+.alert-mode {
     background-color: var(--danger-color);
     color: var(--white-color);
     height: 40px;
+    width: 100%;
     text-align: center;
     line-height: 40px;
+    position: fixed;
+    top: 0;
+    z-index: 999;
 }
 .value input + .value label {
     margin-left: 10px;

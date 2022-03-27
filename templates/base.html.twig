@@ -29,7 +29,10 @@
     <body>
         {% set media_screen = media_screen_service.mediaScreen %}
         {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
-            <div class="maintenance">Mode Maintenance</div>
+            <div class="alert-mode">Mode Maintenance</div>
+        {% endif %}
+        {% if parameter_service.getParameterByName('TEST_MODE') %}
+            <div class="alert-mode">Site de test</div>
         {% endif %}
         {% if not isAdmin %}
             {% include 'common/header.html.twig' %}
