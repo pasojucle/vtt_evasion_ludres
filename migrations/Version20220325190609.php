@@ -35,14 +35,13 @@ final class Version20220325190609 extends AbstractMigration
         $this->addSql('INSERT INTO survey_response (id, survey_issue_id, user_id, value, uuid) SELECT id, vote_issue_id, user_id, value, uuid FROM vote_response');
         $this->addSql('INSERT INTO survey_user (id, survey_id, user_id, created_at) SELECT id, vote_id, user_id, created_at FROM vote_user');
 
-
-        // $this->addSql('ALTER TABLE vote_issue DROP FOREIGN KEY FK_43C441F572DCDAFC');
-        // $this->addSql('ALTER TABLE vote_user DROP FOREIGN KEY FK_3AF1277872DCDAFC');
-        // $this->addSql('ALTER TABLE vote_response DROP FOREIGN KEY FK_C024A2D2A0250CA5');
-        // $this->addSql('DROP TABLE vote');
-        // $this->addSql('DROP TABLE vote_issue');
-        // $this->addSql('DROP TABLE vote_response');
-        // $this->addSql('DROP TABLE vote_user');
+        $this->addSql('ALTER TABLE vote_issue DROP FOREIGN KEY FK_43C441F572DCDAFC');
+        $this->addSql('ALTER TABLE vote_user DROP FOREIGN KEY FK_3AF1277872DCDAFC');
+        $this->addSql('ALTER TABLE vote_response DROP FOREIGN KEY FK_C024A2D2A0250CA5');
+        $this->addSql('DROP TABLE vote');
+        $this->addSql('DROP TABLE vote_issue');
+        $this->addSql('DROP TABLE vote_response');
+        $this->addSql('DROP TABLE vote_user');
    }
 
     public function down(Schema $schema): void

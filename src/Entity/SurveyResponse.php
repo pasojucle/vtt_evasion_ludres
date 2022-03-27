@@ -42,7 +42,7 @@ class SurveyResponse
     private string $uuid;
 
     #[ManyToOne(targetEntity: User::class)]
-    private $user;
+    private ?User $user;
 
     public function getId(): ?int
     {

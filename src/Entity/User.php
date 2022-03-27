@@ -471,7 +471,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeSurveyUser(SurveyUser $survey): self
+    public function removeVoteUser(SurveyUser $survey): self
     {
         if ($this->surveys->removeElement($survey)) {
             // set the owning side to null (unless already changed)

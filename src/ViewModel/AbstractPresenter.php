@@ -30,6 +30,7 @@ class AbstractPresenter
     {
         return [
             'productDirectory' => $this->parameterBag->get('products_directory'),
+            'uploadsDirectory' => $this->parameterBag->get('uploads_directory_path'),
             'currentSeason' => $this->licenceService->getCurrentSeason(),
             'seasonsStatus' => $this->licenceService->getSeasonsStatus(),
             'user' => $this->security->getUser(),

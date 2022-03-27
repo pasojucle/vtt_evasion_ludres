@@ -67,6 +67,9 @@ class Content
     #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $url;
 
+    #[Column(type: 'string', length: 30, nullable: true)]
+    private ?string $buttonLabel;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -188,6 +191,18 @@ class Content
     public function setUrl(?string $url): self
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getButtonLabel(): ?string
+    {
+        return $this->buttonLabel;
+    }
+
+    public function setButtonLabel(?string $buttonLabel): self
+    {
+        $this->buttonLabel = $buttonLabel;
 
         return $this;
     }

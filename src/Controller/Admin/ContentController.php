@@ -9,6 +9,7 @@ use App\Form\Admin\ContentType;
 use App\Repository\ContentRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -53,7 +54,8 @@ class ContentController extends AbstractController
     #[Route('/contenu/{content}', name: 'admin_content_edit', methods: ['GET', 'POST'])]
     public function adminContentEdit(
         Request $request,
-        ?Content $content
+        ?Content $content,
+        UploadService $uploadService
     ): Response {
         $form = $this->createForm(ContentType::class, $content);
 
@@ -64,6 +66,11 @@ class ContentController extends AbstractController
                 $content->setOrderBy(0);
                 $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
                 $content->setOrderBy($order);
+            }
+
+            if ($request->files->get('content')) {
+                $file = $request->files->get('content')['file'];
+                $content->setFileName($uploadService->uploadFile($file));
             }
 
             $this->entityManager->persist($content);

@@ -96,7 +96,7 @@ class ContentType extends AbstractType
                         ],
                         'constraints' => [
                             new File([
-                                'maxSize' => '1024k',
+                                'maxSize' => '2048k',
                                 'mimeTypes' => [
                                     'image/bmp',
                                     'image/jpeg',
@@ -105,6 +105,13 @@ class ContentType extends AbstractType
                                 ],
                                 'mimeTypesMessage' => 'Format image bmp, jpeg, png ou pdf autorisé',
                             ]),
+                        ],
+                    ])
+                    ->add('buttonLabel', TextType::class, [
+                        'label' => 'Libellé du bouton (optionnel)',
+                        'required' => false,
+                        'row_attr' => [
+                            'class' => 'form-group-inline',
                         ],
                     ])
                     ->add('url', TextType::class, [

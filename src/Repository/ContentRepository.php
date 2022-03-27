@@ -100,7 +100,7 @@ class ContentRepository extends ServiceEntityRepository
         $today = new DateTime();
         $qb = $this->createQueryBuilder('c');
 
-        $contents = $qb
+        return $qb
             ->andWhere(
                 $qb->expr()->eq('c.route', ':route'),
                 $qb->expr()->orX(
@@ -120,14 +120,5 @@ class ContentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
-        $homeContents = [];
-        if (null !== $contents) {
-            foreach ($contents as $content) {
-                $type = ($content->isFlash()) ? 'flashes' : 'contents';
-                $homeContents[$type][] = $content;
-            }
-        }
-
-        return $homeContents;
     }
 }

@@ -56,6 +56,7 @@ $(document).ready(function(){
     if ($('#modal_window_show').length > 0) {
         $('#modal_window_show').click();
     }
+    document.querySelectorAll('object.sizing').forEach(object => resize(object));
 });
 
 jQuery(function($){
@@ -378,4 +379,13 @@ const addFormToCollection = (e) => {
         // remove the li for the tag form
         itemFormLi.remove();
     });
+}
+
+function resize(object) {
+    const parent = object.parentNode;
+    const computedStyle = getComputedStyle(parent);
+    const width = parent.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
+    console.log(computedStyle);
+    object.width = width;
+    object.height = parent.dataset.ratio * width;
 }

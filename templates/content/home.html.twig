@@ -7,22 +7,26 @@
     <div class="wrapper wrapper-home wrapper-full-width full-background">
         <div class="news-container">
             {% if home_contents.flashes is defined %}
-                {% for flash in home_contents.flashes %}
+                {% for content in home_contents.flashes %}
                     <div class="block background-color background-primary block-flash reveal" data-toggle="block-body">   
                         <div class="block-title">
-                            <h2>{{ flash.title }}</h2>
+                            <h2>{{ content.title }}</h2>
                             <span class="tools">
                                 <a href="" class="btn btn-ico" data-action="toggle-down"><i class="far fa-caret-square-down"></i></a>
                             </span>
                         </div>  
-                        <div class="block-body up" data-target="block-body">{{ flash.content | raw}}</div>
+                        <div class="block-body up" data-target="block-body">
+                            {% include('content/body_content.html.twig') %}
+                        </div>
                     </div>
                 {% endfor %}
             {% endif %}
             {% if home_contents.contents is defined %}
                 {% for content in home_contents.contents %}
                     <div class="block reveal{% if not(content.content matches '/iframe/') %} background-clear{% endif %}">        
-                        <div class="block-body">{{ content.content | raw}}</div>
+                        <div class="block-body">
+                            {% include('content/body_content.html.twig') %}
+                        </div>
                     </div>
                 {% endfor %}
             {% endif %}

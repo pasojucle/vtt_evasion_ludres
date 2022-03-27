@@ -43,7 +43,7 @@ class Survey
     private Collection $surveyUsers;
 
     #[Column(type: 'boolean', options:['default' => true])]
-    private $isAnonymous = true;
+    private bool $isAnonymous = true;
 
     public function __construct()
     {
