@@ -35,7 +35,7 @@ class ProductViewModel extends AbstractViewModel
 
     private ?Collection $productSizes;
 
-    public static function fromProduct(Product $product, array $services, UserViewModel $user = null)
+    public static function fromProduct(Product $product, ServicesPresenter $services, UserViewModel $user = null)
     {
         $productView = new self();
         $productView->id = $product->getId();
@@ -46,15 +46,15 @@ class ProductViewModel extends AbstractViewModel
         $productView->ref = $product->getRef();
         $productView->filename = $product->getFilename();
         $productView->productSizes = $product->getSizes();
-        $productView->pathName = DIRECTORY_SEPARATOR.$services['productDirectory'].DIRECTORY_SEPARATOR.$productView->filename;
-        $productView->pathNameForPdf = $services['productDirectory'].DIRECTORY_SEPARATOR.$productView->filename;
+        $productView->pathName = DIRECTORY_SEPARATOR.$services->productDirectory.DIRECTORY_SEPARATOR.$productView->filename;
+        $productView->pathNameForPdf = $services->productDirectory.DIRECTORY_SEPARATOR.$productView->filename;
         $productView->sellingPrice = $product->getPrice();
         $productView->price = number_format($product->getPrice(), 2).' €';
         $productView->discountPrice = null;
         $productView->discountTitle = null;
 
-        if (null === $user && $services['user']) {
-            $user = UserViewModel::fromUser($services['user'], $services);
+        if (null === $user && $services->user) {
+            $user = UserViewModel::fromUser($services->user, $services);
         }
 
         if (null !== $user) {

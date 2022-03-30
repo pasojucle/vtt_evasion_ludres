@@ -34,7 +34,7 @@ class IdentityViewModel extends AbstractViewModel
 
     public ?int $age;
 
-    public static function fromIdentity(Identity $identity, array $services, ?IdentityViewModel $member = null)
+    public static function fromIdentity(Identity $identity, ServicesPresenter $services, ?IdentityViewModel $member = null)
     {
         $bithDate = $identity->getBirthDate();
 
@@ -69,7 +69,7 @@ class IdentityViewModel extends AbstractViewModel
         return null;
     }
 
-    private function getAddress(?IdentityViewModel $member, array $services): ?AddressViewModel
+    private function getAddress(?IdentityViewModel $member, ServicesPresenter $services): ?AddressViewModel
     {
         $address = $this->entity->getAddress();
         if (Identity::TYPE_KINSHIP === $this->entity->getType() && (null === $address || $address->isEmpty())) {

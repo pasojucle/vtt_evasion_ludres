@@ -13,30 +13,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AbstractPresenter
 {
-    public array $services;
-
     public function __construct(
-        private LicenceService $licenceService,
-        private ParameterBagInterface $parameterBag,
-        private Security $security,
-        private MembershipFeeAmountRepository $membershipFeeAmountRepository,
-        private TranslatorInterface $translator,
-        private AppExtension $appExtension
+        public ServicesPresenter $services
     ) {
-        $this->services = $this->getServices();
+  
     }
 
-    private function getServices(): array
-    {
-        return [
-            'productDirectory' => $this->parameterBag->get('products_directory'),
-            'uploadsDirectory' => $this->parameterBag->get('uploads_directory_path'),
-            'currentSeason' => $this->licenceService->getCurrentSeason(),
-            'seasonsStatus' => $this->licenceService->getSeasonsStatus(),
-            'user' => $this->security->getUser(),
-            'membershipFeeAmountRepository' => $this->membershipFeeAmountRepository,
-            'translator' => $this->translator,
-            'appExtention' => $this->appExtension,
-        ];
-    }
 }

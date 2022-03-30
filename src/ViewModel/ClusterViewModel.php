@@ -31,9 +31,9 @@ class ClusterViewModel extends AbstractViewModel
 
     public ?bool $isComplete;
 
-    private ?array $services;
+    private ServicesPresenter $services;
 
-    public static function fromCluster(Cluster $cluster, array $services)
+    public static function fromCluster(Cluster $cluster, ServicesPresenter $services)
     {
         $clusterView = new self();
         $clusterView->services = $services;

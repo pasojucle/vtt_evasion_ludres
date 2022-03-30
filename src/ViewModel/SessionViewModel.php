@@ -20,7 +20,7 @@ class SessionViewModel extends AbstractViewModel
 
     public ?bool $userIsOnSite;
 
-    public static function fromSession(Session $session, array $services)
+    public static function fromSession(Session $session, ServicesPresenter $services)
     {
         $sessionView = new self();
         $sessionView->entity = $session;

@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Service\FilenameService;
 use App\Service\ParameterService;
 use App\Service\PdfService;
+use App\ViewModel\LicenceViewModel;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UserViewModel;
 use DateTime;
@@ -32,7 +33,7 @@ class GetRegistrationCertificate
         if ($user) {
             $this->presenter->present($user);
             $user = $this->presenter->viewModel();
-            $licence = $user->getSeasonLicence();
+            $licence = $user->seasonLicence;
         }
         if (!$content) {
             $content = $this->getContent($user, $licence);
@@ -44,12 +45,12 @@ class GetRegistrationCertificate
         return [$filename, $content];
     }
 
-    private function getContent(UserViewModel $user, array $licence)
+    private function getContent(UserViewModel $user, LicenceViewModel $licence)
     {
         $today = new DateTime();
         $todayStr = $today->format('d/m/Y');
 
-        if (Licence::CATEGORY_ADULT === $licence['category']) {
+        if (Licence::CATEGORY_ADULT === $licence->category) {
             $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_ADULT');
             list($search, $replace) = $this->getMemberData($user, $licence, $todayStr);
         } else {
@@ -60,9 +61,9 @@ class GetRegistrationCertificate
         return str_replace($search, $replace, $content);
     }
 
-    private function getMemberData(UserViewModel $user, array $licence, string $today): array
+    private function getMemberData(UserViewModel $user, LicenceViewModel $licence, string $today): array
     {
-        $address = $user->member['address']->toString();
+        $address = $user->member->address->toString();
 
         $search = [
             '{{ nom_prenom }}',
@@ -73,18 +74,18 @@ class GetRegistrationCertificate
             '{{ date }}',
         ];
         $replace = [
-            $user->member['fullName'],
+            $user->member->fullName,
             $address,
-            $licence['season'],
+            $licence->season,
             $user->getLicenceNumber(),
-            $licence['amount'],
+            $licence->amount,
             $today,
         ];
 
         return [$search, $replace];
     }
 
-    private function getKinShipData(UserViewModel $user, array $licence, string $today): array
+    private function getKinShipData(UserViewModel $user, LicenceViewModel $licence, string $today): array
     {
         $address = $user->kinship['address']->toString();
 
@@ -98,12 +99,12 @@ class GetRegistrationCertificate
             '{{ date }}',
         ];
         $replace = [
-            $user->kinship['fullName'],
-            $user->member['fullName'],
+            $user->kinship->fullName,
+            $user->member->fullName,
             $address,
-            $licence['season'],
+            $licence->season,
             $user->getLicenceNumber(),
-            $licence['amount'],
+            $licence->amount,
             $today,
         ];
 

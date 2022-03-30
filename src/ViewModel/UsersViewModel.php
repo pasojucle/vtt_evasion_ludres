@@ -10,7 +10,7 @@ class UsersViewModel
 {
     public ?array $users;
 
-    public static function fromUsers(array|Paginator $users, array $services): UsersViewModel
+    public static function fromUsers(array|Paginator $users, ServicesPresenter $services): UsersViewModel
     {
         $usersViewModel = [];
         if (!empty($users)) {

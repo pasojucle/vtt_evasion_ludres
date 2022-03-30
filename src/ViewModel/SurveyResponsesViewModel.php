@@ -8,7 +8,7 @@ class SurveyResponsesViewModel
 {
     public ?array $surveyResponses = [];
 
-    public static function fromSurveyResponses(Array $surveyResponses, array $services): SurveyResponsesViewModel
+    public static function fromSurveyResponses(Array $surveyResponses, ServicesPresenter $services): SurveyResponsesViewModel
     {
         $surveyResponsesViewModel = [];
         if (!empty($surveyResponses)) {

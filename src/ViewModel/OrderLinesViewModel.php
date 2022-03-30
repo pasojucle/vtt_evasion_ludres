@@ -10,7 +10,7 @@ class OrderLinesViewModel extends AbstractViewModel
 {
     public ?array $lines = [];
 
-    public static function fromOrderLines(collection $orderLines, UserViewModel $orderUser, array $services)
+    public static function fromOrderLines(collection $orderLines, UserViewModel $orderUser, ServicesPresenter $services)
     {
         $linesView = new self();
         if (!$orderLines->isEmpty()) {

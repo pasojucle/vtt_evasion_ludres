@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\ViewModel\Content;
 
+use App\ViewModel\ServicesPresenter;
 use Doctrine\Common\Collections\Collection;
 
 class ContentsViewModel
@@ -12,7 +13,7 @@ class ContentsViewModel
     public ?array $homeContents = [];
 
 
-    public static function fromContents(array|Collection $contents, array $services): ContentsViewModel
+    public static function fromContents(array|Collection $contents, ServicesPresenter $services): ContentsViewModel
     {
         $contentsViewModel = [];
         if (!empty($contents)) {

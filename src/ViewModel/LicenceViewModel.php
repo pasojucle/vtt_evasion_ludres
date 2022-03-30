@@ -46,18 +46,18 @@ class LicenceViewModel extends AbstractViewModel
 
     public ?string $amountStr;
 
-    private array $services;
+    private ServicesPresenter $services;
 
-    public static function fromLicence(?Licence $licence, bool $isNewMember, array $services)
+    public static function fromLicence(?Licence $licence, bool $isNewMember, ServicesPresenter $services)
     {
         $licenceView = new self();
         if ($licence) {
             $status = $licence->getStatus();
-            if ($licence->getSeason() !== $services['currentSeason']) {
-                if ($services['seasonsStatus'][Licence::STATUS_NONE] >= $licence->getSeason()) {
+            if ($licence->getSeason() !== $services->currentSeason) {
+                if ($services->seasonsStatus[Licence::STATUS_NONE] >= $licence->getSeason()) {
                     $status = Licence::STATUS_NONE;
                 }
-                if ($services['seasonsStatus'][Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
+                if ($services->seasonsStatus[Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
                     $status = Licence::STATUS_WAITING_RENEW;
                 }
             }
@@ -74,7 +74,7 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->status = $status;
             $licenceView->statusStr = Licence::STATUS[$status];
             $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
-            $licenceView->lock = $licence->getSeason() !== $services['currentSeason'];
+            $licenceView->lock = $licence->getSeason() !== $services->currentSeason;
 
             $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';
             $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
@@ -90,13 +90,13 @@ class LicenceViewModel extends AbstractViewModel
 
         if ($this->isFinal) {
             $membershipFee = (null !== $this->coverage && null !== $this->hasFamilyMember && null !== $isNewMember)
-                ? $this->services['membershipFeeAmountRepository']->findOneByLicence($this->coverage, $isNewMember, $this->hasFamilyMember)
+                ? $this->services->membershipFeeAmountRepository->findOneByLicence($this->coverage, $isNewMember, $this->hasFamilyMember)
                 : null;
             if (null !== $membershipFee) {
                 $amount = $membershipFee->getAmount();
             }
             if (null !== $amount) {
-                $coverageSrt = $this->services['translator']->trans(Licence::COVERAGES[$this->coverage]);
+                $coverageSrt = $this->services->translator->trans(Licence::COVERAGES[$this->coverage]);
                 $amountStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount} €";
             }
         } else {

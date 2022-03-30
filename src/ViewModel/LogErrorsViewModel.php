@@ -12,7 +12,7 @@ class LogErrorsViewModel
 
     public ?array $tabs;
 
-    public static function fromLogErrors(Paginator $logErrors, array $services): LogErrorsViewModel
+    public static function fromLogErrors(Paginator $logErrors, ServicesPresenter $services): LogErrorsViewModel
     {
         $logErrorsViewModel = [];
         if (!empty($logErrors)) {

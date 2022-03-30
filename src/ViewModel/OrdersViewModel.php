@@ -10,7 +10,7 @@ class OrdersViewModel
 {
     public ?array $orders;
 
-    public static function fromOrders(Paginator $orders, array $services): OrdersViewModel
+    public static function fromOrders(Paginator $orders, ServicesPresenter $services): OrdersViewModel
     {
         $ordersViewModel = [];
         if (!empty($orders)) {

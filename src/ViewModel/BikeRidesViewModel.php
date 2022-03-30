@@ -11,7 +11,7 @@ class BikeRidesViewModel
 {
     public ?array $bikeRides = [];
 
-    public static function fromBikeRides(array|Paginator|Collection $bikeRides, array $services): BikeRidesViewModel
+    public static function fromBikeRides(array|Paginator|Collection $bikeRides, ServicesPresenter $services): BikeRidesViewModel
     {
         $bikeRidesViewModel = [];
         if (!empty($bikeRides)) {

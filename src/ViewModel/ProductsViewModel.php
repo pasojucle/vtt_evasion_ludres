@@ -10,7 +10,7 @@ class ProductsViewModel
 {
     public ?array $products;
 
-    public static function fromProducts(Paginator $products, array $services): ProductsViewModel
+    public static function fromProducts(Paginator $products, ServicesPresenter $services): ProductsViewModel
     {
         $productsViewModel = [];
         if (!empty($products)) {

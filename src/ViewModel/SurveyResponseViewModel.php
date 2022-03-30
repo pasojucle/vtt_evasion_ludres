@@ -18,7 +18,7 @@ class SurveyResponseViewModel extends AbstractViewModel
 
     public ?string $uuid;
 
-    public static function fromSurveyResponse(SurveyResponse $surveyResponse, array $services)
+    public static function fromSurveyResponse(SurveyResponse $surveyResponse, ServicesPresenter $services)
     {
         $surveyResponseView = new self();
         $surveyResponseView->issue = $surveyResponse->getSurveyIssue()->getContent();
@@ -26,7 +26,7 @@ class SurveyResponseViewModel extends AbstractViewModel
             ? UserViewModel::fromUser($surveyResponse->getUser(), $services)
             : null;
         $surveyResponseView->value = (SurveyIssue::RESPONSE_TYPE_CHOICE === $surveyResponse->getSurveyIssue()->getResponseType())
-            ? $services['translator']->trans(SurveyResponse::VALUES[$surveyResponse->getValue()])
+            ? $services->translator->trans(SurveyResponse::VALUES[$surveyResponse->getValue()])
             : $surveyResponse->getValue();;
         $surveyResponseView->uuid = $surveyResponse->getUuid();
         

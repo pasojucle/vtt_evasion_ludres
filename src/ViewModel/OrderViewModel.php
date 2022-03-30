@@ -18,7 +18,7 @@ class OrderViewModel extends AbstractViewModel
 
     public ?string $amount;
 
-    public static function fromOrderHeader(OrderHeader $orderHeader, array $services)
+    public static function fromOrderHeader(OrderHeader $orderHeader, ServicesPresenter $services)
     {
         $orderView = new self();
         $orderView->id = $orderHeader->getId();

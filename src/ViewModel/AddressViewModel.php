@@ -16,7 +16,7 @@ class AddressViewModel extends AbstractViewModel
 
     public ?Address $entity;
 
-    public static function fromAddress(Address $address, array $services)
+    public static function fromAddress(Address $address, ServicesPresenter $services)
     {
         $addressViewModel = new self();
         $addressViewModel->entity = $address;

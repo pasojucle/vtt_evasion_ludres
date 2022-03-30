@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\Identity;
+use DateTime;
+use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Entity\User;
-use DateTime;
+use App\Entity\Identity;
+use App\ViewModel\ServicesPresenter;
 
 class UserViewModel extends AbstractViewModel
 {
@@ -34,9 +35,9 @@ class UserViewModel extends AbstractViewModel
 
     private ?int $currentSeason;
 
-    private array $services;
+    private ServicesPresenter $services;
 
-    public static function fromUser(User $user, array $services)
+    public static function fromUser(User $user, ServicesPresenter $services)
     {
         $userView = new self();
         $userView->entity = $user;
@@ -44,10 +45,10 @@ class UserViewModel extends AbstractViewModel
         $userView->services = $services;
         $userView->licenceNumber = $user->getLicenceNumber();
         $userView->setIdentities();
-        $userView->currentSeason = $services['currentSeason'];
-        $userView->seasonsStatus = $services['seasonsStatus'];
-        $userView->membershipFeeAmountRepository = $services['membershipFeeAmountRepository'];
-        $userView->translator = $services['translator'];
+        $userView->currentSeason = $services->currentSeason;
+        $userView->seasonsStatus = $services->seasonsStatus;
+        $userView->membershipFeeAmountRepository = $services->membershipFeeAmountRepository;
+        $userView->translator = $services->translator;
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);

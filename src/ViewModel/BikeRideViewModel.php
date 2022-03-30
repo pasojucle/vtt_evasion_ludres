@@ -50,9 +50,9 @@ class BikeRideViewModel extends AbstractViewModel
 
     private ?DateTimeImmutable $closingAt;
 
-    private ?array $services;
+    private ServicesPresenter $services;
 
-    public static function fromBikeRide(BikeRide $bikeRide, array $services)
+    public static function fromBikeRide(BikeRide $bikeRide, ServicesPresenter $services)
     {
         $bikeRideView = new self();
         $bikeRideView->entity = $bikeRide;
@@ -69,9 +69,9 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->displayAt = $bikeRideView->startAt->setTime(0, 0, 0);
         $bikeRideView->closingAt = $bikeRideView->startAt->setTime(23, 59, 59);
         $bikeRideView->displayClass = $bikeRideView->getDisplayClass();
-        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($services['user']);
-        $bikeRideView->period = $bikeRideView->getPeriod($services['appExtention']);
-        $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($services['user']);
+        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($services->user);
+        $bikeRideView->period = $bikeRideView->getPeriod($services->appExtension);
+        $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($services->user);
         $bikeRideView->isRegistrable = $bikeRideView->isRegistrable();
 
         $bikeRideView->services = $services;

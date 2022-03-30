@@ -13,7 +13,7 @@ class ClustersViewModel
 
     public $hasClusters = false;
 
-    public static function fromClusters(array|Paginator|Collection $clusters, array $services): ClustersViewModel
+    public static function fromClusters(array|Paginator|Collection $clusters, ServicesPresenter $services): ClustersViewModel
     {
         $clustersViewModel = [];
         if (!empty($clusters)) {
