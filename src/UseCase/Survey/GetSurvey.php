@@ -19,15 +19,8 @@ class GetSurvey
     {
         if (!$survey) {
             $survey = new Survey();
-            $surveyIssues = $this->parameterService->getParameterByName('VOTE_ISSUES');
-            $survey->setContent($this->parameterService->getParameterByName('VOTE_CONTENT'));
-            if (!empty($surveyIssues)) {
-                foreach ($surveyIssues as $surveyIssue) {
-                    $issue = new SurveyIssue();
-                    $issue->setContent($surveyIssue);
-                    $survey->addSurveyIssue($issue);
-                }
-            }
+            $issue = new SurveyIssue();
+            $survey->addSurveyIssue($issue);
         }
     }
 }

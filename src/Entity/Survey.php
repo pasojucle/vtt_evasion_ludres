@@ -22,7 +22,7 @@ class Survey
     private int $id;
 
     #[Column(type: 'string', length: 30)]
-    private string $title;
+    private string $title = '';
 
     #[Column(type: 'text')]
     private string $content;

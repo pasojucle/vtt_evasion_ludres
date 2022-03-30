@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set title = (survey is null) ? 'Ajouter un vote' : 'Modifier un vote' %}
+{% set title = (survey.title is empty) ? 'Ajouter un sondage' : 'Modifier un sondage' %}
 
 {% block title %}{{ title }}{% endblock %}
 
