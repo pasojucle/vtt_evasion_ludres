@@ -6,7 +6,6 @@ namespace App\ViewModel\Content;
 
 use App\ViewModel\AbstractPresenter;
 
-
 class ContentsPresenter extends AbstractPresenter
 {
     private $viewModel;

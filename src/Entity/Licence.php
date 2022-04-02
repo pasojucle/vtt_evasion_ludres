@@ -110,10 +110,13 @@ class Licence
     private ?DateTime $createdAt = null;
 
     #[Column(type: 'boolean', options:['default' => true])]
-    private ?bool $final = false;
+    private bool $final = false;
 
     #[Column(type: 'integer')]
     private int $status = self::STATUS_IN_PROCESSING;
+
+    #[Column(type: 'boolean', options:['default' => false])]
+    private bool $currentSeasonForm = false;
 
     public function getId(): ?int
     {
@@ -260,6 +263,18 @@ class Licence
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCurrentSeasonForm(): ?bool
+    {
+        return $this->currentSeasonForm;
+    }
+
+    public function setCurrentSeasonForm(bool $currentSeasonForm): self
+    {
+        $this->currentSeasonForm = $currentSeasonForm;
 
         return $this;
     }

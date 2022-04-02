@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
 use App\Form\RegistrationStepType;
@@ -17,6 +16,7 @@ use App\Service\RegistrationService;
 use App\Service\UploadService;
 use App\Service\UserService;
 use App\UseCase\Registration\GetProgress;
+use App\UseCase\Registration\GetRegistrationByTypes;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
 use App\UseCase\RegistrationStep\GetReplaces;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,27 +46,9 @@ class RegistrationController extends AbstractController
 
     #[Route('/admin/param_inscription', name: 'admin_registration_steps', methods: ['GET'])]
     public function adminRegistrationSteps(
-        Request $request
+        GetRegistrationByTypes $registrationByTypes
     ): Response {
-        $isFinalValues = [
-            'essai' => false,
-            'final' => true,
-        ];
-        $renders = [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE];
-        $registrationByTypes = [];
-        $labels = [];
-        foreach (array_keys(Licence::CATEGORIES) as $category) {
-            $labels['categories'][] = Licence::CATEGORIES[$category];
-            foreach ($isFinalValues as $isFinalLabel => $isFinal) {
-                $labels['isFinalLabels'][] = $isFinalLabel;
-                foreach ($renders as $render) {
-                    $labels['render'][$category][$isFinal][] = (RegistrationStep::RENDER_VIEW === $render)
-                        ? '<i class="fas fa-desktop"></i>'
-                        : '<i class="fas fa-file-pdf"></i>';
-                    $registrationByTypes[$category][$isFinal][$render] = $this->registrationStepRepository->findByCategoryAndFinal($category, $isFinal, $render);
-                }
-            }
-        }
+        list($labels, $registrationByTypes) = $registrationByTypes->execute();
 
         return $this->render('registration/admin/registrationList.html.twig', [
             'registrationStepGroups' => $this->registrationStepGroupRepository->findAll(),

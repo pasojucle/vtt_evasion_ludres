@@ -58,10 +58,9 @@ class DiseaseType extends AbstractType
                 $form
                     ->add('title', TextType::class, [
                         'attr' => [
-                            'class' => 'widget-inline',
+                            'class' => ($isActive) ? 'widget-inline' : 'widget-inline disabled',
                         ],
                         'required' => $isActive,
-                        'disabled' => !$isActive,
                     ])
                 ;
             }

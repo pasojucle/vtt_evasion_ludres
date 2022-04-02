@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\Address;
 use App\Entity\Identity;
 use DateTime;
 
@@ -80,6 +79,6 @@ class IdentityViewModel extends AbstractViewModel
             $address = AddressViewModel::fromAddress($address, $services);
         }
 
-        return  $address;        
+        return  $address;
     }
 }

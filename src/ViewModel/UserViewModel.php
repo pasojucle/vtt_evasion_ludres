@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
-use App\Entity\User;
+use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Entity\Identity;
-use App\ViewModel\ServicesPresenter;
+use App\Entity\User;
+use DateTime;
 
 class UserViewModel extends AbstractViewModel
 {
@@ -65,9 +64,9 @@ class UserViewModel extends AbstractViewModel
                     $this->member = $this->getMember($identity);
                 }
                 if (Identity::TYPE_KINSHIP === $identity->getType()) {
-                    $this->kinship = $this->getKinship($identity);;
+                    $this->kinship = $this->getKinship($identity);
                 }
-                if (Identity::TYPE_SECOND_CONTACT=== $identity->getType()) {
+                if (Identity::TYPE_SECOND_CONTACT === $identity->getType()) {
                     $this->secondKinship = $this->getSecondKinShip($identity);
                 }
             }
@@ -294,7 +293,6 @@ class UserViewModel extends AbstractViewModel
     private function getKinship(Identity $identity): ?IdentityViewModel
     {
         if ($identity) {
-
             return IdentityViewModel::fromIdentity($identity, $this->services, $this->member);
         }
 

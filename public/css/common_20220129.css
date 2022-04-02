@@ -425,8 +425,8 @@ body {
     line-height: 30px;
 }
 .form-group > input.disease-active {
-    width: unset;
-    height: unset;
+    /* width: unset;
+    height: unset; */
 }
 
 .form-group > textarea {

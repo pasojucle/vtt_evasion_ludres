@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace App\UseCase\Cluster;
 
 use App\Entity\Cluster;
-use App\Entity\Session;
-use App\Entity\BikeRide;
+use App\Repository\SessionRepository;
 use App\Service\FilenameService;
 use App\ViewModel\ClusterPresenter;
-use App\Repository\SessionRepository;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExportCluster
 {
@@ -62,7 +60,6 @@ class ExportCluster
 
     private function getResponse(): Response
     {
-
         $fileName = $this->cluster->title.'_'.$this->cluster->entity->getBikeRide()->getStartAt()->format('Ymd');
         $fileName = $this->filenameService->clean($fileName).'.pdf';
         $pathName = $this->pdfService->joinPdf($this->files, null, '../data/'.$this->filenameService->clean($this->cluster->title).'.pdf');

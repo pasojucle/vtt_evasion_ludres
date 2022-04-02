@@ -51,21 +51,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findMemberQuery(?array $filters): QueryBuilder
     {
         $currentSeason = $this->licenceService->getCurrentSeason();
-        $qb = $this->createQueryBuilder('u')
-            ->Join('u.identities', 'i')
-            ->Join('u.licences', 'li')
-            ->leftjoin('u.level', 'l')
-            ;
+        $qb = $qb = $this->createQuery();
 
         if (!empty($filters)) {
             if (null !== $filters['fullName']) {
-                $qb->andWhere(
-                    $qb->expr()->orX(
-                        $qb->expr()->like('i.name', $qb->expr()->literal('%'.$filters['fullName'].'%')),
-                        $qb->expr()->like('i.firstName', $qb->expr()->literal('%'.$filters['fullName'].'%')),
-                    )
-                )
-                    ;
+                $this->addCriteriaByName($qb, $filters['fullName']);
             }
             if (null !== $filters['level']) {
                 $this->addCriteriaByLevel($qb, $filters['level']);
@@ -81,11 +71,60 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
         }
 
+        return $this->orderByASC($qb);
+    }
+
+    public function findCoverageQuery(?array $filters): QueryBuilder
+    {
+        $currentSeason = $this->licenceService->getCurrentSeason();
+        $qb = $this->createQuery();
+        if (!empty($filters)) {
+            if (null !== $filters['fullName']) {
+                $this->addCriteriaByName($qb, $filters['fullName']);
+            }
+            if (null !== $filters['level']) {
+                $this->addCriteriaByLevel($qb, $filters['level']);
+            }
+        }
+
+        $this->addCriteriaBySeason($qb, $currentSeason);
+
+        $qb->andWhere(
+            $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
+        )
+            ->setParameter('currentSeasonForm', false)
+        ;
+
+        return $this->orderByASC($qb);
+    }
+
+    private function createQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('u')
+        ->Join('u.identities', 'i')
+        ->Join('u.licences', 'li')
+        ->leftjoin('u.level', 'l')
+        ;
+    }
+
+    private function orderByASC(QueryBuilder $qb): QueryBuilder
+    {
         return $qb
             ->andWhere(
                 $qb->expr()->isNull('i.kinship'),
             )
             ->orderBy('i.name', 'ASC')
+        ;
+    }
+
+    private function addCriteriaByName(QueryBuilder &$qb, string $fullName): void
+    {
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->like('i.name', $qb->expr()->literal('%'.$fullName.'%')),
+                $qb->expr()->like('i.firstName', $qb->expr()->literal('%'.$fullName.'%')),
+            )
+        )
         ;
     }
 

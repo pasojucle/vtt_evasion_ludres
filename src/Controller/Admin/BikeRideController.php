@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-
 use App\Entity\BikeRide;
-
 use App\Form\Admin\BikeRideType;
-use App\Service\BikeRideService;
-use App\ViewModel\UserPresenter;
 use App\Repository\BikeRideRepository;
+use App\Service\BikeRideService;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class BikeRideController extends AbstractController
@@ -99,6 +97,7 @@ class BikeRideController extends AbstractController
             'bikeRide' => $bikeRide->getId(),
         ]));
         $presenter->present($bikeRide);
+
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $presenter->viewModel(),
             'bike_rides_filters' => ($filters) ? $filters : [],
@@ -110,7 +109,6 @@ class BikeRideController extends AbstractController
         ExportBikeRide $exportBikeRide,
         BikeRide $bikeRide
     ): Response {
-
         return $exportBikeRide->execute($bikeRide);
     }
 }

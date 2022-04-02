@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Survey;
-use App\Form\Admin\SurveyType;
-use App\UseCase\Survey\GetSurvey;
-use App\UseCase\Survey\ExportSurvey;
-use App\Repository\SurveyRepository;
 use App\Form\Admin\SurveyFilterType;
-use App\UseCase\Survey\GetSurveyResults;
+use App\Form\Admin\SurveyType;
 use App\Repository\SurveyIssueRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Repository\SurveyRepository;
+use App\UseCase\Survey\ExportSurvey;
 use App\UseCase\Survey\GetAnonymousSurveyResults;
+use App\UseCase\Survey\GetSurvey;
+use App\UseCase\Survey\GetSurveyResults;
 use App\ViewModel\SurveyResponsesPresenter;
-use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/admin/sondage')]
 class SurveyController extends AbstractController
@@ -69,12 +69,11 @@ class SurveyController extends AbstractController
         SurveyResponsesPresenter $surveyResponsesPresenter,
         SurveyIssueRepository $surveyIssueRepository,
         Survey $survey
-    ): Response
-    {
+    ): Response {
         $issues = $surveyIssueRepository->findBySurvey($survey);
-        
+
         $filter = ['issue' => $issues[0]];
-        $form = $this->createForm(SurveyFilterType::class, $filter,  [
+        $form = $this->createForm(SurveyFilterType::class, $filter, [
             'issues' => $issues,
         ]);
         $form->handleRequest($request);
@@ -84,6 +83,7 @@ class SurveyController extends AbstractController
         }
         $responses = $getSurveyResults->execute($filter);
         $surveyResponsesPresenter->present($responses);
+
         return $this->render('survey/admin/show.html.twig', [
             'survey' => $survey,
             'responses' => $surveyResponsesPresenter->viewModel()->surveyResponses,
@@ -96,7 +96,6 @@ class SurveyController extends AbstractController
     ])]
     public function showAnonymous(GetAnonymousSurveyResults $getAnonymousSurveyResults, Survey $survey, int $tab): Response
     {
-
         return $this->render('survey/admin/show_anonymous.html.twig', [
             'survey' => $survey,
             'results' => $getAnonymousSurveyResults->execute($survey),
@@ -108,7 +107,6 @@ class SurveyController extends AbstractController
     #[Route('export/{survey}', name: 'admin_survey_export', methods: ['GET'])]
     public function export(ExportSurvey $export, Survey $survey): Response
     {
-        
         $content = $export->execute($survey);
 
         $response = new Response($content);

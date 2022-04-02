@@ -6,7 +6,6 @@ namespace App\ViewModel\Content;
 
 use App\Entity\Content;
 use App\ViewModel\AbstractPresenter;
-use App\ViewModel\Content\ContentViewModel;
 
 class ContentPresenter extends AbstractPresenter
 {

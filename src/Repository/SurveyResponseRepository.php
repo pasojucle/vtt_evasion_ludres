@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Survey;
-use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -76,13 +75,14 @@ class SurveyResponseRepository extends ServiceEntityRepository
             )
             ->setParameter('surveyIssue', $filter['issue']);
 
-        if(isset($filter['value'])) {
-            $qb            
+        if (isset($filter['value'])) {
+            $qb
                 ->andWhere(
                     (new Expr())->eq('r.value', ':value')
                 )
                 ->setParameter('value', $filter['value']);
         }
+
         return $qb->getQuery()
             ->getResult()
         ;

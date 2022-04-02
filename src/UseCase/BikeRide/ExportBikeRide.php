@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
-use App\Entity\Session;
 use App\Entity\BikeRide;
-use App\Service\FilenameService;
+use App\Entity\Session;
 use App\Repository\SessionRepository;
-use Symfony\Component\HttpFoundation\Response;
+use App\Service\FilenameService;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExportBikeRide
 {
@@ -68,7 +68,7 @@ class ExportBikeRide
             $filename,
         );
         $response->headers->set('Content-Disposition', $disposition);
-        
+
         return $response;
     }
 }

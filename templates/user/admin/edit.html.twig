@@ -8,7 +8,7 @@
             <div class="block-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
                 <h2>{{ user.member.fullName }}</h2>
                 <span class="tools">
-                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.id}) }}"
+                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
                         class="btn btn-secondary btn-ico" title="Retour à la fiche de l'adhérents">
                         <i class="fas fa-chevron-left"></i>
                     </a>
@@ -20,7 +20,7 @@
                     <div class="form-group">
                         {{ form_row(form.licenceNumber) }}
                         <div class="form-group-inline">
-                            <a href="{{ path('admin_send_number_licence', {'user': user.id })}}" class="btn btn-xs btn-success">Envoyer le numéro de licence</a>
+                            <a href="{{ path('admin_send_number_licence', {'user': user.entity.id })}}" class="btn btn-xs btn-success">Envoyer le numéro de licence</a>
                         </div>
                     </div>
                     <div class="form-group">{{ form_row(form.level) }}</div>

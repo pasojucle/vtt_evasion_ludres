@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Licence;
+namespace App\UseCase\Licence;
 
 use App\Entity\Licence;
 use App\Entity\User;
@@ -11,7 +11,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class LicenceValidateService
+class ValidateLicence
 {
     private EntityManagerInterface $entityManager;
 

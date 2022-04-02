@@ -41,6 +41,7 @@ class ContentController extends AbstractController
         $bikeRides = $bikeRideRepository->findEnableView();
 
         $contentsPresenter->present($homeContents);
+
         return $this->render('content/home.html.twig', [
             'links_bike_ride' => $linksBikeRide,
             'links_footer' => $linksFooter,

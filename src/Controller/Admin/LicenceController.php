@@ -6,7 +6,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Licence;
 use App\Form\Admin\LicenceValidateType;
-use App\Service\Licence\LicenceValidateService;
+use App\UseCase\Licence\ValidateLicence;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -23,10 +24,11 @@ class LicenceController extends AbstractController
     #[Route('/admin/inscription/delete/{licence}', name: 'admin_delete_licence', methods: ['GET', 'POST'])]
     public function adminDeleteLicence(
         Request $request,
+        UserPresenter $userPresenter,
         Licence $licence
     ): Response {
-        $user = $licence->getUser();
-        $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
+        $userPresenter->present($licence->getUser());
+        $fullName = $userPresenter->viewModel()->member->fullName;
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl(
                 'admin_delete_licence',
@@ -59,7 +61,7 @@ class LicenceController extends AbstractController
     #[Route('/admin/inscription/validate/{licence}', name: 'admin_registration_validate', methods: ['GET', 'POST'])]
     public function adminRegistartionValidate(
         Request $request,
-        LicenceValidateService $licenceValidateService,
+        ValidateLicence $validateLicence,
         Licence $licence
     ): Response {
         $user = $licence->getUser();
@@ -74,7 +76,7 @@ class LicenceController extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $licenceValidateService->execute($request, $licence);
+            $validateLicence->execute($request, $licence);
 
             $this->addFlash('success', "La licence de l'utilisateur {$fullName} a bien été validée");
 

@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
-use DateInterval;
-use App\Entity\User;
-use App\Entity\Level;
-use DateTimeImmutable;
 use App\Entity\BikeRide;
+use App\Entity\Level;
+use App\Entity\User;
 use App\Twig\AppExtension;
-use App\ViewModel\ClustersViewModel;
-use Doctrine\Common\Collections\Collection;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
 
 class BikeRideViewModel extends AbstractViewModel
 {
@@ -147,6 +145,5 @@ class BikeRideViewModel extends AbstractViewModel
     public function getClusters(): ClustersViewModel
     {
         return ClustersViewModel::fromClusters($this->entity->getClusters(), $this->services);
-
     }
 }

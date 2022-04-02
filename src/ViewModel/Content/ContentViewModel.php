@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\ViewModel\Content;
 
 use App\Entity\Content;
-use setasign\Fpdi\Fpdi;
 use App\ViewModel\AbstractViewModel;
 use App\ViewModel\ServicesPresenter;
+use setasign\Fpdi\Fpdi;
 use Symfony\Component\HttpFoundation\File\File;
 
 class ContentViewModel extends AbstractViewModel
@@ -36,7 +36,6 @@ class ContentViewModel extends AbstractViewModel
 
     public ?string $contentStyleMd;
 
-
     public static function fromContent(Content $content, ServicesPresenter $services)
     {
         $contentView = new self();
@@ -48,7 +47,7 @@ class ContentViewModel extends AbstractViewModel
         $contentView->fileName = $contentView->getFileName();
         $contentView->fileTag = $contentView->getFileTag();
         $contentView->fileRatio = $contentView->getFileRatio();
-        
+
         $contentView->buttonLabel = $content->getButtonLabel() ?? 'Voir';
         $contentView->url = $content->getUrl();
 
@@ -84,7 +83,7 @@ class ContentViewModel extends AbstractViewModel
         if ($this->entity->getFileName()) {
             $file = new File($this->uploadsDirectory.$this->entity->getFileName());
 
-            return (str_contains( $file->getMimeType(), 'image')) ? 'img' : 'pdf';
+            return (str_contains($file->getMimeType(), 'image')) ? 'img' : 'pdf';
         }
 
         return null;
@@ -93,8 +92,7 @@ class ContentViewModel extends AbstractViewModel
     private function getFileRatio(): ?float
     {
         if ($this->entity->getFileName() && is_file($this->uploadsDirectory.$this->entity->getFileName())) {
-
-            list($width, $height) = match($this->fileTag) {
+            list($width, $height) = match ($this->fileTag) {
                 'pdf' => $this->getPdfSize(),
                 'img' => $this->getImageSize()
             };
@@ -108,13 +106,13 @@ class ContentViewModel extends AbstractViewModel
     private function getImageSize(): array
     {
         return getimagesize($this->uploadsDirectory.$this->entity->getFileName());
-
     }
 
     private function getPdfSize(): array
     {
         $pdf = new Fpdi();
         $pdf->setSourceFile($this->uploadsDirectory.$this->entity->getFileName());
+
         return [$pdf->GetPageWidth(), $pdf->GetPageHeight()];
     }
 }

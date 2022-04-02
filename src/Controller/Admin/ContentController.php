@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Content;
-use App\Service\UploadService;
 use App\Form\Admin\ContentType;
+use App\Repository\ContentRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Repository\ContentRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UploadService;
 use App\ViewModel\Content\ContentPresenter;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class ContentController extends AbstractController
@@ -92,6 +92,7 @@ class ContentController extends AbstractController
         }
 
         $contentPresenter->present($content);
+
         return $this->render('content/admin/edit.html.twig', [
             'content' => $contentPresenter->viewModel(),
             'form' => $form->createView(),

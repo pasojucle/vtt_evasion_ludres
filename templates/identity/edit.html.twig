@@ -8,7 +8,7 @@
             <div class="block-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
                 <h2>{{ user.member.fullName }}</h2>
                 <span class="tools">
-                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.id}) }}"
+                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
                         class="btn btn-secondary btn-ico" title="Retour à la fiche de l'adhérents">
                         <i class="fas fa-chevron-left"></i>
                     </a>

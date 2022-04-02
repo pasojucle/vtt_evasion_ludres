@@ -21,7 +21,7 @@ class GetAnonymousSurveyResults
     public function execute(Survey $survey): array
     {
         $surveyResponsesByIssues = $this->surveyResponseRepository->findResponsesByIssues($survey);
-        
+
         $results = [];
         $values = [];
         foreach (array_keys(SurveyResponse::VALUES) as $choice) {

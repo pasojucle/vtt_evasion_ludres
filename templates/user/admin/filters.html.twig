@@ -1,0 +1,18 @@
+{{ form_start(form) }}
+<div class="filters">
+    <ul>
+        <li>{{ form_widget(form.fullName)}}</li>
+        <li>{{ form_widget(form.submit)}}</li>
+    </ul>
+    <ul>
+        {% if form.status is defined %}
+            <li>
+                {{ form_widget(form.status)}}
+            </li>
+        {% endif %}
+        <li>
+            {{ form_widget(form.level)}}
+        </li>
+    </ul>
+</div>
+{{ form_end(form) }}

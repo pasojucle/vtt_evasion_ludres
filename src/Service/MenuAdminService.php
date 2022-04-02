@@ -8,11 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MenuAdminService
 {
-    private RequestStack $request;
-
-    public function __construct(RequestStack $request)
+    public function __construct(private RequestStack $request, private LicenceService $licenceService)
     {
-        $this->request = $request;
     }
 
     public function getMenuGroupsAdmin(): array
@@ -68,6 +65,12 @@ class MenuAdminService
                 'label' => 'Inscriptions',
                 'route' => 'admin_registrations',
                 'pattern' => '/admin_registrations/',
+                'role' => 'ROLE_REGISTER',
+            ],
+            [
+                'label' => 'Assurances '.$this->licenceService->getCurrentSeason(),
+                'route' => 'admin_coverage_list',
+                'pattern' => '/admin_coverages/',
                 'role' => 'ROLE_REGISTER',
             ],
             [

@@ -12,7 +12,6 @@ class ContentsViewModel
     public ?array $contents = [];
     public ?array $homeContents = [];
 
-
     public static function fromContents(array|Collection $contents, ServicesPresenter $services): ContentsViewModel
     {
         $contentsViewModel = [];

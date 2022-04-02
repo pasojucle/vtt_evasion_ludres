@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
-use App\Entity\Level;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
 use App\Repository\LevelRepository;

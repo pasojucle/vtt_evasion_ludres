@@ -61,14 +61,14 @@ class ExportSurvey
     {
         foreach ($surveyResponsesByUuid as $uuid => $data) {
             $row = [];
-            
+
             foreach ($data['responses'] as $key => $surveyResponse) {
                 $this->surveyResponsePresenter->present($surveyResponse);
                 $surveyResponse = $this->surveyResponsePresenter->viewModel();
                 if (0 === $key) {
                     $row[] = $surveyResponse->user?->member->fullName ?? $uuid;
                 }
-                
+
                 $row[] = $this->addQuote($surveyResponse->value);
             }
             $content[] = implode(',', $row);

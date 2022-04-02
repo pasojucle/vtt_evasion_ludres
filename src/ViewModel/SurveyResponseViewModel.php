@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\OrderHeader;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 
@@ -27,9 +26,9 @@ class SurveyResponseViewModel extends AbstractViewModel
             : null;
         $surveyResponseView->value = (SurveyIssue::RESPONSE_TYPE_CHOICE === $surveyResponse->getSurveyIssue()->getResponseType())
             ? $services->translator->trans(SurveyResponse::VALUES[$surveyResponse->getValue()])
-            : $surveyResponse->getValue();;
+            : $surveyResponse->getValue();
         $surveyResponseView->uuid = $surveyResponse->getUuid();
-        
+
         return $surveyResponseView;
     }
 }

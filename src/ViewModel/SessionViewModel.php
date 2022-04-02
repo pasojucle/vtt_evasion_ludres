@@ -6,8 +6,6 @@ namespace App\ViewModel;
 
 use App\Entity\Session;
 
-use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
-
 class SessionViewModel extends AbstractViewModel
 {
     public ?Session $entity;
