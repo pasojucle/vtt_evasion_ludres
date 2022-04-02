@@ -70,7 +70,7 @@ class MenuAdminService
             [
                 'label' => 'Assurances '.$this->licenceService->getCurrentSeason(),
                 'route' => 'admin_coverage_list',
-                'pattern' => '/admin_coverages/',
+                'pattern' => '/admin_coverage/',
                 'role' => 'ROLE_REGISTER',
             ],
             [

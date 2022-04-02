@@ -344,7 +344,7 @@ nav > ul > li > div.block-title > a.btn-logger {
 }
 .flashes {
     position: absolute;
-    top: 30vh;
+    top: 50px;
     right: 10%;
     max-width: 100%;
     color: var(--white-color);

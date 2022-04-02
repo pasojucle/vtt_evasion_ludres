@@ -40,7 +40,7 @@
                             {% if user.seasonLicence is not empty and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
                                 <li>
                                     <b>Mon dossier d'inscription</b>
-                                    <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                    <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
                                 </li>
                             {% endif %}
                             <li>

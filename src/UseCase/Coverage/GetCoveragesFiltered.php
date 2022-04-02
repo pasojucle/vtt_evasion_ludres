@@ -10,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class GetCoveragesFiltered extends GetUsersFiltered
 {
-    public const STATUS_TYPE = UserFilterType::STATUS_TYPE_COVERAGE;
+    public int $statusType = UserFilterType::STATUS_TYPE_COVERAGE;
 
     public function getQuery(array $filters): QueryBuilder
     {

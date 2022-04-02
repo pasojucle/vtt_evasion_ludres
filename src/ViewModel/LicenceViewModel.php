@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use App\Entity\Licence;
+use DateTime;
+use DateTimeImmutable;
 
 class LicenceViewModel extends AbstractViewModel
 {
@@ -46,6 +48,8 @@ class LicenceViewModel extends AbstractViewModel
 
     public ?string $amountStr;
 
+    public bool $currentSeasonForm = false;
+
     private ServicesPresenter $services;
 
     public static function fromLicence(?Licence $licence, bool $isNewMember, ServicesPresenter $services)
@@ -75,6 +79,7 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->statusStr = Licence::STATUS[$status];
             $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
             $licenceView->lock = $licence->getSeason() !== $services->currentSeason;
+            $licenceView->currentSeasonForm = $licenceView->getCurrentSeasonForm();
 
             $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';
             $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
@@ -107,5 +112,33 @@ class LicenceViewModel extends AbstractViewModel
             'value' => $amount,
             'str' => $amountStr,
         ];
+    }
+
+    public function getRegistrationTitle(): string
+    {
+        $title = $this->services->translator->trans('registration_step.type.default');
+        $title = 'registration_step.type.';
+        if (null !== $this) {
+            if (!$this->isFinal) {
+                $title .= 'testing';
+            } else {
+                if (null !== $this->category) {
+                    $categories = [
+                        Licence::CATEGORY_MINOR => 'minor',
+                        Licence::CATEGORY_ADULT => 'adult',
+                    ];
+                    $title .= $categories[$this->category];
+                }
+            }
+        }
+
+        return $this->services->translator->trans($title);
+    }
+
+    public function getCurrentSeasonForm()
+    {
+        $coverageFormStartAt = $this->parameterService->getParameterStartAtByName('COVERAGE_FORM_AVAILABLE_AT');
+        
+        return $coverageFormStartAt < new DateTime() && !$this->entity->getCurrentSeasonForm();
     }
 }

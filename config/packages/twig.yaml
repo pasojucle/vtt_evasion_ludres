@@ -6,6 +6,7 @@ twig:
         - 'form/custom_errors_widget.html.twig'
         - 'form/custom_switch_row.html.twig'
         - 'form/custom_file_row.html.twig'
+        - 'form/custom_month_and_hour_row.html.twig'
         - '@TetranzSelect2Entity/Form/fields.html.twig'
         - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
 

@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class GetUsersFiltered
 {
-    public const STATUS_TYPE = '';
+    public int $statusType;
 
     public function __construct(
         private PaginatorService $paginator,
@@ -34,7 +34,7 @@ abstract class GetUsersFiltered
         $filters = $this->getFilters($request, $filtered);
 
         $form = $this->formFactory->create(UserFilterType::class, $filters, [
-            'statusType' => self::STATUS_TYPE,
+            'statusType' => $this->statusType,
         ]);
         $form->handleRequest($request);
 
@@ -71,7 +71,7 @@ abstract class GetUsersFiltered
 
     private function setRedirect(Request $request): void
     {
-        $request->getSession()->set($request->get('_route').'_redirect', $this->urlGenerator->generate($request->get('_route'), [
+        $request->getSession()->set('admin_user_redirect', $this->urlGenerator->generate($request->get('_route'), [
             'filtered' => true,
             'p' => $request->query->get('p'),
         ]));

@@ -99,7 +99,7 @@ class PdfService
                 'y' => 262,
             ],
             [
-                'value' => $this->userPresenter->viewModel()->seasonLicence['createdAt'],
+                'value' => $this->userPresenter->viewModel()->seasonLicence->createdAt,
                 'x' => 75,
                 'y' => 262,
             ],

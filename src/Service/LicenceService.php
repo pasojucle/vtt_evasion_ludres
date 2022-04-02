@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Licence;
-use App\Entity\User;
-use App\ViewModel\UserViewModel;
 use DateTime;
+use App\Entity\User;
+use App\Entity\Licence;
+use App\ViewModel\UserViewModel;
+use App\Service\ParameterService;
+use DateTimeImmutable;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceService
 {
-    private TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
+    private DateTimeImmutable $seasonStartAt;
+    public function __construct(private TranslatorInterface $translator, private ParameterService $parameterService) {
+        $this->seasonStartAt = $this->parameterService->getParameterStartAtByName('SEASON_START_AT');
     }
 
     public function getCurrentSeason(): int
     {
         $today = new DateTime();
 
-        return (8 < (int) $today->format('m')) ? (int) $today->format('Y') + 1 : (int) $today->format('Y');
+        return ($this->seasonStartAt <= $today) ? (int) $today->format('Y') + 1 : (int) $today->format('Y');
     }
 
     public function getCategory(User $user): int
@@ -34,29 +34,6 @@ class LicenceService
         return (18 > (int) $age->format('%y')) ? Licence::CATEGORY_MINOR : Licence::CATEGORY_ADULT;
     }
 
-    public function getRegistrationTitle(UserViewModel $user): string
-    {
-        $title = $this->translator->trans('registration_step.type.default');
-        $licence = $user->seasonLicence;
-        $title = 'registration_step.type.';
-        if (null !== $licence) {
-            if (!$licence->isFinal) {
-                $title .= 'testing';
-            } else {
-                $category = $licence->category;
-                if (null !== $category) {
-                    $categories = [
-                        Licence::CATEGORY_MINOR => 'minor',
-                        Licence::CATEGORY_ADULT => 'adult',
-                    ];
-                    $title .= $categories[$category];
-                }
-            }
-        }
-
-        return $this->translator->trans($title);
-    }
-
     public function getSeasonsStatus(): array
     {
         $today = new DateTime();
@@ -64,10 +41,10 @@ class LicenceService
 
         $seasonsStatus = [];
 
-        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') < 9) ? $currentSeason - 2 : $currentSeason - 1;
+        $seasonsStatus[Licence::STATUS_NONE] = ($today <= $this->seasonStartAt) ? $currentSeason - 2 : $currentSeason - 1;
 
-        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = (9 < (int) $today->format('m')) ? $currentSeason - 1 : 1970;
-
+        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = ($this->seasonStartAt < $today) ? $currentSeason - 1 : 1970;
+        dump($seasonsStatus);
         return $seasonsStatus;
     }
 

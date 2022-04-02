@@ -12,7 +12,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ReplaceKeywordsService
 {
     public function __construct(
-        private LicenceService $licenceService,
         private TranslatorInterface $translator
     ) {
     }
@@ -112,7 +111,7 @@ class ReplaceKeywordsService
             $user->getFullNameChildren(),
             $user->getBirthDateChildren(),
             '<br>',
-            $this->licenceService->getRegistrationTitle($user),
+            $licence->getRegistrationTitle($user),
             $this->translator->trans($licence->type),
             $this->translator->trans($licence->coverageStr),
             $user->isMedicalCertificateRequired(),

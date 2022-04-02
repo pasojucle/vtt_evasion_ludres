@@ -23,7 +23,7 @@ class HealthQuestion
     private int $field;
 
     #[Column(type: 'boolean', nullable: true)]
-    private ?bool $value;
+    private ?bool $value = null;
 
     #[ManyToOne(targetEntity: Health::class, inversedBy: 'healthQuestions')]
     #[JoinColumn(nullable: false)]

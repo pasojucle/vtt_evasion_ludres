@@ -23,13 +23,8 @@ class Parameter
 
     public const TYPE_ARRAY = 4;
 
-    public const TYPES = [
-        self::TYPE_TEXT => 'parameter.type.text',
-        self::TYPE_INTEGER => 'parameter.type.interger',
-        self::TYPE_BOOL => 'parameter.type.bool',
-        self::TYPE_ARRAY => 'parameter.type.array',
-    ];
-
+    public const TYPE_MONTH_AND_DAY = 5;
+    
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
@@ -96,18 +91,13 @@ class Parameter
         if (null === $this->value) {
             return $this->value;
         }
-        $value = $this->value;
-        if (self::TYPE_BOOL === $this->type) {
-            $value = (bool) $this->value;
-        }
-        if (self::TYPE_INTEGER === $this->type) {
-            $value = (int) $this->value;
-        }
-        if (self::TYPE_ARRAY === $this->type) {
-            $value = json_decode($this->value, true);
-        }
-
-        return $value;
+        
+        return match ($this->type) {
+            self::TYPE_BOOL =>(bool) $this->value,
+            self::TYPE_INTEGER => (int) $this->value,
+            self::TYPE_ARRAY, self::TYPE_MONTH_AND_DAY => json_decode($this->value, true),
+            default => $this->value
+        };
     }
 
     public function setValue(string|array $value): self

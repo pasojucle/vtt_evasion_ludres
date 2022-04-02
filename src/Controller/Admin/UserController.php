@@ -78,7 +78,7 @@ class UserController extends AbstractController
 
         return $this->render('user/admin/user.html.twig', [
             'user' => $this->userPresenter->viewModel(),
-            'referer' => $session->get('user_return'),
+            'referer' => $session->get('admin_user_redirect'),
         ]);
     }
 

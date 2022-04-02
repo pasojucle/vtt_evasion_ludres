@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Parameter;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class ParameterType extends AbstractType
 {
@@ -27,34 +27,48 @@ class ParameterType extends AbstractType
                 $label = $parameter?->getLabel();
                 $form = $event->getForm();
                 $fieldOptions = [];
-                if (Parameter::TYPE_BOOL === $type) {
-                    $classType = CheckboxType::class;
-                    $fieldOptions = [
-                        'data' => (bool) $value,
-                        'block_prefix' => 'switch',
-                        'required' => false,
-                    ];
-                } elseif (Parameter::TYPE_TEXT === $type) {
-                    $classType = CKEditorType::class;
-                    $fieldOptions = [
-                        'config_name' => 'minimum_config',
-                    ];
-                } elseif (Parameter::TYPE_ARRAY === $type) {
-                    $classType = CollectionType::class;
-                    $fieldOptions = [
-                        'entry_options' => [
-                            'label' => false,
-                            'row_attr' => [
-                                'class' => 'row',
+
+                switch ($type) {
+                    case Parameter::TYPE_BOOL:
+                        $classType = CheckboxType::class;
+                        $fieldOptions = [
+                            'data' => (bool) $value,
+                            'block_prefix' => 'switch',
+                            'required' => false,
+                        ];
+                        break;
+                    case Parameter::TYPE_TEXT:
+                        $classType = CKEditorType::class;
+                        $fieldOptions = [
+                            'config_name' => 'minimum_config',
+                        ];
+                        break;
+                    case Parameter::TYPE_ARRAY:
+                        $classType = CollectionType::class;
+                        $fieldOptions = [
+                            'entry_options' => [
+                                'label' => false,
+                                'row_attr' => [
+                                    'class' => 'row',
+                                ],
+                                'attr' => [
+                                    'class' => 'col-md-11 form-group',
+                                ],
                             ],
-                            'attr' => [
-                                'class' => 'col-md-11 form-group',
+                            'allow_add' => true,
+                            'allow_delete' => true,
+                        ];
+                        break;
+                    case Parameter::TYPE_MONTH_AND_DAY:
+                        $classType = CollectionType::class;
+                        $fieldOptions = [
+                            'block_prefix' => 'custom_month_and_hour',
+                            'entry_options' => [
+                                'label' => false,
                             ],
-                        ],
-                        'allow_add' => true,
-                        'allow_delete' => true,
-                    ];
-                } else {
+                        ];
+                        break;
+                    default:
                     $classType = TextType::class;
                 }
 

@@ -56,6 +56,10 @@
                                 </div>
                             </div>
                         </li>
+                        {% elseif parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_MONTH_AND_DAY') %}
+                        <li>
+                            {{ form_row(parameter) }}
+                        </li>
                         {% else %}
                         <li>
                             <b>{{ form_label(parameter.value) }}</b>
