@@ -14,16 +14,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceService
 {
-    private DateTimeImmutable $seasonStartAt;
-    public function __construct(private TranslatorInterface $translator, private ParameterService $parameterService) {
-        $this->seasonStartAt = $this->parameterService->getParameterStartAtByName('SEASON_START_AT');
+    private array $seasonStartAt;
+    public function __construct(private TranslatorInterface $translator, private ParameterService $parameterService) 
+    {
+        $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
-
+    
     public function getCurrentSeason(): int
     {
         $today = new DateTime();
 
-        return ($this->seasonStartAt <= $today) ? (int) $today->format('Y') + 1 : (int) $today->format('Y');
+        return ($this->seasonStartAt['month'] < (int) $today->format('m') && $this->seasonStartAt['day'] < (int) $today->format('d')) 
+            ? (int) $today->format('Y') + 1 
+            : (int) $today->format('Y');
     }
 
     public function getCategory(User $user): int
@@ -38,13 +41,18 @@ class LicenceService
     {
         $today = new DateTime();
         $currentSeason = $this->getCurrentSeason();
+        $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
 
         $seasonsStatus = [];
 
-        $seasonsStatus[Licence::STATUS_NONE] = ($today <= $this->seasonStartAt) ? $currentSeason - 2 : $currentSeason - 1;
+        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') < $this->seasonStartAt['month'] && (int) $today->format('d') < $this->seasonStartAt['day'] ) 
+            ? $currentSeason - 2 
+            : $currentSeason - 1;
 
-        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = ($this->seasonStartAt < $today) ? $currentSeason - 1 : 1970;
-        dump($seasonsStatus);
+        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = ($this->seasonStartAt['month'] < (int) $today->format('m') && $this->seasonStartAt['day'] < (int) $today->format('d'))
+            ? $currentSeason - 1 
+            : 1970;
+
         return $seasonsStatus;
     }
 

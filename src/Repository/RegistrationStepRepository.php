@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -69,5 +70,22 @@ class RegistrationStepRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    public function findCoverageStep(): ?RegistrationStep
+    {
+        try {
+            return $this->createQueryBuilder('r')
+                ->join('r.registrationStepGroup', 'rg')
+                ->andWhere(
+                    (new Expr())->eq('LOWER(rg.title)', ':name')
+                )
+                ->setParameter('name', strtolower('Assurance'))
+                ->getQuery()
+                ->getOneOrNullResult()
+                ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 }

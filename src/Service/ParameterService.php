@@ -28,16 +28,6 @@ class ParameterService
         return $value;
     }
 
-    public function getParameterStartAtByName(string $name): DateTimeImmutable
-    {
-        $today = new DateTimeImmutable();
-
-        $seasonStartAtParam = $this->getParameterByName($name);
-        $seasonStartAtParam['Y'] = $today->format('Y');
-        $seasonStartAt = DateTimeImmutable::createFromFormat('d-m-Y', implode('-',$seasonStartAtParam));
-        return $seasonStartAt->setTime(0,0,0);
-    }
-
     public function getSchoolTestingRegistration(UserViewModel $user): array
     {
         $value = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION');

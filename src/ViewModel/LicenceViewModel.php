@@ -136,9 +136,8 @@ class LicenceViewModel extends AbstractViewModel
     }
 
     public function getCurrentSeasonForm()
-    {
-        $coverageFormStartAt = $this->parameterService->getParameterStartAtByName('COVERAGE_FORM_AVAILABLE_AT');
-        
-        return $coverageFormStartAt < new DateTime() && !$this->entity->getCurrentSeasonForm();
+    {        
+
+        return $this->services->coverageFormStartAt < new DateTime() && !$this->entity->getCurrentSeasonForm();
     }
 }

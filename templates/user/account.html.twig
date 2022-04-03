@@ -43,6 +43,13 @@
                                     <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
                                 </li>
                             {% endif %}
+                            {% dump(user.seasonLicence.getCurrentSeasonForm) %}
+                            {% if user.seasonLicence.getCurrentSeasonForm %}
+                                <li>
+                                    <b>Mon bulletin d'assurance</b>
+                                    <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                </li>
+                            {% endif %}
                             <li>
                                 <a href="{{ path('change_password') }}">Modifier mon mot de passe</a>
                             </li>

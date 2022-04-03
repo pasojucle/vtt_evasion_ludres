@@ -15,7 +15,7 @@ class AbstractViewModel
         $properties = $reflectionClass->getProperties();
         if (!empty($properties)) {
             foreach ($properties as $property) {
-                if (ReflectionProperty::IS_PUBLIC === $property->getModifiers()) {
+                if (ReflectionProperty::IS_PUBLIC === $property->getModifiers() && true === $property->getType()->allowsNull()) {
                     $propertyName = $property->getName();
                     $this->{$propertyName} = null;
                 }

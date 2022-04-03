@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Licence;
-use App\Entity\User;
-use App\Form\UserType;
-use App\ViewModel\UserPresenter;
+use DateTime;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use App\Entity\User;
+use App\Form\UserType;
+use App\Entity\Licence;
 use setasign\Fpdi\Fpdi;
+use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class PdfService
@@ -57,6 +58,8 @@ class PdfService
             Licence::COVERAGE_HIGH_GEAR => 73,
         ];
 
+        $today = new DateTime();
+
         $fields = [
             [
                 'value' => $this->userPresenter->viewModel()->getFullName(),
@@ -99,16 +102,16 @@ class PdfService
                 'y' => 262,
             ],
             [
-                'value' => $this->userPresenter->viewModel()->seasonLicence->createdAt,
+                'value' => $this->userPresenter->viewModel()->seasonLicence->createdAt ?? $today->format('d/m/Y'),
                 'x' => 75,
                 'y' => 262,
             ],
         ];
 
-        $pdf->SetFont('Helvetica');
+        $pdf->SetFont('Helvetica');dump($fields);
         foreach ($fields as $field) {
             $pdf->SetXY($field['x'], $field['y']);
-            $pdf->Write(8, iconv('UTF-8', 'ISO-8859-1', $field['value']));
+            $pdf->Write(8, iconv('UTF-8', 'ISO-8859-1', $field['value'] ?? ''));
         }
 
         return $pdf;
