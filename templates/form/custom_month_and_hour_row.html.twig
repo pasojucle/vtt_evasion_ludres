@@ -2,7 +2,7 @@
     <b>{{ form_label(form) }} </b>
     <div class="row"> 
         {% for item in form %}
-            <div class="col-md-1">{{ item.vars.name }}</div>
+            <div class="col-md-1 align-right">{{ item.vars.name|trans }}</div>
             <div class="col-md-1">{{ form_widget(item) }}</div>
         {% endfor %}
     </div>

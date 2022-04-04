@@ -7,7 +7,6 @@ namespace App\Service;
 use DateTime;
 use App\Entity\User;
 use App\Entity\Licence;
-use App\ViewModel\UserViewModel;
 use App\Service\ParameterService;
 use DateTimeImmutable;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -41,15 +40,14 @@ class LicenceService
     {
         $today = new DateTime();
         $currentSeason = $this->getCurrentSeason();
-        $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
 
         $seasonsStatus = [];
 
-        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') < $this->seasonStartAt['month'] && (int) $today->format('d') < $this->seasonStartAt['day'] ) 
+        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') <= $this->seasonStartAt['month'] && (int) $today->format('d') <= $this->seasonStartAt['day'] ) 
             ? $currentSeason - 2 
             : $currentSeason - 1;
 
-        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = ($this->seasonStartAt['month'] < (int) $today->format('m') && $this->seasonStartAt['day'] < (int) $today->format('d'))
+        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
             ? $currentSeason - 1 
             : 1970;
 

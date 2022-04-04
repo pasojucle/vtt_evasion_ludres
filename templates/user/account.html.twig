@@ -33,21 +33,34 @@
                             {% endif %}
                             {% if user.isEndTesting %}
                                 <li>
-                                    <b>Votre période d'essaie est terminée</b>
-                                    <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step': 1})}}">S'inscrire</a>
+                                    <div class="row">
+                                        <div class="col-md-5"><b>Votre période d'essaie est terminée</b></div>
+                                        <div class="col-md-7">
+                                            <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step': 1})}}">S'inscrire</a>
+                                        </div>
+                                    </div>
+                                    <b></b>
                                 </li>
                             {% endif %}
                             {% if user.seasonLicence is not empty and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
                                 <li>
-                                    <b>Mon dossier d'inscription</b>
-                                    <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                    <div class="row">
+                                        <div class="col-md-5"><b>Mon dossier d'inscription</b></div>
+                                        <div class="col-md-7">
+                                            <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                        </div>
+                                    </div>
+                                    <b></b>
                                 </li>
                             {% endif %}
-                            {% dump(user.seasonLicence.getCurrentSeasonForm) %}
                             {% if user.seasonLicence.getCurrentSeasonForm %}
                                 <li>
-                                    <b>Mon bulletin d'assurance</b>
-                                    <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                    <div class="row">
+                                        <div class="col-md-5"><b>Mon bulletin d'assurance {{ licence_service.currentSeason }}</b></div>
+                                        <div class="col-md-7">
+                                            <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                        </div>
+                                    </div>
                                 </li>
                             {% endif %}
                             <li>
