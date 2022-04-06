@@ -64,6 +64,10 @@ class Licence
 
     public const STATUS_TESTING_COMPLETE = 7;
 
+    public const STATUS_NEW = 8;
+
+    public const STATUS_RENEW = 9;
+
     public const ALL_USERS = 99;
 
     public const STATUS = [

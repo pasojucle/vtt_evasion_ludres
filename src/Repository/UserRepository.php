@@ -60,16 +60,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['level']) {
                 $this->addCriteriaByLevel($qb, $filters['level']);
             }
-            if (null !== $filters['status']) {
-                if (is_string($filters['status']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
-                    $this->addCriteriaBySeason($qb, (int) $matches[1]);
-                } elseif (Licence::STATUS_TESTING_IN_PROGRESS === $filters['status']) {
-                    $this->addCriteriaTestinInProgress($qb, $currentSeason);
-                } elseif (Licence::STATUS_TESTING_COMPLETE === $filters['status']) {
-                    $this->addCriteriaTestinComplete($qb, $currentSeason);
-                }
+            if (null !== $filters['status'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
+                dump($filters['status']);
+                $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
         }
+
+        $this->addCriteriaMember($qb);
 
         return $this->orderByASC($qb);
     }
@@ -88,6 +85,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $this->addCriteriaBySeason($qb, $currentSeason);
+        $this->addCriteriaMember($qb);
 
         $qb->andWhere(
             $qb->expr()->eq('li.currentSeasonForm', ':currentSeasonForm')
@@ -101,9 +99,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     private function createQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('u')
-        ->Join('u.identities', 'i')
-        ->Join('u.licences', 'li')
-        ->leftjoin('u.level', 'l')
+            ->join('u.identities', 'i')
+            ->join('u.licences', 'li')
+            ->leftJoin('u.level', 'l')
         ;
     }
 
@@ -119,6 +117,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaByName(QueryBuilder &$qb, string $fullName): void
     {
+
         $qb->andWhere(
             $qb->expr()->orX(
                 $qb->expr()->like('i.name', $qb->expr()->literal('%'.$fullName.'%')),
@@ -163,45 +162,76 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     private function addCriteriaBySeason(QueryBuilder &$qb, int $season): void
     {
         $qb
-            ->andWhere(
-                $qb->expr()->gte('li.status', ':status'),
-                $qb->expr()->eq('li.final', ':final'),
-            )
-            ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
             ->setParameter('season', $season)
-            ->setParameter('final', 1)
             ->groupBy('u.id')
-            ->having(
+            ->andHaving(
                 $qb->expr()->eq($qb->expr()->max('li.season'), ':season')
             )
         ;
     }
 
-    private function addCriteriaTestinInProgress(QueryBuilder &$qb, int $season): void
+    private function addCriteriaMember(QueryBuilder &$qb): void
     {
         $qb
-            ->join('u.sessions', 's')
             ->andWhere(
                 $qb->expr()->gte('li.status', ':status'),
                 $qb->expr()->eq('li.final', ':final'),
             )
             ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
-            ->setParameter('season', $season)
-            ->setParameter('final', 0)
-            ->groupBy('u.id')
-            ->having(
-                $qb->expr()->eq($qb->expr()->max('li.season'), ':season'),
-                $qb->expr()->in($qb->expr()->count('s.id'), [1, 2])
-            )
+            ->setParameter('final', true)
         ;
     }
 
-    private function addCriteriaTestinComplete(QueryBuilder &$qb, int $season): void
+    private function addCriteriaNew(QueryBuilder &$qb): void
     {
         $qb
-            ->leftjoin('u.sessions', 's')
             ->andWhere(
-                $qb->expr()->gte('li.status', ':status'),
+                $qb->expr()->eq('li.final', ':final'),
+            )
+            ->setParameter('final', true)
+            ->groupBy('s.user')
+            ->andHaving(
+                $qb->expr()->eq($qb->expr()->count('li.id'), 1)
+            )
+            ->orderBy('i.name', 'ASC')
+        ;
+    }
+
+    private function addCriteriaRenew(QueryBuilder &$qb): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('li.final', ':final'),
+            )
+            ->setParameter('final', true)
+            ->groupBy('s.user')
+            ->andHaving(
+                $qb->expr()->gt($qb->expr()->count('li.id'), 1)
+            )
+            ->orderBy('i.name', 'ASC')
+        ;
+    }
+
+
+    private function addCriteriaTestinInProgress(QueryBuilder &$qb): void
+    {
+        $qb
+            ->join('u.sessions', 's')
+            ->andWhere(
+                $qb->expr()->eq('li.final', ':final'),
+            )           
+            ->setParameter('final', false)
+            ->groupBy('s.user')
+            ->andHaving(
+                $qb->expr()->lt($qb->expr()->count('s.id'), 3)
+            )
+        ;
+    }
+    private function addCriteriaTestinComplete(QueryBuilder &$qb): void
+    {
+        $qb
+            ->join('u.sessions', 's')
+            ->andWhere(
                 $qb->expr()->eq('li.final', ':final'),
                 $qb->expr()->orX(
                     $qb->expr()->andX(
@@ -212,16 +242,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     $qb->expr()->isnull('u.level')
                 )
             )
-            ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
-            ->setParameter('season', $season)
-            ->setParameter('final', 0)
-            ->setParameter('type', Level::TYPE_ALL_MEMBER)
-            ->groupBy('u.id')
-            ->having(
-                $qb->expr()->eq($qb->expr()->max('li.season'), ':season'),
+            ->setParameter('final', false)
+            ->setParameter('type', Level::TYPE_MEMBER)
+            ->groupBy('s.user')
+            ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('s.id'), 2)
             )
+            ->orderBy('i.name', 'ASC')
         ;
+
     }
 
     public function findNextId(): int
@@ -299,6 +328,49 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('season', $currentSeason)
             ->orderBy('i.name', 'ASC')
             ;
+    }
+
+    public function findlicenceInProgressQuery(?array $filters): QueryBuilder
+    {
+        $currentSeason = $this->licenceService->getCurrentSeason();
+
+        $qb = $this->createQuery();
+
+        if (!empty($filters)) {
+            if (null !== $filters['fullName']) {
+                $this->addCriteriaByName($qb, $filters['fullName']);
+            }
+            if (null !== $filters['level']) {
+                $this->addCriteriaByLevel($qb, $filters['level']);
+            }
+
+            if (null !== $filters['status']) {
+                switch ($filters['status']) {
+                    case Licence::STATUS_TESTING_IN_PROGRESS:
+                        $this->addCriteriaTestinInProgress($qb);
+                        break;
+                    case Licence::STATUS_TESTING_COMPLETE:
+                        $this->addCriteriaTestinComplete($qb);
+                        break;
+                    case Licence::STATUS_NEW:
+                        $this->addCriteriaNew($qb);
+                        break;
+                    case Licence::STATUS_RENEW:
+                        $this->addCriteriaRenew($qb);
+                        break;
+                }
+            }
+        }
+
+        $this->addCriteriaBySeason($qb, $currentSeason);
+        $qb
+            ->andWhere(
+                $qb->expr()->gte('li.status', ':inProgress'),
+            )
+            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE);
+        
+
+        return $this->orderByASC($qb);
     }
 
     public function findMinorAndTesting(): array

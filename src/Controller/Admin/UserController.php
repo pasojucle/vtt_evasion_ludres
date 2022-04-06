@@ -13,6 +13,7 @@ use App\Service\ExportService;
 use App\Service\MailerService;
 use App\Service\PaginatorService;
 use App\UseCase\User\GetMembersFiltered;
+use App\UseCase\Registration\GetRegistrationsFiltered;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,7 +42,7 @@ class UserController extends AbstractController
     ): Response {
         return $this->render(
             'user/admin/users.html.twig',
-            $getMembersFiltered->execute($request, $filtered, 'admin_users_filters', 'admin_users')
+            $getMembersFiltered->execute($request, $filtered)
         );
     }
 
@@ -119,41 +120,15 @@ class UserController extends AbstractController
 
     #[Route('/inscriptions/{filtered}', name: 'registrations', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     public function adminRegistration(
-        PaginatorService $paginator,
+        GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request,
         bool $filtered
     ): Response {
-        $session = $request->getSession();
-        $filters = ($filtered) ? $session->get('admin_registrations_filters') : null;
 
-        $form = $this->createForm(RegistrationFilterType::class, $filters);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $filters = $form->getData();
-            $session->set('admin_registrations_filters', $filters);
-            $filtered = true;
-            $request->query->set('p', 1);
-        }
-
-        $query = $this->userRepository->findUserLicenceInProgressQuery($filters);
-        $users = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $session->set('user_return', $this->generateUrl('admin_registrations', [
-            'filtered' => true,
-            'p' => $request->query->get('p'),
-        ]));
-
-        $this->usersPresenter->present($users);
-
-        return $this->render('user/admin/registrations.html.twig', [
-            'users' => $this->usersPresenter->viewModel()->users,
-            'lastPage' => $paginator->lastPage($users),
-            'current_filters' => [
-                'filtered' => (int) $filtered,
-            ],
-            'count' => $paginator->total($users),
-            'form' => $form->createView(),
-        ]);
+        return $this->render(
+            'user/admin/registrations.html.twig',
+            $getRegistrationsFiltered->execute($request, $filtered)
+        );
     }
 
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]

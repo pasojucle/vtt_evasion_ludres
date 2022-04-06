@@ -60,7 +60,6 @@ class UserFilterType extends AbstractType
             ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-            $user = $event->getData();
             $form = $event->getForm();
 
             $statusChoices = match ($options['statusType']) {
@@ -99,6 +98,8 @@ class UserFilterType extends AbstractType
         return [
             'licence.status.testing_in_processing' => Licence::STATUS_TESTING_IN_PROGRESS,
             'licence.status.testing_complete' => Licence::STATUS_TESTING_COMPLETE,
+            'licence.status.new' => Licence::STATUS_NEW,
+            'licence.status.renew' => Licence::STATUS_RENEW,
         ];
     }
 
