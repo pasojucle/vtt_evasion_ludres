@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Licence;
-use App\UseCase\Coverage\GetCoveragesFiltered;
-use App\UseCase\Coverage\ValidateCoverage;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\UseCase\Coverage\ValidateCoverage;
 use Symfony\Component\HttpFoundation\Request;
+use App\UseCase\Coverage\GetCoveragesFiltered;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Coverage\ExportCoveragesFiltered;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/assurance', name: 'admin_coverage_')]
+#[Route('/admin/assurance', name: 'admin_coverage')]
 class CoverageController extends AbstractController
 {
     public function __construct(
@@ -23,7 +24,7 @@ class CoverageController extends AbstractController
     ) {
     }
 
-    #[Route('s/{filtered}', name: 'list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[Route('s/{filtered}', name: '_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     public function list(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request,
@@ -35,7 +36,7 @@ class CoverageController extends AbstractController
         );
     }
 
-    #[Route('validate/{licence}', name: 'validate', methods: ['GET', 'POST'])]
+    #[Route('validate/{licence}', name: '_validate', methods: ['GET', 'POST'])]
     public function adminRegistartionValidate(
         Request $request,
         ValidateCoverage $validateCoverage,
@@ -69,5 +70,14 @@ class CoverageController extends AbstractController
             'licence' => $licence,
             'fullname' => $fullName,
         ]);
+    }
+
+    #[Route('/export/assurances', name: 's_export', methods: ['GET'])]
+    public function adminCoveragesExport(
+        ExportCoveragesFiltered $exportCoveragesFiltered,
+        Request $request
+    ): Response {
+
+        return $exportCoveragesFiltered->execute($request);
     }
 }

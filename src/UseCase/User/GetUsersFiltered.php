@@ -44,7 +44,7 @@ abstract class GetUsersFiltered
             $request->query->set('p', 1);
         }
 
-        $session->set($this->sessionVarNameFilter($request), $filters);
+        $session->set($this->filterName($request), $filters);
         $query = $this->getQuery($filters);
 
         $this->setRedirect($request);
@@ -64,7 +64,7 @@ abstract class GetUsersFiltered
         ];
     }
 
-    private function sessionVarNameFilter(Request $request): string
+    private function filterName(Request $request): string
     {
         return $request->get('_route').'_filters';
     }
@@ -79,7 +79,7 @@ abstract class GetUsersFiltered
 
     private function getFilters(Request $request, bool $filtered): array
     {
-        return ($filtered) ? $request->getSession()->get($this->sessionVarNameFilter($request)) : [
+        return ($filtered) ? $request->getSession()->get($this->filterName($request)) : [
         'fullName' => null,
         'status' => 'SEASON_'.$this->licenceService->getCurrentSeason(),
         'level' => null,

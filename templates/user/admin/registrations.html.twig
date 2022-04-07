@@ -7,6 +7,11 @@
         <div class="block">
             <div class="block-title">
                 <h2>Gestion des inscriptions - <span class="badge badge-info">{{ count }}</span></h2>
+                <span class="tools">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('admin_registrations_export') }}" class="btn btn-success btn-ico" title="Export la sélection"><i class="fas fa-file-csv"></i></a>
+                    {% endif %}
+                </span>
             </div>
             <div class="block-body">
                 {% include('user/admin/filters.html.twig') %}

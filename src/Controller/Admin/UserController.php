@@ -5,23 +5,19 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Level;
-use App\Entity\User as  UserEntity;
-use App\Form\Admin\RegistrationFilterType;
 use App\Form\Admin\UserType;
-use App\Repository\UserRepository;
-use App\Service\ExportService;
 use App\Service\MailerService;
-use App\Service\PaginatorService;
-use App\UseCase\User\GetMembersFiltered;
-use App\UseCase\Registration\GetRegistrationsFiltered;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UsersPresenter;
+use App\Repository\UserRepository;
+use App\Entity\User as  UserEntity;
+use App\UseCase\User\GetMembersFiltered;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\UseCase\User\ExportMembersFiltered;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -46,27 +42,13 @@ class UserController extends AbstractController
         );
     }
 
-    #[Route('/export/adherents', name: 'users_export', methods: ['GET'])]
+    #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
     public function adminUsersExport(
-        ExportService $exportService,
+        ExportMembersFiltered $exportMembersFiltered,
         Request $request
     ): Response {
-        $session = $request->getSession();
-        $filters = $session->get('admin_users_filters');
 
-        $query = $this->userRepository->findMemberQuery($filters);
-        $users = $query->getQuery()->getResult();
-        $content = $exportService->exportUsers($users);
-
-        $response = new Response($content);
-        $disposition = HeaderUtils::makeDisposition(
-            HeaderUtils::DISPOSITION_ATTACHMENT,
-            'export_email.csv'
-        );
-
-        $response->headers->set('Content-Disposition', $disposition);
-
-        return $response;
+        return $exportMembersFiltered->execute($request);
     }
 
     #[Route('/adherent/{user}', name: 'user', methods: ['GET'])]
@@ -116,19 +98,6 @@ class UserController extends AbstractController
             'user' => $this->userPresenter->viewModel(),
             'form' => $form->createView(),
         ]);
-    }
-
-    #[Route('/inscriptions/{filtered}', name: 'registrations', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
-    public function adminRegistration(
-        GetRegistrationsFiltered $getRegistrationsFiltered,
-        Request $request,
-        bool $filtered
-    ): Response {
-
-        return $this->render(
-            'user/admin/registrations.html.twig',
-            $getRegistrationsFiltered->execute($request, $filtered)
-        );
     }
 
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
