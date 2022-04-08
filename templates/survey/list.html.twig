@@ -8,38 +8,37 @@
             <h1>Sondages</h1>
         </div>
         <div class="wrapper-body">
-                <div class="block background-white">
-                    <div class="block-title">
-                        <h2>Sondages</h2>
-                    </div>
-                    <div class="block-body">
-                        {% if surveys is not empty %}
-                            <ul>
-                                {% for survey in surveys %}
-                                    <li>
-                                        <div class="row">
-                                            <div class="col-md-5"><b>{{ survey.title }}</b></div>
-
-                                            {% if survey in user_surveys.surveys %}
-                                                <div class="col-md-7">
-                                                    <span class="info">Sondage éffectué le {{ user_surveys.surveysCreatedAt[survey.id]|date('d/m/Y H:i:s') }}</span>
-                                                </div>
-                                            {% else %}
-                                                <div class="col-md-4">du {{ survey.startAt|date('d/m/Y') }} au {{ survey.endAt|date('d/m/Y') }}</div>
-                                                <div class="col-md-3">
-                                                    <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Participer</a>
-                                                </div>
-                                            {% endif %}
-                                            
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p>Auncun sondage actif actuellement</p>
-                        {% endif %}
-                    </div>    
+            <div class="block background-white">
+                <div class="block-title">
+                    <h2>Sondages</h2>
                 </div>
+                <div class="block-body">
+                    {% if surveys is not empty %}
+                        <ul>
+                            {% for survey in surveys %}
+                                <li>
+                                    <div class="row">
+                                        <div class="col-md-5"><b>{{ survey.title }}</b></div>
+
+                                        {% if survey in user_surveys.surveys %}
+                                            <div class="col-md-7">
+                                                <span class="info">Sondage éffectué le {{ user_surveys.surveysCreatedAt[survey.id]|date('d/m/Y H:i:s') }}</span>
+                                            </div>
+                                        {% else %}
+                                            <div class="col-md-4">du {{ survey.startAt|date('d/m/Y') }} au {{ survey.endAt|date('d/m/Y') }}</div>
+                                            <div class="col-md-3">
+                                                <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Participer</a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Auncun sondage actif actuellement</p>
+                    {% endif %}
+                </div>    
+            </div>
         </div>
     </div>
 {% endblock %}
