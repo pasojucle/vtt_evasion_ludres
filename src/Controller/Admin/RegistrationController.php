@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\UseCase\Registration\GetRegistrationsFiltered;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -26,7 +27,6 @@ class RegistrationController extends AbstractController
         );
     }
 
-
     #[Route('/export/inscription', name: 's_export', methods: ['GET'])]
     public function adminRegistrationsExport(
         GetRegistrationsFiltered $getRegistrationsFiltered,
@@ -34,5 +34,14 @@ class RegistrationController extends AbstractController
     ): Response {
 
         return $getRegistrationsFiltered->export($request);
+    }
+
+    #[Route('/emails/inscriptions', name: 's_email_to_clipboard', methods: ['GET'])]
+    public function adminEmailRegistrations(
+        GetRegistrationsFiltered $getRegistrationsFiltered,
+        Request $request
+    ): JsonResponse {
+
+        return new JsonResponse($getRegistrationsFiltered->emailsToClipboard($request));
     }
 }

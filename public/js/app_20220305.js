@@ -42,6 +42,7 @@ $(document).ready(function(){
     $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
     $(document).on('click', '.fa-clipboard', clipboard);
+    $(document).on('click', '.email-to-clipboard', emailToClipboard);
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
@@ -337,6 +338,17 @@ function clipboard(event) {
     event.preventDefault();
     const value = $(this).parent().attr('href');
     navigator.clipboard.writeText(value);
+}
+
+function emailToClipboard(event) {
+    event.preventDefault();
+    const url = event.target.parentNode.getAttribute('href');
+    console.log(url);
+    fetch(url).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        navigator.clipboard.writeText(data);
+    });
 }
 
 function addDown(e) {

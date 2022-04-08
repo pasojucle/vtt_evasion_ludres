@@ -9,6 +9,7 @@
                 <h2>Gestion des adhérents - <span class="badge badge-info">{{ count }}</span></h2>
                 <span class="tools">
                     {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('admin_members_email_to_clipboard') }}" class="btn btn-success btn-ico email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i></a>
                         <a href="{{ path('admin_members_export') }}" class="btn btn-success btn-ico" title="Export la sélection"><i class="fas fa-file-csv"></i></a>
                     {% endif %}
                 </span>

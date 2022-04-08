@@ -73,10 +73,9 @@ abstract class GetUsersFiltered
     {
         $session = $request->getSession();
         $filters = $session->get($this->filterName);
-
         $query = $this->getQuery($filters);
         $users = $query->getQuery()->getResult();
-        $content = $this->getContent($users);
+        $content = $this->getExportContent($users);
 
         $response = new Response($content);
         $disposition = HeaderUtils::makeDisposition(
@@ -87,6 +86,16 @@ abstract class GetUsersFiltered
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
+    }
+
+    public function emailsToClipboard(Request $request): string
+     {
+        $session = $request->getSession();
+        $filters = $session->get($this->filterName);
+        $query = $this->getQuery($filters);
+        $emails = $query->select('i.email')->getQuery()->getScalarResult();
+
+        return implode(',', array_column($emails, 'email'));
     }
 
     private function setRedirect(Request $request): void
@@ -106,7 +115,7 @@ abstract class GetUsersFiltered
         ];
     }
 
-    private function getContent(array $users): string
+    private function getExportContent(array $users): string
     {
         $content = [];
         $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\'essai'];

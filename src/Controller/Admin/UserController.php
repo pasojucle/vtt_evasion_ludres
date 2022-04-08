@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
@@ -48,6 +49,15 @@ class UserController extends AbstractController
     ): Response {
 
         return $getMembersFiltered->export($request);
+    }
+
+    #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
+    public function adminEmailUsers(
+        GetMembersFiltered $getMembersFiltered,
+        Request $request
+    ): JsonResponse {
+
+        return new JsonResponse($getMembersFiltered->emailsToClipboard($request));
     }
 
     #[Route('/adherent/{user}', name: 'user', methods: ['GET'])]
