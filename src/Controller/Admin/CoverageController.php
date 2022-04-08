@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use App\UseCase\Coverage\GetCoveragesFiltered;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\UseCase\Coverage\ExportCoveragesFiltered;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -32,7 +31,7 @@ class CoverageController extends AbstractController
     ): Response {
         return $this->render(
             'coverage/admin/list.html.twig',
-            $getCoveragesFiltered->execute($request, $filtered, 'admin_users_filters', 'admin_users')
+            $getCoveragesFiltered->list($request, $filtered, 'admin_users_filters', 'admin_users')
         );
     }
 
@@ -74,10 +73,10 @@ class CoverageController extends AbstractController
 
     #[Route('/export/assurances', name: 's_export', methods: ['GET'])]
     public function adminCoveragesExport(
-        ExportCoveragesFiltered $exportCoveragesFiltered,
+        GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
     ): Response {
 
-        return $exportCoveragesFiltered->execute($request);
+        return $getCoveragesFiltered->export($request);
     }
 }

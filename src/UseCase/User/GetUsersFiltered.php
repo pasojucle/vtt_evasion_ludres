@@ -6,29 +6,34 @@ namespace App\UseCase\User;
 
 use App\Form\UserFilterType;
 use App\Repository\UserRepository;
+use Doctrine\ORM\QueryBuilder;
 use App\Service\LicenceService;
 use App\Service\PaginatorService;
 use App\ViewModel\UsersPresenter;
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class GetUsersFiltered
 {
     public int $statusType;
+    public string $filterName;
 
     public function __construct(
         private PaginatorService $paginator,
         private LicenceService $licenceService,
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $urlGenerator,
-        protected UserRepository $userRepository,
-        private UsersPresenter $usersPresenter
+        private UsersPresenter $usersPresenter,
+        public UserRepository $userRepository
     ) {
     }
 
-    public function execute(Request $request, bool $filtered): array
+    abstract protected function getQuery(array $filters): QueryBuilder;
+
+    public function list(Request $request, bool $filtered): array
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
@@ -44,7 +49,7 @@ abstract class GetUsersFiltered
             $request->query->set('p', 1);
         }
 
-        $session->set($this->filterName($request), $filters);
+        $session->set($this->filterName, $filters);
         $query = $this->getQuery($filters);
 
         $this->setRedirect($request);
@@ -64,9 +69,24 @@ abstract class GetUsersFiltered
         ];
     }
 
-    private function filterName(Request $request): string
+    public function export(Request $request): Response
     {
-        return $request->get('_route').'_filters';
+        $session = $request->getSession();
+        $filters = $session->get($this->filterName);
+
+        $query = $this->getQuery($filters);
+        $users = $query->getQuery()->getResult();
+        $content = $this->getContent($users);
+
+        $response = new Response($content);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            'export_email.csv'
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 
     private function setRedirect(Request $request): void
@@ -79,12 +99,28 @@ abstract class GetUsersFiltered
 
     private function getFilters(Request $request, bool $filtered): array
     {
-        return ($filtered) ? $request->getSession()->get($this->filterName($request)) : [
+        return ($filtered) ? $request->getSession()->get($this->filterName) : [
         'fullName' => null,
         'status' => 'SEASON_'.$this->licenceService->getCurrentSeason(),
         'level' => null,
-    ];
+        ];
     }
 
-    abstract protected function getQuery(array $filters): QueryBuilder;
+    private function getContent(array $users): string
+    {
+        $content = [];
+        $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\'essai'];
+        $content[] = implode(',', $row);
+
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                $identity = $user->getFirstIdentity();
+                $licence = $user->getLastLicence();
+                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->isFinal()];
+                $content[] = implode(',', $row);
+            }
+        }
+
+        return implode(PHP_EOL, $content);
+    }
 }

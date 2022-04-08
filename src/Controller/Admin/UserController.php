@@ -13,7 +13,6 @@ use App\Repository\UserRepository;
 use App\Entity\User as  UserEntity;
 use App\UseCase\User\GetMembersFiltered;
 use Doctrine\ORM\EntityManagerInterface;
-use App\UseCase\User\ExportMembersFiltered;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,17 +37,17 @@ class UserController extends AbstractController
     ): Response {
         return $this->render(
             'user/admin/users.html.twig',
-            $getMembersFiltered->execute($request, $filtered)
+            $getMembersFiltered->list($request, $filtered)
         );
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
     public function adminUsersExport(
-        ExportMembersFiltered $exportMembersFiltered,
+        GetMembersFiltered $getMembersFiltered,
         Request $request
     ): Response {
 
-        return $exportMembersFiltered->execute($request);
+        return $getMembersFiltered->export($request);
     }
 
     #[Route('/adherent/{user}', name: 'user', methods: ['GET'])]

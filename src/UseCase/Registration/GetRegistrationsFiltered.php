@@ -12,6 +12,8 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 {
     public int $statusType = UserFilterType::STATUS_TYPE_REGISTRATION;
 
+    public string $filterName = 'admin_registrations_filters';
+
     public function getQuery(array $filters): QueryBuilder
     {
         return $this->userRepository->findLicenceInProgressQuery($filters);

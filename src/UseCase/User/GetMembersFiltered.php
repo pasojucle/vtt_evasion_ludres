@@ -11,6 +11,8 @@ class GetMembersFiltered extends GetUsersFiltered
 {
     public int $statusType = UserFilterType::STATUS_TYPE_MEMBER;
 
+    public string $filterName = 'admin_users_filters';
+
     public function getQuery(array $filters): QueryBuilder
     {
         return $this->userRepository->findMemberQuery($filters);

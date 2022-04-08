@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\UseCase\Registration\ExportRegistrationsFiltered;
 use App\UseCase\Registration\GetRegistrationsFiltered;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -23,17 +22,17 @@ class RegistrationController extends AbstractController
 
         return $this->render(
             'user/admin/registrations.html.twig',
-            $getRegistrationsFiltered->execute($request, $filtered)
+            $getRegistrationsFiltered->list($request, $filtered)
         );
     }
 
 
     #[Route('/export/inscription', name: 's_export', methods: ['GET'])]
     public function adminRegistrationsExport(
-        ExportRegistrationsFiltered $exportRegistrationsFiltered,
+        GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
     ): Response {
 
-        return $exportRegistrationsFiltered->execute($request);
+        return $getRegistrationsFiltered->export($request);
     }
 }
