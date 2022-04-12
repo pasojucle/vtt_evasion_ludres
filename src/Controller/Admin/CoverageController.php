@@ -89,4 +89,16 @@ class CoverageController extends AbstractController
 
         return new JsonResponse($getCoveragesFiltered->emailsToClipboard($request));
     }
+
+    #[Route('/assurance/choices', name: '_choices', methods: ['GET'])]
+    public function memberChoices(
+        GetCoveragesFiltered $getCoveragesFiltered,
+        Request $request
+    ): JsonResponse {
+        $query = $request->query->get('q');
+
+        $filters = json_decode($request->query->get('filters'), true);
+
+        return new JsonResponse($getCoveragesFiltered->choices($filters, $query));
+    }
 }

@@ -44,4 +44,16 @@ class RegistrationController extends AbstractController
 
         return new JsonResponse($getRegistrationsFiltered->emailsToClipboard($request));
     }
+
+    #[Route('/assurance/choices', name: '_choices', methods: ['GET'])]
+    public function memberChoices(
+        GetRegistrationsFiltered $getRegistrationsFiltered,
+        Request $request
+    ): JsonResponse {
+        $query = $request->query->get('q');
+
+        $filters = json_decode($request->query->get('filters'), true);
+
+        return new JsonResponse($getRegistrationsFiltered->choices($filters, $query));
+    }
 }

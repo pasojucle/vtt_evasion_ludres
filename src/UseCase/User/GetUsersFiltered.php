@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Form\UserFilterType;
-use App\Repository\UserRepository;
 use Doctrine\ORM\QueryBuilder;
 use App\Service\LicenceService;
+use Symfony\Component\Form\Form;
 use App\Service\PaginatorService;
 use App\ViewModel\UsersPresenter;
+use App\Form\Admin\UserFilterType;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -20,10 +21,12 @@ abstract class GetUsersFiltered
 {
     public int $statusType;
     public string $filterName;
+    public string $statusPlaceholder;
+    public string $remoteRoute;
 
     public function __construct(
         private PaginatorService $paginator,
-        private LicenceService $licenceService,
+        public LicenceService $licenceService,
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $urlGenerator,
         private UsersPresenter $usersPresenter,
@@ -33,20 +36,21 @@ abstract class GetUsersFiltered
 
     abstract protected function getQuery(array $filters): QueryBuilder;
 
+    abstract protected function getStatusChoices(): ?array;
+
     public function list(Request $request, bool $filtered): array
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
 
-        $form = $this->formFactory->create(UserFilterType::class, $filters, [
-            'statusType' => $this->statusType,
-        ]);
+        $form = $this->createForm($filters);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $filtered = true;
             $request->query->set('p', 1);
+            $form = $this->createForm($filters);
         }
 
         $session->set($this->filterName, $filters);
@@ -98,6 +102,36 @@ abstract class GetUsersFiltered
         return implode(',', array_column($emails, 'email'));
     }
 
+    public function choices(array $filters, ?string $fullName): array
+    {
+        $filters['fullName'] = $fullName;
+        $query = $this->getQuery($filters);
+        
+        $users = $query->getQuery()->getResult();
+
+        $response = [];
+
+        foreach ($users as $user) {
+            $response[] = [
+                'id' => $user->getId(),
+                'text' => $user->GetFirstIdentity()->getName().' '.$user->GetFirstIdentity()->getFirstName(),
+            ];
+        
+        }
+
+        return $response;
+    }
+
+    private function createForm(array $filters): Form
+    {
+        return $this->formFactory->create(UserFilterType::class, $filters, [
+            'status_choices' => $this->getStatusChoices(),
+            'status_placeholder' => $this->statusPlaceholder,
+            'filters' => $filters,
+            'remote_route' => $this->remoteRoute,
+        ]);
+    }
+
     private function setRedirect(Request $request): void
     {
         $request->getSession()->set('admin_user_redirect', $this->urlGenerator->generate($request->get('_route'), [
@@ -111,7 +145,7 @@ abstract class GetUsersFiltered
         return ($filtered) ? $request->getSession()->get($this->filterName) : [
         'fullName' => null,
         'status' => 'SEASON_'.$this->licenceService->getCurrentSeason(),
-        'level' => null,
+        'levels' => null,
         ];
     }
 
@@ -132,4 +166,6 @@ abstract class GetUsersFiltered
 
         return implode(PHP_EOL, $content);
     }
+
+
 }

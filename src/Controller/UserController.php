@@ -12,7 +12,6 @@ use App\ViewModel\OrdersPresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -81,27 +80,5 @@ class UserController extends AbstractController
         return $this->render('reset_password/reset.html.twig', [
             'resetForm' => $form->createView(),
         ]);
-    }
-
-    #[Route('/utilisateur/list/select2', name: 'user_list_select2', methods: ['GET'])]
-    public function userListSelect2(
-        UserRepository $userRepository,
-        Request $request
-    ): JsonResponse {
-        $query = $request->query->get('q');
-        $hasCurrentSeason = (bool) $request->query->get('has_current_season');
-
-        $users = $userRepository->findByFullName($query, $hasCurrentSeason);
-
-        $response = [];
-
-        foreach ($users as $user) {
-            $response[] = [
-                'id' => $user->getId(),
-                'text' => $user->GetFirstIdentity()->getName().' '.$user->GetFirstIdentity()->getFirstName(),
-            ];
-        }
-
-        return new JsonResponse($response);
     }
 }

@@ -129,4 +129,16 @@ class UserController extends AbstractController
             'user' => $user->getId(),
         ]);
     }
+
+    #[Route('/adhérent/choices', name: 'member_choices', methods: ['GET'])]
+    public function memberChoices(
+        GetMembersFiltered $getMembersFiltered,
+        Request $request
+    ): JsonResponse {
+        $query = $request->query->get('q');
+
+        $filters = json_decode($request->query->get('filters'), true);
+
+        return new JsonResponse($getMembersFiltered->choices($filters, $query));
+    }
 }

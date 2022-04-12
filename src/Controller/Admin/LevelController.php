@@ -6,15 +6,16 @@ namespace App\Controller\Admin;
 
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
-use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LevelController extends AbstractController
 {
@@ -120,5 +121,25 @@ class LevelController extends AbstractController
         $this->orderByService->setNewOrders($level, $levels, $newOrder);
 
         return new Response();
+    }
+
+    #[Route('/admin/level/choices', name: 'admin_level_choices', methods: ['GET'])]
+    public function adminLevelChoices(
+        Request $request
+    ): Response {
+        $levelChoices = [];
+        // $levelChoices[] =  ['id' => Level::TYPE_ALL_MEMBER, 'text' => 'Toute l\'école VTT'];
+        // $levelChoices[] = ['id' => Level::TYPE_ALL_FRAME, 'text' => 'Tout l\'encadrement'];
+        // $levelChoices[] = ['id' => Level::TYPE_ADULT, 'text' => 'Adultes hors encadrement'];
+        $levels = $this->levelRepository->findAll();
+
+        if (!empty($levels)) {
+            foreach ($levels as $level) {
+                $type = (Level::TYPE_MEMBER === $level->getType()) ? 'École VTT' : 'Encadrement';
+                $levelChoices[] = ['id' => $level->getId(), 'text' => $level->getTitle()];
+            }
+        }dump($levelChoices);
+
+        return new JsonResponse($levelChoices);
     }
 }

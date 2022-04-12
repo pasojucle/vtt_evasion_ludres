@@ -57,8 +57,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['fullName']) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
             }
-            if (null !== $filters['level']) {
-                $this->addCriteriaByLevel($qb, $filters['level']);
+            if (!empty($filters['user'])) {
+                $this->addCriteriaByUser($qb, $filters['user']);
+            }
+            if (null !== $filters['levels']) {
+                $this->addCriteriaByLevel($qb, $filters['levels']);
             }
             if (null !== $filters['status'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                 dump($filters['status']);
@@ -79,8 +82,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['fullName']) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
             }
-            if (null !== $filters['level']) {
-                $this->addCriteriaByLevel($qb, $filters['level']);
+            if (null !== $filters['levels']) {
+                $this->addCriteriaByLevel($qb, $filters['levels']);
             }
         }
 
@@ -117,7 +120,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaByName(QueryBuilder &$qb, string $fullName): void
     {
-
         $qb->andWhere(
             $qb->expr()->orX(
                 $qb->expr()->like('i.name', $qb->expr()->literal('%'.$fullName.'%')),
@@ -127,35 +129,62 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    private function addCriteriaByLevel(QueryBuilder &$qb, int|string $level): void
+
+    private function addCriteriaByUser(QueryBuilder &$qb, User $user): void
     {
-        $type = null;
-        if (Level::TYPE_ALL_MEMBER === $level) {
-            $type = Level::TYPE_MEMBER;
+        $qb->andWhere(
+            $qb->expr()->eq('u', ':user')
+        )
+        ->setParameter('user', $user)
+        ;
+    }
+
+    private function addCriteriaByLevel(QueryBuilder &$qb, array $filterLevels): void
+    {
+        $types = [];
+        $levels = [];
+        if (!empty($filterLevels)) {
+            foreach ($filterLevels as $level) {
+                switch ($level) {
+                    case Level::TYPE_ALL_MEMBER:
+                        $types[] = Level::TYPE_MEMBER;
+                        break;
+                    case Level::TYPE_ALL_FRAME:
+                        $types[] = Level::TYPE_FRAME;
+                        break;
+                    case Level::TYPE_ADULT:
+                        $types[] = Level::TYPE_ADULT;
+                        break;
+                    default:
+                        $levels[] = $level;
+                }
+            }
         }
-        if (Level::TYPE_ALL_FRAME === $level) {
-            $type = Level::TYPE_FRAME;
+
+        $orX = $qb->expr()->orX();
+        if (!empty($levels)) {
+            $orX->add($qb->expr()->in('u.level', ':levels'));
+            $qb
+                ->setParameter('levels', $levels)
+                ;
         }
-        if (Level::TYPE_ADULT === $level) {
-            $qb
-                ->andWhere(
-                    $qb->expr()->isNull('u.level'),
-                )
-            ;
-        } elseif (null !== $type) {
-            $qb
-                ->andWhere(
-                    $qb->expr()->eq('l.type', ':type'),
-                )
-                ->setParameter('type', $type)
-                ;
-        } else {
-            $qb
-                ->andWhere(
-                    $qb->expr()->eq('u.level', ':level'),
-                )
-                ->setParameter('level', $level)
-                ;
+
+        if (!empty($types)) {
+            $key = array_search(Level::TYPE_ADULT, $types, true);
+
+            if (false !== $key) {
+                unset($types[$key]);
+                $orX->add($qb->expr()->isNull('u.level'));
+            }
+
+            if (!empty($types)) {
+                $orX->add($qb->expr()->in('l.type', ':types'));
+                $qb->setParameter('types', $types);
+            }
+        }
+
+        if (0 < $orX->count()) {
+            $qb->andWhere($orX);
         }
     }
 
@@ -340,8 +369,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['fullName']) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
             }
-            if (null !== $filters['level']) {
-                $this->addCriteriaByLevel($qb, $filters['level']);
+            if (null !== $filters['levels']) {
+                $this->addCriteriaByLevel($qb, $filters['levels']);
             }
 
             if (null !== $filters['status']) {

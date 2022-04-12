@@ -30,7 +30,7 @@ $(document).ready(function(){
     $('.js-datepicker').datepicker({
         format: 'yyyy-mm-dd hh:ii',
     });
-    $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_level, #registration_filter_isFinal, #order_filter_status', submitFom);
+    $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_levels, #user_filter_user, #registration_filter_isFinal, #order_filter_status', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
     $(document).on('change', '#bike_ride_type', modifierBikeRide);
@@ -58,6 +58,25 @@ $(document).ready(function(){
         $('#modal_window_show').click();
     }
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
+    $('.select2').select2({
+        ajax: {
+        //   dataType: 'json',
+        //   delay: 250,
+          data: function (params) {
+            return {
+              q: params.term, // search term
+            };
+          },
+          processResults: function (data, params) {
+            return {
+              results: data,
+            };
+          },
+        //   cache: true
+        },
+        // placeholder: 'Search for a repository',
+        // minimumInputLength: 0,
+      });
 });
 
 jQuery(function($){
