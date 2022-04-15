@@ -27,6 +27,8 @@ class UserFilterType extends AbstractType
     public const STATUS_TYPE_MEMBER = 1;
     public const STATUS_TYPE_REGISTRATION = 2;
     public const STATUS_TYPE_COVERAGE = 3;
+    public const LEVEL_GROUP_MEMBER = 'École VTT';
+    public const LEVEL_GROUP_FRAME = 'Encadrement';
 
     public function __construct(
         private LevelRepository $levelRepository,
@@ -74,7 +76,7 @@ class UserFilterType extends AbstractType
                     'class' => 'select2',
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionez un ou plusieurs niveaux',
-                    'data-maximum-selection-length' => 3,
+                    'data-maximum-selection-length' => 4,
                     'data-language' => 'fr',
                     'data-allow-clear' => true,
                 ],
@@ -107,16 +109,17 @@ class UserFilterType extends AbstractType
 
     private function getLevelChoices(): array
     {
-        $levelChoices = [];
-        $levelChoices['Toute l\'école VTT'] = Level::TYPE_ALL_MEMBER;
-        $levelChoices['Tout l\'encadrement'] = Level::TYPE_ALL_FRAME;
-        $levelChoices['Adultes hors encadrement'] = Level::TYPE_ADULT;
-        $levels = $this->levelRepository->findAll();
+        $levelChoices = [
+            self::LEVEL_GROUP_MEMBER => ['Toute l\'école VTT' => Level::TYPE_ALL_MEMBER],
+            self::LEVEL_GROUP_FRAME => ['Tout l\'encadrement' => Level::TYPE_ALL_FRAME],
+            'Adultes hors encadrement' => Level::TYPE_ADULT,
+        ];
 
+        $levels = $this->levelRepository->findAll();
         if (!empty($levels)) {
             foreach ($levels as $level) {
-                $type = (Level::TYPE_MEMBER === $level->getType()) ? 'École VTT' : 'Encadrement';
-                $levelChoices[$level->getTitle()] = $level->getId();
+                $group = (Level::TYPE_MEMBER === $level->getType()) ? self::LEVEL_GROUP_MEMBER : self::LEVEL_GROUP_FRAME;
+                $levelChoices[$group][$level->getTitle()] = $level->getId();
             }
         }
 
