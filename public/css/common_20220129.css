@@ -617,33 +617,25 @@ input[type="file"] {
 .nav-bar {
     display: none;
 }
-.filters {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-}
-
-.filters {
-    margin-bottom: 15px;
+.row.filters {
+    padding: 10px;
 }
 .filters input {
     padding: 10px;
 }
-.filters ul > li {
-    display: inline-block;
-    line-height: 41px;
-}
-.filters ul > li {
-    padding: 5px;
-}
-.filters ul > li > * {
-    vertical-align: middle;
-}
-.filters ul > li > .btn:not(.btn-ico) {
-    padding: 12px 8px;
-}
 .filters span b {
     color: var(--primary-color-darker);
+}
+
+span.select2-selection.select2-selection--single {
+    height: 32px;
+}
+.filters .select2-container--default .select2-selection--single,
+.filters .select2-container--default .select2-selection--multiple {
+    background-color: var(--clear-color);
+}
+.filters .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #75777d;
 }
 .col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-content, .col-6 {
     display: grid;

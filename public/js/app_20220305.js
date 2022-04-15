@@ -58,25 +58,7 @@ $(document).ready(function(){
         $('#modal_window_show').click();
     }
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
-    $('.select2').select2({
-        ajax: {
-        //   dataType: 'json',
-        //   delay: 250,
-          data: function (params) {
-            return {
-              q: params.term, // search term
-            };
-          },
-          processResults: function (data, params) {
-            return {
-              results: data,
-            };
-          },
-        //   cache: true
-        },
-        // placeholder: 'Search for a repository',
-        // minimumInputLength: 0,
-      });
+    $('.select2').select2();
 });
 
 jQuery(function($){
@@ -324,7 +306,7 @@ function submitAsynchronous(e) {
 function toggleDown(e) {
     e.preventDefault();
     console.log('toggleDown');
-    const button = $(this);
+    const icon = $(this).find('i');
     const block = $(this).closest('[data-toggle]');
     const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
     blockBody.toggleClass('down').toggleClass('up');
@@ -334,10 +316,11 @@ function toggleDown(e) {
         }
     });
     const regex = /up|down|fas|far|\s/g;
-    const className = button.attr('class').replace(regex, '');
-    button.toggleClass(className+'up').toggleClass(className+'down');
+    const className = icon.attr('class').replace(regex, '');
+    console.log(className);
+    icon.toggleClass(className+'up').toggleClass(className+'down');
     $('.'+className+'up').each(function() {
-        if (!$(this).is(button)) {
+        if (!$(this).is(icon)) {
             $(this).removeClass(className+'up').addClass(className+'down');
         }
     });

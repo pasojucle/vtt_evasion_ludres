@@ -11,7 +11,7 @@ class GetMembersFiltered extends GetUsersFiltered
 {
     public int $statusType = UserFilterType::STATUS_TYPE_MEMBER;
 
-    public string $statusPlaceholder = 'Toutes les saisons';
+    public string $statusPlaceholder = 'Selectionnez une saison';
     
     public string $filterName = 'admin_users_filters';
     

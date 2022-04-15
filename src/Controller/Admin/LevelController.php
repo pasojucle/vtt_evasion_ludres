@@ -122,24 +122,4 @@ class LevelController extends AbstractController
 
         return new Response();
     }
-
-    #[Route('/admin/level/choices', name: 'admin_level_choices', methods: ['GET'])]
-    public function adminLevelChoices(
-        Request $request
-    ): Response {
-        $levelChoices = [];
-        // $levelChoices[] =  ['id' => Level::TYPE_ALL_MEMBER, 'text' => 'Toute l\'école VTT'];
-        // $levelChoices[] = ['id' => Level::TYPE_ALL_FRAME, 'text' => 'Tout l\'encadrement'];
-        // $levelChoices[] = ['id' => Level::TYPE_ADULT, 'text' => 'Adultes hors encadrement'];
-        $levels = $this->levelRepository->findAll();
-
-        if (!empty($levels)) {
-            foreach ($levels as $level) {
-                $type = (Level::TYPE_MEMBER === $level->getType()) ? 'École VTT' : 'Encadrement';
-                $levelChoices[] = ['id' => $level->getId(), 'text' => $level->getTitle()];
-            }
-        }dump($levelChoices);
-
-        return new JsonResponse($levelChoices);
-    }
 }

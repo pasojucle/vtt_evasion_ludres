@@ -70,30 +70,16 @@ class UserFilterType extends AbstractType
                 'label' => false,
                 'multiple' => true,
                 'choices' => $this->getLevelChoices(),
-                
                 'attr' => [
                     'class' => 'select2',
-                    'data-ajax--url' => $this->router->generate('admin_level_choices'),
-                    'data-ajax--cache' => true,
-                    'data-placeholder' => 'Tous les niveaux',
-                    'data-ajax--delay' => 250,
-                    'data-ajax--data-type' => 'json',
-                    'data-scroll' => false,
-                    'data-autostart' => true,
-                    'data-allow-clear' => true,
                     'data-width' => '100%',
-                    'data-ajax--cache-timeout' => 60000,
-                    'data-minimum-input-length' => 0,
+                    'data-placeholder' => 'Sélectionez un ou plusieurs niveaux',
+                    'data-maximum-selection-length' => 3,
+                    'data-language' => 'fr',
+                    'data-allow-clear' => true,
                 ],
                 'required' => false,
             ])
-            // ->add('submit', SubmitType::class, [
-            //     'label' => '<i class="fas fa-search"></i> Rechercher',
-            //     'label_html' => true,
-            //     'attr' => [
-            //         'class' => 'btn',
-            //     ],
-            // ])
             ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
@@ -101,15 +87,20 @@ class UserFilterType extends AbstractType
 
             if ($options['status_choices']) {
                 $form
-                ->add('status', ChoiceType::class, [
-                    'label' => false,
-                    'placeholder' => $options['status_placeholder'],
-                    'choices' => $options['status_choices'],
-                    'attr' => [
-                        'class' => 'btn',
-                    ],
-                    'required' => false,
-                ]);
+                    ->add('status', ChoiceType::class, [
+                        'label' => false,
+                        'multiple' => false,
+                        'choices' => $options['status_choices'],
+                        'attr' => [
+                            'class' => 'select2',
+                            'data-width' => '100%',
+                            'data-placeholder' => $options['status_placeholder'],
+                            'data-language' => 'fr',
+                            'data-allow-clear' => true,
+                        ],
+                        'required' => false,
+                    ])
+                ;
             }
         });
     }
@@ -117,9 +108,9 @@ class UserFilterType extends AbstractType
     private function getLevelChoices(): array
     {
         $levelChoices = [];
-        // $levelChoices['Toute l\'école VTT'] = Level::TYPE_ALL_MEMBER;
-        // $levelChoices['Tout l\'encadrement'] = Level::TYPE_ALL_FRAME;
-        // $levelChoices['Adultes hors encadrement'] = Level::TYPE_ADULT;
+        $levelChoices['Toute l\'école VTT'] = Level::TYPE_ALL_MEMBER;
+        $levelChoices['Tout l\'encadrement'] = Level::TYPE_ALL_FRAME;
+        $levelChoices['Adultes hors encadrement'] = Level::TYPE_ADULT;
         $levels = $this->levelRepository->findAll();
 
         if (!empty($levels)) {
