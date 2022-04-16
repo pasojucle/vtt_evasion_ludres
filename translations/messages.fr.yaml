@@ -88,11 +88,6 @@ bike_ride:
     month: Mois
     next: Prochainement
     all: Tous
-  type:
-    casual: Randonnée occasionnelle
-    school: Randonnée école VTT
-    adult: Randonnée adultes et ados
-    holidays: Vacances scolaires
 
 session:
   availability:

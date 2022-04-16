@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\BikeRideRepository;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinColumn;
+use App\Repository\BikeRideRepository;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repositoryClass: BikeRideRepository::class)]
 class BikeRide
@@ -37,21 +39,6 @@ class BikeRide
         self::PERIOD_MONTH => 'bike_ride.period.month',
         self::PERIOD_NEXT => 'bike_ride.period.next',
         self::PERIOD_ALL => 'bike_ride.period.all',
-    ];
-
-    public const TYPE_CASUAL = 1;
-
-    public const TYPE_SCHOOL = 2;
-
-    public const TYPE_ADULT = 3;
-
-    public const TYPE_HOLIDAYS = 4;
-
-    public const TYPES = [
-        self::TYPE_CASUAL => 'bike_ride.type.casual',
-        self::TYPE_SCHOOL => 'bike_ride.type.school',
-        self::TYPE_ADULT => 'bike_ride.type.adult',
-        self::TYPE_HOLIDAYS => 'bike_ride.type.holidays',
     ];
 
     #[Column(type: 'integer')]
@@ -79,11 +66,12 @@ class BikeRide
     #[OneToMany(targetEntity: Cluster::class, mappedBy: 'bikeRide')]
     private Collection $clusters;
 
-    #[Column(type: 'integer')]
-    private int $type = self::TYPE_CASUAL;
-
     #[Column(type: 'integer', options: ['default' => 1])]
     private $closingDuration = 1;
+
+    #[ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'bikeRides')]
+    #[JoinColumn(nullable: false)]
+    private $bikeRideType;
 
     public function __construct()
     {
@@ -197,18 +185,6 @@ class BikeRide
         return $this;
     }
 
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
-
-    public function setType(int $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getClosingDuration(): ?int
     {
         return $this->closingDuration;
@@ -217,6 +193,18 @@ class BikeRide
     public function setClosingDuration(?int $closingDuration): self
     {
         $this->closingDuration = $closingDuration;
+
+        return $this;
+    }
+
+    public function getBikeRideType(): ?BikeRideType
+    {
+        return $this->bikeRideType;
+    }
+
+    public function setBikeRideType(?BikeRideType $bikeRideType): self
+    {
+        $this->bikeRideType = $bikeRideType;
 
         return $this;
     }

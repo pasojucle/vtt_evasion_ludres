@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des indemnités{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="block">
+            <div class="block-title">
+                <h2>Indemnité</h2>
+            </div>
+            <div class="block-body">
+                <ul class="padding-10">
+                    <li>
+                        <div class="row row-list">
+                            <div class="col-md-6 col-xs-6"></div>
+                            {% for bike_ride_type in bike_ride_types %}
+                                <div class="col-md-3 col-xs-3">{{ constant('App\\Entity\\BikeRide::TYPES')[bike_ride_type]|trans }} </div>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    {% for bikeRideType in indemnities %}
+                        <li>
+                            <div class="row row-list">
+                                <div class="col-md-6 col-xs-6">
+                                    {# <b>{{ indemnity.level.title }}</b> #}
+                                </div>
+                                {% for indemnity in bikeRideType %}
+                                    {% dump(indemnity) %}
+                                    <div class="col-md-3 col-xs-3">
+                                        <a class="btn btn-light btn-pencil" href="{{ path('admin_indemnity_edit', {'indemnity' : indemnity.entity.id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
+                                            {{ indemnity.amount }}
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                <ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -62,10 +62,14 @@ class Level
     #[Column(type: 'boolean')]
     private bool $isDeleted;
 
+    #[OneToMany(mappedBy: 'level', targetEntity: Indemnity::class)]
+    private $indemnities;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->clusters = new ArrayCollection();
+        $this->indemnities = new ArrayCollection();
     }
 
     public function __toString()
@@ -218,6 +222,36 @@ class Level
     public function setIsDeleted(bool $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Indemnity[]
+     */
+    public function getIndemnities(): Collection
+    {
+        return $this->indemnities;
+    }
+
+    public function addIndemnity(Indemnity $indemnity): self
+    {
+        if (!$this->indemnities->contains($indemnity)) {
+            $this->indemnities[] = $indemnity;
+            $indemnity->setLevel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndemnity(Indemnity $indemnity): self
+    {
+        if ($this->indemnities->removeElement($indemnity)) {
+            // set the owning side to null (unless already changed)
+            if ($indemnity->getLevel() === $this) {
+                $indemnity->setLevel(null);
+            }
+        }
 
         return $this;
     }

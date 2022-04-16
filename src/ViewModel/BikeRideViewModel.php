@@ -55,7 +55,7 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView = new self();
         $bikeRideView->entity = $bikeRide;
         $bikeRideView->title = $bikeRide->getTitle();
-        $bikeRideView->type = $bikeRide->getType();
+        $bikeRideView->type = $bikeRide->getBikeRideType()->getName();
         $bikeRideView->content = $bikeRide->getContent();
         $bikeRideView->startAt = $bikeRide->getStartAt();
         $bikeRideView->endAt = $bikeRide->getEndAt();
@@ -79,7 +79,7 @@ class BikeRideViewModel extends AbstractViewModel
 
     public function isRegistrable(): bool
     {
-        if (BikeRide::TYPE_HOLIDAYS === $this->type) {
+        if (!$this->entity->getBikeRideType()->isRegistrable()) {
             return false;
         }
 

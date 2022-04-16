@@ -33,7 +33,7 @@ $(document).ready(function(){
     $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_levels, #user_filter_user, #registration_filter_isFinal, #order_filter_status', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
-    $(document).on('change', '#bike_ride_type', modifierBikeRide);
+    $(document).on('change', '#bike_ride_bikeRideType', modifierBikeRide);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);

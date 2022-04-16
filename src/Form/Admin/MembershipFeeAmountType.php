@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\MembershipFeeAmount;
-use App\Form\HiddenMembershipFeeType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -28,7 +27,6 @@ class MembershipFeeAmountType extends AbstractType
                 ],
             ])
             ->add('coverage', HiddenType::class)
-            ->add('membershipFee', HiddenMembershipFeeType::class)
         ;
     }
 

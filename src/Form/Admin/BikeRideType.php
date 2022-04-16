@@ -4,31 +4,36 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\BikeRideType as EntityBikeRideType;
 use App\Entity\BikeRide;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class BikeRideType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type', ChoiceType::class, [
+            ->add('bikeRideType', EntityType::class, [
                 'label' => 'Type de randonnée',
-                'choices' => array_flip(BikeRide::TYPES),
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
+                'class' => EntityBikeRideType::class,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('brt')
+                        ->orderBy('brt.name', 'ASC')
+                    ;
+                },
+                'choice_label' => 'name',
             ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
@@ -57,8 +62,8 @@ class BikeRideType extends AbstractType
             ])
         ;
 
-        $formModifier = function (FormInterface $form, int $type) {
-            $isDiabled = (BikeRide::TYPE_HOLIDAYS === $type) ? 'disabled' : '';
+        $formModifier = function (FormInterface $form, ?EntityBikeRideType $bikeRideType) {
+            $isDiabled = (!$bikeRideType?->isRegistrable()) ? 'disabled' : '';
 
             $form
                 ->add('endAt', DateTimeType::class, [
@@ -122,15 +127,16 @@ class BikeRideType extends AbstractType
             ;
         };
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $bikeRide) use ($formModifier) {
+            dump($bikeRide);
             $data = $bikeRide->getData();
-            $formModifier($bikeRide->getForm(), $data->getType());
+            $formModifier($bikeRide->getForm(), $data->getBikeRideType());
         });
 
-        $builder->get('type')->addEventListener(
+        $builder->get('bikeRideType')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
-                $type = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $type);
+                $bikeRideType = $event->getForm()->getData();
+                $formModifier($event->getForm()->getParent(), $bikeRideType);
             }
         );
     }

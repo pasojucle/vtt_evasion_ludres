@@ -1,0 +1,25 @@
+{% extends 'base_modal.html.twig' %}
+{% set button_href = path('admin_indemnity_edit', {'indemnity' : (indemnity is not null) ? indemnity.id : null }) %}
+{% set title = (indemnity is null) ? 'Ajouter' : 'Modifier' %}
+{% block form %}{% set form = null%}{% endblock %}
+{% block modal_title %}{{ title }}{% endblock %}
+{% block body %}
+    <div class="form-group-medium-width">
+        {% if indemnity is null %}
+            {{ form_row(form.level) }}
+            {{ form_row(form.bikeRideType) }}
+        {% else %}
+            <h3>
+                indemnity.level.title
+                <br>indemnity.bikeRideType
+            </h3>
+            
+        {% endif %}
+        </h3>
+        {{ form_row(form.amount) }}
+    </div>
+{% endblock %}
+{% block footer %}
+    {% set button_text = title %}
+    {{ parent() }}
+{% endblock %}

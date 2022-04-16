@@ -35,6 +35,9 @@ class LogErrorController extends AbstractController
             'status_code' => $statusCode,
             'lastPage' => $paginator->lastPage($errors),
             'count' => $paginator->total($errors),
+            'current_filters' => [
+                'statusCode' => $statusCode,
+            ],
         ]);
     }
 

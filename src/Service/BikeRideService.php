@@ -8,6 +8,7 @@ use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
+use App\Repository\BikeRideTypeRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
 use App\ViewModel\BikeRidesPresenter;
@@ -31,7 +32,8 @@ class BikeRideService
         private EntityManagerInterface $entityManager,
         private ParameterRepository $parameterRepository,
         private BikeRidesPresenter $bikeRidesPresenter,
-        private ClusterPresenter $clusterPresenter
+        private ClusterPresenter $clusterPresenter,
+        private BikeRideTypeRepository $bikeRideTypeRepository
     ) {
     }
 
@@ -205,25 +207,11 @@ class BikeRideService
     public function setDefaultContent(Request $request, BikeRide $bikeRide): BikeRide
     {
         $bikeRideRequest = $request->request->all('bike_ride');
-        if (null !== $bikeRideRequest && array_key_exists('type', $bikeRideRequest)) {
-            $type = (int) $bikeRideRequest['type'];
-            $bikeRide->setType($type);
-            $parameterName = null;
-            if (BikeRide::TYPE_SCHOOL === $type) {
-                $parameterName = 'EVENT_SCHOOL_CONTENT';
-            }
-            if (BikeRide::TYPE_ADULT === $type) {
-                $parameterName = 'EVENT_ADULT_CONTENT';
-            }
-            if (BikeRide::TYPE_HOLIDAYS === $type) {
-                $parameterName = 'EVENT_HOLIDAYS_CONTENT';
-            }
-            if (null !== $parameterName) {
-                $parameter = $this->parameterRepository->findOneByName($parameterName);
-                if (null !== $parameter) {
-                    $bikeRide->setTitle($parameter->getLabel())->setContent($parameter->getValue());
-                }
-            }
+        if (null !== $bikeRideRequest && array_key_exists('bikeRideType', $bikeRideRequest)) {
+            $type = $this->bikeRideTypeRepository->find((int) $bikeRideRequest['bikeRideType']);
+            $bikeRide->setBikeRideType($type);
+            $bikeRide->setTitle($type->getName())
+                ->setContent($type->getContent());
         }
 
         return $bikeRide;

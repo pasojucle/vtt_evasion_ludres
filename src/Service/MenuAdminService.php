@@ -135,6 +135,12 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
+                'label' => 'Indemnités',
+                'route' => 'admin_indemnity_list',
+                'pattern' => '/indemnites/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Paramètres',
                 'route' => 'admin_groups_parameter',
                 'pattern' => '/parameter/',
