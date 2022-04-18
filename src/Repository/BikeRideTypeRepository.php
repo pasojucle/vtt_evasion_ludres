@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\BikeRideType;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
@@ -34,6 +35,13 @@ class BikeRideTypeRepository extends ServiceEntityRepository
             ->orderBy('brt.name', 'ASC')
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    public function findBikeRideTypeQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('brt')
+            ->orderBy('brt.name', 'ASC')
         ;
     }
 }

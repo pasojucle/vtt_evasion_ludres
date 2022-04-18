@@ -127,7 +127,6 @@ class BikeRideType extends AbstractType
             ;
         };
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $bikeRide) use ($formModifier) {
-            dump($bikeRide);
             $data = $bikeRide->getData();
             $formModifier($bikeRide->getForm(), $data->getBikeRideType());
         });
