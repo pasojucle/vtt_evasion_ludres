@@ -14,10 +14,10 @@ class IndemnitiesViewModel
         if (!empty($indemnities)) {
             foreach ($indemnities as $indemnity) {
                 $indemnityView = IndemnityViewModel::fromIndemnity($indemnity);
-                $indemnitiesViewModel[$indemnityView->level->getId()][$indemnity->getBikeRideType()] = $indemnityView;
+                $indemnitiesViewModel[$indemnityView->level->getId()][$indemnityView->bikeRideType->getId()] = $indemnityView;
             }
         }
-        dump($indemnitiesViewModel);
+
         $indemnitiesView = new self();
         $indemnitiesView->indemnities = $indemnitiesViewModel;
 

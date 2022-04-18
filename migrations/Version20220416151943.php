@@ -20,16 +20,16 @@ final class Version20220416151943 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE bike_ride_type (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, content LONGTEXT DEFAULT NULL, is_compensable TINYINT(1) DEFAULT 0 NOT NULL, is_registrable TINYINT(1) DEFAULT 1 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE indemnity (id INT AUTO_INCREMENT NOT NULL, level_id INT NOT NULL, bike_ride_type INT NOT NULL, amount DOUBLE PRECISION NOT NULL, INDEX IDX_6BBFD1CE5FB14BA7 (level_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE bike_ride_type (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(100) NOT NULL, content LONGTEXT DEFAULT NULL, is_registrable TINYINT(1) DEFAULT 1 NOT NULL, is_compensable TINYINT(1) DEFAULT 0 NOT NULL, is_school TINYINT(1) DEFAULT 0 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE indemnity (id INT AUTO_INCREMENT NOT NULL, level_id INT NOT NULL, bike_ride_type_id INT DEFAULT NULL, amount DOUBLE PRECISION NOT NULL, INDEX IDX_6BBFD1CE5FB14BA7 (level_id), INDEX IDX_6BBFD1CEC9743080 (bike_ride_type_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE indemnity ADD CONSTRAINT FK_6BBFD1CE5FB14BA7 FOREIGN KEY (level_id) REFERENCES level (id)');
 
         $bikeRideTypes = [
-            'EVENT_CASUAL' => ['id' => 1, 'name' => 'Randonnée occasionnelle', 'content' => null, 'isCompensable' => 0, 'isRegistrable' => 1],
-            'EVENT_SCHOOL_CONTENT' => ['id' => 2, 'isCompensable' => 1, 'isRegistrable' => 1],
-            'EVENT_ADULT_CONTENT' => ['id' => 3,'isCompensable' => 0, 'isRegistrable' => 1],
-            'EVENT_HOLIDAYS_CONTENT' => ['id' => 4,'isCompensable' => 0, 'isRegistrable' => 0],
-            'EVENT_CRITERIUM' => ['id' => 5, 'name' => 'Criterium', 'content' => null, 'isCompensable' => 1, 'isRegistrable' => 1],
+            'EVENT_CASUAL' => ['id' => 1, 'name' => 'Randonnée occasionnelle', 'content' => null, 'isCompensable' => 0, 'isRegistrable' => 1, 'isSchool' => 0],
+            'EVENT_SCHOOL_CONTENT' => ['id' => 2, 'isCompensable' => 1, 'isRegistrable' => 1, 'isSchool' => 1],
+            'EVENT_ADULT_CONTENT' => ['id' => 3,'isCompensable' => 0, 'isRegistrable' => 1, 'isSchool' => 0],
+            'EVENT_HOLIDAYS_CONTENT' => ['id' => 4,'isCompensable' => 0, 'isRegistrable' => 0, 'isSchool' => 0],
+            'EVENT_CRITERIUM' => ['id' => 5, 'name' => 'Criterium', 'content' => null, 'isCompensable' => 1, 'isRegistrable' => 1, 'isSchool' => 0],
         ];
         
         $bikeRideParameters = $this->connection->fetchAllAssociative('SELECT * FROM `parameter` WHERE `name`in (\'EVENT_SCHOOL_CONTENT\', \'EVENT_ADULT_CONTENT\', \'EVENT_HOLIDAYS_CONTENT\')');
@@ -38,11 +38,12 @@ final class Version20220416151943 extends AbstractMigration
             $bikeRideTypes[$bikeRideParameter['name']]['content'] = $bikeRideParameter['value'];
         }
         foreach ($bikeRideTypes as $bikeRideType) {
-            $this->addSql('INSERT INTO `bike_ride_type`(`id`, `name`, `content`, `is_compensable`, `is_registrable`) VALUES (:id, :name, :content, :isCompensable, :isRegistrable)', $bikeRideType);
+            $this->addSql('INSERT INTO `bike_ride_type`(`id`, `name`, `content`, `is_compensable`, `is_registrable`, `is_school`) VALUES (:id, :name, :content, :isCompensable, :isRegistrable, :isSchool)', $bikeRideType);
         }
         $this->addSql('DELETE FROM `parameter` WHERE `name`in (\'EVENT_SCHOOL_CONTENT\', \'EVENT_ADULT_CONTENT\', \'EVENT_HOLIDAYS_CONTENT\')');
         $this->addSql('DELETE FROM `parameter_group` WHERE `name` = \'BIKE_RIDE\'');
         $this->addSql('ALTER TABLE bike_ride ADD bike_ride_type_id INT');
+        $this->addSql('ALTER TABLE indemnity ADD CONSTRAINT FK_6BBFD1CEC9743080 FOREIGN KEY (bike_ride_type_id) REFERENCES bike_ride_type (id)');
         $this->addSql('ALTER TABLE bike_ride ADD CONSTRAINT FK_8A8A7B3CC9743080 FOREIGN KEY (bike_ride_type_id) REFERENCES bike_ride_type (id)');
         $this->addSql('CREATE INDEX IDX_8A8A7B3CC9743080 ON bike_ride (bike_ride_type_id)');
         $this->addSql('UPDATE `bike_ride` SET `bike_ride_type_id` = `type`');
@@ -57,6 +58,7 @@ final class Version20220416151943 extends AbstractMigration
         $this->addSql('ALTER TABLE bike_ride ADD `type` INT NOT NULL');
         $this->addSql('UPDATE `bike_ride` SET `type` = `bike_ride_type_id`');
         $this->addSql('ALTER TABLE bike_ride DROP FOREIGN KEY FK_8A8A7B3CC9743080');
+        $this->addSql('ALTER TABLE indemnity DROP FOREIGN KEY FK_6BBFD1CEC9743080');
         $this->addSql('DROP TABLE bike_ride_type');
         $this->addSql('DROP TABLE indemnity');
         $this->addSql('DROP INDEX IDX_8A8A7B3CC9743080 ON bike_ride');

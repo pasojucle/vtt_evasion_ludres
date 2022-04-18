@@ -26,11 +26,11 @@
                                             <div class="col-md-9 col-xs-7">{{ bikeRide.title }}</div>
                                         </div>
                                     {% endset %}
-                                    {% if bikeRide.type != constant('App\\Entity\\BikeRide::TYPE_HOLIDAYS') %}
+                                    {% if bikeRide.bikeRideType.isRegistrable %}
                                         <a class="btn btn-list btn-light" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.entity.id}) }}" title="Voir les participants">
                                             {{ bikeRide_content }}
                                         </a>
-                                    {% else %}
+                                    {% else %} 
                                         {{ bikeRide_content }}
                                     {% endif %}
                                 </div>

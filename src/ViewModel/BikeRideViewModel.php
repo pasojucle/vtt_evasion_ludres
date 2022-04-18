@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\BikeRide;
-use App\Entity\Level;
-use App\Entity\User;
-use App\Twig\AppExtension;
-use DateInterval;
 use DateTime;
+use DateInterval;
+use App\Entity\User;
+use App\Entity\Level;
 use DateTimeImmutable;
+use App\Entity\BikeRide;
+use App\Twig\AppExtension;
+use App\Entity\BikeRideType;
 
 class BikeRideViewModel extends AbstractViewModel
 {
     public ?BikeRide $entity;
 
-    public ?int $type;
+    public ?string $type;
 
     public ?string $title;
 
@@ -42,6 +43,8 @@ class BikeRideViewModel extends AbstractViewModel
 
     public ?string $period;
 
+    public BikeRideType $bikeRideType;
+
     private ?DateTimeImmutable $today;
 
     private ?DateTimeImmutable $displayAt;
@@ -54,6 +57,7 @@ class BikeRideViewModel extends AbstractViewModel
     {
         $bikeRideView = new self();
         $bikeRideView->entity = $bikeRide;
+        $bikeRideView->bikeRideType = $bikeRide->getBikeRideType();
         $bikeRideView->title = $bikeRide->getTitle();
         $bikeRideView->type = $bikeRide->getBikeRideType()->getName();
         $bikeRideView->content = $bikeRide->getContent();
@@ -92,14 +96,15 @@ class BikeRideViewModel extends AbstractViewModel
 
     private function getAccessAvailabity(?User $user): bool
     {
-        if (BikeRide::TYPE_HOLIDAYS === $this->type) {
+        $bikeRideType = $this->entity->getBikeRideType();
+        if (!$bikeRideType->isRegistrable()) {
             return false;
         }
 
         $level = (null !== $user) ? $user->getLevel() : null;
         $type = (null !== $level) ? $level->getType() : null;
 
-        return Level::TYPE_FRAME === $type && BikeRide::TYPE_SCHOOL === $this->type && $this->today <= $this->closingAt;
+        return Level::TYPE_FRAME === $type && $bikeRideType->isSchool() && $this->today <= $this->closingAt;
     }
 
     public function isOver(): bool

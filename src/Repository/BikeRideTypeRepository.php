@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\BikeRideType;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method BikeRideType|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,20 @@ class BikeRideTypeRepository extends ServiceEntityRepository
         parent::__construct($registry, BikeRideType::class);
     }
 
-    // /**
-    //  * @return BikeRideType[] Returns an array of BikeRideType objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return BikeRideType[] Returns an array of BikeRideType objects
+     */
+ 
+    public function findCompensables(): array
     {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('brt')
+            ->andWhere(
+                (new Expr())->eq('brt.isCompensable', ':value')
+                )
+            ->setParameter('value', true)
+            ->orderBy('brt.name', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?BikeRideType
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

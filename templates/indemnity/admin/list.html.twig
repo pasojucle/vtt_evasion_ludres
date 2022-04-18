@@ -6,30 +6,36 @@
  <div class="wrapper">
         <div class="block">
             <div class="block-title">
-                <h2>Indemnité</h2>
+                <h2>Indemnités</h2>
             </div>
             <div class="block-body">
                 <ul class="padding-10">
                     <li>
                         <div class="row row-list">
                             <div class="col-md-6 col-xs-6"></div>
-                            {% for bike_ride_type in bike_ride_types %}
-                                <div class="col-md-3 col-xs-3">{{ constant('App\\Entity\\BikeRide::TYPES')[bike_ride_type]|trans }} </div>
+                            {% for bike_ride_type in indemnities.header %}
+                                <div class="col-md-3 col-xs-3">{{ bike_ride_type.name }} </div>
                             {% endfor %}
                         </div>
                     </li>
-                    {% for bikeRideType in indemnities %}
+                    {% for levelId, level in indemnities.values %}
                         <li>
                             <div class="row row-list">
                                 <div class="col-md-6 col-xs-6">
-                                    {# <b>{{ indemnity.level.title }}</b> #}
+                                    <b>{{ level.name }}</b>
                                 </div>
-                                {% for indemnity in bikeRideType %}
-                                    {% dump(indemnity) %}
+                                {% for bikeRideTypeId, bikeRideType in level.bikeRideTypes %}
                                     <div class="col-md-3 col-xs-3">
-                                        <a class="btn btn-light btn-pencil" href="{{ path('admin_indemnity_edit', {'indemnity' : indemnity.entity.id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
-                                            {{ indemnity.amount }}
-                                        </a>
+                                        {% if bikeRideType.indemnity is not null %}
+                                            <a class="btn btn-light btn-pencil" href="{{ path('admin_indemnity_edit', {'indemnity' : bikeRideType.indemnity.entity.id}) }}" 
+                                                title="Modifier" data-toggle="modal" data-type="primary">
+                                                {{ bikeRideType.indemnity.amount }}
+                                            </a>
+                                        {% else %}
+                                            <a class="btn btn-light btn-ico" href="{{ path('admin_indemnity_add', {'level': levelId, 'bikeRideType': bikeRideTypeId}) }}" 
+                                                title="Ajouter" data-toggle="modal" data-type="primary"><i class="fas fa-plus"></i>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 {% endfor %}
                             </div>

@@ -23,13 +23,13 @@ class IndemnityRepository extends ServiceEntityRepository
      * @return Indemnity[] Returns an array of Indemnity objects
      */
 
-    public function findByLevel(): array
+    public function findOrderByBikeRideType(): array
     {
-        return  $this->createQueryBuilder('i')
-            ->orderBy('i.level', 'ASC')
+        return $this->createQueryBuilder('i')
+            // ->join('i.bikeRideType', 'brt')
+            // ->orderBy('brt.title', 'ASC')
             ->getQuery()
             ->getResult()
         ;
-
     }
 }

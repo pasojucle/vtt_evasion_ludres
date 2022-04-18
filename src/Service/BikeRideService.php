@@ -172,8 +172,8 @@ class BikeRideService
 
     public function createClusters($bikeRide)
     {
-        switch ($bikeRide->getType()) {
-            case BikeRide::TYPE_SCHOOL:
+        if ($bikeRide->getBikeRideType()->isRegistrable()) {
+            if ($bikeRide->getBikeRideType()->isSchool()) {
                 $cluster = new Cluster();
                 $cluster->setTitle(Cluster::CLUSTER_FRAME)
                     ->setRole('ROLE_FRAME')
@@ -192,15 +192,12 @@ class BikeRideService
                         $this->entityManager->persist($cluster);
                     }
                 }
-
-                break;
-            case BikeRide::TYPE_HOLIDAYS:
-                break;
-            default:
+            } else {
                 $cluster = new Cluster();
                 $cluster->setTitle('1er Groupe');
                 $bikeRide->addCluster($cluster);
                 $this->entityManager->persist($cluster);
+            }
         }
     }
 

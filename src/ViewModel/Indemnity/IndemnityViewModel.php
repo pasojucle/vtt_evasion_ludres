@@ -8,6 +8,7 @@ use App\Entity\Level;
 use App\Model\Currency;
 use App\Entity\BikeRide;
 use App\Entity\Indemnity;
+use App\Entity\BikeRideType;
 use App\ViewModel\AbstractViewModel;
 
 class IndemnityViewModel extends AbstractViewModel
@@ -18,7 +19,7 @@ class IndemnityViewModel extends AbstractViewModel
 
     public ?Level $level;
 
-    public ?string $bikeRideType;
+    public ?BikeRideType $bikeRideType;
 
     public ?string $amount;
 
@@ -27,7 +28,7 @@ class IndemnityViewModel extends AbstractViewModel
         $indemnityView = new self();
         $indemnityView->entity = $indemnity;
         $indemnityView->level = $indemnity->getLevel();
-        $indemnityView->bikeRideType = BikeRide::TYPES[$indemnity->getBikeRideType()];
+        $indemnityView->bikeRideType = $indemnity->getBikeRideType();
         $amount = new Currency($indemnity->getAmount());
         $indemnityView->amount = $amount->toString();
 

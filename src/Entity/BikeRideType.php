@@ -13,26 +13,33 @@ class BikeRideType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 100)]
-    private $name;
+    private string $name = '';
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $content;
+    private ?string $content = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private $isCompensable;
+    private bool $isCompensable = false;
 
     #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: BikeRide::class)]
-    private $bikeRides;
+    private Collection $bikeRides;
 
-    #[ORM\Column(type: 'boolean')]
-    private $isRegistrable;
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $isRegistrable = true;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isSchool = false;
+
+    #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: Indemnity::class)]
+    private $indemnities;
 
     public function __construct()
     {
         $this->bikeRides = new ArrayCollection();
+        $this->indemnities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -114,6 +121,48 @@ class BikeRideType
     public function setIsRegistrable(bool $isRegistrable): self
     {
         $this->isRegistrable = $isRegistrable;
+
+        return $this;
+    }
+
+    public function isSchool(): ?bool
+    {
+        return $this->isSchool;
+    }
+
+    public function setIsSchool(bool $isSchool): self
+    {
+        $this->isSchool = $isSchool;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Indemnity[]
+     */
+    public function getIndemnities(): Collection
+    {
+        return $this->indemnities;
+    }
+
+    public function addIndemnity(Indemnity $indemnity): self
+    {
+        if (!$this->indemnities->contains($indemnity)) {
+            $this->indemnities[] = $indemnity;
+            $indemnity->setBikeRideType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndemnity(Indemnity $indemnity): self
+    {
+        if ($this->indemnities->removeElement($indemnity)) {
+            // set the owning side to null (unless already changed)
+            if ($indemnity->getBikeRideType() === $this) {
+                $indemnity->setBikeRideType(null);
+            }
+        }
 
         return $this;
     }

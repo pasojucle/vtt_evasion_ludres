@@ -17,11 +17,12 @@ class Indemnity
     #[ORM\JoinColumn(nullable: false)]
     private $level;
 
-    #[ORM\Column(type: 'integer')]
-    private $bikeRideType;
 
     #[ORM\Column(type: 'float')]
     private $amount;
+
+    #[ORM\ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'indemnities')]
+    private $bikeRideType;
 
     public function getId(): ?int
     {
@@ -40,18 +41,6 @@ class Indemnity
         return $this;
     }
 
-    public function getBikeRideType(): ?int
-    {
-        return $this->bikeRideType;
-    }
-
-    public function setBikeRideType(int $bikeRideType): self
-    {
-        $this->bikeRideType = $bikeRideType;
-
-        return $this;
-    }
-
     public function getAmount(): ?float
     {
         return $this->amount;
@@ -60,6 +49,18 @@ class Indemnity
     public function setAmount(float $amount): self
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getBikeRideType(): ?BikeRideType
+    {
+        return $this->bikeRideType;
+    }
+
+    public function setBikeRideType(?BikeRideType $bikeRideType): self
+    {
+        $this->bikeRideType = $bikeRideType;
 
         return $this;
     }
