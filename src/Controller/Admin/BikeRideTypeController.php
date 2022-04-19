@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\BikeRideType;
 use App\Entity\Level;
+use App\Form\Admin\BikeRideTypeType;
 use App\Form\Admin\LevelType;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
@@ -40,31 +41,25 @@ class BikeRideTypeController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/niveau/{bikeRideType}', name: 'admin_bike_ride_type_edit', methods: ['GET', 'POST'], defaults:['bikeRideType' => null])]
-    public function adminLevelEdit(
+    #[Route('/admin/type-rando/{bikeRideType}', name: 'admin_bike_ride_type_edit', methods: ['GET', 'POST'], defaults:['bikeRideType' => null])]
+    public function adminEdit(
         Request $request,
-        ?BikeRideType $bikeRidetype
+        ?BikeRideType $bikeRideType
     ): Response {
-        $form = $this->createForm(LevelType::class, $level);
+        $form = $this->createForm(BikeRideTypeType::class, $bikeRideType);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $level = $form->getData();
-
-            if (null === $level->getOrderBy() && null !== $level->getType()) {
-                $order = $this->levelRepository->findNexOrderByType($level->getType());
-                $level->setOrderBy($order);
-            }
-            $this->entityManager->persist($level);
+            $bikeRideType = $form->getData();
+            dump($bikeRideType);
+            // $this->entityManager->persist($bikeRideType);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_levels', [
-                'type' => $level->getType(),
-            ]);
+            return $this->redirectToRoute('admin_bike_ride_types');
         }
 
-        return $this->render('level/admin/edit.html.twig', [
-            'level' => $level,
+        return $this->render('bike_ride_type/admin/edit.html.twig', [
+            'bike_ride_type' => $bikeRideType,
             'form' => $form->createView(),
         ]);
     }

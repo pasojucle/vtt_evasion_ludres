@@ -109,7 +109,6 @@ class MenuAdminService
                 'pattern' => '/admin_content/',
                 'role' => 'ROLE_ADMIN',
             ],
-
             [
                 'label' => 'Pop up',
                 'route' => 'admin_modal_window_list',
@@ -126,6 +125,12 @@ class MenuAdminService
                 'label' => 'Niveaux',
                 'route' => 'admin_levels',
                 'pattern' => '/level/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
+                'label' => 'Types de rando',
+                'route' => 'admin_bike_ride_types',
+                'pattern' => '/types-rando/',
                 'role' => 'ROLE_ADMIN',
             ],
             [
