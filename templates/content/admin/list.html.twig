@@ -7,54 +7,45 @@
 
 {% block body %}
 {% set class_ul ='' %}
- <div class="wrapper">
-    <div class="padding-10">
-        <div class="block">
-            <div class="block-title">
-                <h2>{{ title }}</h2>
-                <span class="tools">
-                    {% if current_route == 'home' %}
-                        <a href="{{ path('admin_home_content_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un lien"><i class="fas fa-plus"></i></a>
-                    {% endif %}
-                </span>
-            </div>
-            <div>
-                <nav  class="nav-tab">
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h2>{{ title }}</h2>
+            <span class="tools">
                 {% if current_route == 'home' %}
-                    {% set tabs = constant('App\\Entity\\Content::IS_FLASH') %}
-                    {% for isFlash, label in tabs %}
-                        <a href="{{ path('admin_home_contents', {'isFlash': isFlash} )}}"{% if is_flash == isFlash %} class="active"{% endif %}>{{ label|trans}}</a>
-                    {% endfor %}
-                    {% set class_ul ='sortable' %}
+                    <a href="{{ path('admin_home_content_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un lien"><i class="fas fa-plus"></i></a>
                 {% endif %}
-                </nav>
-            </div>
-            <div class="block-body">
-                <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
-                    {% for content in contents %}     
-                        <li class="ui-state-default" data-id="{{ content.id }}">
-                            <div>
-                                <div class="row row-list">
-                                    {% set title = content.title %}
-                                    {% if content.title is null %}
-                                        {% set title = constant('App\\Entity\\Content::ROUTES')[content.route] | trans %}
-                                    {% endif %}
-                                    <div class="col-md-10 col-xs-8 background-ligth">{{ title }}</div>
-                                    <div class="col-md-2 col-xs-4">
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_home_content_edit', {'content': content.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                        {% if current_route == 'home' %}
-                                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_content_delete', {'content': content.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+            </span>
+        </div>
+        <nav  class="nav-tab">
+        {% if current_route == 'home' %}
+            {% set tabs = constant('App\\Entity\\Content::IS_FLASH') %}
+            {% for isFlash, label in tabs %}
+                <a href="{{ path('admin_home_contents', {'isFlash': isFlash} )}}"{% if is_flash == isFlash %} class="active"{% endif %}>{{ label|trans}}</a>
+            {% endfor %}
+            {% set class_ul ='sortable' %}
+        {% endif %}
+        </nav>
+        <div class="wrapper-body">
+            <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
+                {% for content in contents %}     
+                    <li class="ui-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" data-id="{{ content.id }}">
+                        {% set title = content.title %}
+                        {% if content.title is null %}
+                            {% set title = constant('App\\Entity\\Content::ROUTES')[content.route] | trans %}
+                        {% endif %}
+                        <div class="list-item">{{ title }}</div>
+                        <div>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a class="btn btn-primary btn-ico" href="{{ path('admin_home_content_edit', {'content': content.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                {% if current_route == 'home' %}
+                                    <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_content_delete', {'content': content.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
         {% include('common/pagination.html.twig') %}
     </div>
-</div>
 {% endblock %}

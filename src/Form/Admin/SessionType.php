@@ -20,7 +20,7 @@ class SessionType extends AbstractType
         $builder
             ->add('user', Select2EntityType::class, [
                 'multiple' => false,
-                'remote_route' => 'user_list_select2',
+                'remote_route' => 'admin_member_choices',
                 'class' => User::class,
                 'primary_key' => 'id',
                 'text_property' => 'fullName',
@@ -35,6 +35,9 @@ class SessionType extends AbstractType
                 'placeholder' => 'Saisisez un nom et prénom',
                 'width' => '100%',
                 'label' => 'Participant',
+                'remote_params' => [
+                    'filters' => json_encode([]),
+                ],
                 'constraints' => [
                     new NotBlank(),
                 ],

@@ -4,40 +4,33 @@
 
 {% block body %}
  <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Gestion des niveaux</h2>
-                <span class="tools">
-                    <a href="{{ path('admin_level_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un niveau"><i class="fas fa-plus"></i></a>
-                </span>
-            </div>
-            <div>
-                <nav  class="nav-tab">
-                    {% for type, label in constant('App\\Entity\\Level::TYPES') %}
-                        <a href="{{ path('admin_levels', {'type': type} )}}"{% if type == current_type %} class="active"{% endif %}>{{ label|trans}}</a>
-                    {% endfor %}
-                </nav>
-            </div>
-            <div class="block-body">
-                <ul class="sortable padding-10" data-route="admin_level_order" data-parameter="level">
-                    {% for level in levels %}     
-                        <li{% if not level.isProtected %} class="ui-state-default" data-id="{{ level.id }}"{% endif %}>
-                            <div>
-                                <div class="row row-list">
-                                    <div class="col-md-10 col-xs-8 background-ligth">{{ level.title }}</div>
-                                    <div class="col-md-2 col-xs-4">
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_level_edit', {'level': level.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                        {% if not level.isProtected %}
-                                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+        <div class="wrapper-title">
+            <h2>Gestion des niveaux</h2>
+            <span class="tools">
+                <a href="{{ path('admin_level_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un niveau"><i class="fas fa-plus"></i></a>
+            </span>
+        </div>
+        <nav  class="nav-tab">
+            {% for type, label in constant('App\\Entity\\Level::TYPES') %}
+                <a href="{{ path('admin_levels', {'type': type} )}}"{% if type == current_type %} class="active"{% endif %}>{{ label|trans}}</a>
+            {% endfor %}
+        </nav>
+        <div class="wrapper-body">
+            <ul class="sortable" data-route="admin_level_order" data-parameter="level">
+                {% for level in levels %}     
+                    <li class="{% if not level.isProtected %}ui-state-default {% endif %}col-list col-list-2btn" {% if not level.isProtected %}data-id="{{ level.id }}"{% endif %}>
+                        <div class="list-item">{{ level.title }}</div>
+                        <div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a class="btn btn-primary btn-ico" href="{{ path('admin_level_edit', {'level': level.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                            {% if not level.isProtected %}
+                                <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                            {% endif %}
+                        {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
         {% include('common/pagination.html.twig') %}
     </div>

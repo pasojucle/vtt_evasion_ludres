@@ -1,56 +1,51 @@
 {% set user = session.user %} 
-<li id="session-{{ session.entity.id }}" class="li-long">
-    <div class="row row-list">
-        <div class="col-md-9 col-xs-7">
-            {% set btn_color = '' %}
-            {% if bikeRide.type == constant('App\\Entity\\BikeRide::TYPE_SCHOOL') and session.availability is null and session.user.level is not null %}
-                {% set btn_color = ' style = background-color:' ~ session.user.level.color ~ ';' %}
-            {% endif %}
-            <a href="{{ path('admin_user', {'user': session.user.entity.id}) }}" class="btn btn-list btn-light"{{ btn_color }} title="Informatons sur l'adhérent">
-                <div class="row">
-                    <div class="col-md-5 col-xs-12">
-                        {{ user.member.fullName }}
-                    </div>
-                    <div class="col-md-4 col-xs-10">
-                    {% if user.level is not null %}
-                        {{ user.level|trans }}
-                    {% endif %}
-                    </div>
-                    {% if user.approvalGoingHome is not null %}
-                        <span class="col-md-3 col-xs-2 home {{ user.approvalGoingHome.class }}"></span>
-                    {% endif %}
-                    {% if session.availability is not empty %}
-                        <div class="col-md-3 col-xs-12">
-                            <span class="{{ session.availability.class }}">{{ session.availability.text|trans }}</span>
-                        </div>
-                    {% endif %}
-                </div>
-            </a>
+<li id="session-{{ session.entity.id }}" class="col-list col-list-2btn">
+    {% set btn_color = '' %}
+    {% if bikeRide.bikeRideType.isSchool and session.availability is null and session.user.level is not null %}
+        {% set btn_color = ' style = background-color:' ~ session.user.level.color ~ ';' %}
+    {% endif %}
+    <div class="row row-list list-dropdown">
+        <div class="col-md-5 col-xs-12">
+            {{ user.member.fullName }}
         </div>
-        <div class="col-md-3 col-xs-5">
-            {% if bikeRide.type == constant('App\\Entity\\BikeRide::TYPE_SCHOOL') %}
-                {% if not cluster.isComplete %}
-                    {% if not session.userIsOnSite %}
-                        <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" 
-                        class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} btn-ico admin-session-present" title="Absent">
-                        <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-times{% endif %}"></i></a>
-                    {% else %}
-                        <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" class="btn btn-success btn-ico admin-session-present" title="Présent"><i class="fas fa-check-circle"></i></a>
-                    {% endif %}
+        <div class="col-md-4 col-xs-10">
+        {% if user.level is not null %}
+            {{ user.level|trans }}
+        {% endif %}
+        </div>
+        {% if user.approvalGoingHome is not null %}
+            <span class="col-md-3 col-xs-2 home {{ user.approvalGoingHome.class }}"></span>
+        {% endif %}
+        {% if session.availability is not empty %}
+            <div class="col-md-3 col-xs-12">
+                <span class="{{ session.availability.class }}">{{ session.availability.text|trans }}</span>
+            </div>
+        {% endif %}
+        {% include('user/admin/dropdown.html.twig') %}
+    </div>
+    <div>
+        {% if bikeRide.bikeRideType.isSchool %}
+            {% if not cluster.isComplete %}
+                {% if not session.userIsOnSite %}
+                    <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" 
+                    class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} btn-ico admin-session-present" title="Absent">
+                    <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-times{% endif %}"></i></a>
                 {% else %}
-                    {% if session.userIsOnSite %}
-                        <div  class="success-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
-                    {% endif %}
+                    <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" class="btn btn-success btn-ico admin-session-present" title="Présent"><i class="fas fa-check-circle"></i></a>
+                {% endif %}
+            {% else %}
+                {% if session.userIsOnSite %}
+                    <div  class="success-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
                 {% endif %}
             {% endif %}
-            {% if hasClusters and not cluster.isComplete and (session.availability is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
-                <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.entity.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
-                    <i class="fas fa-exchange-alt"></i>
-                </a>
-            {% endif %}
-            {% if is_granted('ROLE_ADMIN') and not cluster.isComplete%}
-                <a class="btn btn-danger btn-ico" href="{{ path('admin_session_delete', {'session' : session.entity.id}) }}" title="Supprimer"><i class="fas fa-times"></i></a>
-            {% endif %}
-        </div>
+        {% endif %}
+        {% if hasClusters and not cluster.isComplete and (session.availability is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+            <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.entity.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
+                <i class="fas fa-exchange-alt"></i>
+            </a>
+        {% endif %}
+        {% if is_granted('ROLE_ADMIN') and not cluster.isComplete%}
+            <a class="btn btn-danger btn-ico" href="{{ path('admin_session_delete', {'session' : session.entity.id}) }}" title="Supprimer"><i class="fas fa-times"></i></a>
+        {% endif %}
     </div>
 </li>

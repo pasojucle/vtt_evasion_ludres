@@ -114,7 +114,7 @@ class LevelController extends AbstractController
         Level $level
     ): Response {
         $type = $level->getType();
-        $newOrder = $request->request->get('newOrder');
+        $newOrder = (int) $request->request->get('newOrder');
         $levels = $this->levelRepository->findByType($type);
 
         $this->orderByService->setNewOrders($level, $levels, $newOrder);

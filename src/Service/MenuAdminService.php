@@ -130,19 +130,19 @@ class MenuAdminService
             [
                 'label' => 'Types de rando',
                 'route' => 'admin_bike_ride_types',
-                'pattern' => '/types-rando/',
+                'pattern' => '/bike_ride_type/',
                 'role' => 'ROLE_ADMIN',
             ],
             [
                 'label' => 'Tarifs',
                 'route' => 'admin_membership_fee',
-                'pattern' => '/tarifs/',
+                'pattern' => '/membership/',
                 'role' => 'ROLE_ADMIN',
             ],
             [
                 'label' => 'Indemnités',
                 'route' => 'admin_indemnity_list',
-                'pattern' => '/indemnites/',
+                'pattern' => '/indemnity/',
                 'role' => 'ROLE_ADMIN',
             ],
             [

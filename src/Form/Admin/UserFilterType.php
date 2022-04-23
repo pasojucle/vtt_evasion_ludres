@@ -41,13 +41,6 @@ class UserFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            // ->add('fullName', TextType::class, [
-            //     'label' => false,
-            //     'attr' => [
-            //         'placeholder' => 'Nom ou prénom',
-            //     ],
-            //     'required' => false,
-            // ])
             ->add('user', Select2EntityType::class, [
                 'multiple' => false,
                 'remote_route' => $options['remote_route'],

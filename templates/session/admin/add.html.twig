@@ -4,30 +4,29 @@
 
 {% block body %}
  <div class="wrapper">
-    <div class="block">
-        {{ form_start(form) }}
-        <div class="block-title">
-            <h2>{{ bikeRide.title }} - 
-                {% if bikeRide.endAt is null %}
-                    {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
-                {% else %}
-                    du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikbikeRideeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
-                {% endif %}
-                <span class="tools">
-                    <a href="{{ path('admin_bikeRides', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-                </span>
-            </h2>
-        </div>
-        <div class="block-body">
-            <h3>Ajouter un nouveau participant</h3>
-            <br>
-            <div class="form-group">
-                {{ form_row(form.user)}}
-            </div>
-            
-            
-        </div>
-        {{ form_errors(form) }}
-        {{ form_end(form) }}
+    {{ form_start(form) }}
+    <div class="wrapper-title">
+        <h2>{{ bikeRide.title }} - 
+            {% if bikeRide.endAt is null %}
+                {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
+            {% else %}
+                du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikbikeRideeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
+            {% endif %}
+            <span class="tools">
+                <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+            </span>
+        </h2>
     </div>
+    <div class="wrapper-body">
+        <h3>Ajouter un nouveau participant</h3>
+        <br>
+        <div class="form-group">
+            {{ form_row(form.user)}}
+        </div>
+    </div>
+    <div class="wrapper-footer">
+        {{ form_row(form.submit) }}
+        {{ form_errors(form) }}
+    </div>
+    {{ form_end(form) }}
 {% endblock %}

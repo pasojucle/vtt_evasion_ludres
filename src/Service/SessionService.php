@@ -56,7 +56,7 @@ class SessionService
     public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters)
     {
         $userCluster = null;
-        if (BikeRide::TYPE_SCHOOL === $bikeRide->getType()) {
+        if ($bikeRide->getBikeRideType()->isSchool()) {
             $clustersLevelAsUser = [];
             $userLevel = (null !== $user->getLevel()) ? $user->getLevel() : $this->levelRepository->findAwaitingEvaluation();
             foreach ($bikeRide->getClusters() as $cluster) {
@@ -98,8 +98,8 @@ class SessionService
 
         if ($this->userPresenter->viewModel()->isEndTesting()) {
             $this->mailerService->sendMailToMember([
-                'name' => $this->userPresenter->viewModel()->member['name'],
-                'firstName' => $this->userPresenter->viewModel()->member['firstName'],
+                'name' => $this->userPresenter->viewModel()->member->name,
+                'firstName' => $this->userPresenter->viewModel()->member->firstName,
                 'email' => $$this->userPresenter->viewModel()->getContactEmail(),
                 'subject' => 'Fin de la période d\'essai',
                 'testing_end' => true,

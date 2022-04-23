@@ -134,14 +134,14 @@ class ContentController extends AbstractController
         ]);
     }
 
-    #[Route('/ordonner/contenu/{content}', name: 'admin_content_order', methods: ['GET'], options:['expose' => true])]
+    #[Route('/ordonner/contenu/{content}', name: 'admin_content_order', methods: ['POST'], options:['expose' => true])]
     public function adminContentOrder(
         Request $request,
         Content $content
     ): Response {
         $route = $content->getRoute();
         $isFlash = $content->isFlash();
-        $newOrder = $request->request->get('newOrder');
+        $newOrder = (int) $request->request->get('newOrder');
         $contents = $this->contentRepository->findByRoute($route, $isFlash);
 
         $this->orderByService->setNewOrders($content, $contents, $newOrder);

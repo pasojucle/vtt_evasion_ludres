@@ -3,45 +3,42 @@
 {% block title %}Gestion des adhérents{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Gestion des inscriptions - <span class="badge badge-info">{{ count }}</span></h2>
-                <span class="tools">
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('admin_registrations_email_to_clipboard') }}" class="btn btn-success btn-ico email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i></a>
-                        <a href="{{ path('admin_registrations_export') }}" class="btn btn-success btn-ico" title="Export la sélection"><i class="fas fa-file-csv"></i></a>
-                    {% endif %}
-                </span>
-            </div>
-            <div class="block-body">
-                {% include('user/admin/filters.html.twig') %}
-                <ul>
-                    {% for user in users %}
-                        <li class="row row-list">
-                            <div class="col-md-8 col-xs-6">
-                            <a href="{{ path('admin_user', {'user': user.entity.id})}}" class="btn btn-list" title="Informatons sur l'adhérent" {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% else %}style="border: 2px solid var(--light-color"{% endif %}>
-                                <div class="row">
-                                    <div class="col-md-7 col-xs-6">{{ user.member.fullName }}</div>
-                                    <div class="col-md-5 col-xs-6">
-                                        {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
-                                            {{ user.testingBikeRides }}/3 séances d'essai
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </a>
-                            </div>
-                            <div class="col-md-4 col-xs-6">
-                                {% if user.seasonLicence is not empty %}
-                                    <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="danger"><i class="fas fa-check"></i> Valider</a>
-                                    <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.entity.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h2>Gestion des inscriptions - <span class="badge badge-info">{{ count }}</span></h2>
+            <span class="tools">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('admin_registrations_email_to_clipboard') }}" class="btn btn-success btn-ico email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i></a>
+                    <a href="{{ path('admin_registrations_export') }}" class="btn btn-success btn-ico" title="Export la sélection"><i class="fas fa-file-csv"></i></a>
+                {% endif %}
+            </span>
+        </div>
+        {% include('user/admin/filters.html.twig') %}
+        <div class="wrapper-body">
+            <ul>
+                {% for user in users %}
+                    <li class="col-list">
+                        <div class="row list-dropdown row-list" 
+                            {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% endif %}>
+                            <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
+                            <div class="col-md-5 col-xs-12">
+                                {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
+                                    {{ user.testingBikeRides }}/3 séances d'essai
                                 {% endif %}
                             </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+                            {% include('user/admin/dropdown.html.twig') %}
+                        </div>
+                        <div class="col-list-button">
+                            {% if user.seasonLicence is not empty %}
+                                <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="danger"><i class="fas fa-check"></i> Valider</a>
+                                <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.entity.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
+
         {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

@@ -3,34 +3,29 @@
 {% block title %}Gestion des types de randos{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Gestion des types de randos</h2>
-                <span class="tools">
-                    {# <a href="{{ path('admin_bikeRideType_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un niveau"><i class="fas fa-plus"></i></a> #}
-                </span>
-            </div>
-            <div class="block-body">
-                <ul>
-                    {% for bikeRideType in bikeRideTypes %}     
-                        <li>
-                            <div>
-                                <div class="row row-list">
-                                    <div class="col-md-10 col-xs-8 background-ligth">{{ bikeRideType.name }}</div>
-                                    <div class="col-md-2 col-xs-4">
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_type_edit', {'bikeRideType': bikeRideType.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                        {# {% if not bikeRideType.isProtected %}
-                                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_bikeRideType_delete', {'bikeRideType': bikeRideType.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                                        {% endif %} #}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h2>Gestion des types de randos</h2>
+            <span class="tools">
+                {# <a href="{{ path('admin_bikeRideType_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un niveau"><i class="fas fa-plus"></i></a> #}
+            </span>
+        </div>
+        <div class="wrapper-body">
+            <ul>
+                {% for bikeRideType in bikeRideTypes %}     
+                    <li class="col-list col-list-1btn">
+                        <div class="list-item">{{ bikeRideType.name }}</div>
+                        <div>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_type_edit', {'bikeRideType': bikeRideType.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                {# {% if not bikeRideType.isProtected %}
+                                    <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_bikeRideType_delete', {'bikeRideType': bikeRideType.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                {% endif %} #}
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
         {% include('common/pagination.html.twig') %}
     </div>

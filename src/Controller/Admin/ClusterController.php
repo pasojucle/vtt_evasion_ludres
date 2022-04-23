@@ -5,32 +5,34 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Cluster;
+use App\Service\PdfService;
 use App\Service\BikeRideService;
 use App\Service\FilenameService;
-use App\Service\PdfService;
 use App\ViewModel\ClusterPresenter;
+use App\ViewModel\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ClusterController extends AbstractController
 {
     #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET'])]
     public function adminClusterComplete(
         EntityManagerInterface $entityManager,
-        BikeRideService $bikeRideService,
+        BikeRidePresenter $presenter,
         Cluster $cluster
     ): Response {
         $cluster->setIsComplete(!$cluster->isComplete());
         $entityManager->flush();
 
         $bikeRide = $cluster->getBikeRide();
+        $presenter->present($bikeRide);
 
         return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $bikeRideService->getBikeRideWithPresentsByCluster($bikeRide),
+            'bikeRide' => $presenter->viewModel(),
             'bike_rides_filters' => [],
         ]);
     }
@@ -54,7 +56,7 @@ class ClusterController extends AbstractController
                     $render = $this->renderView('cluster/export.html.twig', [
                         'user' => $session['user'],
                     ]);
-                    $tmp = $session['user']->id.'_tmp';
+                    $tmp = $session['user']->entity->getId().'_tmp';
                     $pdfFilepath = $pdfService->makePdf($render, $tmp, $dirName, 'B6');
                     $files[] = [
                         'filename' => $pdfFilepath,

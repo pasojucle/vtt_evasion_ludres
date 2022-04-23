@@ -3,9 +3,9 @@
 {% block title %}Gestion des adhérents{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
+    <div class="wrapper">
+
+            <div class="wrapper-title">
                 <h2>Gestion des adhérents - <span class="badge badge-info">{{ count }}</span></h2>
                 <span class="tools">
                     {% if is_granted('ROLE_ADMIN') %}
@@ -15,35 +15,27 @@
                 </span>
             </div>
             {% include('user/admin/filters.html.twig') %}
-            <div class="block-body">
+            <div class="wrapper-body">
                 <ul>
                     {% for user in users %}
                         {% set licence = user.lastLicence %}           
-                        <li>
-                            <div>
-                            <a href="{{ path('admin_user', {'user': user.entity.id})}}" class="btn btn-list" title="Informatons sur l'adhérent" {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% endif %}>
-                                <div class="row row-list">
-                                    <div class="col-md-1 col-xs-1">
-                                        {% if licence is not empty %}
-                                            <span class="{{ licence.statusClass }}"></span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-md-5 col-xs-11">{{ user.member.fullName }}</div>
-                                    <div class="col-md-3 col-xs-12">
-                                        {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
-                                            {{ user.testingBikeRides }}/3 séances d'essai
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        {{ user.level }}
-                                    </div>
-                                </div>
-                            </a>
+                        <li class="row row-list list-dropdown" data-url="{{ path('admin_user', {'user': user.entity.id})}}" 
+                            {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% endif %}>
+                            <div class="col-md-4 col-xs-12">{{ user.member.fullName }}</div>
+                            <div class="col-md-4 col-xs-12">
+                                {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
+                                    {{ user.testingBikeRides }}/3 séances d'essai
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 col-xs-12">
+                                {{ user.level }}
+                            </div>
+                            {% include('user/admin/dropdown.html.twig') %}
                         </li>
                     {% endfor %}
                 </ul>
             </div>
-        </div>
+
         {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

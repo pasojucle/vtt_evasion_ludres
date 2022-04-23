@@ -43,6 +43,8 @@ $(document).ready(function(){
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
     $(document).on('click', '.fa-clipboard', clipboard);
     $(document).on('click', '.email-to-clipboard', emailToClipboard);
+    $(document).on('click', 'button.dropdown-toggle', toggleDropdown);
+    $(document).on('click', 'a, button:not(.dropdown-toggle)', hideDropdown);
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
@@ -122,7 +124,7 @@ function toggleMenu(e) {
     } else {
         $('main').css('height', 'unset');
     }
-    $('.block-body.down').each(function() {
+    $('.block-body.down, .dropdown-toggle.down').each(function() {
         $(this).removeClass('down').addClass('up');
     });
     $('.fa-angle-up').each(function() {
@@ -399,7 +401,22 @@ function resize(object) {
     const parent = object.parentNode;
     const computedStyle = getComputedStyle(parent);
     const width = parent.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
-    console.log(computedStyle);
     object.width = width;
     object.height = parent.dataset.ratio * width;
+}
+
+function toggleDropdown(event) {
+    const dropdownMenu = $(this).parent().find('[data-target="'+$(this).data('toggle')+'"]');
+    $('.dropdown .dropdown-menu.active').each(function() {
+        if ($(this).data('target') !== dropdownMenu.data('target')) {
+            $(this).removeClass('active');
+        }
+    });
+    dropdownMenu.toggleClass('active');
+}
+
+function hideDropdown() {
+    $('.dropdown .dropdown-menu.active').each(function() {
+        $(this).removeClass('active');
+    });
 }
