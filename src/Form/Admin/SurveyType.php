@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Survey;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class SurveyType extends AbstractType
 {
@@ -63,7 +67,7 @@ class SurveyType extends AbstractType
                 'entry_options' => [
                     'label' => false,
                     'attr' => [
-                        'class' => 'row',
+                        'class' => 'row form-group-collection',
                     ],
                 ],
                 'allow_add' => true,
@@ -71,12 +75,15 @@ class SurveyType extends AbstractType
                 'by_reference' => false,
             ])
             ->add('isAnonymous', CheckboxType::class, [
-                    'label' => 'Sondage doit être annomyme',
-                    'block_prefix' => 'switch',
-                    'required' => false,
-                ])
+                'block_prefix' => 'switch',
+                'attr' => [
+                    'data-switch-on' => 'Mode anonyme activé',
+                    'data-switch-off' => 'Activer le mode anonyme',
+                ],
+                'required' => false,
+            ])
             ->add('save', SubmitType::class, [
-                'label' => 'Enregistere',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],

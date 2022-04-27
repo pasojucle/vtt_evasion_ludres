@@ -60,6 +60,9 @@ $(document).ready(function(){
         $('#modal_window_show').click();
     }
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
+    document
+        .querySelectorAll('.switch input[type="checkbox"]')
+        .forEach(btn => btn.addEventListener("change", handleSwitch));
     $('.select2').select2();
 });
 
@@ -385,7 +388,7 @@ const addFormToCollection = (e) => {
   const addTagFormDeleteLink = (itemFormLi) => {
     const row = $(itemFormLi).find('.row');
     const removeFormButton = document.createElement('button');
-    removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger', 'col-md-1', 'form-group');
+    removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger', 'col-md-1');
     removeFormButton.innerHTML ='<i class="fas fa-times"></i>';
     
     row.append(removeFormButton);
@@ -406,17 +409,26 @@ function resize(object) {
 }
 
 function toggleDropdown(event) {
-    const dropdownMenu = $(this).parent().find('[data-target="'+$(this).data('toggle')+'"]');
-    $('.dropdown .dropdown-menu.active').each(function() {
-        if ($(this).data('target') !== dropdownMenu.data('target')) {
+    const dropdownButton = $(this);
+    const dropdownMenu = dropdownButton.parent().find('[data-target="'+dropdownButton.data('toggle')+'"]');
+    $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
+        if ($(this).data('target') !== dropdownMenu.data('target') && $(this).data('target') !== dropdownButton.data('toggle') ) {
             $(this).removeClass('active');
         }
     });
+    dropdownButton.toggleClass('active');
     dropdownMenu.toggleClass('active');
 }
 
 function hideDropdown() {
-    $('.dropdown .dropdown-menu.active').each(function() {
+    $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
         $(this).removeClass('active');
     });
+}
+
+function handleSwitch(event) {
+    const swicthLabel = document.querySelector('label[for="'+event.target.id+'"]');
+    if (event.target.dataset.switchOn && event.target.dataset.switchOff ) {
+       swicthLabel.innerHTML =  (event.target.checked) ? event.target.dataset.switchOn : event.target.dataset.switchOff; 
+    }
 }
