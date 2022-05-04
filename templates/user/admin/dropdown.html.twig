@@ -1,9 +1,12 @@
 <div class="dropdown">
   <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ user.entity.id }}"><i class="fas fa-ellipsis-v"></i></button>
-  <ul class="dropdown-menu" data-target="dropdown-{{ user.entity.id }}">
-    <li><a class="dropdown-item" href="#">Adhérent</a></li>
-    <li><a class="dropdown-item" href="#">Parent</a></li>
-    <li><a class="dropdown-item" href="#">Santé</a></li>
-    <li><a class="dropdown-item" href="#">Licence</a></li>
-  </ul>
+  <div class="dropdown-menu" data-target="dropdown-{{ user.entity.id }}">
+    <div class="dropdown-title">{{ user.member.fullName }}</div>
+    <ul class="dropdown-body">
+      <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.entity.id})}}"><i class="fas fa-chart-line"></i> Participation</a></li>
+      {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}
+        <li><a class="dropdown-item" href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"><i class="fas fa-exchange-alt"></i> Se connecter en tant que</a></li>
+      {% endif %}
+    </ul>
+  </div>
 </div>

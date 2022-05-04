@@ -32,9 +32,7 @@ class IdentityController extends AbstractController
         } else {
             $identities = $identityRepository->findKinShipsByUser($user);
         }
-        $form = $this->createForm(IdentitiesType::class, [
-            'identities' => $identities,
-        ], [
+        $form = $this->createForm(IdentitiesType::class, ['identities' => $identities], [
             'category' => $licence->getCategory(),
             'season_licence' => $licence,
             'is_kinship' => $isKinship,
@@ -44,7 +42,7 @@ class IdentityController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $editIdentity->execute($request, $user, $form);
 
-            return $this->redirectToRoute('admin_user', [
+            return $this->redirectToRoute('admin_identities_show', [
                 'user' => $user->getId(),
             ]);
         }

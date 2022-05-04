@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
-use App\Service\LicenceService;
+use App\Service\SeasonService;
 use DateInterval;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -26,12 +26,12 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    private LicenceService $licenceService;
+    private SeasonService $seasonService;
 
-    public function __construct(ManagerRegistry $registry, LicenceService $licenceService)
+    public function __construct(ManagerRegistry $registry, SeasonService $seasonService)
     {
         parent::__construct($registry, User::class);
-        $this->licenceService = $licenceService;
+        $this->seasonService = $seasonService;
     }
 
     /**
@@ -50,7 +50,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findMemberQuery(?array $filters): QueryBuilder
     {
-        $currentSeason = $this->licenceService->getCurrentSeason();
+        $currentSeason = $this->seasonService->getCurrentSeason();
         $qb = $qb = $this->createQuery();
 
         if (!empty($filters)) {
@@ -75,7 +75,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findCoverageQuery(?array $filters): QueryBuilder
     {
-        $currentSeason = $this->licenceService->getCurrentSeason();
+        $currentSeason = $this->seasonService->getCurrentSeason();
         $qb = $this->createQuery();
         if (!empty($filters)) {
             if (null !== $filters['fullName']) {
@@ -312,7 +312,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         if (true === $hasCurrentSeason) {
-            $currentSeason = $this->licenceService->getCurrentSeason();
+            $currentSeason = $this->seasonService->getCurrentSeason();
             $qb->leftJoin('u.licences', 'l')
                 ->andWhere(
                     $qb->expr()->eq('l.season', ':currentSeason')
@@ -332,7 +332,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findUserLicenceInProgressQuery(?array $filters): QueryBuilder
     {
-        $currentSeason = $this->licenceService->getCurrentSeason();
+        $currentSeason = $this->seasonService->getCurrentSeason();
 
         $qb = $this->createQueryBuilder('u')
             ->innerJoin('u.identities', 'i')
@@ -360,7 +360,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findlicenceInProgressQuery(?array $filters): QueryBuilder
     {
-        $currentSeason = $this->licenceService->getCurrentSeason();
+        $currentSeason = $this->seasonService->getCurrentSeason();
 
         $qb = $this->createQuery();
 

@@ -3,39 +3,37 @@
 {% block title %}{{ user.member.fullName }}{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
-                <h2>{{ user.member.fullName }}</h2>
-                <span class="tools">
-                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
-                        class="btn btn-secondary btn-ico" title="Retour à la fiche de l'adhérents">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </span>
-            </div>
-                <div class="padding-10">
-                {{ form_start(form) }}
-                <div class="block-body">
-                    <div class="form-group">
-                        {{ form_row(form.licenceNumber) }}
-                        <div class="form-group-inline">
-                            <a href="{{ path('admin_send_number_licence', {'user': user.entity.id })}}" class="btn btn-xs btn-success">Envoyer le numéro de licence</a>
-                        </div>
-                    </div>
-                    <div class="form-group">{{ form_row(form.level) }}</div>
-                    {% for licence in form.licences %}
-                        {% if licence.status is defined and licence.final is defined %}
-                            <div class="form-group">{{ form_row(licence.status) }}</div>
-                            <div class="form-group">{{ form_row(licence.final) }}</div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="block-footer">
-                    {{ form_row(form.save) }}
-                </div>
-                {{ form_end(form) }}
-            </div>
+    <div class="wrapper">
+        <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+            <h1>{{ user.member.fullName }}</h1>
+            <span class="tools">
+                <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
+                    class="btn btn-ico" title="Retour à la fiche de l'adhérents">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
         </div>
+
+        {{ form_start(form) }}
+        <div class="wrapper-body">
+            <div class="form-group">
+                {{ form_row(form.licenceNumber) }}
+                <div class="form-group-inline">
+                    <a href="{{ path('admin_send_number_licence', {'user': user.entity.id })}}" class="btn btn-xs btn-success">Envoyer le numéro de licence</a>
+                </div>
+            </div>
+            <div class="form-group">{{ form_row(form.level) }}</div>
+            {% for licence in form.licences %}
+                {% if licence.status is defined and licence.final is defined %}
+                    <div class="form-group">{{ form_row(licence.status) }}</div>
+                    <div class="form-group">{{ form_row(licence.final) }}</div>
+                {% endif %}
+            {% endfor %}
+            <div class="form-group">{{ form_row(form.health.medicalCertificateDate) }}</div>
+        </div>
+        <div class="wrapper-footer">
+            {{ form_row(form.save) }}
+        </div>
+        {{ form_end(form) }}
     </div>
 {% endblock %}

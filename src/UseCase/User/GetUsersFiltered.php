@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\User;
 
 use Doctrine\ORM\QueryBuilder;
-use App\Service\LicenceService;
+use App\Service\SeasonService;
 use Symfony\Component\Form\Form;
 use App\Service\PaginatorService;
 use App\ViewModel\UsersPresenter;
@@ -26,7 +26,7 @@ abstract class GetUsersFiltered
 
     public function __construct(
         private PaginatorService $paginator,
-        public LicenceService $licenceService,
+        public SeasonService $seasonService,
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $urlGenerator,
         private UsersPresenter $usersPresenter,
@@ -144,7 +144,7 @@ abstract class GetUsersFiltered
     {
         return ($filtered) ? $request->getSession()->get($this->filterName) : [
         'fullName' => null,
-        'status' => 'SEASON_'.$this->licenceService->getCurrentSeason(),
+        'status' => 'SEASON_'.$this->seasonService->getCurrentSeason(),
         'levels' => null,
         ];
     }

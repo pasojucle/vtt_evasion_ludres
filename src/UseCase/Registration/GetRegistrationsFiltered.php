@@ -13,7 +13,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 {
     public int $statusType = UserFilterType::STATUS_TYPE_REGISTRATION;
 
-    public string $statusPlaceholder = 'Selectionnez une saison';
+    public string $statusPlaceholder = 'Sélectionnez une saison';
 
     public string $filterName = 'admin_registrations_filters';
 

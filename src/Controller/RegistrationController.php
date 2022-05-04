@@ -4,35 +4,35 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
-use App\Entity\User as UserEntity;
-use App\Form\UserType;
-use App\Repository\ContentRepository;
-use App\Repository\MembershipFeeRepository;
-use App\Repository\RegistrationStepGroupRepository;
-use App\Repository\RegistrationStepRepository;
-use App\Service\LicenceService;
-use App\Service\MailerService;
-use App\Service\OrderByService;
-use App\Service\ParameterService;
-use App\Service\PdfService;
-use App\Service\RegistrationService;
-use App\Service\UploadService;
-use App\Service\UserService;
-use App\UseCase\Registration\EditRegistration;
-use App\UseCase\Registration\GetProgress;
-use App\UseCase\RegistrationStep\GetReplaces;
-use App\ViewModel\RegistrationStepPresenter;
-use App\ViewModel\UserPresenter;
 use DateTime;
+use App\Form\UserType;
+use App\Entity\Licence;
+use App\Service\PdfService;
+use App\Service\UserService;
+use App\Service\MailerService;
+use App\Service\SeasonService;
+use App\Service\UploadService;
+use App\Service\OrderByService;
+use App\Entity\RegistrationStep;
+use App\ViewModel\UserPresenter;
+use App\Service\ParameterService;
+use App\Entity\User as UserEntity;
+use App\Service\RegistrationService;
+use App\Repository\ContentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\UseCase\Registration\GetProgress;
+use App\Repository\MembershipFeeRepository;
+use App\ViewModel\RegistrationStepPresenter;
+use App\UseCase\RegistrationStep\GetReplaces;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Repository\RegistrationStepRepository;
+use App\UseCase\Registration\EditRegistration;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\RequestStack;
+use App\Repository\RegistrationStepGroupRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RegistrationController extends AbstractController
 {
@@ -41,7 +41,7 @@ class RegistrationController extends AbstractController
         private RegistrationStepGroupRepository $registrationStepGroupRepository,
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
-        private LicenceService $licenceService,
+        private SeasonService $seasonService,
         private MailerService $mailerService,
         private UserService $userService,
         private UploadService $uploadService,
@@ -131,7 +131,7 @@ class RegistrationController extends AbstractController
     public function registrationDownload(
         UserEntity $user
     ): Response {
-        $season = $this->licenceService->getCurrentSeason();
+        $season = $this->seasonService->getCurrentSeason();
 
         return $this->render('registration/download.html.twig', [
             'user_entity' => $user,
@@ -147,7 +147,7 @@ class RegistrationController extends AbstractController
         RegistrationStepPresenter $registrationStepPresenter,
         UserEntity $user
     ): Response {
-        $season = $this->licenceService->getCurrentSeason();
+        $season = $this->seasonService->getCurrentSeason();
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal(), RegistrationStep::RENDER_FILE);

@@ -4,42 +4,50 @@
 
 {% block body %}
  <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Sondage</h2>
-                <span class="tools">
-                    <a href="{{ path('admin_survey_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un survey"><i class="fas fa-plus"></i></a>
-                </span>
-            </div>
-            <div class="block-body">
-                <ul class="padding-10">
-                    {% for survey in surveys %}  
-                        <li>
-                            <div>
-                                <div class="row row-list">
-                                    <div class="col-md-8 col-xs-6 background-ligth">
-                                        {% set route = (survey.isAnonymous) ? 'admin_anonymous_survey' : 'admin_survey' %}
-                                        <a href="{{ path(route, {'survey': survey.id}) }}" class="btn btn-list" title="Résultats du sondage">
-                                            {{ survey.title }}
-                                        </a>
-                                    </div>
-                                    <div class="col-md-4 col-xs-6">
-                                        <a class="btn btn-success btn-ico" href="{{ absolute_url(path('survey', {'survey': survey.id} ))}}" title="Copier l'url"><i class="fas fa-clipboard"></i></a>
-                                        <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
-                                    {% if not survey.isDisabled %}
-                                        {% if survey.surveyUsers is empty %}
-                                            <a class="btn btn-primary btn-ico" href="{{ path('admin_survey_edit', {'survey': survey.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                        {% endif %}
-                                        <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_survey_disable', {'survey': survey.id})}}" title="Cloturer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                                    {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-        {# {% include('common/pagination.html.twig') %} #}
+
+    <div class="wrapper-title">
+        <h1>Sondage</h1>
+        <span class="tools">
+        </span>
     </div>
+    <div class="wrapper-body">
+        <a href="{{ path('admin_survey_edit') }}" class="btn btn-primary" title="Ajouter un survey"><i class="fas fa-plus"></i> Ajouter</a>
+        <ul>
+            {% for survey in surveys %}
+                <li class="list-dropdown">
+                    {% set route = (survey.isAnonymous) ? 'admin_anonymous_survey' : 'admin_survey' %}
+                    <a href="{{ path(route, {'survey': survey.id}) }}" class="btn btn-list" title="Résultats du sondage">
+                        {{ survey.title }}
+                    </a>
+                    <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ survey.id }}"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="dropdown-menu" data-target="dropdown-{{ survey.id }}">
+                        <div class="dropdown-title">{{ survey.title }}</div>
+                        <ul class="dropdown-body">
+                            <li>
+                                <a class="dropdown-item" href="{{ absolute_url(path('survey', {'survey': survey.id} ))}}" title="Copier l'url"><i class="fas fa-clipboard"></i> Copier l'url</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i> Exporter</a>
+                            </li>
+                            {% if not survey.isDisabled %}
+                                {% if survey.surveyUsers is empty %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('admin_survey_edit', {'survey': survey.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item modal-trigger" href="{{ path('admin_survey_disable', {'survey': survey.id})}}" title="Cloturer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Cloturer</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    </div>
+                </li>  
+            {% endfor %}
+        </ul>
+    </div>
+   {# {% include('common/pagination.html.twig') %} #} 
+</div>
+
 {% endblock %}

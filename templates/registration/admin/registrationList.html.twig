@@ -8,102 +8,100 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper registrations">
-        <div class="block">
-            <div class="block-title">
-                <h2>Etapes des inscriptions</h2>
-            </div>
-            <div class="block-body">
-                <div class="row labels">
-                    <div class="col-md-1 col-xs-1"></div>
-                    <div class="col-md-11 col-xs-11">
-                        <div class="row">
-                            <div class="col-md-5 col-xs-5"></div>
-                            <div class="col-md-6 col-xs-6">
-                                <div class="row">
-                                    {% for category in labels.categories %}
-                                        {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
-                                        <div class="col-md-6 col-xs-6 {{ category_class }}"><b>{{ category|trans|capitalize }}</b></div>
-                                    {% endfor %}
-                                    <div class="col-md-12 col-xs-12">
+        <div class="wrapper-title">
+            <h1>Etapes des inscriptions</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="row labels">
+                <div class="col-md-1 col-xs-1"></div>
+                <div class="col-md-11 col-xs-11">
+                    <div class="row">
+                        <div class="col-md-5 col-xs-5"></div>
+                        <div class="col-md-6 col-xs-6">
+                            <div class="row">
+                                {% for category in labels.categories %}
+                                    {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
+                                    <div class="col-md-6 col-xs-6 {{ category_class }}"><b>{{ category|trans|capitalize }}</b></div>
+                                {% endfor %}
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="row">
+                                        {% for isFinal in labels.isFinalLabels %}
+                                            <div class="col-md-3 col-xs-3">{{ isFinal|capitalize }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% for categories in labels.render %}
+                                    <div class="col-md-6 col-xs-6">
                                         <div class="row">
-                                            {% for isFinal in labels.isFinalLabels %}
-                                                <div class="col-md-3 col-xs-3">{{ isFinal|capitalize }}</div>
+                                            {% for isFinal in categories %}
+                                                <div class="col-md-6 col-xs-6">
+                                                    <div class="row">
+                                                        {% for render in isFinal %}
+                                                            <div class="col-md-6 col-xs-6 chart">{{ render|raw }}</div> 
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
                                             {% endfor %}
                                         </div>
                                     </div>
-                                    {% for categories in labels.render %}
-                                        <div class="col-md-6 col-xs-6">
-                                            <div class="row">
-                                                {% for isFinal in categories %}
-                                                    <div class="col-md-6 col-xs-6">
-                                                        <div class="row">
-                                                            {% for render in isFinal %}
-                                                                <div class="col-md-6 col-xs-6 chart">{{ render|raw }}</div> 
-                                                            {% endfor %}
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                {% endfor %}
                             </div>
-                            <div class="col-md-1 col-xs-1"></div>
                         </div>
+                        <div class="col-md-1 col-xs-1"></div>
                     </div>
                 </div>
-                <ul class="sortable" data-route="admin_registration_step_group_order" data-parameter="group" data-target="goups">
-                    {% for group in registrationStepGroups %}
-                        {% set  is_last_item = loop.last %}
-                        <li class="row ui-state-default {% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
-                            data-id="{{ group.id }}">
-                            <div class="col-md-1 col-xs-1 sortable-cursor">
-                                {{ group.orderBy + 1 }}
-                            </div>
-                            <div class="col-md-11 col-xs-11">
-                                <ul class="sortable" data-route="admin_registration_step_order" data-parameter="step" data-target="goup-{{ group.id }}">
-                                {% for step in group.registrationSteps %}
-                                    <li class=" row ui-state-default" data-id="{{ step.id }}">
-                                        <div class="col-md-5 col-xs-5 no-padding-vertical {% if group.registrationSteps|length > 1 %}sortable-cursor{% endif %}">{{ step.title }}</div>
-                                        <div class="col-md-6 col-xs-6 no-padding-vertical">
-                                            <div class="row">
-                                                {% for category in registrationByTypes %}
-                                                {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
-                                                    <div class="col-md-6 col-xs-6 no-padding-vertical">
-                                                        <div class="row">
-                                                        {% for isFinal in category %}
-                                                            <div class="col-md-6 col-xs-6 no-padding-vertical">
-                                                                <div class="row">
-                                                                    {% for render in isFinal %}
-                                                                        <div class="col-md-6 col-xs-6 no-padding-vertical chart {{ category_class }}
-                                                                        {% if step in render %} active{% endif %}
-                                                                        {% if is_last_item %} last-item{% endif %}
-                                                                        ">
-                                                                        </div>
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>                   
-                                                        {% endfor %}
-                                                        </div>
-                                                    </div>                     
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1 col-xs-1">
-                                            <a class="btn btn-primary btn-ico" title="Modifier"
-                                                href="{{ path('admin_registration_step', {'step' : step.id}) }}">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                                </ul>
-                            </div>
-                            
-                        </li>
-                    {% endfor %}
-                </ul>
             </div>
+            <ul class="sortable" data-route="admin_registration_step_group_order" data-parameter="group" data-target="goups">
+                {% for group in registrationStepGroups %}
+                    {% set  is_last_item = loop.last %}
+                    <li class="row ui-state-default {% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
+                        data-id="{{ group.id }}">
+                        <div class="col-md-1 col-xs-1 sortable-cursor">
+                            {{ group.orderBy + 1 }}
+                        </div>
+                        <div class="col-md-11 col-xs-11">
+                            <ul class="sortable" data-route="admin_registration_step_order" data-parameter="step" data-target="goup-{{ group.id }}">
+                            {% for step in group.registrationSteps %}
+                                <li class=" row ui-state-default" data-id="{{ step.id }}">
+                                    <div class="col-md-5 col-xs-5 no-padding-vertical {% if group.registrationSteps|length > 1 %}sortable-cursor{% endif %}">{{ step.title }}</div>
+                                    <div class="col-md-6 col-xs-6 no-padding-vertical">
+                                        <div class="row">
+                                            {% for category in registrationByTypes %}
+                                            {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
+                                                <div class="col-md-6 col-xs-6 no-padding-vertical">
+                                                    <div class="row">
+                                                    {% for isFinal in category %}
+                                                        <div class="col-md-6 col-xs-6 no-padding-vertical">
+                                                            <div class="row">
+                                                                {% for render in isFinal %}
+                                                                    <div class="col-md-6 col-xs-6 no-padding-vertical chart {{ category_class }}
+                                                                    {% if step in render %} active{% endif %}
+                                                                    {% if is_last_item %} last-item{% endif %}
+                                                                    ">
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>                   
+                                                    {% endfor %}
+                                                    </div>
+                                                </div>                     
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 col-xs-1">
+                                        <a class="btn btn-primary btn-ico" title="Modifier"
+                                            href="{{ path('admin_registration_step', {'step' : step.id}) }}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 {% endblock %}

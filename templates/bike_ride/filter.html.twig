@@ -1,5 +1,5 @@
-{{ form_start(form) }}
-    <div class="filters">
+<div class="filters">
+    {{ form_start(form) }}
         {% if form.prev is defined and form.today is defined and form.next is defined %}
             <span>
                 <b>
@@ -32,5 +32,5 @@
                 </li>
             </ul>
         {% endif %}
-    </div>
-{{ form_end(form) }}
+    {{ form_end(form) }}
+</div>

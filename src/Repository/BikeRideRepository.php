@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\BikeRide;
 use DateTime;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\User;
+use App\Entity\BikeRide;
+use App\Service\SeasonService;
+use App\Service\SessionService;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method BikeRide|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,7 +22,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BikeRideRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private SeasonService $seasonService)
     {
         parent::__construct($registry, BikeRide::class);
     }
@@ -29,17 +32,17 @@ class BikeRideRepository extends ServiceEntityRepository
      */
     public function findAllQuery(array $filters): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('e');
+        $qb = $this->createQueryBuilder('br');
         $andX = $qb->expr()->andX();
         if (null !== $filters['startAt']) {
-            $andX->add($qb->expr()->gte('e.startAt', ':startAt'));
+            $andX->add($qb->expr()->gte('br.startAt', ':startAt'));
             $qb->setParameter('startAt', $filters['startAt']);
             if (null === $filters['endAt']) {
                 $qb->setMaxResults(6);
             }
         }
         if (null !== $filters['endAt']) {
-            $andX->add($qb->expr()->lte('e.startAt', ':endAt'));
+            $andX->add($qb->expr()->lte('br.startAt', ':endAt'));
             $qb->setParameter('endAt', $filters['endAt']);
         }
 
@@ -48,7 +51,7 @@ class BikeRideRepository extends ServiceEntityRepository
         }
 
         return $qb
-            ->orderBy('e.startAt', 'ASC')
+            ->orderBy('br.startAt', 'ASC')
         ;
     }
 
@@ -61,7 +64,7 @@ class BikeRideRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
-
+    
     /**
      * @return BikeRide[] Returns an array of enent objects
      */
@@ -70,13 +73,13 @@ class BikeRideRepository extends ServiceEntityRepository
         $today = new DateTime();
         $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 23:59:00');
 
-        return $this->createQueryBuilder('e')
+        return $this->createQueryBuilder('br')
             ->andWhere(
-                (new Expr())->gte('e.startAt', ':today'),
+                (new Expr())->gte('br.startAt', ':today'),
             )
             ->setParameter('today', $today)
-            ->orderBy('e.startAt', 'ASC')
-            ->andHaving("DATE_SUB(e.startAt, e.displayDuration, 'DAY') <= :today")
+            ->orderBy('br.startAt', 'ASC')
+            ->andHaving("DATE_SUB(br.startAt, br.displayDuration, 'DAY') <= :today")
             ->getQuery()
             ->getResult()
         ;

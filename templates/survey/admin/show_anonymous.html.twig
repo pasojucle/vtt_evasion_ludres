@@ -3,46 +3,40 @@
 {% block title %}Gestion des surveys{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>{{ survey.title }}</h2>
-                <span class="tools">
-                    <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
-                    <a href="{{ path('admin_surveys') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
-                </span>
-            </div>
-            <div>
-            <nav  class="nav-tab">
-                {% for key, label in tabs %}
-                    <a href="{{ path('admin_anonymous_survey', {'survey': survey.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>
-                        {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ survey.surveyUsers|length }}</span>{% endif %}
-                    </a>
-                {% endfor %}
-            </nav>
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>{{ survey.title }}</h1>
+            <span class="tools">
+                <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
+                <a href="{{ path('admin_surveys') }}" class="btn btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
+            </span>
         </div>
-        <div class="block-body">
+        <div>
+        <nav  class="nav-tab">
+            {% for key, label in tabs %}
+                <a href="{{ path('admin_anonymous_survey', {'survey': survey.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>
+                    {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ survey.surveyUsers|length }}</span>{% endif %}
+                </a>
+            {% endfor %}
+        </nav>
+        <div class="wrapper-body">
             {% if tab == 0 %}
                 {% if results is not empty %}
-                    <ul class="padding-10">
-                        <li>
-                            <div class="row row-list">
-                                <div class="col-md-6 col-xs-12"></div>
-                                {% for value in constant('App\\Entity\\SurveyResponse::VALUES') %}
-                                    <div class="col-md-2 col-xs-4">
-                                        {{ value|trans }}
-                                    </div>
-                                {% endfor %}
-                            </div>
+                    <ul>
+                        <li class="row row-list light-separator">
+                            <div class="col-md-6 col-xs-12"></div>
+                            {% for value in constant('App\\Entity\\SurveyResponse::VALUES') %}
+                                <div class="col-md-2 col-xs-4">
+                                    {{ value|trans }}
+                                </div>
+                            {% endfor %}
                         </li>
                         {% for results_by_choice in results %}
-                            <li>
-                                <div class="row row-list">
-                                    <div class="col-md-6 col-xs-12">{{ results_by_choice.content }}</div>
-                                    {% for result in results_by_choice['results']  %}
-                                        <div class="col-md-2 col-xs-4">{{ result}}</div>
-                                    {% endfor %}
-                                </div>
+                            <li class="row row-list light-separator">
+                                <div class="col-md-6 col-xs-12">{{ results_by_choice.content }}</div>
+                                {% for result in results_by_choice['results']  %}
+                                    <div class="col-md-2 col-xs-4">{{ result}}</div>
+                                {% endfor %}
                             </li>
                         {% endfor %}
                     </ul>
@@ -53,13 +47,11 @@
                 {% if survey.surveyUsers is not empty %}
                     <ul class="padding-10">
                         {% for survey_user in survey.surveyUsers %}
-                            <li>
-                                <div class="row row-list">
-                                    <div class="col-md-6 col-xs-6">{{ survey_user.createdAt|date('d/m/Y H:i:s') }}</div>
-                                    <div class="col-md-6 col-xs-6">
-                                        {% set identity = survey_user.user.firstIdentity %}
-                                        {{ identity.name }} {{ identity.firstName }}
-                                    </div>
+                            <li class="row row-list light-separator">
+                                <div class="col-md-6 col-xs-6">{{ survey_user.createdAt|date('d/m/Y H:i:s') }}</div>
+                                <div class="col-md-6 col-xs-6">
+                                    {% set identity = survey_user.user.firstIdentity %}
+                                    {{ identity.name }} {{ identity.firstName }}
                                 </div>
                             </li>
                         {% endfor %}

@@ -37,12 +37,12 @@ class RegistrationService
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
         private LicenceRepository $licenceRepository,
-        private LicenceService $licenceService,
+        private SeasonService $seasonService,
         private LevelRepository $levelRepository,
         private UserPresenter $userPresenter,
         private SessionRepository $sessionRepository
     ) {
-        $this->season = $this->licenceService->getCurrentSeason();
+        $this->season = $this->seasonService->getCurrentSeason();
     }
 
     public function getTemplate(int $form): ?string
@@ -75,7 +75,7 @@ class RegistrationService
         $isAllreadyRegistered = false;
 
         if (null !== $user) {
-            $licence = $user->getSeasonLicence($this->season);
+            $licence = $user->getSeasonService($this->season);
             if (null !== $licence) {
                 if ($licence->isFinal() && Licence::STATUS_IN_PROCESSING < $licence->getStatus()) {
                     $isAllreadyRegistered = true;

@@ -15,7 +15,7 @@ use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationStepRepository;
-use App\Service\LicenceService;
+use App\Service\SeasonService;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
@@ -30,7 +30,7 @@ class GetProgress
     private ?Licence $seasonLicence;
 
     public function __construct(
-        private LicenceService $licenceService,
+        private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
         private LevelRepository $levelRepository,
         private RegistrationStepPresenter $presenter,
@@ -38,7 +38,7 @@ class GetProgress
         private Security $security,
         private EntityManagerInterface $entityManager
     ) {
-        $this->season = $this->licenceService->getCurrentSeason();
+        $this->season = $this->seasonService->getCurrentSeason();
     }
 
     public function execute(int $step): array
@@ -90,7 +90,7 @@ class GetProgress
         if (null === $this->user) {
             $this->createUser();
         }
-        $this->seasonLicence = $this->user->getSeasonLicence($this->season);
+        $this->seasonService= $this->user->getSeasonService($this->season);
         if (null === $this->seasonLicence) {
             $this->createNewLicence();
         }
@@ -162,7 +162,7 @@ class GetProgress
 
     private function createNewLicence(): void
     {
-        $this->seasonLicence = new Licence();
+        $this->seasonService= new Licence();
         $this->seasonLicence->setSeason($this->season);
         if (!$this->user->getLicences()->isEmpty()) {
             $this->seasonLicence->setFinal(true)
@@ -175,7 +175,7 @@ class GetProgress
             ;
         }
         if (!$this->user->getIdentities()->isEmpty()) {
-            $category = $this->licenceService->getCategory($this->user);
+            $category = $this->seasonService->getCategory($this->user);
             $this->seasonLicence->setCategory($category);
         }
         $this->entityManager->persist($this->seasonLicence);

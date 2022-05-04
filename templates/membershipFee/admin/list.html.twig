@@ -3,49 +3,43 @@
 {% block title %}Gestion des tarif{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Tarifs</h2>
-            </div>
-            <div class="block-body">
-                <ul class="padding-10">
-                    <li>
-                        <div class="row row-list">
-                            <div class="col-md-6 col-xs-6"></div>
-                            <div class="col-md-2 col-xs-2">Mini Braquet<br>(Sauf école VTT)</div>
-                            <div class="col-md-2 col-xs-2">Petit Braquet</div>
-                            <div class="col-md-2 col-xs-2">Grand Braquet</div>
-                        </div>
-                    </li>
-                    {% for membership_fee in all_membership_fee %}
-                        <li>
-                            <div class="row row-list">
-                                {% if membership_fee.membershipFeeAmounts | length > 1 %}
-                                    <div class="col-md-6 col-xs-6">
-                                        <b>{{ membership_fee.title }}</b><br>
-                                        {{ membership_fee.content }}
-                                    </div>
-                                    {% for membershipFeeAmount in membership_fee.membershipFeeAmounts %}
-                                        <div class="col-md-2 col-xs-2">
-                                            <a class="btn btn-light btn-pencil" href="{{ path('admin_membership_fee_edit', {'amount' : membershipFeeAmount.id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
-                                                {{ membershipFeeAmount.amount }} €
-                                            </a>
-                                        </div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="col-md-10 col-xs-10">{{ membership_fee.title }} : </div>
-                                    <div class="col-md-2 col-xs-2">
-                                        <a class="btn btn-light btn-pencil" href="{{ path('admin_membership_fee_edit', {'amount' : membership_fee.membershipFeeAmounts[0].id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
-                                            {{ membership_fee.membershipFeeAmounts[0].amount }} €/an
-                                        </a>
-                                    </div>
-                                {% endif %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h2>Tarifs</h2>
+        </div>
+        <div class="wrapper-body">
+            <ul>
+                <li class="row row-list">
+                    <div class="col-md-6 col-xs-6"></div>
+                    <div class="col-md-2 col-xs-2">Mini Braquet<br>(Sauf école VTT)</div>
+                    <div class="col-md-2 col-xs-2">Petit Braquet</div>
+                    <div class="col-md-2 col-xs-2">Grand Braquet</div>
+                </li>
+                {% for membership_fee in all_membership_fee %}
+                    <li class="row row-list light-separator padding-vertical-10">
+                        {% if membership_fee.membershipFeeAmounts | length > 1 %}
+                            <div class="col-md-6 col-xs-6">
+                                <b>{{ membership_fee.title }}</b><br>
+                                {{ membership_fee.content }}
                             </div>
-                        </li>
-                    {% endfor %}
-                <ul>
-            </div>
+                            {% for membershipFeeAmount in membership_fee.membershipFeeAmounts %}
+                                <div class="col-md-2 col-xs-2">
+                                    <a class="btn btn-light btn-pencil" href="{{ path('admin_membership_fee_edit', {'amount' : membershipFeeAmount.id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
+                                        {{ membershipFeeAmount.amount }} €
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-md-10 col-xs-10">{{ membership_fee.title }} : </div>
+                            <div class="col-md-2 col-xs-2">
+                                <a class="btn btn-light btn-pencil" href="{{ path('admin_membership_fee_edit', {'amount' : membership_fee.membershipFeeAmounts[0].id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
+                                    {{ membership_fee.membershipFeeAmounts[0].amount }} €/an
+                                </a>
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            <ul>
         </div>
     </div>
 {% endblock %}

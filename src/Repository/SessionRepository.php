@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\BikeRide;
-use App\Entity\Session;
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Session;
+use App\Entity\BikeRide;
+use App\Service\SeasonService;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Session|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,7 +22,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SessionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private SeasonService $seasonService)
     {
         parent::__construct($registry, Session::class);
     }
@@ -50,5 +52,39 @@ class SessionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @return Session[] Returns an array of enent objects
+     */
+    public function findByUserAndFilters(User $user, array $filters): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb
+            ->leftJoin('s.cluster', 'c')
+            ->leftJoin('c.bikeRide', 'br')
+            ->andWhere(
+                $qb->expr()->eq('s.user', ':user')
+            )
+            ->setParameter('user', $user)
+            ;
+        if (isset($filters['season'])) {
+            $season = (int) str_replace('SEASON_', '', $filters['season']);
+            $interval = $this->seasonService->getSeasonInterval($season);
+            $qb
+                ->andWhere(
+                    $qb->expr()->between('br.startAt', ':startAt', ':endAt')
+                )
+                ->setParameter('startAt', $interval['startAt'])
+                ->setParameter('endAt', $interval['endAt']);
+        }
+        if (isset($filters['bikeRideType'])) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('br.bikeRideType', ':bikeRideType')
+                )
+                ->setParameter('bikeRideType', $filters['bikeRideType']);
+        }
+        return $qb;
     }
 }

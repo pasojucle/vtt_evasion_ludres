@@ -3,5 +3,13 @@
         {{ form_widget(form) }}
         <span class="slider round"></span>
     </label>
-    <b>{{ form_label(form) }}</b>
+    <b>
+        {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off']is defined %}
+            <label for="{{ form.vars.id }}">
+            {% if form.vars.checked %} {{form.vars.attr['data-switch-on'] }} {% else %} {{form.vars.attr['data-switch-off'] }} {% endif %}
+            </label>
+        {% else %}
+            {{ form_label(form) }}
+        {% endif %}
+    </b>
 {% endblock %}

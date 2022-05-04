@@ -1,6 +1,6 @@
 {% block custom_month_and_hour_row %}
     <b>{{ form_label(form) }} </b>
-    <div class="row"> 
+    <div class="row form-group"> 
         {% for item in form %}
             <div class="col-md-1 align-right">{{ item.vars.name|trans }}</div>
             <div class="col-md-1">{{ form_widget(item) }}</div>

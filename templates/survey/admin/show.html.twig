@@ -3,41 +3,37 @@
 {% block title %}Gestion des surveys{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>{{ survey.title }}</h2>
-                <span class="tools">
-                    <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
-                    <a href="{{ path('admin_surveys') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
-                </span>
-            </div>
-            <div>
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>{{ survey.title }}</h1>
+            <span class="tools">
+                <a class="btn btn-success btn-ico" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i></a>
+                <a href="{{ path('admin_surveys') }}" class="btn btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
+            </span>
         </div>
-        <div class="block-body">
-                {{ form_start(form) }}
-                <div class="filters">
-                    <ul>
-                        <li>{{ form_widget(form.issue)}}</li>
-                        <li>{{ form_widget(form.value)}}</li>
-                        <li>{{ form_widget(form.submit)}}</li>
-                    </ul>
-                </div>
-                {{ form_end(form) }}
-            {% if responses is not empty %}
-                <ul class="padding-10">
-                    {% for response in responses %}
-                        <li>
-                            <div class="row row-list">
-                                <div class="col-md-6 col-xs-6">{{ response.user.member.fullName }}</div>
-                                <div class="col-md-6 col-xs-6">
-                                    {{ response.value }}
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
+        <div>
+        <div class="wrapper-body">
+            
+        <div class="filters">
+            {{ form_start(form) }}
+                <ul>
+                    <li>{{ form_widget(form.issue)}}</li>
+                    <li>{{ form_widget(form.value)}}</li>
                 </ul>
-            {% endif %}
+            {{ form_end(form) }}
         </div>
+            
+        {% if responses is not empty %}
+            <ul class="padding-10">
+                {% for response in responses %}
+                    <li class="row row-list  light-separator">
+                        <div class="col-md-6 col-xs-6">{{ response.user.member.fullName }}</div>
+                        <div class="col-md-6 col-xs-6">
+                            {{ response.value }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

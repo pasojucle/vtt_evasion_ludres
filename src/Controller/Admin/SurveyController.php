@@ -56,9 +56,9 @@ class SurveyController extends AbstractController
             return $this->redirectToRoute('admin_surveys');
         }
 
-        return $this->renderForm('survey/admin/edit.html.twig', [
+        return $this->render('survey/admin/edit.html.twig', [
             'survey' => $survey,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

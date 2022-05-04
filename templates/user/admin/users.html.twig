@@ -4,37 +4,40 @@
 
 {% block body %}
     <div class="wrapper">
-
-            <div class="wrapper-title">
-                <h2>Gestion des adhérents - <span class="badge badge-info">{{ count }}</span></h2>
-                <span class="tools">
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('admin_members_email_to_clipboard') }}" class="btn btn-success btn-ico email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i></a>
-                        <a href="{{ path('admin_members_export') }}" class="btn btn-success btn-ico" title="Export la sélection"><i class="fas fa-file-csv"></i></a>
-                    {% endif %}
-                </span>
-            </div>
-            {% include('user/admin/filters.html.twig') %}
-            <div class="wrapper-body">
-                <ul>
-                    {% for user in users %}
-                        {% set licence = user.lastLicence %}           
-                        <li class="row row-list list-dropdown" data-url="{{ path('admin_user', {'user': user.entity.id})}}" 
+        <div class="wrapper-title">
+            <h1>Gestion des adhérents - <span class="badge badge-info">{{ count }}</span></h1>
+            <span class="tools">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('admin_members_email_to_clipboard') }}" class="btn btn-success btn-ico email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i></a>
+                    <a href="{{ path('admin_members_export') }}" class="btn btn-success btn-ico" title="Export la sélection"><i class="fas fa-file-csv"></i></a>
+                {% endif %}
+            </span>
+        </div>
+        {% include('user/admin/filters.html.twig') %}
+        <div class="wrapper-body">
+            <ul>
+                {% for user in users %}
+                    {% set licence = user.lastLicence %}           
+                    <li class="list-dropdown"> 
+                        <a href="{{ path('admin_user', {'user': user.entity.id})}}"
                             {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% endif %}>
-                            <div class="col-md-4 col-xs-12">{{ user.member.fullName }}</div>
-                            <div class="col-md-4 col-xs-12">
-                                {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
-                                    {{ user.testingBikeRides }}/3 séances d'essai
-                                {% endif %}
+                            <div class="row">
+                                <div class="col-md-4 col-xs-12">{{ user.member.fullName }}</div>
+                                <div class="col-md-4 col-xs-12">
+                                    {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
+                                        {{ user.testingBikeRides }}/3 séances d'essai
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 col-xs-12">
+                                    {{ user.level }}
+                                </div>
                             </div>
-                            <div class="col-md-4 col-xs-12">
-                                {{ user.level }}
-                            </div>
-                            {% include('user/admin/dropdown.html.twig') %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+                        </a> 
+                        {% include('user/admin/dropdown.html.twig') %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
 
         {% include('common/pagination.html.twig') %}
     </div>

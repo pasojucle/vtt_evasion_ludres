@@ -19,14 +19,14 @@ class SurveyIssueType extends AbstractType
             ->add('content', TextType::class, [
                 'label' => false,
                 'row_attr' => [
-                    'class' => 'col-md-7 form-group ',
+                    'class' => 'col-md-7 form-group-inline',
                 ],
             ])
             ->add('responseType', ChoiceType::class, [
                 'label' => false,
                 'choices' => array_flip(SurveyIssue::RESPONSE_TYPES),
                 'row_attr' => [
-                    'class' => 'col-md-4 form-group ',
+                    'class' => 'col-md-4 form-group-inline',
                 ],
             ])
         ;

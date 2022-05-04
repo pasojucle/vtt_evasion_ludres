@@ -10,7 +10,7 @@ use App\Repository\LicenceRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
-use App\Service\LicenceService;
+use App\Service\SeasonService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,13 +33,13 @@ class RegistrationStepPresenter
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
         private LicenceRepository $licenceRepository,
-        private LicenceService $licenceService,
+        private SeasonService $seasonService,
         private LevelRepository $levelRepository,
         private UserService $userService,
         private SessionRepository $sessionRepository,
         private ReplaceKeywordsService $replaceKeywordsService
     ) {
-        $this->season = $this->licenceService->getCurrentSeason();
+        $this->season = $this->seasonService->getCurrentSeason();
     }
 
     public function present(?RegistrationStep $registrationStep, ?UserViewModel $user, ?int $step, int $render, ?string $class = null): void
@@ -74,7 +74,7 @@ class RegistrationStepPresenter
             'entityManager' => $this->entityManager,
             'userRepository' => $this->userRepository,
             'licenceRepository' => $this->licenceRepository,
-            'licenceService' => $this->licenceService,
+            'seasonService' => $this->seasonService,
             'levelRepository' => $this->levelRepository,
             'sessionRepository' => $this->sessionRepository,
             'replaceKeywordsService' => $this->replaceKeywordsService,

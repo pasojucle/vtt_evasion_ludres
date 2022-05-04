@@ -13,7 +13,7 @@ twig:
     globals:
         menu_service: '@App\Service\MenuService'
         menu_admin_service: '@App\Service\MenuAdminService'
-        licence_service: '@App\Service\LicenceService'
+        season_service: '@App\Service\SeasonService'
         registration_service: '@App\Service\RegistrationService'
         user_service: '@App\Service\UserService'
         order_service: '@App\Service\Order\OrderGetService'

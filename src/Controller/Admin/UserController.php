@@ -4,15 +4,24 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\User;
 use App\Entity\Level;
 use App\Form\Admin\UserType;
 use App\Service\MailerService;
 use App\ViewModel\UserPresenter;
+use App\Service\PaginatorService;
 use App\ViewModel\UsersPresenter;
 use App\Repository\UserRepository;
-use App\Entity\User as  UserEntity;
+use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\SessionsPresenter;
+use App\Repository\SessionRepository;
+use App\ViewModel\BikeRidesPresenter;
+use App\Repository\BikeRideRepository;
+use App\UseCase\User\GetParticipation;
+use App\UseCase\User\GetParticipatioon;
 use App\UseCase\User\GetMembersFiltered;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\Admin\ParticipationFilterType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +35,8 @@ class UserController extends AbstractController
         private UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
         private UsersPresenter $usersPresenter,
-        private UserPresenter $userPresenter
+        private UserPresenter $userPresenter,
+        private PaginatorService $paginator
     ) {
     }
 
@@ -62,7 +72,7 @@ class UserController extends AbstractController
 
     #[Route('/adherent/{user}', name: 'user', methods: ['GET'])]
     public function adminUser(
-        UserEntity $user,
+        User $user,
         Request $request
     ): Response {
         $session = $request->getSession();
@@ -74,10 +84,26 @@ class UserController extends AbstractController
         ]);
     }
 
+
+    #[Route('/admin/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], defaults:['filtered' => false])]
+    public function adminUserParticipation(
+        SessionRepository $sessionRepository,
+        SessionsPresenter $sessionsPresenter,
+        GetParticipation $getParticipation,
+        Request $request,
+        User $user,
+        bool $filtered
+    ): Response {
+
+        return $this->render('user/admin/participation.html.twig', 
+            $getParticipation->execute($request, $user, $filtered)
+        );
+    }
+
     #[Route('/admin/adherent/edit/{user}', name: 'user_edit', methods: ['GET', 'POST'])]
     public function adminUserEdit(
         Request $request,
-        UserEntity $user
+        User $user
     ): Response {
         $licence = $user->getLastLicence();
         $form = $this->createForm(UserType::class, $user, [
@@ -112,7 +138,7 @@ class UserController extends AbstractController
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
     public function adminSendLicence(
         MailerService $mailerService,
-        UserEntity $user
+        User $user
     ): Response {
         $identity = $user->getFirstIdentity();
         $mailerService->sendMailToMember([

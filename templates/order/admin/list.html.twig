@@ -3,55 +3,55 @@
 {% block title %}Gestion des commandes{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Gestion des commandes - <span class="badge badge-info">{{ count }}</span></h2>
-            </div>
-            <div class="block-body">
-                {% if form is defined %}
-                {{ form_start(form) }}
-                <div class="filters">
-                    <ul>
-                        <li>{{ form_widget(form.status)}}</li>
-                    </ul>
-                </div>
-                {{ form_end(form) }}
-                {% endif %}
-                <ul id="orders_container">
-                    {% for order in orders %}
-                        <li class="row row-list">
-                            <div class="col-md-8 col-xs-12">
-                                <a href="{{ path('admin_order', {'orderHeader': order.id})}}" class="btn btn-list btn-light" title="Voir la commande">
-                                    <div class="row">
-                                        <div class="col-md-6 col-xs-8">Cde {{ order.id }} du {{ order.createdAt }}</div>
-                                        <div class="col-md-3 col-xs-4">{{ order.amount }}</div>
-                                        <div class="col-md-3 col-xs-12">{{ constant('App\\Entity\\OrderHeader::STATUS')[order.status]|trans }}</div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-md-4 col-xs-12">
-                                {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_ORDERED') %}
-                                    <a class="btn btn-success order-status" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_VALIDED')})}}" title="Valider">
-                                        <i class="fas fa-check"></i> Valider
-                                    </a>
-                                {% endif %}
-                                {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_VALIDED') %}
-                                    <a class="btn btn-primary order-status" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_COMPLETED')})}}" title="Cloturer">
-                                        <i class="fas fa-check"></i> Cloturer
-                                    </a>
-                                {% endif %}
-                                {% if order.status < constant('App\\Entity\\OrderHeader::STATUS_COMPLETED') %}
-                                    <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
-                                        <i class="fas fa-times"></i>
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </li>
-                    {% endfor %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Gestion des commandes - <span class="badge badge-info">{{ count }}</span></h1>
+        </div>
+        <div class="wrapper-body">
+            {% if form is defined %}
+            {{ form_start(form) }}
+            <div class="filters">
+                <ul>
+                    <li>{{ form_widget(form.status)}}</li>
                 </ul>
-                {% if orders is empty %}Aucune commande{% endif %}
             </div>
+            {{ form_end(form) }}
+            {% endif %}
+            <ul id="orders_container">
+                {% for order in orders %}
+                    <li class="col-list col-1md-1sx-btn">
+                        <div class="list-dropdown">
+                            <a href="{{ path('admin_order', {'orderHeader': order.id})}}" class="btn btn-list btn-light" title="Voir la commande">
+                                <div class="row">
+                                    <div class="col-md-5 col-xs-8">Cde {{ order.id }} du {{ order.createdAt }}</div>
+                                    <div class="col-md-3 col-xs-4">{{ order.amount }}</div>
+                                    <div class="col-md-4 col-xs-12">{{ constant('App\\Entity\\OrderHeader::STATUS')[order.status]|trans }}</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div>
+                            {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_ORDERED') %}
+                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_VALIDED')})}}" title="Valider">
+                                    <i class="fas fa-check"></i> Valider
+                                </a>
+                            {% endif %}
+                            {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_VALIDED') %}
+                                <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_COMPLETED')})}}" title="Cloturer">
+                                    <i class="fas fa-check"></i> Cloturer
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if order.status < constant('App\\Entity\\OrderHeader::STATUS_COMPLETED') %}
+                                <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            {% endif %}
+                        </di>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if orders is empty %}Aucune commande{% endif %}
         </div>
         {% include('common/pagination.html.twig') %}
     </div>

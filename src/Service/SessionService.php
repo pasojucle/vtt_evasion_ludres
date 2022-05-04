@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\BikeRide;
-use App\Entity\Cluster;
+use DateInterval;
 use App\Entity\User;
-use App\Repository\LevelRepository;
-use App\Repository\SessionRepository;
-use App\ViewModel\ClusterPresenter;
+use DateTimeImmutable;
+use App\Entity\Cluster;
+use App\Entity\BikeRide;
 use App\ViewModel\UserPresenter;
+use App\Repository\LevelRepository;
+use App\ViewModel\ClusterPresenter;
+use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\Collection;
 
 class SessionService
@@ -20,8 +22,11 @@ class SessionService
         private UserPresenter $userPresenter,
         private LevelRepository $levelRepository,
         private MailerService $mailerService,
-        private ClusterPresenter $clusterPresenter
-    ) {
+        private ClusterPresenter $clusterPresenter,
+        private ParameterService $parameterService
+    ) 
+    {
+        $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
 
     public function getSessionsBytype(BikeRide $bikeRide, ?User $user = null): array
@@ -105,5 +110,19 @@ class SessionService
                 'testing_end' => true,
             ], 'EMAIL_END_TESTING');
         }
+    }
+    
+    public function getSeasonInterval(int $season): array
+    {
+        $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
+        $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
+        $endAt->sub(new DateInterval('PT1D'));
+
+        $interval = [
+            'startAt' => $startAt->setTime(0,0,0,),
+            'endAt' => $endAt->setTime(0,0,0,),
+        ];
+        dump($interval);
+        return $interval;
     }
 }

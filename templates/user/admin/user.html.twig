@@ -3,116 +3,146 @@
 {% block title %}{{ user.member.fullName }}{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
-                <h2>
-                    {{ user.member.fullName }}
-                </h2>
-                <span class="tools">
-                    {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}
-                        <a class="btn btn-primary btn-ico" href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"><i class="fas fa-exchange-alt"></i></a>
-                    {% endif %}
-                    <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
-                        class="btn btn-secondary btn-ico" title="Retour à la liste des adhérents">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </span>
-            </div>
-            <div class="block-body row padding-10" style="align-items: flex-start;">
-                {% set licence = user.lastLicence %}
-                {% if user.member.picture %}
-                    <div class="col-md-2 col-xs-4">
-                        <img src="{{ '/uploads/' ~ user.member.picture }}" style="width: 100px;">
-                    </div>
-                {% endif %}
-                <div class="col-md-5 col-xs-8">
-                    <ul>
-                        <li><b>Né(e) le : </b>{{ user.member.birthDate }}</li>
-                        <li><i class="fas fa-map-marker-alt"></i> {{ user.member.address.street }}</li>
-                        <li>{{ user.member.address.postalCode }} {{ user.member.address.town }}</li>
-                        <li><i class="fas fa-at"></i> {{ user.member.email }}</li>
-                        <li><i class="fas fa-phone-square"></i> {{ user.member.phone }}</li>
-                        {% if user.approvalGoingHome is not null %}
-                            <li class="{{ user.approvalGoingHome.class }}">{{ user.approvalGoingHome.message }}</li>
-                        {% endif %}
-                    </ul>
-                  {% if is_granted('ROLE_REGISTER') %}
-                        <a href="{{ path('admin_identity_edit', {'user': user.entity.id}) }}"
-                            class="btn btn-secondary marging-bottom-20" title="Modifier">
-                            <i class="fas fa-edit"></i> Modifier
-                        </a>
+    {% set licence = user.lastLicence %}
+    <div class="wrapper">
+        <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+            <h1>
+                {{ user.member.fullName }}
+            </h1>
+            <span class="tools">
+                <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
+                    class="btn btn-ico" title="Retour à la liste des adhérents">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
+        </div>
+        <div class="wrapper-body" style="align-items: flex-start;">
+            <div class="block background-ligth">
+                <div class="block-title">
+                    <h2>Adhérent</h2>
+                    {% if is_granted('ROLE_REGISTER') %}
+                        <div class="tools">
+                            <a href="{{ path('admin_identity_edit', {'user': user.entity.id}) }}"
+                                class="btn" title="Modifier">
+                                <i class="fas fa-edit"></i> 
+                            </a>
+                        </div>
                     {% endif %}
                 </div>
-                {% if licence is not empty %}
-                    <div class="col-md-5 col-xs-12">
+                <div class="row block-body">
+                    {% if user.member.picture %}
+                        <div class="col-md-3 col-xs-4">
+                            <img src="{{ '/uploads/' ~ user.member.picture }}" style="width: 100px;">
+                        </div>
+                    {% endif %}
+                    <div class="col-md-9 col-xs-12">
                         <ul>
-                            <li><b>Licence :</b> {{ user.licenceNumber }}</li>
-                            <li><b>Saison {{ licence.season }}</b></li>
+                            <li><div class="row"><div class="col-md-5 col-xs-6"><b>Date de naissance : </b></div><div class="col-md-7 col-xs-6">{{ user.member.birthDate }}</div></div></li>
+                            <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse : </b></div><div class="col-md-7 col-xs-6">{{ user.member.address.street }}</div></div></li>
+                            <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6">{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
+                            <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-7 col-xs-6">{{ user.member.email }}</div></div></li>
+                            <li><div class="row"><div class="col-md-5 col-xs-6"><b>Téléphone : </b></div><div class="col-md-7 col-xs-6">{{ user.member.phone }}</div></div></li>
+                            {% if user.approvalGoingHome is not null %}
+                                <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6 {{ user.approvalGoingHome.class }}">{{ user.approvalGoingHome.message }}</div></div></li>
+                            {% endif %}
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            {% if user.kinship is not empty %}
+            <div class="block background-ligth">
+                <div class="block-title">
+                    <h2>Parents</h2>
+                    {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                        <div class="tools">
+                           <a href="{{ path('admin_identity_edit', {'user': user.entity.id, 'isKinship': 1}) }}"
+                                class="btn" title="Modifier">
+                                <i class="fas fa-edit"></i> 
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="block-body">
+                    <ul>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ user.kinship.type | trans  }}</b></div><div class="col-md-8 col-xs-6">{{ user.kinship.fullName }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.address.street }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.email }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.phone }}</div></div></li>
+                    </ul>
+                </div>
+            {% endif %}
+            {% if user.secondKinship is not empty %}
+                    <div class="separator"></div>
+                    <ul>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ user.secondKinship.type | trans  }} : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.fullName }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.phone }}</div></div></li>
+                    </ul>
+                </div>
+            {% endif %}
+                <div class="block background-ligth">
+                    <div class="block-title">
+                        <h2>Licence</h2>
+                        {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                            <div class="tools">
+                            <a href="{{ path('admin_user_edit', {'user': user.entity.id}) }}"
+                                    class="btn" title="Modifier">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="block-body">
+                        <ul>
+
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Numéro</b></div><div class="col-md-8 col-xs-6">{{ user.licenceNumber }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Saison</b></div><div class="col-md-8 col-xs-6">{{ licence.season }}</div></div></li>
                             {% if licence.status is not null %}
-                                <li>{{ licence.statusStr|trans }}</li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.statusStr|trans }}</div></div></li>
                             {% endif %}
                             {% if not licence.isFinal %}
-                                <li>Période de test en cours</li>
-                                <li>Nombre de sortie(s) : {{ user.testingBikeRides }}</li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6">{{ user.testingBikeRides }} sortie(s)</div></div></li>
                             {% endif %}
 
                             {% if licence.type is not null %}
-                                <li><b>Type : </b>{{ licence.type|trans }}</li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Type : </b></div><div class="col-md-8 col-xs-6">{{ licence.type|trans }}</div></div></li>
                             {% endif %}
                             {% if licence.coverage is not null %}
-                                <li><b>Assurance : </b>{{ licence.coverageStr|trans }}</li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
                             {% endif %}
-
                             {% if user.level is not null %}
-                                <li><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b> {{ user.level }}</li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b></div><div class="col-md-8 col-xs-6">{{ user.level }}</div></div></li>
                             {% endif %}
                         </ul>
-                        {% if is_granted('ROLE_REGISTER') %}
-                            <a href="{{ path('admin_user_edit', {'user': user.entity.id}) }}"
-                                class="btn btn-secondary marging-bottom-20" title="Modifier">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
+                    </div>
+                </div>
+            
+
+                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal and user.health is not empty %}
+                    <div class="block background-ligth">
+                    <div class="block-title">
+                        <h2>Informations sanitaires</h2>
+                        {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                            <div class="tools">
+                            <a href="{{ path('admin_health_edit', {'user': user.entity.id}) }}"
+                                    class="btn" title="Modifier">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                            </div>
                         {% endif %}
                     </div>
-                    {% if user.kinship is not empty %}
+                    <div class="block-body">
                         <div class="col-md-6 col-xs-12">
                             <ul>
-                                <li><b>{{ user.kinship.type | trans  }}</b> : {{ user.kinship.fullName }} </li>
-                                <li><i class="fas fa-map-marker-alt"></i> {{ user.kinship.address.street }}</li>
-                                <li>{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</li>
-                                <li><i class="fas fa-at"></i> {{ user.kinship.email }}</li>
-                                <li><i class="fas fa-phone-square"></i> {{ user.kinship.phone }}</li>
-                            </ul>
-                        </div>
-                    {% endif %}
-                    {% if user.secondKinship is not empty %}
-                        <div class="col-md-6 col-xs-12">
-                            <ul>
-                                <li><b>{{ user.secondKinship.type | trans  }}</b> : {{ user.secondKinship.fullName }} </li>
-                                <li><i class="fas fa-phone-square"></i> {{ user.secondKinship.phone }}</li>
-                            </ul>
-                        </div>
-                    {% endif %}
-                    {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
-                        <div class="col-md-12 col-xs-12">
-                            <a href="{{ path('admin_identity_edit', {'user': user.entity.id, 'isKinship': 1}) }}"
-                                class="btn btn-secondary marging-bottom-20" title="Modifier">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
-                        </div>
-                        <br>
-                    {% endif %}
-
-                    {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal and user.health is not empty %}
-                        <div class="col-md-6 col-xs-12">
-                            <ul>
-                                <li><b>N° de sécurité sociale : </b> {{ user.health.socialSecurityNumber }} </li>
-                                <li><b>Groupe sanguin : </b> {{ user.health.bloodGroup }}</li>
-                                <li><b>Mutuelle : </b>{{ user.health.mutualCompany }} - N° : </b>{{ user.health.mutualNumber }}</li>
-                                <li><b><i class="fas fa-syringe"></i> antitétanique : </b>{{ user.health.tetanusBooster }}</li>
-                                <li><b>Médecin traitant : </b>{{ user.health.doctorName }}</li>
-                                <li>{{ user.health.doctorAddress }} {{ user.health.doctorTown }} <i class="fas fa-phone-square"></i> {{ user.health.doctorPhone }}</li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>N° de sécurité sociale :</b></div><div class="col-md-8 col-xs-6">{{ user.health.socialSecurityNumber }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Groupe sanguin : </b></div><div class="col-md-8 col-xs-6">{{ user.health.bloodGroup }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Mutuelle : </b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualCompany }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualNumber }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>antitétanique : </b></div><div class="col-md-8 col-xs-6">{{ user.health.tetanusBooster }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Médecin traitant : </b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorName }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorPhone }}</div></div></li>
+                                <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorAddress }} {{ user.health.doctorTown }}</div></div></li>
                             </ul>
                         </div>
                     
@@ -125,24 +155,23 @@
                                             <li>
                                                 {{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}
                                                 {% if disease.title is not null %} : {{ disease.title }}{% endif %}
-                                                <i class="fas fa-file-medical"></i> {{ disease.curentTreatment }} <i class="fas fa-ambulance"></i> {{ disease.emergencyTreatment }}
+                                                    <li><div class="row">
+                                                            <div class="col-md-4 col-xs-4"><b> </b></div>
+                                                            <div class="col-md-4 col-xs-4">{{ disease.curentTreatment }}</div>
+                                                            <div class="col-md-4 col-xs-4">{{ user.health.doctorAddress }} {{ user.health.doctorTown }}</div>
+                                                        </div>
+                                                    </li>
+
+                                                <i class="fas fa-file-medical"></i> <i class="fas fa-ambulance"></i> {{ disease.emergencyTreatment }}
                                             </li>
                                         {% endfor %}
                                     </ul>
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        {% if is_granted('ROLE_REGISTER')  %}
-                            <div class="col-md-12 col-xs-12">
-                            <a href="{{ path('admin_health_edit', {'user': user.entity.id}) }}"
-                                class="btn btn-secondary marging-bottom-20" title="Modifier">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
-                            </div>
-                        {% endif %}
                     {% endif %}
-                {% endif %}
-            </div>
+                </div>
         </div>
     </div>
 {% endblock %}
+

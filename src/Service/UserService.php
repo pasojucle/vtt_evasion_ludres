@@ -16,7 +16,7 @@ class UserService
     public function __construct(
         private ParameterBagInterface $params,
         private SluggerInterface $slugger,
-        private LicenceService $licenceService,
+        private SeasonService $seasonService,
         private EntityManagerInterface $entityManager,
         private UserPresenter $userPresenter
     ) {
@@ -61,8 +61,8 @@ class UserService
             foreach ($users as $user) {
                 $usersDto[] = new User(
                     $user,
-                    $this->licenceService->getCurrentSeason(),
-                    $this->licenceService->getSeasonsStatus()
+                    $this->seasonService->getCurrentSeason(),
+                    $this->seasonService->getSeasonsStatus()
                 );
             }
         }

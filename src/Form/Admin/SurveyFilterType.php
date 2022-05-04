@@ -36,13 +36,6 @@ class SurveyFilterType extends AbstractType
                     'class' => 'btn',
                 ],
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => '<i class="fas fa-search"></i>',
-                'label_html' => true,
-                'attr' => [
-                    'class' => 'btn btn-ico',
-                ],
-            ])
         ;
     }
 

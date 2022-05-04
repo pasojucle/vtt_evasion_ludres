@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.member.fullName }}{% endblock %}
+
+{% block body %}
+    {% set licence = user.lastLicence %}
+    <div class="wrapper">
+        <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+            <h1>
+                {{ user.member.fullName }}
+            </h1>
+            <span class="tools">
+                <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
+                    class="btn btn-ico" title="Retour à la liste des adhérents">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
+        </div>
+        <div class="wrapper-body">
+            {{ form_start(form) }}
+            <div class="form-group filters">
+                <div class="form-group-inline">{{ form_row(form.season) }}</div>
+                <div class="form-group-inline">{{ form_row(form.bikeRideType) }}</div>
+            </div>
+            {{ form_end(form) }}
+            <ul>
+                {% for session in sessions %}       
+                    <li class="row row-list light-separator">
+                        <div class="col-md-4 col-xs-12">{{ session.bikeRide.period }}</div>
+                        <div class="col-md-4 col-xs-12">{{ session.bikeRide.title }} </div>
+                        <div class="col-md-4 col-xs-12">
+                            {% if session.userIsOnSite %} %<span class="success"></span>{% else %}{% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% include('common/pagination.html.twig') %}
+    </div>
+{% endblock %}
+

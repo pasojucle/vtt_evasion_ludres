@@ -30,7 +30,8 @@ $(document).ready(function(){
     $('.js-datepicker').datepicker({
         format: 'yyyy-mm-dd hh:ii',
     });
-    $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_levels, #user_filter_user, #registration_filter_isFinal, #order_filter_status', submitFom);
+    // $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_levels, #user_filter_user, #registration_filter_isFinal, #order_filter_status', submitFom);
+    $(document).on('change', '.filters .select2, .filters select, .filters .btn', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
     $(document).on('change', '#bike_ride_bikeRideType', modifierBikeRide);
@@ -43,8 +44,8 @@ $(document).ready(function(){
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
     $(document).on('click', '.fa-clipboard', clipboard);
     $(document).on('click', '.email-to-clipboard', emailToClipboard);
+    $(document).on('click', 'button:not(.dropdown-toggle), a[data-toggle="modal"]', hideDropdown);
     $(document).on('click', 'button.dropdown-toggle', toggleDropdown);
-    $(document).on('click', 'a, button:not(.dropdown-toggle)', hideDropdown);
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
@@ -412,15 +413,18 @@ function toggleDropdown(event) {
     const dropdownButton = $(this);
     const dropdownMenu = dropdownButton.parent().find('[data-target="'+dropdownButton.data('toggle')+'"]');
     $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
-        if ($(this).data('target') !== dropdownMenu.data('target') && $(this).data('target') !== dropdownButton.data('toggle') ) {
+        console.log($(this), dropdownButton.data('toggle'));
+        if ($(this).data('target') !== dropdownMenu.data('target') && $(this).data('toggle') !== dropdownButton.data('toggle') ) {
             $(this).removeClass('active');
         }
     });
+    
     dropdownButton.toggleClass('active');
     dropdownMenu.toggleClass('active');
 }
 
 function hideDropdown() {
+    console.log($(this));
     $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
         $(this).removeClass('active');
     });

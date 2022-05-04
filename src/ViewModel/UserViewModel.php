@@ -124,7 +124,7 @@ class UserViewModel extends AbstractViewModel
 
     public function getCoverage(): ?int
     {
-        $seasonLicence = $this->entity->getSeasonLicence($this->currentSeason);
+        $seasonLicence= $this->entity->getSeasonLicence($this->currentSeason);
 
         return (null !== $seasonLicence) ? $seasonLicence->getCoverage() : null;
     }

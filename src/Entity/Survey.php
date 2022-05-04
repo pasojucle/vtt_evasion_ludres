@@ -21,7 +21,7 @@ class Survey
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 30)]
+    #[Column(type: 'string', length: 50)]
     private string $title = '';
 
     #[Column(type: 'text')]

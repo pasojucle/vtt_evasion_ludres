@@ -18,7 +18,7 @@ class PdfService
 {
     public function __construct(
         private FilenameService $filenameService,
-        private LicenceService $licenceService,
+        private SeasonService $seasonService,
         private KernelInterface $kernel,
         private UserPresenter $userPresenter
     ) {
@@ -88,7 +88,7 @@ class PdfService
             ],
             [
                 'value' => 'X',
-                'x' => $coverage[$this->userPresenter->viewModel()->getCoverage($this->licenceService->getCurrentSeason())],
+                'x' => $coverage[$this->userPresenter->viewModel()->getCoverage($this->seasonService->getCurrentSeason())],
                 'y' => 247.5,
             ],
             [

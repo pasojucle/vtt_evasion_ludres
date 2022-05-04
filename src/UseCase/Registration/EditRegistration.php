@@ -12,7 +12,7 @@ use App\Repository\IdentityRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginAuthenticator;
 use App\Service\IdentityService;
-use App\Service\LicenceService;
+use App\Service\SeasonService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
 use App\Service\UploadService;
@@ -46,7 +46,7 @@ class EditRegistration
         private LoginAuthenticator $authenticator,
         private UrlGeneratorInterface $urlGenerator,
         private IdentityService $identityService,
-        private LicenceService $licenceService,
+        private SeasonService $seasonService,
         private ParameterService $parameterService,
         private MailerService $mailerService,
         private ValidatorInterface $validator,
@@ -71,8 +71,8 @@ class EditRegistration
         }
 
         if (null !== $user->getIdentities()->first()->getBirthDate()) {
-            $category = $this->licenceService->getCategory($user);
-            $user->getSeasonLicence($season)->setCategory($category);
+            $category = $this->seasonService->getCategory($user);
+            $user->getSeasonService($season)->setCategory($category);
             if (Licence::CATEGORY_MINOR === $category) {
                 $this->schoolTestingRegistrationValidator($form, $progress);
                 $this->identityService->setAddress($user);
@@ -81,11 +81,11 @@ class EditRegistration
         $this->UploadFile($request, $user);
 
         $isMedicalCertificateRequired = $this->isMedicalCertificateRequired($progress);
-        $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
+        $user->getSeasonService($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
         if ($form->isValid()) {
             if (UserType::FORM_OVERVIEW === $progress['current']->form) {
-                $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
+                $user->getSeasonService($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
                 $this->sendMailToClub($user);
             }
             $this->entityManager->flush();
@@ -152,7 +152,7 @@ class EditRegistration
     private function isMedicalCertificateRequired(array $progress): bool
     {
         $isMedicalCertificateRequired = false;
-        $seasonLicence = $progress['seasonLicence'];
+        $seasonService= $progress['seasonLicence'];
         $user = $progress['user'];
         if (Licence::TYPE_RIDE !== $seasonLicence->getType()) {
             $medicalCertificateDate = $user->health->medicalCertificateDateObject;

@@ -11,7 +11,7 @@ class GetMembersFiltered extends GetUsersFiltered
 {
     public int $statusType = UserFilterType::STATUS_TYPE_MEMBER;
 
-    public string $statusPlaceholder = 'Selectionnez une saison';
+    public string $statusPlaceholder = 'Sélectionnez une saison';
     
     public string $filterName = 'admin_users_filters';
     
@@ -24,11 +24,7 @@ class GetMembersFiltered extends GetUsersFiltered
 
     public function getStatusChoices(): ?array
     {
-        $statusChoices = [];
-        foreach (range(2021, $this->licenceService->getCurrentSeason()) as $season) {
-            $statusChoices['Saison '.$season] = 'SEASON_'.$season;
-        }
 
-        return array_reverse($statusChoices);
+        return $this->seasonService->getSeasons();
     }
 }

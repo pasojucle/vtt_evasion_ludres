@@ -65,9 +65,7 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     max-height: 500px;
     transition: max-height 0.25s ease-in;
 }
-.nav-group .block-title .btn {
-    color: var(--white-color);
-}
+
 .nav-group .block-title {
     margin: unset;
 }

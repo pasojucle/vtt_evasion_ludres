@@ -3,26 +3,24 @@
 {% block title %}{{ user.member.fullName }}{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
-                <h2>{{ user.member.fullName }}</h2>
-                <span class="tools">
-                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
-                        class="btn btn-secondary btn-ico" title="Retour à la fiche de l'adhérents">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </span>
-            </div>
-            {{ form_start(form) }}
-            <div class="block-body padding-10">
-                {% include('health/form.html.twig') %}
-            </div>
-            <div class="block-footer">
-                {{ form_errors(form) }}
-                {{ form_row(form.save) }}
-            </div>
-            {{ form_end(form) }}
+    <div class="wrapper">
+        <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+            <h1>{{ user.member.fullName }}</h1>
+            <span class="tools">
+                <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
+                    class="btn btn-ico" title="Retour à la fiche de l'adhérents">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
         </div>
+        {{ form_start(form) }}
+        <div class="wrapper-body padding-10">
+            {% include('health/form.html.twig') %}
+        </div>
+        <div class="wrapper-footer">
+            {{ form_errors(form) }}
+            {{ form_row(form.save) }}
+        </div>
+        {{ form_end(form) }}
     </div>
 {% endblock %}

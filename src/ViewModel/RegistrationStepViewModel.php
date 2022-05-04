@@ -53,7 +53,7 @@ class RegistrationStepViewModel extends AbstractViewModel
     private function getForm(RegistrationStep $registrationStep, ?UserViewModel $user, int $step, $services): ?FormInterface
     {
         $form = null;
-        $currentSeason = $services['licenceService']->getCurrentSeason();
+        $currentSeason = $services['seasonService']->getCurrentSeason();
         $seasonLicence = $user->entity->getSeasonLicence($currentSeason);
         $formFactory = $services['formFactory'];
         $router = $services['router'];

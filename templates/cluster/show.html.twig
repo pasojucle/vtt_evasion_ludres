@@ -4,9 +4,9 @@
 {% block body %}
 <div class="wrapper">
     <div class="wrapper-title">
-        <h2>{{ bikeRide.title }} - {{ bikeRide.period }}</h2>
+        <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
         <span class="tools">
-            <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+            <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
         </span>
     </div>
     <div id="sessions_container" class="wrapper-body">

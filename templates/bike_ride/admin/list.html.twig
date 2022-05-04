@@ -5,18 +5,23 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h2>Programme des sorties</h2>
+            <h1>Programme des sorties</h1>
             <span class="tools">
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('admin_bike_ride_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter une sortie"><i class="fas fa-plus"></i></a>
-            {% endif %}
+
             </span>
         </div>
         <div class="wrapper-body">
-            {% include('bike_ride/filter.html.twig') %}
+            <div class="row">
+                <div class="col-md-8 col-xs-12">{% include('bike_ride/filter.html.twig') %}</div>
+                <div class="col-md-4 col-xs-12 align-right">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('admin_bike_ride_edit') }}" class="btn btn-primary" title="Ajouter une sortie"><i class="fas fa-plus"></i> Ajouter une sortie</a>
+                    {% endif %}
+                </div>
+            </div>    
             <ul>
                 {% for bikeRide in bikeRides %}                      
-                    <li class="col-list col-list-2btn">
+                    <li class="list-dropdown">
                         {% set bikeRide_content %}
                             <div class="row">
                                 <div class="col-md-3 col-xs-5">{{ bikeRide.startAt | date('d/m/y') }}</div>
@@ -24,22 +29,30 @@
                             </div>
                         {% endset %}
                         {% if bikeRide.bikeRideType.isRegistrable %}
-                            <a class="btn btn-list btn-light" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.entity.id}) }}" title="Voir les participants">
+                            <a class="" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.entity.id}) }}" title="Voir les participants">
                                 {{ bikeRide_content }}
                             </a>
                         {% else %}
                             <div class="list-item">{{ bikeRide_content }}</div>
                         {% endif %}
-                        <div>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                {% if bikeRide.startAt <= date() %}
-                                    <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-success btn-ico" title="Exporter la séance">
-                                        <i class="fas fa-file-download"></i>
-                                    </a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="dropdown">
+                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ bikeRide.entity.id }}"><i class="fas fa-ellipsis-v"></i></button>
+                                <div class="dropdown-menu" data-target="dropdown-{{ bikeRide.entity.id }}">
+                                    <div class="dropdown-title">{{ bikeRide.startAt | date('d/m/y') }} - {{ bikeRide.title }}</div>
+                                    <ul class="dropdown-body">
+                                        <li><a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier">
+                                            <i class="fas fa-pencil-alt"></i> Modifier
+                                        </a></li>
+                                        {% if bikeRide.startAt <= date() %}
+                                            <li><a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Exporter la séance">
+                                                <i class="fas fa-file-download"></i> Exporter la séance
+                                            </a></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

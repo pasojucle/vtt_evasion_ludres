@@ -49,10 +49,10 @@ class ParameterType extends AbstractType
                             'entry_options' => [
                                 'label' => false,
                                 'row_attr' => [
-                                    'class' => 'row',
+                                    'class' => 'row form-group-collection',
                                 ],
                                 'attr' => [
-                                    'class' => 'col-md-11 form-group',
+                                    'class' => 'col-md-11',
                                 ],
                             ],
                             'allow_add' => true,

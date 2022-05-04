@@ -4,26 +4,21 @@
 
 {% block body %}
  <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Gestion de la boutique</h2>
-                <span class="tools">
-                    <a href="{{ path('admin_product') }}" class="btn btn-secondary btn-ico" title="Ajouter un produit"><i class="fas fa-plus"></i></a>
-                </span>
+            <div class="wrapper-title">
+                <h1>Gestion de la boutique</h1>
             </div>
-            <div class="block-body">
-                <ul class="padding-10">
+            <div class="wrapper-body">
+                <span class="tools">
+                    <a href="{{ path('admin_product') }}" class="btn btn-primary" title="Ajouter un produit"><i class="fas fa-plus"></i> Ajouter</a>
+                </span>
+                <ul>
                     {% for product in products %}
-                        <li>
-                            <div class="row row-list">
-                                <div class="col-md-10 col-xs-10">
-                                    {{ product.name }}
-                                </div>
-                                <div class="col-md-2 col-xs-2">
-                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_product', {'product' : product.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                        <a class="btn btn-primary btn-ico" href="{{ path('admin_product_delete', {'product' : product.id}) }}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                                </div>
+                        <li class="col-list col-list-2btn">
+                            <div class="list-item">
+                                {{ product.name }}
                             </div>
+                            <a class="btn btn-primary btn-ico" href="{{ path('admin_product', {'product' : product.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                            <a class="btn btn-danger btn-ico" href="{{ path('admin_product_delete', {'product' : product.id}) }}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
                         </li>
                     {% endfor %}
                 </ul>
