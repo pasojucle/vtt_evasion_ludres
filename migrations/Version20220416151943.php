@@ -44,9 +44,12 @@ final class Version20220416151943 extends AbstractMigration
         $this->addSql('DELETE FROM `parameter_group` WHERE `name` = \'BIKE_RIDE\'');
         $this->addSql('ALTER TABLE bike_ride ADD bike_ride_type_id INT');
         $this->addSql('ALTER TABLE indemnity ADD CONSTRAINT FK_6BBFD1CEC9743080 FOREIGN KEY (bike_ride_type_id) REFERENCES bike_ride_type (id)');
+
+        $this->addSql('UPDATE `bike_ride` SET  `type`= 3 WHERE `type` = 0 AND `title` = \'Rando adultes et ados\'');
+        $this->addSql('UPDATE `bike_ride` SET  `type`= 2 WHERE `type` = 0 AND `title` = \'Ecole VTT\'');
+        $this->addSql('UPDATE `bike_ride` SET `bike_ride_type_id` = `type`');
         $this->addSql('ALTER TABLE bike_ride ADD CONSTRAINT FK_8A8A7B3CC9743080 FOREIGN KEY (bike_ride_type_id) REFERENCES bike_ride_type (id)');
         $this->addSql('CREATE INDEX IDX_8A8A7B3CC9743080 ON bike_ride (bike_ride_type_id)');
-        $this->addSql('UPDATE `bike_ride` SET `bike_ride_type_id` = `type`');
         $this->addSql('ALTER TABLE bike_ride CHANGE bike_ride_type_id bike_ride_type_id INT NOT NULL');
         $this->addSql('ALTER TABLE bike_ride DROP `type`');
     }
