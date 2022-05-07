@@ -17,4 +17,10 @@ class Currency
     {
         return number_format($this->amount, 2).' €';
     }
+
+
+    public function add($amountToAdd): float
+    {
+        return $this->amount += $amountToAdd->amount;
+    }
 }

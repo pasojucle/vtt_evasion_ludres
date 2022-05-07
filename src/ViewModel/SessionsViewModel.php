@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
+use App\Model\Currency;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class SessionsViewModel
@@ -14,8 +15,8 @@ class SessionsViewModel
     {
         $sessionsViewModel = [];
         if (!empty($sessions)) {
-            foreach ($sessions as $ession) {
-                $sessionsViewModel[] = SessionViewModel::fromSession($ession, $services);
+            foreach ($sessions as $session) {
+                $sessionsViewModel[] = SessionViewModel::fromSession($session, $services);
             }
         }
 

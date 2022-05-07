@@ -7,15 +7,14 @@
 {% block body %}
  <div class="wrapper">
     {{ form_start(form) }}
-    <div class="block padding-10">
-        <div class="block-title">
-            <h2>{{ title }}</h2>
+        <div class="wrapper-title">
+            <h1>{{ title }}</h1>
             {% set position = (link is not null) ? link.position : constant('App\\Entity\\Link::POSITION_LINK_PAGE') %}
             <span class="tools">
-                <a href="{{ path('admin_links', {'position': position}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>
+                <a href="{{ path('admin_links', {'position': position}) }}" class="btn btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
-        <div class="block-body">
+        <div class="wrapper-body">
             <div class="form-group">
                 {{ form_row(form.url) }}
             </div>
@@ -42,13 +41,12 @@
                 </div>
             {% endif %}
         </div>
-        <div class="block-footer">
+        <div class="wrapper-footer">
             {{ form_widget(form.save) }}
             {% if form.search is defined %}
                 {{ form_widget(form.search) }}
             {% endif %}
         </div>
-    </div>
     {{ form_end(form) }}
 </div>
 {% endblock %}

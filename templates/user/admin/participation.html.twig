@@ -1,14 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ user.member.fullName }}{% endblock %}
+{% block title %}Participation - {{ user.member.fullName }}{% endblock %}
 
 {% block body %}
     {% set licence = user.lastLicence %}
     <div class="wrapper">
         <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
-            <h1>
-                {{ user.member.fullName }}
-            </h1>
+            <h1>Participation - <span class="badge badge badge-info">{{ count }}</span></h1>
             <span class="tools">
                 <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
                     class="btn btn-ico" title="Retour à la liste des adhérents">
@@ -17,6 +15,8 @@
             </span>
         </div>
         <div class="wrapper-body">
+            <h2>{{ user.member.fullName }}</h2>
+            <p>Total des indemnités : {{ total_indemnities.toString }}</p>
             {{ form_start(form) }}
             <div class="form-group filters">
                 <div class="form-group-inline">{{ form_row(form.season) }}</div>
@@ -26,11 +26,13 @@
             <ul>
                 {% for session in sessions %}       
                     <li class="row row-list light-separator">
-                        <div class="col-md-4 col-xs-12">{{ session.bikeRide.period }}</div>
-                        <div class="col-md-4 col-xs-12">{{ session.bikeRide.title }} </div>
-                        <div class="col-md-4 col-xs-12">
-                            {% if session.userIsOnSite %} %<span class="success"></span>{% else %}{% endif %}
+                        {% set col_md = user.level.type == constant('App\\Entity\\Level::TYPE_FRAME') ? 3 : 4 %}
+                        <div class="col-md-{{ col_md}} col-xs-12">{{ session.bikeRide.period }}</div>
+                        <div class="col-md-{{ col_md}} col-xs-12">{{ session.bikeRide.title }} </div>
+                        <div class="col-md-{{ col_md}} col-xs-12">
+                            {% if session.userIsOnSite %}<span class="success"></span> Présent{% else %}<span class="alert-danger"></span> Absent{% endif %}
                         </div>
+                        <div class="col-md-{{ col_md}} col-xs-12">{{ session.indemnityStr }} </div>
                     </li>
                 {% endfor %}
             </ul>

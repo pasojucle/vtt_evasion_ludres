@@ -39,6 +39,8 @@
                 {% endif %}
             {% endif %}
         {% endif %}
+        </div>
+        <div>
         {% if hasClusters and not cluster.isComplete and (session.availability is null or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
             <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.entity.id}) }}" class="btn btn-primary btn-ico" title="Changer de groupe">
                 <i class="fas fa-exchange-alt"></i>

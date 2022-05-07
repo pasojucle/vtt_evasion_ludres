@@ -7,7 +7,9 @@ namespace App\ViewModel;
 use App\Entity\User;
 use App\Twig\AppExtension;
 use App\Service\SeasonService;
+use App\Service\IndemnityService;
 use App\Service\ParameterService;
+use App\Repository\IndemnityRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Repository\MembershipFeeAmountRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,6 +24,7 @@ class ServicesPresenter
     public int $currentSeason;
     public array $seasonsStatus;
     public ?User $user;
+    public array $allIndemnities;
 
     public function __construct(
         private SeasonService $seasonService,
@@ -30,8 +33,9 @@ class ServicesPresenter
         private Security $security,
         public MembershipFeeAmountRepository $membershipFeeAmountRepository,
         public TranslatorInterface $translator,
-        public AppExtension $appExtension
-        
+        public AppExtension $appExtension,
+        private IndemnityRepository $indemnityRepository,
+        public IndemnityService $indemnityService
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
         $this->uploadsDirectory = $this->parameterBag->get('uploads_directory_path');
@@ -40,5 +44,6 @@ class ServicesPresenter
         $this->user = $this->security->getUser();
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
         $this->coverageFormStartAt = $this->parameterService->getParameterByName('COVERAGE_FORM_AVAILABLE_AT');
+        $this->allIndemnities = $this->indemnityRepository->findAll();
     }
 }

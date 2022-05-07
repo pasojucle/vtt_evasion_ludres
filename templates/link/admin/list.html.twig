@@ -4,21 +4,16 @@
 
 {% block body %}
  <div class="wrapper">
-    <div class="block padding-10">
-        <div class="block-title">
-            <h2>Gestion des liens</h2>
-            <span class="tools">
-                <a href="{{ path('admin_link_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un lien"><i class="fas fa-plus"></i></a>
-            </span>
+        <div class="wrapper-title">
+            <h1>Gestion des liens</h1>
         </div>
-        <div>
             <nav  class="nav-tab">
                 {% for position, label in constant('App\\Entity\\Link::POSITIONS') %}
                     <a href="{{ path('admin_links', {'position': position} )}}"{% if position == current_position %} class="active"{% endif %}>{{ label|trans}}</a>
                 {% endfor %}
             </nav>
-        </div>
-        <div class="block-body">
+        <div class="wrapper-body">
+            <a href="{{ path('admin_link_edit') }}" class="btn btn-primary" title="Ajouter un lien"><i class="fas fa-plus"></i> Ajouter un lien</a>
             <ul class="sortable" data-route="admin_link_order" data-parameter="link">
                 {% for link in links %}     
                     <li class="ui-state-default" data-id="{{ link.id }}">

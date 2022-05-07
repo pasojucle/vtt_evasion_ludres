@@ -6,34 +6,30 @@
 
 {% block body %}
  <div class="wrapper">
-    <div class="padding-10">
-        {{ form_start(form) }}
-        <div class="block">
-            <div class="block-title">
-                <h2>{{ title }}</h2>
-                <span class="tools">
-                    <a href="{{ path('admin_modal_window_list') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>
-                </span>
+    {{ form_start(form) }}
+        <div class="wrapper-title">
+            <h1>{{ title }}</h1>
+            <span class="tools">
+                <a href="{{ path('admin_modal_window_list') }}" class="btn btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>
+            </span>
+        </div>
+        <div class="wrapper-body">
+            <div class="form-group">
+                {{ form_row(form.title) }}
             </div>
-            <div class="block-body">
-                <div class="form-group">
-                    {{ form_row(form.title) }}
-                </div>
-                {{ form_row(form.content) }}
-                <div class="form-group">
-                    {{ form_row(form.startAt) }}
-                    {{ form_row(form.endAt) }}
-                </div>
-                <div class="form-group">
-                    {{ form_row(form.minAge) }}
-                    {{ form_row(form.maxAge) }}
-                </div>
+            {{ form_row(form.content) }}
+            <div class="form-group">
+                {{ form_row(form.startAt) }}
+                {{ form_row(form.endAt) }}
             </div>
-            <div class="block-footer">
-                {{ form_widget(form.save) }}
+            <div class="form-group">
+                {{ form_row(form.minAge) }}
+                {{ form_row(form.maxAge) }}
             </div>
         </div>
-        {{ form_end(form) }}
-    </div>
+        <div class="wrapper-footer">
+            {{ form_widget(form.save) }}
+        </div>
+    {{ form_end(form) }}
 </div>
 {% endblock %}

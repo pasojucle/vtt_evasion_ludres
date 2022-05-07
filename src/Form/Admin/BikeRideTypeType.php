@@ -31,28 +31,37 @@ class BikeRideTypeType extends AbstractType
                 ],
             ])
             ->add('isRegistrable', CheckboxType::class, [
-                'label' => 'Possibilté de s\'incrire',
                 'block_prefix' => 'switch',
                 'required' => false,
                 'row_attr' => [
                     'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Ouvert aux inscriptions',
+                    'data-switch-off' => 'Fermé aux inscriptions',
                 ],
             ])
             ->add('isCompensable', CheckboxType::class, [
-                'label' => 'Possibilté d\'indemnité pour les encadrants',
                 'block_prefix' => 'switch',
                 'required' => false,
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
+                'attr' => [
+                    'data-switch-on' => 'Indemnités pour les encadrants',
+                    'data-switch-off' => 'Aucune d\'indemnité',
+                ],
             ])
             ->add('isSchool', CheckboxType::class, [
-                'label' => 'Inscription par groupes de niveaux de l\'école VTT <br>(1 seul groupe par défaut)',
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
                 'row_attr' => [
                     'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Inscription par groupes de niveaux de l\'école VTT',
+                    'data-switch-off' => 'Un seul groupe',
                 ],
             ])
             ->add('save', SubmitType::class, [

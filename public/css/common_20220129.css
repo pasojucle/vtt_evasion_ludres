@@ -938,6 +938,8 @@ nav.nav-tab a {
     border-radius: 5px 5px 0 0;
     line-height: 30px;
     height: 30px;
+    background-color: var(--white-color);
+    z-index: 2;
 }
 nav.nav-tab a:hover, nav.nav-tab a.active {
     color: var(--white-color);
@@ -952,6 +954,17 @@ nav.nav-tab {
     align-items: center;
     margin-bottom: 20px;
     margin: 20px 20px 0 20px;
+    position: relative;
+}
+nav.nav-tab::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: var(--gray-color);
+    bottom: 0px;
+    z-index: 1;
 }
 .background-color {
     margin: unset;

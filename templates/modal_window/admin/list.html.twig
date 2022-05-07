@@ -5,27 +5,29 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h2>Gestion de la pop'up</h2>
+            <h1>Gestion de la pop'up</h1>
             <span class="tools">
-                <a href="{{ path('admin_modal_window_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter une info"><i class="fas fa-plus"></i></a>
+                
             </span>
         </div>
         <div class="wrapper-body">
+            <a href="{{ path('admin_modal_window_edit') }}" class="btn btn-primary" title="Ajouter une info"><i class="fas fa-plus"></i> Ajouter une info</a>
             <ul class="sortable padding-10" data-route="admin_level_order" data-parameter="level">
                 {% for modal_window in modal_window_list %}     
                     <li class="col-list col-list-2btn">  
                         <div class="list-item">{{ modal_window.title }}</div>
-                        <div>
-                            {% if is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div>
                                 <a class="btn btn-primary btn-ico" href="{{ path('admin_modal_window_edit', {'modalWindow': modal_window.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                            </div>
+                            <div>
                                 {% if not modal_window.isDisabled %}
                                     <a class="btn btn-success btn-ico" href="{{ path('admin_modal_window_toggle_disable', {'modalWindow': modal_window.id})}}" title="Désactiver"><i class="fas fa-toggle-on"></i></a>
                                 {% else %}
                                     <a class="btn btn-danger btn-ico" href="{{ path('admin_modal_window_toggle_disable', {'modalWindow': modal_window.id})}}" title="Activer"><i class="fas fa-toggle-off"></i></a>
                                 {% endif %}
-                            {% endif %}
-                            
-                        </div>
+                            </div>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

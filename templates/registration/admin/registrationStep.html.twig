@@ -8,26 +8,27 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>{{ registrationStep.title }}</h2>
+        <div class="wrapper-title">
+            <h1>{{ registrationStep.title }}</h1>
+            <span class="tools">
+                <a href="{{ path('admin_registration_steps') }}" class="btn btn-ico" title="Retour au étapes des inscription"><i class="fas fa-chevron-left"></i></a>
+            </span>
+        </div>
+        <div class="wrapper-body">
+            {{ form_start(form) }}
+            <div class="form-group">{{ form_row(form.title) }}</div>
+            <div class="form-group">{{ form_row(form.category) }}</div>
+            <h2>Affichage</h2>
+            <div class="form-group">
+                {{ form_row(form.finalRender) }}
+                {{ form_row(form.testingRender) }}
             </div>
-            <div class="block-body">
-                {{ form_start(form) }}
-                <div class="form-group">{{ form_row(form.title) }}</div>
-                <div class="form-group">{{ form_row(form.category) }}</div>
-                <h2>Affichage</h2>
-                <div class="form-group">
-                    {{ form_row(form.finalRender) }}
-                    {{ form_row(form.testingRender) }}
-                </div>
-                <div class="form-group">{{ form_row(form.form) }}</div>
-                {{ form_row(form.pdfFile) }}
-                {{ registrationStep.filename }}
-                <div class="form-group">{{ form_row(form.content) }}</div>
-                {{ form_row(form.save) }}
-                {{ form_end(form) }}
-            </div>
+            <div class="form-group">{{ form_row(form.form) }}</div>
+            {{ form_row(form.pdfFile) }}
+            {{ registrationStep.filename }}
+            <div class="form-group">{{ form_row(form.content) }}</div>
+            {{ form_row(form.save) }}
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

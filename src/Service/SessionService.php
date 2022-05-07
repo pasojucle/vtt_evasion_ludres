@@ -122,7 +122,7 @@ class SessionService
             'startAt' => $startAt->setTime(0,0,0,),
             'endAt' => $endAt->setTime(0,0,0,),
         ];
-        dump($interval);
+
         return $interval;
     }
 }

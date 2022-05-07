@@ -10,30 +10,20 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>{{ title }}</h1>
-            <span class="tools">
-                {% if current_route == 'home' %}
-                    <a href="{{ path('admin_home_content_edit') }}" class="btn btn-ico" title="Ajouter un lien"><i class="fas fa-plus"></i></a>
-                {% endif %}
-            </span>
         </div>
-
+        {% if current_route == 'home' %}
+            <nav  class="nav-tab">
+                {% set tabs = constant('App\\Entity\\Content::IS_FLASH') %}
+                {% for isFlash, label in tabs %}
+                    <a href="{{ path('admin_home_contents', {'isFlash': isFlash} )}}"{% if is_flash == isFlash %} class="active"{% endif %}>{{ label|trans}}</a>
+                {% endfor %}
+                {% set class_ul ='sortable' %}
+            </nav>
+        {% endif %}
         <div class="wrapper-body">
             {% if current_route == 'home' %}
-            <div class="row">
-                <div class="col-md-8 col-xs-12">
-                    <nav  class="nav-tab">
-                        {% set tabs = constant('App\\Entity\\Content::IS_FLASH') %}
-                        {% for isFlash, label in tabs %}
-                            <a href="{{ path('admin_home_contents', {'isFlash': isFlash} )}}"{% if is_flash == isFlash %} class="active"{% endif %}>{{ label|trans}}</a>
-                        {% endfor %}
-                        {% set class_ul ='sortable' %}
-                    </nav>
-                </div>
-                <div class="col-md-4 col-xs-12 align-right">
-                    <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un lien"><i class="fas fa-plus"></i> Ajouter un lien</a>
-                </div>
-            </div> 
-        {% endif %}
+                <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un lien"><i class="fas fa-plus"></i> Ajouter un lien</a>
+            {% endif %}
             <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
                 {% for content in contents %}     
                     <li class="ui-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" data-id="{{ content.id }}">

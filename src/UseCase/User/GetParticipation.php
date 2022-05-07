@@ -18,6 +18,7 @@ use App\Repository\UserRepository;
 use App\ViewModel\SessionPresenter;
 use App\ViewModel\SessionsPresenter;
 use App\Repository\SessionRepository;
+use App\Service\IndemnityService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -37,7 +38,8 @@ class GetParticipation
         private SessionPresenter $sessionPresenter,
         private SessionsPresenter $sessionsPresenter,
         private SessionRepository $sessionRepository,
-        private SeasonService $seasonService
+        private SeasonService $seasonService,
+        private IndemnityService $indemnityService
     ) {
     }
 
@@ -45,17 +47,20 @@ class GetParticipation
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
-dump($filters);
+        
         $form = $this->createForm($filters);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $filtered = true;
+            $request->query->set('p', 1);
         }
 
         $session->set($this->filterName, $filters);
         $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
+        /** @var QueryBuilder $queryAll */
+        $queryAll = clone $query;
 
         $this->setRedirect($request, $user);
 
@@ -66,10 +71,12 @@ dump($filters);
         return [
             'user' => $this->userPresenter->viewModel(),
             'sessions' =>  $this->sessionsPresenter->viewModel()->sessions,
+            'total_indemnities' =>  $this->indemnityService->getTotal($queryAll->getQuery()->getResult()),
             'form' => $form->createView(),
             'lastPage' => $this->paginator->lastPage($sessions),
             'current_filters' => [
                 'filtered' => (int) $filtered,
+                'user' => $user->getId(),
             ],
             'count' => $this->paginator->total($sessions),
         ];

@@ -5,12 +5,13 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h2>Gestion des types de randos</h2>
+            <h1>Gestion des types de randos</h1>
             <span class="tools">
                 {# <a href="{{ path('admin_bikeRideType_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un niveau"><i class="fas fa-plus"></i></a> #}
             </span>
         </div>
         <div class="wrapper-body">
+            <a href="{{ path('admin_bike_ride_type_edit') }}" class="btn btn-primary" title="Ajouter un type de sortie"><i class="fas fa-plus"></i> Ajouter un type de sortie</a>
             <ul>
                 {% for bikeRideType in bikeRideTypes %}     
                     <li class="col-list col-list-1btn">
