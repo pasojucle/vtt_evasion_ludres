@@ -5,14 +5,28 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Session;
+use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
+use App\Repository\SessionRepository;
 
 class IndemnityService
 {
-    public function __construct(private IndemnityRepository $indemnityRepository)
+    public function __construct(private IndemnityRepository $indemnityRepository, private SeasonService $seasonService, private SessionRepository $sessionRepository)
     {
 
+    }
+
+    public function getUserIndemnities(User $user, ?int $season = null): Currency
+    {   
+        if (null === $season) {
+            $season = $this->seasonService->getCurrentSeason();
+        }
+        $query = $this->sessionRepository->findByUserAndFilters($user, ['season' => 'SEASON_'.$season]);
+        /** @var QueryBuilder $query */
+        $sessions = $query->getQuery()->getResult();
+
+        return $this->getTotal($sessions);
     }
 
     public function getTotal(array $sessions): Currency

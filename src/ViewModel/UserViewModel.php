@@ -36,6 +36,8 @@ class UserViewModel extends AbstractViewModel
 
     private ServicesPresenter $services;
 
+    public ?array $titleColors;
+
     public static function fromUser(User $user, ServicesPresenter $services)
     {
         $userView = new self();
@@ -51,7 +53,8 @@ class UserViewModel extends AbstractViewModel
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);
-
+        $userView->titleColors = $userView->getTitleColors();
+        
         return $userView;
     }
 
@@ -312,6 +315,18 @@ class UserViewModel extends AbstractViewModel
     {
         if ($identity) {
             return IdentityViewModel::fromIdentity($identity, $this->services);
+        }
+
+        return null;
+    }
+
+    private function getTitleColors(): ?array 
+    {
+        if ($this->entity->getLevel() && $this->entity->getLevel()->getColor()) {
+            $background = $this->entity->getLevel()->getColor();
+            list($r, $g, $b) = sscanf($background, "#%02x%02x%02x");
+            $color = (0.3*$r+0.59*$g+0.11*$b > 200) ? '#000' : '#fff';
+            return ['color' => $color, 'background' => $background];
         }
 
         return null;

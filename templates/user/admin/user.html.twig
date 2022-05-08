@@ -5,7 +5,7 @@
 {% block body %}
     {% set licence = user.lastLicence %}
     <div class="wrapper">
-        <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+        <div class="wrapper-title" {% if user.titleColors is not null %} style="background-color: {{ user.titleColors.background }}; color: {{ user.titleColors.color }}"{% endif %}>
             <h1>
                 {{ user.member.fullName }}
             </h1>

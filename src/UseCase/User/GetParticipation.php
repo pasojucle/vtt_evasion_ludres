@@ -59,8 +59,6 @@ class GetParticipation
 
         $session->set($this->filterName, $filters);
         $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
-        /** @var QueryBuilder $queryAll */
-        $queryAll = clone $query;
 
         $this->setRedirect($request, $user);
 
@@ -71,7 +69,7 @@ class GetParticipation
         return [
             'user' => $this->userPresenter->viewModel(),
             'sessions' =>  $this->sessionsPresenter->viewModel()->sessions,
-            'total_indemnities' =>  $this->indemnityService->getTotal($queryAll->getQuery()->getResult()),
+            'total_indemnities' =>  $this->indemnityService->getUserIndemnities($user, ),
             'form' => $form->createView(),
             'lastPage' => $this->paginator->lastPage($sessions),
             'current_filters' => [
