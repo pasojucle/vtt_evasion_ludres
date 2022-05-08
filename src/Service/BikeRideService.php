@@ -64,11 +64,12 @@ class BikeRideService
                 BikeRide::PERIOD_WEEK => 'P1W',
                 BikeRide::PERIOD_MONTH => 'P1M1D',
             ];
+
             if (BikeRide::DIRECTION_PREV === $direction) {
-                $date->sub(new DateInterval($intervals[$period]));
+                $date = $date->sub(new DateInterval($intervals[$period]));
             }
             if (BikeRide::DIRECTION_NEXT === $direction) {
-                $date->add(new DateInterval($intervals[$period]));
+                $date = $date->add(new DateInterval($intervals[$period]));
             }
         }
         $startAt = clone $date;
@@ -138,8 +139,8 @@ class BikeRideService
                 $today = new DateTime();
                 $data['date'] = $today->format('Y-m-d');
             }
-
-            $filters = $this->getFiltersByData($data);
+            dump($data);
+            $filters = $this->getFiltersByData($data);dump($filters);
             $this->requestStack->getSession()->set('admin_bike_rides_filters', $filters);
 
             return [
