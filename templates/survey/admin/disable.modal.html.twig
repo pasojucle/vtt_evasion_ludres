@@ -3,9 +3,9 @@
 {% block form %}{% set form = form %}{% endblock %}
 {% block modal_title %}Cloturer un vote{{ survey.title }}{% endblock %}
 {% block body %}
-    <p>Etes-vous de cloturer le vote {{ survey.title }} ?</p>
+    <p>Etes-vous certain de clôturer le vote {{ survey.title }} ?</p>
 {% endblock %}
 {% block footer %}
-    {% set button_text = 'Colturer' %}
+    {% set button_text = 'Clôturer' %}
     {{ parent() }}
 {% endblock %}
