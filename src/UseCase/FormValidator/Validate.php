@@ -23,7 +23,8 @@ class Validate
     public function execute(Request $request): array
     {
         $current = $request->request->get('current');
-        $value = $this->getValue($request->request->get('value'), $current);
+        $value = ($request->request->all('values')) ? $request->request->all('values') : $request->request->get('value');
+        $value = $this->getValue($value, $current);
         $constraintClass = $request->request->get('constraint');
         $required = !empty($request->request->get('required'));
 

@@ -166,8 +166,7 @@ body > script {display: none !important;}
 .alert-warning:not(.form-group-inline, .form-group), h2.alert-danger, .alert-warning-color {
     color: var(--primary-color-darker);
 }
-.alert-warning:not(.form-group-inline, .form-group)::before,
-.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
+.alert-warning:not(.form-group-inline, .form-group)::before {
     content: '\f06a';
     color: var(--primary-color-darker);
     font-family: "Font Awesome 5 Free";
@@ -178,21 +177,33 @@ body > script {display: none !important;}
 .success:not(.form-group-inline, .form-group) {
     color: var(--success-color);
 }
-.success:not(.form-group-inline, .form-group, .home)::before,
-.form-group-inline.success::after, .form-group.success::after {
+.success:not(.form-group-inline, .form-group, .home)::before {
     content: '\f058';
     color: var(--success-color);
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
 }
+.form-group-inline.success::after, .form-group.success::after,
+.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
+    content: '';
+    background-color: var(--success-color);
+    display: block;
+    height: 2px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.form-group-inline.success::after, .form-group.success::after{
+    background-color: var(--success-color);
+}
+.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
+    background-color: var(--primary-color-darker);
+}
 .form-group-inline.success, .form-group-inline.alert-warning, .form-group.success, .form-group.alert-warning {
     position: relative;
-}
-.form-group-inline.success::after, .form-group-inline.alert-warning::after, .form-group.success::after, .form-group.alert-warning::after {
-    position: absolute;
-    bottom: 6px;
-    right: 10px;
 }
 .success-test {
     color: var(--blue-color);

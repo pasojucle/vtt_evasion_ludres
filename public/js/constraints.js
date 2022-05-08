@@ -50,7 +50,7 @@ function validate(element){
         $('[data-constraint="'+input.data('constraint')+'"]').each(function(){
             values[getName(this.name)] = this.value;
         });
-        data['value'] = values;
+        data['values'] = values;
     } else {
         data['value'] = input.val();
     }
