@@ -71,7 +71,7 @@ class EditRegistration
         }
 
         if (null !== $user->getIdentities()->first()->getBirthDate()) {
-            $category = $this->seasonService->getCategory($user);
+            $category = $this->licenceService->getCategory($user);
             $user->getSeasonService($season)->setCategory($category);
             if (Licence::CATEGORY_MINOR === $category) {
                 $this->schoolTestingRegistrationValidator($form, $progress);

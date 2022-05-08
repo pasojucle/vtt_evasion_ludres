@@ -92,6 +92,7 @@ class LicenceViewModel extends AbstractViewModel
     {
         $amount = null;
         $amountStr = '';
+        $indemnities = null;
 
         if ($this->isFinal) {
             $membershipFee = (null !== $this->coverage && null !== $this->hasFamilyMember && null !== $isNewMember)
@@ -100,6 +101,12 @@ class LicenceViewModel extends AbstractViewModel
             if (null !== $membershipFee) {
                 $amount = $membershipFee->getAmount();
             }
+            $indemnities = $this->services->indemnityService->getUserIndemnities($this->entity->getUser(), $this->season - 1);
+
+            if (null !== $amount && null !== $indemnities) {
+                $amount -= $indemnities->getAmount();
+            }
+
             if (null !== $amount) {
                 $coverageSrt = $this->services->translator->trans(Licence::COVERAGES[$this->coverage]);
                 $amountStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount} €";
@@ -111,6 +118,7 @@ class LicenceViewModel extends AbstractViewModel
         return [
             'value' => $amount,
             'str' => $amountStr,
+            'indemnities' => $indemnities,
         ];
     }
 

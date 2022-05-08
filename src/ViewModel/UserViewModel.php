@@ -48,7 +48,7 @@ class UserViewModel extends AbstractViewModel
         $userView->setIdentities();
         $userView->currentSeason = $services->currentSeason;
         $userView->seasonsStatus = $services->seasonsStatus;
-        $userView->membershipFeeAmountRepository = $services->membershipFeeAmountRepository;
+        // $userView->membershipFeeAmountRepository = $services->membershipFeeAmountRepository;
         $userView->translator = $services->translator;
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
