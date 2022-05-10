@@ -25,7 +25,7 @@
                         <div class="dropdown-title">{{ survey.title }}</div>
                         <ul class="dropdown-body">
                             <li>
-                                <a class="dropdown-item" href="{{ absolute_url(path('survey', {'survey': survey.id} ))}}" title="Copier l'url"><i class="fas fa-clipboard"></i> Copier l'url</a>
+                                <a class="dropdown-item" href="{{ absolute_url(path('survey', {'survey': survey.id} ))}}" title="Copier l'url" data-clipboard="1"><i class="fas fa-clipboard"></i> Copier l'url</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i> Exporter</a>

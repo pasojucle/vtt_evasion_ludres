@@ -20,7 +20,7 @@
                         <button 
                         {% if button_href is defined %} href="{{ button_href }}"{% endif %}
                         type="submit" class="btn">
-                        {% if button_text is defined %}{{ button_text }}{% endif %}
+                        {% if button_text is defined %}{{ button_text|raw }}{% endif %}
                         </button>
                     {% endif %}
                 </div>

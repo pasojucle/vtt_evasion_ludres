@@ -1,8 +1,8 @@
 {% extends 'base_modal.html.twig' %}
 {% block form %}{% set form = null%}{% endblock %}
-{% block modal_title %}Critérium Départemental{% endblock %}
+{% block modal_title %}{{ modal.title }}{% endblock %}
 {% block body %}
-    {{ content|raw }}
+    {{ modal.content|raw }}
 {% endblock %}
 {% block footer %}
     {% set button_close = 'Fermer' %}

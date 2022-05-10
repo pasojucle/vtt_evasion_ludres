@@ -14,10 +14,10 @@ class ModalWindowController extends AbstractController
     #[Route('/modal/window', name: 'modal_window_show', options:['expose' => true], methods: ['GET'])]
     public function show(ShowModalWindow $showModalWindow): Response
     {
-        $content = $showModalWindow->execute();
-        if (null !== $content) {
+        $modal = $showModalWindow->execute();
+        if (null !== $modal) {
             return $this->render('modal_window/show.modal.html.twig', [
-                'content' => $content,
+                'modal' => $modal,
             ]);
         }
 

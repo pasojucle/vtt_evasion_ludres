@@ -61,7 +61,8 @@ class UserType extends AbstractType
                 'label' => false,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Modifier',
+                'label' => '<i class="fas fa-check"></i> Modifier',
+                'label_html' => true,
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],

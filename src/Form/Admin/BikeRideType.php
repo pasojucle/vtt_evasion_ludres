@@ -34,6 +34,9 @@ class BikeRideType extends AbstractType
                     ;
                 },
                 'choice_label' => 'name',
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
             ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
@@ -45,6 +48,9 @@ class BikeRideType extends AbstractType
                 'label' => 'Détail (optionnel)',
                 'config_name' => 'minimum_config',
                 'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
             ])
             ->add('startAt', DateTimeType::class, [
                 'input' => 'datetime_immutable',

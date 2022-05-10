@@ -42,7 +42,7 @@ $(document).ready(function(){
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
     $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
-    $(document).on('click', '.fa-clipboard', clipboard);
+    $(document).on('click', 'a[data-clipboard="1"]', clipboard);
     $(document).on('click', '.email-to-clipboard', emailToClipboard);
     $(document).on('click', 'button:not(.dropdown-toggle), a[data-toggle="modal"]', hideDropdown);
     $(document).on('click', 'button.dropdown-toggle', toggleDropdown);
@@ -344,7 +344,7 @@ function setCookie(cName, cValue, expDays) {
 
 function clipboard(event) {
     event.preventDefault();
-    const value = $(this).parent().attr('href');
+    const value = $(this).attr('href');
     navigator.clipboard.writeText(value);
 }
 

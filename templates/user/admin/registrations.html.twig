@@ -32,12 +32,10 @@
                             </a>
                             {% include('user/admin/dropdown.html.twig') %}
                         </div>
-                        {# <div class="col-list-button"> #}
-                            {% if user.seasonLicence is not empty %}
-                                <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="danger"><i class="fas fa-check"></i> Valider</a>
-                                <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.entity.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                            {% endif %}
-                        {# </div> #}
+                        {% if user.seasonLicence is not empty %}
+                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Valider</a>
+                            <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.entity.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

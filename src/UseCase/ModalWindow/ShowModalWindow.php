@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\ModalWindow;
 
+use App\Entity\ModalWindow;
 use App\Repository\ModalWindowRepository;
 use App\Service\UserService;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,12 +20,12 @@ class ShowModalWindow
     ) {
     }
 
-    public function execute(): ?string
+    public function execute(): ?ModalWindow
     {
         $session = $this->requestStack->getCurrentRequest()->getSession();
         $modalWindow = $session->get('show_modal_window');
         $user = $this->security->getUser();
-        $content = null;
+        $modal = null;
         if (null !== $user) {
             $user = $this->userService->convertToUser($user);
             if ($user->licenceNumber !== $modalWindow) {
@@ -32,10 +33,10 @@ class ShowModalWindow
                 $session->set('show_modal_window', $user->licenceNumber);
             }
             if (!empty($modalWindows)) {
-                $content = $modalWindows[0]->getContent();
+                $modal = $modalWindows[0];
             }
         }
 
-        return $content;
+        return $modal;
     }
 }

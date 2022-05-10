@@ -12,6 +12,6 @@
     </div>
 {% endblock %}
 {% block footer %}
-    {% set button_text = title %}
+    {% set button_text = '<i class="fas fa-check"></i> ' ~ title %}
     {{ parent() }}
 {% endblock %}

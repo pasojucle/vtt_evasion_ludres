@@ -56,7 +56,8 @@ class IndemnityController extends AbstractController
         }
 
         return $this->render('indemnity/admin/edit.modal.html.twig', [
-            'indemnity' => $indemnity,
+            'level' => $indemnity->getLevel(),
+            'bikeRideType' => $indemnity->getBikeRideType(),
             'form' => $form->createView(),
         ]);
     }
