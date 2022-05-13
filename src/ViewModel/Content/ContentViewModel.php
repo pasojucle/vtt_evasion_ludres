@@ -36,6 +36,8 @@ class ContentViewModel extends AbstractViewModel
 
     public ?string $contentStyleMd;
 
+    private ?string $uploadsDirectory;
+
     public static function fromContent(Content $content, ServicesPresenter $services)
     {
         $contentView = new self();

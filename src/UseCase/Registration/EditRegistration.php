@@ -12,6 +12,7 @@ use App\Repository\IdentityRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginAuthenticator;
 use App\Service\IdentityService;
+use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
 use App\Service\SeasonService;
@@ -51,7 +52,8 @@ class EditRegistration
         private MailerService $mailerService,
         private ValidatorInterface $validator,
         private EventDispatcherInterface $dispatcher,
-        private TokenStorageInterface $tokenStorage
+        private TokenStorageInterface $tokenStorage,
+        private LicenceService $licenceService
     ) {
     }
 
@@ -154,9 +156,9 @@ class EditRegistration
         $isMedicalCertificateRequired = false;
         $seasonService = $progress['seasonLicence'];
         $user = $progress['user'];
-        if (Licence::TYPE_RIDE !== $seasonLicence->getType()) {
+        if (Licence::TYPE_RIDE !== $seasonService->getType()) {
             $medicalCertificateDate = $user->health->medicalCertificateDateObject;
-            $medicalCertificateDuration = (Licence::TYPE_HIKE === $seasonLicence->getType()) ? 5 : 3;
+            $medicalCertificateDuration = (Licence::TYPE_HIKE === $seasonService->getType()) ? 5 : 3;
             $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
             $today = new DateTime();
             if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->health->isMedicalCertificateRequired) {

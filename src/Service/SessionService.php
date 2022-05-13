@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\Collection;
 
 class SessionService
 {
+    private string $seasonStartAt;
     public function __construct(
         private SessionRepository $sessionRepository,
         private UserPresenter $userPresenter,

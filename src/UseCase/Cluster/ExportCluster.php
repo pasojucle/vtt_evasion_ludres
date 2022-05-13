@@ -7,10 +7,12 @@ namespace App\UseCase\Cluster;
 use App\Entity\Cluster;
 use App\Repository\SessionRepository;
 use App\Service\FilenameService;
+use App\Service\PdfService;
 use App\ViewModel\ClusterPresenter;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 class ExportCluster
 {
@@ -21,7 +23,9 @@ class ExportCluster
     public function __construct(
         private SessionRepository $sessionRepository,
         private FilenameService $filenameService,
-        ClusterPresenter $presenter
+        private ClusterPresenter $presenter,
+        private PdfService $pdfService,
+        private Environment $twig
     ) {
     }
 
@@ -45,7 +49,7 @@ class ExportCluster
         if (!empty($this->cluster->sessions)) {
             foreach ($this->cluster->sessions as $session) {
                 if ($session['isPresent']) {
-                    $render = $this->renderView('cluster/export.html.twig', [
+                    $render = $this->twig->render('cluster/export.html.twig', [
                         'user' => $session['user'],
                     ]);
                     $tmp = $session['user']->id.'_tmp';

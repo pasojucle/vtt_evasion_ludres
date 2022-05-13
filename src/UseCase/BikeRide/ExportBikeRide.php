@@ -8,6 +8,7 @@ use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
 use App\Service\FilenameService;
+use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +19,8 @@ class ExportBikeRide
 
     public function __construct(
         private SessionRepository $sessionRepository,
-        private FilenameService $filenameService
+        private FilenameService $filenameService,
+        private UserPresenter $userPresenter
     ) {
     }
 

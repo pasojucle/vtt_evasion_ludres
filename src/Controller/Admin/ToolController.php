@@ -20,6 +20,7 @@ use App\Repository\UserRepository;
 use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
+use App\Service\SeasonService;
 use App\Service\UserService;
 use App\UseCase\Tool\GetRegistrationCertificate;
 use App\ViewModel\ClusterPresenter;
@@ -38,7 +39,8 @@ class ToolController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private LicenceService $licenceService
+        private LicenceService $licenceService,
+        private SeasonService $seasonService
     ) {
     }
 
@@ -129,7 +131,7 @@ class ToolController extends AbstractController
                             ->setType($licenceType)
                             ->setCategory($category)
                             ->setFinal(true)
-                            ->setSeason('2021')
+                            ->setSeason(2021)
                             ->setStatus(Licence::STATUS_VALID)
                         ;
 
@@ -239,7 +241,7 @@ class ToolController extends AbstractController
                         $user = $this->entityManager->getRepository(User::class)->findOneBy([
                             'licenceNumber' => $licenceNumber,
                         ]);
-                        $licence = $user->getSeasonLicence($this->SeasonService->getCurrentSeason());
+                        $licence = $user->getSeasonLicence($this->seasonService->getCurrentSeason());
                         if (null !== $licence) {
                             $licence->setType($licenceType);
                             $this->entityManager->persist($user);
