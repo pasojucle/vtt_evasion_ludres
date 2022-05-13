@@ -8,9 +8,9 @@ use App\Entity\Indemnity;
 use App\Form\HiddenBikeRideTypeType;
 use App\Form\HiddenLevelType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class IndemnityType extends AbstractType
 {

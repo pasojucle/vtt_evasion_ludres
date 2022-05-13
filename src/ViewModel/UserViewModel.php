@@ -54,7 +54,7 @@ class UserViewModel extends AbstractViewModel
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);
         $userView->titleColors = $userView->getTitleColors();
-        
+
         return $userView;
     }
 
@@ -127,7 +127,7 @@ class UserViewModel extends AbstractViewModel
 
     public function getCoverage(): ?int
     {
-        $seasonLicence= $this->entity->getSeasonLicence($this->currentSeason);
+        $seasonLicence = $this->entity->getSeasonLicence($this->currentSeason);
 
         return (null !== $seasonLicence) ? $seasonLicence->getCoverage() : null;
     }
@@ -181,11 +181,11 @@ class UserViewModel extends AbstractViewModel
                 if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
                     $approvalGoingHome = ($approval->getValue())
                         ? [
-                            'class' => ['color'=> 'success', 'icon' => '<i class="fa-solid fa-house-circle-check"></i>'],
+                            'class' => ['color' => 'success', 'icon' => '<i class="fa-solid fa-house-circle-check"></i>'],
                             'message' => 'Autorisé à rentrer seul',
                         ]
                         : [
-                            'class' => ['color'=> 'alert-danger', 'icon' => '<i class="fa-solid fa-house-circle-xmark"></i>'],
+                            'class' => ['color' => 'alert-danger', 'icon' => '<i class="fa-solid fa-house-circle-xmark"></i>'],
                             'message' => 'Pas autorisé à rentrer seul',
                         ];
                 }
@@ -320,12 +320,13 @@ class UserViewModel extends AbstractViewModel
         return null;
     }
 
-    private function getTitleColors(): ?array 
+    private function getTitleColors(): ?array
     {
         if ($this->entity->getLevel() && $this->entity->getLevel()->getColor()) {
             $background = $this->entity->getLevel()->getColor();
-            list($r, $g, $b) = sscanf($background, "#%02x%02x%02x");
-            $color = (0.3*$r+0.59*$g+0.11*$b > 200) ? '#000' : '#fff';
+            list($r, $g, $b) = sscanf($background, '#%02x%02x%02x');
+            $color = (0.3 * $r + 0.59 * $g + 0.11 * $b > 200) ? '#000' : '#fff';
+
             return ['color' => $color, 'background' => $background];
         }
 

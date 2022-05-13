@@ -47,9 +47,9 @@ class SessionViewModel extends AbstractViewModel
     private function getAvailability(): array
     {
         $availbilityClass = [
-            1 => ['badge'=> 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>'],
-            2 => ['badge'=> 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>'],
-            3 => ['badge'=> 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>'],
+            1 => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>'],
+            2 => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>'],
+            3 => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>'],
         ];
         $availability = [];
         if (null !== $this->entity->getAvailability()) {
@@ -68,10 +68,12 @@ class SessionViewModel extends AbstractViewModel
             foreach ($this->allIndemnities as $indemnity) {
                 if ($this->bikeRide->bikeRideType === $indemnity->getBikeRideType() && $this->user->entity->getLevel() === $indemnity->getLevel() && $this->userIsOnSite) {
                     $amount = new Currency($indemnity->getAmount());
+
                     return $amount;
                 }
             }
         }
+
         return null;
     }
 }

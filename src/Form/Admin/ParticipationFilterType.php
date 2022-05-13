@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
-use App\Service\SeasonService;
 use App\Repository\LevelRepository;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Service\SeasonService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class ParticipationFilterType extends AbstractType
 {

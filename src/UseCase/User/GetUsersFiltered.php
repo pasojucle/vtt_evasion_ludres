@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use Doctrine\ORM\QueryBuilder;
-use App\Service\SeasonService;
-use Symfony\Component\Form\Form;
-use App\Service\PaginatorService;
-use App\ViewModel\UsersPresenter;
 use App\Form\Admin\UserFilterType;
 use App\Repository\UserRepository;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Service\PaginatorService;
+use App\Service\SeasonService;
+use App\ViewModel\UsersPresenter;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class GetUsersFiltered
@@ -93,7 +93,7 @@ abstract class GetUsersFiltered
     }
 
     public function emailsToClipboard(Request $request): string
-     {
+    {
         $session = $request->getSession();
         $filters = $session->get($this->filterName);
         $query = $this->getQuery($filters);
@@ -106,7 +106,7 @@ abstract class GetUsersFiltered
     {
         $filters['fullName'] = $fullName;
         $query = $this->getQuery($filters);
-        
+
         $users = $query->getQuery()->getResult();
 
         $response = [];
@@ -116,7 +116,6 @@ abstract class GetUsersFiltered
                 'id' => $user->getId(),
                 'text' => $user->GetFirstIdentity()->getName().' '.$user->GetFirstIdentity()->getFirstName(),
             ];
-        
         }
 
         return $response;
@@ -166,6 +165,4 @@ abstract class GetUsersFiltered
 
         return implode(PHP_EOL, $content);
     }
-
-
 }

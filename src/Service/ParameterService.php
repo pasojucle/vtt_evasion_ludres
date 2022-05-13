@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTimeImmutable;
-use App\ViewModel\UserViewModel;
 use App\Repository\ParameterRepository;
+use App\ViewModel\UserViewModel;
 
 class ParameterService
 {

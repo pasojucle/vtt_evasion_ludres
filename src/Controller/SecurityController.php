@@ -41,7 +41,7 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    #[Route('/deconnexion', name: 'check_logout', methods: ['GET'])]
+    #[Route('/deconnexion', name: 'check_logout', methods: ['GET', 'POST'])]
     public function checkLogout(
         Request $request,
         FormFactoryInterface $formFactory

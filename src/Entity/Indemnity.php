@@ -17,7 +17,6 @@ class Indemnity
     #[ORM\JoinColumn(nullable: false)]
     private $level;
 
-
     #[ORM\Column(type: 'float')]
     private $amount;
 

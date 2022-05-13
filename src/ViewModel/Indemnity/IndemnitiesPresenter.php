@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\ViewModel\Indemnity;
 
 use App\ViewModel\AbstractPresenter;
-use App\ViewModel\Indemnity\IndemnitiesViewModel;
 
 class IndemnitiesPresenter extends AbstractPresenter
 {

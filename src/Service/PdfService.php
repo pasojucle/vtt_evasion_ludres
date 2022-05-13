@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Licence;
+use App\Entity\User;
+use App\Form\UserType;
+use App\ViewModel\UserPresenter;
 use DateTime;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use App\Entity\User;
-use App\Form\UserType;
-use App\Entity\Licence;
 use setasign\Fpdi\Fpdi;
-use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class PdfService

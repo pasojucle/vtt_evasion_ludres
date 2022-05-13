@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\ViewModel\Indemnity;
 
+use App\Entity\BikeRideType;
+use App\Entity\Indemnity;
 use App\Entity\Level;
 use App\Model\Currency;
-use App\Entity\BikeRide;
-use App\Entity\Indemnity;
-use App\Entity\BikeRideType;
 use App\ViewModel\AbstractViewModel;
 
 class IndemnityViewModel extends AbstractViewModel
 {
     public ?array $services;
-    
+
     public ?Indemnity $entity;
 
     public ?Level $level;

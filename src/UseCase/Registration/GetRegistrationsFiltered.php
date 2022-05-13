@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\UseCase\Registration;
 
 use App\Entity\Licence;
-use Doctrine\ORM\QueryBuilder;
 use App\Form\Admin\UserFilterType;
 use App\UseCase\User\GetUsersFiltered;
+use Doctrine\ORM\QueryBuilder;
 
 class GetRegistrationsFiltered extends GetUsersFiltered
 {

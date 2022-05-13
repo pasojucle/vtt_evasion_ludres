@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\User;
-use App\Entity\Session;
 use App\Entity\BikeRide;
+use App\Entity\Session;
+use App\Entity\User;
 use App\Service\SeasonService;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Session|null find($id, $lockMode = null, $lockVersion = null)
@@ -85,6 +85,7 @@ class SessionRepository extends ServiceEntityRepository
                 )
                 ->setParameter('bikeRideType', $filters['bikeRideType']);
         }
+
         return $qb;
     }
 }

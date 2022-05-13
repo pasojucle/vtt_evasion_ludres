@@ -4,35 +4,35 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use DateTime;
-use App\Form\UserType;
 use App\Entity\Licence;
-use App\Service\PdfService;
-use App\Service\UserService;
+use App\Entity\RegistrationStep;
+use App\Entity\User as UserEntity;
+use App\Form\UserType;
+use App\Repository\ContentRepository;
+use App\Repository\MembershipFeeRepository;
+use App\Repository\RegistrationStepGroupRepository;
+use App\Repository\RegistrationStepRepository;
 use App\Service\MailerService;
+use App\Service\OrderByService;
+use App\Service\ParameterService;
+use App\Service\PdfService;
+use App\Service\RegistrationService;
 use App\Service\SeasonService;
 use App\Service\UploadService;
-use App\Service\OrderByService;
-use App\Entity\RegistrationStep;
-use App\ViewModel\UserPresenter;
-use App\Service\ParameterService;
-use App\Entity\User as UserEntity;
-use App\Service\RegistrationService;
-use App\Repository\ContentRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use App\UseCase\Registration\GetProgress;
-use App\Repository\MembershipFeeRepository;
-use App\ViewModel\RegistrationStepPresenter;
-use App\UseCase\RegistrationStep\GetReplaces;
-use Symfony\Component\HttpFoundation\Request;
-use App\Repository\RegistrationStepRepository;
+use App\Service\UserService;
 use App\UseCase\Registration\EditRegistration;
+use App\UseCase\Registration\GetProgress;
+use App\UseCase\RegistrationStep\GetReplaces;
+use App\ViewModel\RegistrationStepPresenter;
+use App\ViewModel\UserPresenter;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Repository\RegistrationStepGroupRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RegistrationController extends AbstractController
 {

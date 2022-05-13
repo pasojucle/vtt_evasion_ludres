@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use DateTime;
-use App\Entity\User;
 use App\Entity\BikeRide;
 use App\Service\SeasonService;
-use App\Service\SessionService;
+use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method BikeRide|null find($id, $lockMode = null, $lockVersion = null)
@@ -64,7 +62,7 @@ class BikeRideRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
-    
+
     /**
      * @return BikeRide[] Returns an array of enent objects
      */

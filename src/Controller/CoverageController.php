@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use DateTime;
-use App\Entity\User;
-use App\Service\PdfService;
 use App\Entity\RegistrationStep;
-use App\ViewModel\UserPresenter;
-use App\ViewModel\RegistrationStepPresenter;
+use App\Entity\User;
 use App\Repository\RegistrationStepRepository;
+use App\Service\PdfService;
+use App\ViewModel\RegistrationStepPresenter;
+use App\ViewModel\UserPresenter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/coverage', name: 'coverage')]
 class CoverageController extends AbstractController
 {
-
     #[Route('current/season/{user}', name: '_current_season_edit', methods: ['GET'])]
     public function currentSeasonEdit(
         RegistrationStepRepository $registrationStepRepository,
@@ -27,8 +25,7 @@ class CoverageController extends AbstractController
         PdfService $pdfService,
         UserPresenter $userPresenter,
         User $user
-    )
-    {
+    ) {
         $userPresenter->present($user);
 
         $coverageStep = $registrationStepRepository->findCoverageStep();

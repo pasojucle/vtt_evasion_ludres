@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
-use DateInterval;
-use App\Entity\User;
-use App\Entity\Level;
-use DateTimeImmutable;
 use App\Entity\BikeRide;
-use App\Twig\AppExtension;
 use App\Entity\BikeRideType;
+use App\Entity\Level;
+use App\Entity\User;
+use App\Twig\AppExtension;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
 
 class BikeRideViewModel extends AbstractViewModel
 {

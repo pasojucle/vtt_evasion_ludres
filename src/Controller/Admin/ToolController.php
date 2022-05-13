@@ -529,7 +529,7 @@ class ToolController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            /**@var SubmitButoon $submit */
+            /** @var SubmitButoon $submit */
             $submit = $form->get('submit');
             $content = ($submit->isClicked()) ? utf8_encode($data['content']) : null;
             list($filename, $content) = $getRegistrationCertificate->execute($request, $data['user'], $content);
@@ -560,7 +560,7 @@ class ToolController extends AbstractController
             $licence = $data['user']->getLastLicence();
             $presenter->present($data['user']);
             $user = $presenter->viewModel();
-            /**@var SubmitButoon $submit */
+            /** @var SubmitButoon $submit */
             $submit = $form->get('submit');
             $content = ($submit->isClicked())
                 ? utf8_encode($data['content'])

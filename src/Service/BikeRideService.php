@@ -140,7 +140,8 @@ class BikeRideService
                 $data['date'] = $today->format('Y-m-d');
             }
             dump($data);
-            $filters = $this->getFiltersByData($data);dump($filters);
+            $filters = $this->getFiltersByData($data);
+            dump($filters);
             $this->requestStack->getSession()->set('admin_bike_rides_filters', $filters);
 
             return [

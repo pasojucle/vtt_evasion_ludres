@@ -3,10 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\BikeRideType;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method BikeRideType|null find($id, $lockMode = null, $lockVersion = null)
@@ -24,13 +24,12 @@ class BikeRideTypeRepository extends ServiceEntityRepository
     /**
      * @return BikeRideType[] Returns an array of BikeRideType objects
      */
- 
     public function findCompensables(): array
     {
         return $this->createQueryBuilder('brt')
             ->andWhere(
                 (new Expr())->eq('brt.isCompensable', ':value')
-                )
+            )
             ->setParameter('value', true)
             ->orderBy('brt.name', 'ASC')
             ->getQuery()

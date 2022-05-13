@@ -61,7 +61,7 @@ class LinkController extends AbstractController
             $link = $form->getData();
 
             $isNew = null === $link->getTitle() && null === $link->getDescription() && null === $link->getImage();
-            /**@var SubmitButoon $search */
+            /** @var SubmitButoon $search */
             $search = $form->get('search');
             if (null !== $link->getUrl() && ($isNew || ($form->has('search') && $search->isClicked()))) {
                 $data = $linkService->getUrlData($link->getUrl());

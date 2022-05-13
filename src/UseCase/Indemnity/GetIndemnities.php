@@ -28,8 +28,8 @@ class GetIndemnities
 
         $values = [];
         if (!empty($frameLevels) && !empty($bikeRidesTypes)) {
-            foreach($frameLevels as $frameLevel) {
-                foreach($bikeRidesTypes as $bikeRidesType) {
+            foreach ($frameLevels as $frameLevel) {
+                foreach ($bikeRidesTypes as $bikeRidesType) {
                     $indemnity = (array_key_exists($frameLevel->getId(), $indemnities) && array_key_exists($bikeRidesType->getId(), $indemnities[$frameLevel->getId()]))
                         ? $indemnities[$frameLevel->getId()][$bikeRidesType->getId()]
                         : null;

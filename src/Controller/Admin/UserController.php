@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
 use App\Entity\Level;
+use App\Entity\User;
 use App\Form\Admin\UserType;
-use App\Service\MailerService;
-use App\ViewModel\UserPresenter;
-use App\Service\PaginatorService;
-use App\ViewModel\UsersPresenter;
-use App\Repository\UserRepository;
-use App\ViewModel\BikeRidePresenter;
-use App\ViewModel\SessionsPresenter;
 use App\Repository\SessionRepository;
-use App\ViewModel\BikeRidesPresenter;
-use App\Repository\BikeRideRepository;
-use App\UseCase\User\GetParticipation;
-use App\UseCase\User\GetParticipatioon;
+use App\Repository\UserRepository;
+use App\Service\MailerService;
+use App\Service\PaginatorService;
 use App\UseCase\User\GetMembersFiltered;
+use App\UseCase\User\GetParticipation;
+use App\ViewModel\SessionsPresenter;
+use App\ViewModel\UserPresenter;
+use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Form\Admin\ParticipationFilterType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -57,7 +52,6 @@ class UserController extends AbstractController
         GetMembersFiltered $getMembersFiltered,
         Request $request
     ): Response {
-
         return $getMembersFiltered->export($request);
     }
 
@@ -66,7 +60,6 @@ class UserController extends AbstractController
         GetMembersFiltered $getMembersFiltered,
         Request $request
     ): JsonResponse {
-
         return new JsonResponse($getMembersFiltered->emailsToClipboard($request));
     }
 
@@ -84,7 +77,6 @@ class UserController extends AbstractController
         ]);
     }
 
-
     #[Route('/admin/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], defaults:['filtered' => false])]
     public function adminUserParticipation(
         SessionRepository $sessionRepository,
@@ -94,8 +86,8 @@ class UserController extends AbstractController
         User $user,
         bool $filtered
     ): Response {
-
-        return $this->render('user/admin/participation.html.twig', 
+        return $this->render(
+            'user/admin/participation.html.twig',
             $getParticipation->execute($request, $user, $filtered)
         );
     }

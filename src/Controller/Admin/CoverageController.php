@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Licence;
+use App\UseCase\Coverage\GetCoveragesFiltered;
+use App\UseCase\Coverage\ValidateCoverage;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use App\UseCase\Coverage\ValidateCoverage;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use App\UseCase\Coverage\GetCoveragesFiltered;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/assurance', name: 'admin_coverage')]
 class CoverageController extends AbstractController
@@ -77,7 +77,6 @@ class CoverageController extends AbstractController
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
     ): Response {
-
         return $getCoveragesFiltered->export($request);
     }
 
@@ -86,7 +85,6 @@ class CoverageController extends AbstractController
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
     ): JsonResponse {
-
         return new JsonResponse($getCoveragesFiltered->emailsToClipboard($request));
     }
 

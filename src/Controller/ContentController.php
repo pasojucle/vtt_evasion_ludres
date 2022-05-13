@@ -154,11 +154,10 @@ class ContentController extends AbstractController
         ]);
     }
 
-
     #[Route('/Annonces/{title}/{filename}', name: 'annonces', methods: ['GET'])]
     #[Route('/Calendrier/{filename}', name: 'calendrier', methods: ['GET'])]
     public function PermanentRedirect(): Response
     {
-        return $this->redirectToRoute('home',[], 308);
+        return $this->redirectToRoute('home', [], 308);
     }
 }

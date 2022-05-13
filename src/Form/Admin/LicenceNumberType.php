@@ -6,19 +6,19 @@ namespace App\Form\Admin;
 
 use App\Entity\User;
 use App\Service\SeasonService;
-use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class LicenceNumberType extends AbstractType
 {
     public function __construct(private SeasonService $seasonService)
     {
-        
     }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

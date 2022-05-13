@@ -13,7 +13,7 @@ class GetCoveragesFiltered extends GetUsersFiltered
     public int $statusType = UserFilterType::STATUS_TYPE_COVERAGE;
 
     public string $statusPlaceholder = 'Toutes les saisons';
-    
+
     public string $filterName = 'admin_coverage_list_filters';
 
     public string $remoteRoute = 'admin_coverage_choices';

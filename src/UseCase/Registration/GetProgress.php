@@ -90,7 +90,7 @@ class GetProgress
         if (null === $this->user) {
             $this->createUser();
         }
-        $this->seasonService= $this->user->getSeasonService($this->season);
+        $this->seasonService = $this->user->getSeasonService($this->season);
         if (null === $this->seasonLicence) {
             $this->createNewLicence();
         }
@@ -162,7 +162,7 @@ class GetProgress
 
     private function createNewLicence(): void
     {
-        $this->seasonService= new Licence();
+        $this->seasonService = new Licence();
         $this->seasonLicence->setSeason($this->season);
         if (!$this->user->getLicences()->isEmpty()) {
             $this->seasonLicence->setFinal(true)

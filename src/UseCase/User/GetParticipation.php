@@ -6,23 +6,16 @@ namespace App\UseCase\User;
 
 use App\Entity\User;
 use App\Form\Admin\ParticipationFilterType;
-use App\Service\SeasonService;
-use Doctrine\ORM\QueryBuilder;
-use App\ViewModel\UserPresenter;
-use App\ViewModel\UserViewModel;
-use Symfony\Component\Form\Form;
-use App\Service\PaginatorService;
-use App\ViewModel\UsersPresenter;
-use App\Form\Admin\UserFilterType;
-use App\Repository\UserRepository;
-use App\ViewModel\SessionPresenter;
-use App\ViewModel\SessionsPresenter;
 use App\Repository\SessionRepository;
 use App\Service\IndemnityService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Service\PaginatorService;
+use App\Service\SeasonService;
+use App\ViewModel\SessionPresenter;
+use App\ViewModel\SessionsPresenter;
+use App\ViewModel\UserPresenter;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GetParticipation
@@ -47,7 +40,7 @@ class GetParticipation
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
-        
+
         $form = $this->createForm($filters);
         $form->handleRequest($request);
 
@@ -66,10 +59,11 @@ class GetParticipation
 
         $this->userPresenter->present($user);
         $this->sessionsPresenter->present($sessions);
+
         return [
             'user' => $this->userPresenter->viewModel(),
-            'sessions' =>  $this->sessionsPresenter->viewModel()->sessions,
-            'total_indemnities' =>  $this->indemnityService->getUserIndemnities($user, ),
+            'sessions' => $this->sessionsPresenter->viewModel()->sessions,
+            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, ),
             'form' => $form->createView(),
             'lastPage' => $this->paginator->lastPage($sessions),
             'current_filters' => [

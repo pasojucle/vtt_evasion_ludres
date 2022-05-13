@@ -4,22 +4,18 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\User;
 use App\Entity\Level;
-use App\Entity\Licence;
-use App\Service\LicenceService;
+use App\Entity\User;
 use App\Repository\LevelRepository;
+use App\Service\LicenceService;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Security;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class UserFilterType extends AbstractType

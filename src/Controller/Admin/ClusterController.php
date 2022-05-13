@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Cluster;
-use App\Service\PdfService;
-use App\Service\BikeRideService;
 use App\Service\FilenameService;
-use App\ViewModel\ClusterPresenter;
+use App\Service\PdfService;
 use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\ClusterPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ClusterController extends AbstractController
 {

@@ -5,19 +5,14 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\BikeRideType;
-use App\Entity\Level;
 use App\Form\Admin\BikeRideTypeType;
-use App\Form\Admin\LevelType;
-use App\Service\OrderByService;
-use App\Service\PaginatorService;
-use App\Repository\LevelRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\BikeRideTypeRepository;
+use App\Service\PaginatorService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BikeRideTypeController extends AbstractController
 {

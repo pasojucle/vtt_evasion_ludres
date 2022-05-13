@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use App\Entity\User;
-use App\Twig\AppExtension;
-use App\Service\SeasonService;
+use App\Repository\IndemnityRepository;
+use App\Repository\MembershipFeeAmountRepository;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
-use App\Repository\IndemnityRepository;
-use Symfony\Component\Security\Core\Security;
-use App\Repository\MembershipFeeAmountRepository;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Service\SeasonService;
+use App\Twig\AppExtension;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ServicesPresenter
 {

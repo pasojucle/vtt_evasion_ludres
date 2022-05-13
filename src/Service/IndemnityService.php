@@ -14,11 +14,10 @@ class IndemnityService
 {
     public function __construct(private IndemnityRepository $indemnityRepository, private SeasonService $seasonService, private SessionRepository $sessionRepository)
     {
-
     }
 
     public function getUserIndemnities(User $user, ?int $season = null): Currency
-    {   
+    {
         if (null === $season) {
             $season = $this->seasonService->getCurrentSeason();
         }
@@ -33,7 +32,7 @@ class IndemnityService
     {
         $allIndemnities = $this->indemnityRepository->findAll();
         $totalIndemnities = new Currency(0);
-        
+
         if (!empty($sessions)) {
             foreach ($sessions as $session) {
                 $indemnity = $this->getIndemnity($allIndemnities, $session);
@@ -52,10 +51,12 @@ class IndemnityService
             foreach ($allIndemnities as $indemnity) {
                 if ($session->getCluster()->getBikeRide()->getBikeRideType() === $indemnity->getBikeRideType() && $session->getUser()->getLevel() === $indemnity->getLevel() && $session->isPresent()) {
                     $amount = new Currency($indemnity->getAmount());
+
                     return $amount;
                 }
             }
         }
+
         return null;
     }
 }

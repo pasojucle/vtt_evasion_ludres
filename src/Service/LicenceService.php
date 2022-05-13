@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTime;
-use App\Entity\User;
 use App\Entity\Licence;
+use App\Entity\User;
+use DateTime;
 
 class LicenceService
 {

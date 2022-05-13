@@ -22,7 +22,6 @@ class IndemnityRepository extends ServiceEntityRepository
     /**
      * @return Indemnity[] Returns an array of Indemnity objects
      */
-
     public function findOrderByBikeRideType(): array
     {
         return $this->createQueryBuilder('i')

@@ -6,15 +6,15 @@ namespace App\Controller\Admin;
 
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
+use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LevelController extends AbstractController
 {

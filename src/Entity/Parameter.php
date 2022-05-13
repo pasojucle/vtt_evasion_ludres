@@ -24,7 +24,7 @@ class Parameter
     public const TYPE_ARRAY = 4;
 
     public const TYPE_MONTH_AND_DAY = 5;
-    
+
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
@@ -91,9 +91,9 @@ class Parameter
         if (null === $this->value) {
             return $this->value;
         }
-        
+
         return match ($this->type) {
-            self::TYPE_BOOL =>(bool) $this->value,
+            self::TYPE_BOOL => (bool) $this->value,
             self::TYPE_INTEGER => (int) $this->value,
             self::TYPE_ARRAY, self::TYPE_MONTH_AND_DAY => json_decode($this->value, true),
             default => $this->value

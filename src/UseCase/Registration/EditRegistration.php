@@ -12,9 +12,9 @@ use App\Repository\IdentityRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginAuthenticator;
 use App\Service\IdentityService;
-use App\Service\SeasonService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
+use App\Service\SeasonService;
 use App\Service\UploadService;
 use App\Validator\UniqueMember;
 use App\ViewModel\UserPresenter;
@@ -152,7 +152,7 @@ class EditRegistration
     private function isMedicalCertificateRequired(array $progress): bool
     {
         $isMedicalCertificateRequired = false;
-        $seasonService= $progress['seasonLicence'];
+        $seasonService = $progress['seasonLicence'];
         $user = $progress['user'];
         if (Licence::TYPE_RIDE !== $seasonLicence->getType()) {
             $medicalCertificateDate = $user->health->medicalCertificateDateObject;

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-
 class Currency
 {
     private float $amount;
 
-    public function __construct(?float $amount) {
+    public function __construct(?float $amount)
+    {
         $this->amount = $amount;
     }
 
@@ -22,6 +22,7 @@ class Currency
     {
         return $this->amount;
     }
+
     public function add(Currency $amountToAdd): float
     {
         return $this->amount += $amountToAdd->amount;

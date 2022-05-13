@@ -4,32 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Indemnity;
 use App\Entity\Level;
 use App\Form\Admin\IndemnityType;
-use App\Repository\IndemnityRepository;
 use App\UseCase\Indemnity\GetIndemnities;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\ViewModel\Indemnity\IndemnitiesPresenter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/indemnite', name: 'admin_indemnity')]
 class IndemnityController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
-        
     }
+
     #[Route('s}', name: '_list', methods: ['GET'])]
     public function adminList(
         GetIndemnities $getIndemnities
     ): Response {
-
         return $this->render('indemnity/admin/list.html.twig', [
             'indemnities' => $getIndemnities->execute(),
         ]);
@@ -41,7 +37,7 @@ class IndemnityController extends AbstractController
         Indemnity $indemnity
     ): Response {
         $form = $this->createForm(IndemnityType::class, $indemnity, [
-            'action' => $this->generateUrl ('admin_indemnity_edit', [
+            'action' => $this->generateUrl('admin_indemnity_edit', [
                 'indemnity' => $indemnity?->getId(),
             ]),
         ]);
@@ -72,7 +68,7 @@ class IndemnityController extends AbstractController
         $indemnity->setLevel($level)
             ->setBikeRideType($bikeRideType);
         $form = $this->createForm(IndemnityType::class, $indemnity, [
-            'action' => $this->generateUrl ('admin_indemnity_add', [
+            'action' => $this->generateUrl('admin_indemnity_add', [
                 'level' => $level->getId(),
                 'bikeRideType' => $bikeRideType->getId(),
             ]),

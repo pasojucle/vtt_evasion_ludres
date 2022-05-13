@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\UseCase\Registration\GetRegistrationsFiltered;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\UseCase\Registration\GetRegistrationsFiltered;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name:'admin_registration')]
 class RegistrationController extends AbstractController
@@ -20,7 +20,6 @@ class RegistrationController extends AbstractController
         Request $request,
         bool $filtered
     ): Response {
-
         return $this->render(
             'user/admin/registrations.html.twig',
             $getRegistrationsFiltered->list($request, $filtered)
@@ -32,7 +31,6 @@ class RegistrationController extends AbstractController
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
     ): Response {
-
         return $getRegistrationsFiltered->export($request);
     }
 
@@ -41,7 +39,6 @@ class RegistrationController extends AbstractController
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
     ): JsonResponse {
-
         return new JsonResponse($getRegistrationsFiltered->emailsToClipboard($request));
     }
 

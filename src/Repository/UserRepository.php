@@ -128,7 +128,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-
     private function addCriteriaByUser(QueryBuilder &$qb, User $user): void
     {
         $qb->andWhere(
@@ -240,14 +239,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-
     private function addCriteriaTestinInProgress(QueryBuilder &$qb): void
     {
         $qb
             ->join('u.sessions', 's')
             ->andWhere(
                 $qb->expr()->eq('li.final', ':final'),
-            )           
+            )
             ->setParameter('final', false)
             ->groupBy('s.user')
             ->andHaving(
@@ -255,6 +253,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
         ;
     }
+
     private function addCriteriaTestinComplete(QueryBuilder &$qb): void
     {
         $qb
@@ -278,7 +277,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
             ->orderBy('i.name', 'ASC')
         ;
-
     }
 
     public function findNextId(): int
@@ -396,7 +394,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $qb->expr()->gte('li.status', ':inProgress'),
             )
             ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE);
-        
 
         return $this->orderByASC($qb);
     }
