@@ -46,17 +46,16 @@ class SessionViewModel extends AbstractViewModel
 
     private function getAvailability(): array
     {
-        $availbilityColors = [
-            1 => 'success',
-            2 => 'alert-warning',
-            3 => 'alert-danger',
+        $availbilityClass = [
+            1 => ['badge'=> 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>'],
+            2 => ['badge'=> 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>'],
+            3 => ['badge'=> 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>'],
         ];
-
         $availability = [];
-        if (null !== $this->availability) {
+        if (null !== $this->entity->getAvailability()) {
             $availability = [
-                'class' => $availbilityColors[$this->availability],
-                'text' => Session::AVAILABILITIES[$this->availability],
+                'class' => $availbilityClass[$this->entity->getAvailability()],
+                'text' => Session::AVAILABILITIES[$this->entity->getAvailability()],
             ];
         }
 

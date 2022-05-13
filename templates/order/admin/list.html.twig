@@ -32,12 +32,12 @@
                         <div>
                             {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_ORDERED') %}
                                 <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_VALIDED')})}}" title="Valider">
-                                    <i class="fas fa-check"></i> Valider
+                                    <div><i class="fas fa-check"></i> Valider</div>
                                 </a>
                             {% endif %}
                             {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_VALIDED') %}
                                 <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_COMPLETED')})}}" title="Cloturer">
-                                    <i class="fas fa-check"></i> Cloturer
+                                    <div><i class="fas fa-check"></i> Cloturer</div>
                                 </a>
                             {% endif %}
                         </div>

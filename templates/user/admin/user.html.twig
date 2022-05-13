@@ -43,7 +43,7 @@
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-7 col-xs-6">{{ user.member.email }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Téléphone : </b></div><div class="col-md-7 col-xs-6">{{ user.member.phone }}</div></div></li>
                             {% if user.approvalGoingHome is not null %}
-                                <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6 {{ user.approvalGoingHome.class }}">{{ user.approvalGoingHome.message }}</div></div></li>
+                                <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6 {{ user.approvalGoingHome.class.color }}">{{ user.approvalGoingHome.message }}</div></div></li>
                             {% endif %}
                         </ul>
 
@@ -84,7 +84,7 @@
                 <div class="block background-ligth">
                     <div class="block-title">
                         <h2>Licence</h2>
-                        {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                        {% if is_granted('ROLE_REGISTER') %}
                             <div class="tools">
                             <a href="{{ path('admin_user_edit', {'user': user.entity.id}) }}"
                                     class="btn" title="Modifier">

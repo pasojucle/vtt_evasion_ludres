@@ -5,11 +5,10 @@
 {% block body %}
     <div class="wrapper">
         {{ form_start(form) }}
-        <div class="block padding-10">
-            <div class="block-title">
-                <h2>Envoyer une notification d'erreur sur une inscription</h2>
+            <div class="wrapper-title">
+                <h1>Envoyer une notification d'erreur sur une inscription</h1>
             </div>
-            <div class="block-body">
+            <div class="wrapper-body">
                 <div class="form-group">
                     {{ form_row(form.user) }}
                 </div>
@@ -17,11 +16,10 @@
                     {{ form_row(form.content) }}
                 </div>
             </div>
-            <div class="block-footer">
+            <div class="wrapper-footer">
                 {{ form_row(form.submit, {'label': 'Envoyer'}) }}
             </div>
             <b>Attention, l'envoi du mail, change le statut de l'inscription.</b>
-        </div>
         {{ form_errors(form) }}
         {{ form_end(form) }}
     </div>

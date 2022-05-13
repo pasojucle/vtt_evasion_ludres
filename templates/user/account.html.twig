@@ -56,7 +56,7 @@
                             {% if user.seasonLicence.getCurrentSeasonForm %}
                                 <li>
                                     <div class="row">
-                                        <div class="col-md-5"><b>Mon bulletin d'assurance {{ licence_service.currentSeason }}</b></div>
+                                        <div class="col-md-5"><b>Mon bulletin d'assurance {{ season_service.currentSeason }}</b></div>
                                         <div class="col-md-7">
                                             <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
                                         </div>

@@ -239,7 +239,7 @@ class ToolController extends AbstractController
                         $user = $this->entityManager->getRepository(User::class)->findOneBy([
                             'licenceNumber' => $licenceNumber,
                         ]);
-                        $licence = $user->getSeasonLicence($this->licenceService->getCurrentSeason());
+                        $licence = $user->getSeasonLicence($this->SeasonService->getCurrentSeason());
                         if (null !== $licence) {
                             $licence->setType($licenceType);
                             $this->entityManager->persist($user);
@@ -529,7 +529,9 @@ class ToolController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $content = ($form->get('submit')->isClicked()) ? utf8_encode($data['content']) : null;
+            /**@var SubmitButoon $submit */
+            $submit = $form->get('submit');
+            $content = ($submit->isClicked()) ? utf8_encode($data['content']) : null;
             list($filename, $content) = $getRegistrationCertificate->execute($request, $data['user'], $content);
             $form = $this->createForm(LicenceNumberType::class, [
                 'user' => $data['user'],
@@ -558,8 +560,9 @@ class ToolController extends AbstractController
             $licence = $data['user']->getLastLicence();
             $presenter->present($data['user']);
             $user = $presenter->viewModel();
-            $buttonIsCliked = $form->get('submit')->isClicked();
-            $content = ($buttonIsCliked)
+            /**@var SubmitButoon $submit */
+            $submit = $form->get('submit');
+            $content = ($submit->isClicked())
                 ? utf8_encode($data['content'])
                 : $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
             $content = str_replace('{{ licenceNumber }}', $user->getLicenceNumber(), $content);
@@ -567,7 +570,7 @@ class ToolController extends AbstractController
                 'user' => $data['user'],
                 'content' => $content,
             ]);
-            if ($buttonIsCliked) {
+            if ($submit->isClicked()) {
                 $result = $mailerService->sendMailToMember([
                     'name' => $user->member['name'],
                     'firstName' => $user->member['firstName'],

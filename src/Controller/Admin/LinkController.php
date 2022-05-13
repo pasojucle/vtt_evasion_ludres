@@ -61,7 +61,9 @@ class LinkController extends AbstractController
             $link = $form->getData();
 
             $isNew = null === $link->getTitle() && null === $link->getDescription() && null === $link->getImage();
-            if (null !== $link->getUrl() && ($isNew || ($form->has('search') && $form->get('search')->isClicked()))) {
+            /**@var SubmitButoon $search */
+            $search = $form->get('search');
+            if (null !== $link->getUrl() && ($isNew || ($form->has('search') && $search->isClicked()))) {
                 $data = $linkService->getUrlData($link->getUrl());
 
                 if ($data) {
@@ -155,7 +157,7 @@ class LinkController extends AbstractController
         Link $link
     ): Response {
         $position = $link->getPosition();
-        $newOrder = $request->request->get('newOrder');
+        $newOrder = (int) $request->request->get('newOrder');
         $links = $this->linkRepository->findByPosition($position);
 
         $this->orderByService->setNewOrders($link, $links, $newOrder);

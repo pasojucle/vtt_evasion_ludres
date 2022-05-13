@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\BikeRide;
+use App\Entity\User;
 use App\Entity\Session;
-use App\Form\SessionAvailabilityType;
+use App\Entity\BikeRide;
 use App\Form\SessionEditType;
-use App\Repository\SessionRepository;
-use App\Service\BikeRideService;
 use App\Service\SessionService;
-use App\ViewModel\BikeRidePresenter;
+use App\Service\BikeRideService;
 use App\ViewModel\UserPresenter;
+use App\ViewModel\BikeRidePresenter;
+use App\Form\SessionAvailabilityType;
+use App\Repository\SessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
@@ -39,6 +40,7 @@ class SessionController extends AbstractController
         BikeRidePresenter $bikeRidePresenter,
         BikeRide $bikeRide
     ): Response {
+        /**@var User $user */
         $user = $this->getUser();
 
         $clusters = $bikeRide->getClusters();
@@ -74,6 +76,7 @@ class SessionController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $userSession = $form->getData();
+
             $user->addSession($userSession);
 
             $this->entityManager->persist($userSession);

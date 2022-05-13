@@ -20,27 +20,26 @@
                     <li class="col-list col-1md-1sx-btn">
                         <div class="list-dropdown">
                             <a href="{{ path('admin_user', {'user': user.entity.id})}}"
-                                {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% endif %}>
+                                {% if user.titleColors is not null %} style="background-color: {{ user.titleColors.background }}; color: {{ user.titleColors.color }}"{% endif %}>
                                 <div class="row">
                                     <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
-                                    <div class="col-md-5 col-xs-12">
-                                        {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
+                                    {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
+                                        <div class="col-md-5 col-xs-12">
                                             {{ user.testingBikeRides }}/3 séances d'essai
-                                        {% endif %}
-                                    </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </a>
                             {% include('user/admin/dropdown.html.twig') %}
                         </div>
                         {% if user.seasonLicence is not empty %}
-                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Valider</a>
+                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
                             <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.entity.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
                         {% endif %}
                     </li>
                 {% endfor %}
             </ul>
         </div>
-
         {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

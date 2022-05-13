@@ -146,6 +146,35 @@ body > script {display: none !important;}
     line-height: 30px;
     text-align: center;
     border: 2px solid var(--white-color);
+    margin: -10px;
+}
+.person.person-check::before,
+.person.person-question::before,
+.person.person-xmark::before {
+    content: '\e542';
+    color: var(--white-color);
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+    border: 2px solid var(--white-color);
+    margin: -10px;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+.person.person-question::before {
+    content: '\e542';
+    background-color: var(--primary-color);
+}
+.person.person-check::before {
+    content: '\e53e';
+    background-color: var(--success-color);
+}
+.person.person-xmark::before {
+    content: '\e543';
+    background-color: var(--danger-color);
 }
 .home.success::before {
     background-color: var(--success-color);
@@ -173,7 +202,9 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
-
+.fas.fa-check-circle {
+    font-size: 20px;
+}
 .success:not(.form-group-inline, .form-group) {
     color: var(--success-color);
 }
@@ -345,6 +376,9 @@ nav > ul > li > div.nav-bar-title > a.btn-logger {
     display: inline-block;
     color: var(--success-color);
 }
+.success-ico.xl-ico i {
+    font-size: 36px;
+}
 .float-left + .float-right.btn-xl {
     margin-top: -25px;
 }
@@ -438,6 +472,8 @@ body {
     position: absolute;
     text-align: center;
     width: 100%;
+    top: 0;
+    left: 0;
 }
 .form-group > input[type="checkbox"] + label {
     vertical-align: middle;
@@ -726,13 +762,14 @@ span.select2-selection.select2-selection--single {
 .col-list.col-1md-1sx-btn {
     grid-template-columns: auto 105px 45px;
 }
-.col-list .btn {
+.col-list .btn, .success-ico.xl-ico {
     height: 100%;
     padding: unset;
-    padding-top: 12px;
-    padding-bottom: 12px;
     width: 100%;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .row {
     display: flex;
@@ -740,10 +777,12 @@ span.select2-selection.select2-selection--single {
     /* line-height: 25px; */
     flex-wrap: wrap;
     align-items: center;
+    /* flex-direction: column; */
+    justify-content: center;
 }
 .row.row-list {
     position: relative;
-    min-height: 50px;
+    min-height: 45px;
 }
 .row .align-self-center {
     align-self: center;
@@ -811,7 +850,7 @@ span.select2-selection.select2-selection--single {
 .align-center {
     text-align: center;
 }
-.align-right {
+.align-right, .align-right-md {
     text-align: right;
 }
 .info {
@@ -834,6 +873,7 @@ span.select2-selection.select2-selection--single {
 }
 .list-dropdown {
     background-color: var(--white-color);
+    min-height: 45px;
 }
 
 .list-dropdown > a {
@@ -852,9 +892,16 @@ span.select2-selection.select2-selection--single {
     position: relative;
     padding: 10px 20px;
 }
+.wrapper .wrapper-title h1 {
+    width: calc(100% - 50px);
+}
 .wrapper .wrapper-body {
     padding: 20px;
     box-sizing: border-box;
+}
+.wrapper .wrapper-body h2{
+    margin-bottom: 5px;
+    font-size: 20px;
 }
 .admin .wrapper .wrapper-title {
     background-color: var(--primary-color);
@@ -920,7 +967,10 @@ span.select2-selection.select2-selection--single {
     background-color: var(--white-color);
 
 }
-.nav-group ul > li:not(:first-child)::after, .col-list:not(:first-child) .list-item::after, .row-list.light-separator:not(:first-child)::after {
+.nav-group ul > li:not(:first-child)::after,
+.col-list:not(:first-child) .list-item::after,
+.row-list.light-separator:not(:first-child)::after,
+.list-dropdown:not(:first-child).light-separator::after {
     background-color: var(--light-color);
     z-index: 5;
 }
@@ -1259,7 +1309,7 @@ nav.nav-tab::before {
         gap: 20px;
     }
     .col-list {
-        grid-template-columns: auto 140px;
+        /* grid-template-columns: auto 140px; */
     }
     .row {
         line-height: unset;
@@ -1327,7 +1377,7 @@ nav.nav-tab::before {
         letter-spacing: -0.5px;
     }
     .row.row-list .btn, .row.row-list .background-ligth {
-        height: 80px;
+        height: 45px;
     }
     .row.row-list .btn-ico, .row.row-list .one-line {
         line-height: 65px;
@@ -1358,5 +1408,13 @@ nav.nav-tab::before {
     .block.background-ligth, .block.background-clear, .block.background-color {
         padding: 10px;
     }
-
+    .list-dropdown > a {
+        padding: 5px;
+    }
+    .list-dropdown .row {
+        min-height: 45px;
+    }
+    .align-right-md {
+        text-align: unset;
+    }
 }

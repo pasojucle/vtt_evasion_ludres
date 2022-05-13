@@ -4,69 +4,67 @@
 
 {% block body %}
     <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Journal des erreurs</h2>
-                <span class="tools">
-                    <a href="{{ path('admin_log_errors', {'statusCode': error.statusCode}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-                </span>
-            </div>
-            <div class="block-body">
-                <ul id="errors_container">
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>Date</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.createdAt }}</div>
-                    </li>
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>Code erreur</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.statusCode }}</div>
-                    </li>
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>Url</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.url }}</div>
-                    </li>
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>Erreur</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.errorMessage }}</div>
-                    </li>
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>Fichier</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.fileName }}</div>
-                    </li>
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>ligne</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.line }}</div>
-                    </li>
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>user-agent</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.userAgent }}</div>
-                    </li>
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>Route</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">{{ error.route }}</div>
-                    </li>
-                    {% if error.user is not empty %}
-                    <li class="row row-list">
-                        <div class="col-md-4 col-xs-6"><b>Utilisateur</b>
-                        </div>
-                        <div class="col-md-8 col-xs-6">
-                            {{ error.user.licenceNumber }}
-                            {% if error.user.member is not empty %}
-                                {{ error.user.member.fullName }}
-                            {% endif %}
-                        </div>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+        <div class="wrapper-title">
+            <h1>Journal des erreurs</h1>
+            <span class="tools">
+                <a href="{{ path('admin_log_errors', {'statusCode': error.statusCode}) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+            </span>
+        </div>
+        <div class="wrapper-body">
+            <ul id="errors_container">
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>Date</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.createdAt }}</div>
+                </li>
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>Code erreur</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.statusCode }}</div>
+                </li>
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>Url</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.url }}</div>
+                </li>
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>Erreur</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.errorMessage }}</div>
+                </li>
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>Fichier</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.fileName }}</div>
+                </li>
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>ligne</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.line }}</div>
+                </li>
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>user-agent</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.userAgent }}</div>
+                </li>
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>Route</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">{{ error.route }}</div>
+                </li>
+                {% if error.user is not empty %}
+                <li class="row row-list">
+                    <div class="col-md-4 col-xs-6"><b>Utilisateur</b>
+                    </div>
+                    <div class="col-md-8 col-xs-6">
+                        {{ error.user.licenceNumber }}
+                        {% if error.user.member is not empty %}
+                            {{ error.user.member.fullName }}
+                        {% endif %}
+                    </div>
+                </li>
+                {% endif %}
+            </ul>
         </div>
     </div>
 {% endblock %}

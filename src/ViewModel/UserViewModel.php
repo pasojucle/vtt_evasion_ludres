@@ -181,11 +181,11 @@ class UserViewModel extends AbstractViewModel
                 if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
                     $approvalGoingHome = ($approval->getValue())
                         ? [
-                            'class' => 'success',
+                            'class' => ['color'=> 'success', 'icon' => '<i class="fa-solid fa-house-circle-check"></i>'],
                             'message' => 'Autorisé à rentrer seul',
                         ]
                         : [
-                            'class' => 'alert-danger',
+                            'class' => ['color'=> 'alert-danger', 'icon' => '<i class="fa-solid fa-house-circle-xmark"></i>'],
                             'message' => 'Pas autorisé à rentrer seul',
                         ];
                 }

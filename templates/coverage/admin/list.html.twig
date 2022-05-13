@@ -34,7 +34,7 @@
                         </div>
                         <div>
                             {% if user.seasonLicence is not empty %}
-                                <a class="btn btn-success" href="{{ path('admin_coverage_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Valider</a>
+                                <a class="btn btn-success" href="{{ path('admin_coverage_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
                             {% endif %}
                         </div>
                     </li>

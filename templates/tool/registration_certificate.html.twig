@@ -6,21 +6,19 @@
     <div class="wrapper">
         {% if filename is null %}
             {{ form_start(form) }}
-            <div class="block padding-10">
-                <div class="block-title">
-                    <h2>Attestation d'inscription pour CE</h2>
+            <div class="wrapper-title">
+                <h1>Attestation d'inscription pour CE</h1>
+            </div>
+            <div class="wrapper-body">
+                <div class="form-group">
+                    {{ form_row(form.user) }}
                 </div>
-                <div class="block-body">
-                    <div class="form-group">
-                        {{ form_row(form.user) }}
-                    </div>
-                    <div class="form-group">
-                        {{ form_row(form.content) }}
-                    </div>
+                <div class="form-group">
+                    {{ form_row(form.content) }}
                 </div>
-                <div class="block-footer">
-                    {{ form_row(form.submit, {'label': 'Générer le certificat'}) }}
-                </div>
+            </div>
+            <div class="wrapper-footer">
+                {{ form_row(form.submit, {'label': 'Générer le certificat'}) }}
             </div>
             {{ form_errors(form) }}
             {{ form_end(form) }}

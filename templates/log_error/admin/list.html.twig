@@ -3,41 +3,37 @@
 {% block title %}Journal des erreurs{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-        <div class="block">
-            <div class="block-title">
-                <h2>Journal des erreurs - <span class="badge badge-info">{{ count }}</span></h2>
-            </div>
-            <div class="block-body">
-                <div>
-                    <nav class="nav-tab">
-                        {% for statuscode, label in tabs %}
-                            <a href="{{ path('admin_log_errors', {'statusCode': statuscode} )}}"{% if status_code == statuscode %} class="active"{% endif %}>{{ label|trans}}</a>
-                        {% endfor %}
-                    </nav>
-                </div>
-                <ul id="errors_container">
-                    {% for error in errors %}
-                        <li class="row row-list">
-                            <div class="col-md-11 col-xs-10">
-                                <a href="{{ path('admin_log_error', {'error': error.id}) }}" class="btn btn-list btn-light" title="Voir l'erreur">
-                                    <div class="row">
-                                        <div class="col-md-5 col-xs-8">{{ error.createdAt }}<br>{{ error.url }}</div>
-                                        <div class="col-md-7 col-xs-12">{{ error.errorMessage }}</div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-md-1 col-xs-2">
-                                <a class="btn btn-danger delete-error" 
-                                    href="{{ path('admin_log_error_delete', {'error': error.id}) }}" title="Annuler">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                {% if errors is empty %}Aucune erreur{% endif %}
-            </div>
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Journal des erreurs - <span class="badge badge-info">{{ count }}</span></h1>
+        </div>
+        <nav class="nav-tab">
+            {% for statuscode, label in tabs %}
+                <a href="{{ path('admin_log_errors', {'statusCode': statuscode} )}}"{% if status_code == statuscode %} class="active"{% endif %}>{{ label|trans}}</a>
+            {% endfor %}
+        </nav>
+        <div class="wrapper-body">
+            <ul id="errors_container">
+                {% for error in errors %}
+                    <li class="row row-list">
+                        <div class="col-md-11 col-xs-10">
+                            <a href="{{ path('admin_log_error', {'error': error.id}) }}" class="btn btn-list btn-light" title="Voir l'erreur">
+                                <div class="row">
+                                    <div class="col-md-5 col-xs-8">{{ error.createdAt }}<br>{{ error.url }}</div>
+                                    <div class="col-md-7 col-xs-12">{{ error.errorMessage }}</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-1 col-xs-2">
+                            <a class="btn btn-danger delete-error" 
+                                href="{{ path('admin_log_error_delete', {'error': error.id}) }}" title="Annuler">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if errors is empty %}Aucune erreur{% endif %}
         </div>
         {% include('common/pagination.html.twig') %}
     </div>

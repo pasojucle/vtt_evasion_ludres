@@ -39,7 +39,12 @@ button.dropdown-toggle:hover, button.dropdown-toggle.active {
 }
 
 .dropdown-menu > ul > li {
-    line-height: 30px;
+    line-height: 45px;
+}
+
+.dropdown-menu > ul > li.info {
+    color: var(--gray-color);
+    font-weight: 300;
 }
 
 .dropdown-menu > ul > li:not(:last-child)::after {
@@ -63,5 +68,8 @@ button.dropdown-toggle:hover, button.dropdown-toggle.active {
 @media screen and (max-width: 414px) {
     .dropdown .dropdown-menu.active {
         width: calc(100vw - 72px);
+    }
+    .col-list.col-list-1btn .dropdown .dropdown-menu.active {
+        width: calc(100vw - 120px);
     }
 }

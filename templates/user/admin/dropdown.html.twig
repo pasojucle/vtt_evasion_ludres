@@ -3,6 +3,22 @@
   <div class="dropdown-menu" data-target="dropdown-{{ user.entity.id }}">
     <div class="dropdown-title">{{ user.member.fullName }}</div>
     <ul class="dropdown-body">
+      {% if session is defined %}
+        {% if session.availability is not empty %}
+          <li class="info">{{ session.availability.class.icon|raw }} {{ session.availability.text|trans }}</li>
+        {% endif %}
+        {% if user.approvalGoingHome is not null %}
+          <li class="info ">{{ user.approvalGoingHome.class.icon|raw }} {{ user.approvalGoingHome.message }}</li>
+        {% endif %}
+        {% if hasClusters and not cluster.isComplete and (session.availability is empty or session.availability == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+          <li><a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.entity.id}) }}" class="dropdown-item" title="Changer de groupe">
+              <i class="fa-solid fa-rotate"></i> Changer de groupe
+          </a></li>
+        {% endif %}
+        {% if is_granted('ROLE_ADMIN') and not cluster.isComplete %}
+            <li><a class="dropdown-item" href="{{ path('admin_session_delete', {'session' : session.entity.id}) }}" title="Supprimer"><i class="fas fa-times"></i> Supprimer de la sortie</a></li>
+        {% endif %}
+      {% endif %}
       <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.entity.id})}}"><i class="fas fa-chart-line"></i> Participation</a></li>
       {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}
         <li><a class="dropdown-item" href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"><i class="fas fa-exchange-alt"></i> Se connecter en tant que</a></li>
