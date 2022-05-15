@@ -15,6 +15,7 @@ use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationStepRepository;
+use App\Service\LicenceService;
 use App\Service\SeasonService;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
@@ -36,7 +37,8 @@ class GetProgress
         private RegistrationStepPresenter $presenter,
         private UserPresenter $userPresenter,
         private Security $security,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private LicenceService $licenceService
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
@@ -77,10 +79,10 @@ class GetProgress
         }
         $progress['current'] = $progress['steps'][$progress['currentIndex']];
         $progress['user'] = $this->userPresenter->viewModel();
-        $progress['seasonLicence'] = $this->seasonLicence;
+        // $progress['seasonLicence'] = $this->seasonLicence;
         $progress['season'] = $this->season;
         $progress['step'] = $step;
-
+        
         return $progress;
     }
 
@@ -90,7 +92,7 @@ class GetProgress
         if (null === $this->user) {
             $this->createUser();
         }
-        $this->seasonService = $this->user->getSeasonService($this->season);
+        $this->seasonLicence = $this->user->getSeasonLicence($this->season);
         if (null === $this->seasonLicence) {
             $this->createNewLicence();
         }
@@ -162,7 +164,7 @@ class GetProgress
 
     private function createNewLicence(): void
     {
-        $this->seasonService = new Licence();
+        $this->seasonLicence = new Licence();
         $this->seasonLicence->setSeason($this->season);
         if (!$this->user->getLicences()->isEmpty()) {
             $this->seasonLicence->setFinal(true)
@@ -175,7 +177,7 @@ class GetProgress
             ;
         }
         if (!$this->user->getIdentities()->isEmpty()) {
-            $category = $this->seasonService->getCategory($this->user);
+            $category = $this->licenceService->getCategory($this->user);
             $this->seasonLicence->setCategory($category);
         }
         $this->entityManager->persist($this->seasonLicence);
@@ -224,8 +226,7 @@ class GetProgress
             Identity::TYPE_SECOND_CONTACT => Identity::KINSHIP_MOTHER,
         ] as $type => $kinShip) {
             $identity = new Identity();
-            $identity->setKinship($kinShip)
-                ->setType($type)
+            $identity->setType($type)
             ;
             $this->user->addIdentity($identity);
             if (Identity::TYPE_KINSHIP === $type) {

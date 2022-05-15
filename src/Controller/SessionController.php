@@ -62,7 +62,7 @@ class SessionController extends AbstractController
 
             $userSession = new Session();
             $userSession->setUser($user)
-                ->setCluster($userCluster->entity)
+                ->setCluster($userCluster)
             ;
         }
         $bikeRidePresenter->present($bikeRide);

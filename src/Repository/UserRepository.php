@@ -242,7 +242,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     private function addCriteriaTestinInProgress(QueryBuilder &$qb): void
     {
         $qb
-            ->join('u.sessions', 's')
+            ->leftjoin('u.sessions', 's')
             ->andWhere(
                 $qb->expr()->eq('li.final', ':final'),
             )
@@ -369,7 +369,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['levels']) {
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
-
             if (null !== $filters['status']) {
                 switch ($filters['status']) {
                     case Licence::STATUS_TESTING_IN_PROGRESS:
@@ -391,7 +390,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->addCriteriaBySeason($qb, $currentSeason);
         $qb
             ->andWhere(
-                $qb->expr()->gte('li.status', ':inProgress'),
+                $qb->expr()->eq('li.status', ':inProgress'),
             )
             ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE);
 

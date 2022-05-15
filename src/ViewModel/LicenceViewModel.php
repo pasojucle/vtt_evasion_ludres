@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\Licence;
 use DateTime;
 use DateTimeImmutable;
+use App\Entity\Licence;
+use App\Model\Currency;
 
 class LicenceViewModel extends AbstractViewModel
 {
@@ -44,9 +45,7 @@ class LicenceViewModel extends AbstractViewModel
 
     public ?bool $lock;
 
-    public ?string $amount;
-
-    public ?string $amountStr;
+    private bool $isNewMember;
 
     public bool $currentSeasonForm = false;
 
@@ -81,22 +80,21 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->lock = $licence->getSeason() !== $services->currentSeason;
             $licenceView->currentSeasonForm = $licenceView->getCurrentSeasonForm();
 
-            $licenceView->amount = $licenceView->getAmount($isNewMember)['value'].' €';
-            $licenceView->amountStr = $licenceView->getAmount($isNewMember)['str'];
+            $licenceView->isNewMember = $isNewMember;
         }
 
         return $licenceView;
     }
 
-    private function getAmount(bool $isNewMember): array
+    public function getAmount(): array
     {
         $amount = null;
         $amountStr = '';
         $indemnities = null;
 
         if ($this->isFinal) {
-            $membershipFee = (null !== $this->coverage && null !== $this->hasFamilyMember && null !== $isNewMember)
-                ? $this->services->membershipFeeAmountRepository->findOneByLicence($this->coverage, $isNewMember, $this->hasFamilyMember)
+            $membershipFee = (null !== $this->coverage && null !== $this->hasFamilyMember && null !== $this->isNewMember)
+                ? $this->services->membershipFeeAmountRepository->findOneByLicence($this->coverage, $this->isNewMember, $this->hasFamilyMember)
                 : null;
             if (null !== $membershipFee) {
                 $amount = $membershipFee->getAmount();
@@ -108,8 +106,9 @@ class LicenceViewModel extends AbstractViewModel
             }
 
             if (null !== $amount) {
+                $amount = new Currency($amount);
                 $coverageSrt = $this->services->translator->trans(Licence::COVERAGES[$this->coverage]);
-                $amountStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount} €";
+                $amountStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount->toString()}";
             }
         } else {
             $amountStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";

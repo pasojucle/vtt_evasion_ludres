@@ -32,7 +32,7 @@ class IdentityType extends AbstractType
             $identity = $event->getData();
             $form = $event->getForm();
             $type = $identity->getType();
-            $kinship = $identity->getKinship();
+            $kinship = 1 < $type;
             $disabled = ($options['season_licence']->isFinal() && Identity::TYPE_MEMBER === $type) ? 'disabled' : '';
             $addressClass = (Identity::TYPE_SECOND_CONTACT !== $type) ? ' identity-address' : '';
             $addressRequired = 'required';
@@ -129,7 +129,7 @@ class IdentityType extends AbstractType
                         ;
                 }
 
-                if (Licence::CATEGORY_ADULT === $options['category']) {
+                if (Licence::CATEGORY_ADULT === $options['category'] && $options['season_licence']->isFinal()) {
                     $form
                         ->add('profession', TextType::class, [
                             'label' => 'Profession',
@@ -164,6 +164,7 @@ class IdentityType extends AbstractType
                         ->add('kinship', ChoiceType::class, [
                             'label' => 'Parenté',
                             'choices' => array_flip($kinshipChoices),
+                            'placeholder' => 'Choisir le lien de parenté',
                             'row_attr' => [
                                 'class' => 'form-group-inline',
                             ],

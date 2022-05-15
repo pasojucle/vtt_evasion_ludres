@@ -74,7 +74,7 @@ class EditRegistration
 
         if (null !== $user->getIdentities()->first()->getBirthDate()) {
             $category = $this->licenceService->getCategory($user);
-            $user->getSeasonService($season)->setCategory($category);
+            $user->getSeasonLicence($season)->setCategory($category);
             if (Licence::CATEGORY_MINOR === $category) {
                 $this->schoolTestingRegistrationValidator($form, $progress);
                 $this->identityService->setAddress($user);
@@ -83,11 +83,11 @@ class EditRegistration
         $this->UploadFile($request, $user);
 
         $isMedicalCertificateRequired = $this->isMedicalCertificateRequired($progress);
-        $user->getSeasonService($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
+        $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
         if ($form->isValid()) {
             if (UserType::FORM_OVERVIEW === $progress['current']->form) {
-                $user->getSeasonService($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
+                $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
                 $this->sendMailToClub($user);
             }
             $this->entityManager->flush();
@@ -132,7 +132,7 @@ class EditRegistration
     private function schoolTestingRegistrationValidator(FormInterface &$form, array $progress)
     {
         $schoolTestingRegistration = $this->parameterService->getSchoolTestingRegistration($progress['user']);
-        if (!$schoolTestingRegistration['value'] && !$progress['seasonLicence']->isFinal()) {
+        if (!$schoolTestingRegistration['value'] && !$progress['user']->seasonLicence->isFinal) {
             $form->addError(new FormError($schoolTestingRegistration['message']));
         }
     }
@@ -154,11 +154,10 @@ class EditRegistration
     private function isMedicalCertificateRequired(array $progress): bool
     {
         $isMedicalCertificateRequired = false;
-        $seasonService = $progress['seasonLicence'];
         $user = $progress['user'];
-        if (Licence::TYPE_RIDE !== $seasonService->getType()) {
+        if (Licence::TYPE_RIDE !== $user->seasonLicence->type) {
             $medicalCertificateDate = $user->health->medicalCertificateDateObject;
-            $medicalCertificateDuration = (Licence::TYPE_HIKE === $seasonService->getType()) ? 5 : 3;
+            $medicalCertificateDuration = (Licence::TYPE_HIKE === $user->seasonLicence->type) ? 5 : 3;
             $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
             $today = new DateTime();
             if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->health->isMedicalCertificateRequired) {
@@ -197,7 +196,7 @@ class EditRegistration
 
     private function authenticating(Request $request, User $user): void
     {
-        $token = new UsernamePasswordToken($user, '', $user->getRoles());
+        $token = new UsernamePasswordToken($user, $user->getPassword(), $user->getRoles());
         $this->tokenStorage->setToken($token);
 
         // $event = new SecurityEvents($request);

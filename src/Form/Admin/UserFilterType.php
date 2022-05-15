@@ -64,7 +64,7 @@ class UserFilterType extends AbstractType
                 'attr' => [
                     'class' => 'select2',
                     'data-width' => '100%',
-                    'data-placeholder' => 'Sélectionez un ou plusieurs niveaux',
+                    'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
                     'data-maximum-selection-length' => 4,
                     'data-language' => 'fr',
                     'data-allow-clear' => true,

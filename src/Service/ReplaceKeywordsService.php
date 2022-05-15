@@ -104,7 +104,7 @@ class ReplaceKeywordsService
             $address,
             $licence->season,
             $user->getLicenceNumber(),
-            $licence->amountStr,
+            $licence->getAmount()['str'],
             $today->format('d/m/Y'),
             $user->getFullName(),
             $user->getBirthDate(),

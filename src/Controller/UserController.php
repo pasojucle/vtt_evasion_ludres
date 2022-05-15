@@ -34,6 +34,9 @@ class UserController extends AbstractController
         Request $request
     ): Response {
         $user = $this->getUser();
+        if (null === $user) {
+            $this->redirectToRoute('login');
+        }
 
         $query = $ordersHeaderRepository->findOrdersByUserQuery($user);
         $ordersHeader = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);

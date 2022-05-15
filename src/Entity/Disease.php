@@ -74,13 +74,13 @@ class Disease
     private int $type;
 
     #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $title;
+    private ?string $title = null;
 
     #[Column(type: 'text', nullable: true)]
-    private ?string $curentTreatment;
+    private ?string $curentTreatment = null;
 
     #[Column(type: 'text', nullable: true)]
-    private ?string $emergencyTreatment;
+    private ?string $emergencyTreatment = null;
 
     #[Column(type: 'integer')]
     private int $label;

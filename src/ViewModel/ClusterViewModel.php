@@ -45,7 +45,7 @@ class ClusterViewModel extends AbstractViewModel
         $clusterView->maxUsers = $cluster->getMaxUsers();
         $clusterView->role = $cluster->getRole();
         $clusterView->isComplete = $cluster->isComplete();
-        $clusterView->memberSessions = $clusterView->getMemberSessions();
+        $clusterView->memberSessions = $services->clusterService->getMemberSessions($cluster);
         $clusterView->availableSessions = $clusterView->getAvailableSessions();
         $clusterView->usersOnSiteCount = $clusterView->getUsersOnSiteCount();
 
@@ -66,21 +66,6 @@ class ClusterViewModel extends AbstractViewModel
         }
 
         return $sessions;
-    }
-
-    private function getMemberSessions(): ArrayCollection
-    {
-        $memberSessions = [];
-        if (!$this->entity->getSessions()->isEmpty()) {
-            foreach ($this->entity->getSessions() as $session) {
-                $roles = $session->getUser()->getRoles();
-                if (in_array('USER', $roles, true)) {
-                    $memberSessions[] = $session->getUser();
-                }
-            }
-        }
-
-        return new ArrayCollection($memberSessions);
     }
 
     public function getAvailableSessions(): ArrayCollection

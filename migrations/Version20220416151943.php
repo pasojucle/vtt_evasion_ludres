@@ -70,6 +70,6 @@ final class Version20220416151943 extends AbstractMigration
         $this->addSql("INSERT INTO `parameter` (`id`, `name`, `label`, `type`, `value`, `parameter_group_id`) VALUES
         (1, 'EVENT_SCHOOL_CONTENT', 'ÉcoleVTT', 1, 'Ecole VTT sur Ludres de 14h00 précise à 17h00, école VTT, rando et goûter.', 1),
         (2, 'EVENT_ADULT_CONTENT', 'Rando adultes et ados', 1, '1er groupe (40 à 50 km) rendez-vous à 8h30 sur le parking de la Jauffaite, en face de l\'école Jacques Prévert ou à 9h00 au club sur le plateau de Ludres.2e et 3e groupe (20 à 40 km). Rendez-vous à 9h00 au club sur le plateau.', 1),
-        (12, 'EVENT_HOLIDAYS_CONTENT', 'ÉcoleVTT: Vacances scolaires', 1, 'Il n\'y aura pas de séances d\'école VTT les samedis 30 octobre et 06 novembre. Reprise le samedi 13 novembre.\r\n\r\nBonnes vacances à toutes et à tous', 1);");
+        (12, 'EVENT_HOLIDAYS_CONTENT', 'ÉcoleVTT: Vacances scolaires', 1, 'Il n\'y aura pas de séances d\'école VTT les samedis 30 octobre et 06 novembre. Reprise le samedi 13 novembre.Bonnes vacances à toutes et à tous', 1);");
     }
 }

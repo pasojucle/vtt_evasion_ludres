@@ -84,15 +84,16 @@ class RegistrationController extends AbstractController
         }
 
         $progress = $this->getProgress->execute($step);
-        if (Licence::STATUS_IN_PROCESSING < $progress['seasonLicence']->getStatus() && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
+        $user = $progress['user'];
+        if (Licence::STATUS_IN_PROCESSING < $user->seasonLicence->status && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
             return $this->redirectToRoute('registration_download', [
-                'user' => $progress['user']->entity->getId(),
+                'user' => $user->entity->getId(),
             ]);
         }
         $form = $progress['current']->formObject;
 
         $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress['user']);
-        if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress['current']->form && !$progress['user']->getId()) {
+        if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress['current']->form && !$progress['user']->licenceNumber) {
             $this->addFlash('success', $schoolTestingRegistration['message']);
         }
         $maxStep = $step;
@@ -119,7 +120,6 @@ class RegistrationController extends AbstractController
             'prev' => $progress['prevIndex'],
             'current' => $progress['current'],
             'next' => $progress['nextIndex'],
-            'season_licence' => $progress['seasonLicence'],
             'maxStep' => $this->requestStack->getSession()->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
             'user' => $progress['user'],

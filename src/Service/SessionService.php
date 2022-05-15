@@ -17,14 +17,15 @@ use Doctrine\Common\Collections\Collection;
 
 class SessionService
 {
-    private string $seasonStartAt;
+    private array $seasonStartAt;
     public function __construct(
         private SessionRepository $sessionRepository,
         private UserPresenter $userPresenter,
         private LevelRepository $levelRepository,
         private MailerService $mailerService,
         private ClusterPresenter $clusterPresenter,
-        private ParameterService $parameterService
+        private ParameterService $parameterService,
+        private ClusterService $clusterService
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
@@ -58,23 +59,21 @@ class SessionService
         return [$framers, $members];
     }
 
-    public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters)
+    public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): Cluster
     {
         $userCluster = null;
         if ($bikeRide->getBikeRideType()->isSchool()) {
             $clustersLevelAsUser = [];
             $userLevel = (null !== $user->getLevel()) ? $user->getLevel() : $this->levelRepository->findAwaitingEvaluation();
             foreach ($bikeRide->getClusters() as $cluster) {
-                $this->clusterPresenter->present($cluster);
-                $cluster = $this->clusterPresenter->viewModel();
-                if (null !== $cluster->level && $cluster->level === $userLevel) {
+                if (null !== $cluster->getLevel() && $cluster->getLevel() === $userLevel) {
                     $clustersLevelAsUser[] = $cluster;
-                    if (count($cluster->memberSessions) <= $cluster->maxUsers) {
+                    if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
                         $userCluster = $cluster;
                     }
                 }
 
-                if (null !== $cluster->role && $user->hasRole($cluster->role)) {
+                if (null !== $cluster->getRole() && $user->hasRole($cluster->getRole())) {
                     $userCluster = $cluster;
                 }
             }

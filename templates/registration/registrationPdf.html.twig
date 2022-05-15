@@ -5,7 +5,7 @@
         <main class="registration">
         {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
         {% if registration_document_steps[key]is defined %}
-            {{ registration_document_steps[key]['header']|imgPath(media)|raw }}
+            {{ registration_document_steps[key]['header']|imgPath(media)|raw|nl2br }}
         {% endif %}
         {# <div class="block"> #}
             {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}

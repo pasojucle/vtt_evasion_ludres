@@ -7,6 +7,7 @@ namespace App\ViewModel;
 use App\Entity\User;
 use App\Repository\IndemnityRepository;
 use App\Repository\MembershipFeeAmountRepository;
+use App\Service\ClusterService;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
 use App\Service\SeasonService;
@@ -35,7 +36,8 @@ class ServicesPresenter
         public TranslatorInterface $translator,
         public AppExtension $appExtension,
         private IndemnityRepository $indemnityRepository,
-        public IndemnityService $indemnityService
+        public IndemnityService $indemnityService,
+        public ClusterService $clusterService
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
         $this->uploadsDirectory = $this->parameterBag->get('uploads_directory_path');

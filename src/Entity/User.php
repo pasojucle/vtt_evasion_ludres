@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $sessions;
 
     #[ManyToOne(targetEntity: Level::class, inversedBy: 'users')]
-    private ?Level $level;
+    private ?Level $level = null;
 
     #[Column(type: 'boolean', options:['default' => false])]
     private $passwordMustBeChanged = false;

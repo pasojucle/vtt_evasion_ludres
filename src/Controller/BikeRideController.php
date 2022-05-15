@@ -43,7 +43,7 @@ class BikeRideController extends AbstractController
         return $this->render('bike_ride/list.html.twig', $response['parameters']);
     }
 
-    #[Route('/mon_programme', name: 'user_bike_rides', methods: ['GET'])]
+    #[Route('/mon-programme', name: 'user_bike_rides', methods: ['GET'])]
     public function userBikeRides(
         UserPresenter $presenter
     ): Response {

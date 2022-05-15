@@ -78,7 +78,7 @@ class GetRegistrationCertificate
             $address,
             $licence->season,
             $user->getLicenceNumber(),
-            $licence->amount,
+            $licence->getAmount()['value']->toString(),
             $today,
         ];
 
@@ -104,7 +104,7 @@ class GetRegistrationCertificate
             $address,
             $licence->season,
             $user->getLicenceNumber(),
-            $licence->amount,
+            $licence->getAmount()['value']->toString(),
             $today,
         ];
 
