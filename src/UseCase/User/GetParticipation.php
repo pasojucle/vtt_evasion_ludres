@@ -53,8 +53,6 @@ class GetParticipation
         $session->set($this->filterName, $filters);
         $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
 
-        $this->setRedirect($request, $user);
-
         $sessions = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $this->userPresenter->present($user);
@@ -71,6 +69,7 @@ class GetParticipation
                 'user' => $user->getId(),
             ],
             'count' => $this->paginator->total($sessions),
+            'referer' => $session->get('admin_user_redirect'),
         ];
     }
 

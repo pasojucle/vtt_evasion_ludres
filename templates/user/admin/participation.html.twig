@@ -16,7 +16,9 @@
         </div>
         <div class="wrapper-body">
             <h2>{{ user.member.fullName }}</h2>
+            {% if user.level.type == constant('App\\Entity\\Level::TYPE_FRAME') %}
             <p>Total des indemnités : {{ total_indemnities.toString }}</p>
+            {% endif %}
             {{ form_start(form) }}
             <div class="form-group filters">
                 <div class="form-group-inline">{{ form_row(form.season) }}</div>

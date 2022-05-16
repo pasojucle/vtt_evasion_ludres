@@ -79,8 +79,6 @@ class UserController extends AbstractController
 
     #[Route('/admin/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], defaults:['filtered' => false])]
     public function adminUserParticipation(
-        SessionRepository $sessionRepository,
-        SessionsPresenter $sessionsPresenter,
         GetParticipation $getParticipation,
         Request $request,
         User $user,

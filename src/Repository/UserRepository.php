@@ -201,7 +201,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb
             ->andWhere(
-                $qb->expr()->gte('li.status', ':status'),
+                $qb->expr()->gt('li.status', ':status'),
                 $qb->expr()->eq('li.final', ':final'),
             )
             ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
@@ -390,9 +390,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->addCriteriaBySeason($qb, $currentSeason);
         $qb
             ->andWhere(
-                $qb->expr()->eq('li.status', ':inProgress'),
+                $qb->expr()->orX(
+                   $qb->expr()->eq('li.status', ':inProgress'), 
+                   $qb->expr()->eq('li.final', ':final')
+                )
+                
             )
-            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE);
+            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('final', 0);
 
         return $this->orderByASC($qb);
     }
