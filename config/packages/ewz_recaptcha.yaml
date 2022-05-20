@@ -2,5 +2,6 @@
 ewz_recaptcha:
     public_key:  '%env(EWZ_RECAPTCHA_SITE_KEY)%'
     private_key: '%env(EWZ_RECAPTCHA_SECRET)%'
-    version: 2
+    version: 3
     enabled: true
+    score_threshold: 0.6
