@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Validator\EmailHost;
+use App\Validator\FullName;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,11 +34,17 @@ class ContactType extends AbstractType
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
+                'constraints' => [
+                    new FullName(),
+                ],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Adresse mail',
                 'row_attr' => [
                     'class' => 'form-group-inline',
+                ],
+                'constraints' => [
+                    new EmailHost(),
                 ],
             ])
             ->add('message', TextareaType::class, [
