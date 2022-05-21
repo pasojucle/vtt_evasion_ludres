@@ -12,7 +12,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SeasonService
 {
-    private array $seasonStartAt;
+    private ?array $seasonStartAt;
 
     public function __construct(private TranslatorInterface $translator, private ParameterService $parameterService)
     {
