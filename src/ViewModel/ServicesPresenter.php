@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ServicesPresenter
 {
     public ?array $seasonStartAt;
-    public array $coverageFormStartAt;
+    public ?array $coverageFormStartAt;
     public string $productDirectory;
     public string $uploadsDirectory;
     public int $currentSeason;
