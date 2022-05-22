@@ -347,6 +347,12 @@ p + p {
 .bike-rides-container {
     grid-area: events;
 }
+.bike-rides-container li:not(:last-child) {
+    margin-bottom: 5px;
+}
+.bike-rides-container li > a {
+    color: var(--background-color);
+}
 .links-container {
     grid-area: links;
 }
@@ -390,6 +396,9 @@ button[type="submit"] {
 }
 .bike-rides .bike-ride-detail {
     background-color: var(--white-color);
+}
+.bike-rides .bike-ride-detail .row {
+    align-items: self-start;
 }
 .bike-rides .bike-ride-date, .bike-rides .bike-ride-btn{
     background-color: var(--green-color);

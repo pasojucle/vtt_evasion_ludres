@@ -6,6 +6,7 @@
 parameters:
     public_directory: '%kernel.project_dir%/public'
     uploads_directory_path: '%kernel.project_dir%/public/uploads/'
+    uploads_directory: '/uploads/'
     files_directory_path: '%kernel.project_dir%/public/files/'
     products_directory: 'uploads/products'
     products_directory_path: '%kernel.project_dir%/public/%products_directory%'

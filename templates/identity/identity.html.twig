@@ -29,7 +29,7 @@
             </div>
             <div class="align-center">
                 {% set picture = identity.vars.value.picture %}
-                <img class="user-picture" src="{% if picture %}/uploads/{{ picture }}{% endif %}" alt="{{ picture }}">            
+                <img class="user-picture" src="{% if picture %}{{ picture }}{% endif %}" alt="{{ picture }}">            
                 {{ form_row(identity.pictureFile) }}
             </div>
         </div>

@@ -5,20 +5,22 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType as EntityBikeRideType;
 use Doctrine\ORM\EntityRepository;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\File;
+use App\Entity\BikeRideType as EntityBikeRideType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class BikeRideType extends AbstractType
 {
@@ -50,6 +52,30 @@ class BikeRideType extends AbstractType
                 'required' => false,
                 'row_attr' => [
                     'class' => 'form-group',
+                ],
+            ])
+            ->add('file', FileType::class, [
+                'label' => 'Fichier (optionnel)',
+                'mapped' => false,
+                'required' => false,
+                'block_prefix' => 'custom_file',
+                'attr' => [
+                    'accept' => '.bmp,.jpeg,.jpg,.png, .pdf',
+                ],
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2048k',
+                        'mimeTypes' => [
+                            'image/bmp',
+                            'image/jpeg',
+                            'image/png',
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'Format image bmp, jpeg, png ou pdf autorisé',
+                    ]),
                 ],
             ])
             ->add('startAt', DateTimeType::class, [

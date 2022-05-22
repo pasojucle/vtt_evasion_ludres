@@ -19,7 +19,7 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function imgPath($content, $media)
+    public function imgPath($content, $media = RegistrationStep::RENDER_VIEW)
     {
         if (RegistrationStep::RENDER_FILE === $media) {
             $pattern = '#src="\/images#';
@@ -33,8 +33,8 @@ class AppExtension extends AbstractExtension
     public function formatDateLong($date): string
     {
         $formatter = new IntlDateFormatter('fr_fr', IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
-        $formatter->setPattern('EEEE');
+        $formatter->setPattern('EEEE d/M/yy');
 
-        return ucfirst($formatter->format($date)).' '.$date->format('d/m/Y');
+        return ucfirst($formatter->format($date));
     }
 }

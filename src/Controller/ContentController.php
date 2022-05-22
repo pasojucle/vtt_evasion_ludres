@@ -12,6 +12,7 @@ use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\MailerService;
 use App\Service\OrderByService;
+use App\ViewModel\BikeRidesPresenter;
 use App\ViewModel\Content\ContentsPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +34,8 @@ class ContentController extends AbstractController
         LinkRepository $linkRepository,
         ContentRepository $contentRepository,
         BikeRideRepository $bikeRideRepository,
-        ContentsPresenter $contentsPresenter
+        ContentsPresenter $contentsPresenter,
+        BikeRidesPresenter $bikeRidesPresenter
     ): Response {
         $homeContents = $contentRepository->findHomeContents();
         $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
@@ -41,11 +43,12 @@ class ContentController extends AbstractController
         $bikeRides = $bikeRideRepository->findEnableView();
 
         $contentsPresenter->present($homeContents);
+        $bikeRidesPresenter->present($bikeRides);
 
         return $this->render('content/home.html.twig', [
             'links_bike_ride' => $linksBikeRide,
             'links_footer' => $linksFooter,
-            'bikeRides' => $bikeRides,
+            'bikeRides' => $bikeRidesPresenter->viewModel()->bikeRides,
             'home_contents' => $contentsPresenter->viewModel()->homeContents,
         ]);
     }

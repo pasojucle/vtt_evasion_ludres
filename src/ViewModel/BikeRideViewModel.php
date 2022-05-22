@@ -53,6 +53,8 @@ class BikeRideViewModel extends AbstractViewModel
 
     private ServicesPresenter $services;
 
+    public ?string $filename;
+
     public static function fromBikeRide(BikeRide $bikeRide, ServicesPresenter $services)
     {
         $bikeRideView = new self();
@@ -77,6 +79,7 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->isRegistrable = $bikeRideView->isRegistrable();
 
         $bikeRideView->services = $services;
+        $bikeRideView->filename = $bikeRideView->getFilename();
 
         return $bikeRideView;
     }
@@ -150,5 +153,11 @@ class BikeRideViewModel extends AbstractViewModel
     public function getClusters(): ClustersViewModel
     {
         return ClustersViewModel::fromClusters($this->entity->getClusters(), $this->services);
+    }
+
+    private function getFilename(): ?string
+    {
+        return ($this->entity->getFileName()) ? $this->services->uploadsDirectory.$this->entity->getFileName() : null;
+
     }
 }

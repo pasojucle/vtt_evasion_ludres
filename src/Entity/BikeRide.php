@@ -46,7 +46,7 @@ class BikeRide
     private int $id;
 
     #[Column(type: 'string', length: 150)]
-    private string $title;
+    private string $title = '';
 
     #[Column(type: 'text', nullable: true)]
     private ?string $content;
@@ -72,6 +72,9 @@ class BikeRide
     #[ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'bikeRides')]
     #[JoinColumn(nullable: false)]
     private $bikeRideType;
+
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private $filename;
 
     public function __construct()
     {
@@ -205,6 +208,18 @@ class BikeRide
     public function setBikeRideType(?BikeRideType $bikeRideType): self
     {
         $this->bikeRideType = $bikeRideType;
+
+        return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): self
+    {
+        $this->filename = $filename;
 
         return $this;
     }

@@ -47,7 +47,7 @@ class Identity
     #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $firstName = null;
 
-    #[Column(type: 'datetime', nullable: true)]
+    #[Column(type: 'date', nullable: true)]
     private ?DateTime $birthDate = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]

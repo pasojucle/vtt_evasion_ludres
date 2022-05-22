@@ -33,7 +33,7 @@ class Health
     #[Column(type: 'string', length: 5, nullable: true)]
     private ?string $bloodGroup = null;
 
-    #[Column(type: 'datetime', nullable: true)]
+    #[Column(type: 'date', nullable: true)]
     private ?DateTime $tetanusBooster = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]
@@ -54,7 +54,7 @@ class Health
     #[OneToMany(targetEntity: Disease::class, mappedBy: 'health')]
     private Collection $diseases;
 
-    #[Column(type: 'datetime', nullable: true)]
+    #[Column(type: 'date', nullable: true)]
     private ?DateTime $medicalCertificateDate = null;
 
     public function __construct()

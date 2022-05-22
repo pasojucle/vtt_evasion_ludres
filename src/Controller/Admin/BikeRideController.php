@@ -15,7 +15,6 @@ use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,7 +23,6 @@ class BikeRideController extends AbstractController
 {
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
-        private RequestStack $requestStack,
         private EntityManagerInterface $entityManager,
         private BikeRideService $bikeRideService,
         private UserPresenter $userPresenter
@@ -58,21 +56,22 @@ class BikeRideController extends AbstractController
     public function adminEdit(
         Request $request,
         EditBikeRide $editBikeRide,
+        BikeRidePresenter $bikeRidePresenter,
         ?BikeRide $bikeRide
     ): Response {
         if (null === $bikeRide) {
             $bikeRide = new BikeRide();
         }
         $bikeRide = $this->bikeRideService->setDefaultContent($request, $bikeRide);
-        $filters = $this->requestStack->getSession()->get('admin_bike_rides_filters');
+        $filters = $request->getSession()->get('admin_bike_rides_filters');
         $form = $this->createForm(BikeRideType::class, $bikeRide);
 
         if (!$request->isXmlHttpRequest()) {
             $form->handleRequest($request);
         }
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $editBikeRide->execute($form);
-
+            $editBikeRide->execute($form, $request);
+            
             $this->addFlash('success', 'La sortie à bien été enregistrée');
 
             $filters = $this->bikeRideService->getFilters(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
@@ -80,20 +79,23 @@ class BikeRideController extends AbstractController
             return $this->redirectToRoute('admin_bike_rides', $filters);
         }
 
+        $bikeRidePresenter->present($bikeRide);
+
         return $this->render('bike_ride/admin/edit.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRide,
+            'bikeRide' => $bikeRidePresenter->viewModel(),
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }
 
     #[Route('/sortie/groupe/{bikeRide}', name: 'admin_bike_ride_cluster_show', methods: ['GET'])]
     public function adminClusterShow(
+        Request $request,
         BikeRidePresenter $presenter,
         BikeRide $bikeRide
     ): Response {
-        $filters = $this->requestStack->getSession()->get('admin_bike_rides_filters');
-        $this->requestStack->getSession()->set('user_return', $this->generateUrl('admin_bike_ride_cluster_show', [
+        $filters = $request->getSession()->get('admin_bike_rides_filters');
+        $request->getSession()->set('user_return', $this->generateUrl('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),
         ]));
         $presenter->present($bikeRide);

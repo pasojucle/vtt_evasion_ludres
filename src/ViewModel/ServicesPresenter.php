@@ -40,7 +40,8 @@ class ServicesPresenter
         public ClusterService $clusterService
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
-        $this->uploadsDirectory = $this->parameterBag->get('uploads_directory_path');
+        $this->uploadsDirectoryPath = $this->parameterBag->get('uploads_directory_path');
+        $this->uploadsDirectory = $this->parameterBag->get('uploads_directory');
         $this->currentSeason = $this->seasonService->getCurrentSeason();
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
         $this->user = $this->security->getUser();

@@ -32,7 +32,7 @@
                 <div class="row block-body">
                     {% if user.member.picture %}
                         <div class="col-md-3 col-xs-4">
-                            <img src="{{ '/uploads/' ~ user.member.picture }}" style="width: 100px;">
+                            <img src="{{ user.member.picture|imgPath }}" style="width: 100px;">
                         </div>
                     {% endif %}
                     <div class="col-md-9 col-xs-12">

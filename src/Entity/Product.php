@@ -52,7 +52,7 @@ class Product
     #[Column(type: 'float', nullable: true)]
     private ?float $discountPrice;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[Column(type: 'string', length: 50, nullable: true)]
     private ?string $discountTitle;
 
     #[Column(type: 'integer', nullable: true)]

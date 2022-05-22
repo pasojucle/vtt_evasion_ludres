@@ -14,8 +14,6 @@ class ContentViewModel extends AbstractViewModel
 {
     public ?Content $entity;
 
-    public ?array $services;
-
     public ?string $title;
 
     public ?string $route;
@@ -36,13 +34,13 @@ class ContentViewModel extends AbstractViewModel
 
     public ?string $contentStyleMd;
 
-    private ?string $uploadsDirectory;
+    private ?ServicesPresenter $services;
 
     public static function fromContent(Content $content, ServicesPresenter $services)
     {
         $contentView = new self();
         $contentView->entity = $content;
-        $contentView->uploadsDirectory = $services->uploadsDirectory;
+        $contentView->services = $services;
         $contentView->title = $content->getTitle();
         $contentView->route = $content->getRoute();
         $contentView->content = $content->getContent();
@@ -73,17 +71,14 @@ class ContentViewModel extends AbstractViewModel
 
     private function getFileName(): ?string
     {
-        if ($this->entity->getFileName()) {
-            return '/uploads/'.$this->entity->getFileName();
-        }
 
-        return null;
+        return ($this->entity->getFileName()) ? $this->services->uploadsDirectory.$this->entity->getFileName() : null;
     }
 
     private function getFileTag(): ?string
     {
         if ($this->entity->getFileName()) {
-            $file = new File($this->uploadsDirectory.$this->entity->getFileName());
+            $file = new File($this->services->uploadsDirectoryPath.$this->entity->getFileName());
 
             return (str_contains($file->getMimeType(), 'image')) ? 'img' : 'pdf';
         }
@@ -93,7 +88,7 @@ class ContentViewModel extends AbstractViewModel
 
     private function getFileRatio(): ?float
     {
-        if ($this->entity->getFileName() && is_file($this->uploadsDirectory.$this->entity->getFileName())) {
+        if ($this->entity->getFileName() && is_file($this->services->uploadsDirectoryPath.$this->entity->getFileName())) {
             list($width, $height) = match ($this->fileTag) {
                 'pdf' => $this->getPdfSize(),
                 'img' => $this->getImageSize()
@@ -107,13 +102,13 @@ class ContentViewModel extends AbstractViewModel
 
     private function getImageSize(): array
     {
-        return getimagesize($this->uploadsDirectory.$this->entity->getFileName());
+        return getimagesize($this->services->uploadsDirectoryPath.$this->entity->getFileName());
     }
 
     private function getPdfSize(): array
     {
         $pdf = new Fpdi();
-        $pdf->setSourceFile($this->uploadsDirectory.$this->entity->getFileName());
+        $pdf->setSourceFile($this->services->uploadsDirectoryPath.$this->entity->getFileName());
 
         return [$pdf->GetPageWidth(), $pdf->GetPageHeight()];
     }

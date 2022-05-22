@@ -42,7 +42,7 @@ class IdentityController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $editIdentity->execute($request, $user, $form);
 
-            return $this->redirectToRoute('admin_identities_show', [
+            return $this->redirectToRoute('admin_user', [
                 'user' => $user->getId(),
             ]);
         }

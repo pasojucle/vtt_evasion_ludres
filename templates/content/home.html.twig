@@ -34,22 +34,25 @@
         <div class="bike-rides-container">
             <div class="block background-clear reveal">
                 {% if bikeRides is not empty %}
-                <div class="block-body">
-                    <ul>
-                    {% for bikeRide in bikeRides %}
-                        <li>
-                            <h2>
-                                {% if bikeRide.endAt is null %}
-                                    {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy')  | capitalize }}
-                                {% else %}
-                                    du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize }} au {{ bikeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize }}
-                                {% endif %}
-                            </h2>
-                            <p>{{ bikeRide.title }}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
+                    <div class="block-footer">
+                        <div class="block-body">
+                            <ul>
+                                {% for bikeRide in bikeRides %}
+                                    <li>
+                                        <a href="{{ path('schedule', {'period': 'prochainement'}) }}">
+                                            <h2>
+                                                {{ bikeRide.period }}
+                                            </h2>
+                                            <p>{{ bikeRide.title }}</p>
+                                            {% if bikeRide.filename is not null %}
+                                                <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}">            
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
                 {% endif %}
                 <div class="block-footer">
                     <a href="{{ path('schedule', {'period': 'prochainement'}) }}" class="btn btn-secondary align-center btn-full-width"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
