@@ -20,20 +20,32 @@ class Respondent
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: Survey::class, inversedBy: 'surveyUsers')]
+    #[ManyToOne(targetEntity: Survey::class, inversedBy: 'respondents')]
     #[JoinColumn(nullable: false)]
     private Survey $survey;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'surveys')]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'respondents')]
     #[JoinColumn(nullable: false)]
     private User $user;
 
     #[Column(type: 'datetime')]
     private DateTime $createdAt;
 
-    public function getId(): ?int
+    public function geId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
     }
 
     public function getSurvey(): ?Survey
@@ -56,18 +68,6 @@ class Respondent
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
 
         return $this;
     }

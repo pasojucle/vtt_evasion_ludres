@@ -42,22 +42,22 @@ class Survey
     #[Column(type: 'boolean')]
     private bool $disabled = false;
 
-    #[OneToMany(targetEntity: Respondent::class, mappedBy: 'survey')]
-    private Collection $surveyUsers;
+    #[OneToMany(mappedBy: 'survey', targetEntity: Respondent::class)]
+    private Collection $respondents;
 
     #[Column(type: 'boolean', options:['default' => true])]
     private bool $isAnonymous = true;
 
+    #[OneToOne(inversedBy: 'survey', targetEntity: BikeRide::class, cascade: ['persist', 'remove'])]
+    private BikeRide $bikeRide;
+
     #[ManyToMany(targetEntity: User::class, inversedBy: 'surveys')]
     private $members;
-
-    #[OneToOne(inversedBy: 'survey', targetEntity: BikeRide::class, cascade: ['persist', 'remove'])]
-    private $bikeRide;
 
     public function __construct()
     {
         $this->surveyIssues = new ArrayCollection();
-        $this->surveyUsers = new ArrayCollection();
+        $this->respondents = new ArrayCollection();
         $this->members = new ArrayCollection();
     }
 
@@ -159,24 +159,25 @@ class Survey
     /**
      * @return Collection|Respondent[]
      */
-    public function getSurveyUsers(): Collection
+
+    public function getRespondents(): Collection
     {
-        return $this->surveyUsers;
+        return $this->respondents;
     }
 
-    public function addSurveyUser(Respondent $respondent): self
+    public function addRespondent(Respondent $respondent): self
     {
-        if (!$this->surveyUsers->contains($respondent)) {
-            $this->surveyUsers[] = $respondent;
+        if (!$this->respondents->contains($respondent)) {
+            $this->respondents[] = $respondent;
             $respondent->setSurvey($this);
         }
 
         return $this;
     }
 
-    public function removeSurveyUser(Respondent $respondent): self
+    public function removeRespondent(Respondent $respondent): self
     {
-        if ($this->surveyUsers->removeElement($respondent)) {
+        if ($this->respondents->removeElement($respondent)) {
             // set the owning side to null (unless already changed)
             if ($respondent->getSurvey() === $this) {
                 $respondent->setSurvey(null);
@@ -194,6 +195,18 @@ class Survey
     public function setIsAnonymous(bool $isAnonymous): self
     {
         $this->isAnonymous = $isAnonymous;
+
+        return $this;
+    }
+
+    public function getBikeRide(): ?BikeRide
+    {
+        return $this->bikeRide;
+    }
+
+    public function setBikeRide(?BikeRide $bikeRide): self
+    {
+        $this->bikeRide = $bikeRide;
 
         return $this;
     }
@@ -218,18 +231,6 @@ class Survey
     public function removeMember(User $member): self
     {
         $this->members->removeElement($member);
-
-        return $this;
-    }
-
-    public function getBikeRide(): ?BikeRide
-    {
-        return $this->bikeRide;
-    }
-
-    public function setBikeRide(?BikeRide $bikeRide): self
-    {
-        $this->bikeRide = $bikeRide;
 
         return $this;
     }

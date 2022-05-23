@@ -75,11 +75,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(targetEntity: OrderHeader::class, mappedBy: 'user')]
     private Collection $orderHeaders;
 
-    #[OneToMany(targetEntity: Respondent::class, mappedBy: 'user')]
+    #[OneToMany(mappedBy: 'user', targetEntity: Respondent::class)]
     private Collection $respondents;
 
     #[ManyToMany(targetEntity: Survey::class, mappedBy: 'members')]
     private $surveys;
+
 
     public function __construct()
     {
@@ -88,8 +89,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->licences = new ArrayCollection();
         $this->sessions = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
-        $this->respondents = new ArrayCollection();
         $this->health = null;
+        $this->respondents = new ArrayCollection();
         $this->surveys = new ArrayCollection();
     }
 
@@ -459,15 +460,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
     /**
-     * @return Collection|Respondent[]
+     * @return Collection<int, Respondent>
      */
-    public function getSurveys(): Collection
+    public function getRespondents(): Collection
     {
         return $this->respondents;
     }
 
-    public function addSurvey(Respondent $respondent): self
+    public function addRespondent(Respondent $respondent): self
     {
         if (!$this->respondents->contains($respondent)) {
             $this->respondents[] = $respondent;
@@ -477,13 +479,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeVoteUser(Respondent $respondent): self
+    public function removeRespondent(Respondent $respondent): self
     {
         if ($this->respondents->removeElement($respondent)) {
             // set the owning side to null (unless already changed)
             if ($respondent->getUser() === $this) {
                 $respondent->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Survey>
+     */
+    public function getSurveys(): Collection
+    {
+        return $this->surveys;
+    }
+
+    public function addSurvey(Survey $survey): self
+    {
+        if (!$this->surveys->contains($survey)) {
+            $this->surveys[] = $survey;
+            $survey->addMember($this);
         }
 
         return $this;
