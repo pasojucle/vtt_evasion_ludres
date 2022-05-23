@@ -83,6 +83,7 @@ class SessionEditType extends AbstractType
                     $form->addError(new FormError('Votre période d\'essai est terminée ! Pour continuer à participer aux sorties, inscrivez-vous.'));
                 }
             }
+            dump($session->getCluster()->getBikeRide()->getSurvey());
         });
         $builder
             ->add('user', HiddenUserType::class)

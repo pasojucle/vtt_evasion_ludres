@@ -26,6 +26,17 @@ class SurveyRepository extends ServiceEntityRepository
     /**
      * @return Survey[] Returns an array of Survey objects
      */
+    public function findAllDESCQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('v')
+            ->orderBy('v.id', 'DESC')
+        ;
+    }
+
+
+    /**
+     * @return Survey[] Returns an array of Survey objects
+     */
     public function findActiveQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('v')
@@ -33,6 +44,7 @@ class SurveyRepository extends ServiceEntityRepository
                 (new Expr())->eq('v.disabled', 0),
                 (new Expr())->lte('v.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('v.endAt', 'CURRENT_DATE()'),
+                (new Expr())->isNull('v.bikeRide'),
             )
             ->orderBy('v.id', 'ASC')
         ;
@@ -40,6 +52,7 @@ class SurveyRepository extends ServiceEntityRepository
 
     public function findActive(): array
     {
+        /**@var QueryBuilder $qb */
         $qb = $this->findActiveQuery();
 
         return $qb

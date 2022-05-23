@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\SurveyUserRepository;
+use App\Repository\RespondentRepository;
 use DateTime;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -13,8 +13,8 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
-#[Entity(repositoryClass: SurveyUserRepository::class)]
-class SurveyUser
+#[Entity(repositoryClass: RespondentRepository::class)]
+class Respondent
 {
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]

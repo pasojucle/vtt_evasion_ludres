@@ -32,8 +32,6 @@ class UserViewModel extends AbstractViewModel
 
     public ?HealthViewModel $health;
 
-    private ?int $currentSeason;
-
     private ServicesPresenter $services;
 
     public ?array $titleColors;
@@ -46,9 +44,6 @@ class UserViewModel extends AbstractViewModel
         $userView->services = $services;
         $userView->licenceNumber = $user->getLicenceNumber();
         $userView->setIdentities();
-        $userView->currentSeason = $services->currentSeason;
-        $userView->seasonsStatus = $services->seasonsStatus;
-        // $userView->membershipFeeAmountRepository = $services->membershipFeeAmountRepository;
         $userView->translator = $services->translator;
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
@@ -127,7 +122,7 @@ class UserViewModel extends AbstractViewModel
 
     public function getCoverage(): ?int
     {
-        $seasonLicence = $this->entity->getSeasonLicence($this->currentSeason);
+        $seasonLicence = $this->entity->getSeasonLicence($this->services->currentSeason);
 
         return (null !== $seasonLicence) ? $seasonLicence->getCoverage() : null;
     }
@@ -140,7 +135,7 @@ class UserViewModel extends AbstractViewModel
     public function isMedicalCertificateRequired(): string
     {
         $message = '';
-        $licence = $this->entity->getSeasonLicence($this->currentSeason);
+        $licence = $this->entity->getSeasonLicence($this->services->currentSeason);
 
         if (null !== $licence && $licence->isMedicalCertificateRequired()) {
             $message = 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
@@ -276,12 +271,12 @@ class UserViewModel extends AbstractViewModel
     {
         $lastLicence = $this->getLastLicence();
 
-        return 1 === $this->entity->getLicences()->count() && $lastLicence->season === $this->currentSeason && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
+        return 1 === $this->entity->getLicences()->count() && $lastLicence->season === $this->services->currentSeason && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
     }
 
     private function getSeasonLicence(): LicenceViewModel
     {
-        $licence = $this->entity->getSeasonLicence($this->currentSeason);
+        $licence = $this->entity->getSeasonLicence($this->services->currentSeason);
 
         return LicenceViewModel::fromLicence($licence, $this->isNewMember, $this->services);
     }

@@ -128,10 +128,10 @@ class ExportSurvey
         $content[] = '';
         if (!$survey->getSurveyUsers()->isEmpty()) {
             $content[] = 'Horodateur,Participants - '.$survey->getSurveyUsers()->count();
-            foreach ($survey->getSurveyUsers() as $surveyUser) {
+            foreach ($survey->getSurveyUsers() as $respondent) {
                 $row = [];
-                $identity = $surveyUser->getUser()->getFirstIdentity();
-                $row[] = $surveyUser->getCreatedAt()->format('d/m/Y H:i');
+                $identity = $respondent->getUser()->getFirstIdentity();
+                $row[] = $respondent->getCreatedAt()->format('d/m/Y H:i');
                 $row[] = $identity->getName().' '.$identity->getFirstName();
                 $content[] = implode(',', $row);
             }

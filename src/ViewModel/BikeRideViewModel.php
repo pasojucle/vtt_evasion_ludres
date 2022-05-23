@@ -7,6 +7,7 @@ namespace App\ViewModel;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Level;
+use App\Entity\Survey;
 use App\Entity\User;
 use App\Twig\AppExtension;
 use DateInterval;
@@ -45,6 +46,8 @@ class BikeRideViewModel extends AbstractViewModel
 
     public BikeRideType $bikeRideType;
 
+    public ?Survey $survey;
+
     private ?DateTimeImmutable $today;
 
     private ?DateTimeImmutable $displayAt;
@@ -77,6 +80,7 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->period = $bikeRideView->getPeriod($services->appExtension);
         $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($services->user);
         $bikeRideView->isRegistrable = $bikeRideView->isRegistrable();
+        $bikeRideView->survey = $bikeRide->getSurvey();
 
         $bikeRideView->services = $services;
         $bikeRideView->filename = $bikeRideView->getFilename();

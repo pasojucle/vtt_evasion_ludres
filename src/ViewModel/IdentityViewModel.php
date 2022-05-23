@@ -41,7 +41,7 @@ class IdentityViewModel extends AbstractViewModel
 
         $identityView = new self();
         $identityView->entity = $identity;
-        $identity->services = $services;
+        $identityView->services = $services;
         $identityView->name = $identity->getName();
         $identityView->firstName = $identity->getFirstName();
         $identityView->fullName = $identity->getName().' '.$identity->getFirstName();

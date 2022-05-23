@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Form\ChangePasswordFormType;
-use App\Repository\OrderHeaderRepository;
-use App\Repository\UserRepository;
-use App\Service\PaginatorService;
-use App\ViewModel\OrdersPresenter;
+use App\Entity\User;
 use App\ViewModel\UserPresenter;
+use App\Service\PaginatorService;
+use App\Repository\UserRepository;
+use App\ViewModel\OrdersPresenter;
+use App\Form\ChangePasswordFormType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\OrderHeaderRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class UserController extends AbstractController
 {
@@ -65,6 +67,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /**@var PasswordAuthenticatedUserInterface|User $user */
             $encodedPassword = $passwordHasher->hashPassword(
                 $user,
                 $form->get('plainPassword')->getData()

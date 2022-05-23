@@ -6,10 +6,10 @@ namespace App\Controller;
 
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
-use App\Entity\SurveyUser;
+use App\Entity\Respondent;
 use App\Form\SurveyResponsesType;
 use App\Repository\SurveyRepository;
-use App\Repository\SurveyUserRepository;
+use App\Repository\RespondentRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,9 +25,9 @@ class SurveyController extends AbstractController
     }
 
     #[Route('sondage/{survey}', name: 'survey', methods: ['GET', 'POST'])]
-    public function show(Request $request, SurveyUserRepository $surveyUserRepository, Survey $survey): Response
+    public function show(Request $request, RespondentRepository $respondentRepository, Survey $survey): Response
     {
-        $form = $message = $surveyUser = null;
+        $form = $message = $respondent = null;
         $user = $this->getUser();
         $surveyResponses = [];
         $now = new DateTime();
@@ -44,12 +44,12 @@ class SurveyController extends AbstractController
             ];
         }
         if (!$message) {
-            $surveyUser = $surveyUserRepository->findOneBySurveyAndUser($survey, $user);
+            $respondent = $respondentRepository->findOneBySurveyAndUser($survey, $user);
         }
-        if ($surveyUser) {
+        if ($respondent) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Votre participation au survey a déja été prise en compte le '.$surveyUser->getCreatedAt()->format('d/m/Y').' a '.$surveyUser->getCreatedAt()->format('H\hi'),
+                'content' => 'Votre participation au survey a déja été prise en compte le '.$respondent->getCreatedAt()->format('d/m/Y').' a '.$respondent->getCreatedAt()->format('H\hi'),
             ];
         }
         if (!$message) {
@@ -78,12 +78,12 @@ class SurveyController extends AbstractController
                         $this->entityManager->persist($response);
                     }
                 }
-                $surveyUser = new SurveyUser();
-                $surveyUser->setUser($user)
+                $respondent = new Respondent();
+                $respondent->setUser($user)
                     ->setSurvey($survey)
                     ->setCreatedAt($now)
                 ;
-                $this->entityManager->persist($surveyUser);
+                $this->entityManager->persist($respondent);
                 $this->entityManager->flush();
 
                 $message = [
@@ -95,7 +95,7 @@ class SurveyController extends AbstractController
 
         return $this->render('survey/survey_responses.html.twig', [
             'survey' => $survey,
-            'surveyUser' => $surveyUser,
+            'respondent' => $respondent,
             'form' => ($form) ? $form->createView() : $form,
             'message' => $message,
         ]);
@@ -104,11 +104,11 @@ class SurveyController extends AbstractController
     #[Route('/mes_sondages', name: 'user_surveys', methods: ['GET'])]
     public function surveys(
         SurveyRepository $surveyRepository,
-        SurveyUserRepository $surveyUserRepository
+        RespondentRepository $respondentRepository
     ): Response {
         return $this->render('survey/list.html.twig', [
             'surveys' => $surveyRepository->findActive($this->getUser()),
-            'user_surveys' => $surveyUserRepository->findActiveSurveysByUser($this->getUser()),
+            'user_surveys' => $respondentRepository->findActiveSurveysByUser($this->getUser()),
         ]);
     }
 }

@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Survey;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Entity\BikeRide;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Form\Transformer\BikeRideTransformer;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class SurveyType extends AbstractType
 {
@@ -76,6 +79,25 @@ class SurveyType extends AbstractType
                     'data-switch-on' => 'Mode anonyme activé',
                     'data-switch-off' => 'Activer le mode anonyme',
                 ],
+                'required' => false,
+            ])
+            ->add('bikeRide', Select2EntityType::class, [
+                'multiple' => false,
+                'remote_route' => 'admin_bike_ride_choices',
+                'class' => BikeRide::class,
+                'primary_key' => 'id',
+                'transformer' => BikeRideTransformer::class,
+                'minimum_input_length' => 0,
+                'page_limit' => 10,
+                'allow_clear' => true,
+                'delay' => 250,
+                'cache' => true,
+                'cache_timeout' => 60000,
+                // if 'cache' is true
+                'language' => 'fr',
+                'placeholder' => 'Saisisez une sortie',
+                'width' => '100%',
+                'label' => 'Sortie (optionnel)',
                 'required' => false,
             ])
             ->add('save', SubmitType::class, [

@@ -6,17 +6,19 @@ namespace App\Controller\Admin;
 
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
-use App\Repository\BikeRideRepository;
 use App\Service\BikeRideService;
+use App\ViewModel\UserPresenter;
+use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRidesPresenter;
+use App\Repository\BikeRideRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
-use App\ViewModel\BikeRidePresenter;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class BikeRideController extends AbstractController
@@ -112,5 +114,27 @@ class BikeRideController extends AbstractController
         BikeRide $bikeRide
     ): Response {
         return $exportBikeRide->execute($bikeRide);
+    }
+
+    #[Route('/sortie_choices', name: 'admin_bike_ride_choices', methods: ['GET'])]
+    public function bikeRideChoices(
+        BikeRidesPresenter $presenter,
+        Request $request
+    ): JsonResponse {
+        $query = $request->query->get('q');
+        $bikeRides = (null !== $query) 
+            ? $this->bikeRideRepository->findLike($query)
+            : $this->bikeRideRepository->findAllDESC();
+
+        $response = [];
+        $presenter->present($bikeRides);
+        foreach ($presenter->viewModel()->bikeRides as $bikeRide) {
+            $response[] = [
+                'id' => $bikeRide->entity->getId(),
+                'text' => $bikeRide->period.' - '.$bikeRide->title,
+            ];
+        }
+
+        return new JsonResponse($response);
     }
 }

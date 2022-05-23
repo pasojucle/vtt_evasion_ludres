@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\SurveyRepository;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use App\Repository\SurveyRepository;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repositoryClass: SurveyRepository::class)]
 class Survey
@@ -39,16 +42,23 @@ class Survey
     #[Column(type: 'boolean')]
     private bool $disabled = false;
 
-    #[OneToMany(targetEntity: SurveyUser::class, mappedBy: 'survey')]
+    #[OneToMany(targetEntity: Respondent::class, mappedBy: 'survey')]
     private Collection $surveyUsers;
 
     #[Column(type: 'boolean', options:['default' => true])]
     private bool $isAnonymous = true;
 
+    #[ManyToMany(targetEntity: User::class, inversedBy: 'surveys')]
+    private $members;
+
+    #[OneToOne(inversedBy: 'survey', targetEntity: BikeRide::class, cascade: ['persist', 'remove'])]
+    private $bikeRide;
+
     public function __construct()
     {
         $this->surveyIssues = new ArrayCollection();
         $this->surveyUsers = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,29 +157,29 @@ class Survey
     }
 
     /**
-     * @return Collection|SurveyUser[]
+     * @return Collection|Respondent[]
      */
     public function getSurveyUsers(): Collection
     {
         return $this->surveyUsers;
     }
 
-    public function addSurveyUser(SurveyUser $surveyUser): self
+    public function addSurveyUser(Respondent $respondent): self
     {
-        if (!$this->surveyUsers->contains($surveyUser)) {
-            $this->surveyUsers[] = $surveyUser;
-            $surveyUser->setSurvey($this);
+        if (!$this->surveyUsers->contains($respondent)) {
+            $this->surveyUsers[] = $respondent;
+            $respondent->setSurvey($this);
         }
 
         return $this;
     }
 
-    public function removeSurveyUser(SurveyUser $surveyUser): self
+    public function removeSurveyUser(Respondent $respondent): self
     {
-        if ($this->surveyUsers->removeElement($surveyUser)) {
+        if ($this->surveyUsers->removeElement($respondent)) {
             // set the owning side to null (unless already changed)
-            if ($surveyUser->getSurvey() === $this) {
-                $surveyUser->setSurvey(null);
+            if ($respondent->getSurvey() === $this) {
+                $respondent->setSurvey(null);
             }
         }
 
@@ -184,6 +194,42 @@ class Survey
     public function setIsAnonymous(bool $isAnonymous): self
     {
         $this->isAnonymous = $isAnonymous;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getMembers(): Collection
+    {
+        return $this->members;
+    }
+
+    public function addMember(User $member): self
+    {
+        if (!$this->members->contains($member)) {
+            $this->members[] = $member;
+        }
+
+        return $this;
+    }
+
+    public function removeMember(User $member): self
+    {
+        $this->members->removeElement($member);
+
+        return $this;
+    }
+
+    public function getBikeRide(): ?BikeRide
+    {
+        return $this->bikeRide;
+    }
+
+    public function setBikeRide(?BikeRide $bikeRide): self
+    {
+        $this->bikeRide = $bikeRide;
 
         return $this;
     }

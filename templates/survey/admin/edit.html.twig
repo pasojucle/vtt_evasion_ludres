@@ -8,9 +8,9 @@
  <div class="wrapper">
     {{ form_start(form) }}
         <div class="wrapper-title">
-            <h2>{{ title }}</h2>
+            <h1>{{ title }}</h1>
             <span class="tools">
-                <a href="{{ path('admin_surveys') }}" class="btn btn-secondary btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
+                <a href="{{ path('admin_surveys') }}" class="btn btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
         <div class="wrapper-body">
@@ -24,6 +24,9 @@
             </div>
             <div class="form-group switch-group">
                 {{ form_row(form.isAnonymous) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.bikeRide) }}
             </div>
             <b>{{ form_label(form.surveyIssues) }}</b>
                 <ul class="collection_container {{ form.surveyIssues.vars.name }}"
@@ -39,7 +42,7 @@
                     </button>
                 </div>
             </div>
-        <div class="block-footer">
+        <div class="wrapper-footer">
             {{ form_widget(form.save) }}
         </div>
     </div>

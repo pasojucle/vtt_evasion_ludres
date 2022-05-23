@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
+use App\Entity\Respondent;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
+use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -73,8 +75,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(targetEntity: OrderHeader::class, mappedBy: 'user')]
     private Collection $orderHeaders;
 
-    #[OneToMany(targetEntity: SurveyUser::class, mappedBy: 'user')]
-    private Collection $surveys;
+    #[OneToMany(targetEntity: Respondent::class, mappedBy: 'user')]
+    private Collection $respondents;
+
+    #[ManyToMany(targetEntity: Survey::class, mappedBy: 'members')]
+    private $surveys;
 
     public function __construct()
     {
@@ -83,8 +88,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->licences = new ArrayCollection();
         $this->sessions = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
-        $this->surveys = new ArrayCollection();
+        $this->respondents = new ArrayCollection();
         $this->health = null;
+        $this->surveys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -454,30 +460,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|SurveyUser[]
+     * @return Collection|Respondent[]
      */
     public function getSurveys(): Collection
     {
-        return $this->surveys;
+        return $this->respondents;
     }
 
-    public function addSurvey(SurveyUser $survey): self
+    public function addSurvey(Respondent $respondent): self
     {
-        if (!$this->surveys->contains($survey)) {
-            $this->surveys[] = $survey;
-            $survey->setUser($this);
+        if (!$this->respondents->contains($respondent)) {
+            $this->respondents[] = $respondent;
+            $respondent->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeVoteUser(SurveyUser $survey): self
+    public function removeVoteUser(Respondent $respondent): self
+    {
+        if ($this->respondents->removeElement($respondent)) {
+            // set the owning side to null (unless already changed)
+            if ($respondent->getUser() === $this) {
+                $respondent->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeSurvey(Survey $survey): self
     {
         if ($this->surveys->removeElement($survey)) {
-            // set the owning side to null (unless already changed)
-            if ($survey->getUser() === $this) {
-                $survey->setUser(null);
-            }
+            $survey->removeMember($this);
         }
 
         return $this;

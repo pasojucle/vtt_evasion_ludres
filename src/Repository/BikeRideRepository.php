@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\BikeRide;
 use App\Service\SeasonService;
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -58,6 +59,7 @@ class BikeRideRepository extends ServiceEntityRepository
      */
     public function findAllFiltered(array $filters): array
     {
+        /**@var QueryBuilder $qb */
         $qb = $this->findAllQuery($filters);
 
         return $qb->getQuery()->getResult();
@@ -78,6 +80,42 @@ class BikeRideRepository extends ServiceEntityRepository
             ->setParameter('today', $today)
             ->orderBy('br.startAt', 'ASC')
             ->andHaving("DATE_SUB(br.startAt, br.displayDuration, 'DAY') <= :today")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+        /**
+     * @return BikeRide[] Returns an array of enent objects
+     */
+    public function findLike(string $query): array
+    {
+        $startAt = DateTimeImmutable::createFromFormat('d/m/y', $query);
+
+        $orX = (new Expr)->orX();
+        $orX->add((new Expr())->like('br.title', ':title'));
+        $params['title'] = '%'.$query.'%';
+        if ($startAt) {
+            $orX->add((new Expr())->eq('br.startAt', ':query'));
+            $params['query'] = $startAt->setTime(0,0,0);
+        }
+
+        return $this->createQueryBuilder('br')
+            ->andWhere($orX)
+            ->setParameters($params)
+            ->orderBy('br.startAt', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return BikeRide[] Returns an array of enent objects
+     */
+    public function findAllDESC(): array
+    {
+        return $this->createQueryBuilder('br')
+            ->orderBy('br.startAt', 'DESC')
             ->getQuery()
             ->getResult()
         ;
