@@ -447,6 +447,9 @@ body {
     background: var(--light-color);
     padding: 5px;
 }
+.background-ligth .form-group > textarea {
+    background: var(--white-color);
+}
 .form-group > input[type="checkbox"] {
     -webkit-appearance: none;
     -moz-appearance: none;

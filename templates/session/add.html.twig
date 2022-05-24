@@ -10,7 +10,6 @@
         <div class="wrapper-body">
             <div class="block background-ligth">
             {{ form_start(form) }}
-                {% set bikeRide = bikeRide %}
                 <div class="block-title bike-ride-date active">
                     <h2>
                         {% if bikeRide.endAt is null %}
@@ -27,11 +26,11 @@
                     {% endif %}
                     <p>{{ bikeRide.content |raw }}</p>
                     <div class="form-group">
-                        {% if form.cluster is defined %}
-                            {% set field = form.cluster %}
+                        {% if form.session.cluster is defined %}
+                            {% set field = form.session.cluster %}
                         {% endif %}
                         {% if form.availability is defined %}
-                            {% set field = form.availability %}
+                            {% set field = form.session.availability %}
                         {% endif %}
                         {% if field is defined %}
                             {% for  child in field.children %}
@@ -42,9 +41,20 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    {% if form.responses is defined %}
+                        {{ bikeRide.survey.content|raw }}
+                        <br>
+                        <div class="form-group row">
+                            {% for response in form.responses.surveyResponses %}
+                                <div class="col-md-6 col-xs-12">{{ response.vars.value.surveyIssue.content }}</div>
+                                <div class="col-md-6 col-xs-12">{{ form_widget(response)}}</div>
+                            {% endfor %}
+
+                        </div>
+                    {% endif %}
                     {% include('session/registered_list.html.twig') %}
                     {{ form_errors(form)}}
-                    {{ form_row(form.user)}}
+                    {{ form_row(form.session.user)}}
                 </div>
                 <div class="block-footer">
                     {% if form.submit is defined %}

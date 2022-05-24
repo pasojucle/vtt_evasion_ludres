@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class SurveyResponsesType extends AbstractType
 {
@@ -21,12 +23,18 @@ class SurveyResponsesType extends AbstractType
                     'label' => false,
                 ],
             ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
-            ])
             ;
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+                $form = $event->getForm();
+                if (null === $form->getParent()) {
+                    $form
+                        ->add('submit', SubmitType::class, [
+                            'label' => 'Enregistrer',
+                            'attr' => [
+                                'class' => 'btn btn-primary float-right',
+                            ],
+                        ]);
+                }
+            });
     }
 }

@@ -28,10 +28,9 @@ class EditBikeRide
         if ($clusters->isEmpty($bikeRide)) {
             $this->bikeRideService->createClusters($bikeRide);
         }
-        dump($request->files->all());
+
         if ($request->files->get('bike_ride')) {
             $file = $request->files->get('bike_ride')['file'];
-            dump($file);
             $bikeRide->setFileName($this->uploadService->uploadFile($file));
         }
 

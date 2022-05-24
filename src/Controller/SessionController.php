@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\BikeRide;
-use App\Entity\Session;
+use DateTime;
 use App\Entity\User;
-use App\Form\SessionAvailabilityType;
+use App\Entity\Session;
+use App\Entity\BikeRide;
+use App\Form\SessionType;
+use App\Entity\Respondent;
 use App\Form\SessionEditType;
-use App\Repository\SessionRepository;
-use App\Service\BikeRideService;
+use App\Entity\SurveyResponse;
 use App\Service\SessionService;
-use App\ViewModel\BikeRidePresenter;
+use App\Service\BikeRideService;
 use App\ViewModel\UserPresenter;
+use App\ViewModel\BikeRidePresenter;
+use App\Form\SessionAvailabilityType;
+use App\Repository\SessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
@@ -66,7 +70,18 @@ class SessionController extends AbstractController
             ;
         }
         $bikeRidePresenter->present($bikeRide);
-        $form = $this->createForm(SessionEditType::class, $userSession, [
+        $surveyResponses = null;
+        if (null !== $bikeRide->getSurvey() && !$bikeRide->getSurvey()->getSurveyIssues()->isEmpty()) {
+            $uuid = uniqid('', true);
+            foreach ($bikeRide->getSurvey()->getSurveyIssues() as $issue) {
+                $response = new SurveyResponse();
+                $response->setSurveyIssue($issue)
+                    ->setUuid($uuid)
+                ;
+                $surveyResponses[] = $response;
+            }
+        }
+        $form = $this->createForm(SessionType::class, ['session' => $userSession, 'responses' =>['surveyResponses' => $surveyResponses]], [
             'clusters' => $clusters,
             'bikeRide' => $bikeRidePresenter->viewModel(),
             'is_already_registered' => $isAlreadyRegistered,
@@ -75,11 +90,29 @@ class SessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $userSession = $form->getData();
+            $data = $form->getData();
 
-            $user->addSession($userSession);
+            $user->addSession($data['session']);
 
-            $this->entityManager->persist($userSession);
+            if (array_key_exists('responses', $data) && !empty($data['responses']['surveyResponses'])) {
+                foreach ($data['responses']['surveyResponses'] as $response) {
+                    if (!$bikeRide->getSurvey()->isAnonymous()) {
+                        $response->setUser($user);
+                    }
+                    $this->entityManager->persist($response);
+                }
+                $now = new DateTime();
+
+                $respondent = new Respondent();
+                $respondent->setUser($user)
+                    ->setSurvey($bikeRide->getSurvey())
+                    ->setCreatedAt($now)
+                ;
+            }
+
+            $this->entityManager->persist($respondent);
+
+            $this->entityManager->persist($data['session']);
             $this->entityManager->flush();
             $this->addFlash('success', 'Votre inscription a bien été prise en compte');
 

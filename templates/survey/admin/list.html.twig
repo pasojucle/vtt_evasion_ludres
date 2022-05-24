@@ -31,7 +31,7 @@
                                 <a class="dropdown-item" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i> Exporter</a>
                             </li>
                             {% if not survey.isDisabled %}
-                                {% if survey.surveyUsers is empty %}
+                                {% if survey.respondents is empty %}
                                     <li>
                                         <a class="dropdown-item" href="{{ path('admin_survey_edit', {'survey': survey.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
                                     </li>

@@ -39,7 +39,6 @@ class BikeRideTransformer implements DataTransformerInterface
      */
     public function transform($entity)
     {
-        dump($entity);
         if (null === $entity) {
             return '';
         }
@@ -58,7 +57,6 @@ class BikeRideTransformer implements DataTransformerInterface
      */
     public function reverseTransform($identifier)
     {
-        dump($identifier);
         if (!$identifier) {
             return null;
         }
