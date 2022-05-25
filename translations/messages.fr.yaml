@@ -148,5 +148,6 @@ survey:
     no: Non
     no_opinion: Ne se prononce pas
   issue:
+    check: oui/non
     choice: oui/non/ne se prononce pas
     string: Réponse libre

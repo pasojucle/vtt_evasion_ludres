@@ -55,7 +55,9 @@ $(document).ready(function(){
         .forEach(btn => btn.addEventListener("click", addFormToCollection));
     const collectionItems = document.querySelectorAll('ul.collection_container > li')
     collectionItems.forEach((item) => {
-            addTagFormDeleteLink(item)
+        if ($(item).find('input:disabled').length < 1) {
+            addTagFormDeleteLink(item);
+        } 
     })
     if ($('#modal_window_show').length > 0) {
         $('#modal_window_show').click();
@@ -315,7 +317,6 @@ function submitAsynchronous(e) {
 
 function toggleDown(e) {
     e.preventDefault();
-    console.log('toggleDown');
     const icon = $(this).find('i');
     const block = $(this).closest('[data-toggle]');
     const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
@@ -327,7 +328,6 @@ function toggleDown(e) {
     });
     const regex = /up|down|fas|far|\s/g;
     const className = icon.attr('class').replace(regex, '');
-    console.log(className);
     icon.toggleClass(className+'up').toggleClass(className+'down');
     $('.'+className+'up').each(function() {
         if (!$(this).is(icon)) {
@@ -415,8 +415,6 @@ function resize(object) {
 
 function toggleDropdown(event) {
     const dropdownButton = $(this);
-    console.log($(window).height() / 2);
-    console.log(dropdownButton.offset());
     const dropdownMenu = dropdownButton.parent().find('[data-target="'+dropdownButton.data('toggle')+'"]');
     $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
         if ($(this).data('target') !== dropdownMenu.data('target') && $(this).data('toggle') !== dropdownButton.data('toggle') ) {

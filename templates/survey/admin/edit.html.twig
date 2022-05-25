@@ -37,9 +37,11 @@
                     {% endfor %}
                 </ul>
                 <div>
-                    <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.surveyIssues.vars.name }}">
-                    <i class="fas fa-plus-circle"></i> Ajouter une question
-                    </button>
+                    {% if survey.respondents is empty %}
+                        <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.surveyIssues.vars.name }}">
+                        <i class="fas fa-plus-circle"></i> Ajouter une question
+                        </button>            
+                    {% endif %}
                 </div>
             </div>
         <div class="wrapper-footer">

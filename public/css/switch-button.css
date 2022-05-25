@@ -57,10 +57,18 @@
     border-radius: 34px;
     background-color: var(--danger-color);
   }
+  .slider.round.disabled {
+    background-color: var(--gray-color);
+  }
   
   .slider.round:before {
     border-radius: 50%;
   }
   .switch-group {
     line-height: 34px;
+  }
+
+  label.disabled {
+    color: var(--gray-color);
+    background-color: unset;
   }

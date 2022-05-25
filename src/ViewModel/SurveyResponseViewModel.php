@@ -24,7 +24,7 @@ class SurveyResponseViewModel extends AbstractViewModel
         $surveyResponseView->user = (null !== $surveyResponse->getUser())
             ? UserViewModel::fromUser($surveyResponse->getUser(), $services)
             : null;
-        $surveyResponseView->value = (SurveyIssue::RESPONSE_TYPE_CHOICE === $surveyResponse->getSurveyIssue()->getResponseType())
+        $surveyResponseView->value = (SurveyIssue::RESPONSE_TYPE_STRING !== $surveyResponse->getSurveyIssue()->getResponseType())
             ? $services->translator->trans(SurveyResponse::VALUES[$surveyResponse->getValue()])
             : $surveyResponse->getValue();
         $surveyResponseView->uuid = $surveyResponse->getUuid();

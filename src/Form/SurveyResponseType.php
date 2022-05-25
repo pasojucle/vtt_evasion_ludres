@@ -23,10 +23,14 @@ class SurveyResponseType extends AbstractType
             $surveyResponse = $event->getData();
             $form = $event->getForm();
 
-            if (SurveyIssue::RESPONSE_TYPE_CHOICE === $surveyResponse->getSurveyIssue()->getResponseType()) {
+            if (SurveyIssue::RESPONSE_TYPE_STRING !== $surveyResponse->getSurveyIssue()->getResponseType()) {
+                $choices = SurveyResponse::VALUES;
+                if (SurveyIssue::RESPONSE_TYPE_CHECK) {
+                    unset($choices[SurveyResponse::VALUE_NO_OPINION]);
+                }
                 $form
                     ->add('value', ChoiceType::class, [
-                        'choices' => array_flip(SurveyResponse::VALUES),
+                        'choices' =>  array_flip($choices),
                         'expanded' => true,
                         'label' => false,
                         'row_attr' => [

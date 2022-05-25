@@ -1,11 +1,11 @@
 {% block switch_row %}
     <label class="switch">
         {{ form_widget(form) }}
-        <span class="slider round"></span>
+        <span class="slider round{% if form.vars.disabled %} disabled{% endif %}"></span>
     </label>
     <b>
         {% if form.vars.attr['data-switch-on'] is defined and form.vars.attr['data-switch-off']is defined %}
-            <label for="{{ form.vars.id }}">
+            <label for="{{ form.vars.id }}" {% if form.vars.disabled %}class="disabled"{% endif %}>
             {% if form.vars.checked %} {{form.vars.attr['data-switch-on'] }} {% else %} {{form.vars.attr['data-switch-off'] }} {% endif %}
             </label>
         {% else %}
