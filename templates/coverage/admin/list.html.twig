@@ -5,13 +5,18 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h2>Gestion des assurances {{ season_service.currentSeason }} - <span class="badge badge-info">{{ count }}</span></h2>
-            <span class="tools">
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('admin_coverages_email_to_clipboard') }}" class="btn btn-success btn-ico email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i></a>
-                    <a href="{{ path('admin_coverages_export') }}" class="btn btn-success btn-ico" title="Export la sélection"><i class="fas fa-file-csv"></i></a>
-                {% endif %}
-            </span>
+            <h1>Gestion des assurances {{ season_service.currentSeason }} - <span class="badge badge-info">{{ count }}</span></h1>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                    <div class="dropdown-menu" data-target="dropdown-tools">
+                        <ul class="dropdown-body">
+                            <li><a href="{{ path('admin_coverages_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></œli>
+                            <li><a href="{{ path('admin_coverages_export') }}" class="dropdown-item" title="Export la sélection"><i class="fas fa-file-csv"></i> Export la sélection</a></li>
+                        </ul>
+                    </div>
+                </div>
+             {% endif %}
         </div>
         {% include('user/admin/filters.html.twig') %}
         <div class="wrapper-body">

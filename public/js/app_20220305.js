@@ -354,12 +354,12 @@ function clipboard(event) {
 
 function emailToClipboard(event) {
     event.preventDefault();
-    const url = event.target.parentNode.getAttribute('href');
-    console.log(url);
+    const url = event.target.getAttribute('href');
     fetch(url).then(function (response) {
         return response.json();
     }).then(function (data) {
         navigator.clipboard.writeText(data);
+        hideDropdown();
     });
 }
 
@@ -427,7 +427,6 @@ function toggleDropdown(event) {
 }
 
 function hideDropdown() {
-    console.log($(this));
     $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
         $(this).removeClass('active active-top active-bottom');
     });
