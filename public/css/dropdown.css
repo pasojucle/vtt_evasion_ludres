@@ -15,6 +15,17 @@ button.dropdown-toggle {
     cursor: pointer;
 }
 
+
+button.dropdown-toggle::after {
+    content: '\f142';
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+button.dropdown-toggle.active::after {
+    content: '\f00d';
+}
+
 button.dropdown-toggle:hover, button.dropdown-toggle.active {
     background-color:#dddddd; 
 }
@@ -23,7 +34,6 @@ button.dropdown-toggle:hover, button.dropdown-toggle.active {
     display: none;
     position: absolute;
     right: 30px;
-    top: 0;
 }
 
 .dropdown .dropdown-menu.active {
@@ -33,6 +43,14 @@ button.dropdown-toggle:hover, button.dropdown-toggle.active {
     z-index: 999;
     width: max-content;
 }
+.dropdown .dropdown-menu.active.active-top {
+    top: 0;
+}
+
+.dropdown .dropdown-menu.active.active-bottom {
+    bottom: 0;
+}
+
 
 .dropdown .dropdown-menu a {
     color: var(--background-color);

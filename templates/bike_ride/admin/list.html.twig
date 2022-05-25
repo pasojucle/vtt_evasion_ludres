@@ -37,7 +37,7 @@
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <div class="dropdown">
-                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ bikeRide.entity.id }}"><i class="fas fa-ellipsis-v"></i></button>
+                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ bikeRide.entity.id }}"></button>
                                 <div class="dropdown-menu" data-target="dropdown-{{ bikeRide.entity.id }}">
                                     <div class="dropdown-title">{{ bikeRide.startAt | date('d/m/y') }} - {{ bikeRide.title }}</div>
                                     <ul class="dropdown-body">

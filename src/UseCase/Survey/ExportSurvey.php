@@ -126,9 +126,9 @@ class ExportSurvey
     private function addSurveyUsers(array &$content, Survey $survey): void
     {
         $content[] = '';
-        if (!$survey->getSurveyUsers()->isEmpty()) {
-            $content[] = 'Horodateur,Participants - '.$survey->getSurveyUsers()->count();
-            foreach ($survey->getSurveyUsers() as $respondent) {
+        if (!$survey->getRespondents()->isEmpty()) {
+            $content[] = 'Horodateur,Participants - '.$survey->getRespondents()->count();
+            foreach ($survey->getRespondents() as $respondent) {
                 $row = [];
                 $identity = $respondent->getUser()->getFirstIdentity();
                 $row[] = $respondent->getCreatedAt()->format('d/m/Y H:i');

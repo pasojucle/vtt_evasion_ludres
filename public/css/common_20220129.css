@@ -1409,9 +1409,9 @@ nav.nav-tab::before {
     .block.background-ligth, .block.background-clear, .block.background-color {
         padding: 10px;
     }
-    .list-dropdown > a {
+    /* .list-dropdown > a {
         padding: 5px;
-    }
+    } */
     .list-dropdown .row {
         min-height: 45px;
     }

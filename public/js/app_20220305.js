@@ -138,8 +138,8 @@ function toggleMenu(e) {
     $('.fa-angle-up').each(function() {
         $(this).removeClass('fa-angle-up').addClass('fa-angle-down');
     });
-    console.log('toggleMenu');
 }
+
 function buildSortable() {
     let error = false;
     $("ul.sortable").sortable({
@@ -415,22 +415,23 @@ function resize(object) {
 
 function toggleDropdown(event) {
     const dropdownButton = $(this);
+    console.log($(window).height() / 2);
+    console.log(dropdownButton.offset());
     const dropdownMenu = dropdownButton.parent().find('[data-target="'+dropdownButton.data('toggle')+'"]');
     $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
-        console.log($(this), dropdownButton.data('toggle'));
         if ($(this).data('target') !== dropdownMenu.data('target') && $(this).data('toggle') !== dropdownButton.data('toggle') ) {
-            $(this).removeClass('active');
+            $(this).removeClass('active active-top active-bottom');
         }
     });
-    
+    let classMenu = (dropdownButton.offset().top + dropdownMenu.height() - $(window).scrollTop() < $(window).height()) ? 'active active-top' : 'active active-bottom';
     dropdownButton.toggleClass('active');
-    dropdownMenu.toggleClass('active');
+    dropdownMenu.toggleClass(classMenu);
 }
 
 function hideDropdown() {
     console.log($(this));
     $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
-        $(this).removeClass('active');
+        $(this).removeClass('active active-top active-bottom');
     });
 }
 
