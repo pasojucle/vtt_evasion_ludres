@@ -26,12 +26,12 @@
                 {{ form_row(form.isAnonymous) }}
             </div>
             <div id="surveyDisplay">
-                {% for display in form.display %}
-                <div class="form-group">{{ form_row(display) }}
-                    {% if display.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_BIKE_RIDE') %}
+                {% for displayCriteria in form.displayCriteria %}
+                <div class="form-group">{{ form_row(displayCriteria) }}
+                    {% if displayCriteria.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_BIKE_RIDE') %}
                         {{ form_row(form.bikeRide) }}
                     {% endif %}
-                    {% if display.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_MEMBER_LIST') %}
+                    {% if displayCriteria.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_MEMBER_LIST') %}
                         {{ form_row(form.members) }}
                     {% endif %}
                 </div>

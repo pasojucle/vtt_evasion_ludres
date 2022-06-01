@@ -70,7 +70,7 @@ class SurveyType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('display', ChoiceType::class, [
+            ->add('displayCriteria', ChoiceType::class, [
                 'expanded' => true,
                 'multiple' => false,
                 'choices' => [
@@ -94,7 +94,7 @@ class SurveyType extends AbstractType
             ])
         ;
 
-        $formModifier = function(FormInterface $form, array $options, ?int $display, ?BikeRide $bikeRide, ?Collection $members) {
+        $formModifier = function(FormInterface $form, array $options, ?int $displayCriteria, ?BikeRide $bikeRide, ?Collection $members) {
             $form
                 ->add('surveyIssues', CollectionType::class, [
                     'label' => false,
@@ -137,8 +137,8 @@ class SurveyType extends AbstractType
                     'width' => '100%',
                     'label' => false,
                     'required' => false,
-                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_BIKE_RIDE !== $display : $display,
-                    'data' => (self::DISPLAY_BIKE_RIDE === $display) ? $bikeRide : null,
+                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_BIKE_RIDE !== $displayCriteria : $displayCriteria,
+                    'data' => (self::DISPLAY_BIKE_RIDE === $displayCriteria) ? $bikeRide : null,
                 ])
                 ->add('members', Select2EntityType::class, [
                     'multiple' => true,
@@ -158,11 +158,11 @@ class SurveyType extends AbstractType
                     'width' => '100%',
                     'label' => false,
                     'required' => false,
-                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_MEMBER_LIST !== $display : $display,
+                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_MEMBER_LIST !== $displayCriteria : $displayCriteria,
                     'remote_params' => [
                         'filters' => json_encode($options['filters']),
                     ],
-                    'data' => (self::DISPLAY_MEMBER_LIST === $display) ? $members : null,
+                    'data' => (self::DISPLAY_MEMBER_LIST === $displayCriteria) ? $members : null,
                 ])
                 ;
         };
@@ -171,15 +171,15 @@ class SurveyType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            $formModifier($form, $options, $data->getDisplay(), $data->getBikeRide(), $data->getMembers());
+            $formModifier($form, $options, $data->getDisplayCriteria(), $data->getBikeRide(), $data->getMembers());
         });
 
-        $builder->get('display')->addEventListener(
+        $builder->get('displayCriteria')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($options, $formModifier) {
-                $display = $event->getForm()->getData();
+                $displayCriteria = $event->getForm()->getData();
                 $survey = $event->getForm()->getParent()->getData();
-                $formModifier($event->getForm()->getParent(), $options, $display, $survey->getBikeRide(), $survey->getMembers());
+                $formModifier($event->getForm()->getParent(), $options, $displayCriteria, $survey->getBikeRide(), $survey->getMembers());
             }
         );
     }

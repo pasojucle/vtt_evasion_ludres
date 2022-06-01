@@ -19,7 +19,7 @@ class GetSurvey
     public function execute(?Survey &$survey): void
     {
         $this->getSurvey($survey);
-        $survey->setDisplay($this->getDisplay($survey));
+        $survey->setDisplayCriteria($this->getDisplayCriteria($survey));
 
     }
 
@@ -33,20 +33,20 @@ class GetSurvey
 
     }
 
-    private function getDisplay(Survey $survey): ?int
+    private function getDisplayCriteria(Survey $survey): ?int
     {
         switch(true) {
             case null !== $survey->getBikeRide():
-                $display = SurveyType::DISPLAY_BIKE_RIDE;
+                $displayCriteria = SurveyType::DISPLAY_BIKE_RIDE;
                 break;
             case !$survey->getMembers()->isEmpty():
 
-                $display = SurveyType::DISPLAY_MEMBER_LIST;
+                $displayCriteria = SurveyType::DISPLAY_MEMBER_LIST;
                 break;
             default:
-            $display = SurveyType::DISPLAY_ALL_MEMBERS;
+            $displayCriteria = SurveyType::DISPLAY_ALL_MEMBERS;
         }
 
-        return $display;
+        return $displayCriteria;
     }
 }

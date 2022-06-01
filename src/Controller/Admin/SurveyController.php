@@ -58,11 +58,11 @@ class SurveyController extends AbstractController
 
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $survey = $form->getData();
-            dump($survey);
-            if (SurveyType::DISPLAY_BIKE_RIDE !== $survey->getDisplay()) {
+
+            if (SurveyType::DISPLAY_BIKE_RIDE !== $survey->getDisplayCriteria()) {
                 $survey->setBikeRide(null);
             }
-            if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getDisplay()) {
+            if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getDisplayCriteria()) {
                 $survey->removeMembers();
             }
             $this->entityManager->persist($survey);
