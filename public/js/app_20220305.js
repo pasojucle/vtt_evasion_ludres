@@ -35,6 +35,7 @@ $(document).ready(function(){
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('click', '.input-file-button', getFile);
     $(document).on('change', '#bike_ride_bikeRideType', modifierBikeRide);
+    $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
@@ -221,6 +222,29 @@ function modifierBikeRide() {
           $('.js-datepicker').datepicker({
             format: 'yyyy-mm-dd hh:ii',
         });
+        }
+      });
+}
+
+function formModifier() {
+    const form = $(this).closest('form');
+    const selector = '#' + $(this).data('modifier');
+    const data = {};
+    $.each(form[0].elements,function() {
+        if ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden') {
+            data[$(this).attr('name')] = $(this).val();
+        }
+    });
+
+    $.ajax({
+        url : form.attr('action'),
+        type: form.attr('method'),
+        data : data,
+        success: function(html) {
+          $(selector).replaceWith(
+            $(html).find(selector)
+          );
+          $('.select2entity').select2entity();
         }
       });
 }

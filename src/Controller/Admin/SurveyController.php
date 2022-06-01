@@ -50,11 +50,21 @@ class SurveyController extends AbstractController
     public function edit(Request $request, GetSurvey $getSurvey, ?Survey $survey): Response
     {
         $getSurvey->execute($survey);
-        $form = $this->createForm(SurveyType::class, $survey);
+
+        $form = $this->createForm(SurveyType::class, $survey, [
+            'display_disabled' => $survey->getRespondents()->isEmpty(),
+        ]);
         $form->handleRequest($request);
 
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $survey = $form->getData();
+            dump($survey);
+            if (SurveyType::DISPLAY_BIKE_RIDE !== $survey->getDisplay()) {
+                $survey->setBikeRide(null);
+            }
+            if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getDisplay()) {
+                $survey->removeMembers();
+            }
             $this->entityManager->persist($survey);
             $this->entityManager->flush();
 

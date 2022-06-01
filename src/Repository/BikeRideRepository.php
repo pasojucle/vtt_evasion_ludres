@@ -90,8 +90,11 @@ class BikeRideRepository extends ServiceEntityRepository
      */
     public function findLike(string $query): array
     {
+        if (1 === preg_match('#^(\d{2})\/(\d{1,2})#', $query)) {
+            $today = new DateTime();
+            $query = $query.'/'. $today->format('y');
+        }
         $startAt = DateTimeImmutable::createFromFormat('d/m/y', $query);
-
         $orX = (new Expr)->orX();
         $orX->add((new Expr())->like('br.title', ':title'));
         $params['title'] = '%'.$query.'%';

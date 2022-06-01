@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use App\Entity\RegistrationStep;
-use IntlDateFormatter;
-use Twig\Extension\AbstractExtension;
+use DateTime;
 use Twig\TwigFilter;
+use IntlDateFormatter;
+use App\Entity\RegistrationStep;
+use DateTimeImmutable;
+use Twig\Extension\AbstractExtension;
 
 class AppExtension extends AbstractExtension
 {
@@ -30,7 +32,7 @@ class AppExtension extends AbstractExtension
         return $content;
     }
 
-    public function formatDateLong($date): string
+    public function formatDateLong(DateTime|DateTimeImmutable $date): string
     {
         $formatter = new IntlDateFormatter('fr_fr', IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
         $formatter->setPattern('EEEE d/M/yy');

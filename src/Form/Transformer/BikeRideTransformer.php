@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Form\Transformer;
 
+use IntlDateFormatter;
+use App\Entity\BikeRide;
+use DateTimeImmutable;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
-/**
- * Class EntityHiddenTransformer.
- *
- * @author  Francesco Casula <fra.casula@gmail.com>
- */
+
 class BikeRideTransformer implements DataTransformerInterface
 {
     private $entityClass;
@@ -37,13 +36,13 @@ class BikeRideTransformer implements DataTransformerInterface
      *
      * @return string
      */
-    public function transform($entity)
+    public function transform($bikeRide)
     {
-        if (null === $entity) {
+        if (null === $bikeRide) {
             return '';
         }
 
-        return $entity->getId();
+        return [$bikeRide->getId() => $this->getPeriod($bikeRide).' - '.$bikeRide->getTitle()];
     }
 
     /**
@@ -74,5 +73,20 @@ class BikeRideTransformer implements DataTransformerInterface
         }
 
         return $entity;
+    }
+
+    private function formatDateLong(DateTimeImmutable $date): string
+    {
+        $formatter = new IntlDateFormatter('fr_fr', IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
+        $formatter->setPattern('EEEE d/M/yy');
+
+        return ucfirst($formatter->format($date));
+    }
+
+    private function getPeriod(BikeRide $bikeRide): string
+    {
+        return  (null === $bikeRide->getEndAt())
+        ? $this->formatDateLong($bikeRide->getStartAt())
+        : $this->formatDateLong($bikeRide->getStartAt()).' au '.$this->formatDateLong($bikeRide->getEndAt());
     }
 }

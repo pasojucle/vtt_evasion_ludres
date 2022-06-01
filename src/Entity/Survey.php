@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Form\Admin\SurveyType;
 use DateTime;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
@@ -49,10 +50,12 @@ class Survey
     private bool $isAnonymous = true;
 
     #[OneToOne(inversedBy: 'survey', targetEntity: BikeRide::class, cascade: ['persist', 'remove'])]
-    private BikeRide $bikeRide;
+    private ?BikeRide $bikeRide;
 
     #[ManyToMany(targetEntity: User::class, inversedBy: 'surveys')]
-    private $members;
+    private Collection $members;
+
+    private ?int $display = SurveyType::DISPLAY_ALL_MEMBERS;
 
     public function __construct()
     {
@@ -233,5 +236,31 @@ class Survey
         $this->members->removeElement($member);
 
         return $this;
+    }
+
+    public function removeMembers(): self
+    {
+        if (!$this->members->isEmpty()) {
+            foreach ($this->members as $member) {
+                $this->members->removeElement($member);
+            }
+        }
+
+        return $this;
+    }
+
+
+    public function setDisplay(?int $display): self
+    {
+        $this->display = $display;
+
+        return $this;
+    }
+
+
+    public function getDisplay(): ?int
+    {
+
+        return $this->display;
     }
 }
