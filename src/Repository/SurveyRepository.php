@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Survey;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Survey|null find($id, $lockMode = null, $lockVersion = null)
@@ -28,34 +29,45 @@ class SurveyRepository extends ServiceEntityRepository
      */
     public function findAllDESCQuery(): QueryBuilder
     {
-        return $this->createQueryBuilder('v')
-            ->orderBy('v.id', 'DESC')
+        return $this->createQueryBuilder('s')
+            ->orderBy('s.id', 'DESC')
         ;
     }
 
 
-    /**
-     * @return Survey[] Returns an array of Survey objects
-     */
-    public function findActiveQuery(): QueryBuilder
+    // /**
+    //  * @return Survey[] Returns an array of Survey objects
+    //  */
+    // public function findActiveQuery(): QueryBuilder
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->andWhere(
+    //             (new Expr())->eq('s.disabled', 0),
+    //             (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
+    //             (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
+    //             (new Expr())->isNull('s.bikeRide'),
+    //         )
+    //         ->orderBy('s.id', 'ASC')
+    //     ;
+    // }
+
+    public function findActive(User $member): array
     {
-        return $this->createQueryBuilder('v')
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.members', 'm')
             ->andWhere(
-                (new Expr())->eq('v.disabled', 0),
-                (new Expr())->lte('v.startAt', 'CURRENT_DATE()'),
-                (new Expr())->gte('v.endAt', 'CURRENT_DATE()'),
-                // (new Expr())->isNull('v.bikeRide'),
+                (new Expr())->eq('s.disabled', 0),
+                (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
+                (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
+                (new Expr())->isNull('s.bikeRide'),
+
+                (new Expr())->orX(
+                    (new Expr())->isNull('m'),
+                    (new Expr())->eq('m', ':member'),
+                ),
             )
-            ->orderBy('v.id', 'ASC')
-        ;
-    }
-
-    public function findActive(): array
-    {
-        /**@var QueryBuilder $qb */
-        $qb = $this->findActiveQuery();
-
-        return $qb
+            ->setParameter('member', $member)
+            ->orderBy('s.id', 'ASC')
             ->getQuery()
             ->getResult()
         ;

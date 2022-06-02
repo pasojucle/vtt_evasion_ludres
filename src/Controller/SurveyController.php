@@ -108,7 +108,7 @@ class SurveyController extends AbstractController
     ): Response {
         return $this->render('survey/list.html.twig', [
             'surveys' => $surveyRepository->findActive($this->getUser()),
-            'user_surveys' => $respondentRepository->findActiveSurveysByUser($this->getUser()),
+            'respondents' => $respondentRepository->findActiveSurveysByUser($this->getUser()),
         ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Entity\Survey;
 use App\Form\Admin\SurveyType;
 use App\Service\PaginatorService;
 use App\UseCase\Survey\GetSurvey;
+use App\UseCase\Survey\SetSurvey;
 use App\Form\Admin\SurveyFilterType;
 use App\Repository\SurveyRepository;
 use App\UseCase\Survey\ExportSurvey;
@@ -47,27 +48,18 @@ class SurveyController extends AbstractController
     #[Route('/edite/{survey}', name: 'admin_survey_edit', methods: ['GET', 'POST'], defaults:[
         'survey' => null,
     ])]
-    public function edit(Request $request, GetSurvey $getSurvey, ?Survey $survey): Response
+    public function edit(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, ?Survey $survey): Response
     {
         $getSurvey->execute($survey);
 
         $form = $this->createForm(SurveyType::class, $survey, [
-            'display_disabled' => $survey->getRespondents()->isEmpty(),
+            'display_disabled' => !$survey->getRespondents()->isEmpty(),
         ]);
         $form->handleRequest($request);
 
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $survey = $form->getData();
 
-            if (SurveyType::DISPLAY_BIKE_RIDE !== $survey->getDisplayCriteria()) {
-                $survey->setBikeRide(null);
-            }
-            if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getDisplayCriteria()) {
-                $survey->removeMembers();
-            }
-            $this->entityManager->persist($survey);
-            $this->entityManager->flush();
-
+            $setSurvey->execute($form);
             return $this->redirectToRoute('admin_surveys');
         }
 
