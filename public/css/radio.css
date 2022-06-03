@@ -1,0 +1,29 @@
+input[type="radio"] {
+    display: none;
+  }
+  input[type="radio"] + label {
+    position: relative;
+    padding-left: 1.3rem;
+  }
+  input[type="radio"] + label::before,
+  input[type="radio"] + label::after {
+    display: block;
+    position: absolute;
+    box-sizing: border-box;
+    bottom: 0;
+    left: 0;
+    content:'';
+    width: 1rem;
+    height: 1rem; 
+    border-radius: 1rem;
+  }
+  input[type="radio"] + label::before {
+    border: 2px solid var(--primary-color-darker);
+    /* background-color: #eee; */
+  }
+  input[type="radio"]:checked + label::after {
+    content: '\f058';
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: var(--primary-color-darker);
+  }

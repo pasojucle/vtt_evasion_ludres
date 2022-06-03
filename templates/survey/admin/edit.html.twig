@@ -27,14 +27,14 @@
             </div>
             <div id="surveyDisplay">
                 {% for displayCriteria in form.displayCriteria %}
-                <div class="form-group">{{ form_row(displayCriteria) }}
+                <div class="form-group">{{ form_widget(displayCriteria) }} {{ form_label(displayCriteria) }}</div>
                     {% if displayCriteria.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_BIKE_RIDE') %}
-                        {{ form_row(form.bikeRide) }}
+                        <div class="form-group">{{ form_row(form.bikeRide) }}</div>
                     {% endif %}
                     {% if displayCriteria.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_MEMBER_LIST') %}
-                        {{ form_row(form.members) }}
+                        <div class="form-group">{{ form_row(form.members) }}</div>
                     {% endif %}
-                </div>
+                
                 {% endfor %}
             </div>
 
