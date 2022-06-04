@@ -36,7 +36,7 @@ class UpdateCommand extends Command
 
         $maintenance = $this->parameterRepository->findOneByName('MAINTENANCE_MODE');
         $io->writeln('Mise du site en maintenance');
-        $maintenance->setValue(1);
+        $maintenance->setValue("1");
         $this->entityManager->flush();
 
         $io->writeln('git reset --hard');
