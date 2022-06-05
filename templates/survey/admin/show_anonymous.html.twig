@@ -14,7 +14,7 @@
         <nav  class="nav-tab">
             {% for key, label in tabs %}
                 <a href="{{ path('admin_anonymous_survey', {'survey': survey.id, 'tab': key} )}}"{% if tab == key %} class="active"{% endif %}>
-                    {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ survey.surveyUsers|length }}</span>{% endif %}
+                    {{ label|trans}} {% if key == 1 %}<span class="badge badge-info">{{ survey.respondents|length }}</span>{% endif %}
                 </a>
             {% endfor %}
         </nav>

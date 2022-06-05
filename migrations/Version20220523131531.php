@@ -35,6 +35,7 @@ final class Version20220523131531 extends AbstractMigration
         $this->addSql('ALTER TABLE survey_user ADD CONSTRAINT FK_4B7AD682A76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE survey_user ADD CONSTRAINT FK_4B7AD682B3FE509D FOREIGN KEY (survey_id) REFERENCES survey (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE survey_user ADD PRIMARY KEY (survey_id, user_id)');
+        $this->addSql('TRUNCATE TABLE survey_user');
     }
 
     public function down(Schema $schema): void

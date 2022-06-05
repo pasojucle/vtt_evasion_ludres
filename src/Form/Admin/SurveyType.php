@@ -96,6 +96,7 @@ class SurveyType extends AbstractType
         ;
 
         $formModifier = function(FormInterface $form, array $options, ?int $displayCriteria, ?BikeRide $bikeRide, ?Collection $members) {
+            $disabled = (null !== $displayCriteria);
             $form
                 ->add('surveyIssues', CollectionType::class, [
                     'label' => false,
@@ -138,7 +139,7 @@ class SurveyType extends AbstractType
                     'width' => '100%',
                     'label' => false,
                     'required' => false,
-                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_BIKE_RIDE !== $displayCriteria : $displayCriteria,
+                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_BIKE_RIDE !== $displayCriteria : $disabled,
                     'data' => (self::DISPLAY_BIKE_RIDE === $displayCriteria) ? $bikeRide : null,
                 ])
                 ->add('members', Select2EntityType::class, [
@@ -159,7 +160,7 @@ class SurveyType extends AbstractType
                     'width' => '100%',
                     'label' => false,
                     'required' => false,
-                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_MEMBER_LIST !== $displayCriteria : $displayCriteria,
+                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_MEMBER_LIST !== $displayCriteria : $disabled,
                     'remote_params' => [
                         'filters' => json_encode($options['filters']),
                     ],
