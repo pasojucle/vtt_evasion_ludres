@@ -2,12 +2,11 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        
     </head>
     {% apply inline_css(source('@styles/email.css')) %}
         <body style="font-family: Verdana,Geneva,Tahoma,sans-serif;font-size: 13px">
-            <header >
-                <img src="{{ app.request.schemeAndHttpHost }}/logos/logo.jpg" alt="VTT EVASION LUDRES" height="100">
+            <header>
+                <img style="height: 100px;" src="{{ app.request.schemeAndHttpHost }}/logos/logo.jpg" alt="VTT EVASION LUDRES" height="100">
             </header>
             <main>
                 {% block body %}{% endblock %}
@@ -17,6 +16,5 @@
                 <div>Bureau des associations<br>Hôtel de ville<br>54710 Ludres</div>
             </footer>
         </body>
-
     {% endapply %}
 </html>

@@ -1,7 +1,7 @@
 {% extends 'base_email.html.twig' %}
 
 {% block body %}
-<b>{{ data.subject }}</b>
+<p><b>{{ data.subject }}</b></p>
 <br>
 <p>Bonjour {{ data.name }} {{ data.firstName }},</p>
 {% if data.sendLogin is defined %}
