@@ -152,12 +152,6 @@
     "laminas/laminas-code": {
         "version": "4.2.2"
     },
-    "laminas/laminas-eventmanager": {
-        "version": "3.3.1"
-    },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.2.0"
-    },
     "monolog/monolog": {
         "version": "2.2.0"
     },
@@ -274,9 +268,6 @@
         "files": [
             "config/packages/debug.yaml"
         ]
-    },
-    "symfony/debug-pack": {
-        "version": "v1.0.9"
     },
     "symfony/dependency-injection": {
         "version": "v5.2.7"
@@ -426,9 +417,6 @@
     "symfony/options-resolver": {
         "version": "v5.2.4"
     },
-    "symfony/orm-pack": {
-        "version": "v2.1.0"
-    },
     "symfony/password-hasher": {
         "version": "v5.3.7"
     },
@@ -470,9 +458,6 @@
     },
     "symfony/process": {
         "version": "v5.2.7"
-    },
-    "symfony/profiler-pack": {
-        "version": "v1.0.5"
     },
     "symfony/property-access": {
         "version": "v5.2.4"
@@ -526,9 +511,6 @@
     "symfony/serializer": {
         "version": "v5.2.7"
     },
-    "symfony/serializer-pack": {
-        "version": "v1.0.4"
-    },
     "symfony/service-contracts": {
         "version": "v2.4.0"
     },
@@ -537,9 +519,6 @@
     },
     "symfony/string": {
         "version": "v5.2.6"
-    },
-    "symfony/test-pack": {
-        "version": "v1.0.7"
     },
     "symfony/translation": {
         "version": "5.3",
@@ -572,9 +551,6 @@
             "config/packages/twig.yaml",
             "templates/base.html.twig"
         ]
-    },
-    "symfony/twig-pack": {
-        "version": "v1.0.1"
     },
     "symfony/validator": {
         "version": "6.0",
