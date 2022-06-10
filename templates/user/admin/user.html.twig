@@ -111,6 +111,7 @@
                             {% if licence.coverage is not null %}
                                 <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
                             {% endif %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
                             {% if user.level is not null %}
                                 <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b></div><div class="col-md-8 col-xs-6">{{ user.level }}</div></div></li>
                             {% endif %}

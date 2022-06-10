@@ -10,6 +10,12 @@
             }
         %}
         <div class="container">{{ current.content|replace(replaces) | raw}}</div>
+        {% if licence.isVae is defined %}
+            <div class="inputGroup long check">
+                {{ form_widget(licence.isVae) }}
+                {{ form_label(licence.isVae) }}
+            </div>
+        {% endif %}
     {% endfor %}
     <br>
 {% endif %}

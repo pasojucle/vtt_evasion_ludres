@@ -574,11 +574,11 @@ class ToolController extends AbstractController
             ]);
             if ($submit->isClicked()) {
                 $result = $mailerService->sendMailToMember([
-                    'name' => $user->member['name'],
-                    'firstName' => $user->member['firstName'],
-                    'email' => $user->getContactEmail(),
+                    'name' => $user->member->name,
+                    'firstName' => $user->member->firstName,
+                    'email' => $user->mainEmail,
                     'subject' => 'Votre inscription au club de Vtt Évasion Ludres',
-                    'licenceNumber' => $user->getLicenceNumber(),
+                    'licenceNumber' => $user->licenceNumber,
                     'registration_error' => true,
                     'content' => $content,
                 ]);

@@ -49,6 +49,8 @@ class LicenceViewModel extends AbstractViewModel
 
     public bool $currentSeasonForm = false;
 
+    public string $isVae;
+
     private ServicesPresenter $services;
 
     public static function fromLicence(?Licence $licence, bool $isNewMember, ServicesPresenter $services)
@@ -79,6 +81,7 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
             $licenceView->lock = $licence->getSeason() !== $services->currentSeason;
             $licenceView->currentSeasonForm = $licenceView->getCurrentSeasonForm();
+            $licenceView->isVae = $licenceView->isVae();
 
             $licenceView->isNewMember = $isNewMember;
         }
@@ -153,5 +156,10 @@ class LicenceViewModel extends AbstractViewModel
         $coverageFormStartAt->setTime(0, 0, 0);
 
         return $coverageFormStartAt < new DateTime() && !$this->entity->getCurrentSeasonForm();
+    }
+
+    private function isVae(): string
+    {
+        return $this->entity->isVae() ? 'VTT à assistance électrique' : '';
     }
 }

@@ -127,16 +127,18 @@ class UserController extends AbstractController
 
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
     public function adminSendLicence(
+        UserPresenter $userPresenter,
         MailerService $mailerService,
         User $user
     ): Response {
-        $identity = $user->getFirstIdentity();
+        $userPresenter->present($user);
+
         $mailerService->sendMailToMember([
             'subject' => 'Votre numero de licence',
-            'email' => $identity->getEmail(),
-            'name' => $identity->getName(),
-            'firstName' => $identity->getFirstName(),
-            'licenceNumber' => $user->getLicenceNumber(),
+            'email' => $userPresenter->viewModel()->mainEmail,
+            'name' => $userPresenter->viewModel()->member->name,
+            'firstName' => $userPresenter->viewModel()->member->firstName,
+            'licenceNumber' => $userPresenter->viewModel()->licenceNumber,
         ], 'EMAIL_LICENCE_VALIDATE');
 
         $this->addFlash('success', 'Le messsage à été envoyé avec succès');

@@ -7,20 +7,16 @@ namespace App\UseCase\Licence;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Service\MailerService;
+use App\ViewModel\UserPresenter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class ValidateLicence
 {
-    private EntityManagerInterface $entityManager;
-
-    private MailerService $mailerService;
-
-    public function __construct(EntityManagerInterface $entityManager, MailerService $mailerService)
+    public function __construct(private EntityManagerInterface $entityManager, private MailerService $mailerService, private UserPresenter $userPresenter)
     {
-        $this->entityManager = $entityManager;
-        $this->mailerService = $mailerService;
+
     }
 
     public function execute(Request $request, Licence $licence)
@@ -64,14 +60,14 @@ class ValidateLicence
 
     private function sendMail(string $licenceNumber, User $user)
     {
-        if ($licenceNumber !== $user->getLicenceNumber()) {
-            $identity = $user->getFirstIdentity();
+        $this->userPresenter->present($user);
+        if ($licenceNumber !== $this->userPresenter->viewModel()->licenceNumber) {
             $this->mailerService->sendMailToMember([
                 'subject' => 'Votre numero de licence',
-                'email' => $identity->getEmail(),
-                'name' => $identity->getName(),
-                'firstName' => $identity->getFirstName(),
-                'licenceNumber' => $user->getLicenceNumber(),
+                'email' => $this->userPresenter->viewModel()->mainEmail,
+                'name' => $this->userPresenter->viewModel()->member->name,
+                'firstName' => $this->userPresenter->viewModel()->member->firstName,
+                'licenceNumber' => $this->userPresenter->viewModel()->licenceNumber,
             ], 'EMAIL_LICENCE_VALIDATE');
         }
     }

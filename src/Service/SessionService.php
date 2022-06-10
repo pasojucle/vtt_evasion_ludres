@@ -104,7 +104,7 @@ class SessionService
             $this->mailerService->sendMailToMember([
                 'name' => $this->userPresenter->viewModel()->member->name,
                 'firstName' => $this->userPresenter->viewModel()->member->firstName,
-                'email' => $$this->userPresenter->viewModel()->getContactEmail(),
+                'email' => $$this->userPresenter->viewModel()->mainEmail,
                 'subject' => 'Fin de la période d\'essai',
                 'testing_end' => true,
             ], 'EMAIL_END_TESTING');

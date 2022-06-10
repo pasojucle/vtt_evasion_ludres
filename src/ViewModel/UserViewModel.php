@@ -36,6 +36,8 @@ class UserViewModel extends AbstractViewModel
 
     public ?array $titleColors;
 
+    public ?string $mainEmail;
+
     public static function fromUser(User $user, ServicesPresenter $services)
     {
         $userView = new self();
@@ -82,6 +84,15 @@ class UserViewModel extends AbstractViewModel
             return ($this->kinship)
                 ? $this->kinship->name.' '.$this->kinship->firstName
                 : $this->member->name.' '.$this->member->firstName;
+        }
+
+        return '';
+    }
+
+    public function getMainEmail(): string
+    {
+        if (null !== $this->member) {
+            return ($this->kinship) ? $this->kinship->email : $this->member->email;
         }
 
         return '';
@@ -256,16 +267,16 @@ class UserViewModel extends AbstractViewModel
         return null;
     }
 
-    public function getContactEmail(): ?string
-    {
-        $member = $this->member;
-        $licence = $this->getLastLicence();
-        if (Licence::CATEGORY_MINOR === $licence->category) {
-            $member = $this->kinship;
-        }
+    // public function getContactEmail(): ?string
+    // {
+    //     $member = $this->member;
+    //     $licence = $this->getLastLicence();
+    //     if (Licence::CATEGORY_MINOR === $licence->category) {
+    //         $member = $this->kinship;
+    //     }
 
-        return $member->email;
-    }
+    //     return $member->email;
+    // }
 
     public function mustProvideRegistration(): bool
     {

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Licence;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class LicenceType extends AbstractType
 {
@@ -50,6 +51,10 @@ class LicenceType extends AbstractType
                         'row_attr' => [
                             'class' => 'form-group-inline',
                         ],
+                    ])
+                    ->add('isVae', CheckboxType::class, [
+                        'label' => 'VTT à assistance électrique',
+                        'required' => false,
                     ])
                     ;
             }

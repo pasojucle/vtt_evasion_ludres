@@ -141,7 +141,7 @@ class EditRegistration
     {
         $this->userPresenter->present($user);
         $user = $this->userPresenter->viewModel();
-        $email = $user->getContactEmail();
+        $email = $user->mainEmail;
         $this->mailerService->sendMailToMember([
             'name' => $user->member->name,
             'firstName' => $user->member->firstName,

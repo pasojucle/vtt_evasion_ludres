@@ -122,6 +122,9 @@ class Licence
     #[Column(type: 'boolean', options:['default' => false])]
     private bool $currentSeasonForm = false;
 
+    #[Column(type: 'boolean', options:['default' => false])]
+    private $isVae = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -279,6 +282,18 @@ class Licence
     public function setCurrentSeasonForm(bool $currentSeasonForm): self
     {
         $this->currentSeasonForm = $currentSeasonForm;
+
+        return $this;
+    }
+
+    public function isVae(): ?bool
+    {
+        return $this->isVae;
+    }
+
+    public function setIsVae(bool $isVae): self
+    {
+        $this->isVae = $isVae;
 
         return $this;
     }
