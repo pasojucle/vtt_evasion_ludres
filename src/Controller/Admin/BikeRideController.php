@@ -14,6 +14,7 @@ use App\Repository\BikeRideRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\BikeRideTypeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,11 +59,13 @@ class BikeRideController extends AbstractController
     public function adminEdit(
         Request $request,
         EditBikeRide $editBikeRide,
+        BikeRideTypeRepository $bikeRideTypeRepository,
         BikeRidePresenter $bikeRidePresenter,
         ?BikeRide $bikeRide
     ): Response {
         if (null === $bikeRide) {
             $bikeRide = new BikeRide();
+            $bikeRide->setBikeRideType($bikeRideTypeRepository->findDefault());
         }
         $bikeRide = $this->bikeRideService->setDefaultContent($request, $bikeRide);
         $filters = $request->getSession()->get('admin_bike_rides_filters');

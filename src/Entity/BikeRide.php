@@ -52,13 +52,13 @@ class BikeRide
     private string $title = '';
 
     #[Column(type: 'text', nullable: true)]
-    private ?string $content;
+    private ?string $content = '';
 
     #[Column(type: 'datetime_immutable')]
     private DateTimeImmutable $startAt;
 
     #[Column(type: 'datetime_immutable', nullable: true)]
-    private ?DateTimeImmutable $endAt;
+    private ?DateTimeImmutable $endAt = null;
 
     #[Column(type: 'integer')]
     private int $displayDuration = 8;
@@ -77,15 +77,16 @@ class BikeRide
     private BikeRideType $bikeRideType;
 
     #[Column(type: 'string', length: 255, nullable: true)]
-    private ?string $filename;
+    private ?string $filename = null;
 
     #[OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
-    private ?Survey $survey;
+    private ?Survey $survey = null;
 
 
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
+        $this->startAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int

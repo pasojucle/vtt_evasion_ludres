@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\BikeRideType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -42,5 +43,17 @@ class BikeRideTypeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('brt')
             ->orderBy('brt.name', 'ASC')
         ;
+    }
+
+    public function findDefault(): ?BikeRideType
+    {
+        try {
+            return $this->createQueryBuilder('brt')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 }
