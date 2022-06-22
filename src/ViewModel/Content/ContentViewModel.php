@@ -52,7 +52,7 @@ class ContentViewModel extends AbstractViewModel
         $contentView->url = $content->getUrl();
 
         $contentView->contentStyleMd = $contentView->getContentStyleMd();
-
+dump($contentView);
         return $contentView;
     }
 

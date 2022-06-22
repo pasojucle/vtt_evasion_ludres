@@ -194,71 +194,9 @@ p + p {
 .background-ligth .btn-primary {
     background-color: var(--primary-color-darker);
 }
-.card {
-    position: relative;
-    word-wrap: break-word;
-    color: var(--background-color);
-    background-clip: border-box;
-    border-radius: .25rem;
-    background-color: var(--white-color);
-    text-align: center;
-}
-.card.card-link {
-    background-color: var(--primary-color);
-}
-.card.card-link a {
-    color: var(--white-color);
-}
-.card-img {
-    width: 100%;
-    display: block;
-    border-style: none;
-    background-color: var(--white-color);
-}
-.card-link .card-img {
-    height: 150px;
-    background-size: 90% auto;
-}
-.card-product .card-img {
-    height: 250px;
-}
-.card-product .card-body {
-    font-size: 13px;
-    text-align: left;
-    color: var(--background-color);
-    font-weight: 700;
-}
-.card-product .price {
-    color: var(--primary-color-darker);
-    font-size: 16px;
-}
 .throughed-price {
     color: var(--background-color);
     text-decoration-line: line-through;
-}
-.card-product .throughed-price {
-    font-size: 12px;
-}
-.card-img {
-    height: 220px;
-}
-.card .card-title h2 {
-    font-size: 17px;
-    color: var(--primary-color-darker);
-    margin-top: 15px;
-}
-.card-footer {
-    margin-bottom: 15px;
-}
-.card-body {
-    padding: 15px;
-    /* height: calc(100% - 150px); */
-}
-.card-bike-ride .card-body p {
-    text-align: center;
-}
-.card h3 {
-    font-weight: normal;
 }
 .text-col-2 {
     column-count: 2;

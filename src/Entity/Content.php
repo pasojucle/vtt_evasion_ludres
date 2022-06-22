@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ContentRepository;
 use DateTime;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToMany;
+use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repositoryClass: ContentRepository::class)]
 class Content
@@ -69,6 +72,14 @@ class Content
 
     #[Column(type: 'string', length: 30, nullable: true)]
     private ?string $buttonLabel;
+
+    #[ManyToMany(targetEntity: Background::class, inversedBy: 'contents')]
+    private Collection $backgrounds;
+
+    public function __construct()
+    {
+        $this->backgrounds = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -203,6 +214,30 @@ class Content
     public function setButtonLabel(?string $buttonLabel): self
     {
         $this->buttonLabel = $buttonLabel;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BackgroundImage>
+     */
+    public function getBackgrounds(): Collection
+    {
+        return $this->backgrounds;
+    }
+
+    public function addBackground(Background $background): self
+    {
+        if (!$this->backgrounds->contains($background)) {
+            $this->backgrounds[] = $background;
+        }
+
+        return $this;
+    }
+
+    public function removeBackground(Background $background): self
+    {
+        $this->backgrounds->removeElement($background);
 
         return $this;
     }

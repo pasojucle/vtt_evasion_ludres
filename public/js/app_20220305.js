@@ -114,11 +114,20 @@ function updateIdentity() {
 }
 
 function previewFile() {
-    const preview = $(this).parent().parent().find('img')[0];
+    const previews = $(this).parent().parent().find('img, canvas');
     const [file] = this.files;
-
     if (file) {
-        preview.src = URL.createObjectURL(file)
+        const image = URL.createObjectURL(file);
+        previews.each(function() {
+            console.log(this);
+            if (this instanceof HTMLImageElement) {
+                this.src = image;
+            }
+            if (this instanceof HTMLCanvasElement) {
+                this.dataset.src =  image;
+            }
+            
+        });
     }
 }
 

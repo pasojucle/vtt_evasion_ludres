@@ -110,6 +110,7 @@ body > script {display: none !important;}
     --red-color: #ff5722;
     --background-color: #000;
     --light-color: #efefef;
+    --light-color-darker: #d7d7d7;
     --clear-color: rgba(192,192,192,.80);
     --nav-height: 49px;
     --gray-color: rgb(100,100,100);
@@ -559,7 +560,7 @@ body {
     z-index: 2;
     transition: color 200ms ease-in;
     overflow: hidden;
-    border: 2px solid var(--light-color);
+    border: 2px solid var(--light-color-darker);
 }
 .inputGroup.long {
     width: 100%;
@@ -591,7 +592,7 @@ body {
     width: 32px;
     height: 32px;
 
-    border: 2px solid var(--light-color);
+    border: 2px solid var(--light-color-darker);
     background-position: 2px 3px;
     border-radius: 50%;
     z-index: 2;
@@ -706,7 +707,7 @@ span.select2-selection.select2-selection--single {
     display: inline-block;
     vertical-align: middle;
 }
-.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-content, .col-6, .col-list {
+.col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-content, .col-6, .col-list, .grid-background {
     display: grid;
     grid-auto-rows: max-content;
 }
@@ -773,6 +774,9 @@ span.select2-selection.select2-selection--single {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+.grid-background {
+    grid-template-columns: repeat(5, 1fr);
 }
 .row {
     display: flex;
@@ -1160,6 +1164,84 @@ nav.nav-tab::before {
 .nav-group .block-title .btn,
 .wrapper .wrapper-title .btn {
     color: var(--white-color);
+}
+
+
+.card {
+    position: relative;
+    word-wrap: break-word;
+    color: var(--background-color);
+    background-clip: border-box;
+    border-radius: .25rem;
+    background-color: var(--white-color);
+    text-align: center;
+}
+.card.card-link {
+    background-color: var(--primary-color);
+}
+.card.card-link a {
+    color: var(--white-color);
+}
+.card-img {
+    width: 100%;
+    display: block;
+    border-style: none;
+    background-color: var(--white-color);
+}
+.card-link .card-img {
+    height: 150px;
+    background-size: 90% auto;
+}
+.card-background {
+    width: 150px;
+    margin: 5px;
+    border: 2px solid var(--light-color-darker);
+}
+.card-background .card-img {
+    height: 100px;
+    background-size: 90% auto;
+}
+.card-product .card-img {
+    height: 250px;
+}
+.card-product .card-body {
+    font-size: 13px;
+    text-align: left;
+    color: var(--background-color);
+    font-weight: 700;
+}
+.card-product .price {
+    color: var(--primary-color-darker);
+    font-size: 16px;
+}
+.card-product .throughed-price {
+    font-size: 12px;
+}
+.card-img {
+    height: 220px;
+}
+.card .card-title h2 {
+    font-size: 17px;
+    color: var(--primary-color-darker);
+    margin-top: 15px;
+}
+.card-footer {
+    margin-bottom: 15px;
+}
+.card-body {
+    padding: 15px;
+    /* height: calc(100% - 150px); */
+}
+.card-background .card-body {
+    padding: 5px;
+    font-size: 12px;
+    background-color: var(--light-color);
+}
+.card-bike-ride .card-body p {
+    text-align: center;
+}
+.card h3 {
+    font-weight: normal;
 }
 
 @media screen and (min-width: 800px) {
