@@ -21,12 +21,9 @@ class HiddenArrayTransformer implements DataTransformerInterface
      */
     public function reverseTransform($json)
     {
-        dump($json); 
         if (null === $json) {
-            return '';
+            return [];
         }
-
-        
 
         return json_decode($json, true);
     }
@@ -40,10 +37,8 @@ class HiddenArrayTransformer implements DataTransformerInterface
      */
     public function transform($array)
     {
-        dump($array);
-
         if (!$array) {
-            return [];
+            return '';
         }
 
         return json_encode($array);

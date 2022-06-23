@@ -124,6 +124,7 @@ class MediaPosition {
     orientation;
     ratio = 1;
 
+    startX = 0;
     startY = 0;
     currentY = 0;
 
@@ -171,9 +172,7 @@ class MediaPosition {
         }
         
         this.zoneLandscape = new zone(this, 'landscape', 1520, 1080);
-        this.currentY = this.display.height;
-
-
+        this.zoneSquare = new zone(this, 'square', 850, 850);
         this.imagePosition = $('#'+this.prefix+'_mediaPositionY');
 
         this.run();
@@ -185,7 +184,8 @@ class MediaPosition {
         self = this;
         setInterval(function() {
             self.resetCanvas();
-            self.drawZone();
+            self.drawZone(self.zoneLandscape);
+            self.drawZone(self.zoneSquare);
         }, 1000/30);
     }
     resetCanvas() {
@@ -196,41 +196,26 @@ class MediaPosition {
         self = this;
         this.canvas.onmousedown = function(e) {
             var mouseY = e.pageY - e.target.offsetTop;
-            self.startY = mouseY - self.zoneLandscape.positionY ;
+            var mouseX = e.pageX - e.target.offsetLeft;
+            // self.startX = mouseX - self.zoneLandscape.positionX ;
+            // self.startY = mouseY - self.zoneLandscape.positionY ;
+            self.zoneLandscape.setDraggable(mouseX, mouseY);
 
-            if (mouseY >= self.zoneLandscape.positionY &&
-                mouseY <= (self.zoneLandscape.positionY + self.zoneLandscape.height)) {
-                    self.isDraggable = true;
-                document.body.style.cursor = "move";
-            }
         };
         this.canvas.onmousemove = function(e) {
-            if (self.isDraggable) {
-                self.currentY = e.pageY - e.target.offsetTop;
-                self.zone.positionY = self.currentY - self.startY;
-
-                if (self.zoneLandscape.positionY <= 0 || (self.zone.positionY + self.zoneLandscape.height) >= self.canvas.height) {
-                    if (self.zoneLandscape.positionY < 0) {
-                        self.zoneLandscape.positionY = 0;
-                    }
-                    if ((self.zoneLandscape.positionY + self.zoneLandscape.height) > self.canvas.height) {
-                        self.zoneLandscape.positionY = self.canvas.height - self.zoneLandscape.height;
-                    }
-                }
-            }
+            self.currentY = e.pageY - e.target.offsetTop;
+            self.zoneLandscape.move(self);
         };
         document.onmouseup = function(e) {
-            self.isDraggable = false;
-            document.body.style.cursor = "auto";
-            self.imagePosition.val(self.zoneLandscape.positionY / self.ratio);
+            self.zoneLandscape.setPositions();
         };
     };
-    drawZone() {
-        this.context.fillStyle = 'rgba(0, 0, 0, 0.9)';
-        this.context.fillRect(0,0, this.display.width, this.zoneLandscape.positionY);
-        this.context.fillRect(0,0, this.zoneLandscape.positionX, this.display.height);
-        this.context.fillRect(0,this.zoneLandscape.positionY+this.zoneLandscape.height, this.display.width, this.display.height-this.zoneLandscape.height-this.zoneLandscape.positionY);
-        this.context.fillRect(this.zoneLandscape.positionX+this.zoneLandscape.width,0, this.display.width-this.zoneLandscape.width-this.zoneLandscape.positionX, this.display.height);
+    drawZone(zone) {
+        this.context.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        this.context.fillRect(0,0, this.display.width, zone.positionY);
+        this.context.fillRect(0,0, zone.positionX, this.display.height);
+        this.context.fillRect(0,zone.positionY+zone.height, this.display.width, this.display.height-zone.height-zone.positionY);
+        this.context.fillRect(zone.positionX+zone.width,0, this.display.width-zone.width-zone.positionX, this.display.height);
     };
 }
 
@@ -240,7 +225,7 @@ class zone {
     width;
     height
     ratio;
-    positionsX;
+    positionX;
     positionY;
     inputselector;
     imagePositions;
@@ -255,17 +240,51 @@ class zone {
         }
         
         this.inputselector = document.querySelector('#background_' + name + 'Position');
-        this.imagePositions =  (this.inputselector) ? JSON.parse(this.inputselector.value) : {};
+        console.log('inputselector', this.inputselector);
+        this.imagePositions =  (this.inputselector && this.inputselector.value !== '') ? JSON.parse(this.inputselector.value) : {'positionX': null, 'positionY': null};
+        console.log('imagePositions', this.imagePositions);
         this.height = outputHeight * this.ratio;
         this.width = outputWidth * this.ratio;
 
         if (this.imagePositions.positionX || this.imagePositions.positionY) {
-
             this.positionX = this.imagePositions.positionX * this.ratio;
             this.positionY = this.imagePositions.positionY * this.ratio;
         } else {
+            
             this.positionX = (canvas.display.width- this.width) / 2;
             this.positionY = (canvas.display.height - this.height)/2;
+        }
+        console.log(this);
+    }
+    setDraggable(mouseX, mouseY) {
+        if (mouseY >= this.positionY
+            && mouseY <= (this.positionY + this.height)
+            && mouseX >= this.positionX
+            && mouseX <= (this.positionX + this.width)
+        ) {
+            this.isDraggable = true;
+            document.body.style.cursor = "move";
+        }
+    }
+    move(mediaPosition) {
+        if (this.isDraggable) {
+            this.positionY = mediaPosition.currentY - mediaPosition.startY;
+            if (this.positionY <= 0 || (this.positionY + this.height) >= mediaPosition.canvas.height) {
+                if (this.positionY < 0) {
+                    this.positionY = 0;
+                }
+                if ((this.positionY + this.height) > mediaPosition.canvas.height) {
+                    this.positionY = mediaPosition.canvas.height - this.height;
+                }
+            }
+        }
+    }
+    setPositions() {
+        if (this.isDraggable) {
+            this.isDraggable = false;
+            document.body.style.cursor = "auto";
+            this.inputselector.value = JSON.stringify({'positionX': this.positionX, 'positionY': this.positionY});
+            console.log(this.inputselector.value);
         }
     }
 }
