@@ -35,6 +35,8 @@ class UserController extends AbstractController
         OrdersPresenter $ordersPresenter,
         Request $request
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $user = $this->getUser();
         if (null === $user) {
             $this->redirectToRoute('login');
@@ -57,6 +59,8 @@ class UserController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        
         $user = $this->getUser();
 
         if (null === $user) {

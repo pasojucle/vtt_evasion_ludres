@@ -106,6 +106,8 @@ class SurveyController extends AbstractController
         SurveyRepository $surveyRepository,
         RespondentRepository $respondentRepository
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         return $this->render('survey/list.html.twig', [
             'surveys' => $surveyRepository->findActive($this->getUser()),
             'respondents' => $respondentRepository->findActiveSurveysByUser($this->getUser()),

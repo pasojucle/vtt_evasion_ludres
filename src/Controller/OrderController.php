@@ -38,6 +38,8 @@ class OrderController extends AbstractController
         OrderValidateService $orderValidateService,
         Request $request
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $user = $this->getUser();
         if (null === $user) {
             return $this->redirectToRoute('home');
@@ -71,6 +73,8 @@ class OrderController extends AbstractController
     public function order(
         ?OrderHeader $orderHeader
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $this->presenter->present($orderHeader);
 
         return $this->render('order/show.html.twig', [
@@ -141,6 +145,7 @@ class OrderController extends AbstractController
         PaginatorService $paginator,
         Request $request
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $user = $this->getUser();
         $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
