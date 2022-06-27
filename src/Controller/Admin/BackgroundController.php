@@ -47,8 +47,7 @@ class BackgroundController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $background = $form->getData();
-            if ($request->files->get('background')) {
-                dump($request->files->get('background'));
+            if ($request->files->get('background') && $request->files->get('background')['backgroundFile']) {
                 $file = $request->files->get('background')['backgroundFile'];
                 $background->setFileName($this->uploadService->uploadFile($file));
             }

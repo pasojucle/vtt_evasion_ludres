@@ -17,6 +17,7 @@ class MediaPosition {
     startX = 0;
     startY = 0;
     currentY = 0;
+    currentX = 0;
 
     zones = [];
     imagePosition;
@@ -55,7 +56,7 @@ class MediaPosition {
         this.display['height'] = this.image.height * this.ratio;
 
         Object.entries(this.zones).forEach(([key, zone]) => 
-            this.zones[key]['zone'] = new Zone(this.display, key, zone)
+            this.zones[key]['zone'] = new Zone(this, zone)
         );
 
         if (this.image.width > this.image.height) {
@@ -97,6 +98,7 @@ class MediaPosition {
         };
         this.canvas.onmousemove = function(e) {
             self.currentY = e.pageY - e.target.offsetTop;
+            self.currentX = e.pageX - e.target.offsetLeft;
             Object.entries(self.zones).forEach(([key, zone]) => zone.zone.move(self));
         };
         document.onmouseup = function(e) {
@@ -133,7 +135,6 @@ class MediaPosition {
 }
 
 class Zone {
-
     isDraggable = false;
     width;
     height
@@ -144,15 +145,18 @@ class Zone {
     imagePositions;
     origin = {};
     name;
+    mediaPosition;
 
     startY = 0;
-    currentY = 0;
-    constructor(display, key, zone) {
+    startX = 0;
+
+    constructor(mediaPosition, zone) {
         this.name = zone.name;
-        if(zone.outputWidth / zone.outputHeight <  display.width / display.height) {
-            this.ratio =  display.height / zone.outputHeight;
+        this.mediaPosition = mediaPosition;
+        if(zone.outputWidth / zone.outputHeight <  mediaPosition.display.width / mediaPosition.display.height) {
+            this.ratio =  mediaPosition.display.height / zone.outputHeight;
         } else {
-            this.ratio =  display.width / zone.outputWidth;
+            this.ratio =  mediaPosition.display.width / zone.outputWidth;
         }
         this.inputselector = document.querySelector('#background_' + zone.name + 'Position');
         this.imagePositions =  (this.inputselector && this.inputselector.value !== '') ? JSON.parse(this.inputselector.value) : {'positionX': null, 'positionY': null};
@@ -163,10 +167,12 @@ class Zone {
             this.positionX = this.imagePositions.positionX * this.ratio;
             this.positionY = this.imagePositions.positionY * this.ratio;
         } else {
-            this.defaultPositions(display);
+            this.defaultPositions();
         }
     }
     StartDraggable(mouseX, mouseY) {
+        this.startX = mouseX - this.positionX + this.origin.x;
+        this.startY = mouseY - this.positionY + this.origin.y;
         if (mouseY >= this.origin.y + this.positionY
             && mouseY <= (this.origin.y + this.positionY + this.height)
             && mouseX >= this.origin.x + this.positionX
@@ -181,14 +187,22 @@ class Zone {
     }
     move(mediaPosition) {
         if (this.isDraggable) {
-            this.positionY = mediaPosition.currentY - mediaPosition.startY;
-            if (this.positionY <= 0 || (this.positionY + this.height) >= mediaPosition.canvas.height) {
-                if (this.positionY < 0) {
-                    this.positionY = 0;
-                }
-                if ((this.positionY + this.height) > mediaPosition.canvas.height) {
-                    this.positionY = mediaPosition.canvas.height - this.height;
-                }
+            this.positionY = mediaPosition.currentY - this.startY;
+            this.positionX = mediaPosition.currentX - this.startX;
+
+            if (this.positionY < 0) {
+                this.positionY = 0;
+            }
+            if ((this.positionY + this.height) >= this.mediaPosition.display.height + this.origin.y) {
+                this.positionY = this.mediaPosition.display.height + this.origin.y - this.height;
+            }
+            if (this.positionX < 0) {
+                this.positionX = 0;
+            }
+            console.log(this.positionX + this.width, '/', this.mediaPosition.display.width + this.origin.x - this.width);
+            console.log(this.mediaPosition.display.width,this.origin.x,this.width);
+            if ((this.positionX + this.width) >= this.mediaPosition.display.width + this.origin.x) {
+                this.positionX = this.mediaPosition.display.width + this.origin.x - this.width;
             }
         }
     }
@@ -200,12 +214,12 @@ class Zone {
         }
     }
     setPositions() {
-        this.inputselector.value = JSON.stringify({'positionX': this.positionX, 'positionY': this.positionY});
+        this.inputselector.value = JSON.stringify({'positionX': this.positionX / this.ratio, 'positionY': this.positionY / this.ratio});
         console.log(this.inputselector.value);
     }
-    defaultPositions(display) {
-        this.positionX = ( display.width - this.width) / 2;
-        this.positionY = ( display.height  - this.height) / 2;
+    defaultPositions() {
+        this.positionX = ( this.mediaPosition.display.width - this.width) / 2;
+        this.positionY = ( this.mediaPosition.display.height  - this.height) / 2;
         this.setPositions();
     }
 }
