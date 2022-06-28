@@ -10,6 +10,8 @@ parameters:
     files_directory_path: '%kernel.project_dir%/public/files/'
     products_directory: 'uploads/products'
     products_directory_path: '%kernel.project_dir%/public/%products_directory%'
+    backgrounds_directory: '/images/background/'
+    backgrounds_directory_path: '%kernel.project_dir%/public%backgrounds_directory%'
     environment: '%env(APP_ENV)%'
     maintenance:
         ipAuthorized: ["127.0.0.1","88.166.188.236"] 

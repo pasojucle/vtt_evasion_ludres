@@ -41,6 +41,8 @@ class ServicesPresenter
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
         $this->uploadsDirectoryPath = $this->parameterBag->get('uploads_directory_path');
+        $this->backgroundsDirectory = $this->parameterBag->get('backgrounds_directory');
+        $this->backgroundsDirectoryPath = $this->parameterBag->get('backgrounds_directory_path');
         $this->uploadsDirectory = $this->parameterBag->get('uploads_directory');
         $this->currentSeason = $this->seasonService->getCurrentSeason();
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();

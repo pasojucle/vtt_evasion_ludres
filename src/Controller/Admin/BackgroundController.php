@@ -49,11 +49,14 @@ class BackgroundController extends AbstractController
             $background = $form->getData();
             if ($request->files->get('background') && $request->files->get('background')['backgroundFile']) {
                 $file = $request->files->get('background')['backgroundFile'];
-                $background->setFileName($this->uploadService->uploadFile($file));
+                $background->setFileName($this->uploadService->uploadFile($file, 'backgrounds_directory_path'));
+                $this->uploadService->resizeBackground($background->getFilename(), $background->getLandscapePosition(), 800, 450, 'md');
             }
 
             $this->entityManager->persist($background);
             $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_background_list');
         }
 
         $presenter->present($background);

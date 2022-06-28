@@ -6,6 +6,7 @@ namespace App\Service;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UploadService
@@ -20,7 +21,7 @@ class UploadService
         $this->slugger = $slugger;
     }
 
-    public function uploadFile($pictureFile, ?string $dir = 'uploads_directory_path'): ?string
+    public function uploadFile(?UploadedFile $pictureFile, ?string $dir = 'uploads_directory_path'): ?string
     {
         if ($pictureFile) {
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -43,5 +44,25 @@ class UploadService
         }
 
         return null;
+    }
+
+    public function resizeBackground(string $filename,array $positions, int $outputWidth, int $outputHeight, string $outputDir): bool
+    {
+        $path = $this->params->get('backgrounds_directory_path').$filename;
+        list($width, $height,  $type) = getimagesize($path);
+        $ratio = ($width > $height) ? $outputWidth / $width : $outputHeight / $height;
+
+        if ($type == IMAGETYPE_JPEG) {
+            $imageSrc = imagecreatefromjpeg($path);
+        } else {
+            $imageSrc = imagecreatefrompng($path);
+        }
+        $imageBlack = imagecreatetruecolor( $outputWidth, $outputHeight );
+        $outputPath = $this->params->get('backgrounds_directory_path'). $outputDir . DIRECTORY_SEPARATOR. $filename;
+        imagecopyresampled($imageBlack, $imageSrc, (int) round($positions['positionX']), (int) round($positions['positionY']), 0, 0, (int) round($width * $ratio), (int) round($height * $ratio), $width, $height );
+        if (!imagejpeg ($imageBlack, $outputPath) || !imagepng ($imageBlack, $outputPath)) {
+            return false;
+        }
+        return true;
     }
 }

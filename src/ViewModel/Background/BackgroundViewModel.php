@@ -35,7 +35,7 @@ class BackgroundViewModel extends AbstractViewModel
 
     private function getPath(): ?string
     {
-        return ($this->entity->getFileName()) ? $this->services->uploadsDirectory.$this->entity->getFileName() : null;
+        return ($this->entity->getFileName()) ? $this->services->backgroundsDirectory.$this->entity->getFileName() : null;
 
     }
 }
