@@ -45,24 +45,4 @@ class UploadService
 
         return null;
     }
-
-    public function resizeBackground(string $filename,array $positions, int $outputWidth, int $outputHeight, string $outputDir): bool
-    {
-        $path = $this->params->get('backgrounds_directory_path').$filename;
-        list($width, $height,  $type) = getimagesize($path);
-        $ratio = ($width > $height) ? $outputWidth / $width : $outputHeight / $height;
-
-        if ($type == IMAGETYPE_JPEG) {
-            $imageSrc = imagecreatefromjpeg($path);
-        } else {
-            $imageSrc = imagecreatefrompng($path);
-        }
-        $imageBlack = imagecreatetruecolor( $outputWidth, $outputHeight );
-        $outputPath = $this->params->get('backgrounds_directory_path'). $outputDir . DIRECTORY_SEPARATOR. $filename;
-        imagecopyresampled($imageBlack, $imageSrc, (int) round($positions['positionX']), (int) round($positions['positionY']), 0, 0, (int) round($width * $ratio), (int) round($height * $ratio), $width, $height );
-        if (!imagejpeg ($imageBlack, $outputPath) || !imagepng ($imageBlack, $outputPath)) {
-            return false;
-        }
-        return true;
-    }
 }

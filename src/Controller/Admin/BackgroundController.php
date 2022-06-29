@@ -9,6 +9,7 @@ use App\Service\UploadService;
 use App\Service\PaginatorService;
 use App\Form\Admin\BackgroundType;
 use App\Repository\BackgroundRepository;
+use App\UseCase\Background\EditBackground;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,21 +41,14 @@ class BackgroundController extends AbstractController
     }
 
     #[Route('/image_de_fond/{background}', name: 'admin_background_edit', defaults:['background' => null], methods: ['GET', 'post'])]
-    public function adminEdit(Request $request, BackgroundPresenter $presenter, ?Background $background)
+    public function adminEdit(Request $request, BackgroundPresenter $presenter, EditBackground $editBackground, ?Background $background)
     {
+        $currentFilename = $background?->getFilename();
         $form = $this->createForm(BackgroundType::class, $background);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $background = $form->getData();
-            if ($request->files->get('background') && $request->files->get('background')['backgroundFile']) {
-                $file = $request->files->get('background')['backgroundFile'];
-                $background->setFileName($this->uploadService->uploadFile($file, 'backgrounds_directory_path'));
-                $this->uploadService->resizeBackground($background->getFilename(), $background->getLandscapePosition(), 800, 450, 'md');
-            }
-
-            $this->entityManager->persist($background);
-            $this->entityManager->flush();
+            $editBackground->execute($form->getData(), $request, $currentFilename);
 
             return $this->redirectToRoute('admin_background_list');
         }
