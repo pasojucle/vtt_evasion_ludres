@@ -1,0 +1,12 @@
+{% block thumbnail_row %}
+<ul style="display: flex">
+    {% for child in form.children %}
+        <li class="card card-background card">
+            {{ form_widget(child)}}
+            <div class="card-img" style="background-image: url(/images/background/{{ child.vars.label }})"></div>
+            <div class="card-body">{{ form_label(child)}} </div>
+        </li>
+                        
+    {% endfor %}
+</ul>
+{% endblock %}
