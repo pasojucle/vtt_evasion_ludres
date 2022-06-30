@@ -29,6 +29,7 @@ class MediaPosition {
         this.display = {'width': 350, 'height': 0};
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
+        this.ratio;
 
         this.reader = new FileReader()
 
@@ -164,8 +165,8 @@ class Zone {
         this.width = zone.outputWidth * this.ratio;
 
         if (this.imagePositions.positionX !== null && this.imagePositions.positionY !== null) {
-            this.positionX = this.imagePositions.positionX * this.ratio;
-            this.positionY = this.imagePositions.positionY * this.ratio;
+            this.positionX = this.imagePositions.positionX * this.mediaPosition.ratio;
+            this.positionY = this.imagePositions.positionY * this.mediaPosition.ratio;
         } else {
             this.defaultPositions();
         }
@@ -214,7 +215,7 @@ class Zone {
         }
     }
     setPositions() {
-        this.inputselector.value = JSON.stringify({'positionX': this.positionX / this.ratio, 'positionY': this.positionY / this.ratio});
+        this.inputselector.value = JSON.stringify({'positionX': this.positionX / this.mediaPosition.ratio, 'positionY': this.positionY / this.mediaPosition.ratio});
         console.log(this.inputselector.value);
     }
     defaultPositions() {

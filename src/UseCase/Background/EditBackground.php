@@ -62,17 +62,16 @@ class EditBackground
         $path = $this->parameterBag->get('backgrounds_directory_path').$filename;
         list($originWidth, $originHeight,  $type) = getimagesize($path);
 
-        $ratio = ($outputWidth / $outputHeight <  $originWidth / $originWidth) 
+        $ratio = ($outputWidth / $outputHeight <  $originWidth / $originHeight) 
             ? $outputHeight / $originHeight 
             : $outputWidth / $originWidth;
-            dump($ratio);
+     
         $imageSrc = ($type == IMAGETYPE_JPEG) ? imagecreatefromjpeg($path): imagecreatefrompng($path);
         $imageBlack = imagecreatetruecolor( $outputWidth, $outputHeight );
         $outputPath = $this->parameterBag->get('backgrounds_directory_path'). $outputDir . DIRECTORY_SEPARATOR. $filename;
         imagecopyresampled($imageBlack, $imageSrc, 0, 0, (int) round($positions['positionX']), (int) round($positions['positionY']), (int) round($originWidth * $ratio), (int) round($originHeight * $ratio), $originWidth, $originHeight );
 
         if (!imagejpeg ($imageBlack, $outputPath) || !imagepng ($imageBlack, $outputPath)) {
-            dump('ko');
             return false;
         }
 
