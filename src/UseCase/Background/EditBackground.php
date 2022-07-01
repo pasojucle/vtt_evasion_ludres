@@ -8,6 +8,7 @@ use App\Entity\Background;
 use App\Service\UploadService;
 use Symfony\Component\Finder\Finder;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -46,9 +47,11 @@ class EditBackground
     public function makeAllSizes(Background $background): void
     {
         $sizes = [
-            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 1920, 'outputHeight' => 1080, 'outputDir' => 'xl'],
-            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 800, 'outputHeight' => 450, 'outputDir' => 'md'],
-            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 400, 'outputHeight' => 225, 'outputDir' => 'xs'],
+            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 1920, 'outputHeight' => 1080, 'outputDir' => 'landscape_xl'],
+            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 800, 'outputHeight' => 450, 'outputDir' => 'landscape_md'],
+            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 400, 'outputHeight' => 225, 'outputDir' => 'landscape_xs'],
+            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 450, 'outputHeight' => 800, 'outputDir' => 'portrait_md'],
+            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 225, 'outputHeight' => 400, 'outputDir' => 'portrait_xs'],
             ['positions' => $background->getSquarePosition(), 'outputWidth' => 850, 'outputHeight' => 850, 'outputDir' => 'square'],
         ];
 
@@ -68,6 +71,9 @@ class EditBackground
      
         $imageSrc = ($type == IMAGETYPE_JPEG) ? imagecreatefromjpeg($path): imagecreatefrompng($path);
         $imageBlack = imagecreatetruecolor( $outputWidth, $outputHeight );
+
+        $this->mkdirIfNotExists($outputDir);
+
         $outputPath = $this->parameterBag->get('backgrounds_directory_path'). $outputDir . DIRECTORY_SEPARATOR. $filename;
         imagecopyresampled($imageBlack, $imageSrc, 0, 0, (int) round($positions['positionX']), (int) round($positions['positionY']), (int) round($originWidth * $ratio), (int) round($originHeight * $ratio), $originWidth, $originHeight );
 
@@ -76,5 +82,13 @@ class EditBackground
         }
 
         return true;
+    }
+
+    private function mkdirIfNotExists(string $outputDir):void
+    {
+        $filesystem = new Filesystem();
+        if (!$filesystem->exists($this->parameterBag->get('backgrounds_directory_path'). $outputDir)) {
+            $filesystem->mkdir($this->parameterBag->get('backgrounds_directory_path'). $outputDir, 0775);
+        }
     }
 }

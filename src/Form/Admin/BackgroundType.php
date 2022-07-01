@@ -42,6 +42,7 @@ class BackgroundType extends AbstractType
                 ],
             ])
             ->add('landscapePosition', HiddenArrayType::class)
+            ->add('portraitPosition', HiddenArrayType::class)
             ->add('squarePosition', HiddenArrayType::class)
             ->add('save', SubmitType::class, [
                 'label' => 'Enregister',

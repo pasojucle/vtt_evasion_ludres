@@ -41,17 +41,6 @@ class ContentType extends AbstractType
             ->add('route', HiddenType::class, [
                 'empty_data' => 'home',
             ])
-            ->add('backgrounds', EntityType::class, [
-                'class' => Background::class,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('b')
-                        ->orderBy('b.filename', 'ASC');
-                },
-                'choice_label' => 'filename',
-                'multiple' => true,
-                'expanded' => true,
-                'block_prefix' => 'thumbnail',
-            ])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -136,6 +125,21 @@ class ContentType extends AbstractType
                         ],
                     ])
                 ;
+            }
+            if ('home' !== $content->getRoute()) {
+
+                $form
+                    ->add('backgrounds', EntityType::class, [
+                        'class' => Background::class,
+                        'query_builder' => function (EntityRepository $er) {
+                            return $er->createQueryBuilder('b')
+                                ->orderBy('b.filename', 'ASC');
+                        },
+                        'choice_label' => 'filename',
+                        'multiple' => true,
+                        'expanded' => true,
+                        'block_prefix' => 'thumbnail',
+                    ]);
             }
         });
     }

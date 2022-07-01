@@ -27,6 +27,9 @@ class Background
     #[ORM\Column(type: 'json')]
     private array $squarePosition = [];
 
+    #[ORM\Column(type: 'json')]
+    private $portraitPosition = [];
+
     public function __construct()
     {
         $this->contents = new ArrayCollection();
@@ -96,6 +99,18 @@ class Background
     public function setSquarePosition(array $squarePosition): self
     {
         $this->squarePosition = $squarePosition;
+
+        return $this;
+    }
+
+    public function getPortraitPosition(): ?array
+    {
+        return $this->portraitPosition;
+    }
+
+    public function setPortraitPosition(array $portraitPosition): self
+    {
+        $this->portraitPosition = $portraitPosition;
 
         return $this;
     }

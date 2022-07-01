@@ -26,7 +26,7 @@ class MediaPosition {
     fileInput;
 
     constructor(canvas) {
-        this.display = {'width': 350, 'height': 0};
+        this.display = {};
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
         this.ratio;
@@ -44,17 +44,18 @@ class MediaPosition {
         this.fileInput.onchange = (e => this.changeImage());
     }
     initialize(e) {
-
+        this.display.width = (this.image.width > this.image.height) ? 400 : 225;
 
         console.log('onLoad', this.display.width, this.image.width);
         console.log('onLoad', this.display.width, this.image);
         this.zones = [
             {'name': 'landscape', 'outputWidth': 1920, 'outputHeight': 1080},
+            {'name': 'portrait', 'outputWidth': 1080, 'outputHeight': 1920},
             {'name': 'square', 'outputWidth': 850, 'outputHeight': 850},
         ];
 
         this.ratio = this.display.width / this.image.width;
-        this.display['height'] = this.image.height * this.ratio;
+        this.display.height = this.image.height * this.ratio;
 
         Object.entries(this.zones).forEach(([key, zone]) => 
             this.zones[key]['zone'] = new Zone(this, zone)
@@ -62,10 +63,10 @@ class MediaPosition {
 
         if (this.image.width > this.image.height) {
             this.canvas.width = this.image.width * this.ratio;
-            this.canvas.height = this.image.height * this.ratio *2;
+            this.canvas.height = this.image.height * this.ratio * this.zones.length;
             Object.entries(this.zones).forEach(([key, zone]) => zone.zone.setOrigin(0, (this.display.height + this.gap) * key));
         } else {
-            this.canvas.width = this.image.width * this.ratio *2;
+            this.canvas.width = this.image.width * this.ratio * this.zones.length;;
             this.canvas.height = this.image.height * this.ratio;
             Object.entries(this.zones).forEach(([key, zone]) => zone.zone.setOrigin((this.display.width + this.gap) * key, 0));
         }

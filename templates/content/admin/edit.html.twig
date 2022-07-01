@@ -52,7 +52,9 @@
                 </div>
             {% endif %}
             {{ form_row(form.route) }}
-            {{ form_row(form.backgrounds) }}
+            {% if form.backgrounds is defined %}
+                {{ form_row(form.backgrounds) }}
+            {% endif %}
         </div>
         <div class="wrapper-footer">
             {{ form_widget(form.save) }}
