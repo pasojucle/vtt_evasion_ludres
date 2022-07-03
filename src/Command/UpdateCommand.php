@@ -51,8 +51,8 @@ class UpdateCommand extends Command
             $cmdComposer = 'composer install';
             $cmdMigration = 'php bin/console doctrine:migration:migrate -n';
             if ('/home/patrick/Sites/vtt_evasion_ludres' !== getcwd()) {
-                $cmdComposer = '/usr/bin/php8.0-cli ../composer.phar install';
-                $cmdMigration = '/usr/bin/php8.0-cli  bin/console doctrine:migration:migrate -n';
+                $cmdComposer = '/usr/bin/php8.1-cli ../composer.phar install';
+                $cmdMigration = '/usr/bin/php8.1-cli  bin/console doctrine:migration:migrate -n';
             }
 
             $io->writeln('composer install');
