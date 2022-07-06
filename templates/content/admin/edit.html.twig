@@ -5,8 +5,8 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    {{ form_start(form) }}
     <div class="wrapper">
+    {{ form_start(form) }}
         <div class="wrapper-title">
             <h1>{{ title }}</h1>
             {% set route = (content is not null) ? content.route : 'home' %}
@@ -53,12 +53,14 @@
             {% endif %}
             {{ form_row(form.route) }}
             {% if form.backgrounds is defined %}
-                {{ form_row(form.backgrounds) }}
+                <div class="form-group">
+                    {{ form_row(form.backgrounds) }}
+                </div>
             {% endif %}
         </div>
         <div class="wrapper-footer">
             {{ form_widget(form.save) }}
         </div>
+        {{ form_end(form) }}
     </div>
-    {{ form_end(form) }}
 {% endblock %}

@@ -9,7 +9,15 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper background-{{ background_color }} background-color col-content">
-        <div class="wrapper-img" style="background-image:url(../images/background/{{ media_screen }}/{{ background_img }})"></div>
+        <div is="my-slider" class="wrapper-img slider">
+            {% for background in content.backgrounds %}
+                <picture>
+                    <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">
+                    <source media="(max-width: 800px)" srcset="../images/background/landscape_md/{{ background.filename }}">
+                    <img src="../images/background/square/{{ background.filename }}" alt="le club">
+                </picture>
+            {% endfor %}
+        </div>
         <div class="wrapper-content">
             <div class="reveal">
                 {{ content.content | raw}}

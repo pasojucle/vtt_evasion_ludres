@@ -1053,6 +1053,9 @@ nav.nav-tab::before {
 }
 .background-color .wrapper-img, .card-img {
     width: 100%;
+}
+.card-img {
+    width: 100%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

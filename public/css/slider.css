@@ -1,0 +1,28 @@
+
+.slider {
+    overflow: hidden;
+    position: relative;
+}
+
+.slider picture {
+    overflow: hidden;
+    position: absolute;
+    transition: left 1s ease;
+    left: 0;
+}
+.slider picture.loaded {
+    z-index: 3;
+}
+.slider picture.playing {
+    z-index: 2;
+}
+.slider picture.back {
+    z-index: 1;
+}
+
+.slider picture img {
+    width: unset;
+    height: unset;
+    max-width: unset;
+    position: absolute;
+}

@@ -67,7 +67,10 @@ $(document).ready(function(){
     document
         .querySelectorAll('.switch input[type="checkbox"]')
         .forEach(btn => btn.addEventListener("change", handleSwitch));
-    $('.select2').select2();
+    if ($('.select2').length > 0) {
+        $('.select2').select2();
+    }
+    
     $(document).on('select2:open', (event) => {
         const id = event.target.id;
         document.querySelector('.select2-search__field[aria-controls="select2-'+id+'-results"]').focus();

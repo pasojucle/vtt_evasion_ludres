@@ -1,11 +1,8 @@
-
-$(function() {
+document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.media-position').forEach(canvas => {
         new MediaPosition(canvas);
-    });;
-});
-
-
+    });
+  }, false);
 
 class MediaPosition {
     canvas

@@ -11,7 +11,7 @@
                 <span class="tools">
                     <a href="{{ path('admin_background_edit') }}" class="btn btn-primary" title="Ajouter une image"><i class="fas fa-plus"></i> Ajouter une image</a>
                 </span>
-                <ul style="display: flex">
+                <ul style="display: flex; flex-wrap: wrap;">
                     {% for background in backgrounds %}
                         <li class="card card-background">
                             <a href="{{ path('admin_background_edit', {'background' : background.entity.id}) }}">
