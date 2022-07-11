@@ -32,8 +32,10 @@ class ContentRepository extends ServiceEntityRepository
         $andX = $qb->expr()->andX();
         if (null !== $route) {
             $andX->add($qb->expr()->eq('c.route', ':route'));
+            $andX->add($qb->expr()->isNotNull('c.parent'));
         } else {
             $andX->add($qb->expr()->neq('c.route', ':route'));
+            $andX->add($qb->expr()->isNull('c.parent'));
             $route = 'home';
         }
 
@@ -41,6 +43,7 @@ class ContentRepository extends ServiceEntityRepository
             $andX->add($qb->expr()->eq('c.isFlash', ':isFlash'));
             $qb->setParameter('isFlash', $isFlash);
         }
+
 
         return $qb
             ->andWhere($andX)
@@ -51,9 +54,15 @@ class ContentRepository extends ServiceEntityRepository
 
     public function findByRoute(string $route, ?bool $isFlash = null): array
     {
-        $qb = $this->findContentQuery($route, $isFlash);
-
-        return $qb->getQuery()->getResult();
+        return $this->createQueryBuilder('c')
+            ->andWhere(
+                (new Expr())->eq('c.route', ':route'),
+                (new Expr())->eq('c.isFlash', ':isFlash')
+            )
+            ->setParameter('route', $route)
+            ->setParameter('isFlash', $isFlash)
+            ->orderBy('c.orderBy', 'ASC')
+            ->getQuery()->getResult();
     }
 
     public function findNexOrderByRoute(string $route, bool $isFlash): int
@@ -63,6 +72,7 @@ class ContentRepository extends ServiceEntityRepository
             ->select('MAX(c.orderBy)')
             ->andWhere(
                 (new Expr())->eq('c.route', ':route'),
+                (new Expr())->isNotNull('c.parent'),
                 (new Expr())->eq('c.isFlash', ':isFlash')
             )
             ->setParameter('route', $route)
@@ -70,6 +80,8 @@ class ContentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult()
         ;
+
+        dump($route, $isFlash, $maxOrder);
 
         if (null !== $maxOrder) {
             $maxOrder = (int) $maxOrder;
@@ -84,7 +96,8 @@ class ContentRepository extends ServiceEntityRepository
         try {
             return $this->createQueryBuilder('l')
                 ->andWhere(
-                    (new Expr())->eq('l.route', ':route')
+                    (new Expr())->eq('l.route', ':route'),
+                    (new Expr())->isNull('l.parent'),
                 )
                 ->setParameter('route', $route)
                 ->getQuery()

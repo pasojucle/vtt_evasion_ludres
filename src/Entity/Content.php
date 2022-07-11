@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use DateTime;
+use App\Entity\Background;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\ManyToMany;
 use App\Repository\ContentRepository;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\OrderBy;
 
 #[Entity(repositoryClass: ContentRepository::class)]
 class Content
@@ -34,6 +38,7 @@ class Content
         'rules' => 'content.route.rules',
         'legal_notices' => 'content.route.legal_notices',
         'login_help' => 'content.route.login_help',
+        'registration_membership_fee' => 'content.route.registration_membership_fee'
     ];
 
     #[Column(type: 'integer')]
@@ -43,8 +48,8 @@ class Content
     #[Column(type: 'string', length: 100)]
     private string $route;
 
-    #[Column(type: 'text')]
-    private string $content;
+    #[Column(type: 'text', nullable: true)]
+    private ?string $content = null;
 
     #[Column(type: 'datetime', nullable: true)]
     private ?DateTime $startAt;
@@ -52,8 +57,8 @@ class Content
     #[Column(type: 'datetime', nullable: true)]
     private ?DateTime $endAt;
 
-    #[Column(type: 'integer')]
-    private int $orderBy = 0;
+    #[Column(type: 'integer', nullable: true)]
+    private ?int $orderBy = null;
 
     #[Column(type: 'boolean')]
     private bool $isActive = true;
@@ -62,23 +67,31 @@ class Content
     private bool $isFlash = false;
 
     #[Column(type: 'string', length: 100, nullable: true)]
-    private ? string $title;
+    private ? string $title = null;
 
     #[Column(type: 'string', length: 255, nullable: true)]
-    private ?string $filename;
+    private ?string $filename  = null;
 
     #[Column(type: 'string', length: 255, nullable: true)]
-    private ?string $url;
+    private ?string $url = null;
 
     #[Column(type: 'string', length: 30, nullable: true)]
-    private ?string $buttonLabel;
+    private ?string $buttonLabel = null;
 
     #[ManyToMany(targetEntity: Background::class, inversedBy: 'contents')]
     private Collection $backgrounds;
 
+    #[ManyToOne(targetEntity: self::class, inversedBy: 'contents')]
+    private $parent = null;
+
+    #[OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    #[OrderBy(['orderBy' => 'ASC'])]
+    private $contents;
+
     public function __construct()
     {
         $this->backgrounds = new ArrayCollection();
+        $this->contents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -103,7 +116,7 @@ class Content
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(?string $content): self
     {
         $this->content = $content;
 
@@ -139,7 +152,7 @@ class Content
         return $this->orderBy;
     }
 
-    public function setOrderBy(int $orderBy): self
+    public function setOrderBy(?int $orderBy): self
     {
         $this->orderBy = $orderBy;
 
@@ -238,6 +251,48 @@ class Content
     public function removeBackground(Background $background): self
     {
         $this->backgrounds->removeElement($background);
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getContents(): Collection
+    {
+        return $this->contents;
+    }
+
+    public function addContent(self $content): self
+    {
+        if (!$this->contents->contains($content)) {
+            $this->contents[] = $content;
+            $content->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContent(self $content): self
+    {
+        if ($this->contents->removeElement($content)) {
+            // set the owning side to null (unless already changed)
+            if ($content->getParent() === $this) {
+                $content->setParent(null);
+            }
+        }
 
         return $this;
     }

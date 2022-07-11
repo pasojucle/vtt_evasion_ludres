@@ -7,10 +7,19 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper background-blue background-color col-content">
-        <div class="wrapper-img" style="background-image:url(../images/background/{{ media_screen }}/ecole_vtt_disciplines.jpg)"></div>
+        <div is="my-slider" class="wrapper-img slider">
+            {% for background in content.backgrounds %}
+                <picture>
+                    <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">
+                    <source media="(max-width: 800px)" srcset="../images/background/landscape_md/{{ background.filename }}">
+                    <img src="../images/background/square/{{ background.filename }}" alt="le club">
+                </picture>
+            {% endfor %}
+        </div>
         <div class="wrapper-content">
             <div class="reveal">
                 <h1>Les tarifs</h1>
+                {{ content.content | raw}}
                 {% include('registration/membership_fee.html.twig') %}
             </div>
         </div>

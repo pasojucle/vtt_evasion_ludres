@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+{% set title = 'Gestion de la page d\'accueil' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+{% set class_ul ='' %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>{{ title }}</h1>
+        </div>
+        <nav  class="nav-tab">
+            {% for tab_value, label in tabs %}
+                <a href="{{ path('admin_home_contents', {'tab': tab_value} )}}"{% if tab == tab_value %} class="active"{% endif %}>{{ label|trans}}</a>
+            {% endfor %}
+        </nav>
+        <div class="wrapper-body">
+            {% if tab != constant('App\\Controller\\Admin\\ContentController::HOME_TAB_BACKGROUNDS') %}
+            {% set class_ul ='sortable' %}
+                <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un contenu"><i class="fas fa-plus"></i> Ajouter un contenu</a>
+                <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
+                    {% for content in contents %}     
+                        <li class="ui-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" data-id="{{ content.id }}">
+                            {% set title = content.title %}
+                            {% if content.title is null %}
+                                {% set title = constant('App\\Entity\\Content::ROUTES')[content.route] | trans %}
+                            {% endif %}
+                            <div class="list-item">{{ title }}</div>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <div>
+                                    <a class="btn btn-primary btn-ico" href="{{ path('admin_home_content_edit', {'content': content.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                </div>
+                                <div>
+                                    {% if current_route == 'home' %}
+                                        <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_content_delete', {'content': content.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                    {% endif %}
+                                    </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                {{ form_start(form)}}
+                <div class="form-group">
+                    {{ form_row(form.backgrounds) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.save) }}
+                </div>
+                {{ form_end(form)}}
+            {% endif %}
+        </div>
+        {% include('common/pagination.html.twig') %}
+    </div>
+{% endblock %}

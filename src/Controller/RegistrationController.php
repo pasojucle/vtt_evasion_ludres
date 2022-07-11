@@ -63,10 +63,12 @@ class RegistrationController extends AbstractController
 
     #[Route('/inscription/tarifs', name: 'registration_membership_fee', methods: ['GET'])]
     public function registrationMemberShipFee(
-        MembershipFeeRepository $membershipFeeRepository
+        MembershipFeeRepository $membershipFeeRepository,
+        ContentRepository $contentRepository
     ): Response {
         return $this->render('registration/membership_fee_page.html.twig', [
             'all_membership_fee' => $membershipFeeRepository->findAll(),
+            'content' => $contentRepository->findOneByRoute('registration_membership_fee'),
         ]);
     }
 

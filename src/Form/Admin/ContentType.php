@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Content;
-use App\Entity\Background;
-use Doctrine\ORM\EntityRepository;
+use App\Form\Type\BackgroundsType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -126,20 +124,9 @@ class ContentType extends AbstractType
                     ])
                 ;
             }
-            if ('home' !== $content->getRoute()) {
-
+            if (null === $content?->getParent()) {
                 $form
-                    ->add('backgrounds', EntityType::class, [
-                        'class' => Background::class,
-                        'query_builder' => function (EntityRepository $er) {
-                            return $er->createQueryBuilder('b')
-                                ->orderBy('b.filename', 'ASC');
-                        },
-                        'choice_label' => 'filename',
-                        'multiple' => true,
-                        'expanded' => true,
-                        'block_prefix' => 'thumbnail',
-                    ]);
+                    ->add('backgrounds', BackgroundsType::class);
             }
         });
     }

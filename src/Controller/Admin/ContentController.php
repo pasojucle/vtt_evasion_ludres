@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Content;
 use App\Form\Admin\ContentType;
+use App\Form\Admin\HomeBackgroundsType;
 use App\Repository\ContentRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
@@ -21,6 +22,16 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin')]
 class ContentController extends AbstractController
 {
+    public const HOME_TAB_FLASH = 0;
+    public const HOME_TAB_CONTENT = 1;
+    public const HOME_TAB_BACKGROUNDS = 2;
+
+    private const HOME_TABS = [
+        self::HOME_TAB_FLASH => 'content.type.flash',
+        self::HOME_TAB_CONTENT => 'content.type.content',
+        self::HOME_TAB_BACKGROUNDS => 'content.type.backgrounds'
+    ];
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private OrderByService $orderByService,
@@ -28,7 +39,39 @@ class ContentController extends AbstractController
     ) {
     }
 
-    #[Route('/page/accueil/contenus/{isFlash}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'isFlash' => true])]
+    #[Route('/page/accueil/contenus/{tab}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'tab' => self::HOME_TAB_FLASH])]
+    public function listHome(
+        PaginatorService $paginator,
+        Request $request,
+        ?string $route,
+        int $tab
+    ): Response {
+        $isFlash = $tab === self::HOME_TAB_FLASH;
+
+        $form = $this->createForm(HomeBackgroundsType::class, $this->contentRepository->findOneByRoute('home'));
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+        }
+
+        $query = $this->contentRepository->findContentQuery($route, $isFlash);
+        $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+
+        return $this->render('content/admin/home_contents.html.twig', [
+            'contents' => $contents,
+            'form' => $form->createView(),
+            'lastPage' => $paginator->lastPage($contents),
+            'current_route' => $route,
+            'is_flash' => $isFlash,
+            'tabs' => self::HOME_TABS,
+            'tab' => $tab,
+            'current_filters' => [
+                'route' => $route,
+                'tab' => $tab,
+            ],
+        ]);
+    }
+
     #[Route('/contenus', name: 'admin_contents', methods: ['GET'], defaults:['route' => null, 'isFlash' => false])]
     public function list(
         PaginatorService $paginator,
@@ -36,6 +79,7 @@ class ContentController extends AbstractController
         ?string $route,
         bool $isFlash
     ): Response {
+
         $query = $this->contentRepository->findContentQuery($route, $isFlash);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
@@ -59,6 +103,14 @@ class ContentController extends AbstractController
         UploadService $uploadService,
         ?Content $content
     ): Response {
+        if (null === $content && 'admin_home_content_edit' === $request->attributes->get('_route')) {
+            $parent = $this->contentRepository->findOneByRoute('home');
+            dump($parent);
+            $content = new Content();
+            $content->setRoute('home')
+                ->setParent($parent);
+        }
+
         $form = $this->createForm(ContentType::class, $content);
 
         $form->handleRequest($request);
@@ -84,7 +136,7 @@ class ContentController extends AbstractController
 
                 return $this->redirectToRoute('admin_home_contents', [
                     'route' => $content->getRoute(),
-                    'isFlash' => (int) $content->isFlash(),
+                    'tab' => (int) $content->isFlash() ? self::HOME_TAB_FLASH : self::HOME_TAB_CONTENT,
                 ]);
             }
 
@@ -99,7 +151,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    #[Route('/supprimer/contenu/{content}', name: 'admin_content_delete', methods: ['GET'])]
+    #[Route('/supprimer/contenu/{content}', name: 'admin_content_delete', methods: ['GET', 'POST'])]
     public function adminContentDelete(
         Request $request,
         Content $content
@@ -143,6 +195,7 @@ class ContentController extends AbstractController
         $isFlash = $content->isFlash();
         $newOrder = (int) $request->request->get('newOrder');
         $contents = $this->contentRepository->findByRoute($route, $isFlash);
+        dump($contents);
 
         $this->orderByService->setNewOrders($content, $contents, $newOrder);
 
