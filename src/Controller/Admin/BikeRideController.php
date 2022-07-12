@@ -33,7 +33,7 @@ class BikeRideController extends AbstractController
     }
 
     #[Route('/', name: 'admin_home', methods: ['GET'])]
-    public function adminHome()
+    public function adminHome(): Response
     {
         return $this->redirectToRoute('admin_bike_rides');
     }

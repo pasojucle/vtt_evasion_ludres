@@ -124,6 +124,7 @@ class ContentType extends AbstractType
                     ])
                 ;
             }
+
             if (null === $content?->getParent()) {
                 $form
                     ->add('backgrounds', BackgroundsType::class);

@@ -19,7 +19,8 @@
                         <div class="list-item">{{ title }}</div>
                         {% if is_granted('ROLE_ADMIN') %}
                             <div>
-                                <a class="btn btn-primary btn-ico" href="{{ path('admin_home_content_edit', {'content': content.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                                {% set route = content.getRoute == 'home' ? 'admin_home_content_edit' : 'admin_content_edit' %}
+                                <a class="btn btn-primary btn-ico" href="{{ path(route, {'content': content.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
                             </div>
                             <div>
                                 {% if current_route == 'home' %}
