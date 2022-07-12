@@ -41,11 +41,13 @@ class ContentController extends AbstractController
         $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
         $linksFooter = $linkRepository->findByPosition(Link::POSITION_HOME_FOOTER);
         $bikeRides = $bikeRideRepository->findEnableView();
+        $homeContent = $homeContents[0]->getParent();
 
         $contentsPresenter->present($homeContents);
         $bikeRidesPresenter->present($bikeRides);
 
         return $this->render('content/home.html.twig', [
+            'backgrounds' => $homeContent->getBackgrounds(),
             'links_bike_ride' => $linksBikeRide,
             'links_footer' => $linksFooter,
             'bikeRides' => $bikeRidesPresenter->viewModel()->bikeRides,

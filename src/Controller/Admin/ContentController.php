@@ -52,6 +52,7 @@ class ContentController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
+            $this->addFlash('success', 'Enregistrement effectué.');
         }
 
         $query = $this->contentRepository->findContentQuery($route, $isFlash);
@@ -103,9 +104,8 @@ class ContentController extends AbstractController
         UploadService $uploadService,
         ?Content $content
     ): Response {
-        if (null === $content && 'admin_home_content_edit' === $request->attributes->get('_route')) {
+        if (null === $content->getParent() && 'admin_home_content_edit' === $request->attributes->get('_route')) {
             $parent = $this->contentRepository->findOneByRoute('home');
-            dump($parent);
             $content = new Content();
             $content->setRoute('home')
                 ->setParent($parent);
@@ -195,7 +195,6 @@ class ContentController extends AbstractController
         $isFlash = $content->isFlash();
         $newOrder = (int) $request->request->get('newOrder');
         $contents = $this->contentRepository->findByRoute($route, $isFlash);
-        dump($contents);
 
         $this->orderByService->setNewOrders($content, $contents, $newOrder);
 

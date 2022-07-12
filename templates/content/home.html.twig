@@ -2,9 +2,20 @@
 
 {% block title %}Accueil{% endblock %}
 
+{% block background %}
+    <div is="my-slider" class="full-background">
+        {% for background in backgrounds %}
+            <picture>
+                <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">
+                <source media="(max-width: 800px)" srcset="../images/background/landscape_md/{{ background.filename }}">
+                <img src="../images/background/landscape_xl/{{ background.filename }}" alt="le club">
+            </picture>
+        {% endfor %}
+    </div>
+{% endblock %}
+
 {% block body %}
-    
-    <div class="wrapper wrapper-home wrapper-full-width full-background">
+    <div class="wrapper wrapper-home wrapper-full-width">
         <div class="news-container">
             {% if home_contents.flashes is defined %}
                 {% for content in home_contents.flashes %}

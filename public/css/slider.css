@@ -1,26 +1,39 @@
 
-.slider {
+.slider, .fade-in {
     overflow: hidden;
     position: relative;
 }
 
-.slider picture {
+.full-background {
+    position: fixed;
+}
+
+.slider picture, .full-background picture {
     overflow: hidden;
     position: absolute;
-    transition: left 1s ease;
+    transition: all 1s ease;
     left: 0;
+    opacity: 1;
 }
-.slider picture.loaded {
+.slider picture.loaded, .full-background picture.loaded {
     z-index: 3;
 }
-.slider picture.playing {
+.slider picture.playing, .full-background picture.playing {
     z-index: 2;
 }
-.slider picture.back {
+.slider picture.back, .full-background picture.back {
     z-index: 1;
 }
 
-.slider picture img {
+
+.full-background picture.loaded, .full-background picture.back  {
+    opacity: 0;
+}
+.full-background picture.playing {
+    opacity: 1;
+}
+
+.slider picture img, .full-background picture img {
     width: unset;
     height: unset;
     max-width: unset;

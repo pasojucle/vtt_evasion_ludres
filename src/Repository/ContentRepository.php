@@ -81,8 +81,6 @@ class ContentRepository extends ServiceEntityRepository
             ->getSingleScalarResult()
         ;
 
-        dump($route, $isFlash, $maxOrder);
-
         if (null !== $maxOrder) {
             $maxOrder = (int) $maxOrder;
             $nexOrder = $maxOrder + 1;
@@ -116,6 +114,7 @@ class ContentRepository extends ServiceEntityRepository
         return $qb
             ->andWhere(
                 $qb->expr()->eq('c.route', ':route'),
+                $qb->expr()->isNotNull('c.parent'),
                 $qb->expr()->orX(
                     $qb->expr()->andX(
                         $qb->expr()->isNull('c.startAt'),

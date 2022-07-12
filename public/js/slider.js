@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let slider = document.querySelector('.slider');
-    slider.addPictures();
-    slider.run();
+    if (document.querySelector('.slider, .full-background')) {
+        let slider = document.querySelector('.slider, .full-background');
+        slider.addPictures();
+        slider.run();
+    }
   }, false);
 
 const resizeObserver = new ResizeObserver(entries => {
@@ -12,10 +14,13 @@ const resizeObserver = new ResizeObserver(entries => {
         }
     }
   });
+if (document.querySelector('.slider, .full-background')) {
+    resizeObserver.observe(document.querySelector('.slider, .full-background' ));
+}
 
-resizeObserver.observe(document.querySelector('.slider'));
 
 class Slider extends HTMLDivElement {
+    type;
     pictures = [];
     currentIndex = 0;
     lastIndex = null;
@@ -24,11 +29,24 @@ class Slider extends HTMLDivElement {
 
     constructor() {
         super();
+        this.setType();
         this.setSizes();
     }
+    setType() {
+        if (this.classList.contains('slider')) {
+            this.height = this.offsetHeight;
+            this.width = this.offsetWidth;
+        }
+        this.type = (this.classList.contains('full-background')) ? 'background' : 'slider'
+    }
     setSizes() {
-        this.height = this.offsetHeight;
-        this.width = this.offsetWidth;
+        if (this.type === 'slider') {
+            this.height = this.offsetHeight;
+            this.width = this.offsetWidth;
+        } else {
+            this.height = window.innerHeight;
+            this.width = window.innerWidth;
+        }
         console.log('slider', this.width, this.height);
     }
     addPictures() {
@@ -82,7 +100,7 @@ class SliderPicture {
     top;
     constructor(index, picture, slider) {
         this.slider = slider;
-        this.index = this.index;
+        this.index = index;
         this.picture = picture;
         this.resize();
     }
@@ -100,7 +118,10 @@ class SliderPicture {
 
         this.picture.style.width = this.width + 'px';
         this.picture.style.height = this.heigh + 'px';
-        this.picture.style.left = (this.index === this.slider.currentIndex) ? 0 : this.width + 'px';
+
+        if (this.slider.type === 'slider') {
+            this.picture.style.left = (this.index === this.slider.currentIndex) ? 0 : this.width + 'px';
+        }
 
         this.picture.lastElementChild.style.width = this.width + 'px';
         this.picture.lastElementChild.style.height = this.heigh + 'px';
@@ -112,7 +133,9 @@ class SliderPicture {
     }
     slide() {
         console.log('slide', this);
-        this.picture.style.left = '0px';
+        if (this.slider.type === 'slider') {
+            this.picture.style.left = '0px';
+        }
         this.picture.classList.remove('loaded');
         this.picture.classList.add('playing');
     }
@@ -120,7 +143,9 @@ class SliderPicture {
         console.log('back', this);
         this.picture.classList.remove('playing');
         this.picture.classList.add('back');
-        setTimeout(() => {this.picture.style.left = this.width + 'px';}, 2 * 1000);
+        if (this.slider.type === 'slider') {
+            setTimeout(() => {this.picture.style.left = this.width + 'px';}, 2 * 1000);
+        }
         setTimeout(() => {
             this.picture.classList.remove('back');
             this.picture.classList.add('loaded');
