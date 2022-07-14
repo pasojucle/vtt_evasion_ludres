@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Erreur'} %}
+{% endblock %}
+
 {% block body %}
-    <div class="wrapper wrapper-small-width full-background">
+    <div class="wrapper wrapper-small-width">
         <div class="wrapper-title">
             <h1></h1>
         </div>

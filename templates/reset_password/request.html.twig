@@ -2,11 +2,15 @@
 
 {% block title %}Réinitialiser votre mot de passe{% endblock %}
 
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mot de passe'} %}
+{% endblock %}
+
 {% block body %}
     {% for flashError in app.flashes('reset_password_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
-    <div class="wrapper wrapper-medium-width full-background">
+    <div class="wrapper wrapper-medium-width">
         <div class="wrapper-title">
             <h1>Mot de passe</h1>
         </div>

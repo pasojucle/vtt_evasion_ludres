@@ -42,9 +42,6 @@ class MediaPosition {
     }
     initialize(e) {
         this.display.width = (this.image.width > this.image.height) ? 400 : 225;
-
-        console.log('onLoad', this.display.width, this.image.width);
-        console.log('onLoad', this.display.width, this.image);
         this.zones = [
             {'name': 'landscape', 'outputWidth': 1920, 'outputHeight': 1080},
             {'name': 'portrait', 'outputWidth': 1080, 'outputHeight': 1920},
@@ -114,7 +111,7 @@ class MediaPosition {
         //left
         this.context.fillRect(zone.origin.x,zone.origin.y, zone.positionX, this.display.height);
         //rigth
-        this.context.fillRect(zone.positionX+zone.width,zone.origin.y, this.display.width-zone.width-zone.positionX, this.display.height);
+        this.context.fillRect(zone.origin.x + zone.positionX+zone.width,zone.origin.y, this.display.width-zone.width-zone.positionX, this.display.height);
     }
     changeImage() {
         this.image = new Image();
@@ -152,11 +149,12 @@ class Zone {
     constructor(mediaPosition, zone) {
         this.name = zone.name;
         this.mediaPosition = mediaPosition;
-        if(zone.outputWidth / zone.outputHeight <  mediaPosition.display.width / mediaPosition.display.height) {
+        if(zone.outputWidth / zone.outputHeight < mediaPosition.display.width / mediaPosition.display.height) {
             this.ratio =  mediaPosition.display.height / zone.outputHeight;
         } else {
             this.ratio =  mediaPosition.display.width / zone.outputWidth;
         }
+        
         this.inputselector = document.querySelector('#background_' + zone.name + 'Position');
         this.imagePositions =  (this.inputselector && this.inputselector.value !== '') ? JSON.parse(this.inputselector.value) : {'positionX': null, 'positionY': null};
         this.height = zone.outputHeight * this.ratio;
@@ -168,10 +166,11 @@ class Zone {
         } else {
             this.defaultPositions();
         }
+        console.log('zone', this);
     }
     StartDraggable(mouseX, mouseY) {
-        this.startX = mouseX - this.positionX + this.origin.x;
-        this.startY = mouseY - this.positionY + this.origin.y;
+        this.startX = mouseX - this.positionX ;
+        this.startY = mouseY - this.positionY;
         if (mouseY >= this.origin.y + this.positionY
             && mouseY <= (this.origin.y + this.positionY + this.height)
             && mouseX >= this.origin.x + this.positionX
@@ -188,20 +187,21 @@ class Zone {
         if (this.isDraggable) {
             this.positionY = mediaPosition.currentY - this.startY;
             this.positionX = mediaPosition.currentX - this.startX;
-
+            console.log('mediaPosition.currentX', mediaPosition.currentX);
+            console.log('this.startX', this.startX);
+            console.log('positionY', this.positionY);
             if (this.positionY < 0) {
                 this.positionY = 0;
             }
-            if ((this.positionY + this.height) >= this.mediaPosition.display.height + this.origin.y) {
-                this.positionY = this.mediaPosition.display.height + this.origin.y - this.height;
+            if ((this.positionY + this.height) >= this.mediaPosition.display.height) {
+                this.positionY = this.mediaPosition.display.height - this.height;
             }
+
             if (this.positionX < 0) {
                 this.positionX = 0;
             }
-            console.log(this.positionX + this.width, '/', this.mediaPosition.display.width + this.origin.x - this.width);
-            console.log(this.mediaPosition.display.width,this.origin.x,this.width);
-            if ((this.positionX + this.width) >= this.mediaPosition.display.width + this.origin.x) {
-                this.positionX = this.mediaPosition.display.width + this.origin.x - this.width;
+            if ((this.positionX + this.width) >= this.mediaPosition.display.width ) {
+                this.positionX = this.mediaPosition.display.width - this.width;
             }
         }
     }

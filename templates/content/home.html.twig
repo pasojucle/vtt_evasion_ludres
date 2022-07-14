@@ -3,15 +3,7 @@
 {% block title %}Accueil{% endblock %}
 
 {% block background %}
-    <div is="my-slider" class="full-background">
-        {% for background in backgrounds %}
-            <picture>
-                <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">
-                <source media="(max-width: 800px)" srcset="../images/background/landscape_md/{{ background.filename }}">
-                <img src="../images/background/landscape_xl/{{ background.filename }}" alt="le club">
-            </picture>
-        {% endfor %}
-    </div>
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Accueil'} %}
 {% endblock %}
 
 {% block body %}

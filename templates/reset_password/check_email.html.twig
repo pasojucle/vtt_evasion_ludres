@@ -3,7 +3,12 @@
 {% block title %}Password Reset Email Sent{% endblock %}
 
 {% block body %}
-<div class="wrapper wrapper-medium-width full-background">
+
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mon compte'} %}
+{% endblock %}
+
+<div class="wrapper wrapper-medium-width">
         <div class="wrapper-title">
             <h1>Mot de passe</h1>
         </div>

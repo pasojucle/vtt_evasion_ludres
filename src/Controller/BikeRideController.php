@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\BikeRideRepository;
+use App\Repository\ContentRepository;
 use App\Service\BikeRideService;
 use App\Service\PaginatorService;
 use App\ViewModel\UserPresenter;
@@ -45,7 +46,8 @@ class BikeRideController extends AbstractController
 
     #[Route('/mon-programme', name: 'user_bike_rides', methods: ['GET'])]
     public function userBikeRides(
-        UserPresenter $presenter
+        UserPresenter $presenter,
+        ContentRepository $contentRepository
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
         
@@ -53,6 +55,7 @@ class BikeRideController extends AbstractController
 
         return $this->render('bike_ride/user_list.html.twig', [
             'user' => $presenter->viewModel(),
+            'backgrounds' => $contentRepository->findOneByRoute('user_account')?->getBackgrounds(),
         ]);
     }
 }

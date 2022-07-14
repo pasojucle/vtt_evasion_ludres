@@ -38,7 +38,11 @@ class Content
         'rules' => 'content.route.rules',
         'legal_notices' => 'content.route.legal_notices',
         'login_help' => 'content.route.login_help',
-        'registration_membership_fee' => 'content.route.registration_membership_fee'
+        'registration_membership_fee' => 'content.route.registration_membership_fee',
+        'schedule' => 'content.route.schedule',
+        'user_account' => 'content.route.user_account',
+        'default' => 'content.route.default',
+        'links' => 'content.route.links'
     ];
 
     #[Column(type: 'integer')]
@@ -87,6 +91,9 @@ class Content
     #[OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     #[OrderBy(['orderBy' => 'ASC'])]
     private $contents;
+
+    #[Column(type: 'boolean', options: ['default' => 0])]
+    private bool $backgroundOnly = false;
 
     public function __construct()
     {
@@ -293,6 +300,18 @@ class Content
                 $content->setParent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isBackgroundOnly(): ?bool
+    {
+        return $this->backgroundOnly;
+    }
+
+    public function setBackgroundOnly(bool $backgroundOnly): self
+    {
+        $this->backgroundOnly = $backgroundOnly;
 
         return $this;
     }

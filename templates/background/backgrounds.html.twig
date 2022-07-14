@@ -1,0 +1,16 @@
+{% if backgrounds is not defined or backgrounds is empty %}
+    {% set backgrounds = background_service.default %}
+{% endif %}
+{% if backgrounds is defined %}
+    <div is="my-carrousel" class="full-background">
+        {% for key, background in backgrounds %}
+            <picture class="{% if key == 0 %}playing{% else %}loaded{% endif %}">
+                <source media="(max-width: 400px) and (orientation: landscape)" srcset="{{ app.request.getSchemeAndHttpHost() }}/images/background/landscape_xs/{{ background.filename }}">
+                <source media="(max-width: 800px) and (orientation: landscape)" srcset=".{{ app.request.getSchemeAndHttpHost() }}/images/background/landscape_md/{{ background.filename }}">
+                <source media="(max-width: 400px) and (orientation: portrait)" srcset="{{ app.request.getSchemeAndHttpHost() }}/images/background/portrait_xs/{{ background.filename }}">
+                <source media="(max-width: 800px) and (orientation: portrait)" srcset="{{ app.request.getSchemeAndHttpHost() }}/images/background/portrait_md/{{ background.filename }}">
+                <img src="{{ app.request.getSchemeAndHttpHost() }}/images/background/landscape_xl/{{ background.filename }}" alt="{{ alt }}">
+            </picture>
+        {% endfor %}
+    </div>
+{% endif %}

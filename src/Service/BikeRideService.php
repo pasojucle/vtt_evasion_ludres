@@ -9,6 +9,7 @@ use App\Entity\Cluster;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
+use App\Repository\ContentRepository;
 use App\Repository\LevelRepository;
 use App\Repository\ParameterRepository;
 use App\ViewModel\BikeRidesPresenter;
@@ -33,7 +34,8 @@ class BikeRideService
         private ParameterRepository $parameterRepository,
         private BikeRidesPresenter $bikeRidesPresenter,
         private ClusterPresenter $clusterPresenter,
-        private BikeRideTypeRepository $bikeRideTypeRepository
+        private BikeRideTypeRepository $bikeRideTypeRepository,
+        private ContentRepository $contentRepository
     ) {
     }
 
@@ -163,6 +165,7 @@ class BikeRideService
             'form' => $form->createView(),
             'bikeRides' => $this->bikeRidesPresenter->viewModel()->bikeRides,
             'current_filters' => $filters,
+            'backgrounds' => $this->contentRepository->findOneByRoute('schedule')?->getBackgrounds(),
         ];
 
         return [

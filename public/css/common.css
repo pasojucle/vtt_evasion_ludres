@@ -431,6 +431,9 @@ body {
     font-size: 16px;
     user-select: none;
 }
+main:not(.admin) {
+    position: relative;
+}
 .paginator > ul > li {
     display: inline-block;
 }
@@ -818,6 +821,9 @@ span.select2-selection.select2-selection--single {
 } 
 .row.padding-10 .col-md-1, .row.padding-10 .col-md-2, .row.padding-10 .col-md-3, .row.padding-10 .col-md-4, .row.padding-10 .col-md-5, .row.padding-10 .col-md-6, .row.padding-10 .col-md-7, .row.padding-10 .col-md-8, .row.padding-10 .col-md-9, .row.padding-10 .col-md-10, .row.padding-10 .col-md-11, .row.padding-10 .col-md-12, .padding-10 {
     padding: 0 10px;
+} 
+.row.padding-top-5 .col-md-1, .row.padding-top-5 .col-md-2, .row.padding-top-5 .col-md-3, .row.padding-top-5 .col-md-4, .row.padding-top-5 .col-md-5, .row.padding-top-5 .col-md-6, .row.padding-top-5 .col-md-7, .row.padding-top-5 .col-md-8, .row.padding-top-5 .col-md-9, .row.padding-top-5 .col-md-10, .row.padding-top-5 .col-md-11, .row.padding-top-5 .col-md-12, .padding-top-5 {
+    padding-top: 5px;
 } 
 .row.list-dropdown > .col-md-1, .row.list-dropdown > .col-md-2, .row.list-dropdown > .col-md-3, .row.list-dropdown > .col-md-4, .row.list-dropdown > .col-md-5, .row.list-dropdown > .col-md-6, .row.list-dropdown > .col-md-7, .row.list-dropdown > .col-md-8, .row.list-dropdown > .col-md-9, .row.list-dropdown > .col-md-10, .row.list-dropdown > .col-md-11, .row.list-dropdown > .col-md-12 {
     padding: 10px;

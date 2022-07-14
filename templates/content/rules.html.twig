@@ -5,8 +5,13 @@
 {% block stylesheets %}
     {{ parent()}}
 {% endblock %}
+
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Réglement'} %}
+{% endblock %}
+
 {% block body %}
-    <div class="wrapper wrapper-medium-width full-background">
+    <div class="wrapper wrapper-medium-width">
         <div class="wrapper-title">
             <h1>Réglément intérieur</h1>
         </div>

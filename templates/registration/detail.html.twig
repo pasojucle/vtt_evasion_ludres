@@ -7,7 +7,7 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper background-red background-color col-content">
-        <div is="my-slider" class="wrapper-img slider">
+        <div is="my-carrousel" class="wrapper-img slider">
             {% for background in content.backgrounds %}
                 <picture>
                     <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">

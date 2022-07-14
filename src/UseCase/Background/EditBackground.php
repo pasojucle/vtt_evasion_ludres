@@ -50,8 +50,8 @@ class EditBackground
             ['positions' => $background->getLandscapePosition(), 'outputWidth' => 1920, 'outputHeight' => 1080, 'outputDir' => 'landscape_xl'],
             ['positions' => $background->getLandscapePosition(), 'outputWidth' => 800, 'outputHeight' => 450, 'outputDir' => 'landscape_md'],
             ['positions' => $background->getLandscapePosition(), 'outputWidth' => 400, 'outputHeight' => 225, 'outputDir' => 'landscape_xs'],
-            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 450, 'outputHeight' => 800, 'outputDir' => 'portrait_md'],
-            ['positions' => $background->getLandscapePosition(), 'outputWidth' => 225, 'outputHeight' => 400, 'outputDir' => 'portrait_xs'],
+            ['positions' => $background->getPortraitPosition(), 'outputWidth' => 450, 'outputHeight' => 800, 'outputDir' => 'portrait_md'],
+            ['positions' => $background->getPortraitPosition(), 'outputWidth' => 225, 'outputHeight' => 400, 'outputDir' => 'portrait_xs'],
             ['positions' => $background->getSquarePosition(), 'outputWidth' => 850, 'outputHeight' => 850, 'outputDir' => 'square'],
         ];
 

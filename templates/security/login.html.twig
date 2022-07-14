@@ -2,9 +2,13 @@
 
 {% block title %}Authentification{% endblock %}
 
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mon compte'} %}
+{% endblock %}
+
 {% block body %}
 <form method="post">
-    <div class="wrapper wrapper wrapper-medium-width full-background">
+    <div class="wrapper wrapper wrapper-medium-width">
         <div class="wrapper-title">
             <h1>Me connecter</h1>
         </div>

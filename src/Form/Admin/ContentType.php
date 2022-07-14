@@ -25,11 +25,6 @@ class ContentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('content', CKEditorType::class, [
-                'label' => 'Contenu',
-                'config_name' => 'full_config',
-                'required' => false,
-            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregister',
                 'attr' => [
@@ -44,6 +39,15 @@ class ContentType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $content = $event->getData();
             $form = $event->getForm();
+
+            if (!$content->isBackgroundOnly()) {
+                $form
+                    ->add('content', CKEditorType::class, [
+                        'label' => 'Contenu',
+                        'config_name' => 'full_config',
+                        'required' => false,
+                    ]);
+            }
             if (null === $content || 'home' === $content->getRoute()) {
                 $form
                     ->add('title', TextType::class, [

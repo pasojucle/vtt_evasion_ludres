@@ -2,8 +2,12 @@
 
 {% block title %}Sondages{% endblock %}
 
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Sondage'} %}
+{% endblock %}
+
 {% block body %}
-    <div class="wrapper wrapper-medium-width full-background">
+    <div class="wrapper wrapper-medium-width">
         <div class="wrapper-title">
             <h1>Sondages</h1>
         </div>

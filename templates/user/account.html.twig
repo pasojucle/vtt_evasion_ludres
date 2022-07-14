@@ -1,9 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Mon compte{% endblock %}
-
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mon compte'} %}
+{% endblock %}
 {% block body %}
-    <div class="wrapper wrapper-medium-width full-background">
+    <div class="wrapper wrapper-medium-width">
         <div class="wrapper-title">
             <h1>Mon compte</h1>
         </div>
@@ -15,17 +17,17 @@
                     </div>
                     <div class="block-body">
                         <ul>
-                            <li><div class="row"><div class="col-md-5"><b>Nom</b></div><div class="col-md-7">{{ user.member.fullName }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-5"><b>Adresse</b></div><div class="col-md-7">{{ user.member.address.street }}<br>{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-5"><b>Téléphone</b></div><div class="col-md-7">{{ user.member.phone }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-5"><b>Mail</b></div><div class="col-md-7">{{ user.member.email }}</div></div></li>
-                            <li><div  class="row"><div class="col-md-5"><b>N° licence</b></div><div class="col-md-7">{{ user.licenceNumber }}</div></div></li>
+                            <li><div class="row padding-top-5"><div class="col-md-5"><b>Nom</b></div><div class="col-md-7">{{ user.member.fullName }}</div></div></li>
+                            <li><div  class="row padding-top-5"><div class="col-md-5"><b>Adresse</b></div><div class="col-md-7">{{ user.member.address.street }}<br>{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
+                            <li><div  class="row padding-top-5"><div class="col-md-5"><b>Téléphone</b></div><div class="col-md-7">{{ user.member.phone }}</div></div></li>
+                            <li><div  class="row padding-top-5"><div class="col-md-5"><b>Mail</b></div><div class="col-md-7">{{ user.member.email }}</div></div></li>
+                            <li><div  class="row padding-top-5"><div class="col-md-5"><b>N° licence</b></div><div class="col-md-7">{{ user.licenceNumber }}</div></div></li>
                             {% if user.health is not empty and user.health.medicalCertificateDate %}
-                                <li><div  class="row"><div class="col-md-5"><b>Date du certificat médical</b></div><div class="col-md-7">{{ user.health.medicalCertificateDate }}</div></div></li>
+                                <li><div  class="row padding-top-5"><div class="col-md-5"><b>Date du certificat médical</b></div><div class="col-md-7">{{ user.health.medicalCertificateDate }}</div></div></li>
                             {% endif %}
                             {% if user.level is not null %}
                                 <li>
-                                    <div  class="row">
+                                    <div  class="row padding-top-5">
                                         <div class="col-md-5"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</b></div>
                                         <div class="col-md-7">{{ user.level }}</div>
                                     </div>
@@ -33,7 +35,7 @@
                             {% endif %}
                             {% if user.isEndTesting %}
                                 <li>
-                                    <div class="row">
+                                    <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Votre période d'essaie est terminée</b></div>
                                         <div class="col-md-7">
                                             <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step': 1})}}">S'inscrire</a>
@@ -44,7 +46,7 @@
                             {% endif %}
                             {% if user.seasonLicence is not empty and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
                                 <li>
-                                    <div class="row">
+                                    <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon dossier d'inscription</b></div>
                                         <div class="col-md-7">
                                             <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
@@ -55,7 +57,7 @@
                             {% endif %}
                             {% if user.seasonLicence.getCurrentSeasonForm %}
                                 <li>
-                                    <div class="row">
+                                    <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon bulletin d'assurance {{ season_service.currentSeason }}</b></div>
                                         <div class="col-md-7">
                                             <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>

@@ -108,9 +108,8 @@ class SessionController extends AbstractController
                     ->setSurvey($bikeRide->getSurvey())
                     ->setCreatedAt($now)
                 ;
+                $this->entityManager->persist($respondent);
             }
-
-            $this->entityManager->persist($respondent);
 
             $this->entityManager->persist($data['session']);
             $this->entityManager->flush();

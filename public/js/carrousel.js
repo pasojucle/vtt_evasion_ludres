@@ -1,9 +1,22 @@
+var hidden, visibilityChange;
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+  hidden = "hidden";
+  visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+  hidden = "msHidden";
+  visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+  hidden = "webkitHidden";
+  visibilityChange = "webkitvisibilitychange";
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.slider, .full-background')) {
-        let slider = document.querySelector('.slider, .full-background');
-        slider.addPictures();
-        slider.run();
+        let carrousel = document.querySelector('.slider, .full-background');
+        carrousel.addPictures();
+        carrousel.run();
     }
+    document.addEventListener(visibilityChange, handleVisibilityChange, false);
   }, false);
 
 const resizeObserver = new ResizeObserver(entries => {
@@ -13,24 +26,29 @@ const resizeObserver = new ResizeObserver(entries => {
             entry.target.resise();
         }
     }
-  });
+});
+
 if (document.querySelector('.slider, .full-background')) {
-    resizeObserver.observe(document.querySelector('.slider, .full-background' ));
+    resizeObserver.observe(document.querySelector('.slider, .full-background'));
 }
 
+function handleVisibilityChange() {
+    const carrouselElement = document.querySelector('.slider, .full-background');
+}
 
-class Slider extends HTMLDivElement {
+class Carrousel extends HTMLDivElement {
     type;
     pictures = [];
     currentIndex = 0;
     lastIndex = null;
     interval;
-    time = 5;
+    time = 8;
 
     constructor() {
         super();
         this.setType();
         this.setSizes();
+        
     }
     setType() {
         if (this.classList.contains('slider')) {
@@ -47,23 +65,29 @@ class Slider extends HTMLDivElement {
             this.height = window.innerHeight;
             this.width = window.innerWidth;
         }
-        console.log('slider', this.width, this.height);
     }
     addPictures() {
         const pictures = this.querySelectorAll('picture');
-        console.log('pictures', pictures);
         pictures.forEach((picture, index) => {
-            console.log('index', index);
             this.pictures[index] = new SliderPicture(index, picture, this);
         });
     }
     run() {
-        console.log('run');
         this.slide();
         if (this.pictures.length > 1) {
             this.lastIndex = this.pictures.length - 1;
             this.interval = window.setInterval(() => {this.nextPicture(); this.slide();}, this.time * 1000);
         }
+    }
+    stop() {
+        localStorage.setItem('last_index', this.lastIndex);
+        localStorage.setItem('current_index', this.currentIndex);
+        clearInterval(this.interval);
+    }
+    restart() {
+        this.clastIndex = localStorage.getItem('last_index');
+        this.currentIndex = localStorage.getItem('current_index');
+        this.interval = window.setInterval(() => {this.nextPicture(); this.slide();}, this.time * 1000);
     }
     nextPicture() {
         this.currentIndex = this.nextIndex(this.currentIndex);
@@ -89,61 +113,56 @@ class Slider extends HTMLDivElement {
     }
 }
 
-window.customElements.define('my-slider', Slider, { extends: "div"});
+window.customElements.define('my-carrousel', Carrousel, { extends: "div"});
 
 class SliderPicture {
-    slider;
+    carrousel;
     index;
     picture;
     heigh;
     width;
     top;
-    constructor(index, picture, slider) {
-        this.slider = slider;
+    constructor(index, picture, carrousel) {
+        this.carrousel = carrousel;
         this.index = index;
         this.picture = picture;
         this.resize();
     }
     resize() {
-        console.log('ration width', this.slider.width / this.picture.lastElementChild.naturalWidth);
-        console.log('ration height', this.slider.height / this.picture.lastElementChild.naturalHeight);
-        let ratio = (this.slider.width / this.picture.lastElementChild.naturalWidth > this.slider.height / this.picture.lastElementChild.naturalHeight) 
-        ? this.slider.width / this.picture.lastElementChild.naturalWidth
-        : this.slider.height / this.picture.lastElementChild.naturalHeight
+        let ratio = (this.carrousel.width / this.picture.lastElementChild.naturalWidth > this.carrousel.height / this.picture.lastElementChild.naturalHeight) 
+        ? this.carrousel.width / this.picture.lastElementChild.naturalWidth
+        : this.carrousel.height / this.picture.lastElementChild.naturalHeight
 
         this.width = this.picture.lastElementChild.naturalWidth * ratio;
         this.heigh = this.picture.lastElementChild.naturalHeight * ratio;
-        this.left = (this.slider.width - this.width) / 2;
-        this.top =  (this.slider.height - this.heigh) / 2;
+        this.left = (this.carrousel.width - this.width) / 2;
+        this.top =  (this.carrousel.height - this.heigh) / 2;
 
         this.picture.style.width = this.width + 'px';
         this.picture.style.height = this.heigh + 'px';
 
-        if (this.slider.type === 'slider') {
-            this.picture.style.left = (this.index === this.slider.currentIndex) ? 0 : this.width + 'px';
+        if (this.carrousel.type === 'slider') {
+            this.picture.style.left = (this.index === this.carrousel.currentIndex) ? 0 : this.width + 'px';
         }
 
         this.picture.lastElementChild.style.width = this.width + 'px';
         this.picture.lastElementChild.style.height = this.heigh + 'px';
         this.picture.lastElementChild.style.left = this.left+'px';
         this.picture.lastElementChild.style.top = this.top + 'px';
-        console.log('picture', this.width, this.heigh);
-
+        
         return this.picture.lastElementChild;
     }
     slide() {
-        console.log('slide', this);
-        if (this.slider.type === 'slider') {
+        if (this.carrousel.type === 'slider') {
             this.picture.style.left = '0px';
         }
         this.picture.classList.remove('loaded');
         this.picture.classList.add('playing');
     }
     back() {
-        console.log('back', this);
         this.picture.classList.remove('playing');
         this.picture.classList.add('back');
-        if (this.slider.type === 'slider') {
+        if (this.carrousel.type === 'slider') {
             setTimeout(() => {this.picture.style.left = this.width + 'px';}, 2 * 1000);
         }
         setTimeout(() => {

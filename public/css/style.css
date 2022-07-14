@@ -370,15 +370,13 @@ button[type="submit"] {
 .bike-rides .bike-ride-btn {
     display: none;
 }
-.full-background {
+/*.full-background {
     background-image: url(../images/20210708_134713.jpg);
     background-size: cover;
     background-attachment: fixed;
     min-height: 100vh;
-    /* background-blend-mode: soft-light;
-    background-color: rgba(255,255 ,255, 0.3); */
-}
-.full-background h1 {
+}*/
+.wrapper-full-background h1, .wrapper-medium-width h1, .wrapper-full-width h1 {
     margin-bottom: 100px;
     color: rgba(255,255,255,0.4);
     text-align: left;

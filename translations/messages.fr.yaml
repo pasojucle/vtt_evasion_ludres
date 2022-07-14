@@ -126,6 +126,10 @@ content:
     legal_notices: Mentions légales
     login_help: Aide à la connexion
     registration_membership_fee: Tarifs
+    schedule: Programme du club
+    user_account: Compte utilisateur
+    links: Liens
+    default: Fonds par défaut (login, formulaires ...)
   type:
     flash: Message flash
     content: Contenu

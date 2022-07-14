@@ -12,8 +12,9 @@
     overflow: hidden;
     position: absolute;
     transition: all 1s ease;
-    left: 0;
-    opacity: 1;
+}
+.full-background picture {
+    opacity: 0.8;
 }
 .slider picture.loaded, .full-background picture.loaded {
     z-index: 3;
@@ -25,12 +26,11 @@
     z-index: 1;
 }
 
-
 .full-background picture.loaded, .full-background picture.back  {
     opacity: 0;
 }
 .full-background picture.playing {
-    opacity: 1;
+    opacity: .8;
 }
 
 .slider picture img, .full-background picture img {

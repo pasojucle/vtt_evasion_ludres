@@ -2,11 +2,15 @@
 
 {% block title %}Mentions légales{% endblock %}
 
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mentions légales'} %}
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent()}}
 {% endblock %}
 {% block body %}
-    <div class="wrapper wrapper-full-width full-background">
+    <div class="wrapper wrapper-full-width">
         <div class="wrapper-title">
             <h1>Mentions légales</h1>
         </div>
