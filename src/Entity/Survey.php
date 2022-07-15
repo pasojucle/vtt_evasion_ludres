@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Form\Admin\SurveyType;
 use DateTime;
+use App\Entity\Respondent;
+use App\Entity\SurveyIssue;
 use Doctrine\ORM\Mapping\Id;
+use App\Form\Admin\SurveyType;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use App\Repository\SurveyRepository;
+use DateInterval;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\Common\Collections\Collection;
@@ -50,7 +53,7 @@ class Survey
     private bool $isAnonymous = true;
 
     #[OneToOne(inversedBy: 'survey', targetEntity: BikeRide::class, cascade: ['persist', 'remove'])]
-    private ?BikeRide $bikeRide;
+    private ?BikeRide $bikeRide = null;
 
     #[ManyToMany(targetEntity: User::class, inversedBy: 'surveys')]
     private Collection $members;
@@ -62,6 +65,9 @@ class Survey
         $this->surveyIssues = new ArrayCollection();
         $this->respondents = new ArrayCollection();
         $this->members = new ArrayCollection();
+        $today = new DateTime();
+        $this->startAt = $today;
+        $this->endAt = $today->add(new DateInterval('P8D'));
     }
 
     public function getId(): ?int
@@ -140,9 +146,9 @@ class Survey
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
-        $this->title = $title;
+        $this->title = ($title) ? $title : '';
 
         return $this;
     }

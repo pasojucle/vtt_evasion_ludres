@@ -23,7 +23,7 @@ class GetSurvey
 
     }
 
-    private function getSurvey(Survey &$survey): void
+    private function getSurvey(?Survey &$survey): void
     {
         if (!$survey) {
             $survey = new Survey();
