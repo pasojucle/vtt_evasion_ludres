@@ -19,8 +19,7 @@
         <div class="wrapper-content">
             <div class="reveal">
                 <h1>Les tarifs</h1>
-                {{ content.content | raw }}
-                {% include('registration/membership_fee.html.twig') %}
+                {% include'registration/membership_fee.html.twig' with {'membership_fee_content': content.content} %}
             </div>
         </div>
     </div>
