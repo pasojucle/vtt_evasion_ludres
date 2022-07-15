@@ -41,7 +41,7 @@
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse : </b></div><div class="col-md-7 col-xs-6">{{ user.member.address.street }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6">{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-7 col-xs-6">{{ user.member.email }}</div></div></li>
-                            <li><div class="row"><div class="col-md-5 col-xs-6"><b>Téléphone : </b></div><div class="col-md-7 col-xs-6">{{ user.member.phone }}</div></div></li>
+                            <li><div class="row"><div class="col-md-5 col-xs-6"><b>Téléphone : </b></div><div class="col-md-7 col-xs-6">{{ user.member.phonesAnchor|raw }}</div></div></li>
                             {% if user.approvalGoingHome is not null %}
                                 <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6 {{ user.approvalGoingHome.class.color }}">{{ user.approvalGoingHome.message }}</div></div></li>
                             {% endif %}
@@ -69,7 +69,7 @@
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.address.street }}</div></div></li>
                         <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</div></div></li>
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.email }}</div></div></li>
-                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.phone }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.phonesAnchor|raw }}</div></div></li>
                     </ul>
                 </div>
             {% endif %}

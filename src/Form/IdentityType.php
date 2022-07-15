@@ -54,9 +54,11 @@ class IdentityType extends AbstractType
                             new NotNull(),
                             new NotBlank(),
                         ],
-                        'attr' => [
-                            'data-constraint' => 'app-UniqueMember',
-                        ],
+                        'attr' => (Identity::TYPE_MEMBER === $type) 
+                            ? [
+                                'data-constraint' => 'app-UniqueMember',
+                            ]
+                            : ['data-constraint' => ''],
                         'disabled' => $disabled,
                     ])
                     ->add('firstName', TextType::class, [
@@ -68,10 +70,12 @@ class IdentityType extends AbstractType
                             new NotNull(),
                             new NotBlank(),
                         ],
-                        'attr' => [
-                            'data-constraint' => 'app-UniqueMember',
-                            'data-multiple-fields' => 1,
-                        ],
+                        'attr' => (Identity::TYPE_MEMBER === $type) 
+                            ? [
+                                'data-constraint' => 'app-UniqueMember',
+                                'data-multiple-fields' => 1,
+                            ]
+                            : ['data-constraint' => ''],
                         'disabled' => $disabled,
                     ])
                     ->add('mobile', TextType::class, [
@@ -84,6 +88,18 @@ class IdentityType extends AbstractType
                         ],
                         'attr' => [
                             'data-constraint' => 'app-Phone',
+                        ],
+                    ])
+                    ->add('email', EmailType::class, [
+                        'label' => (Identity::TYPE_KINSHIP === $type && Licence::CATEGORY_MINOR === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
+                        'row_attr' => [
+                            'class' => 'form-group-inline',
+                        ],
+                        'constraints' => [
+                            new Email(),
+                        ],
+                        'attr' => [
+                            'data-constraint' => 'symfony-Email',
                         ],
                     ])
                 ;
@@ -101,18 +117,6 @@ class IdentityType extends AbstractType
                             ],
                             'attr' => [
                                 'data-constraint' => 'app-Phone',
-                            ],
-                        ])
-                        ->add('email', EmailType::class, [
-                            'label' => 'Adresse mail',
-                            'row_attr' => [
-                                'class' => 'form-group-inline',
-                            ],
-                            'constraints' => [
-                                new Email(),
-                            ],
-                            'attr' => [
-                                'data-constraint' => 'symfony-Email',
                             ],
                         ])
                         ->add('birthDate', DateTimeType::class, [
@@ -153,19 +157,17 @@ class IdentityType extends AbstractType
                     $kinshipChoices = Identity::KINSHIPS;
                     if (Identity::TYPE_SECOND_CONTACT !== $type) {
                         unset($kinshipChoices[Identity::KINSHIP_OTHER]);
-                        $form
-                            ->add('otherAddress', CheckboxType::class, [
-                                'label' => 'Réside à une autre adresse que l\'enfant',
-                                'required' => false,
-                                'mapped' => false,
-                                'attr' => [
-                                    'class' => 'identity-other-address',
-                                ],
-                                'data' => ($identity->hasAddress()) ? true : false,
-                            ])
-                            ;
                     }
                     $form
+                        ->add('otherAddress', CheckboxType::class, [
+                            'label' => 'Réside à une autre adresse que l\'enfant',
+                            'required' => false,
+                            'mapped' => false,
+                            'attr' => [
+                                'class' => 'identity-other-address',
+                            ],
+                            'data' => ($identity->hasAddress()) ? true : false,
+                        ])
                         ->add('kinship', ChoiceType::class, [
                             'label' => 'Parenté',
                             'choices' => array_flip($kinshipChoices),

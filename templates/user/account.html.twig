@@ -19,7 +19,7 @@
                         <ul>
                             <li><div class="row padding-top-5"><div class="col-md-5"><b>Nom</b></div><div class="col-md-7">{{ user.member.fullName }}</div></div></li>
                             <li><div  class="row padding-top-5"><div class="col-md-5"><b>Adresse</b></div><div class="col-md-7">{{ user.member.address.street }}<br>{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
-                            <li><div  class="row padding-top-5"><div class="col-md-5"><b>Téléphone</b></div><div class="col-md-7">{{ user.member.phone }}</div></div></li>
+                            <li><div  class="row padding-top-5"><div class="col-md-5"><b>Téléphone</b></div><div class="col-md-7">{{ user.member.phonesAnchor|raw }}</div></div></li>
                             <li><div  class="row padding-top-5"><div class="col-md-5"><b>Mail</b></div><div class="col-md-7">{{ user.member.email }}</div></div></li>
                             <li><div  class="row padding-top-5"><div class="col-md-5"><b>N° licence</b></div><div class="col-md-7">{{ user.licenceNumber }}</div></div></li>
                             {% if user.health is not empty and user.health.medicalCertificateDate %}
@@ -30,6 +30,14 @@
                                     <div  class="row padding-top-5">
                                         <div class="col-md-5"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</b></div>
                                         <div class="col-md-7">{{ user.level }}</div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            {% if user.seasonLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+                                <li>
+                                    <div class="row padding-top-5">
+                                        <div class="col-md-5"><b>Contact principal</b></div>
+                                        <div class="col-md-7">{{ user.mainEmail }}</div>
                                     </div>
                                 </li>
                             {% endif %}

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\Identity;
+use DateTime;
+use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Entity\User;
-use DateTime;
+use App\Entity\Identity;
 
 class UserViewModel extends AbstractViewModel
 {
@@ -51,6 +51,7 @@ class UserViewModel extends AbstractViewModel
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);
         $userView->titleColors = $userView->getTitleColors();
+        $userView->mainEmail = $userView->getMainEmail();
 
         return $userView;
     }
@@ -89,7 +90,7 @@ class UserViewModel extends AbstractViewModel
         return '';
     }
 
-    public function getMainEmail(): string
+    public function getMainEmail(): ?string
     {
         if (null !== $this->member) {
             return ($this->kinship) ? $this->kinship->email : $this->member->email;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\Identity;
 use DateTime;
+use App\Entity\Identity;
 
 class IdentityViewModel extends AbstractViewModel
 {
@@ -26,6 +26,8 @@ class IdentityViewModel extends AbstractViewModel
     public ?string $email;
 
     public ?string $phone;
+
+    public ?string $phonesAnchor;
 
     public ?string $picture;
 
@@ -50,6 +52,7 @@ class IdentityViewModel extends AbstractViewModel
         $identityView->address = $identityView->getAddress($member);
         $identityView->email = $identity->getEmail();
         $identityView->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
+        $identityView->phonesAnchor = $identityView->getPhonesAnchor();
         $identityView->picture = $identityView->getPicture();
         $identityView->type = (null !== $identity->getKinShip()) ? Identity::KINSHIPS[$identity->getKinShip()] : null;
 
@@ -89,5 +92,16 @@ class IdentityViewModel extends AbstractViewModel
     {
 
         return (null !== $this->entity->getPicture()) ? $this->services->uploadsDirectory.$this->entity->getPicture() : null;
+    }
+
+    private function getPhoneAnchor(?string $phone): ?string
+    {
+        return ($phone) ? '<a class="phone" href="tel:'.$phone.'">'.$phone.'</a>' : '';
+    }
+
+    private function getPhonesAnchor(): ?string
+    {
+        $identity = $this->entity;
+        return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
     }
 }

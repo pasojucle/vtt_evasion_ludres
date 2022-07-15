@@ -89,6 +89,10 @@ img[src=""] {
 
 a img { border: 0; }
 a {text-decoration: none;}
+a.phone {
+    color: var(--backgroud-color);
+    font-weight: 600;
+}
 body > script {display: none !important;}
 
 /*styles*/
