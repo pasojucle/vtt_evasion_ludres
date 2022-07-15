@@ -17,7 +17,6 @@
     {{ form_row(form.doctorAddress) }}
     {{ form_row(form.doctorTown) }}
 </div>
-
 {% set type = '' %}
 {% for disease in form.diseases %}
     {% if type != disease.vars.value.type %}
