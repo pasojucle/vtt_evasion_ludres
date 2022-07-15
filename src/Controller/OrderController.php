@@ -15,6 +15,7 @@ use App\ViewModel\OrderPresenter;
 use App\ViewModel\OrdersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
@@ -85,13 +86,14 @@ class OrderController extends AbstractController
     #[Route('/confirmation-commande/{orderHeader}', name: 'order_acknowledgement', methods: ['GET'])]
     public function orderAcknowledgement(
         PdfService $pdfService,
-        OrderHeader $orderHeader
+        OrderHeader $orderHeader,
+        ParameterBagInterface $parameterBag
     ): Response {
         $this->presenter->present($orderHeader);
         $orderAcknowledgement = $this->renderView('order/acknowledgement.html.twig', [
             'order' => $this->presenter->viewModel(),
         ]);
-        $pdfFilepath = $pdfService->makePdf($orderAcknowledgement, 'order_acknowledgement_temp', '../data/');
+        $pdfFilepath = $pdfService->makePdf($orderAcknowledgement, 'order_acknowledgement_temp', $parameterBag->get('tmp_directory_path'));
 
         $fileContent = file_get_contents($pdfFilepath);
 

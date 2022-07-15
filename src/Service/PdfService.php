@@ -12,6 +12,7 @@ use DateTime;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use setasign\Fpdi\Fpdi;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class PdfService
@@ -20,12 +21,17 @@ class PdfService
         private FilenameService $filenameService,
         private SeasonService $seasonService,
         private KernelInterface $kernel,
-        private UserPresenter $userPresenter
+        private UserPresenter $userPresenter,
+        private ParameterBagInterface $parameterBag
     ) {
     }
 
-    public function makePdf(string $html, string $filename, string $directory = '../data/licences', string $paper = 'A4')
+    public function makePdf(string $html, string $filename, ?string $directory = null, string $paper = 'A4')
     {
+        if (null === $directory) {
+            $directory = $this->parameterBag->get('tmp_directory_path').'licences';
+        }
+
         $options = new Options();
         $options->setIsHtml5ParserEnabled(true);
         $dompdf = new Dompdf($options);
@@ -35,8 +41,8 @@ class PdfService
         $dompdf->render();
         $output = $dompdf->output();
 
-        if (!is_dir('../data')) {
-            mkdir('../data');
+        if (!is_dir($this->parameterBag->get('data_directory_path'))) {
+            mkdir($this->parameterBag->get('data_directory_path'));
         }
         if (!is_dir($directory)) {
             mkdir($directory);
@@ -117,8 +123,11 @@ class PdfService
         return $pdf;
     }
 
-    public function joinPdf(array $files, ?User $user = null, $filename = '../data/pdf_temp.pdf'): string
+    public function joinPdf(array $files, ?User $user = null, ?string $filename = null): string
     {
+        if (null === $filename) {
+            $filename = $this->parameterBag->get('tmp_directory_path').'pdf_temp.pdf';
+        }
         // initiate FPDI
         $pdf = new Fpdi();
         // iterate through the files

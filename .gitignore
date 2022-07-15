@@ -15,7 +15,7 @@
 ###< symfony/phpunit-bridge ###
 
 /sources/
-/data/
+/data/tmp/
 /public/uploads/
 /public/images/
 /public/files/

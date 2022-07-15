@@ -28,6 +28,7 @@ use App\ViewModel\UserPresenter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
@@ -599,7 +600,8 @@ class ToolController extends AbstractController
 
     #[Route('/admin/outil/departements', name: 'admin_departments', methods: ['GET', 'POST'])]
     public function adminDepartments(
-        Request $request
+        Request $request,
+        ParameterBagInterface $parameterBag
     ): Response {
         $form = $this->createForm(ToolImportType::class);
         $form->handleRequest($request);
@@ -622,7 +624,7 @@ class ToolController extends AbstractController
                         $departments[$name] = $number.' - '.$name;
                     }
                     fclose($handle);
-                    file_put_contents('../data/departments', json_encode($departments));
+                    file_put_contents($parameterBag->get('data_directory_path').'departments', json_encode($departments));
                 }
             }
         }

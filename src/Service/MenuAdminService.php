@@ -91,6 +91,12 @@ class MenuAdminService
                 'pattern' => '/survey/',
                 'role' => 'ROLE_ADMIN',
             ],
+            [
+                'label' => 'Pop up',
+                'route' => 'admin_modal_window_list',
+                'pattern' => '/popup/',
+                'role' => 'ROLE_ADMIN',
+            ],
         ];
     }
 
@@ -113,12 +119,6 @@ class MenuAdminService
                 'label' => 'Images de fond',
                 'route' => 'admin_background_list',
                 'pattern' => '/admin_background/',
-                'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Pop up',
-                'route' => 'admin_modal_window_list',
-                'pattern' => '/popup/',
                 'role' => 'ROLE_ADMIN',
             ],
             [

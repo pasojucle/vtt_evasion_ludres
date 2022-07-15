@@ -5,19 +5,24 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Cluster;
-use App\Service\FilenameService;
 use App\Service\PdfService;
-use App\ViewModel\BikeRidePresenter;
+use App\Service\FilenameService;
 use App\ViewModel\ClusterPresenter;
+use App\ViewModel\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ClusterController extends AbstractController
 {
+    public function __construct(private ParameterBagInterface $parameterBag)
+    {
+        
+    }
     #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET'])]
     public function adminClusterComplete(
         EntityManagerInterface $entityManager,
@@ -45,7 +50,7 @@ class ClusterController extends AbstractController
     ): Response {
         $presenter->present($cluster);
         $files = [];
-        $dirName = '../data/'.$filenameService->clean($presenter->viewModel()->title);
+        $dirName = $this->parameterBag->get('tmp_directory_path').$filenameService->clean($presenter->viewModel()->title);
         if (!is_dir($dirName)) {
             mkdir($dirName);
         }
@@ -66,7 +71,7 @@ class ClusterController extends AbstractController
 
         $fileName = $cluster->getTitle().'_'.$cluster->getBikeRide()->getStartAt()->format('Ymd');
         $fileName = $filenameService->clean($fileName).'.pdf';
-        $pathName = $pdfService->joinPdf($files, null, '../data/'.$filenameService->clean($cluster->getTitle()).'.pdf');
+        $pathName = $pdfService->joinPdf($files, null, $this->parameterBag->get('tmp_directory_path').$filenameService->clean($cluster->getTitle()).'.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(

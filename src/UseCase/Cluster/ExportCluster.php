@@ -9,6 +9,7 @@ use App\Repository\SessionRepository;
 use App\Service\FilenameService;
 use App\Service\PdfService;
 use App\ViewModel\ClusterPresenter;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,8 @@ class ExportCluster
         private FilenameService $filenameService,
         private ClusterPresenter $presenter,
         private PdfService $pdfService,
-        private Environment $twig
+        private Environment $twig,
+        private ParameterBagInterface $parameterBag
     ) {
     }
 
@@ -35,7 +37,7 @@ class ExportCluster
     {
         $this->presenter->present($cluster);
         $this->cluster = $this->presenter->viewModel();
-        $this->dirName = '../data/'.$this->filenameService->clean($this->presenter->viewModel()->title);
+        $this->dirName = $this->parameterBag->get('tmp_directory_path').$this->filenameService->clean($this->presenter->viewModel()->title);
         if (!is_dir($this->dirName)) {
             mkdir($this->dirName);
         }
@@ -66,7 +68,7 @@ class ExportCluster
     {
         $fileName = $this->cluster->title.'_'.$this->cluster->entity->getBikeRide()->getStartAt()->format('Ymd');
         $fileName = $this->filenameService->clean($fileName).'.pdf';
-        $pathName = $this->pdfService->joinPdf($this->files, null, '../data/'.$this->filenameService->clean($this->cluster->title).'.pdf');
+        $pathName = $this->pdfService->joinPdf($this->files, null, $this->parameterBag->get('tmp_directory_path').$this->filenameService->clean($this->cluster->title).'.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(
