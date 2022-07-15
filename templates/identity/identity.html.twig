@@ -1,6 +1,6 @@
 {% if identity.children is not empty %}
     {% if identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_KINSHIP') %}
-        <b>Contact parent principal</b>
+        <b>Responsable de l'enfant</b>
     {% elseif identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_SECOND_CONTACT') %}
         <b>Second contact</b>
     {% endif %}
