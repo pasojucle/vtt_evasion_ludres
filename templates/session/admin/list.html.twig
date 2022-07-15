@@ -15,10 +15,7 @@
                         {% endif %}
                         </div>
                     </div>
-
-
                 </div>
-
                 {% if user.approvalGoingHome is not null %}
                     <span class="col-md-3 col-xs-2 home {{ user.approvalGoingHome.class.color }}"></span>
                 {% endif %}
@@ -31,7 +28,7 @@
         </a>
         {% include 'user/admin/dropdown.html.twig' with {'session' : session} %}
     </div>
-    {% if bikeRide.bikeRideType.isSchool %}
+    {# {% if bikeRide.bikeRideType.isSchool %} #}
         {% if not cluster.isComplete %}
             {% if not session.userIsOnSite %}
                 <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" 
@@ -45,5 +42,5 @@
                 <div class="success-ico xl-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
             {% endif %}
         {% endif %}
-    {% endif %}
+    {# {% endif %} #}
 </li>

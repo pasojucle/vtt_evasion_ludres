@@ -6,12 +6,12 @@ namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class BikeRideTypeType extends AbstractType
 {
@@ -24,8 +24,9 @@ class BikeRideTypeType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('content', TextareaType::class, [
+            ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
+                'config_name' => 'minimum_config',
                 'row_attr' => [
                     'class' => 'form-group',
                 ],
