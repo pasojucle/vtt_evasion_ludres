@@ -42,7 +42,8 @@ class Carrousel extends HTMLDivElement {
     currentIndex = 0;
     lastIndex = null;
     interval;
-    time = 8;
+    firstTime = 3;
+    time = 6;
 
     constructor() {
         super();
@@ -76,7 +77,13 @@ class Carrousel extends HTMLDivElement {
         this.slide();
         if (this.pictures.length > 1) {
             this.lastIndex = this.pictures.length - 1;
-            this.interval = window.setInterval(() => {this.nextPicture(); this.slide();}, this.time * 1000);
+            setTimeout(() => {
+                this.nextPicture();
+                this.slide();
+                this.interval = window.setInterval(() => {this.nextPicture(); this.slide();}, this.time * 1000);
+            }, this.firstTime * 1000);
+
+            
         }
     }
     stop() {

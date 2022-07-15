@@ -82,6 +82,11 @@ img {
     height: auto;
     vertical-align: middle;
 }
+img[src=""] {
+    display: none;
+}
+
+
 a img { border: 0; }
 a {text-decoration: none;}
 body > script {display: none !important;}
