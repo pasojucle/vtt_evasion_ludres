@@ -73,7 +73,7 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/inscription"', name: 'registration_form', methods: ['GET', 'POST'], defaults:['step' => 1])]
+    #[Route('/inscription', name: 'registration_form', methods: ['GET', 'POST'], defaults:['step' => 1])]
     #[Route('/mon-compte/inscription/{step}', name: 'user_registration_form', methods: ['GET', 'POST'])]
     public function registerForm(
         Request $request,

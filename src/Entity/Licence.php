@@ -84,16 +84,16 @@ class Licence
     private int $id;
 
     #[Column(type: 'integer', nullable: true)]
-    private ?int $type;
+    private ?int $type = null;
 
     #[Column(type: 'integer', nullable: true)]
-    private ?int $coverage;
+    private ?int $coverage = null;
 
     #[Column(type: 'boolean')]
     private bool $magazineSubscription = false;
 
     #[Column(type: 'float', nullable: true)]
-    private ?float $subscriptionAmount;
+    private ?float $subscriptionAmount = null;
 
     #[Column(type: 'boolean')]
     private bool $additionalFamilyMember = false;

@@ -23,7 +23,7 @@ class SeasonService
     {
         $today = new DateTime();
 
-        return ($this->seasonStartAt['month'] < (int) $today->format('m') && $this->seasonStartAt['day'] < (int) $today->format('d'))
+        return ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
             ? (int) $today->format('Y') + 1
             : (int) $today->format('Y');
     }
