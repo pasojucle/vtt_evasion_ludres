@@ -47,8 +47,14 @@ class ModalWindowRepository extends ServiceEntityRepository
             ->setParameter('today', $today->format('Y-m-d H:i:s'));
         if (null !== $age) {
             $qb->andWhere(
-                (new Expr())->lte('m.minAge', ':age'),
-                (new Expr())->gte('m.maxAge', ':age')
+                (new Expr())->orX(
+                    (new Expr())->lte('m.minAge', ':age'),
+                    (new Expr())->isNull('m.minAge')
+                ),
+                (new Expr())->orX(
+                    (new Expr())->isNull('m.maxAge'),
+                    (new Expr())->gte('m.maxAge', ':age')
+                ),
             )
                 ->setParameter('age', $age)
                 ;

@@ -70,7 +70,7 @@ class ModalWindowType extends AbstractType
                 ],
             ])
             ->add('maxAge', IntegerType::class, [
-                'label' => 'Age minimum (optionnel)',
+                'label' => 'Age maximum (optionnel)',
                 'attr' => [
                     'min' => 0,
                     'max' => 90,

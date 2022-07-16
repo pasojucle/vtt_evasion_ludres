@@ -23,14 +23,14 @@ class ShowModalWindow
     public function execute(): ?ModalWindow
     {
         $session = $this->requestStack->getCurrentRequest()->getSession();
-        $modalWindow = $session->get('show_modal_window');
+        $licenceNumber = $session->get('licence_number');
         $user = $this->security->getUser();
         $modal = null;
         if (null !== $user) {
             $user = $this->userService->convertToUser($user);
-            if ($user->licenceNumber !== $modalWindow) {
+            if ($user->licenceNumber !== $licenceNumber) {
                 $modalWindows = $this->modalWindowRepository->findLastByAge($user->member?->age);
-                $session->set('show_modal_window', $user->licenceNumber);
+                $session->set('licence_number', $user->licenceNumber);
             }
             if (!empty($modalWindows)) {
                 $modal = $modalWindows[0];
