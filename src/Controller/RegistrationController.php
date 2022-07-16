@@ -48,7 +48,8 @@ class RegistrationController extends AbstractController
         private GetReplaces $getReplaces,
         private OrderByService $orderByService,
         private RegistrationService $registrationService,
-        private GetProgress $getProgress
+        private GetProgress $getProgress, 
+        private ContentRepository $contentRepository
     ) {
     }
 
@@ -124,6 +125,7 @@ class RegistrationController extends AbstractController
             'next' => $progress['nextIndex'],
             'maxStep' => $this->requestStack->getSession()->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
+            'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
             'user' => $progress['user'],
             'media' => RegistrationStep::RENDER_VIEW,
         ]);
@@ -144,7 +146,6 @@ class RegistrationController extends AbstractController
     #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
     public function registrationFile(
         MembershipFeeRepository $membershipFeeRepository,
-        ContentRepository $contentRepository,
         PdfService $pdfService,
         UserPresenter $presenter,
         RegistrationStepPresenter $registrationStepPresenter,
@@ -191,7 +192,7 @@ class RegistrationController extends AbstractController
                         $html = $this->renderView('registration/registrationPdf.html.twig', [
                             'user' => $presenter->viewModel(),
                             'all_membership_fee' => $allmembershipFee,
-                            'membership_fee_content' => $contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
+                            'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
                             'current' => $step,
                             'form' => $form->createView(),
                             'media' => RegistrationStep::RENDER_FILE,

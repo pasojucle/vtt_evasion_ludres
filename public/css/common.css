@@ -1123,6 +1123,9 @@ nav.nav-tab::before {
 .block:not(:first-child) {
     margin-top: var(--gap);
 }
+h3 + ul.block.background-ligth {
+    margin-top: 5px;
+}
 .col-2 .block {
     margin-top: unset;
 }

@@ -49,7 +49,7 @@
     {% if identity.email is defined %}
         <div class="form-group">{{ form_row(identity.email) }}</div>
     {% endif %}
-    
+    <div class="address-container">
     {% if identity.otherAddress is defined %}
         <div class="form-group">
             <div class="inputGroup long check">
@@ -59,12 +59,13 @@
         </div>
     {% endif %}
     {% if identity.address is defined %}
-        <div{% if identity.vars.name == 1 %} id="address_container"{% endif %}>
+
             <div class="form-group">{{ form_row(identity.address.street) }}</div>
             <div class="form-group">
                 {{ form_row(identity.address.postalCode) }}
                 {{ form_row(identity.address.town) }}
             </div>
-        </div>
+
     {% endif %}
+    </div>
 {% endif %}

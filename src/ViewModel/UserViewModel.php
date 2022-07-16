@@ -312,7 +312,7 @@ class UserViewModel extends AbstractViewModel
     private function getSecondKinShip(Identity $identity): ?IdentityViewModel
     {
         if ($identity) {
-            return IdentityViewModel::fromIdentity($identity, $this->services);
+            return IdentityViewModel::fromIdentity($identity, $this->services, $this->member);
         }
 
         return null;

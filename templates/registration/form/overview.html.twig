@@ -80,14 +80,13 @@
     {% endif %}
 </div>
 {% if user.kinship %}
-<h3>Autorisation parentale pour mineur</h3>
+<h3>Responsable de l'enfant</h3>
 <ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Non et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.fullName }} ({{ user.kinship.type | trans  }})</span>
+        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.fullName }} ({{ user.kinship.type | trans  }})</span>
     </li>
     <li class="row">
         <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.address.street }}, {{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</span>
-
     </li>
     <li class="row">
         <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.email }}</span>
@@ -95,17 +94,42 @@
     <li class="row">
         <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ user.kinship.phone}}</span>
     </li>
+</ul>
+<h3>Second contact</h3>
+<ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Second contact : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.fullName}} ({{ user.secondKinship.type|trans}})</span>
+        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.fullName}} ({{ user.secondKinship.type|trans}})</span>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.address.street }}, {{ user.secondKinship.address.postalCode }} {{ user.secondKinship.address.town }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.email }}</span>
+    </li>
+    <li class="row">
         <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.phone}}</span>
     </li>
 </ul>
-<br>
 {% endif %}
+{% if user.seasonLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+    <ul class="block background-ligth">
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Email principal</b></span><span class="col-md-8 col-sx-6">{{ user.mainEmail }}</span>
+        </li>
+    </ul>
+{% endif %}
+
 <ul class="block background-ligth">
     <li class="row">
         <span class="col-md-4 col-sx-6"><b>Type de licence : </b></span><span class="col-md-8 col-sx-6">{{ licence.type|trans}}</span>
         <span class="col-md-4 col-sx-6"><b>Type d'assurance : </b></span><span class="col-md-8 col-sx-6">{{ licence.coverageStr|trans}}</span>
-        <span class="col-md-4 col-sx-6">b></span><span class="col-md-8 col-sx-6">{{ licence.isVae }}</span>
+        <span class="col-md-4 col-sx-6"></span><span class="col-md-8 col-sx-6">{{ licence.isVae }}</span>
     </li>
 </ul>
+
+{% if user.seasonLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+    <ul class="block background-ligth">
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Autorisation parentale</b></span><span class="col-md-8 col-sx-6">{{ user.getApprovalGoingHome.class.icon|raw }} {{ user.getApprovalGoingHome.message }}</span>
+        </li>
+    </ul>
+{% endif %}

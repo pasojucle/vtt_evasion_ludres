@@ -39,7 +39,7 @@ class IdentityType extends AbstractType
             $type = $identity->getType();
             $kinship = 1 < $type;
             $disabled = ($options['season_licence']->isFinal() && Identity::TYPE_MEMBER === $type) ? 'disabled' : '';
-            $addressClass = (Identity::TYPE_SECOND_CONTACT !== $type) ? ' identity-address' : '';
+            $addressClass = (Identity::TYPE_MEMBER !== $type) ? ' identity-address' : '';
             $addressRequired = 'required';
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
 

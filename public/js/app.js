@@ -107,12 +107,15 @@ jQuery(function($){
 
 function updateIdentity() {
     let required = $(this).is(':checked');
-    $('.identity-address').toggleClass('hidden');
+    const container = $(this).parents('div.address-container');
+    console.log(container);
+    console.log(container.find('.identity-address'));
+    container.find('.identity-address').toggleClass('hidden');
     if (required) {
-        $('.identity-address').find('input').attr('required', 'required');
+        container.find('.identity-address').find('input').attr('required', 'required');
     } else {
-        $('.identity-address').find('input').removeAttr('required');
-        $('.identity-address').find('input').val('');
+        container.find('.identity-address').find('input').removeAttr('required');
+        container.find('.identity-address').find('input').val('');
     }
 }
 
@@ -122,7 +125,6 @@ function previewFile() {
     if (file) {
         const image = URL.createObjectURL(file);
         previews.each(function() {
-            console.log(this);
             if (this instanceof HTMLImageElement) {
                 this.src = image;
             }

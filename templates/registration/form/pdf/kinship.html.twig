@@ -19,11 +19,11 @@
     <tr>
         <td><b>Adresse :</b></td>
         <td>{{ user.kinship.address.street }}</td>
-        <td></td>
+        <td>{{ user.secondKinship.address.street }}</td>
     </tr>
     <tr>
         <td></td>
         <td>{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</td>
-        <td></td>
+        <td>{{ user.secondKinship.address.postalCode }} {{ user.secondKinship.address.town }}</td>
     </tr>
 </table>

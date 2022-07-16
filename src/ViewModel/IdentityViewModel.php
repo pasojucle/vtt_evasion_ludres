@@ -77,7 +77,7 @@ class IdentityViewModel extends AbstractViewModel
     private function getAddress(?IdentityViewModel $member): ?AddressViewModel
     {
         $address = $this->entity->getAddress();
-        if (Identity::TYPE_KINSHIP === $this->entity->getType() && (null === $address || $address->isEmpty())) {
+        if (null !== $this->entity->getType() && (null === $address || $address->isEmpty())) {
             $address = $member->address;
         }
 

@@ -229,9 +229,9 @@ class GetProgress
             $identity->setType($type)
             ;
             $this->user->addIdentity($identity);
-            if (Identity::TYPE_KINSHIP === $type) {
+            // if (Identity::TYPE_KINSHIP === $type) {
                 $this->createAddress($identity);
-            }
+            // }
             $this->entityManager->persist($identity);
         }
 
