@@ -27,6 +27,7 @@ class SetSurvey
             $survey->removeMembers();
         }
 
+        $this->entityManager->persist($survey);
         $this->entityManager->flush();
     }
 }

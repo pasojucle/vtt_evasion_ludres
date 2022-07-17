@@ -43,9 +43,9 @@
                     <p>Auncun resultat</p>
                 {% endif %}
             {% else %}
-                {% if survey.surveyUsers is not empty %}
+                {% if survey.respondents is not empty %}
                     <ul class="padding-10">
-                        {% for survey_user in survey.surveyUsers %}
+                        {% for survey_user in survey.respondents %}
                             <li class="row row-list light-separator">
                                 <div class="col-md-6 col-xs-6">{{ survey_user.createdAt|date('d/m/Y H:i:s') }}</div>
                                 <div class="col-md-6 col-xs-6">
