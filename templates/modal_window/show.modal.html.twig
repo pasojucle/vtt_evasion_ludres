@@ -6,5 +6,9 @@
 {% endblock %}
 {% block footer %}
     {% set button_close = 'Fermer' %}
+    {% if modal.url is not null %}
+        {% set anchor_text = 'Participer' %}
+        {% set url = modal.url %}
+    {% endif %}
     {{ parent() }}
 {% endblock %}

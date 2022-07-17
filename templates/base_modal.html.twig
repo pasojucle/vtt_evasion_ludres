@@ -23,6 +23,9 @@
                         {% if button_text is defined %}{{ button_text|raw }}{% endif %}
                         </button>
                     {% endif %}
+                    {% if url is defined %}
+                        <a href="{{ url }}" class="btn btn-primary">{{ anchor_text|raw }}</a>
+                    {% endif %}
                 </div>
             {% endblock %}
             {% if form is defined %}

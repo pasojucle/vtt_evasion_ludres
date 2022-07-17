@@ -12,6 +12,7 @@ use App\Repository\SurveyRepository;
 use App\Repository\ModalWindowRepository;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ShowModalWindow
 {
@@ -20,11 +21,12 @@ class ShowModalWindow
         private Security $security,
         private UserService $userService,
         private ModalWindowRepository $modalWindowRepository,
-        private SurveyRepository $surveyRepository
+        private SurveyRepository $surveyRepository,
+        private UrlGeneratorInterface $urlGenerator
     ) {
     }
 
-    public function execute(): ModalWindow|Survey|null
+    public function execute(): ?array
     {
         $session = $this->requestStack->getCurrentRequest()->getSession();
         $modalWindowShowOn = (null !== $session->get('modal_window_show_on'))
@@ -45,7 +47,12 @@ class ShowModalWindow
                         $modalWindowShowOn[] = $index;
                         $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
                 
-                        return $modalWindow;
+                        return [
+                            'title' => $modalWindow->getTitle(),
+                            'content' => $modalWindow->getContent(),
+                            'url' => ($modalWindow instanceof Survey) 
+                                ? $this->urlGenerator->generate('survey',['survey' => $modalWindow->getId()]) : null,
+                        ];
                     }
                 }
             }
