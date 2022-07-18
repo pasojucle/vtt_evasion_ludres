@@ -37,7 +37,6 @@ class ShowModalWindow
             $user = $this->userService->convertToUser($user);
             $modalWindows = $this->modalWindowRepository->findLastByAge($user->member?->age);
             $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user->entity);
-            dump($surveys);
             $modalWindows = array_merge($modalWindows, $surveys);
 
             if (!empty($modalWindows)) {
