@@ -94,6 +94,7 @@ session:
     registered: Sera présent
     available: Disponible si besoin
     unavailable: Absent
+    undefined: Non défini
 
 role:
    ROLE_FRAME: Encadrant

@@ -8,11 +8,8 @@ use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
-use App\Repository\ClusterRepository;
 use App\Repository\SessionRepository;
-use App\Service\BikeRideService;
 use App\Service\SessionService;
-use App\Service\UserService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,7 +32,6 @@ class SessionController extends AbstractController
     #[Route('/admin/seance/{session}', name: 'admin_session_present', methods: ['GET'])]
     public function adminPresent(
         Session $session,
-        BikeRideService $bikeRideService,
         BikeRidePresenter $bikeRidePresenter
     ): Response {
         $isPresent = !$session->isPresent();
@@ -53,7 +49,6 @@ class SessionController extends AbstractController
 
     #[Route('/admin/groupe/change/{session}', name: 'admin_bike_ride_switch_cluster', methods: ['GET', 'POST'])]
     public function adminClusterSwitch(
-        ClusterRepository $clusterRepository,
         Request $request,
         Session $session
     ): Response {
@@ -120,7 +115,6 @@ class SessionController extends AbstractController
 
     #[Route('/admin/rando/supprime/{session}', name: 'admin_session_delete', methods: ['GET'])]
     public function adminSessionDelete(
-        UserService $userService,
         Session $session,
         UserPresenter $userPresenter
     ) {

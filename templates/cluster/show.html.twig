@@ -18,7 +18,7 @@
             {% if cluster.sessions | length > 0 %}
                 <ul>
                     {% for session in cluster.availableSessions %}             
-                        {% include ('session/admin/list.html.twig')%}
+                        {% include 'session/admin/list.html.twig' with {'user': session.user} %}
                     {% endfor %}
                 </ul>
                 {% if hasClusters and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
@@ -42,6 +42,10 @@
                             </div>
                         {% endif %}
                     </div>
+                {% elseif is_granted('ROLE_ADMIN') %}
+                <div class="btn-container">
+                    <a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.entity.id})}}" class="btn btn-secondary">Voir tous l'encadrement</a>
+                </div>
                 {% endif %}
             {% else %}
                 <p class="padding-10">Auncun inscrit</p>

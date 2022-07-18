@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Encadrement de la sortie{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Encadrement</h1>
+            <span class="tools">
+                <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bike_ride.entity.id}) }}" class="btn btn-ico" title="Retour à la sorties"><i class="fas fa-chevron-left"></i></a>
+            </span>
+        </div>
+        <div class="wrapper-body">
+            <h2>Sortie {{ bike_ride.title }} du {{ bike_ride.period }}</h2>
+            <ul>
+                {% for framer in framers %}                      
+                    <li class="list-dropdown"> 
+                        <a href="{{ path('admin_user', {'user': framer.entity.id})}}"
+                            {% if framer.level is not null %}style="background-color: {{ framer.level.color }}"{% endif %}>
+                            <div class="row">
+                                <div class="col-md-4 col-xs-12">{{ framer.member.fullName }}</div>
+                                <div class="col-md-4 col-xs-12"> {{ framer.level }}</div>
+                                {% set availability = framer.getFramerAvailabilityByBikeRide(bike_ride.entity) %}
+                                <div class="col-md-1 col-xs-3 {{ availability.class.badge}}"></div>
+                                <div class="col-md-3 col-xs-9">{{availability.text|trans }}</div>
+                            </div>
+                        </a> 
+                        {% include 'user/admin/dropdown.html.twig' with {'user': framer} %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

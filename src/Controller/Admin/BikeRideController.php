@@ -8,6 +8,7 @@ use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Service\BikeRideService;
 use App\ViewModel\UserPresenter;
+use App\Repository\UserRepository;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRidesPresenter;
 use App\Repository\BikeRideRepository;
@@ -15,6 +16,8 @@ use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\BikeRideTypeRepository;
+use App\Repository\SessionRepository;
+use App\ViewModel\UsersPresenter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -139,5 +142,21 @@ class BikeRideController extends AbstractController
         }
 
         return new JsonResponse($response);
+    }
+
+    #[Route('/sortie/encadrement/{bikeRide}', name: 'admin_bike_ride_framer_list', methods: ['GET'])]
+    public function adminBikeRideFramerList(
+        UserRepository $userRepository,
+        UsersPresenter $usersPresenter,
+        BikeRidePresenter $bikeRidePresenter,
+        BikeRide $bikeRide
+    ){
+        $usersPresenter->present($userRepository->findFramers());
+        $bikeRidePresenter->present($bikeRide);
+
+        return $this->render('bike_ride/admin/framer_list.html.twig', [
+            'framers' => $usersPresenter->viewModel()->users,
+            'bike_ride' => $bikeRidePresenter->viewModel(),
+        ]);
     }
 }

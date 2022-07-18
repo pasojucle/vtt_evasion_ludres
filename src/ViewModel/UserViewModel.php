@@ -8,6 +8,7 @@ use DateTime;
 use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
+use App\Entity\BikeRide;
 use App\Entity\Identity;
 
 class UserViewModel extends AbstractViewModel
@@ -338,5 +339,24 @@ class UserViewModel extends AbstractViewModel
         }
 
         return null;
+    }
+
+    public function getFramerAvailabilityByBikeRide(BikeRide $bikeRide): array
+    {
+        $sessions = $this->entity?->getSessions();
+
+        if (!$sessions?->isEmpty()) {
+            foreach ($sessions as $session) {
+                if ($session->getCluster()?->getBikeRide() === $bikeRide) {
+                    dump(SessionViewModel::fromSession($session, $this->services));
+                    return SessionViewModel::fromSession($session, $this->services)->availability;
+                }
+            }
+        }
+
+        return [                
+            'class' => ['badge' => 'person person-rays', 'icon' => '<i class="fa-solid fa-person-rays"></i>'],
+            'text' => 'session.availability.undefined',
+        ];
     }
 }

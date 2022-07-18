@@ -1,4 +1,3 @@
-{% set user = session.user %} 
 <li id="session-{{ session.entity.id }}" class="col-list col-list-1btn">
     <div class="list-dropdown">
         <a href="{{ path('admin_user', {'user': user.entity.id})}}"

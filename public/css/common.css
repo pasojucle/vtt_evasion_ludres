@@ -160,7 +160,8 @@ body > script {display: none !important;}
 }
 .person.person-check::before,
 .person.person-question::before,
-.person.person-xmark::before {
+.person.person-xmark::before,
+.person.person-rays::before {
     content: '\e542';
     color: var(--white-color);
     height: 30px;
@@ -185,6 +186,10 @@ body > script {display: none !important;}
 .person.person-xmark::before {
     content: '\e543';
     background-color: var(--danger-color);
+}
+.person.person-rays::before {
+    content: '\e54d';
+    background-color: var(--gray-color);
 }
 .home.success::before {
     background-color: var(--success-color);
@@ -255,6 +260,9 @@ body > script {display: none !important;}
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
+}
+.btn-container {
+    margin: 10px auto 20px auto;
 }
 .btn {
     padding: 12px 20px;
