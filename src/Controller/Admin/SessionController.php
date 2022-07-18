@@ -9,6 +9,7 @@ use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
 use App\Repository\SessionRepository;
+use App\Service\MailerService;
 use App\Service\SessionService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;

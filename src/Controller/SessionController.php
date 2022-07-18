@@ -18,6 +18,7 @@ use App\ViewModel\UserPresenter;
 use App\ViewModel\BikeRidePresenter;
 use App\Form\SessionAvailabilityType;
 use App\Repository\SessionRepository;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,6 +43,7 @@ class SessionController extends AbstractController
         SessionRepository $sessionRepository,
         BikeRideService $bikeRideService,
         BikeRidePresenter $bikeRidePresenter,
+        MailerService $mailerService,
         BikeRide $bikeRide
     ): Response {
         /** @var User $user */
@@ -110,6 +112,16 @@ class SessionController extends AbstractController
                 ;
                 $this->entityManager->persist($respondent);
             }
+
+
+            // $bikeRidePresenter->present($bikeRide);
+            $mailerService->sendMailToMember([
+                'name' => $this->userPresenter->viewModel()->member->name,
+                'firstName' => $this->userPresenter->viewModel()->member->firstName,
+                'email' => $this->userPresenter->viewModel()->mainEmail,
+                'subject' => 'Confirmation d\'inscription à une sortie',
+                'bikeRideTitleAndPeriod' => $bikeRidePresenter->viewModel()->title.' du '.$bikeRidePresenter->viewModel()->period,
+            ], 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION');
 
             $this->entityManager->persist($data['session']);
             $this->entityManager->flush();
