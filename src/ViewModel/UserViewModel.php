@@ -348,7 +348,6 @@ class UserViewModel extends AbstractViewModel
         if (!$sessions?->isEmpty()) {
             foreach ($sessions as $session) {
                 if ($session->getCluster()?->getBikeRide() === $bikeRide) {
-                    dump(SessionViewModel::fromSession($session, $this->services));
                     return SessionViewModel::fromSession($session, $this->services)->availability;
                 }
             }
