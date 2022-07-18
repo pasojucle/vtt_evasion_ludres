@@ -42,13 +42,14 @@
                             </div>
                         {% endif %}
                     </div>
-                {% elseif is_granted('ROLE_ADMIN') %}
-                <div class="btn-container">
-                    <a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.entity.id})}}" class="btn btn-secondary">Voir tous l'encadrement</a>
-                </div>
                 {% endif %}
             {% else %}
                 <p class="padding-10">Auncun inscrit</p>
+            {% endif %}
+            {% if hasClusters and cluster.title == constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+                <div class="btn-container">
+                    <a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.entity.id})}}" class="btn btn-secondary">Voir tous l'encadrement</a>
+                </div>
             {% endif %}
             <br>
         {% endfor %}
