@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Respondent;
 use App\Entity\User;
 use App\Entity\Survey;
 use Doctrine\ORM\Query\Expr;
@@ -67,6 +68,36 @@ class SurveyRepository extends ServiceEntityRepository
                 ),
             )
             ->setParameter('member', $member)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function findActiveAndWithoutResponse(User $member): array
+    {
+        $respondents = $this->_em->createQueryBuilder()
+            ->select('(r.survey)')
+            ->from(Respondent::class, 'r')
+            ->where(
+                (new Expr)->eq('r.user', ':rMember')
+            );
+
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.members', 'm')
+            ->andWhere(
+                (new Expr())->eq('s.disabled', 0),
+                (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
+                (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
+                (new Expr())->isNull('s.bikeRide'),
+                (new Expr())->notIn('s', $respondents->getDQL()),
+
+                (new Expr())->orX(
+                    (new Expr())->isNull('m'),
+                    (new Expr())->eq('m', ':member'),
+                ),
+            )
+            ->setParameter('member', $member)
+            ->setParameter('rMember', $member)
             ->orderBy('s.id', 'ASC')
             ->getQuery()
             ->getResult()
