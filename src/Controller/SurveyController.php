@@ -49,7 +49,7 @@ class SurveyController extends AbstractController
         if ($respondent) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Votre participation au survey a déja été prise en compte le ' . $respondent->getCreatedAt()->format('d/m/Y') . ' a ' . $respondent->getCreatedAt()->format('H\hi'),
+                'content' => 'Votre participation au sondage a déja été prise en compte le ' . $respondent->getCreatedAt()->format('d/m/Y') . ' a ' . $respondent->getCreatedAt()->format('H\hi'),
             ];
         }
         if (!$message) {
@@ -88,7 +88,7 @@ class SurveyController extends AbstractController
 
                 $message = [
                     'class' => 'success',
-                    'content' => 'Votre participation au survey à bien été prise en compte.',
+                    'content' => 'Votre participation au sondage a bien été prise en compte.',
                 ];
             }
         }
