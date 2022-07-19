@@ -22,6 +22,9 @@ class ServicesPresenter
     public ?array $coverageFormStartAt;
     public string $productDirectory;
     public string $uploadsDirectory;
+    public string $uploadsDirectoryPath;
+    public string $backgroundsDirectory;
+    public string $backgroundsDirectoryPath;
     public int $currentSeason;
     public array $seasonsStatus;
     public ?User $user;
