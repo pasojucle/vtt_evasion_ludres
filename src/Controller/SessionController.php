@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use DateTime;
 use App\Entity\User;
 use App\Entity\Session;
 use App\Entity\BikeRide;
-use App\Form\SessionType;
-use App\Entity\Respondent;
-use App\Form\SessionEditType;
-use App\Entity\SurveyResponse;
 use App\Service\SessionService;
-use App\Service\BikeRideService;
 use App\ViewModel\UserPresenter;
+use App\UseCase\Session\EditSession;
 use App\ViewModel\BikeRidePresenter;
 use App\Form\SessionAvailabilityType;
-use App\Repository\SessionRepository;
-use App\Service\MailerService;
+use App\UseCase\Session\GetFormSession;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,91 +34,20 @@ class SessionController extends AbstractController
     #[Route('/mon-compte/rando/inscription/{bikeRide}', name: 'session_add', methods: ['GET', 'POST'])]
     public function sessionAdd(
         Request $request,
-        SessionRepository $sessionRepository,
-        BikeRideService $bikeRideService,
         BikeRidePresenter $bikeRidePresenter,
-        MailerService $mailerService,
+        GetFormSession $getFormSession,
+        EditSession $editSession,
         BikeRide $bikeRide
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
 
-        $clusters = $bikeRide->getClusters();
-        if ($clusters->isEmpty()) {
-            $bikeRideService->createClusters($bikeRide);
-            $this->entityManager->flush();
-            $clusters = $bikeRide->getClusters();
-        }
-        $userSession = $sessionRepository->findByUserAndClusters($user, $clusters);
-        $isAlreadyRegistered = ($userSession) ? true : false;
-
-        $this->userPresenter->present($user);
-        $isEndTesting = $this->userPresenter->viewModel()->isEndTesting();
-
-        list($framers, $members) = $this->sessionService->getSessionsBytype($bikeRide);
-
-        if (null === $userSession) {
-            $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
-
-            $userSession = new Session();
-            $userSession->setUser($user)
-                ->setCluster($userCluster)
-            ;
-        }
-        $bikeRidePresenter->present($bikeRide);
-        $surveyResponses = null;
-        if (null !== $bikeRide->getSurvey() && !$bikeRide->getSurvey()->getSurveyIssues()->isEmpty()) {
-            $uuid = uniqid('', true);
-            foreach ($bikeRide->getSurvey()->getSurveyIssues() as $issue) {
-                $response = new SurveyResponse();
-                $response->setSurveyIssue($issue)
-                    ->setUuid($uuid)
-                ;
-                $surveyResponses[] = $response;
-            }
-        }
-        $form = $this->createForm(SessionType::class, ['session' => $userSession, 'responses' =>['surveyResponses' => $surveyResponses]], [
-            'clusters' => $clusters,
-            'bikeRide' => $bikeRidePresenter->viewModel(),
-            'is_already_registered' => $isAlreadyRegistered,
-            'is_end_testing' => $isEndTesting,
-        ]);
+        $form = $getFormSession->execute($user, $bikeRide);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $editSession->execute($form, $this->userPresenter->viewModel(), $bikeRidePresenter->viewModel());
 
-            $user->addSession($data['session']);
-
-            if (array_key_exists('responses', $data) && !empty($data['responses']['surveyResponses'])) {
-                foreach ($data['responses']['surveyResponses'] as $response) {
-                    if (!$bikeRide->getSurvey()->isAnonymous()) {
-                        $response->setUser($user);
-                    }
-                    $this->entityManager->persist($response);
-                }
-                $now = new DateTime();
-
-                $respondent = new Respondent();
-                $respondent->setUser($user)
-                    ->setSurvey($bikeRide->getSurvey())
-                    ->setCreatedAt($now)
-                ;
-                $this->entityManager->persist($respondent);
-            }
-
-
-            // $bikeRidePresenter->present($bikeRide);
-            $mailerService->sendMailToMember([
-                'name' => $this->userPresenter->viewModel()->member->name,
-                'firstName' => $this->userPresenter->viewModel()->member->firstName,
-                'email' => $this->userPresenter->viewModel()->mainEmail,
-                'subject' => 'Confirmation d\'inscription à une sortie',
-                'bikeRideTitleAndPeriod' => $bikeRidePresenter->viewModel()->title.' du '.$bikeRidePresenter->viewModel()->period,
-            ], 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION');
-
-            $this->entityManager->persist($data['session']);
-            $this->entityManager->flush();
             $this->addFlash('success', 'Votre inscription a bien été prise en compte');
 
             $this->sessionService->checkEndTesting($user);
@@ -132,14 +55,7 @@ class SessionController extends AbstractController
             return $this->redirectToRoute('user_bike_rides');
         }
 
-        return $this->render('session/add.html.twig', [
-            'form' => $form->createView(),
-            'bikeRide' => $bikeRide,
-            'framers' => $framers,
-            'members' => $members,
-            'is_already_registered' => $isAlreadyRegistered,
-            'is_end_testing' => $isEndTesting,
-        ]);
+        return $this->render('session/add.html.twig', $getFormSession->params);
     }
 
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
