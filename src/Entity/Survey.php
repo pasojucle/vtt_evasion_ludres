@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use App\Entity\Respondent;
-use App\Entity\SurveyIssue;
-use Doctrine\ORM\Mapping\Id;
 use App\Form\Admin\SurveyType;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\OneToOne;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
 use App\Repository\SurveyRepository;
 use DateInterval;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity(repositoryClass: SurveyRepository::class)]
 class Survey
@@ -168,7 +165,6 @@ class Survey
     /**
      * @return Collection|Respondent[]
      */
-
     public function getRespondents(): Collection
     {
         return $this->respondents;
@@ -255,7 +251,6 @@ class Survey
         return $this;
     }
 
-
     public function setDisplayCriteria(?int $displayCriteria): self
     {
         $this->displayCriteria = $displayCriteria;
@@ -263,10 +258,8 @@ class Survey
         return $this;
     }
 
-
     public function getDisplayCriteria(): ?int
     {
-
         return $this->displayCriteria;
     }
 }

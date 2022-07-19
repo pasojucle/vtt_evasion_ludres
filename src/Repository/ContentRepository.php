@@ -44,7 +44,6 @@ class ContentRepository extends ServiceEntityRepository
             $qb->setParameter('isFlash', $isFlash);
         }
 
-
         return $qb
             ->andWhere($andX)
             ->setParameter('route', $route)

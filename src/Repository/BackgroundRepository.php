@@ -3,9 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Background;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Background>
@@ -40,9 +40,9 @@ class BackgroundRepository extends ServiceEntityRepository
         }
     }
 
-   /**
-    * @return Background[] Returns an array of Background objects
-    */
+    /**
+     * @return Background[] Returns an array of Background objects
+     */
     public function findAllQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('b')

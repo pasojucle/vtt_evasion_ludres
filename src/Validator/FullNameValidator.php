@@ -16,7 +16,7 @@ class FullNameValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, FullName::class);
         }
         $data = $this->context->getRoot()->getData();
-        
+
         if (strtolower($value) === strtolower($data['name'])) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation()

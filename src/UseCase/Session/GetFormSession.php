@@ -4,30 +4,28 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use DateTime;
-use App\Entity\User;
-use App\Entity\Licence;
-use App\Entity\Session;
 use App\Entity\BikeRide;
-use App\Form\SessionType;
-use App\Entity\Respondent;
+use App\Entity\Session;
 use App\Entity\SurveyResponse;
+use App\Entity\User;
+use App\Form\SessionType;
+use App\Repository\SessionRepository;
+use App\Service\BikeRideService;
 use App\Service\MailerService;
 use App\Service\SessionService;
-use App\Service\BikeRideService;
-use App\ViewModel\UserPresenter;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRideViewModel;
-use App\Repository\SessionRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormInterface;
+use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Security\Core\Security;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Security;
 
 class GetFormSession
 {
     public array $params;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MailerService $mailerService,
@@ -49,7 +47,7 @@ class GetFormSession
         $this->userPresenter->present($user);
         $this->bikeRidePresenter->present($bikeRide);
         list($framers, $members) = $this->sessionService->getSessionsBytype($bikeRide);
-        
+
         $isEndTesting = $this->userPresenter->viewModel()->isEndTesting();
 
         $form = $this->getForm($userSession, $this->bikeRidePresenter->viewModel(), $clusters, $isAlreadyRegistered, $isEndTesting);
@@ -110,7 +108,7 @@ class GetFormSession
     {
         return $this->formFactory->create(SessionType::class, [
             'session' => $userSession,
-            'responses' =>['surveyResponses' => $this->getSurveyResponse($bikeRide->entity)]
+            'responses' => ['surveyResponses' => $this->getSurveyResponse($bikeRide->entity)],
         ], [
             'clusters' => $clusters,
             'bikeRide' => $bikeRide,

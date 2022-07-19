@@ -239,7 +239,7 @@ class Identity
     }
 
     public function isEmpty()
-    {      
+    {
         return null === $this->name && null === $this->firstName;
     }
 

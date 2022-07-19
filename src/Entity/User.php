@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Respondent;
-use Doctrine\ORM\Mapping\Id;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use App\Repository\UserRepository;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\ORM\Mapping\OneToOne;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -80,7 +79,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ManyToMany(targetEntity: Survey::class, mappedBy: 'members')]
     private $surveys;
-
 
     public function __construct()
     {
@@ -427,7 +425,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullName(): string
     {
-        return $this->getFirstIdentity()->getName().' '.$this->getFirstIdentity()->getfirstName();
+        return $this->getFirstIdentity()->getName() . ' ' . $this->getFirstIdentity()->getfirstName();
     }
 
     /**
@@ -459,7 +457,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 
     /**
      * @return Collection<int, Respondent>

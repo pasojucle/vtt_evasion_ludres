@@ -507,7 +507,7 @@ class ToolController extends AbstractController
                 'licenceNumber' => $licenceNumber,
             ]);
             if (null !== $user) {
-                $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
+                $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
                 $userService->deleteUser($user);
                 $this->addFlash('success', "Les données de l'utilisateur {$fullName} ont bien été supprimées");
 
@@ -621,10 +621,10 @@ class ToolController extends AbstractController
                         if (preg_match('#^(NUMÉRO)$#', $number)) {
                             continue;
                         }
-                        $departments[$name] = $number.' - '.$name;
+                        $departments[$name] = $number . ' - ' . $name;
                     }
                     fclose($handle);
-                    file_put_contents($parameterBag->get('data_directory_path').'departments', json_encode($departments));
+                    file_put_contents($parameterBag->get('data_directory_path') . 'departments', json_encode($departments));
                 }
             }
         }

@@ -66,19 +66,18 @@ class ContentViewModel extends AbstractViewModel
             $col -= 3;
         }
 
-        return 'col-md-'.$col;
+        return 'col-md-' . $col;
     }
 
     private function getFileName(): ?string
     {
-
-        return ($this->entity->getFileName()) ? $this->services->uploadsDirectory.$this->entity->getFileName() : null;
+        return ($this->entity->getFileName()) ? $this->services->uploadsDirectory . $this->entity->getFileName() : null;
     }
 
     private function getFileTag(): ?string
     {
         if ($this->entity->getFileName()) {
-            $file = new File($this->services->uploadsDirectoryPath.$this->entity->getFileName());
+            $file = new File($this->services->uploadsDirectoryPath . $this->entity->getFileName());
 
             return (str_contains($file->getMimeType(), 'image')) ? 'img' : 'pdf';
         }
@@ -88,7 +87,7 @@ class ContentViewModel extends AbstractViewModel
 
     private function getFileRatio(): ?float
     {
-        if ($this->entity->getFileName() && is_file($this->services->uploadsDirectoryPath.$this->entity->getFileName())) {
+        if ($this->entity->getFileName() && is_file($this->services->uploadsDirectoryPath . $this->entity->getFileName())) {
             list($width, $height) = match ($this->fileTag) {
                 'pdf' => $this->getPdfSize(),
                 'img' => $this->getImageSize()
@@ -102,13 +101,13 @@ class ContentViewModel extends AbstractViewModel
 
     private function getImageSize(): array
     {
-        return getimagesize($this->services->uploadsDirectoryPath.$this->entity->getFileName());
+        return getimagesize($this->services->uploadsDirectoryPath . $this->entity->getFileName());
     }
 
     private function getPdfSize(): array
     {
         $pdf = new Fpdi();
-        $pdf->setSourceFile($this->services->uploadsDirectoryPath.$this->entity->getFileName());
+        $pdf->setSourceFile($this->services->uploadsDirectoryPath . $this->entity->getFileName());
 
         return [$pdf->GetPageWidth(), $pdf->GetPageHeight()];
     }

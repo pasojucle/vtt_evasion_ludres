@@ -16,7 +16,6 @@ class ValidateLicence
 {
     public function __construct(private EntityManagerInterface $entityManager, private MailerService $mailerService, private UserPresenter $userPresenter)
     {
-
     }
 
     public function execute(Request $request, Licence $licence)

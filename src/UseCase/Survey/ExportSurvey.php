@@ -26,7 +26,7 @@ class ExportSurvey
         $surveyResponsesByUuid = $this->surveyResponseRepository->findResponsesByUuid($survey);
         $content = [];
         $today = new DateTime();
-        $content[] = 'Export du '.$today->format('d/m/Y H:i:s').' - '.$survey->getTitle();
+        $content[] = 'Export du ' . $today->format('d/m/Y H:i:s') . ' - ' . $survey->getTitle();
         $content[] = '';
         $header = [];
         $header[0] = 'Identifiant';
@@ -54,7 +54,7 @@ class ExportSurvey
             $string = '';
         }
 
-        return '"'.$string.'"';
+        return '"' . $string . '"';
     }
 
     private function addResponses(array &$content, array $surveyResponsesByUuid): void
@@ -127,12 +127,12 @@ class ExportSurvey
     {
         $content[] = '';
         if (!$survey->getRespondents()->isEmpty()) {
-            $content[] = 'Horodateur,Participants - '.$survey->getRespondents()->count();
+            $content[] = 'Horodateur,Participants - ' . $survey->getRespondents()->count();
             foreach ($survey->getRespondents() as $respondent) {
                 $row = [];
                 $identity = $respondent->getUser()->getFirstIdentity();
                 $row[] = $respondent->getCreatedAt()->format('d/m/Y H:i');
-                $row[] = $identity->getName().' '.$identity->getFirstName();
+                $row[] = $identity->getName() . ' ' . $identity->getFirstName();
                 $content[] = implode(',', $row);
             }
         } else {

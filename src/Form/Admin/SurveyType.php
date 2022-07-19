@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\User;
-use App\Entity\Survey;
 use App\Entity\BikeRide;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
+use App\Entity\Survey;
+use App\Entity\User;
 use App\Form\Transformer\BikeRideTransformer;
 use Doctrine\Common\Collections\Collection;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class SurveyType extends AbstractType
 {
@@ -78,7 +78,7 @@ class SurveyType extends AbstractType
                     'Afficher le sondage à l\'inscription à une sortie' => self::DISPLAY_BIKE_RIDE,
                     'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_MEMBER_LIST,
                 ],
-                'choice_attr' => function() {
+                'choice_attr' => function () {
                     return [
                         'data-modifier' => 'surveyDisplay',
                         'class' => 'form-modifier',
@@ -95,7 +95,7 @@ class SurveyType extends AbstractType
             ])
         ;
 
-        $formModifier = function(FormInterface $form, array $options, ?int $displayCriteria, ?BikeRide $bikeRide, ?Collection $members) {
+        $formModifier = function (FormInterface $form, array $options, ?int $displayCriteria, ?BikeRide $bikeRide, ?Collection $members) {
             $disabled = (null !== $displayCriteria);
             $form
                 ->add('surveyIssues', CollectionType::class, [

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Respondent;
-use App\Entity\User;
 use App\Entity\Survey;
+use App\Entity\User;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Survey|null find($id, $lockMode = null, $lockVersion = null)
@@ -34,7 +34,6 @@ class SurveyRepository extends ServiceEntityRepository
             ->orderBy('s.id', 'DESC')
         ;
     }
-
 
     // /**
     //  * @return Survey[] Returns an array of Survey objects
@@ -61,7 +60,6 @@ class SurveyRepository extends ServiceEntityRepository
                 (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
                 (new Expr())->isNull('s.bikeRide'),
-
                 (new Expr())->orX(
                     (new Expr())->isNull('m'),
                     (new Expr())->eq('m', ':member'),
@@ -73,13 +71,14 @@ class SurveyRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
     public function findActiveAndWithoutResponse(User $member): array
     {
         $respondents = $this->_em->createQueryBuilder()
             ->select('(r.survey)')
             ->from(Respondent::class, 'r')
             ->where(
-                (new Expr)->eq('r.user', ':rMember')
+                (new Expr())->eq('r.user', ':rMember')
             );
 
         return $this->createQueryBuilder('s')
@@ -90,7 +89,6 @@ class SurveyRepository extends ServiceEntityRepository
                 (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
                 (new Expr())->isNull('s.bikeRide'),
                 (new Expr())->notIn('s', $respondents->getDQL()),
-
                 (new Expr())->orX(
                     (new Expr())->isNull('m'),
                     (new Expr())->eq('m', ':member'),

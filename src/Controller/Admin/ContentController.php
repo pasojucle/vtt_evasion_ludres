@@ -29,7 +29,7 @@ class ContentController extends AbstractController
     private const HOME_TABS = [
         self::HOME_TAB_FLASH => 'content.type.flash',
         self::HOME_TAB_CONTENT => 'content.type.content',
-        self::HOME_TAB_BACKGROUNDS => 'content.type.backgrounds'
+        self::HOME_TAB_BACKGROUNDS => 'content.type.backgrounds',
     ];
 
     public function __construct(
@@ -46,7 +46,7 @@ class ContentController extends AbstractController
         ?string $route,
         int $tab
     ): Response {
-        $isFlash = $tab === self::HOME_TAB_FLASH;
+        $isFlash = self::HOME_TAB_FLASH === $tab;
 
         $form = $this->createForm(HomeBackgroundsType::class, $this->contentRepository->findOneByRoute('home'));
         $form->handleRequest($request);
@@ -80,7 +80,6 @@ class ContentController extends AbstractController
         ?string $route,
         bool $isFlash
     ): Response {
-
         $query = $this->contentRepository->findContentQuery($route, $isFlash);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 

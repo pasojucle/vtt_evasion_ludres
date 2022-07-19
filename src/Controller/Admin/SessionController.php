@@ -9,7 +9,6 @@ use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
 use App\Repository\SessionRepository;
-use App\Service\MailerService;
 use App\Service\SessionService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
@@ -125,7 +124,7 @@ class SessionController extends AbstractController
         $this->entityManager->remove($session);
         $this->entityManager->flush();
 
-        $this->addFlash('success', $userPresenter->viewModel()->member->fullName.' à bien été désincrit');
+        $this->addFlash('success', $userPresenter->viewModel()->member->fullName . ' à bien été désincrit');
 
         return $this->redirectToRoute('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),

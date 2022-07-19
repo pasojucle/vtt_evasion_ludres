@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\UseCase\ModalWindow;
 
-use ReflectionClass;
-use App\Entity\ModalWindow;
 use App\Entity\Survey;
-use App\Service\UserService;
-use App\Repository\SurveyRepository;
 use App\Repository\ModalWindowRepository;
-use Symfony\Component\Security\Core\Security;
+use App\Repository\SurveyRepository;
+use App\Service\UserService;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Security;
 
 class ShowModalWindow
 {
@@ -30,7 +29,7 @@ class ShowModalWindow
     {
         $session = $this->requestStack->getCurrentRequest()->getSession();
         $modalWindowShowOn = (null !== $session->get('modal_window_show_on'))
-            ?  json_decode($session->get('modal_window_show_on'), true)
+            ? json_decode($session->get('modal_window_show_on'), true)
             : [];
         $user = $this->security->getUser();
         if (null !== $user) {
@@ -40,18 +39,18 @@ class ShowModalWindow
             $modalWindows = array_merge($modalWindows, $surveys);
 
             if (!empty($modalWindows)) {
-                foreach($modalWindows as $modalWindow) {
-                    $index = $user->licenceNumber.'-'.(new ReflectionClass($modalWindow))->getShortName().'-'.$modalWindow->getId();
+                foreach ($modalWindows as $modalWindow) {
+                    $index = $user->licenceNumber . '-' . (new ReflectionClass($modalWindow))->getShortName() . '-' . $modalWindow->getId();
 
                     if (!in_array($index, $modalWindowShowOn)) {
                         $modalWindowShowOn[] = $index;
                         $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
-                
+
                         return [
                             'title' => $modalWindow->getTitle(),
                             'content' => $modalWindow->getContent(),
-                            'url' => ($modalWindow instanceof Survey) 
-                                ? $this->urlGenerator->generate('survey',['survey' => $modalWindow->getId()]) : null,
+                            'url' => ($modalWindow instanceof Survey)
+                                ? $this->urlGenerator->generate('survey', ['survey' => $modalWindow->getId()]) : null,
                         ];
                     }
                 }

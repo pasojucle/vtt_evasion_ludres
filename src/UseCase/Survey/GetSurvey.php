@@ -20,7 +20,6 @@ class GetSurvey
     {
         $this->getSurvey($survey);
         $survey->setDisplayCriteria($this->getDisplayCriteria($survey));
-
     }
 
     private function getSurvey(?Survey &$survey): void
@@ -30,12 +29,11 @@ class GetSurvey
             $issue = new SurveyIssue();
             $survey->addSurveyIssue($issue);
         }
-
     }
 
     private function getDisplayCriteria(Survey $survey): ?int
     {
-        switch(true) {
+        switch (true) {
             case null !== $survey->getBikeRide():
                 $displayCriteria = SurveyType::DISPLAY_BIKE_RIDE;
                 break;

@@ -50,7 +50,7 @@ class BikeRideController extends AbstractController
         ContentRepository $contentRepository
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        
+
         $presenter->present($this->getUser());
 
         return $this->render('bike_ride/user_list.html.twig', [

@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\Collection;
 class SessionService
 {
     private array $seasonStartAt;
+
     public function __construct(
         private SessionRepository $sessionRepository,
         private UserPresenter $userPresenter,
@@ -81,7 +82,7 @@ class SessionService
             if (null === $userCluster) {
                 $cluster = new Cluster();
                 $count = count($clustersLevelAsUser) + 1;
-                $cluster->setTitle($userLevel->getTitle().' '.$count)
+                $cluster->setTitle($userLevel->getTitle() . ' ' . $count)
                     ->setLevel($userLevel)
                     ->setBikeRide($bikeRide)
                     ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)

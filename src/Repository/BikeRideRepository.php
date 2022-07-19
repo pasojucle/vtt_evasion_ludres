@@ -59,7 +59,7 @@ class BikeRideRepository extends ServiceEntityRepository
      */
     public function findAllFiltered(array $filters): array
     {
-        /**@var QueryBuilder $qb */
+        /** @var QueryBuilder $qb */
         $qb = $this->findAllQuery($filters);
 
         return $qb->getQuery()->getResult();
@@ -71,7 +71,7 @@ class BikeRideRepository extends ServiceEntityRepository
     public function findEnableView(): array
     {
         $today = new DateTime();
-        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d').' 23:59:00');
+        $today = DateTime::createFromFormat('Y-m-d H:i:s', $today->format('Y-m-d') . ' 23:59:00');
 
         return $this->createQueryBuilder('br')
             ->andWhere(
@@ -85,22 +85,22 @@ class BikeRideRepository extends ServiceEntityRepository
         ;
     }
 
-        /**
+    /**
      * @return BikeRide[] Returns an array of enent objects
      */
     public function findLike(string $query): array
     {
         if (1 === preg_match('#^(\d{2})\/(\d{1,2})#', $query)) {
             $today = new DateTime();
-            $query = $query.'/'. $today->format('y');
+            $query = $query . '/' . $today->format('y');
         }
         $startAt = DateTimeImmutable::createFromFormat('d/m/y', $query);
-        $orX = (new Expr)->orX();
+        $orX = (new Expr())->orX();
         $orX->add((new Expr())->like('br.title', ':title'));
-        $params['title'] = '%'.$query.'%';
+        $params['title'] = '%' . $query . '%';
         if ($startAt) {
             $orX->add((new Expr())->eq('br.startAt', ':query'));
-            $params['query'] = $startAt->setTime(0,0,0);
+            $params['query'] = $startAt->setTime(0, 0, 0);
         }
 
         return $this->createQueryBuilder('br')

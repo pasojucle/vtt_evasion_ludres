@@ -20,7 +20,7 @@ class AddressType extends AbstractType
             ->add('street', TextType::class, [
                 'label' => 'Adresse',
                 'row_attr' => [
-                    'class' => 'form-group-inline full-width'.$options['row_class'],
+                    'class' => 'form-group-inline full-width' . $options['row_class'],
                 ],
                 'attr' => [
                     'data-constraint' => '',
@@ -35,7 +35,7 @@ class AddressType extends AbstractType
                         'max' => 5,
                     ]), ],
                 'row_attr' => [
-                    'class' => 'form-group-inline'.$options['row_class'],
+                    'class' => 'form-group-inline' . $options['row_class'],
                 ],
                 'attr' => [
                     'data-constraint' => 'app-PostalCode',
@@ -45,7 +45,7 @@ class AddressType extends AbstractType
             ->add('town', TextType::class, [
                 'label' => 'Ville',
                 'row_attr' => [
-                    'class' => 'form-group-inline'.$options['row_class'],
+                    'class' => 'form-group-inline' . $options['row_class'],
                 ],
                 'attr' => [
                     'data-constraint' => '',

@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\ContentRepository;
 use DateTime;
-use App\Entity\Background;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\ManyToMany;
-use App\Repository\ContentRepository;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\OrderBy;
 
 #[Entity(repositoryClass: ContentRepository::class)]
@@ -42,7 +41,7 @@ class Content
         'schedule' => 'content.route.schedule',
         'user_account' => 'content.route.user_account',
         'default' => 'content.route.default',
-        'links' => 'content.route.links'
+        'links' => 'content.route.links',
     ];
 
     #[Column(type: 'integer')]
@@ -74,7 +73,7 @@ class Content
     private ? string $title = null;
 
     #[Column(type: 'string', length: 255, nullable: true)]
-    private ?string $filename  = null;
+    private ?string $filename = null;
 
     #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $url = null;

@@ -65,7 +65,7 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getFirstIdentity()->getName().' '.$user->getFirstIdentity()->getFirstName();
+        $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
         $data = [
             'licenceNumber' => $user->getLicenceNumber(),
             'medicalCertificateDate' => $user->getHealth()->getMedicalCertificateDate(),

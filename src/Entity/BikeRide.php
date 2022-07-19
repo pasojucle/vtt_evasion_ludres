@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Survey;
+use App\Repository\BikeRideRepository;
 use DateTimeImmutable;
-use App\Entity\BikeRideType;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\JoinColumn;
-use App\Repository\BikeRideRepository;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity(repositoryClass: BikeRideRepository::class)]
 class BikeRide
@@ -81,7 +79,6 @@ class BikeRide
 
     #[OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
     private ?Survey $survey = null;
-
 
     public function __construct()
     {
@@ -240,12 +237,12 @@ class BikeRide
     public function setSurvey(?Survey $survey): self
     {
         // unset the owning side of the relation if necessary
-        if ($survey === null && $this->survey !== null) {
+        if (null === $survey && null !== $this->survey) {
             $this->survey->setBikeRide(null);
         }
 
         // set the owning side of the relation if necessary
-        if ($survey !== null && $survey->getBikeRide() !== $this) {
+        if (null !== $survey && $survey->getBikeRide() !== $this) {
             $survey->setBikeRide($this);
         }
 

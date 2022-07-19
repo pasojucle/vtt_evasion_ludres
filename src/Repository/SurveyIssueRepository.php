@@ -37,7 +37,7 @@ class SurveyIssueRepository extends ServiceEntityRepository
                 ->andWhere(
                     (new Expr())->like('sr.content', ':content')
                 )
-                ->setParameter('content', '%'.$content.'%');
+                ->setParameter('content', '%' . $content . '%');
         }
 
         return $qb->getQuery()

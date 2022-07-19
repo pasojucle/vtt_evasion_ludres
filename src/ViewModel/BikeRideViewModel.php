@@ -95,8 +95,8 @@ class BikeRideViewModel extends AbstractViewModel
         }
 
         $today = new DateTime();
-        $intervalDisplay = new DateInterval('P'.$this->displayDuration.'D');
-        $intervalClosing = new DateInterval('P'.$this->closingDuration.'D');
+        $intervalDisplay = new DateInterval('P' . $this->displayDuration . 'D');
+        $intervalClosing = new DateInterval('P' . $this->closingDuration . 'D');
 
         return $this->displayAt->sub($intervalDisplay) <= $today && $today <= $this->closingAt->sub($intervalClosing);
     }
@@ -121,7 +121,7 @@ class BikeRideViewModel extends AbstractViewModel
 
     public function isNext(): bool
     {
-        $interval = new DateInterval('P'.$this->displayDuration.'D');
+        $interval = new DateInterval('P' . $this->displayDuration . 'D');
 
         return $this->displayAt->sub($interval) <= $this->today && $this->today <= $this->closingAt;
     }
@@ -151,7 +151,7 @@ class BikeRideViewModel extends AbstractViewModel
     {
         return  (null === $this->endAt)
             ? $appExtension->formatDateLong($this->startAt)
-            : $appExtension->formatDateLong($this->startAt).' au '.$appExtension->formatDateLong($this->endAt);
+            : $appExtension->formatDateLong($this->startAt) . ' au ' . $appExtension->formatDateLong($this->endAt);
     }
 
     public function getClusters(): ClustersViewModel
@@ -161,7 +161,6 @@ class BikeRideViewModel extends AbstractViewModel
 
     private function getFilename(): ?string
     {
-        return ($this->entity->getFileName()) ? $this->services->uploadsDirectory.$this->entity->getFileName() : null;
-
+        return ($this->entity->getFileName()) ? $this->services->uploadsDirectory . $this->entity->getFileName() : null;
     }
 }

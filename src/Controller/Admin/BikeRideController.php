@@ -6,23 +6,22 @@ namespace App\Controller\Admin;
 
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
-use App\Service\BikeRideService;
-use App\ViewModel\UserPresenter;
-use App\Repository\UserRepository;
-use App\ViewModel\BikeRidePresenter;
-use App\ViewModel\BikeRidesPresenter;
 use App\Repository\BikeRideRepository;
+use App\Repository\BikeRideTypeRepository;
+use App\Repository\UserRepository;
+use App\Service\BikeRideService;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\BikeRideTypeRepository;
-use App\Repository\SessionRepository;
+use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRidesPresenter;
+use App\ViewModel\UserPresenter;
 use App\ViewModel\UsersPresenter;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class BikeRideController extends AbstractController
@@ -79,7 +78,7 @@ class BikeRideController extends AbstractController
         }
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $editBikeRide->execute($form, $request);
-            
+
             $this->addFlash('success', 'La sortie à bien été enregistrée');
 
             $filters = $this->bikeRideService->getFilters(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
@@ -128,7 +127,7 @@ class BikeRideController extends AbstractController
         Request $request
     ): JsonResponse {
         $query = $request->query->get('q');
-        $bikeRides = (null !== $query) 
+        $bikeRides = (null !== $query)
             ? $this->bikeRideRepository->findLike($query)
             : $this->bikeRideRepository->findAllDESC();
 
@@ -137,7 +136,7 @@ class BikeRideController extends AbstractController
         foreach ($presenter->viewModel()->bikeRides as $bikeRide) {
             $response[] = [
                 'id' => $bikeRide->entity->getId(),
-                'text' => $bikeRide->period.' - '.$bikeRide->title,
+                'text' => $bikeRide->period . ' - ' . $bikeRide->title,
             ];
         }
 
@@ -150,7 +149,7 @@ class BikeRideController extends AbstractController
         UsersPresenter $usersPresenter,
         BikeRidePresenter $bikeRidePresenter,
         BikeRide $bikeRide
-    ){
+    ) {
         $usersPresenter->present($userRepository->findFramers());
         $bikeRidePresenter->present($bikeRide);
 

@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Background;
-use App\Service\UploadService;
-use App\Service\PaginatorService;
 use App\Form\Admin\BackgroundType;
 use App\Repository\BackgroundRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\PaginatorService;
+use App\Service\UploadService;
 use App\UseCase\Background\EditBackground;
+use App\ViewModel\Background\BackgroundPresenter;
+use App\ViewModel\Background\BackgroundsPresenter;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\ViewModel\Background\BackgroundPresenter;
-use App\ViewModel\Background\BackgroundsPresenter;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class BackgroundController extends AbstractController
@@ -36,6 +36,7 @@ class BackgroundController extends AbstractController
         $backgrounds = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $presenter->present($backgrounds);
+
         return $this->render('background/admin/list.html.twig', [
             'backgrounds' => $presenter->viewModel()->backgrounds,
             'lastPage' => $paginator->lastPage($backgrounds),
@@ -56,6 +57,7 @@ class BackgroundController extends AbstractController
         }
 
         $presenter->present($background);
+
         return $this->render('background/admin/edit.html.twig', [
             'background' => $presenter->viewModel(),
             'form' => $form->createView(),

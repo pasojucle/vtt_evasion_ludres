@@ -37,7 +37,7 @@ class ExportBikeRide
 
     private function addHeader(): void
     {
-        $this->fileContent[] = $this->bikeRide->getTitle().' - '.$this->bikeRide->getStartAt()->format('d/m/Y');
+        $this->fileContent[] = $this->bikeRide->getTitle() . ' - ' . $this->bikeRide->getStartAt()->format('d/m/Y');
         $this->fileContent[] = '';
         $row = ['n° de Licence', 'Nom', 'Prénom', 'Présent', 'Niveau'];
         $this->fileContent[] = implode(self::SEPARATOR, $row);
@@ -62,8 +62,8 @@ class ExportBikeRide
 
     private function getResponse(): Response
     {
-        $filename = $this->bikeRide->getTitle().'_'.$this->bikeRide->getStartAt()->format('Y_m_d');
-        $filename = $this->filenameService->clean($filename).'.csv';
+        $filename = $this->bikeRide->getTitle() . '_' . $this->bikeRide->getStartAt()->format('Y_m_d');
+        $filename = $this->filenameService->clean($filename) . '.csv';
         $response = new Response(implode(PHP_EOL, $this->fileContent));
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

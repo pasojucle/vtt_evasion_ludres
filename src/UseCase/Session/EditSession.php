@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use DateTime;
-use App\Entity\User;
 use App\Entity\Licence;
 use App\Entity\Respondent;
+use App\Entity\User;
 use App\Service\MailerService;
 use App\ViewModel\BikeRideViewModel;
 use App\ViewModel\UserViewModel;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -56,13 +56,13 @@ class EditSession
 
     private function confirmationRegistration(UserViewModel $user, BikeRideViewModel $bikeRide): void
     {
-        if ($user->seasonLicence->category === Licence::CATEGORY_MINOR) {
+        if (Licence::CATEGORY_MINOR === $user->seasonLicence->category) {
             $this->mailerService->sendMailToMember([
                 'name' => $user->member->name,
                 'firstName' => $user->member->firstName,
                 'email' => $user->mainEmail,
                 'subject' => 'Confirmation d\'inscription à une sortie',
-                'bikeRideTitleAndPeriod' => $bikeRide->title.' du '.$bikeRide->period,
+                'bikeRideTitleAndPeriod' => $bikeRide->title . ' du ' . $bikeRide->period,
             ], 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION');
         }
     }

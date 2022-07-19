@@ -11,12 +11,10 @@ class BackgroundService
 {
     public function __construct(private ContentRepository $contentRepository)
     {
-        
     }
 
     public function getDefault(): Collection
     {
         return $this->contentRepository->findOneByRoute('default')?->getBackgrounds();
     }
-
 }

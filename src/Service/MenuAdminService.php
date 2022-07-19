@@ -68,7 +68,7 @@ class MenuAdminService
                 'role' => 'ROLE_REGISTER',
             ],
             [
-                'label' => 'Assurances '.$this->seasonService->getCurrentSeason(),
+                'label' => 'Assurances ' . $this->seasonService->getCurrentSeason(),
                 'route' => 'admin_coverage_list',
                 'pattern' => '/admin_coverage/',
                 'role' => 'ROLE_REGISTER',

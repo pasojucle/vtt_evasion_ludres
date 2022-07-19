@@ -40,7 +40,7 @@ class LicenceNumberType extends AbstractType
                 'width' => '100%',
                 'label' => 'Adhérent',
                 'remote_params' => [
-                    'filters' => json_encode(['status' => 'SEASON_'.$this->seasonService->getCurrentSeason()]),
+                    'filters' => json_encode(['status' => 'SEASON_' . $this->seasonService->getCurrentSeason()]),
                 ],
                 'required' => true,
                 'attr' => [

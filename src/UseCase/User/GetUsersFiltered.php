@@ -114,7 +114,7 @@ abstract class GetUsersFiltered
         foreach ($users as $user) {
             $response[] = [
                 'id' => $user->getId(),
-                'text' => $user->GetFirstIdentity()->getName().' '.$user->GetFirstIdentity()->getFirstName(),
+                'text' => $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName(),
             ];
         }
 
@@ -143,7 +143,7 @@ abstract class GetUsersFiltered
     {
         return ($filtered) ? $request->getSession()->get($this->filterName) : [
         'fullName' => null,
-        'status' => 'SEASON_'.$this->seasonService->getCurrentSeason(),
+        'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
         'levels' => null,
         ];
     }

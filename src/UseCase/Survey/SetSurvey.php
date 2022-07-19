@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\UseCase\Survey;
 
-
 use App\Form\Admin\SurveyType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
@@ -13,7 +12,6 @@ class SetSurvey
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
-        
     }
 
     public function execute(FormInterface $form): void

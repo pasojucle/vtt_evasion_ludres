@@ -6,11 +6,11 @@ namespace App\UseCase\Background;
 
 use App\Entity\Background;
 use App\Service\UploadService;
-use Symfony\Component\Finder\Finder;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\Request;
 
 class EditBackground
 {
@@ -43,7 +43,6 @@ class EditBackground
         $this->entityManager->flush();
     }
 
-  
     public function makeAllSizes(Background $background): void
     {
         $sizes = [
@@ -56,39 +55,39 @@ class EditBackground
         ];
 
         foreach ($sizes as $size) {
-            $this->resizeBackground($background->getFilename() ,$size['positions'], $size['outputWidth'], $size['outputHeight'], $size['outputDir']);
+            $this->resizeBackground($background->getFilename(), $size['positions'], $size['outputWidth'], $size['outputHeight'], $size['outputDir']);
         }
     }
 
-    public function resizeBackground(string $filename,array $positions, int $outputWidth, int $outputHeight, string $outputDir): bool
+    public function resizeBackground(string $filename, array $positions, int $outputWidth, int $outputHeight, string $outputDir): bool
     {
-        $path = $this->parameterBag->get('backgrounds_directory_path').$filename;
-        list($originWidth, $originHeight,  $type) = getimagesize($path);
+        $path = $this->parameterBag->get('backgrounds_directory_path') . $filename;
+        list($originWidth, $originHeight, $type) = getimagesize($path);
 
-        $ratio = ($outputWidth / $outputHeight <  $originWidth / $originHeight) 
-            ? $outputHeight / $originHeight 
+        $ratio = ($outputWidth / $outputHeight < $originWidth / $originHeight)
+            ? $outputHeight / $originHeight
             : $outputWidth / $originWidth;
-     
-        $imageSrc = ($type == IMAGETYPE_JPEG) ? imagecreatefromjpeg($path): imagecreatefrompng($path);
-        $imageBlack = imagecreatetruecolor( $outputWidth, $outputHeight );
+
+        $imageSrc = (IMAGETYPE_JPEG == $type) ? imagecreatefromjpeg($path) : imagecreatefrompng($path);
+        $imageBlack = imagecreatetruecolor($outputWidth, $outputHeight);
 
         $this->mkdirIfNotExists($outputDir);
 
-        $outputPath = $this->parameterBag->get('backgrounds_directory_path'). $outputDir . DIRECTORY_SEPARATOR. $filename;
-        imagecopyresampled($imageBlack, $imageSrc, 0, 0, (int) round($positions['positionX']), (int) round($positions['positionY']), (int) round($originWidth * $ratio), (int) round($originHeight * $ratio), $originWidth, $originHeight );
+        $outputPath = $this->parameterBag->get('backgrounds_directory_path') . $outputDir . DIRECTORY_SEPARATOR . $filename;
+        imagecopyresampled($imageBlack, $imageSrc, 0, 0, (int) round($positions['positionX']), (int) round($positions['positionY']), (int) round($originWidth * $ratio), (int) round($originHeight * $ratio), $originWidth, $originHeight);
 
-        if (!imagejpeg ($imageBlack, $outputPath) || !imagepng ($imageBlack, $outputPath)) {
+        if (!imagejpeg($imageBlack, $outputPath) || !imagepng($imageBlack, $outputPath)) {
             return false;
         }
 
         return true;
     }
 
-    private function mkdirIfNotExists(string $outputDir):void
+    private function mkdirIfNotExists(string $outputDir): void
     {
         $filesystem = new Filesystem();
-        if (!$filesystem->exists($this->parameterBag->get('backgrounds_directory_path'). $outputDir)) {
-            $filesystem->mkdir($this->parameterBag->get('backgrounds_directory_path'). $outputDir, 0775);
+        if (!$filesystem->exists($this->parameterBag->get('backgrounds_directory_path') . $outputDir)) {
+            $filesystem->mkdir($this->parameterBag->get('backgrounds_directory_path') . $outputDir, 0775);
         }
     }
 }

@@ -46,7 +46,7 @@ class SeasonService
     {
         $seasons = [];
         foreach (range(2021, $this->getCurrentSeason()) as $season) {
-            $seasons['Saison '.$season] = 'SEASON_'.$season;
+            $seasons['Saison ' . $season] = 'SEASON_' . $season;
         }
 
         return array_reverse($seasons);

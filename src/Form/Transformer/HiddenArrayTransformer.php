@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Form\Transformer;
 
-
 use Symfony\Component\Form\DataTransformerInterface;
-
 
 class HiddenArrayTransformer implements DataTransformerInterface
 {
-
-
     /**
      * Transforms an string (json) to a array (array).
      *

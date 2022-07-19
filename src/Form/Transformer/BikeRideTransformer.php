@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form\Transformer;
 
-use IntlDateFormatter;
 use App\Entity\BikeRide;
 use DateTimeImmutable;
 use Doctrine\Persistence\ObjectManager;
+use IntlDateFormatter;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-
 
 class BikeRideTransformer implements DataTransformerInterface
 {
@@ -42,7 +41,7 @@ class BikeRideTransformer implements DataTransformerInterface
             return '';
         }
 
-        return [$bikeRide->getId() => $this->getPeriod($bikeRide).' - '.$bikeRide->getTitle()];
+        return [$bikeRide->getId() => $this->getPeriod($bikeRide) . ' - ' . $bikeRide->getTitle()];
     }
 
     /**
@@ -87,6 +86,6 @@ class BikeRideTransformer implements DataTransformerInterface
     {
         return  (null === $bikeRide->getEndAt())
         ? $this->formatDateLong($bikeRide->getStartAt())
-        : $this->formatDateLong($bikeRide->getStartAt()).' au '.$this->formatDateLong($bikeRide->getEndAt());
+        : $this->formatDateLong($bikeRide->getStartAt()) . ' au ' . $this->formatDateLong($bikeRide->getEndAt());
     }
 }

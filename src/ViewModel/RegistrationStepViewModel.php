@@ -82,6 +82,6 @@ class RegistrationStepViewModel extends AbstractViewModel
             return null;
         }
 
-        return 'registration/form/'.str_replace('form.', '', UserType::FORMS[$form]).'.html.twig';
+        return 'registration/form/' . str_replace('form.', '', UserType::FORMS[$form]) . '.html.twig';
     }
 }

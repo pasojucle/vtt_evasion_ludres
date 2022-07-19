@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
-use DateTimeImmutable;
 use App\Entity\Licence;
 use App\Model\Currency;
+use DateTime;
+use DateTimeImmutable;
 
 class LicenceViewModel extends AbstractViewModel
 {

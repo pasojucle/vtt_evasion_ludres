@@ -6,8 +6,8 @@ namespace App\Form\Type;
 
 use App\Entity\Background;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BackgroundsType extends AbstractType

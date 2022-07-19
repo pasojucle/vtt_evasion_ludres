@@ -29,13 +29,13 @@ class PdfService
     public function makePdf(string $html, string $filename, ?string $directory = null, string $paper = 'A4')
     {
         if (null === $directory) {
-            $directory = $this->parameterBag->get('tmp_directory_path').'licences';
+            $directory = $this->parameterBag->get('tmp_directory_path') . 'licences';
         }
 
         $options = new Options();
         $options->setIsHtml5ParserEnabled(true);
         $dompdf = new Dompdf($options);
-        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir().'/public');
+        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir() . '/public');
         $dompdf->loadHtml($html);
         $dompdf->setPaper($paper, 'portrait');
         $dompdf->render();
@@ -47,7 +47,7 @@ class PdfService
         if (!is_dir($directory)) {
             mkdir($directory);
         }
-        $pdfFilepath = $directory.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
+        $pdfFilepath = $directory . DIRECTORY_SEPARATOR . $this->filenameService->clean($filename) . '.pdf';
 
         file_put_contents($pdfFilepath, $output);
 
@@ -126,7 +126,7 @@ class PdfService
     public function joinPdf(array $files, ?User $user = null, ?string $filename = null): string
     {
         if (null === $filename) {
-            $filename = $this->parameterBag->get('tmp_directory_path').'pdf_temp.pdf';
+            $filename = $this->parameterBag->get('tmp_directory_path') . 'pdf_temp.pdf';
         }
         // initiate FPDI
         $pdf = new Fpdi();

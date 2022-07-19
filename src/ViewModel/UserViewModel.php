@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
-use App\Entity\User;
-use App\Entity\Level;
-use App\Entity\Licence;
 use App\Entity\BikeRide;
 use App\Entity\Identity;
+use App\Entity\Level;
+use App\Entity\Licence;
+use App\Entity\User;
+use DateTime;
 
 class UserViewModel extends AbstractViewModel
 {
@@ -84,8 +84,8 @@ class UserViewModel extends AbstractViewModel
     {
         if (null !== $this->member) {
             return ($this->kinship)
-                ? $this->kinship->name.' '.$this->kinship->firstName
-                : $this->member->name.' '.$this->member->firstName;
+                ? $this->kinship->name . ' ' . $this->kinship->firstName
+                : $this->member->name . ' ' . $this->member->firstName;
         }
 
         return '';
@@ -103,7 +103,7 @@ class UserViewModel extends AbstractViewModel
     public function getFullNameChildren()
     {
         if ($this->kinship && $this->member) {
-            return $this->member->name.' '.$this->member->firstName;
+            return $this->member->name . ' ' . $this->member->firstName;
         }
 
         return '';
@@ -353,7 +353,7 @@ class UserViewModel extends AbstractViewModel
             }
         }
 
-        return [                
+        return [
             'class' => ['badge' => 'person person-rays', 'icon' => '<i class="fa-solid fa-person-rays"></i>'],
             'text' => 'session.availability.undefined',
         ];

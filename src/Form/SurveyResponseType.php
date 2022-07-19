@@ -30,7 +30,7 @@ class SurveyResponseType extends AbstractType
                 }
                 $form
                     ->add('value', ChoiceType::class, [
-                        'choices' =>  array_flip($choices),
+                        'choices' => array_flip($choices),
                         'expanded' => true,
                         'label' => false,
                         'row_attr' => [

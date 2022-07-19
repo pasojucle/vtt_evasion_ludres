@@ -110,8 +110,8 @@ class EditRegistration
 
         $nextId = $this->userRepository->findNextId();
         $identity = $user->getFirstIdentity();
-        $fullName = strtoupper($identity->getName()).ucfirst($identity->getFirstName());
-        $user->setLicenceNumber(substr($fullName, 0, 20).$nextId);
+        $fullName = strtoupper($identity->getName()) . ucfirst($identity->getFirstName());
+        $user->setLicenceNumber(substr($fullName, 0, 20) . $nextId);
 
         return $identity;
     }
@@ -158,7 +158,7 @@ class EditRegistration
         if (Licence::TYPE_RIDE !== $user->seasonLicence->type) {
             $medicalCertificateDate = $user->health->medicalCertificateDateObject;
             $medicalCertificateDuration = (Licence::TYPE_HIKE === $user->seasonLicence->type) ? 5 : 3;
-            $intervalDuration = new DateInterval('P'.$medicalCertificateDuration.'Y');
+            $intervalDuration = new DateInterval('P' . $medicalCertificateDuration . 'Y');
             $today = new DateTime();
             if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->health->isMedicalCertificateRequired) {
                 $isMedicalCertificateRequired = true;

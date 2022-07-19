@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
 use App\Entity\Identity;
+use DateTime;
 
 class IdentityViewModel extends AbstractViewModel
 {
@@ -46,9 +46,9 @@ class IdentityViewModel extends AbstractViewModel
         $identityView->services = $services;
         $identityView->name = $identity->getName();
         $identityView->firstName = $identity->getFirstName();
-        $identityView->fullName = $identity->getName().' '.$identity->getFirstName();
+        $identityView->fullName = $identity->getName() . ' ' . $identity->getFirstName();
         $identityView->birthDate = ($bithDate) ? $bithDate->format('d/m/Y') : null;
-        $identityView->birthPlace = $identity->getBirthPlace().' ('.$identity->getBirthDepartment().')';
+        $identityView->birthPlace = $identity->getBirthPlace() . ' (' . $identity->getBirthDepartment() . ')';
         $identityView->address = $identityView->getAddress($member);
         $identityView->email = $identity->getEmail();
         $identityView->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
@@ -90,18 +90,18 @@ class IdentityViewModel extends AbstractViewModel
 
     private function getPicture(): ?string
     {
-
-        return (null !== $this->entity->getPicture()) ? $this->services->uploadsDirectory.$this->entity->getPicture() : null;
+        return (null !== $this->entity->getPicture()) ? $this->services->uploadsDirectory . $this->entity->getPicture() : null;
     }
 
     private function getPhoneAnchor(?string $phone): ?string
     {
-        return ($phone) ? '<a class="phone" href="tel:'.$phone.'">'.$phone.'</a>' : '';
+        return ($phone) ? '<a class="phone" href="tel:' . $phone . '">' . $phone . '</a>' : '';
     }
 
     private function getPhonesAnchor(): ?string
     {
         $identity = $this->entity;
+
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
     }
 }

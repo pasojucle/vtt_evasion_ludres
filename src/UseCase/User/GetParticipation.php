@@ -90,7 +90,7 @@ class GetParticipation
     private function getFilters(Request $request, bool $filtered): array
     {
         return ($filtered) ? $request->getSession()->get($this->filterName) : [
-        'season' => 'SEASON_'.$this->seasonService->getCurrentSeason(),
+        'season' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
         'bikeRideType' => null,
         ];
     }

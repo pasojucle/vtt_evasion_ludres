@@ -22,7 +22,7 @@ class OrderLinesViewModel extends AbstractViewModel
                     'quantity' => $line->getQuantity(),
                     'size' => $line->getSize()->getName(),
                     'amount_float' => $amount,
-                    'amount' => number_format($amount, 2).' €',
+                    'amount' => number_format($amount, 2) . ' €',
                 ];
             }
         }

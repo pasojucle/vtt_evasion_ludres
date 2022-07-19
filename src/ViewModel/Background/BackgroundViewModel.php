@@ -8,7 +8,6 @@ use App\Entity\Background;
 use App\ViewModel\AbstractViewModel;
 use App\ViewModel\ServicesPresenter;
 
-
 class BackgroundViewModel extends AbstractViewModel
 {
     public ?Background $entity;
@@ -18,7 +17,6 @@ class BackgroundViewModel extends AbstractViewModel
     public ?string $path;
 
     private ServicesPresenter $services;
-
 
     public static function fromBackground(Background $background, ServicesPresenter $services)
     {
@@ -31,11 +29,8 @@ class BackgroundViewModel extends AbstractViewModel
         return $backgroundView;
     }
 
-    
-
     private function getPath(): ?string
     {
-        return ($this->entity->getFileName()) ? $this->services->backgroundsDirectory.$this->entity->getFileName() : null;
-
+        return ($this->entity->getFileName()) ? $this->services->backgroundsDirectory . $this->entity->getFileName() : null;
     }
 }

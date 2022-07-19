@@ -21,7 +21,7 @@ class IndemnityService
         if (null === $season) {
             $season = $this->seasonService->getCurrentSeason();
         }
-        $query = $this->sessionRepository->findByUserAndFilters($user, ['season' => 'SEASON_'.$season]);
+        $query = $this->sessionRepository->findByUserAndFilters($user, ['season' => 'SEASON_' . $season]);
         /** @var QueryBuilder $query */
         $sessions = $query->getQuery()->getResult();
 

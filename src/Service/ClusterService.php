@@ -7,7 +7,6 @@ namespace App\Service;
 use App\Entity\Cluster;
 use Doctrine\Common\Collections\ArrayCollection;
 
-
 class ClusterService
 {
     public function getMemberSessions(Cluster $cluster): ArrayCollection

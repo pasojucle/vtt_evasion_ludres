@@ -39,7 +39,7 @@ class DiseaseType extends AbstractType
             $form
                 ->add('curentTreatment', TextType::class, [
                     'attr' => [
-                        'class' => ($isActive) ? $curentTreatmentClass : $curentTreatmentClass.' disabled',
+                        'class' => ($isActive) ? $curentTreatmentClass : $curentTreatmentClass . ' disabled',
                         'placeholder' => $currentTraitementLabel,
                     ],
                     'required' => $isActive,

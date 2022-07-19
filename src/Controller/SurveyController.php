@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
-use App\Entity\Respondent;
 use App\Form\SurveyResponsesType;
-use App\Repository\SurveyRepository;
 use App\Repository\RespondentRepository;
+use App\Repository\SurveyRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,13 +34,13 @@ class SurveyController extends AbstractController
         if ($now < $survey->getStartAt()) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le survey sera accessible à partir du '.$survey->getStartAt()->format('d/m/Y'),
+                'content' => 'Le survey sera accessible à partir du ' . $survey->getStartAt()->format('d/m/Y'),
             ];
         }
         if ($survey->getEndAt() < $now) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le survey est clôturé depuis le '.$survey->getEndAt()->format('d/m/Y'),
+                'content' => 'Le survey est clôturé depuis le ' . $survey->getEndAt()->format('d/m/Y'),
             ];
         }
         if (!$message) {
@@ -49,7 +49,7 @@ class SurveyController extends AbstractController
         if ($respondent) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Votre participation au survey a déja été prise en compte le '.$respondent->getCreatedAt()->format('d/m/Y').' a '.$respondent->getCreatedAt()->format('H\hi'),
+                'content' => 'Votre participation au survey a déja été prise en compte le ' . $respondent->getCreatedAt()->format('d/m/Y') . ' a ' . $respondent->getCreatedAt()->format('H\hi'),
             ];
         }
         if (!$message) {

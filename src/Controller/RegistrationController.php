@@ -48,7 +48,7 @@ class RegistrationController extends AbstractController
         private GetReplaces $getReplaces,
         private OrderByService $orderByService,
         private RegistrationService $registrationService,
-        private GetProgress $getProgress, 
+        private GetProgress $getProgress,
         private ContentRepository $contentRepository
     ) {
     }
@@ -177,7 +177,7 @@ class RegistrationController extends AbstractController
                 $registrationStepPresenter->present($step, $presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
                 $step = $registrationStepPresenter->viewModel();
                 if (null !== $step->filename) {
-                    $filename = './files/'.$step->filename;
+                    $filename = './files/' . $step->filename;
                     $files[] = [
                         'filename' => $filename,
                         'form' => $step->form,

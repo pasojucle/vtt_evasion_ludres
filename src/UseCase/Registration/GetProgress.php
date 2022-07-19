@@ -82,7 +82,7 @@ class GetProgress
         // $progress['seasonLicence'] = $this->seasonLicence;
         $progress['season'] = $this->season;
         $progress['step'] = $step;
-        
+
         return $progress;
     }
 
@@ -230,7 +230,7 @@ class GetProgress
             ;
             $this->user->addIdentity($identity);
             // if (Identity::TYPE_KINSHIP === $type) {
-                $this->createAddress($identity);
+            $this->createAddress($identity);
             // }
             $this->entityManager->persist($identity);
         }

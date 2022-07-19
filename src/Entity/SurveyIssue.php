@@ -19,9 +19,9 @@ use Doctrine\ORM\Mapping\OneToMany;
 class SurveyIssue
 {
     public const RESPONSE_TYPE_STRING = 1;
-    
+
     public const RESPONSE_TYPE_CHOICE = 2;
-    
+
     public const RESPONSE_TYPE_CHECK = 3;
 
     public const RESPONSE_TYPES = [

@@ -6,17 +6,15 @@ namespace App\Form;
 
 use App\Validator\EmailHost;
 use App\Validator\FullName;
+use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaV3Type;
+use EWZ\Bundle\RecaptchaBundle\Validator\Constraints\IsTrueV3;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaV3Type;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use EWZ\Bundle\RecaptchaBundle\Validator\Constraints\IsTrueV3;
-use EWZ\Bundle\RecaptchaBundle\Validator\Constraints\IsTrue as RecaptchaTrue;
 
 class ContactType extends AbstractType
 {

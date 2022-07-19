@@ -118,8 +118,8 @@ class GetRegistrationCertificate
         ]);
         $filename = 'Attestation d\'inscription';
         $dirname = 'registration_certificate';
-        $this->pdfService->makePdf($renderPdf, $filename, '../public/'.$dirname);
+        $this->pdfService->makePdf($renderPdf, $filename, '../public/' . $dirname);
 
-        return DIRECTORY_SEPARATOR.$dirname.DIRECTORY_SEPARATOR.$this->filenameService->clean($filename).'.pdf';
+        return DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $this->filenameService->clean($filename) . '.pdf';
     }
 }

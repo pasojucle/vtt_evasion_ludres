@@ -37,7 +37,7 @@ class ExportCluster
     {
         $this->presenter->present($cluster);
         $this->cluster = $this->presenter->viewModel();
-        $this->dirName = $this->parameterBag->get('tmp_directory_path').$this->filenameService->clean($this->presenter->viewModel()->title);
+        $this->dirName = $this->parameterBag->get('tmp_directory_path') . $this->filenameService->clean($this->presenter->viewModel()->title);
         if (!is_dir($this->dirName)) {
             mkdir($this->dirName);
         }
@@ -54,7 +54,7 @@ class ExportCluster
                     $render = $this->twig->render('cluster/export.html.twig', [
                         'user' => $session['user'],
                     ]);
-                    $tmp = $session['user']->id.'_tmp';
+                    $tmp = $session['user']->id . '_tmp';
                     $pdfFilepath = $this->pdfService->makePdf($render, $tmp, $this->dirName, 'B6');
                     $this->files[] = [
                         'filename' => $pdfFilepath,
@@ -66,9 +66,9 @@ class ExportCluster
 
     private function getResponse(): Response
     {
-        $fileName = $this->cluster->title.'_'.$this->cluster->entity->getBikeRide()->getStartAt()->format('Ymd');
-        $fileName = $this->filenameService->clean($fileName).'.pdf';
-        $pathName = $this->pdfService->joinPdf($this->files, null, $this->parameterBag->get('tmp_directory_path').$this->filenameService->clean($this->cluster->title).'.pdf');
+        $fileName = $this->cluster->title . '_' . $this->cluster->entity->getBikeRide()->getStartAt()->format('Ymd');
+        $fileName = $this->filenameService->clean($fileName) . '.pdf';
+        $pathName = $this->pdfService->joinPdf($this->files, null, $this->parameterBag->get('tmp_directory_path') . $this->filenameService->clean($this->cluster->title) . '.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(

@@ -23,7 +23,7 @@ class LinkService
             }
 
             $charset = null;
-            preg_match_all('/<[\s]*meta[\s]*http-equiv="?'.'([^>"]*)"?[\s]*'.'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+            preg_match_all('/<[\s]*meta[\s]*http-equiv="?' . '([^>"]*)"?[\s]*' . 'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             $httpEquiv = $this->getTags($match);
             $contentType = (array_key_exists('Content-Type', $httpEquiv)) ? $httpEquiv['Content-Type']['value'] : null;
             if (null !== $contentType) {
@@ -32,17 +32,17 @@ class LinkService
                 $charset = (array_key_exists('charset', $values)) ? $values['charset']['value'] : null;
             }
 
-            preg_match_all('/<[\s]*meta[\s]*name="?'.'([^>"]*)"?[\s]*'.'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+            preg_match_all('/<[\s]*meta[\s]*name="?' . '([^>"]*)"?[\s]*' . 'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             $metaTags = $this->getTags($match);
             $description = (array_key_exists('description', $metaTags)) ? $metaTags['description']['value'] : null;
 
-            preg_match_all('/<[\s]*meta[\s]*property="?'.'([^>"]*)"?[\s]*'.'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+            preg_match_all('/<[\s]*meta[\s]*property="?' . '([^>"]*)"?[\s]*' . 'content="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             $properties = $this->getTags($match);
             $image = (array_key_exists('og:image', $properties)) ? $properties['og:image']['value'] : null;
 
-            preg_match_all('/<[\s]*link[\s]*rel="?'.'([^>"]*)"?[\s]*'.'href="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+            preg_match_all('/<[\s]*link[\s]*rel="?' . '([^>"]*)"?[\s]*' . 'href="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             if (empty($match[0])) {
-                preg_match_all('/<[\s]*link[\s]*href="?'.'([^>"]*)"?[\s]*'.'rel="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
+                preg_match_all('/<[\s]*link[\s]*href="?' . '([^>"]*)"?[\s]*' . 'rel="?([^>"]*)"?[\s]*[\/]?[\s]*>/si', $contents, $match);
             }
             $links = $this->getTags($match);
             if (array_key_exists('https://api.w.org/', $links)) {
@@ -100,7 +100,7 @@ class LinkService
         // Check if we need to go somewhere else
 
         if (isset($contents) && is_string($contents)) {
-            preg_match_all('/<[\s]*meta[\s]*http-equiv="?REFRESH"?'.'[\s]*content="?[0-9]*;[\s]*URL[\s]*=[\s]*([^>"]*)"?'.'[\s]*[\/]?[\s]*>/si', $contents, $match);
+            preg_match_all('/<[\s]*meta[\s]*http-equiv="?REFRESH"?' . '[\s]*content="?[0-9]*;[\s]*URL[\s]*=[\s]*([^>"]*)"?' . '[\s]*[\/]?[\s]*>/si', $contents, $match);
 
             if (isset($match) && is_array($match) && 2 === count($match) && 1 === count($match[1])) {
                 if (!isset($maximumRedirections) || $currentRedirection < $maximumRedirections) {
