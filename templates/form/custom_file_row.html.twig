@@ -2,7 +2,7 @@
     {% set class = (form.vars.row_attr.class is defined) ? form.vars.row_attr.class : 'form-group' %}
     <div class="{{ class }}">
         {{ form_label(form) }}
-        <button class="input-file-button">Selectionner un fichier</button>
+        <button class="input-file-button" type="button">Selectionner un fichier</button>
         <p id="filename">{{ form.vars.value }}</p>  
         {{ form_widget(form) }} 
     </div>

@@ -52,7 +52,9 @@ class MailerService
         }
         if (null !== $parameter) {
             $content = $parameter->getValue();
-            $content = str_replace('{{ bikeRideTitleAndPeriod }}', $data['bikeRideTitleAndPeriod'], $content);
+            if(array_key_exists('bikeRideTitleAndPeriod', $data)) {
+                $content = str_replace('{{ bikeRideTitleAndPeriod }}', $data['bikeRideTitleAndPeriod'], $content);
+            }
         }
         if (array_key_exists('content', $data)) {
             $content = $data['content'];

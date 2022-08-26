@@ -27,9 +27,14 @@ $(document).ready(function(){
     }
     $(document).on('change', '.identity-other-address', updateIdentity);
     $(document).on('change', 'input[type="file"]', previewFile);
-    $('.js-datepicker').datepicker({
-        format: 'yyyy-mm-dd hh:ii',
-    });
+
+    $('.js-datepicker').each(function() {
+        $(this).datepicker({
+            format: 'dd/mm/YYYY',
+            maxDate: new Date($(this).data('max-date')),
+            minDate: new Date($(this).data('min-date')),
+        });
+    })
     // $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_levels, #user_filter_user, #registration_filter_isFinal, #order_filter_status', submitFom);
     $(document).on('change', '.filters .select2, .filters select, .filters .btn', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
@@ -245,8 +250,9 @@ function formModifier() {
     const selector = '#' + $(this).data('modifier');
     const data = {};
     $.each(form[0].elements,function() {
-        if ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden') {
-            data[$(this).attr('name')] = $(this).val();
+        if ($(this).attr('name') !== undefined && ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden')) {
+            let value = ($(this).attr('name').includes('town')) ? null : $(this).val();
+            data[$(this).attr('name')] = value;
         }
     });
 
