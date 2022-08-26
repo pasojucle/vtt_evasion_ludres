@@ -28,7 +28,7 @@
                                 {% if user.level is not null %}style="background-color: {{ user.level.color }}"{% endif %}>
                                 <div class="row">
                                     <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
-                                    {% if user.seasonLicence is not empty and not user.seasonLicence.isFinal %}
+                                    {% if user.seasonLicence is not empty and user.seasonLicence.isFinal is same as(false) %}
                                         <div class="col-md-5 col-xs-12">
                                             {{ user.testingBikeRides }}/3 séances d'essai
                                         </div>

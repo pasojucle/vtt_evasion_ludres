@@ -56,6 +56,7 @@ class LicenceViewModel extends AbstractViewModel
     public static function fromLicence(?Licence $licence, bool $isNewMember, ServicesPresenter $services)
     {
         $licenceView = new self();
+        $licenceView->services = $services;
         if ($licence) {
             $status = $licence->getStatus();
             if ($licence->getSeason() !== $services->currentSeason) {
@@ -67,7 +68,6 @@ class LicenceViewModel extends AbstractViewModel
                 }
             }
             $licenceView->entity = $licence;
-            $licenceView->services = $services;
             $licenceView->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
             $licenceView->season = $licence->getSeason();
             $licenceView->isFinal = $licence->isFinal();

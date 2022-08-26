@@ -251,7 +251,7 @@ class UserViewModel extends AbstractViewModel
 
     public function isEndTesting(): bool
     {
-        if (!$this->seasonLicence->isFinal) {
+        if (false === $this->seasonLicence->isFinal) {
             $count = (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
 
             return 2 < $count;
@@ -262,7 +262,7 @@ class UserViewModel extends AbstractViewModel
 
     public function testingBikeRides(): ?int
     {
-        if (!$this->seasonLicence->isFinal) {
+        if (false === $this->seasonLicence->isFinal) {
             return (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
         }
 
