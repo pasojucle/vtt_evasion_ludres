@@ -146,7 +146,7 @@ class GetProgress
     public function updateStatus(): void
     {
         $licence = $this->seasonLicence;
-        if (!$licence->isFinal() &&
+        if (false === $licence->isFinal() &&
             ((0 < count($this->user->getDoneSessions()) && Licence::CATEGORY_MINOR === $licence->getCategory())
             || (0 < count($this->user->getSessions()) && Licence::CATEGORY_ADULT === $licence->getCategory()))) {
             $this->seasonLicence->setFinal(true)

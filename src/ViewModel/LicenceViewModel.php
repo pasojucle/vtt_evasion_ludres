@@ -128,8 +128,9 @@ class LicenceViewModel extends AbstractViewModel
     {
         $title = $this->services->translator->trans('registration_step.type.default');
         $title = 'registration_step.type.';
+
         if (null !== $this) {
-            if (!$this->isFinal) {
+            if (false === $this->isFinal) {
                 $title .= 'testing';
             } else {
                 if (null !== $this->category) {

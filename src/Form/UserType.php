@@ -163,7 +163,7 @@ class UserType extends AbstractType
                     ],
                     'required' => true,
                     'first_options' => [
-                        'label' => 'Mot de passe (6 caractères minimum)',
+                        'label' => 'Mot de passe (6 caractères mini, 10 max)',
                     ],
                     'second_options' => [
                         'label' => 'Confirmation du mot de passe',

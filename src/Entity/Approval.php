@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(repositoryClass: ApprovalRepository::class)]
@@ -25,7 +26,8 @@ class Approval
     private ?bool $value;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'approvals')]
-    private User $user;
+    #[JoinColumn(nullable:true)]
+    private ?User $user;
 
     public function getId(): ?int
     {

@@ -158,7 +158,7 @@ abstract class GetUsersFiltered
             foreach ($users as $user) {
                 $identity = $user->getFirstIdentity();
                 $licence = $user->getLastLicence();
-                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->isFinal()];
+                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), false === $licence->isFinal()];
                 $content[] = implode(',', $row);
             }
         }
