@@ -19,7 +19,7 @@ class ExportBikeRide
 
     public function __construct(
         private SessionRepository $sessionRepository,
-        private StringService $ftringService,
+        private StringService $stringService,
         private UserPresenter $userPresenter
     ) {
     }
@@ -63,7 +63,7 @@ class ExportBikeRide
     private function getResponse(): Response
     {
         $filename = $this->bikeRide->getTitle() . '_' . $this->bikeRide->getStartAt()->format('Y_m_d');
-        $filename = $this->ftringService->clean($filename) . '.csv';
+        $filename = $this->stringService->clean($filename) . '.csv';
         $response = new Response(implode(PHP_EOL, $this->fileContent));
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
