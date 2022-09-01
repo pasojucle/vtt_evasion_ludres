@@ -54,7 +54,7 @@ class ExportBikeRide
                     $member = $this->userPresenter->viewModel()->member;
                     $present = ($session->isPresent()) ? 'oui' : 'non';
                     $row = [$this->userPresenter->viewModel()->getLicenceNumber(), $member->name, $member->firstName, $present, $this->userPresenter->viewModel()->getLevel()];
-                    $fileContent[] = implode(self::SEPARATOR, $row);
+                    $this->fileContent[] = implode(self::SEPARATOR, $row);
                 }
             }
         }
