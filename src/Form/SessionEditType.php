@@ -22,8 +22,7 @@ class SessionEditType extends AbstractType
             $session = $event->getData();
             $form = $event->getForm();
 
-            if (!$options['is_already_registered'] && !$options['is_end_testing']) {
-                if (null !== $options['bikeRide'] && $options['bikeRide']->accessAvailability) {
+                if (null !== $options['bike_ride'] && $options['bike_ride']->accessAvailability) {
                     $form
                         ->add('availability', ChoiceType::class, [
                             'label' => false,
@@ -51,7 +50,7 @@ class SessionEditType extends AbstractType
                         ;
                     }
                 }
-            }
+
         });
 
         $builder
@@ -64,7 +63,7 @@ class SessionEditType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Session::class,
             'clusters' => [],
-            'bikeRide' => null,
+            'bike_ride' => null,
             'is_already_registered' => false,
             'is_end_testing' => false,
             'submited_label' => null,

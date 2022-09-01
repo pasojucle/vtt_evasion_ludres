@@ -76,9 +76,9 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->displayAt = $bikeRideView->startAt->setTime(0, 0, 0);
         $bikeRideView->closingAt = $bikeRideView->startAt->setTime(23, 59, 59);
         $bikeRideView->displayClass = $bikeRideView->getDisplayClass();
-        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($services->user);
+        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($services->security->getUser());
         $bikeRideView->period = $bikeRideView->getPeriod($services->appExtension);
-        $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($services->user);
+        $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($services->security->getUser());
         $bikeRideView->isRegistrable = $bikeRideView->isRegistrable();
         $bikeRideView->survey = $bikeRide->getSurvey();
 

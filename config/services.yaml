@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    project_directory: '%kernel.project_dir%/'
     public_directory: '%kernel.project_dir%/public'
     uploads_directory_path: '%kernel.project_dir%/public/uploads/'
     uploads_directory: '/uploads/'
@@ -14,6 +15,7 @@ parameters:
     backgrounds_directory_path: '%kernel.project_dir%/public%backgrounds_directory%'
     data_directory_path: '%kernel.project_dir%/data/'
     tmp_directory_path: '%kernel.project_dir%/data/tmp/'
+    cmd_directory_path: '%kernel.project_dir%/data/cmd/'
     environment: '%env(APP_ENV)%'
     maintenance:
         ipAuthorized: ["127.0.0.1","88.166.188.236"] 

@@ -60,8 +60,8 @@ class SessionSwitchType extends AbstractType
 
     private function getChoices(Session $session): array
     {
-        $event = $session->getCluster()->getEvent();
+        $bikeRide = $session->getCluster()->getBikeRide();
 
-        return $this->clusterRepository->findByEvent($event);
+        return $this->clusterRepository->findByBikeRide($bikeRide);
     }
 }

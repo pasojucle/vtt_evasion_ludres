@@ -21,3 +21,6 @@
 /public/files/
 /public/registration_certificate/
 /public/registration_certificate/Attestation_d_inscription.pdf
+data/cmd/doctrinemigrationmigrate-n
+data/cmd/geoconvertbirthplace
+data/cmd/geoloaddata

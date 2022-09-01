@@ -7,7 +7,7 @@ namespace App\UseCase\BikeRide;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
-use App\Service\FilenameService;
+use App\Service\StringService;
 use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +19,7 @@ class ExportBikeRide
 
     public function __construct(
         private SessionRepository $sessionRepository,
-        private FilenameService $filenameService,
+        private StringService $ftringService,
         private UserPresenter $userPresenter
     ) {
     }
@@ -51,7 +51,7 @@ class ExportBikeRide
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
                     $this->userPresenter->present($session->getUser());
 
-                    $member = $this->userPresenter->viewModel()->getMember();
+                    $member = $this->userPresenter->viewModel()->member;
                     $present = ($session->isPresent()) ? 'oui' : 'non';
                     $row = [$this->userPresenter->viewModel()->getLicenceNumber(), $member['name'], $member['firstName'], $present, $this->userPresenter->viewModel()->getLevel()];
                     $fileContent[] = implode(self::SEPARATOR, $row);
@@ -63,7 +63,7 @@ class ExportBikeRide
     private function getResponse(): Response
     {
         $filename = $this->bikeRide->getTitle() . '_' . $this->bikeRide->getStartAt()->format('Y_m_d');
-        $filename = $this->filenameService->clean($filename) . '.csv';
+        $filename = $this->ftringService->clean($filename) . '.csv';
         $response = new Response(implode(PHP_EOL, $this->fileContent));
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

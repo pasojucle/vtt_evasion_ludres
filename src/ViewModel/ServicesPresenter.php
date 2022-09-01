@@ -34,7 +34,7 @@ class ServicesPresenter
         private SeasonService $seasonService,
         private ParameterService $parameterService,
         private ParameterBagInterface $parameterBag,
-        private Security $security,
+        public Security $security,
         public MembershipFeeAmountRepository $membershipFeeAmountRepository,
         public TranslatorInterface $translator,
         public AppExtension $appExtension,
@@ -49,7 +49,6 @@ class ServicesPresenter
         $this->uploadsDirectory = $this->parameterBag->get('uploads_directory');
         $this->currentSeason = $this->seasonService->getCurrentSeason();
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
-        $this->user = $this->security->getUser();
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
         $this->coverageFormStartAt = $this->parameterService->getParameterByName('COVERAGE_FORM_AVAILABLE_AT');
         $this->allIndemnities = $this->indemnityRepository->findAll();

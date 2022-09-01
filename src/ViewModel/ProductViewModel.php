@@ -53,8 +53,8 @@ class ProductViewModel extends AbstractViewModel
         $productView->discountPrice = null;
         $productView->discountTitle = null;
 
-        if (null === $user && $services->user) {
-            $user = UserViewModel::fromUser($services->user, $services);
+        if (null === $user && $services->security->getUser()) {
+            $user = UserViewModel::fromUser($services->security->getUser(), $services);
         }
 
         if (null !== $user) {

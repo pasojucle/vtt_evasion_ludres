@@ -17,8 +17,9 @@ class SessionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $submitLabel = null;
+
         if (!$options['is_already_registered'] && !$options['is_end_testing']) {
-            $submitLabel = (null !== $options['bikeRide'] && $options['bikeRide']->accessAvailability)
+            $submitLabel = (null !== $options['bike_ride'] && $options['bike_ride']->accessAvailability)
                 ? 'Enregister' : 'S\'inscrire';
         }
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
@@ -42,7 +43,7 @@ class SessionType extends AbstractType
             ->add('session', SessionEditType::class, [
                 'label' => false,
                 'clusters' => [],
-                'bikeRide' => null,
+                'bike_ride' => $options['bike_ride'],
                 'is_already_registered' => false,
                 'is_end_testing' => false,
                 'submited_label' => $submitLabel,
@@ -66,7 +67,7 @@ class SessionType extends AbstractType
     {
         $resolver->setDefaults([
             'clusters' => [],
-            'bikeRide' => null,
+            'bike_ride' => null,
             'is_already_registered' => false,
             'is_end_testing' => false,
         ]);

@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use App\Entity\BikeRide;
-use App\Entity\Session;
-use App\Entity\SurveyResponse;
 use App\Entity\User;
+use App\Entity\Level;
+use App\Entity\Session;
+use App\Entity\BikeRide;
 use App\Form\SessionType;
-use App\Repository\SessionRepository;
-use App\Service\BikeRideService;
+use App\Entity\SurveyResponse;
 use App\Service\MailerService;
 use App\Service\SessionService;
+use App\Service\BikeRideService;
+use App\ViewModel\UserPresenter;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRideViewModel;
-use App\ViewModel\UserPresenter;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\SessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class GetFormSession
 {
@@ -111,9 +112,9 @@ class GetFormSession
             'responses' => ['surveyResponses' => $this->getSurveyResponse($bikeRide->entity)],
         ], [
             'clusters' => $clusters,
-            'bikeRide' => $bikeRide,
+            'bike_ride' => $bikeRide,
             'is_already_registered' => $isAlreadyRegistered,
-            'is_end_testing' => $isEndTesting,
+            'is_end_testing' => $isEndTesting
         ]);
     }
 
