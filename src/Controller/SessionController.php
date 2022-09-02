@@ -34,7 +34,6 @@ class SessionController extends AbstractController
     #[Route('/mon-compte/rando/inscription/{bikeRide}', name: 'session_add', methods: ['GET', 'POST'])]
     public function sessionAdd(
         Request $request,
-        BikeRidePresenter $bikeRidePresenter,
         GetFormSession $getFormSession,
         EditSession $editSession,
         BikeRide $bikeRide
@@ -46,7 +45,7 @@ class SessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $editSession->execute($form, $this->userPresenter->viewModel(), $bikeRidePresenter->viewModel());
+            $editSession->execute($form, $user, $bikeRide);
 
             $this->addFlash('success', 'Votre inscription a bien été prise en compte');
 

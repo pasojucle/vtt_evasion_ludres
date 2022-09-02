@@ -625,7 +625,7 @@ main:not(.admin) {
 .inputGroup label:after {
     width: 32px;
     height: 32px;
-
+    font-family: "Font Awesome 5 Free";
     border: 2px solid var(--light-color-darker);
     background-position: 2px 3px;
     border-radius: 50%;

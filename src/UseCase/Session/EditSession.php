@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use App\Entity\Licence;
-use App\Entity\Respondent;
-use App\Entity\User;
-use App\Service\MailerService;
-use App\ViewModel\BikeRideViewModel;
-use App\ViewModel\UserViewModel;
 use DateTime;
+use App\Entity\User;
+use App\Entity\Licence;
+use App\Entity\BikeRide;
+use App\Entity\Respondent;
+use App\Service\MailerService;
+use App\ViewModel\UserPresenter;
+use App\ViewModel\UserViewModel;
+use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRideViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -19,26 +22,28 @@ class EditSession
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MailerService $mailerService,
+        private UserPresenter $userPresenter,
+        private BikeRidePresenter $bikeRidePresenter
     ) {
     }
 
-    public function execute(FormInterface $form, UserViewModel $user, BikeRideViewModel $bikeRide): void
+    public function execute(FormInterface $form, User $user, BikeRide $bikeRide): void
     {
         $data = $form->getData();
-        $user->entity->addSession($data['session']);
+        $user->addSession($data['session']);
 
-        $this->answerTheSurvey($data, $user->entity, $bikeRide);
+        $this->answerTheSurvey($data, $user, $bikeRide);
         $this->confirmationRegistration($user, $bikeRide);
 
         $this->entityManager->persist($data['session']);
         $this->entityManager->flush();
     }
 
-    private function answerTheSurvey(array $data, User $user, BikeRideViewModel $bikeRide): void
+    private function answerTheSurvey(array $data, User $user, BikeRide $bikeRide): void
     {
         if (array_key_exists('responses', $data) && !empty($data['responses']['surveyResponses'])) {
             foreach ($data['responses']['surveyResponses'] as $response) {
-                if (!$bikeRide->entity->getSurvey()->isAnonymous()) {
+                if (!$bikeRide->getSurvey()->isAnonymous()) {
                     $response->setUser($user);
                 }
                 $this->entityManager->persist($response);
@@ -47,15 +52,19 @@ class EditSession
 
             $respondent = new Respondent();
             $respondent->setUser($user)
-                ->setSurvey($bikeRide->entity->getSurvey())
+                ->setSurvey($bikeRide->getSurvey())
                 ->setCreatedAt($now)
             ;
             $this->entityManager->persist($respondent);
         }
     }
 
-    private function confirmationRegistration(UserViewModel $user, BikeRideViewModel $bikeRide): void
+    private function confirmationRegistration(User $user, BikeRide $bikeRide): void
     {
+        $this->userPresenter->present($user);
+        $this->bikeRidePresenter->present($bikeRide);
+        $user = $this->userPresenter->viewModel();
+        $bikeRide = $this->bikeRidePresenter->viewModel();
         if (Licence::CATEGORY_MINOR === $user->seasonLicence->category) {
             $this->mailerService->sendMailToMember([
                 'name' => $user->member->name,

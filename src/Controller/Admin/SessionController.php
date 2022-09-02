@@ -92,7 +92,7 @@ class SessionController extends AbstractController
 
             if ($form->isValid()) {
                 $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
-                $userSession->setCluster($userCluster->entity);
+                $userSession->setCluster($userCluster);
                 $user->addSession($userSession);
                 $this->entityManager->persist($userSession);
 

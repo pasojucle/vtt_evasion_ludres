@@ -50,7 +50,7 @@ class SessionService
                         $this->userPresenter->present($session->getUser());
                         $framers[] = [
                             'user' => $this->userPresenter->viewModel(),
-                            'availability' => $session->getAvailabilityToView(),
+                            'availability' => $session->getAvailability(),
                         ];
                     }
                 }
