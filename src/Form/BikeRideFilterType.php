@@ -49,13 +49,6 @@ class BikeRideFilterType extends AbstractType
                             'title' => 'Suivant',
                         ],
                     ])
-                    ->add('today', SubmitType::class, [
-                        'label' => 'Aujourd\'hui',
-                        'attr' => [
-                            'class' => 'btn btn-default',
-                            'title' => 'Aujourd\'hui',
-                        ],
-                    ])
                 ;
             }
         });

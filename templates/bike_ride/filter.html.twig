@@ -1,6 +1,6 @@
 <div class="filters">
     {{ form_start(form) }}
-        {% if form.prev is defined and form.today is defined and form.next is defined %}
+        {% if form.prev is defined and form.next is defined %}
             <span>
                 <b>
                 {% if current_filters.period == constant('App\\Entity\\BikeRide::PERIOD_DAY') %}
@@ -17,8 +17,8 @@
                 <li>
                     {{ form_widget(form.prev)}}
                 </li>
-                <li>
-                    {{ form_widget(form.today)}}
+                <li class="btn background-ligth">
+                    {{ current_filters.strMonth }}
                 </li>
                 <li >
                     {{ form_widget(form.next)}}

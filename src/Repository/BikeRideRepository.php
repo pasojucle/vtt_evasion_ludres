@@ -37,7 +37,7 @@ class BikeRideRepository extends ServiceEntityRepository
             $andX->add($qb->expr()->gte('br.startAt', ':startAt'));
             $qb->setParameter('startAt', $filters['startAt']);
             if (null === $filters['endAt']) {
-                $qb->setMaxResults(6);
+                $qb->setMaxResults($filters['limit']);
             }
         }
         if (null !== $filters['endAt']) {

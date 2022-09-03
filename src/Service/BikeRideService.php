@@ -96,7 +96,7 @@ class BikeRideService
             case BikeRide::PERIOD_NEXT:
                 $startAt = $startAt;
                 $endAt = null;
-                $limit = 6;
+                $limit = 10;
 
                 break;
             default:
@@ -119,6 +119,7 @@ class BikeRideService
             'day' => $date->format('d'),
             'date' => $date->format('y-m-d'),
             'limit' => $limit,
+            'strMonth' => $this->getStringMonth((int) $date->format('m')),
         ];
     }
 
@@ -137,10 +138,10 @@ class BikeRideService
             if ($form->has('prev') && $form->get('prev')->isClicked()) {
                 $data['direction'] = BikeRide::DIRECTION_PREV;
             }
-            if ($form->has('today') && $form->get('today')->isClicked()) {
-                $today = new DateTime();
-                $data['date'] = $today->format('Y-m-d');
-            }
+            // if ($form->has('today') && $form->get('today')->isClicked()) {
+            //     $today = new DateTime();
+            //     $data['date'] = $today->format('Y-m-d');
+            // }
             $filters = $this->getFiltersByData($data);
             $this->requestStack->getSession()->set('admin_bike_rides_filters', $filters);
 
@@ -215,5 +216,23 @@ class BikeRideService
         }
 
         return $bikeRide;
+    }
+
+    public function getStringMonth(int $month):string
+    {
+        return [
+           1 => 'Janvier',
+           2 => 'Février',
+           3 => 'Mars',
+           4 => 'Avril',
+           5 => 'Mai',
+           6 => 'Juin',
+           7 => 'Juillet',
+           8 => 'Août',
+           9 => 'Septembre',
+           10 => 'Octobre',
+           11 => 'Novembre',
+           12 => 'Décembre'
+        ][$month];
     }
 }

@@ -35,8 +35,8 @@ class BikeRide
     public const DIRECTION_NEXT = 2;
 
     public const PERIODS = [
-        self::PERIOD_DAY => 'bike_ride.period.day',
-        self::PERIOD_WEEK => 'bike_ride.period.week',
+        // self::PERIOD_DAY => 'bike_ride.period.day',
+        // self::PERIOD_WEEK => 'bike_ride.period.week',
         self::PERIOD_MONTH => 'bike_ride.period.month',
         self::PERIOD_NEXT => 'bike_ride.period.next',
         self::PERIOD_ALL => 'bike_ride.period.all',
