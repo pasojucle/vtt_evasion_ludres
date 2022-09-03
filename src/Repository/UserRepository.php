@@ -145,20 +145,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             foreach ($filterLevels as $level) {
                 switch ($level) {
                     case Level::TYPE_ALL_MEMBER:
-                        $types[] = Level::TYPE_MEMBER;
+                        $types[] = Level::TYPE_SCHOOL_MEMBER;
                         break;
                     case Level::TYPE_ALL_FRAME:
                         $types[] = Level::TYPE_FRAME;
                         break;
-                    case Level::TYPE_ADULT:
-                        $types[] = Level::TYPE_ADULT;
+                    case Level::TYPE_ADULT_MEMBER:
+                        $types[] = Level::TYPE_ADULT_MEMBER;
                         break;
                     default:
                         $levels[] = $level;
                 }
             }
         }
-
         $orX = $qb->expr()->orX();
         if (!empty($levels)) {
             $orX->add($qb->expr()->in('u.level', ':levels'));
@@ -168,17 +167,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         if (!empty($types)) {
-            $key = array_search(Level::TYPE_ADULT, $types, true);
-
-            if (false !== $key) {
-                unset($types[$key]);
-                $orX->add($qb->expr()->isNull('u.level'));
-            }
-
-            if (!empty($types)) {
-                $orX->add($qb->expr()->in('l.type', ':types'));
-                $qb->setParameter('types', $types);
-            }
+            $orX->add($qb->expr()->in('l.type', ':types'));
+            $qb->setParameter('types', $types);
         }
 
         if (0 < $orX->count()) {
@@ -270,7 +260,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 )
             )
             ->setParameter('final', false)
-            ->setParameter('type', Level::TYPE_MEMBER)
+            ->setParameter('type', Level::TYPE_SCHOOL_MEMBER)
             ->groupBy('s.user')
             ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('s.id'), 2)

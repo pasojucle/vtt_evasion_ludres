@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 #[Entity(repositoryClass: LevelRepository::class)]
 class Level
 {
-    public const TYPE_MEMBER = 1;
+    public const TYPE_SCHOOL_MEMBER = 1;
 
     public const TYPE_FRAME = 2;
 
@@ -24,11 +24,12 @@ class Level
 
     public const TYPE_ALL_FRAME = 'ALL_FRAME';
 
-    public const TYPE_ADULT = 'ADULT';
+    public const TYPE_ADULT_MEMBER = 3;
 
     public const TYPES = [
-        self::TYPE_MEMBER => 'level.type.member',
+        self::TYPE_SCHOOL_MEMBER => 'level.type.school_member',
         self::TYPE_FRAME => 'level.type.frame',
+        self::TYPE_ADULT_MEMBER =>  'level.type.adult_member',
     ];
 
     #[Column(type: 'integer')]

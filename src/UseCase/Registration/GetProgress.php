@@ -139,7 +139,9 @@ class GetProgress
             if (!$this->user->getIdentities()->isEmpty()) {
                 $this->removeKinship();
             }
-            // $this->user->setLevel(null);
+            if (null === $this->user->getLevel()) {
+                $this->setAdultLevel();
+            }
         }
     }
 
@@ -277,6 +279,13 @@ class GetProgress
         $awaitingEvaluationlevel = $this->levelRepository->findAwaitingEvaluation();
         $this->seasonLicence->setType(Licence::TYPE_HIKE);
         $this->user->setLevel($awaitingEvaluationlevel);
+    }
+
+    private function setAdultLevel(): void
+    {
+        $unframedAdultlevel = $this->levelRepository->findUnframedAdult();
+        $this->seasonLicence->setType(Licence::TYPE_HIKE);
+        $this->user->setLevel($unframedAdultlevel);
     }
 
     private function removeMinorApprovals(): void

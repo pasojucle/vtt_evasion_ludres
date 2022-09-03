@@ -56,7 +56,7 @@ class LevelRepository extends ServiceEntityRepository
      */
     public function findAllTypeMember(): array
     {
-        $qb = $this->findLevelQuery(Level::TYPE_MEMBER);
+        $qb = $this->findLevelQuery(Level::TYPE_SCHOOL_MEMBER);
 
         return $qb
             ->getQuery()
@@ -69,7 +69,7 @@ class LevelRepository extends ServiceEntityRepository
      */
     public function findAllTypeMemberNotProtected(): array
     {
-        $qb = $this->findLevelQuery(Level::TYPE_MEMBER);
+        $qb = $this->findLevelQuery(Level::TYPE_SCHOOL_MEMBER);
 
         return $qb
             ->andWhere(
@@ -127,7 +127,7 @@ class LevelRepository extends ServiceEntityRepository
         return $nexOrder;
     }
 
-    public function findAwaitingEvaluation(): ?Level
+    private function findDefaultByType(int $type): ?Level
     {
         try {
             return $this->createQueryBuilder('l')
@@ -135,12 +135,22 @@ class LevelRepository extends ServiceEntityRepository
                     (new Expr())->eq('l.type', ':type'),
                     (new Expr())->eq('l.isProtected', 1)
                 )
-                ->setParameter('type', Level::TYPE_MEMBER)
+                ->setParameter('type', $type)
                 ->getQuery()
                 ->getOneOrNullResult()
         ;
         } catch (NonUniqueResultException $e) {
             return null;
         }
+    }
+
+    public function findAwaitingEvaluation(): ?Level
+    {
+        return $this->findDefaultByType(Level::TYPE_SCHOOL_MEMBER);
+    }
+
+    public function findUnframedAdult(): ?Level
+    {
+        return $this->findDefaultByType(Level::TYPE_ADULT_MEMBER);
     }
 }

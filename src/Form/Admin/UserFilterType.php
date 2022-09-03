@@ -23,7 +23,7 @@ class UserFilterType extends AbstractType
     public const STATUS_TYPE_MEMBER = 1;
     public const STATUS_TYPE_REGISTRATION = 2;
     public const STATUS_TYPE_COVERAGE = 3;
-    public const LEVEL_GROUP_MEMBER = 'École VTT';
+    public const LEVEL_GROUP_SCHOOL = 'École VTT';
     public const LEVEL_GROUP_FRAME = 'Encadrement';
 
     public function __construct(
@@ -99,16 +99,18 @@ class UserFilterType extends AbstractType
     private function getLevelChoices(): array
     {
         $levelChoices = [
-            self::LEVEL_GROUP_MEMBER => ['Toute l\'école VTT' => Level::TYPE_ALL_MEMBER],
+            self::LEVEL_GROUP_SCHOOL => ['Toute l\'école VTT' => Level::TYPE_ALL_MEMBER],
             self::LEVEL_GROUP_FRAME => ['Tout l\'encadrement' => Level::TYPE_ALL_FRAME],
-            'Adultes hors encadrement' => Level::TYPE_ADULT,
         ];
 
         $levels = $this->levelRepository->findAll();
         if (!empty($levels)) {
             foreach ($levels as $level) {
-                $group = (Level::TYPE_MEMBER === $level->getType()) ? self::LEVEL_GROUP_MEMBER : self::LEVEL_GROUP_FRAME;
-                $levelChoices[$group][$level->getTitle()] = $level->getId();
+                match($level->getType()) {
+                    Level::TYPE_SCHOOL_MEMBER => $levelChoices[self::LEVEL_GROUP_SCHOOL][$level->getTitle()] = $level->getId(),
+                    Level::TYPE_FRAME => $levelChoices[self::LEVEL_GROUP_FRAME][$level->getTitle()] = $level->getId(),
+                    default => $levelChoices[$level->getTitle()] = $level->getId()
+                };
             }
         }
 
