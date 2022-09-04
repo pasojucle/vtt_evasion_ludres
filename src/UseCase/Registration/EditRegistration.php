@@ -72,9 +72,6 @@ class EditRegistration
             $identity = $this->registerNewUser($user, $form);
             $manualAuthenticating = true;
             $this->uniqueMemberValidator($form, $identity);
-            if ($form->isValid()) { 
-                $session->set('sendLoginRegistration', true);
-            }
         }
 
         if($user->getMemberIdentity()->getBirthCommune()) {
@@ -92,10 +89,10 @@ class EditRegistration
         $this->UploadFile($request, $user);
 
         $category = $user->getSeasonLicence($season)->getCategory();
-        if (true === $session->get('sendLoginRegistration') && 
+        if (false === $user->isLoginSend() && 
             ((Licence::CATEGORY_MINOR === $category && $user->getKinshipIdentity()) || Licence::CATEGORY_ADULT === $category )) {
                 $this->sendMail($user);
-                $session->set('sendLoginRegistration', false);
+                $user->setLoginSend(true);
         }
 
         $isMedicalCertificateRequired = $this->isMedicalCertificateRequired($progress);

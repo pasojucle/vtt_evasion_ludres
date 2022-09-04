@@ -78,7 +78,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $respondents;
 
     #[ManyToMany(targetEntity: Survey::class, mappedBy: 'members')]
-    private $surveys;
+    private Collection $surveys;
+
+    #[Column(type: 'boolean', options:['default' => false])]
+    private bool $loginSend = false;
 
     public function __construct()
     {
@@ -534,6 +537,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->surveys->removeElement($survey)) {
             $survey->removeMember($this);
         }
+
+        return $this;
+    }
+
+    public function isLoginSend(): ?bool
+    {
+        return $this->loginSend;
+    }
+
+    public function setLoginSend(bool $loginSend): self
+    {
+        $this->loginSend = $loginSend;
 
         return $this;
     }
