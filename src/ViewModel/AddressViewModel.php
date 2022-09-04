@@ -22,8 +22,7 @@ class AddressViewModel extends AbstractViewModel
         $addressViewModel->entity = $address;
         $addressViewModel->street = $address->getStreet();
         $addressViewModel->postalCode = $address->getPostalCode();
-        $addressViewModel->town = $address->getTown();
-
+        $addressViewModel->town = $address->getCommune()?->getName() ?? $address->getTown();
         return $addressViewModel;
     }
 

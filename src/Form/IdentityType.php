@@ -4,30 +4,39 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Identity;
+use DateTime;
+use DateInterval;
+use App\Entity\Commune;
 use App\Entity\Licence;
-use App\Validator\BirthDate;
+use App\Entity\Identity;
 use App\Validator\Phone;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Validator\BirthDate;
+use PhpParser\Builder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class IdentityType extends AbstractType
 {
-    public function __construct(private ParameterBagInterface $parameterBag)
+    public function __construct(private ParameterBagInterface $parameterBag, private UrlGeneratorInterface $urlGenerator, private RequestStack $requestStack)
     {
     }
 
@@ -39,9 +48,14 @@ class IdentityType extends AbstractType
             $type = $identity->getType();
             $kinship = 1 < $type;
             $disabled = ($options['season_licence']->isFinal() && Identity::TYPE_MEMBER === $type) ? 'disabled' : '';
+            $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
+
+
             $addressClass = (Identity::TYPE_MEMBER !== $type) ? ' identity-address' : '';
             $addressRequired = 'required';
-            $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
+            if (!$identity->hasAddress()) {
+                $addressRequired = '';
+            }
 
             if ((!$options['is_kinship'] && !$kinship) || ($options['is_kinship'] && $kinship)) {
                 $form
@@ -74,8 +88,9 @@ class IdentityType extends AbstractType
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                                 'data-multiple-fields' => 1,
+                                'autocomplete'=>'off',
                             ]
-                            : ['data-constraint' => ''],
+                            : ['data-constraint' => '', 'autocomplete'=>'off',],
                         'disabled' => $disabled,
                     ])
                     ->add('mobile', TextType::class, [
@@ -88,6 +103,7 @@ class IdentityType extends AbstractType
                         ],
                         'attr' => [
                             'data-constraint' => 'app-Phone',
+                            'autocomplete'=>'off',
                         ],
                     ])
                     ->add('email', EmailType::class, [
@@ -100,11 +116,19 @@ class IdentityType extends AbstractType
                         ],
                         'attr' => [
                             'data-constraint' => 'symfony-Email',
+                            'autocomplete'=>'off',
                         ],
                     ])
+                    ->add('address', AddressType::class, [
+                        'row_class' => $addressClass,
+                        'required' => $addressRequired,
+                    ])
+
                 ;
 
                 if (Identity::TYPE_SECOND_CONTACT !== $type) {
+                    $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
+                    $dateMin =  (new DateTime())->sub(new DateInterval('P80Y'));
                     $form
                         ->add('phone', TextType::class, [
                             'label' => 'Téléphone fixe',
@@ -117,6 +141,7 @@ class IdentityType extends AbstractType
                             ],
                             'attr' => [
                                 'data-constraint' => 'app-Phone',
+                                'autocomplete'=>'off',
                             ],
                         ])
                         ->add('birthDate', DateTimeType::class, [
@@ -126,6 +151,9 @@ class IdentityType extends AbstractType
                             'format' => 'dd/MM/yyyy',
                             'attr' => [
                                 'class' => 'js-datepicker',
+                                'data-max-date' => $dateMax->format('Y-m-d'),
+                                'data-min-date' => $dateMin->format('Y-m-d'),
+                                'data-year-range' => $dateMin->format('Y').':'.$dateMax->format('Y'),
                                 'autocomplete' => 'off',
                                 'data-constraint' => 'app-BirthDate',
                             ],
@@ -180,39 +208,37 @@ class IdentityType extends AbstractType
                             ],
                         ])
                     ;
-                    if (!$identity->hasAddress()) {
-                        $addressClass .= ' hidden';
-                        $addressRequired = '';
-                    }
                 } else {
                     $form
-                        ->add('birthplace', TextType::class, [
-                            'label' => 'Lieu de naissance',
-                            'row_attr' => [
-                                'class' => $row_class,
+                        ->add('birthCommune', Select2EntityType::class, [
+                            'label' => 'Lieu de naissance<br><small>(Pour l\'étranger, saisissez la ville et le pays)</small>',
+                            'label_html' => true,
+                            'class' => Commune::class,
+                            'multiple' => false,
+                            'remote_route' => 'geo_department',
+                            'primary_key' => 'id',
+                            'text_property' => 'name',
+                            'minimum_input_length' => 1,
+                            'page_limit' => 10,
+                            'allow_clear' => true,
+                            'allow_add' => [
+                                'enabled' => true,
+                                'new_tag_text' => ' (Hors France)',
+                                'tag_separators' => '[";"]',
                             ],
-                            'constraints' => [
-                                new NotNull(),
-                                new NotBlank(),
+                            'delay' => 250,
+                            'cache' => false,
+                            'language' => 'fr',
+                            'placeholder' => 'Rechercher une commune (sans espace)',
+                            'width' => '100%',
+                            'row_attr' => [
+                                'class' => 'form-group search',
                             ],
                             'attr' => [
-                                'data-constraint' => '',
+                                'class' => 'commune-search',
+                                'data-constraint' => 'app-NotEmpty',
                             ],
-                        ])
-                        ->add('birthDepartment', ChoiceType::class, [
-                            'label' => 'Département de naissance',
-                            'placeholder' => 'Sélectinner un département',
-                            'choices' => array_flip(json_decode(file_get_contents($this->parameterBag->get('data_directory_path') . 'departments'), true)),
-                            'row_attr' => [
-                                'class' => $row_class,
-                            ],
-                            'constraints' => [
-                                new NotNull(),
-                                new NotBlank(),
-                            ],
-                            'attr' => [
-                                'data-constraint' => '',
-                            ],
+                            'required' => false,
                         ])
                         ->add('pictureFile', FileType::class, [
                             'label' => 'Photo d\'itentité',
@@ -236,10 +262,6 @@ class IdentityType extends AbstractType
                         ])
                         ;
                 }
-                $form->add('address', AddressType::class, [
-                    'row_class' => $addressClass,
-                    'required' => $addressRequired,
-                ]);
             }
         });
     }

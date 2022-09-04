@@ -11,11 +11,13 @@ use App\Form\UserType;
 use App\Repository\IdentityRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginAuthenticator;
+use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
 use App\Service\SeasonService;
+use App\Service\StringService;
 use App\Service\UploadService;
 use App\Validator\UniqueMember;
 use App\ViewModel\UserPresenter;
@@ -53,7 +55,9 @@ class EditRegistration
         private ValidatorInterface $validator,
         private EventDispatcherInterface $dispatcher,
         private TokenStorageInterface $tokenStorage,
-        private LicenceService $licenceService
+        private LicenceService $licenceService,
+        private StringService $stringService,
+        private CommuneService $communeService
     ) {
     }
 
@@ -62,17 +66,22 @@ class EditRegistration
         $season = $progress['season'];
         $user = $form->getData();
         $manualAuthenticating = false;
+        $session = $request->getSession();
 
         if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
             $identity = $this->registerNewUser($user, $form);
             $manualAuthenticating = true;
             $this->uniqueMemberValidator($form, $identity);
-            if ($form->isValid()) {
-                $this->sendMail($user);
+            if ($form->isValid()) { 
+                $session->set('sendLoginRegistration', true);
             }
         }
 
-        if (null !== $user->getIdentities()->first()->getBirthDate()) {
+        if($user->getMemberIdentity()->getBirthCommune()) {
+            $this->communeService->addIfNotExists($user->getMemberIdentity()->getBirthCommune());
+        };
+
+        if (null !== $user->getMemberIdentity()->getBirthDate()) {
             $category = $this->licenceService->getCategory($user);
             $user->getSeasonLicence($season)->setCategory($category);
             if (Licence::CATEGORY_MINOR === $category) {
@@ -81,6 +90,13 @@ class EditRegistration
             }
         }
         $this->UploadFile($request, $user);
+
+        $category = $user->getSeasonLicence($season)->getCategory();
+        if (true === $session->get('sendLoginRegistration') && 
+            ((Licence::CATEGORY_MINOR === $category && $user->getKinshipIdentity()) || Licence::CATEGORY_ADULT === $category )) {
+                $this->sendMail($user);
+                $session->set('sendLoginRegistration', true);
+        }
 
         $isMedicalCertificateRequired = $this->isMedicalCertificateRequired($progress);
         $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
@@ -110,8 +126,8 @@ class EditRegistration
 
         $nextId = $this->userRepository->findNextId();
         $identity = $user->getFirstIdentity();
-        $fullName = strtoupper($identity->getName()) . ucfirst($identity->getFirstName());
-        $user->setLicenceNumber(substr($fullName, 0, 20) . $nextId);
+        $fullName = $this->stringService->clean(strtoupper($identity->getName()) . ucfirst($identity->getFirstName()));
+        $user->setLicenceNumber(substr(preg_replace('/[^a-zA-Z0-9]+/', '', $fullName), 0, 20) . $nextId);
 
         return $identity;
     }

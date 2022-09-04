@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Repository\ParameterRepository;
+use App\Service\CommandLineService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UpdateCommand extends Command
 {
@@ -17,16 +19,12 @@ class UpdateCommand extends Command
 
     protected static $defaultDescription = 'update website';
 
-    private ParameterRepository $parameterRepository;
-
-    private EntityManagerInterface $entityManager;
-
     public function __construct(
-        ParameterRepository $parameterRepository,
-        EntityManagerInterface $entityManager
+        private ParameterRepository $parameterRepository,
+        private EntityManagerInterface $entityManager,
+        private ParameterBagInterface $parameterBag,
+        private CommandLineService $commandLineService
     ) {
-        $this->parameterRepository = $parameterRepository;
-        $this->entityManager = $entityManager;
         parent::__construct();
     }
 
@@ -39,29 +37,47 @@ class UpdateCommand extends Command
         $maintenance->setValue('1');
         $this->entityManager->flush();
 
-        $io->writeln('git reset --hard');
-        $output = shell_exec('git reset --hard');
-        $io->writeln($output);
+        if ('patrick' !== getenv('USER')) {
+            $io->writeln('git reset --hard');
+            $output = shell_exec('git reset --hard');
+            $io->writeln($output);
 
-        $io->writeln('git pull');
-        $output = shell_exec('git pull');
-        $io->writeln($output);
+            $io->writeln('git pull');
+            $output = shell_exec('git pull');
+            $io->writeln($output);
+        }
 
         if ('Déjà à jour.' !== $output) {
-            $cmdComposer = 'composer install';
-            $cmdMigration = 'php bin/console doctrine:migration:migrate -n';
-            if ('/home/patrick/Sites/vtt_evasion_ludres' !== getcwd()) {
-                $cmdComposer = '/usr/bin/php8.1-cli ../composer.phar install';
-                $cmdMigration = '/usr/bin/php8.1-cli  bin/console doctrine:migration:migrate -n';
-            }
 
-            $io->writeln('composer install');
+            $io->writeln('version php :'.$this->commandLineService->getPhpVersion());
+
+            $cmdComposer = ('patrick' === getenv('USER')) 
+                ? 'composer install' 
+                : $this->commandLineService->getBinay().' ../composer.phar install';
+
+            $io->writeln($cmdComposer);
             $output = shell_exec($cmdComposer);
             $io->writeln($output);
 
-            $io->writeln('doctrine:migration:migrate');
-            $output = shell_exec($cmdMigration);
-            $io->writeln($output);
+            $commands = [
+                ['cmd' => 'doctrine:migration:migrate -n', 'onlyOne' => false],
+                ['cmd' => 'geo:load:data', 'onlyOne' => true],
+                ['cmd' => 'geo:convert:birthplace', 'onlyOne' => true],
+                ['cmd' => 'geo:convert:town', 'onlyOne' => true],
+            ];
+
+            foreach($commands as $command) {
+                $filename = $this->parameterBag->get('cmd_directory_path').str_replace([':', ' '], '', $command['cmd']);
+                if (!($command['onlyOne'] && file_exists($filename)) ) {
+                    $cmd = $this->commandLineService->getBinConsole().' '.$command['cmd'] ;
+                    $io->writeln($cmd);
+                    $output = shell_exec($cmd);
+                    $io->writeln($output);
+                }
+                if ($command['onlyOne']) {
+                    file_put_contents($filename, '');
+                }
+            }
         }
 
         $io->writeln('Suppression du mode maintenance');

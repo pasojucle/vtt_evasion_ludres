@@ -83,8 +83,8 @@ class UserViewModel extends AbstractViewModel
     public function getFullName(): string
     {
         if (null !== $this->member) {
-            return ($this->kinship)
-                ? $this->kinship->name . ' ' . $this->kinship->firstName
+            return (Licence::CATEGORY_MINOR === $this->seasonLicence->category)
+                ? $this->kinship?->name . ' ' . $this->kinship?->firstName
                 : $this->member->name . ' ' . $this->member->firstName;
         }
 
@@ -94,7 +94,7 @@ class UserViewModel extends AbstractViewModel
     public function getMainEmail(): ?string
     {
         if (null !== $this->member) {
-            return ($this->kinship) ? $this->kinship->email : $this->member->email;
+            return (Licence::CATEGORY_MINOR === $this->seasonLicence->category) ? $this->kinship?->email : $this->member->email;
         }
 
         return '';
@@ -239,7 +239,7 @@ class UserViewModel extends AbstractViewModel
     {
         $type = (null !== $this->entity->getLevel()) ? $this->entity->getLevel()->getType() : null;
 
-        return Level::TYPE_MEMBER === $type;
+        return Level::TYPE_SCHOOL_MEMBER === $type;
     }
 
     public function isFramer(): bool

@@ -38,6 +38,11 @@ class EditIdentity
                 }
             }
         }
+
+        if($user->getMemberIdentity()->getBirthCommune()) {
+            $this->communeService->addIfNotExists($user->getMemberIdentity()->getBirthCommune());
+        };
+
         $this->entityManager->flush();
     }
 }

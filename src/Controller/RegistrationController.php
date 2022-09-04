@@ -173,7 +173,7 @@ class RegistrationController extends AbstractController
             UserType::FORM_APPROVAL,
         ];
         if (!empty($steps)) {
-            foreach ($steps as $key => $step) {
+            foreach ($steps as $step) {
                 $registrationStepPresenter->present($step, $presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
                 $step = $registrationStepPresenter->viewModel();
                 if (null !== $step->filename) {

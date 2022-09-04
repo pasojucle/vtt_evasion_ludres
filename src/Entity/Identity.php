@@ -84,6 +84,9 @@ class Identity
     #[Column(type: 'integer', options: ['default' => 1])]
     private int $type = self::TYPE_MEMBER;
 
+    #[ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
+    private ?Commune $birthCommune = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -263,6 +266,20 @@ class Identity
     public function setType(int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getBirthCommune(): ?Commune
+    {
+        return ($this->birthCommune) 
+            ? $this->birthCommune
+            : (($this->birthplace) ? (new Commune())->setName($this->birthplace) : null);
+    }
+
+    public function setBirthCommune(?Commune $birthCommune): self
+    {
+        $this->birthCommune = $birthCommune;
 
         return $this;
     }

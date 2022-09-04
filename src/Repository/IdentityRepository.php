@@ -68,4 +68,16 @@ class IdentityRepository extends ServiceEntityRepository
             ->getResult()
     ;
     }
+
+    public function findAllBirthplaceToConvert(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere(
+                (new Expr())->isNotNull('i.birthplace'),
+                (new Expr())->isNull('i.birthCommune'),
+            )
+            ->getQuery()
+            ->getResult()
+    ;
+    }
 }

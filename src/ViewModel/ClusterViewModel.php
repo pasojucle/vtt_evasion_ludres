@@ -98,8 +98,8 @@ class ClusterViewModel extends AbstractViewModel
         if (!$this->entity->getSessions()->isEmpty()) {
             foreach ($this->entity->getSessions() as $session) {
                 $level = $session->getUser()->getLevel();
-                $levelType = (null !== $level) ? $level->getType() : Level::TYPE_MEMBER;
-                if ($session->isPresent() && Level::TYPE_MEMBER === $levelType) {
+                $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
+                if ($session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $levelType) {
                     $userOnSiteSessions[] = $session;
                 }
             }

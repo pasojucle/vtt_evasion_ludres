@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Repository\IndemnityRepository;
 use App\Repository\MembershipFeeAmountRepository;
 use App\Service\ClusterService;
+use App\Service\IdentityService;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
 use App\Service\SeasonService;
@@ -40,7 +41,8 @@ class ServicesPresenter
         public AppExtension $appExtension,
         private IndemnityRepository $indemnityRepository,
         public IndemnityService $indemnityService,
-        public ClusterService $clusterService
+        public ClusterService $clusterService,
+        public IdentityService $identityService
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
         $this->uploadsDirectoryPath = $this->parameterBag->get('uploads_directory_path');

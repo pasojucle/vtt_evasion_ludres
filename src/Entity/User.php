@@ -259,6 +259,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    public function getMemberIdentity(): Identity|false
+    {
+        $criteria = Criteria::create()
+            ->andWhere(
+                Criteria::expr()->orX(
+                    Criteria::expr()->eq('kinship', Identity::TYPE_MEMBER),
+                    Criteria::expr()->isNull('kinship'),
+                )
+            )
+        ;
+
+        return $this->identities->matching($criteria)->first();
+    }
+
+    public function getKinshipIdentity(): Identity|false
+    {
+        $criteria = Criteria::create()
+            ->andWhere(
+                Criteria::expr()->eq('kinship', Identity::TYPE_KINSHIP),
+            )
+        ;
+
+        return $this->identities->matching($criteria)->first();
+    }
+    
+
     public function getHealth(): ?Health
     {
         return $this->health;

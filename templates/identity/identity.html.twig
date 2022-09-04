@@ -1,4 +1,4 @@
-{% if identity.children is not empty %}
+{% if identity.children|length > 1 %}
     {% if identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_KINSHIP') %}
         <b>Responsable de l'enfant</b>
     {% elseif identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_SECOND_CONTACT') %}
@@ -15,9 +15,9 @@
         {% if identity.birthDate is defined %}
         <div class="form-group">
             {{ form_row(identity.birthDate)}}
-            {% if identity.birthplace is defined and identity.birthDepartment is defined %}
-                {{ form_row(identity.birthplace) }}
-                {{ form_row(identity.birthDepartment) }}
+            {% if identity.birthCommune is defined %}
+                {{ form_row(identity.birthCommune) }}
+                {# {{ form_row(identity.birthDepartment) }} #}
             {% endif %}
         </div>
         {% endif %}
@@ -53,19 +53,21 @@
     {% if identity.otherAddress is defined %}
         <div class="form-group">
             <div class="inputGroup long check">
-                {{ form_widget(identity.otherAddress)}}
+                {{ form_widget(identity.otherAddress, {'attr':{'data-modifier': 'address-' ~ identity.vars.name }})}}
                 {{ form_label(identity.otherAddress)}}
             </div>
         </div>
     {% endif %}
-    {% if identity.address is defined %}
 
-            <div class="form-group">{{ form_row(identity.address.street) }}</div>
-            <div class="form-group">
-                {{ form_row(identity.address.postalCode) }}
-                {{ form_row(identity.address.town) }}
-            </div>
+        <div class="address-group{% if identity.otherAddress is defined and identity.otherAddress.vars.data is same as false %} hidden{% endif %}">
+            {% if identity.address is defined %}
+                <div class="form-group">{{ form_row(identity.address.street) }}</div>
+                <div class="form-group">
+                    {{ form_row(identity.address.postalCode, {'attr':{'data-modifier': 'commune-' ~ identity.vars.name }}) }}
+                    {{ form_row(identity.address.commune) }}
+                </div>
+            {% endif %}
+        </div>
 
-    {% endif %}
     </div>
 {% endif %}

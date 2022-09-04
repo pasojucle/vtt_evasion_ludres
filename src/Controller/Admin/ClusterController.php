@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Cluster;
-use App\Service\FilenameService;
+use App\Service\StringService;
 use App\Service\PdfService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\ClusterPresenter;
@@ -45,12 +45,12 @@ class ClusterController extends AbstractController
     public function adminClusterExport(
         PdfService $pdfService,
         ClusterPresenter $presenter,
-        FilenameService $filenameService,
+        StringService $ftringService,
         Cluster $cluster
     ): Response {
         $presenter->present($cluster);
         $files = [];
-        $dirName = $this->parameterBag->get('tmp_directory_path') . $filenameService->clean($presenter->viewModel()->title);
+        $dirName = $this->parameterBag->get('tmp_directory_path') . $ftringService->clean($presenter->viewModel()->title);
         if (!is_dir($dirName)) {
             mkdir($dirName);
         }
@@ -70,8 +70,8 @@ class ClusterController extends AbstractController
         }
 
         $fileName = $cluster->getTitle() . '_' . $cluster->getBikeRide()->getStartAt()->format('Ymd');
-        $fileName = $filenameService->clean($fileName) . '.pdf';
-        $pathName = $pdfService->joinPdf($files, null, $this->parameterBag->get('tmp_directory_path') . $filenameService->clean($cluster->getTitle()) . '.pdf');
+        $fileName = $ftringService->clean($fileName) . '.pdf';
+        $pathName = $pdfService->joinPdf($files, null, $this->parameterBag->get('tmp_directory_path') . $ftringService->clean($cluster->getTitle()) . '.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(

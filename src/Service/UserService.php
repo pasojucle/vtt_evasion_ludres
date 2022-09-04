@@ -8,8 +8,8 @@ use App\Entity\User;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UserViewModel;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UserService
 {

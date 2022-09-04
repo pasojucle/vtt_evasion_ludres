@@ -45,7 +45,7 @@ class UserType extends AbstractType
                     ;
                 },
                 'group_by' => function ($choice, $key, $value) {
-                    if (Level::TYPE_MEMBER === $choice->getType()) {
+                    if (Level::TYPE_SCHOOL_MEMBER === $choice->getType()) {
                         return 'Adhérent';
                     }
 

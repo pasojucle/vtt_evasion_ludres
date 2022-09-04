@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class PdfService
 {
     public function __construct(
-        private FilenameService $filenameService,
+        private StringService $ftringService,
         private SeasonService $seasonService,
         private KernelInterface $kernel,
         private UserPresenter $userPresenter,
@@ -47,7 +47,7 @@ class PdfService
         if (!is_dir($directory)) {
             mkdir($directory);
         }
-        $pdfFilepath = $directory . DIRECTORY_SEPARATOR . $this->filenameService->clean($filename) . '.pdf';
+        $pdfFilepath = $directory . DIRECTORY_SEPARATOR . $this->ftringService->clean($filename) . '.pdf';
 
         file_put_contents($pdfFilepath, $output);
 

@@ -48,7 +48,7 @@ class IdentityViewModel extends AbstractViewModel
         $identityView->firstName = $identity->getFirstName();
         $identityView->fullName = $identity->getName() . ' ' . $identity->getFirstName();
         $identityView->birthDate = ($bithDate) ? $bithDate->format('d/m/Y') : null;
-        $identityView->birthPlace = $identity->getBirthPlace() . ' (' . $identity->getBirthDepartment() . ')';
+        $identityView->birthPlace = $identityView->getBirthplace();
         $identityView->address = $identityView->getAddress($member);
         $identityView->email = $identity->getEmail();
         $identityView->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
@@ -103,5 +103,18 @@ class IdentityViewModel extends AbstractViewModel
         $identity = $this->entity;
 
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
+    }
+
+    private function getBirthplace():string
+    {
+        $birthCommune = $this->entity->getBirthCommune();
+        
+        if($birthCommune) {
+            return ($birthCommune->getDepartment())
+                ? $birthCommune->getName(). ' ('.$birthCommune->getDepartment()?->getName() . ')'
+                : $birthCommune->getName();
+        }
+
+        return $this->entity->getBirthPlace() . ' (' . $this->entity->getBirthDepartment() . ')';
     }
 }

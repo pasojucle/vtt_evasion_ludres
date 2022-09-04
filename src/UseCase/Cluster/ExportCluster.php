@@ -6,7 +6,7 @@ namespace App\UseCase\Cluster;
 
 use App\Entity\Cluster;
 use App\Repository\SessionRepository;
-use App\Service\FilenameService;
+use App\Service\StringService;
 use App\Service\PdfService;
 use App\ViewModel\ClusterPresenter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -23,7 +23,7 @@ class ExportCluster
 
     public function __construct(
         private SessionRepository $sessionRepository,
-        private FilenameService $filenameService,
+        private StringService $ftringService,
         private ClusterPresenter $presenter,
         private PdfService $pdfService,
         private Environment $twig,
@@ -37,7 +37,7 @@ class ExportCluster
     {
         $this->presenter->present($cluster);
         $this->cluster = $this->presenter->viewModel();
-        $this->dirName = $this->parameterBag->get('tmp_directory_path') . $this->filenameService->clean($this->presenter->viewModel()->title);
+        $this->dirName = $this->parameterBag->get('tmp_directory_path') . $this->ftringService->clean($this->presenter->viewModel()->title);
         if (!is_dir($this->dirName)) {
             mkdir($this->dirName);
         }
@@ -67,8 +67,8 @@ class ExportCluster
     private function getResponse(): Response
     {
         $fileName = $this->cluster->title . '_' . $this->cluster->entity->getBikeRide()->getStartAt()->format('Ymd');
-        $fileName = $this->filenameService->clean($fileName) . '.pdf';
-        $pathName = $this->pdfService->joinPdf($this->files, null, $this->parameterBag->get('tmp_directory_path') . $this->filenameService->clean($this->cluster->title) . '.pdf');
+        $fileName = $this->ftringService->clean($fileName) . '.pdf';
+        $pathName = $this->pdfService->joinPdf($this->files, null, $this->parameterBag->get('tmp_directory_path') . $this->ftringService->clean($this->cluster->title) . '.pdf');
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(

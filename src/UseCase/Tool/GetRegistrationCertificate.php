@@ -6,7 +6,7 @@ namespace App\UseCase\Tool;
 
 use App\Entity\Licence;
 use App\Entity\User;
-use App\Service\FilenameService;
+use App\Service\StringService;
 use App\Service\ParameterService;
 use App\Service\PdfService;
 use App\ViewModel\LicenceViewModel;
@@ -21,7 +21,7 @@ class GetRegistrationCertificate
     public function __construct(
         private UserPresenter $presenter,
         private PdfService $pdfService,
-        private FilenameService $filenameService,
+        private StringService $ftringService,
         private Environment $twig,
         private ParameterService $parameterService
     ) {
@@ -120,6 +120,6 @@ class GetRegistrationCertificate
         $dirname = 'registration_certificate';
         $this->pdfService->makePdf($renderPdf, $filename, '../public/' . $dirname);
 
-        return DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $this->filenameService->clean($filename) . '.pdf';
+        return DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $this->ftringService->clean($filename) . '.pdf';
     }
 }

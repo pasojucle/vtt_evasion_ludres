@@ -33,6 +33,9 @@ $(document).ready(function(){
             format: 'dd/mm/YYYY',
             maxDate: new Date($(this).data('max-date')),
             minDate: new Date($(this).data('min-date')),
+            yearRange: $(this).data('year-range'),
+            changeMonth: true,
+            changeYear: true,
         });
     })
     // $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_levels, #user_filter_user, #registration_filter_isFinal, #order_filter_status', submitFom);
@@ -110,12 +113,10 @@ jQuery(function($){
 	$.datepicker.setDefaults($.datepicker.regional['fr']);
 });
 
-function updateIdentity() {
+function updateIdentity(event) {
     let required = $(this).is(':checked');
     const container = $(this).parents('div.address-container');
-    console.log(container);
-    console.log(container.find('.identity-address'));
-    container.find('.identity-address').toggleClass('hidden');
+    container.find('.address-group').toggleClass('hidden');
     if (required) {
         container.find('.identity-address').find('input').attr('required', 'required');
     } else {
@@ -248,10 +249,11 @@ function modifierBikeRide() {
 function formModifier() {
     const form = $(this).closest('form');
     const selector = '#' + $(this).data('modifier');
+    console.log(selector);
     const data = {};
     $.each(form[0].elements,function() {
         if ($(this).attr('name') !== undefined && ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden')) {
-            let value = ($(this).attr('name').includes('town')) ? null : $(this).val();
+            let value = ($(this).attr('name').includes('commune')) ? null : $(this).val();
             data[$(this).attr('name')] = value;
         }
     });
@@ -260,7 +262,9 @@ function formModifier() {
         url : form.attr('action'),
         type: form.attr('method'),
         data : data,
-        success: function(html) {
+        success: function(html) {   
+            console.log($(selector));   
+            console.log($(html).find(selector));
           $(selector).replaceWith(
             $(html).find(selector)
           );

@@ -1,13 +1,13 @@
 let lastField;
 $(document).ready(function(){
     lastField = getLastField();
-    console.log(lastField);
+    console.log('lastFied', lastField);
     validateAll();
     $(document).on('blur', '[data-constraint]', function(){
         validateAll(this.name);
     });
 
-    $(document).on('change', '[data-constraint="app-BirthDate"]', function(){
+    $(document).on('change', '[data-constraint="app-BirthDate"], .select2entity', function(){
         validateAll(this.name);
     });
 });
