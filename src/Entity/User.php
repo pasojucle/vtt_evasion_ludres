@@ -263,10 +263,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $criteria = Criteria::create()
             ->andWhere(
-                Criteria::expr()->orX(
-                    Criteria::expr()->eq('kinship', Identity::TYPE_MEMBER),
-                    Criteria::expr()->isNull('kinship'),
-                )
+                Criteria::expr()->eq('type', Identity::TYPE_MEMBER),
             )
         ;
 
@@ -277,7 +274,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $criteria = Criteria::create()
             ->andWhere(
-                Criteria::expr()->eq('kinship', Identity::TYPE_KINSHIP),
+                Criteria::expr()->eq('type', Identity::TYPE_KINSHIP),
             )
         ;
 

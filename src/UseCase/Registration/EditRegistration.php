@@ -95,7 +95,7 @@ class EditRegistration
         if (true === $session->get('sendLoginRegistration') && 
             ((Licence::CATEGORY_MINOR === $category && $user->getKinshipIdentity()) || Licence::CATEGORY_ADULT === $category )) {
                 $this->sendMail($user);
-                $session->set('sendLoginRegistration', true);
+                $session->set('sendLoginRegistration', false);
         }
 
         $isMedicalCertificateRequired = $this->isMedicalCertificateRequired($progress);

@@ -224,16 +224,13 @@ class GetProgress
     private function createIdentitiesKinship(): Identity
     {
         foreach ([
-            Identity::TYPE_KINSHIP => Identity::KINSHIP_FATHER,
-            Identity::TYPE_SECOND_CONTACT => Identity::KINSHIP_MOTHER,
-        ] as $type => $kinShip) {
+            Identity::TYPE_KINSHIP,
+            Identity::TYPE_SECOND_CONTACT,
+        ] as $type) {
             $identity = new Identity();
-            $identity->setType($type)
-            ;
+            $identity->setType($type);
             $this->user->addIdentity($identity);
-            // if (Identity::TYPE_KINSHIP === $type) {
             $this->createAddress($identity);
-            // }
             $this->entityManager->persist($identity);
         }
 
