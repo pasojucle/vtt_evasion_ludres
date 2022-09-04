@@ -10,10 +10,12 @@ use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
+use App\Service\IdentityService;
 use App\Service\MailerService;
 use App\Service\OrderByService;
 use App\ViewModel\BikeRidesPresenter;
 use App\ViewModel\Content\ContentsPresenter;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -111,13 +113,26 @@ class ContentController extends AbstractController
     #[Route('/contact', name: 'contact', methods: ['GET', 'POST'])]
     public function contact(
         Request $request,
-        MailerService $mailerService
+        IdentityService $identityService,
+        MailerService $mailerService,
+        UserPresenter $userPresenter
     ): Response {
-        $form = $this->createForm(ContactType::class);
+        $user = $this->getUser();
+        $data =  null;
+        if (null !== $user) {
+            $mainContact = $identityService->getMainContact($user);
+            $data = ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()];
+        }
+
+        $form = $this->createForm(ContactType::class, $data);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            if($user) {
+                $userPresenter->present($user);
+                $data['user'] = $userPresenter->viewModel();
+            }
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
             if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_FORM_CONTACT')) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
