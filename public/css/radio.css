@@ -1,12 +1,12 @@
-  .radio input[type="radio"] {
+  .radio-group input[type="radio"] {
     display: none;
   }
-  .radio input[type="radio"] + label {
+  .radio-group input[type="radio"] + label {
     position: relative;
     padding-left: 1.3rem;
   }
-  .radio input[type="radio"] + label::before,
-  .radio input[type="radio"] + label::after {
+  .radio-group input[type="radio"] + label::before,
+  .radio-group input[type="radio"] + label::after {
     display: block;
     position: absolute;
     box-sizing: border-box;
@@ -17,11 +17,11 @@
     height: 1rem; 
     border-radius: 1rem;
   }
-  .radio input[type="radio"] + label::before {
+  .radio-group input[type="radio"] + label::before {
     border: 2px solid var(--primary-color-darker);
     /* background-color: #eee; */
   }
-  .radio input[type="radio"]:checked + label::after {
+  .radio-group input[type="radio"]:checked + label::after {
     content: '\f058';
     font-family: "Font Awesome 5 Free";
     font-weight: 900;

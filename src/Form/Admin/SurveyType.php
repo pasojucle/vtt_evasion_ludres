@@ -82,7 +82,6 @@ class SurveyType extends AbstractType
                     return [
                         'data-modifier' => 'surveyDisplay',
                         'class' => 'form-modifier',
-                        'block_prefix' => 'custom_radio',
                      ];
                 },
                 'disabled' => $options['display_disabled'],
