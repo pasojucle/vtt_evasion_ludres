@@ -10,6 +10,8 @@ use App\Service\PaginatorService;
 use App\ViewModel\LogErrorPresenter;
 use App\ViewModel\LogErrorsPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,6 +68,35 @@ class LogErrorController extends AbstractController
 
         $entityManager->remove($error);
         $entityManager->flush();
+
+        $query = $logErrorRepository->findLogErrorQuery($statusCode);
+        $errors = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $presenter->present($errors);
+
+        return $this->render('log_error/admin/list.html.twig', [
+            'errors' => $presenter->viewModel()->logErrors,
+            'tabs' => $presenter->viewModel()->tabs,
+            'status_code' => $statusCode,
+            'lastPage' => $paginator->lastPage($errors),
+            'count' => $paginator->total($errors),
+            'target_route' => 'admin_log_errors',
+            'current_Filters' => [
+                'statusCode' => $statusCode,
+            ],
+        ]);
+    }
+
+    #[Route('/admin/log/errors/delete/{statusCode}', name: 'admin_log_errors_delete', methods: ['GET'])]
+    public function deleteAll(
+        EntityManagerInterface $entityManager,
+        PaginatorService $paginator,
+        LogErrorsPresenter $presenter,
+        LogErrorRepository $logErrorRepository,
+        Request $request,
+        int $statusCode
+    ): Response {
+
+        $logErrorRepository->deletAllBySatusCode($statusCode);
 
         $query = $logErrorRepository->findLogErrorQuery($statusCode);
         $errors = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);

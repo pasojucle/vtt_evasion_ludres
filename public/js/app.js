@@ -335,11 +335,19 @@ function anchorAsynchronous(e) {
     e.preventDefault();
     const route = $(this).attr('href');
     const container = $(this).closest('ul').attr('id');
+    const badgeInfo = '.wrapper-title .badge.badge-info';
+    const paginator = 'nav.paginator';
 
     $.ajax({
         url : route,
         success: function(html) {
             $('#'+container).replaceWith($(html).find('#'+container));
+            if ($(badgeInfo)) {
+                $(badgeInfo).replaceWith($(html).find(badgeInfo));
+            }
+            if ($(paginator)) {
+                $(paginator).replaceWith($(html).find(paginator));
+            }
         }
       });
 }

@@ -36,4 +36,15 @@ class LogErrorRepository extends ServiceEntityRepository
             ->orderBy('l.createdAt', 'DESC')
         ;
     }
+
+    public function deletAllBySatusCode(int $statusCode): void
+    {
+        $this->createQueryBuilder('l')
+            ->delete()
+            ->where('l.statusCode = :statusCode')
+            ->setParameter('statusCode', $statusCode)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

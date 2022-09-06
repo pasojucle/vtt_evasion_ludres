@@ -14,6 +14,7 @@
         </nav>
         <div class="wrapper-body">
             <ul id="errors_container">
+                <a href="{{ path('admin_log_errors_delete', {'statusCode': status_code})}}" class="btn btn-danger delete-error">Supprimer tout</a>
                 {% for error in errors %}
                     <li class="row row-list">
                         <div class="col-md-11 col-xs-10">
@@ -32,8 +33,8 @@
                         </div>
                     </li>
                 {% endfor %}
+                {% if errors is empty %}<li>Aucune erreur</li>{% endif %}
             </ul>
-            {% if errors is empty %}Aucune erreur{% endif %}
         </div>
         {% include('common/pagination.html.twig') %}
     </div>
