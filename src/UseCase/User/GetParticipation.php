@@ -40,7 +40,7 @@ class GetParticipation
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
-
+        dump($filters);
         $form = $this->createForm($filters);
         $form->handleRequest($request);
 
@@ -61,7 +61,7 @@ class GetParticipation
         return [
             'user' => $this->userPresenter->viewModel(),
             'sessions' => $this->sessionsPresenter->viewModel()->sessions,
-            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, ),
+            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, (int) str_replace('SEASON_', '', $filters['season'])),
             'form' => $form->createView(),
             'lastPage' => $this->paginator->lastPage($sessions),
             'current_filters' => [
