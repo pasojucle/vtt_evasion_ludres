@@ -92,7 +92,7 @@ bike_ride:
 session:
   availability:
     registered: Sera présent
-    available: Disponible si besoin
+    available: Dispo. si besoin
     unavailable: Absent
     undefined: Non défini
 

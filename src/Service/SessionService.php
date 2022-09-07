@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
 use App\ViewModel\ClusterPresenter;
+use App\ViewModel\SessionPresenter;
 use App\ViewModel\UserPresenter;
 use DateInterval;
 use DateTimeImmutable;
@@ -26,7 +27,8 @@ class SessionService
         private MailerService $mailerService,
         private ClusterPresenter $clusterPresenter,
         private ParameterService $parameterService,
-        private ClusterService $clusterService
+        private ClusterService $clusterService,
+        private SessionPresenter $sessionPresenter,
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
@@ -48,10 +50,8 @@ class SessionService
                 } else {
                     if ($user !== $session->getUser()) {
                         $this->userPresenter->present($session->getUser());
-                        $framers[] = [
-                            'user' => $this->userPresenter->viewModel(),
-                            'availability' => $session->getAvailability(),
-                        ];
+                        $this->sessionPresenter->present($session);
+                        $framers[] = $this->sessionPresenter->viewModel();
                     }
                 }
             }

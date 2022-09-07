@@ -126,8 +126,12 @@ body > script {display: none !important;}
     --white-color: #fff;
     --gap:25px;
 }
+.alert-danger-color,
 .alert-danger {
     color: var(--danger-color);
+}
+.warning-color {
+    color: var(--primary-color-darker);
 }
 .background-color .alert-danger {
     background-color: var(--danger-color);
@@ -220,6 +224,7 @@ body > script {display: none !important;}
 .fas.fa-check-circle {
     font-size: 20px;
 }
+.success-color,
 .success:not(.form-group-inline, .form-group) {
     color: var(--success-color);
 }

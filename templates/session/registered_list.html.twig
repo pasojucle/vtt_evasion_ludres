@@ -5,9 +5,9 @@
             {% if framers is not empty %}
                 <ul>
                     {% for framer in framers %}
-                        <li> 
+                        <li>
                             <div class="row row-list">
-                                <div class="col-md-6 col-xs-6"><span class="{{ framer.availability.class }}">{{ framer.availability.text|trans }}</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="{{ framer.availability.class.color }}"> {{ framer.availability.class.icon|raw }} {{ framer.availability.text|trans }}</span></div>
                                 <div class="col-md-6 col-xs-6">{{ framer.user.member.fullName }}</div>
                                 
                             </div>

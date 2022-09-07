@@ -27,11 +27,12 @@
                                         </b>
                                     </div>
                                     <div class="col-md-5 col-xs-8">
-                                        <div>{{ bikeRide.bikeRide.title }}</div>
-                                        
-                                        {% if bikeRide.availability is not empty %}
-                                            <br><div class="{{ bikeRide.availability.class.badge }}">{{ bikeRide.availability.text|trans }}</div>
-                                        {% endif %}
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-12">{{ bikeRide.bikeRide.title }}</div>
+                                            {% if bikeRide.availability is not empty %}
+                                                <div class="col-md-12 col-xs-12 {{ bikeRide.availability.class.color }}">{{ bikeRide.availability.class.icon|raw }} {{ bikeRide.availability.text|trans }}</div>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                     <div class="col-md-2 col-xs-4">
                                         {% if bikeRide.availability is empty %}
