@@ -73,7 +73,7 @@ class SessionController extends AbstractController
 
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Votre disponiblité à bien été modifiée');
+            $this->addFlash('success', 'Votre disponibilité a bien été modifiée');
 
             return $this->redirectToRoute('user_bike_rides');
         }

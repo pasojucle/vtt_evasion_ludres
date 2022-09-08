@@ -42,7 +42,7 @@ class BackgroundType extends AbstractType
             ->add('portraitPosition', HiddenArrayType::class)
             ->add('squarePosition', HiddenArrayType::class)
             ->add('save', SubmitType::class, [
-                'label' => 'Enregister',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],

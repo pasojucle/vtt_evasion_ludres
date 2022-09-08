@@ -45,7 +45,7 @@ class LevelType extends AbstractType
                 ],
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Enregister',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],

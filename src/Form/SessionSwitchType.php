@@ -28,7 +28,7 @@ class SessionSwitchType extends AbstractType
     {
         $builder
             ->add('save', SubmitType::class, [
-                'label' => 'Enregister',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],

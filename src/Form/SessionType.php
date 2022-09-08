@@ -20,7 +20,7 @@ class SessionType extends AbstractType
 
         if (!$options['is_already_registered'] && !$options['is_end_testing']) {
             $submitLabel = (null !== $options['bike_ride'] && $options['bike_ride']->accessAvailability)
-                ? 'Enregister' : 'S\'inscrire';
+                ? 'Enregistrer' : 'S\'inscrire';
         }
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $form = $event->getForm();

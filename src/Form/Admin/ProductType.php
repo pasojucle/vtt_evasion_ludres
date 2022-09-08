@@ -83,7 +83,7 @@ class ProductType extends AbstractType
                 'multiple' => true,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Enregister',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],
