@@ -60,6 +60,7 @@ class SessionController extends AbstractController
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
     public function sessionAvailabilityEdit(
         Request $request,
+        BikeRidePresenter $bikeRidePresenter,
         Session $session
     ) {
         $bikeRide = $session->getCluster()->getBikeRide();
@@ -78,9 +79,10 @@ class SessionController extends AbstractController
             return $this->redirectToRoute('user_bike_rides');
         }
 
+        $bikeRidePresenter->present($bikeRide);
         return $this->render('session/edit.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRide,
+            'bikeRide' => $bikeRidePresenter->viewModel(),
             'framers' => $framers,
             'members' => $members,
         ]);
