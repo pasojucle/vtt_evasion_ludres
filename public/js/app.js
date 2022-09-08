@@ -283,9 +283,11 @@ function clusterComplete(event) {
         url : route,
         success: function(html) {
             $('#sessions_container').replaceWith($(html).find('#sessions_container'));
+            $('a#cluster_export_'+parameters['cluster'])[0].click();
         }
       });
 }
+
 
 function adminSessionPresent(e) {
     e.preventDefault();
