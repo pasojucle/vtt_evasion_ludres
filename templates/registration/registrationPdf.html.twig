@@ -2,7 +2,7 @@
 
 {% block body %}
     {% if template is not defined %}
-        <main class="registration">
+        <main class="minimize">
         {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
         {% if registration_document_steps[key]is defined %}
             {{ registration_document_steps[key]['header']|imgPath(media)|raw|nl2br }}

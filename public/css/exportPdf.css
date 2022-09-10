@@ -95,7 +95,7 @@ body {
 main {
     margin: 20px;
 }
-main.registration {
+main.minimize {
     font-size: 12px;
     line-height: 16px;
     margin: 0px;
@@ -116,11 +116,11 @@ h2 {
     margin-top: 4px;
     margin-bottom: 1px;
 }
-.registration h2 {
+.minimize h2 {
     background-color: #e6841b;
     color: #fff;
 }
-.registration h3 {
+.minimize h3 {
     font-size: 14px;
     margin-top: 4px;
     margin-bottom: 1px;
@@ -156,8 +156,11 @@ table {
 th, td {
     padding: 5px;
 }
-.registration th, .registration td {
+.minimize th, .minimize td {
     padding: 0px;
+}
+.minimize .table-border th, .minimize .table-border td {
+    padding: 0px 2px;
 }
 .table-border th, .table-border td {
     border: 1px solid #000;
@@ -170,7 +173,7 @@ td.background {
     border: 1px solid #fff;
     background-color: #eeeeee;
 }
-.registration br {
+.minimize br {
     line-height: 4px; 
 }
 .align-left {

@@ -87,7 +87,7 @@ class GetRegistrationCertificate
 
     private function getKinShipData(UserViewModel $user, LicenceViewModel $licence, string $today): array
     {
-        $address = $user->kinship['address']->toString();
+        $address = $user->kinship?->address->toString();
 
         $search = [
             '{{ nom_prenom_parent }}',
@@ -99,12 +99,12 @@ class GetRegistrationCertificate
             '{{ date }}',
         ];
         $replace = [
-            $user->kinship->fullName,
+            $user->kinship?->fullName,
             $user->member->fullName,
             $address,
             $licence->season,
             $user->getLicenceNumber(),
-            $licence->getAmount()['value']->toString(),
+            $licence->getAmount()['value']?->toString(),
             $today,
         ];
 

@@ -1,6 +1,7 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
+<main class="minimize">
         <h2>{{ user.member.fullName }}</h2>
         <div>
             <br>
@@ -106,4 +107,5 @@
             <li><b>Type d'assurance : </b>{{ user.lastLicence.coverageStr|trans }}</li>
         </ul>
         </div>
+        </main>
 {% endblock %}
