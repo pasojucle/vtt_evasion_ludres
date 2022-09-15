@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Survey;
-use App\Entity\SurveyResponse;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
+use App\Entity\SurveyResponse;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method SurveyResponse|null find($id, $lockMode = null, $lockVersion = null)
@@ -86,5 +87,18 @@ class SurveyResponseRepository extends ServiceEntityRepository
         return $qb->getQuery()
             ->getResult()
         ;
+    }
+
+    public function deleteResponsesByUser(User $user): void
+    {
+        $this->createQueryBuilder('r')
+        ->delete()
+        ->andWhere(
+            (new Expr())->eq('r.user', ':user')
+        )
+        ->setParameter('user', $user)
+        ->getQuery()
+        ->getResult()
+    ;
     }
 }

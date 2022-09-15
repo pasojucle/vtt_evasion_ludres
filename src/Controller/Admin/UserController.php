@@ -157,4 +157,28 @@ class UserController extends AbstractController
 
         return new JsonResponse($getMembersFiltered->choices($filters, $query));
     }
+
+    #[Route('/all/user/choices', name: 'all_user_choices', methods: ['GET'])]
+    public function allUserChoices(
+        Request $request,
+        UserRepository $userRepository,
+    ): JsonResponse {
+        $query = $request->query->get('q');
+        $users = (null !== $query) 
+            ? $userRepository->findByNumberLicenceOrFullName($query)
+            : $userRepository->findAllAsc();
+        $response = [];
+        foreach($users as $user) {
+            $text = $user->getLicenceNumber();
+            if (null !== $user->GetFirstIdentity()) {
+                $text .= ' '. $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
+            }
+            $response[] = [
+                'id' => $user->getId(),
+                'text' => $text,
+            ];
+        }
+
+        return new JsonResponse($response);
+    }
 }

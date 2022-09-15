@@ -1,5 +1,13 @@
-$(document).ready(function(){
-    getMediaScreen();
+import('./js-datepicker.js');
+import('./modal.js');
+import('./reveal.js');
+import('./input-file.js');
+import('./constraints.js');
+import('./switch.js');
+import('./dropdown.js');
+import('./clipboard.js');
+
+document.addEventListener("DOMContentLoaded", (event) => {
     if ($('ul.StepProgress').length > 0) {
         const stepProgressMargingTop = parseInt($('ul.StepProgress').css('margin-top').replace('px', ''));
         const offsetTop = $('ul.StepProgress').offset().top-100;
@@ -26,22 +34,10 @@ $(document).ready(function(){
         buildSortable();
     }
     $(document).on('change', '.identity-other-address', updateIdentity);
-    $(document).on('change', 'input[type="file"]', previewFile);
 
-    $('.js-datepicker').each(function() {
-        $(this).datepicker({
-            format: 'dd/mm/YYYY',
-            maxDate: new Date($(this).data('max-date')),
-            minDate: new Date($(this).data('min-date')),
-            yearRange: $(this).data('year-range'),
-            changeMonth: true,
-            changeYear: true,
-        });
-    })
-    // $(document).on('change', '#bike_ride_filter_period, #user_filter_status, #user_filter_levels, #user_filter_user, #registration_filter_isFinal, #order_filter_status', submitFom);
     $(document).on('change', '.filters .select2, .filters select, .filters .btn', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
-    $(document).on('click', '.input-file-button', getFile);
+
     $(document).on('change', '#bike_ride_bikeRideType', modifierBikeRide);
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
@@ -51,10 +47,8 @@ $(document).ready(function(){
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
     $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
-    $(document).on('click', 'a[data-clipboard="1"]', clipboard);
-    $(document).on('click', '.email-to-clipboard', emailToClipboard);
-    $(document).on('click', 'button:not(.dropdown-toggle), a[data-toggle="modal"]', hideDropdown);
-    $(document).on('click', 'button.dropdown-toggle', toggleDropdown);
+
+
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
@@ -72,9 +66,7 @@ $(document).ready(function(){
         $('#modal_window_show').click();
     }
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
-    document
-        .querySelectorAll('.switch input[type="checkbox"]')
-        .forEach(btn => btn.addEventListener("change", handleSwitch));
+
     if ($('.select2').length > 0) {
         $('.select2').select2();
     }
@@ -83,35 +75,21 @@ $(document).ready(function(){
         const id = event.target.id;
         document.querySelector('.select2-search__field[aria-controls="select2-'+id+'-results"]').focus();
     });
+    $(document).on('click', '#user_search_submit', confirmDeleteUser)
 });
 
-jQuery(function($){
-	$.datepicker.regional['fr'] = {
-		closeText: 'Fermer',
-		prevText: '&#x3c;Préc',
-		nextText: 'Suiv&#x3e;',
-		currentText: 'Aujourd\'hui',
-		monthNames: ['Janvier','Fevrier','Mars','Avril','Mai','Juin',
-		'Juillet','Aout','Septembre','Octobre','Novembre','Decembre'],
-		monthNamesShort: ['Jan','Fev','Mar','Avr','Mai','Jun',
-		'Jul','Aou','Sep','Oct','Nov','Dec'],
-		dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
-		dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
-		dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
-		weekHeader: 'Sm',
-		dateFormat: 'dd/mm/yy',
-        timeFormat:  "HH:mm",
-		firstDay: 1,
-		isRTL: false,
-		showMonthAfterYear: false,
-		yearSuffix: '',
-		minDate: '-12M +0D',
-		maxDate: '+12M +0D',
-		numberOfMonths: 1,
-		showButtonPanel: false
-	};
-	$.datepicker.setDefaults($.datepicker.regional['fr']);
-});
+function confirmDeleteUser(e) {
+            e.preventDefault();
+        let form = $(this).closest('form');
+        console.log(form.attr('action'));
+        let user = form.find('#user_search_user').val();
+        let route = Routing.generate('admin_tool_confirm_delete_user', {'user': user});
+        let anchor = $('<a class="modal-trigger" href="'+route+'" data-toggle="modal" data-type="danger"></a>');
+        form.append(anchor);
+        console.log('anchor', anchor);
+        anchor.click();
+}
+
 
 function updateIdentity(event) {
     let required = $(this).is(':checked');
@@ -125,22 +103,7 @@ function updateIdentity(event) {
     }
 }
 
-function previewFile() {
-    const previews = $(this).parent().parent().find('img, canvas');
-    const [file] = this.files;
-    if (file) {
-        const image = URL.createObjectURL(file);
-        previews.each(function() {
-            if (this instanceof HTMLImageElement) {
-                this.src = image;
-            }
-            if (this instanceof HTMLCanvasElement) {
-                this.dataset.src =  image;
-            }
-            
-        });
-    }
-}
+
 
 function submitFom() {
     $(this).closest('form').submit()
@@ -203,23 +166,6 @@ function updateLinkOrder(item) {
             }
         }
     });
-}
-
-function getMediaScreen() {
-    const width = screen.width;
-    let mediaScreen = (width > 800) ? 'md' : 'xs';
-    setCookie('media_screen', mediaScreen, 30)
-}
-
-function getFile(e) {
-    e.preventDefault();
-    $inputFile = $('input[type="file"]');
-    $inputFile.click();
-    $inputFile.on('change',  function(event) {
-        filename = event.target.value.split('\\').pop();
-        $('#filename').text(filename);
-    });
-    return false;
 }
 
 function modifierBikeRide() {
@@ -404,23 +350,6 @@ function setCookie(cName, cValue, expDays) {
     document.cookie = cName + "=" + cValue + "; " + expires + "; path=/; url=" + location.hostname;
 }
 
-function clipboard(event) {
-    event.preventDefault();
-    const value = $(this).attr('href');
-    navigator.clipboard.writeText(value);
-}
-
-function emailToClipboard(event) {
-    event.preventDefault();
-    const url = event.target.getAttribute('href');
-    fetch(url).then(function (response) {
-        return response.json();
-    }).then(function (data) {
-        navigator.clipboard.writeText(data);
-        hideDropdown();
-    });
-}
-
 function addDown(e) {
     $(this).closest('div.block').find('i').removeClass('fa-caret-square-up').addClass('fa-caret-square-down');
 }
@@ -471,28 +400,4 @@ function resize(object) {
     object.height = parent.dataset.ratio * width;
 }
 
-function toggleDropdown(event) {
-    const dropdownButton = $(this);
-    const dropdownMenu = dropdownButton.parent().find('[data-target="'+dropdownButton.data('toggle')+'"]');
-    $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
-        if ($(this).data('target') !== dropdownMenu.data('target') && $(this).data('toggle') !== dropdownButton.data('toggle') ) {
-            $(this).removeClass('active active-top active-bottom');
-        }
-    });
-    let classMenu = (dropdownButton.offset().top + dropdownMenu.height() - $(window).scrollTop() < $(window).height()) ? 'active active-top' : 'active active-bottom';
-    dropdownButton.toggleClass('active');
-    dropdownMenu.toggleClass(classMenu);
-}
 
-function hideDropdown() {
-    $('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').each(function() {
-        $(this).removeClass('active active-top active-bottom');
-    });
-}
-
-function handleSwitch(event) {
-    const swicthLabel = document.querySelector('label[for="'+event.target.id+'"]');
-    if (event.target.dataset.switchOn && event.target.dataset.switchOff ) {
-       swicthLabel.innerHTML =  (event.target.checked) ? event.target.dataset.switchOn : event.target.dataset.switchOff; 
-    }
-}

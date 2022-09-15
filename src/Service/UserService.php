@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\OrderHeader;
+use App\Entity\Respondent;
+use App\Entity\Survey;
+use App\Entity\SurveyResponse;
 use App\Entity\User;
+use App\Repository\OrderLineRepository;
+use App\Repository\SurveyResponseRepository;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UserViewModel;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\Void_;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -18,7 +25,9 @@ class UserService
         private SluggerInterface $slugger,
         private SeasonService $seasonService,
         private EntityManagerInterface $entityManager,
-        private UserPresenter $userPresenter
+        private UserPresenter $userPresenter,
+        private SurveyResponseRepository $surveyResponseRepository,
+        private OrderLineRepository $orderLineRepository
     ) {
     }
 
@@ -38,35 +47,24 @@ class UserService
             ],
             [
                 'entity' => $user,
-                'methods' => ['getSessions', 'getLicences', 'getApprovals', 'getIdentities'],
+                'methods' => ['getSessions', 'getLicences', 'getApprovals', 'getIdentities', 'getOrderHeaders', 'getRespondents', 'getSurveys'],
             ],
         ];
         foreach ($allData as $data) {
             foreach ($data['methods'] as $method) {
                 if (!$data['entity']->{$method}()->isEmpty()) {
                     foreach ($data['entity']->{$method}() as $entity) {
+                        if ($entity instanceof OrderHeader) {
+                            $this->orderLineRepository->deleteByOrderHeader($entity);
+                        }
                         $this->entityManager->remove($entity);
                     }
                 }
             }
         }
+        $this->surveyResponseRepository->deleteResponsesByUser($user);
+
         $this->entityManager->remove($user);
         $this->entityManager->flush();
-    }
-
-    private function convertUsers($users): array
-    {
-        $usersDto = [];
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $usersDto[] = new User(
-                    $user,
-                    $this->seasonService->getCurrentSeason(),
-                    $this->seasonService->getSeasonsStatus()
-                );
-            }
-        }
-
-        return $usersDto;
     }
 }

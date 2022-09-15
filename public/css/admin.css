@@ -27,11 +27,15 @@ nav > .nav-group.block:not(:last-child) {
     border-radius: 8px 8px 0 0;
     overflow: hidden;
 }
-nav > .nav-group > .block-title {
-    padding: 15px;
+nav > .nav-group > a > .block-title {
+    padding: 10px 15px;
     background-color: var(--primary-color);
     color: var(--white-color);
     margin: unset;
+}
+nav > .nav-group > a > .block-title > .tools.angle {
+    font-size: 28px;
+    padding: 0 8px;
 }
 nav > .nav-group > .block-body > ul > li::after {
     margin: unset;

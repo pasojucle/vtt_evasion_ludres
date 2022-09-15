@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\OrderLine;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\OrderHeader;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method OrderLine|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,5 +21,19 @@ class OrderLineRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, OrderLine::class);
+    }
+
+
+    public function deleteByOrderHeader(OrderHeader $orderHeader): void
+    {
+        $this->createQueryBuilder('ol')
+        ->delete()
+        ->andWhere(
+            (new Expr())->eq('ol.orderHeader', ':orderHeader')
+        )
+        ->setParameter('orderHeader', $orderHeader)
+        ->getQuery()
+        ->getResult()
+    ;
     }
 }

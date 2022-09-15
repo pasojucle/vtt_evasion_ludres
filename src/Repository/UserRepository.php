@@ -429,4 +429,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult()
             ;
     }
+
+    public function findByNumberLicenceOrFullName(string $query): array
+    {
+        return $this->createQueryBuilder('u')
+        ->leftJoin('u.identities', 'i')
+        ->orWhere(
+            (new Expr())->like('LOWER(u.licenceNumber)', ':query'),
+            (new Expr())->like('LOWER(i.name)', ':query'),
+            (new Expr())->like('LOWER(i.firstName)', ':query'),
+        )
+        ->setParameters([
+            'query' => '%' . strtolower($query) . '%',
+        ])
+        ->orderBy('u.licenceNumber', 'ASC')
+        ->getQuery()
+        ->getResult()
+        ;
+    }
+
+    public function findAllAsc(): array
+    {
+        return $this->createQueryBuilder('u')
+        ->leftJoin('u.identities', 'i')
+        ->orderBy('u.licenceNumber', 'ASC')
+        ->getQuery()
+        ->getResult()
+        ;
+    }
 }

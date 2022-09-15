@@ -4,37 +4,40 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Address;
-use App\Entity\Approval;
-use App\Entity\BikeRide;
+use DateTime;
+use App\Entity\User;
 use App\Entity\Health;
-use App\Entity\HealthQuestion;
-use App\Entity\Identity;
+use App\Entity\Address;
 use App\Entity\Licence;
 use App\Entity\Session;
-use App\Entity\User;
-use App\Form\Admin\LicenceNumberType;
+use App\Entity\Approval;
+use App\Entity\BikeRide;
+use App\Entity\Identity;
+use App\Form\Admin\ToolType;
 use App\Form\ToolImportType;
-use App\Repository\LevelRepository;
-use App\Repository\UserRepository;
-use App\Service\LicenceService;
-use App\Service\MailerService;
-use App\Service\ParameterService;
-use App\Service\SeasonService;
 use App\Service\UserService;
-use App\UseCase\Tool\GetRegistrationCertificate;
-use App\ViewModel\ClusterPresenter;
+use App\Entity\HealthQuestion;
+use App\Service\MailerService;
+use App\Service\SeasonService;
+use App\Service\LicenceService;
 use App\ViewModel\UserPresenter;
-use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use App\Service\ParameterService;
+use App\Form\Admin\UserSearchType;
+use App\Repository\UserRepository;
+use App\Repository\LevelRepository;
+use App\ViewModel\ClusterPresenter;
+use App\Form\Admin\LicenceNumberType;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Tool\GetRegistrationCertificate;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ToolController extends AbstractController
 {
@@ -493,32 +496,49 @@ class ToolController extends AbstractController
     }
 
     #[Route('/admin/tool/delete/user', name: 'admin_tool_delete_user', methods: ['GET', 'POST'])]
-    public function adminDeleteUser(
-        Request $request,
-        UserService $userService
-    ): Response {
-        $form = $this->createForm(LicenceNumberType::class);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $licenceNumber = $data['licenceNumber'];
-            $user = $this->entityManager->getRepository(User::class)->findOneBy([
-                'licenceNumber' => $licenceNumber,
-            ]);
-            if (null !== $user) {
-                $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
-                $userService->deleteUser($user);
-                $this->addFlash('success', "Les données de l'utilisateur {$fullName} ont bien été supprimées");
-
-                return $this->redirectToRoute('admin_tool_delete_user');
-            }
-            $form->addError(new FormError("Le numéro de licence {$licenceNumber} n'existe pas"));
-        }
+    public function adminDeleteUser(): Response {
+        $form = $this->createForm(UserSearchType::class, null, [
+            'action' => $this->generateUrl( 'admin_tool_confirm_delete_user'),
+        ]);
 
         return $this->render('tool/delete_user.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/admin/tool/confirm/delete/user/{user}', name: 'admin_tool_confirm_delete_user', defaults: ['user' => null], methods: ['GET', 'POST'], options:['expose' => true])]
+    public function adminConfirmDeleteUser(
+        Request $request,
+        UserService $userService,
+        ?User $user
+    ): Response {
+        if (null !== $user) {
+            $form = $this->createForm(FormType::class, null, [
+                'action' => $this->generateUrl( 'admin_tool_confirm_delete_user', [
+                    'user' => $user->getId(),
+                ]),
+            ]);
+
+
+            $fullname = $user->getLicenceNumber();
+            if (null !== $user->GetFirstIdentity()) {
+                $fullname .= ' '. $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
+            }
+            $form->handleRequest($request);
+            if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+                $userService->deleteUser($user);
+                $this->addFlash('success', "Les données de l'utilisateur {$fullname} ont bien été supprimées");
+
+                return $this->redirectToRoute('admin_tool_delete_user');
+            }
+
+            return $this->render('tool/delete_user_modal.html.twig', [
+                'form' => $form->createView(),
+                'fullname' => $fullname,
+                'user' => $user,
+            ]);
+        }
+        return new Response(null, 400);
     }
 
     #[Route('/admin/registration/certificate', name: 'admin_registration_certificate', methods: ['GET', 'POST'])]
@@ -526,7 +546,7 @@ class ToolController extends AbstractController
         Request $request,
         GetRegistrationCertificate $getRegistrationCertificate,
     ): Response {
-        $form = $this->createForm(LicenceNumberType::class);
+        $form = $this->createForm(ToolType::class);
         $form->handleRequest($request);
         $filename = null;
 
@@ -536,7 +556,7 @@ class ToolController extends AbstractController
             $submit = $form->get('submit');
             $content = ($submit->isClicked()) ? utf8_encode($data['content']) : null;
             list($filename, $content) = $getRegistrationCertificate->execute($request, $data['user'], $content);
-            $form = $this->createForm(LicenceNumberType::class, [
+            $form = $this->createForm(ToolType::class, [
                 'user' => $data['user'],
                 'content' => $content,
             ]);
@@ -555,7 +575,7 @@ class ToolController extends AbstractController
         UserPresenter $presenter,
         ParameterService $parameterService
     ): Response {
-        $form = $this->createForm(LicenceNumberType::class);
+        $form = $this->createForm(ToolType::class);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -569,7 +589,7 @@ class ToolController extends AbstractController
                 ? utf8_encode($data['content'])
                 : $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
             $content = str_replace('{{ licenceNumber }}', $user->getLicenceNumber(), $content);
-            $form = $this->createForm(LicenceNumberType::class, [
+            $form = $this->createForm(ToolType::class, [
                 'user' => $data['user'],
                 'content' => $content,
             ]);

@@ -5,19 +5,17 @@
 {% block body %}
     <div class="wrapper">
         {{ form_start(form) }}
-        <div class="block">
-            <div class="block-title">
-                <h2>Supprimer un utilisateur</h2>
+            <div class="wrapper-title">
+                <h1>Supprimer un utilisateur</h1>
             </div>
-            <div class="block-body">
+            <div class="wrapper-body">
                 <div class="form-group">
-                    {{ form_row(form.licenceNumber) }}
+                    {{ form_row(form.user) }}
                 </div>
             </div>
-            <div class="block-footer">
+            <div class="wrapper-footer">
                 {{ form_row(form.submit) }}
             </div>
-        </div>
         {{ form_errors(form) }}
         {{ form_end(form) }}
     </div>

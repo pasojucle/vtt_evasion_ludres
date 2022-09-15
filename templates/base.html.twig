@@ -32,7 +32,6 @@
     </head>
     <body>
         {% block background %}{% endblock %}
-        {% set media_screen = media_screen_service.mediaScreen %}
         {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
             <div class="alert-mode">Mode Maintenance</div>
         {% endif %}
@@ -73,11 +72,8 @@
             crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="https://kit.fontawesome.com/c6257eb348.js" crossorigin="anonymous"></script>
-        <script src="/js/modal.js"></script>
+        <script src="/js/carrousel.js"></script>
         <script src="/js/app.js"></script>
-        <script src="/js/constraints.js"></script>
-        <script src="/js/reveal.js"></script>
-        <script src="/js/carrousel.js?v=2"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script src="/bundles/tetranzselect2entity/js/select2entity.js"></script>
         <script src="/js/select2/i18n/fr.js"></script>

@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
-class LicenceNumberType extends AbstractType
+class ToolType extends AbstractType
 {
     public function __construct(private SeasonService $seasonService)
     {
