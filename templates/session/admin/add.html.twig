@@ -6,16 +6,13 @@
  <div class="wrapper">
     {{ form_start(form) }}
     <div class="wrapper-title">
-        <h2>{{ bikeRide.title }} - 
-            {% if bikeRide.endAt is null %}
-                {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
-            {% else %}
-                du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikbikeRideeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
-            {% endif %}
-            <span class="tools">
-                <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-            </span>
-        </h2>
+        {% dump(bikeRide) %}
+        <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
+        <span class="tools">
+            <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-ico" title="Retour à la liste des sorties">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </span>
     </div>
     <div class="wrapper-body">
         <h3>Ajouter un nouveau participant</h3>

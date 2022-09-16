@@ -76,6 +76,7 @@ class SessionController extends AbstractController
     public function adminSessionAdd(
         Request $request,
         SessionRepository $sessionRepository,
+        BikeRidePresenter $bikeRidePresenter,
         BikeRide $bikeRide
     ): Response {
         $clusters = $bikeRide->getClusters();
@@ -97,7 +98,7 @@ class SessionController extends AbstractController
                 $this->entityManager->persist($userSession);
 
                 $this->entityManager->flush();
-                $this->addFlash('success', 'Le participant à bien été inscrit');
+                $this->addFlash('success', 'Le participant a bien été inscrit');
 
                 $this->sessionService->checkEndTesting($user);
 
@@ -107,9 +108,10 @@ class SessionController extends AbstractController
             }
         }
 
+        $bikeRidePresenter->present($bikeRide);
         return $this->render('session/admin/add.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRide,
+            'bikeRide' => $bikeRidePresenter->viewModel(),
         ]);
     }
 
