@@ -56,6 +56,7 @@ class SessionViewModel extends AbstractViewModel
             $availability = [
                 'class' => $availbilityClass[$this->entity->getAvailability()],
                 'text' => Session::AVAILABILITIES[$this->entity->getAvailability()],
+                'value' => $this->entity->getAvailability(),
             ];
         }
 

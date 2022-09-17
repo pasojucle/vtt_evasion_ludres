@@ -31,17 +31,16 @@ button.dropdown-toggle:hover, button.dropdown-toggle.active {
 }
 
 .dropdown .dropdown-menu {
-    display: block;
+    display: none;
     position: absolute;
     right: 30px;
-    opacity: 0;
     background-color: #dddddd;
     border: 2px solid var(--white-color);
     width: max-content;
 }
 
 .dropdown .dropdown-menu.active {
-    opacity: 1;
+    display: block;
     z-index: 999;
 }
 
