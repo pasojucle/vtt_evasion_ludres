@@ -10,6 +10,7 @@ use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
 use App\Service\Order\OrderValidateService;
 use App\Service\PaginatorService;
+use App\Service\ParameterService;
 use App\Service\PdfService;
 use App\ViewModel\OrderPresenter;
 use App\ViewModel\OrdersPresenter;
@@ -29,7 +30,8 @@ class OrderController extends AbstractController
         private OrderPresenter $presenter,
         private OrderHeaderRepository $orderHeaderRepository,
         private EntityManagerInterface $entityManager,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
+        private ParameterService $parameterService
     ) {
     }
 
@@ -80,6 +82,7 @@ class OrderController extends AbstractController
 
         return $this->render('order/show.html.twig', [
             'order' => $this->presenter->viewModel(),
+            'message' => $this->parameterService->getParameterByName('ORDER_ACKNOWLEDGEMENT_MESSAGE'),
         ]);
     }
 
@@ -92,6 +95,7 @@ class OrderController extends AbstractController
         $this->presenter->present($orderHeader);
         $orderAcknowledgement = $this->renderView('order/acknowledgement.html.twig', [
             'order' => $this->presenter->viewModel(),
+            'message' => $this->parameterService->getParameterByName('ORDER_ACKNOWLEDGEMENT_MESSAGE'),
         ]);
         $pdfFilepath = $pdfService->makePdf($orderAcknowledgement, 'order_acknowledgement_temp', $parameterBag->get('tmp_directory_path'));
 

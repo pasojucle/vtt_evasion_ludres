@@ -191,7 +191,7 @@ class MenuAdminService
                 'label' => 'Supprimer un adhérent',
                 'route' => 'admin_tool_delete_user',
                 'pattern' => '/produit/',
-                'role' => 'ROLE_SUPER_ADMIN',
+                'role' => 'ROLE_ADMIN',
             ],
         ];
     }

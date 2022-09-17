@@ -83,6 +83,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Column(type: 'boolean', options:['default' => false])]
     private bool $loginSend = false;
 
+    #[Column(type: 'boolean', options:['default' => false])]
+    private $protected = false;
+
     public function __construct()
     {
         $this->identities = new ArrayCollection();
@@ -549,6 +552,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLoginSend(bool $loginSend): self
     {
         $this->loginSend = $loginSend;
+
+        return $this;
+    }
+
+    public function isProtected(): ?bool
+    {
+        return $this->protected;
+    }
+
+    public function setProtected(bool $protected): self
+    {
+        $this->protected = $protected;
 
         return $this;
     }
