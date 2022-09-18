@@ -73,6 +73,15 @@ class RegistrationController extends AbstractController
         ]);
     }
 
+    #[Route('/inscription/tuto', name: 'registration_tuto', methods: ['GET'])]
+    public function registrationTuto(
+        ContentRepository $contentRepository
+    ): Response {
+        return $this->render('registration/tuto.html.twig', [
+            'content' => $contentRepository->findOneByRoute('registration_tuto'),
+        ]);
+    }
+
     #[Route('/inscription', name: 'registration_form', methods: ['GET', 'POST'], defaults:['step' => 1])]
     #[Route('/mon-compte/inscription/{step}', name: 'user_registration_form', methods: ['GET', 'POST'])]
     public function registerForm(

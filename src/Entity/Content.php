@@ -38,6 +38,7 @@ class Content
         'legal_notices' => 'content.route.legal_notices',
         'login_help' => 'content.route.login_help',
         'registration_membership_fee' => 'content.route.registration_membership_fee',
+        'registration_tuto' => 'content.route.registration_tuto',
         'schedule' => 'content.route.schedule',
         'user_account' => 'content.route.user_account',
         'default' => 'content.route.default',

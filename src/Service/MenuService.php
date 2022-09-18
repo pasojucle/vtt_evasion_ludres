@@ -73,6 +73,11 @@ class MenuService
                         'route' => 'registration_membership_fee',
                         'pattern' => '/registration_membership_fee/',
                     ],
+                    [
+                        'label' => 'Tuto',
+                        'route' => 'registration_tuto',
+                        'pattern' => '/registration_tuto/',
+                    ],
                 ],
             ],
             [
