@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Level;
 use App\Entity\User;
+use App\Entity\Level;
 use App\Form\Admin\UserType;
-use App\Repository\UserRepository;
 use App\Service\MailerService;
-use App\Service\PaginatorService;
-use App\UseCase\User\GetMembersFiltered;
-use App\UseCase\User\GetParticipation;
 use App\ViewModel\UserPresenter;
+use App\Service\PaginatorService;
 use App\ViewModel\UsersPresenter;
+use App\Repository\UserRepository;
+use App\Form\Admin\CertificateType;
+use App\UseCase\User\GetParticipation;
+use App\UseCase\User\GetMembersFiltered;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Tool\GetRegistrationCertificate;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -154,6 +156,7 @@ class UserController extends AbstractController
         $query = $request->query->get('q');
 
         $filters = json_decode($request->query->get('filters'), true);
+        dump($filters, $getMembersFiltered->choices($filters, $query));
 
         return new JsonResponse($getMembersFiltered->choices($filters, $query));
     }
@@ -180,5 +183,29 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse($response);
+    }
+
+    #[Route('/admin/adherent/certificate/{user}', name: 'user_certificate', methods: ['GET', 'POST'])]
+    public function adminRegistrationCertificate(
+        Request $request,
+        GetRegistrationCertificate $getRegistrationCertificate,
+        User $user
+    ): Response {
+        list($content) = $getRegistrationCertificate->execute($request, $user);
+        $form = $this->createForm(CertificateType::class, [
+            'content' => $content,
+        ]);
+        $form->handleRequest($request);
+        $filename = null;
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            list($content, $filename) = $getRegistrationCertificate->execute($request, $user, utf8_encode($data['content']));
+        }
+
+        return $this->render('tool/registration_certificate.html.twig', [
+            'form' => $form->createView(),
+            'filename' => $filename,
+        ]);
     }
 }

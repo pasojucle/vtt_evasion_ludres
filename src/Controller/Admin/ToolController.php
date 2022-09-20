@@ -26,13 +26,11 @@ use App\Form\Admin\UserSearchType;
 use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
 use App\ViewModel\ClusterPresenter;
-use App\Form\Admin\LicenceNumberType;
 use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\UseCase\Tool\GetRegistrationCertificate;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -539,33 +537,6 @@ class ToolController extends AbstractController
             ]);
         }
         return new Response(null, 400);
-    }
-
-    #[Route('/admin/registration/certificate', name: 'admin_registration_certificate', methods: ['GET', 'POST'])]
-    public function adminRegistrationCertificate(
-        Request $request,
-        GetRegistrationCertificate $getRegistrationCertificate,
-    ): Response {
-        $form = $this->createForm(ToolType::class);
-        $form->handleRequest($request);
-        $filename = null;
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            /** @var SubmitButoon $submit */
-            $submit = $form->get('submit');
-            $content = ($submit->isClicked()) ? utf8_encode($data['content']) : null;
-            list($filename, $content) = $getRegistrationCertificate->execute($request, $data['user'], $content);
-            $form = $this->createForm(ToolType::class, [
-                'user' => $data['user'],
-                'content' => $content,
-            ]);
-        }
-
-        return $this->render('tool/registration_certificate.html.twig', [
-            'form' => $form->createView(),
-            'filename' => $filename,
-        ]);
     }
 
     #[Route('/admin/registration/error', name: 'admin_registration_error', methods: ['GET', 'POST'])]

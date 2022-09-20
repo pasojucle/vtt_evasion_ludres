@@ -40,7 +40,7 @@ class GetParticipation
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
-        dump($filters);
+
         $form = $this->createForm($filters);
         $form->handleRequest($request);
 

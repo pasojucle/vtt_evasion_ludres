@@ -35,14 +35,13 @@ class GetRegistrationCertificate
             $user = $this->presenter->viewModel();
             $licence = $user->seasonLicence;
         }
-        if (!$content) {
             $content = $this->getContent($user, $licence);
-        }
+
         if (!$request->isXmlHttpRequest() && $content) {
             $filename = $this->makePdf($content);
         }
 
-        return [$filename, $content];
+        return [$content, $filename];
     }
 
     private function getContent(UserViewModel $user, LicenceViewModel $licence)

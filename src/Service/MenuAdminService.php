@@ -176,12 +176,6 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
-                'label' => 'Attestation d\'inscription pour CE',
-                'route' => 'admin_registration_certificate',
-                'pattern' => '/admin_registration_certificate/',
-                'role' => 'ROLE_ADMIN',
-            ],
-            [
                 'label' => 'Journal des erreurs',
                 'route' => 'admin_log_errors',
                 'pattern' => '/admin_log_errors/',

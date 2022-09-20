@@ -4,15 +4,16 @@
 
 {% block body %}
     <div class="wrapper">
-        {% if filename is null %}
-            {{ form_start(form) }}
+
             <div class="wrapper-title">
                 <h1>Attestation d'inscription pour CE</h1>
+                <span class="tools">
+                    <a href="{{ path('admin_users', {'filtered': true}) }}" class="btn btn-ico" title="Retour à la liste des utilisateurs"><i class="fas fa-chevron-left"></i></a>
+                </span>
             </div>
+        {% if filename is null %}
+            {{ form_start(form) }}
             <div class="wrapper-body">
-                <div class="form-group">
-                    {{ form_row(form.user) }}
-                </div>
                 <div class="form-group">
                     {{ form_row(form.content) }}
                 </div>
@@ -23,9 +24,11 @@
             {{ form_errors(form) }}
             {{ form_end(form) }}
         {% else %}
+        <div class="wrapper-body">
             <object width="100%" height="1050" type="application/pdf" data="{{ filename }}">
             <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
             </object>
+            </div>
         {% endif %}
     </div>
 {% endblock %}

@@ -12,36 +12,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
-class ToolType extends AbstractType
+class CertificateType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('user', Select2EntityType::class, [
-                'multiple' => false,
-                'remote_route' => 'admin_member_choices',
-                'class' => User::class,
-                'primary_key' => 'id',
-                'text_property' => 'fullName',
-                'minimum_input_length' => 0,
-                'page_limit' => 10,
-                'allow_clear' => true,
-                'delay' => 250,
-                'cache' => true,
-                'cache_timeout' => 60000,
-                // if 'cache' is true
-                'language' => 'fr',
-                'placeholder' => 'Saisisez un nom et prénom',
-                'width' => '100%',
-                'label' => 'Adhérent',
-                'remote_params' => [
-                    'filters' => json_encode(['status' => null]),
-                ],
-                'required' => true,
-                'attr' => [
-                    'class' => 'submit-asynchronous',
-                ],
-            ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Message',
                 'config_name' => 'full_config',
