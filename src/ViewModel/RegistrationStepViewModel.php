@@ -6,6 +6,7 @@ namespace App\ViewModel;
 
 use App\Entity\RegistrationStep;
 use App\Form\UserType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\FormInterface;
 
 class RegistrationStepViewModel extends AbstractViewModel
@@ -24,9 +25,11 @@ class RegistrationStepViewModel extends AbstractViewModel
 
     public ?int $form;
 
+    private ServicesPresenter $services;
+
     public static function fromRegistrationStep(
         RegistrationStep $registrationStep,
-        array $services,
+        ServicesPresenter $services,
         ?UserViewModel $user,
         int $step,
         int $render,
@@ -37,12 +40,13 @@ class RegistrationStepViewModel extends AbstractViewModel
         $registrationStepView->title = $registrationStep->getTitle();
         $registrationStepView->form = $registrationStep->getForm();
         $registrationStepView->filename = $registrationStep->getFilename();
+        $registrationStepView->services = $services;
         if (null !== $step) {
             $registrationStepView->formObject = $registrationStepView->getForm($registrationStep, $user, $step, $services);
             $registrationStepView->template = $registrationStepView->getTemplate($registrationStep);
         }
         if (null !== $user) {
-            $registrationStepView->content = $services['replaceKeywordsService']->replace($user, $registrationStep->getContent(), $render);
+            $registrationStepView->content = $services->replaceKeywordsService->replace($user, $registrationStep->getContent(), $render);
         } else {
             $registrationStepView->content = $registrationStep->getContent();
         }
@@ -53,11 +57,12 @@ class RegistrationStepViewModel extends AbstractViewModel
     private function getForm(RegistrationStep $registrationStep, ?UserViewModel $user, int $step, $services): ?FormInterface
     {
         $form = null;
-        $currentSeason = $services['seasonService']->getCurrentSeason();
-        $seasonLicence = $user->entity->getSeasonLicence($currentSeason);
-        $formFactory = $services['formFactory'];
-        $router = $services['router'];
-        $route = (empty($user->entity->getLicenceNumber())) ? 'registration_form' : 'user_registration_form';
+        $seasonLicence = $user->entity->getSeasonLicence($services->currentSeason);
+        $formFactory = $services->formFactory;
+        $router = $services->router;
+
+        $route = ('user_registration_form' === $this->services->requestStack->getCurrentRequest()->get('_route')) ? 'user_registration_form' : 'registration_form';
+
         if (null !== $registrationStep->getForm() && UserType::FORM_REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
             $form = $formFactory->create(UserType::class, $user->entity, [
                 'attr' => [

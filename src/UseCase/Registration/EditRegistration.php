@@ -28,7 +28,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -45,7 +44,6 @@ class EditRegistration
         private IdentityRepository $identityRepository,
         private UserPresenter $userPresenter,
         private UserPasswordHasherInterface $passwordHasher,
-        private RequestStack $requestStack,
         private LoginAuthenticator $authenticator,
         private UrlGeneratorInterface $urlGenerator,
         private IdentityService $identityService,
@@ -65,13 +63,12 @@ class EditRegistration
     {
         $season = $progress['season'];
         $user = $form->getData();
-        $manualAuthenticating = false;
         $session = $request->getSession();
 
         if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
             $identity = $this->registerNewUser($user, $form);
-            $manualAuthenticating = true;
             $this->uniqueMemberValidator($form, $identity);
+
         }
 
         if($user->getMemberIdentity()->getBirthCommune()) {
@@ -89,11 +86,7 @@ class EditRegistration
         $this->UploadFile($request, $user);
 
         $category = $user->getSeasonLicence($season)->getCategory();
-        if (false === $user->isLoginSend() && 
-            ((Licence::CATEGORY_MINOR === $category && $user->getKinshipIdentity()) || Licence::CATEGORY_ADULT === $category )) {
-                $this->sendMail($user);
-                $user->setLoginSend(true);
-        }
+
 
         $isMedicalCertificateRequired = $this->isMedicalCertificateRequired($progress);
         $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
@@ -102,13 +95,14 @@ class EditRegistration
             if (UserType::FORM_OVERVIEW === $progress['current']->form) {
                 $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
                 $this->sendMailToClub($user);
+                if (false === $user->isLoginSend()) {
+                    $this->sendMailToUser($user);
+                    $user->setLoginSend(true);
+                }
             }
             $this->entityManager->flush();
 
-            $this->requestStack->getSession()->remove('registrationPath');
-            if ($manualAuthenticating) {
-                $this->authenticating($request, $user);
-            }
+            $session->set('registration_user_id', $user->getId());
         }
     }
 
@@ -150,7 +144,7 @@ class EditRegistration
         }
     }
 
-    private function sendMail(User $user): void
+    private function sendMailToUser(User $user): void
     {
         $this->userPresenter->present($user);
         $user = $this->userPresenter->viewModel();
@@ -161,6 +155,9 @@ class EditRegistration
             'email' => $email,
             'subject' => 'Création de compte sur le site VTT Evasion Ludres',
             'licenceNumber' => $user->licenceNumber,
+            'registration' => $this->urlGenerator->generate('registration_file', [
+                'user' => $user->entity->getId(),
+            ]),
         ], 'EMAIL_REGISTRATION');
     }
 

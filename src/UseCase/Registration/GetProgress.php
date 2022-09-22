@@ -4,24 +4,27 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Entity\Address;
-use App\Entity\Approval;
-use App\Entity\Disease;
-use App\Entity\Health;
-use App\Entity\HealthQuestion;
-use App\Entity\Identity;
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
-use App\Repository\LevelRepository;
-use App\Repository\RegistrationStepRepository;
-use App\Service\LicenceService;
+use App\Entity\Health;
+use App\Form\UserType;
+use App\Entity\Address;
+use App\Entity\Disease;
+use App\Entity\Licence;
+use App\Entity\Approval;
+use App\Entity\Identity;
+use App\Entity\HealthQuestion;
 use App\Service\SeasonService;
-use App\ViewModel\RegistrationStepPresenter;
+use App\Service\LicenceService;
+use App\Entity\RegistrationStep;
 use App\ViewModel\UserPresenter;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\UserRepository;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\Collection;
+use App\ViewModel\RegistrationStepPresenter;
 use Symfony\Component\Security\Core\Security;
+use App\Repository\RegistrationStepRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class GetProgress
 {
@@ -36,9 +39,11 @@ class GetProgress
         private LevelRepository $levelRepository,
         private RegistrationStepPresenter $presenter,
         private UserPresenter $userPresenter,
+        private UserRepository $userRepository,
         private Security $security,
         private EntityManagerInterface $entityManager,
-        private LicenceService $licenceService
+        private LicenceService $licenceService,
+        private RequestStack $requestStack
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
@@ -83,12 +88,25 @@ class GetProgress
         $progress['season'] = $this->season;
         $progress['step'] = $step;
 
+
+        if (UserType::FORM_REGISTRATION_FILE === $progress['current']->form) {
+            $this->requestStack->getSession()->remove('registration_user_id');
+        }
+
         return $progress;
     }
 
     public function setUser()
     {
-        $this->user = $this->security->getUser();
+        $sesssion = $this->requestStack->getSession();
+        $userId = ($sesssion->has('registration_user_id')) ? $sesssion->get('registration_user_id') : null;
+        $user = (null !== $userId) ? $this->userRepository->find($userId) : null;
+
+        $this->user = ('user_registration_form' === $this->requestStack->getCurrentRequest()->get('_route'))
+            ? $this->security->getUser()
+            : $user;
+
+
         if (null === $this->user) {
             $this->createUser();
         }

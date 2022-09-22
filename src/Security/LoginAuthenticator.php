@@ -82,9 +82,9 @@ class LoginAuthenticator extends AbstractAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        if ($targetPath = $request->getSession()->get('registrationPath')) {
-            return new RedirectResponse($targetPath);
-        }
+        // if ($targetPath = $request->getSession()->get('registrationPath')) {
+        //     return new RedirectResponse($targetPath);
+        // }
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->urlGenerator->generate('admin_home'));

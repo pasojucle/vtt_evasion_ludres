@@ -64,7 +64,7 @@
                             {% endif %}
                             <button class="{{ btn_class }}" type="submit">{{ btn_label|raw }}</button>
                         {% else %}
-                            <a class="btn btn-primary float-right" href="{{ path('user_registration_form', {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
+                            <a class="btn btn-primary float-right" href="{{ path(app.request.attributes.get('_route'), {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
                         {% endif %}
                     {% endif %}
                 </div>
