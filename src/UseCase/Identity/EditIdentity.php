@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Identity;
 
 use App\Entity\User;
+use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\UploadService;
 use App\ViewModel\UserPresenter;
@@ -18,7 +19,8 @@ class EditIdentity
         private UserPresenter $presenter,
         private EntityManagerInterface $entityManager,
         private IdentityService $identityService,
-        private UploadService $uploadService
+        private UploadService $uploadService,
+        private CommuneService $communeService
     ) {
     }
 

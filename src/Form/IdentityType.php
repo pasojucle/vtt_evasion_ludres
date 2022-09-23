@@ -238,7 +238,7 @@ class IdentityType extends AbstractType
                                 'class' => 'commune-search',
                                 'data-constraint' => 'app-NotEmpty',
                             ],
-                            'required' => false,
+                            'required' => true,
                         ])
                         ->add('pictureFile', FileType::class, [
                             'label' => 'Photo d\'itentité',
