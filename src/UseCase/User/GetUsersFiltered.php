@@ -141,7 +141,7 @@ abstract class GetUsersFiltered
 
     private function getFilters(Request $request, bool $filtered): array
     {
-        return ($filtered) ? $request->getSession()->get($this->filterName) : [
+        return ($filtered && null !== $request->getSession()->get($this->filterName)) ? $request->getSession()->get($this->filterName) : [
         'fullName' => null,
         'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
         'levels' => null,

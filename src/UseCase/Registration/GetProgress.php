@@ -145,7 +145,7 @@ class GetProgress
             if ($this->user->getHealth()->getDiseases()->isEmpty()) {
                 $this->createDisease();
             }
-            if (null === $this->user->getLevel()) {
+            if (!$this->seasonLicence->isFinal()) {
                 $this->setAwaitingLevel();
             }
         } else {
@@ -157,7 +157,7 @@ class GetProgress
             if (!$this->user->getIdentities()->isEmpty()) {
                 $this->removeKinship();
             }
-            if (null === $this->user->getLevel()) {
+            if (!$this->seasonLicence->isFinal()) {
                 $this->setAdultLevel();
             }
         }

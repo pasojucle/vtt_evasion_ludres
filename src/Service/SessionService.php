@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\BikeRide;
-use App\Entity\Cluster;
+use DateInterval;
 use App\Entity\User;
+use App\Entity\Level;
+use DateTimeImmutable;
+use App\Entity\Cluster;
+use App\Entity\BikeRide;
+use App\Form\Admin\LevelType;
+use App\ViewModel\UserPresenter;
 use App\Repository\LevelRepository;
-use App\Repository\SessionRepository;
 use App\ViewModel\ClusterPresenter;
 use App\ViewModel\SessionPresenter;
-use App\ViewModel\UserPresenter;
-use DateInterval;
-use DateTimeImmutable;
+use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\Collection;
 
 class SessionService
@@ -65,16 +67,15 @@ class SessionService
         $userCluster = null;
         if ($bikeRide->getBikeRideType()->isSchool()) {
             $clustersLevelAsUser = [];
-            $userLevel = (null !== $user->getLevel()) ? $user->getLevel() : $this->levelRepository->findAwaitingEvaluation();
             foreach ($bikeRide->getClusters() as $cluster) {
-                if (null !== $cluster->getLevel() && $cluster->getLevel() === $userLevel) {
+                if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
                     $clustersLevelAsUser[] = $cluster;
                     if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
                         $userCluster = $cluster;
                     }
                 }
 
-                if (null !== $cluster->getRole() && $user->hasRole($cluster->getRole())) {
+                if (null !== $cluster->getRole() && ($user->hasRole($cluster->getRole()) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
                     $userCluster = $cluster;
                 }
             }
@@ -82,8 +83,8 @@ class SessionService
             if (null === $userCluster) {
                 $cluster = new Cluster();
                 $count = count($clustersLevelAsUser) + 1;
-                $cluster->setTitle($userLevel->getTitle() . ' ' . $count)
-                    ->setLevel($userLevel)
+                $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
+                    ->setLevel($$user->getLevel())
                     ->setBikeRide($bikeRide)
                     ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
                 ;
