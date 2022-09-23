@@ -47,7 +47,7 @@ abstract class GetUsersFiltered
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $filters = $form->getData();
+            $filters = $form->getData();dump($filters);
             $filtered = true;
             $request->query->set('p', 1);
             $form = $this->createForm($filters);
@@ -142,7 +142,7 @@ abstract class GetUsersFiltered
     private function getFilters(Request $request, bool $filtered): array
     {
         return ($filtered && null !== $request->getSession()->get($this->filterName)) ? $request->getSession()->get($this->filterName) : [
-        'fullName' => null,
+        'user' => null,
         'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
         'levels' => null,
         ];
