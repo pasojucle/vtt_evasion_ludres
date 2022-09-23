@@ -143,6 +143,7 @@ abstract class GetUsersFiltered
     {
         return ($filtered && null !== $request->getSession()->get($this->filterName)) ? $request->getSession()->get($this->filterName) : [
         'user' => null,
+        'fullName' => null,
         'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
         'levels' => null,
         ];

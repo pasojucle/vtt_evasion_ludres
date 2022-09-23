@@ -54,9 +54,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $qb = $this->createQuery();
 
         if (!empty($filters)) {
-            // if (null !== $filters['fullName']) {
-            //     $this->addCriteriaByName($qb, $filters['fullName']);
-            // }
+            if (null !== $filters['fullName']) {
+                $this->addCriteriaByName($qb, $filters['fullName']);
+            }
             if (!empty($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
@@ -351,8 +351,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $currentSeason = $this->seasonService->getCurrentSeason();
 
         $qb = $this->createQuery();
-
+dump($filters);
         if (!empty($filters)) {
+            if (null !== $filters['fullName']) {
+                $this->addCriteriaByName($qb, $filters['fullName']);
+            }
             if (null !== $filters['user']) {
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
