@@ -47,7 +47,7 @@ abstract class GetUsersFiltered
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $filters = $form->getData();dump($filters);
+            $filters = $form->getData();
             $filtered = true;
             $request->query->set('p', 1);
             $form = $this->createForm($filters);
@@ -105,6 +105,7 @@ abstract class GetUsersFiltered
     public function choices(array $filters, ?string $fullName): array
     {
         $filters['fullName'] = $fullName;
+        $filters['user'] = null;
         $query = $this->getQuery($filters);
 
         $users = $query->getQuery()->getResult();

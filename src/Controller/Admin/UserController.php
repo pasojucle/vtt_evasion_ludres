@@ -156,7 +156,6 @@ class UserController extends AbstractController
         $query = $request->query->get('q');
 
         $filters = json_decode($request->query->get('filters'), true);
-        dump($filters, $getMembersFiltered->choices($filters, $query));
 
         return new JsonResponse($getMembersFiltered->choices($filters, $query));
     }
