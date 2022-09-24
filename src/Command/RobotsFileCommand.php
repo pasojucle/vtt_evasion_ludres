@@ -5,47 +5,31 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Service\MenuService;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+#[AsCommand(
+    name: 'make:robots:file',
+    description: 'Make robots file',
+)]
 class RobotsFileCommand extends Command
 {
-    protected static $defaultName = 'make:robots:file';
-
-    private RequestContext $requestContext;
-
-    private ParameterBagInterface $parameterBag;
-
-    private MenuService $navService;
-
-    private UrlGeneratorInterface $urlGenerator;
-
     private string $publicDir;
 
     public function __construct(
-        RequestContext $requestContext,
-        ParameterBagInterface $parameterBag,
-        MenuService $navService,
-        UrlGeneratorInterface $urlGenerator
+        private RequestContext $requestContext,
+        private ParameterBagInterface $parameterBag,
+        private MenuService $navService,
+        private UrlGeneratorInterface $urlGenerator
     ) {
         parent::__construct();
-        $this->requestContext = $requestContext;
-        $this->parameterBag = $parameterBag;
-        $this->navService = $navService;
-        $this->urlGenerator = $urlGenerator;
         $this->publicDir = $this->parameterBag->get('public_directory');
-    }
-
-    protected function configure()
-    {
-        $this
-            ->setDescription('Make robots file')
-            ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

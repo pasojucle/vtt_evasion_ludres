@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Repository\ParameterRepository;
 use App\Service\CommandLineService;
+use App\Repository\ParameterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+#[AsCommand(
+    name: 'website:update',
+    description: 'update website',
+)]
 class UpdateCommand extends Command
 {
-    protected static $defaultName = 'website:update';
-
-    protected static $defaultDescription = 'update website';
-
     public function __construct(
         private ParameterRepository $parameterRepository,
         private EntityManagerInterface $entityManager,
