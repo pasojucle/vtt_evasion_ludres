@@ -32,6 +32,7 @@ class CoverageController extends AbstractController
 
         $registrationStepPresenter->present($coverageStep, $userPresenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
         $step = $registrationStepPresenter->viewModel();
+        $files = [];
         if (null !== $step->filename) {
             $filename = './files/' . $step->filename;
             $files[] = [

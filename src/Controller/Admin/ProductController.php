@@ -82,7 +82,7 @@ class ProductController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $product->isDisabled(true);
+            $product->setIsDisabled(true);
             $this->entityManager->persist($product);
             $this->entityManager->flush();
 

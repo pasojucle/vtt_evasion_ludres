@@ -33,6 +33,8 @@ class ClusterViewModel extends AbstractViewModel
 
     private ServicesPresenter $services;
 
+    public int $usersOnSiteCount;
+
     public static function fromCluster(Cluster $cluster, ServicesPresenter $services)
     {
         $clusterView = new self();

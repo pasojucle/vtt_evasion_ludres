@@ -71,7 +71,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var PasswordAuthenticatedUserInterface|User $user */
+            /** @var PasswordAuthenticatedUserInterface&user $user */
             $encodedPassword = $passwordHasher->hashPassword(
                 $user,
                 $form->get('plainPassword')->getData()

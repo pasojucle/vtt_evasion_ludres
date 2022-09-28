@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\OrderHeaderRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -52,7 +53,7 @@ class OrderHeader
     private int $status;
 
     #[Column(type: 'datetime')]
-    private DateTime $createdAt;
+    private DateTimeInterface $createdAt;
 
     public function __construct()
     {
@@ -118,12 +119,12 @@ class OrderHeader
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 

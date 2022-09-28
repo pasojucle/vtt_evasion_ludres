@@ -50,8 +50,8 @@ class GetProgress
 
     public function execute(int $step): array
     {
-        $this->setUser($step);
-        $this->updateStatus($this->user);
+        $this->setUser();
+        $this->updateStatus();
 
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
@@ -60,6 +60,7 @@ class GetProgress
         $progress = [];
         $progress['prevIndex'] = null;
         $progress['nextIndex'] = null;
+        $progress['currentIndex'] = null;
         $progress['current'] = null;
         $progress['steps'] = null;
         $progress['max_step'] = count($steps);

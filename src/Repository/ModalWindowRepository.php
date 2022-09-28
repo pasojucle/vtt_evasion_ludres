@@ -22,7 +22,7 @@ class ModalWindowRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return FlashInfo[] Returns an array of FlashInfo objects
+     * @return ModalWindow[] Returns an array of FlashInfo objects
      */
     public function findAllDesc(): array
     {
@@ -34,7 +34,7 @@ class ModalWindowRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return FlashInfo[] Returns an array of FlashInfo objects
+     * @return ModalWindow[] Returns an array of FlashInfo objects
      */
     public function findLastByAge(?int $age): array
     {

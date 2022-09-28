@@ -31,11 +31,11 @@ class BikeRideTransformer implements DataTransformerInterface
     /**
      * Transforms an object (entity) to a string (number).
      *
-     * @param object|null $entity
+     * @param object|null $bikeRide
      *
-     * @return string
+     * @return array|string
      */
-    public function transform($bikeRide)
+    public function transform($bikeRide): array|string
     {
         if (null === $bikeRide) {
             return '';

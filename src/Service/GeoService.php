@@ -6,6 +6,8 @@ namespace App\Service;
 
 class GeoService
 {
+    private array $departmentIds;
+    
     public function __construct()
     {
         $this->departmentIds = array_merge(range(1,19), range(21,95),range(971,974), ['2A', '2B', 976]);

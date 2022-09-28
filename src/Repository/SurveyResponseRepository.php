@@ -24,9 +24,6 @@ class SurveyResponseRepository extends ServiceEntityRepository
         parent::__construct($registry, SurveyResponse::class);
     }
 
-    /**
-     * @return SurveyResponse[] Returns an array of SurveyResponse objects
-     */
     public function findResponsesByUuid(Survey $survey): array
     {
         $responses = $this->findResponsesBySurvey($survey);
@@ -40,6 +37,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
 
         return $responsedByUuid;
     }
+
 
     public function findResponsesByIssues(Survey $survey): array
     {
@@ -55,7 +53,9 @@ class SurveyResponseRepository extends ServiceEntityRepository
         return $responsedByIssue;
     }
 
-    public function findResponsesBySurvey(Survey $survey): array
+    /**
+     * @return SurveyResponse[] Returns an array of SurveyResponse objects
+     */    public function findResponsesBySurvey(Survey $survey): array
     {
         return $this->createQueryBuilder('r')
             ->join('r.surveyIssue', 'i')

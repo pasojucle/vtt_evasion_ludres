@@ -4,6 +4,8 @@ namespace App\Command;
 
 use App\Entity\Commune;
 use App\Entity\Department;
+use App\Repository\CommuneRepository;
+use App\Repository\DepartmentRepository;
 use App\Service\GeoService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -26,7 +28,12 @@ class LoadGeoDataCommand extends Command
     private OutputInterface $output;
     private SymfonyStyle $ssio;
 
-    public function __construct(private GeoService $geoService, private EntityManagerInterface $entityManager)
+    public function __construct(
+        private GeoService $geoService, 
+        private EntityManagerInterface $entityManager, 
+        private CommuneRepository $communeRepository,
+        private DepartmentRepository $departmentRepository
+        )
     {
         parent::__construct();
         $this->departmentIds = array_merge(range(1,19), range(21,95),range(971,974), ['2A', '2B', 976]);
@@ -44,17 +51,17 @@ class LoadGeoDataCommand extends Command
         $this->output = $output;
         $this->ssio = new SymfonyStyle($input, $this->output);
 
-        $this->entityManager->getRepository(Commune::class)->deleteAll();
-        $this->entityManager->getRepository(Department::class)->deleteAll();
-        $this->departements = $this->getDepartments($this->departmentIds);
-        $this->getCommunes($this->departmentIds);
+        $this->communeRepository->deleteAll();
+        $this->departmentRepository->deleteAll();
+        $this->setDepartments($this->departmentIds);
+        $this->setCommunes($this->departmentIds);
         
         $this->ssio->success('Les départments et communes ont bien été charchés en base de données');
 
         return Command::SUCCESS;
     }
 
-    private function getDepartments(array $departmentIds)
+    private function setDepartments(array $departmentIds)
     {
         $this->progressBar = new ProgressBar($this->output, count($this->departmentIds));
         $this->output->writeln('Chargement des departements');
@@ -93,7 +100,7 @@ class LoadGeoDataCommand extends Command
         return false;
     }
 
-    private function getCommunes(array $departmentIds)
+    private function setCommunes(array $departmentIds)
     {
         $this->progressBar = new ProgressBar($this->output, count($this->departmentIds));
         $this->output->writeln('Chargement des communess');

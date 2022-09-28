@@ -26,6 +26,10 @@ class LogErrorViewModel extends AbstractViewModel
 
     public ?UserViewModel $user;
 
+    public ?string $fileName;
+
+    public ?int $line;
+
     public static function fromLogError(LogError $logError, ServicesPresenter $services)
     {
         $logErrorView = new self();

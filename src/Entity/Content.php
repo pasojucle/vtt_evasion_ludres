@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\ContentRepository;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTimeInterface;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OrderBy;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping\ManyToMany;
+use App\Repository\ContentRepository;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repositoryClass: ContentRepository::class)]
 class Content
@@ -56,10 +57,10 @@ class Content
     private ?string $content = null;
 
     #[Column(type: 'datetime', nullable: true)]
-    private ?DateTime $startAt;
+    private ?DateTimeInterface $startAt;
 
     #[Column(type: 'datetime', nullable: true)]
-    private ?DateTime $endAt;
+    private ?DateTimeInterface $endAt;
 
     #[Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
@@ -82,6 +83,9 @@ class Content
     #[Column(type: 'string', length: 30, nullable: true)]
     private ?string $buttonLabel = null;
 
+    /**
+     * @var ArrayCollection <Background>
+     */
     #[ManyToMany(targetEntity: Background::class, inversedBy: 'contents')]
     private Collection $backgrounds;
 
@@ -130,24 +134,24 @@ class Content
         return $this;
     }
 
-    public function getStartAt(): ?\DateTimeInterface
+    public function getStartAt(): ?DateTimeInterface
     {
         return $this->startAt;
     }
 
-    public function setStartAt(?\DateTimeInterface $startAt): self
+    public function setStartAt(?DateTimeInterface $startAt): self
     {
         $this->startAt = $startAt;
 
         return $this;
     }
 
-    public function getEndAt(): ?\DateTimeInterface
+    public function getEndAt(): ?DateTimeInterface
     {
         return $this->endAt;
     }
 
-    public function setEndAt(?\DateTimeInterface $endAt): self
+    public function setEndAt(?DateTimeInterface $endAt): self
     {
         $this->endAt = $endAt;
 
@@ -238,9 +242,6 @@ class Content
         return $this;
     }
 
-    /**
-     * @return Collection<int, BackgroundImage>
-     */
     public function getBackgrounds(): Collection
     {
         return $this->backgrounds;

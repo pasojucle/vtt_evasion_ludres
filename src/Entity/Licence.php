@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\LicenceRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -111,7 +112,7 @@ class Licence
     private int $season;
 
     #[Column(type: 'datetime', nullable: true)]
-    private ?DateTime $createdAt = null;
+    private ?DateTimeInterface $createdAt = null;
 
     #[Column(type: 'boolean', options:['default' => true])]
     private bool $final = false;
@@ -238,12 +239,12 @@ class Licence
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    public function setCreatedAt(?DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 

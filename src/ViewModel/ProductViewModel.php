@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use App\Entity\Product;
+use App\ViewModel\UserViewModel;
 use Doctrine\Common\Collections\Collection;
 
 class ProductViewModel extends AbstractViewModel
@@ -31,11 +32,14 @@ class ProductViewModel extends AbstractViewModel
 
     public ?string $pathName = null;
 
+    public string $pathNameForPdf;
+
     public ?array $sizes;
 
     private ?Collection $productSizes;
 
-    public static function fromProduct(Product $product, ServicesPresenter $services, UserViewModel $user = null)
+    /**@param ?UserViewModel $user */
+    public static function fromProduct(Product $product, ServicesPresenter $services, ?UserViewModel $user = null)
     {
         $productView = new self();
         $productView->id = $product->getId();
@@ -56,8 +60,8 @@ class ProductViewModel extends AbstractViewModel
         if (null === $user && $services->security->getUser()) {
             $user = UserViewModel::fromUser($services->security->getUser(), $services);
         }
-
-        if (null !== $user) {
+        
+        if (null !== $user && $user instanceof UserViewModel) {
             if (!empty($user->member) && $product->getCategory() === $user->lastLicence->category) {
                 $productView->sellingPrice = $product->getDiscountPrice();
                 $productView->discountPrice = number_format($product->getDiscountPrice(), 2) . ' €';

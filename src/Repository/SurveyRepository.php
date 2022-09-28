@@ -25,9 +25,6 @@ class SurveyRepository extends ServiceEntityRepository
         parent::__construct($registry, Survey::class);
     }
 
-    /**
-     * @return Survey[] Returns an array of Survey objects
-     */
     public function findAllDESCQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('s')

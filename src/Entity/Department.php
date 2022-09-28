@@ -17,6 +17,9 @@ class Department
     #[ORM\Column(type: 'string', length: 75)]
     private string $name;
 
+    /**
+     * @var ArrayCollection <Commune>
+     */
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: Commune::class)]
     private Collection $communes;
 
@@ -49,9 +52,7 @@ class Department
         return $this;
     }
 
-    /**
-     * @return Collection<int, Communes>
-     */
+
     public function getCommunes(): Collection
     {
         return $this->communes;

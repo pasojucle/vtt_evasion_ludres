@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\UseCase\FormValidator;
 
+use App\Service\ValidatorService;
 use App\Validator\BirthDate;
 use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
 
 class Validate
 {
     public function __construct(
-        private ValidatorInterface $validator,
+        private ValidatorService $validator,
         private Environment $twig
     ) {
     }
@@ -30,7 +29,7 @@ class Validate
 
         $constraints = $this->getConstraints($constraintClass, $required, $value);
 
-        $violations = $this->validator->validate($value, $constraints);
+        $violations = $this->validator->ValidateToArray($value, $constraints);
         $render = $this->twig->render('validator/errors.html.twig', [
             'violations' => $violations,
         ]);
@@ -65,11 +64,11 @@ class Validate
         return $constraints;
     }
 
-    private function getStatus(ConstraintViolationListInterface $violations, bool $isEmptyValue): ?string
+    private function getStatus(array $violations, bool $isEmptyValue): ?string
     {
-        if (!empty((string) $violations)) {
+        if (!empty($violations)) {
             $status = 'ALERT_WARNING';
-        } elseif (empty((string) $violations) && !$isEmptyValue) {
+        } elseif (empty($violations) && !$isEmptyValue) {
             $status = 'SUCCESS';
         } else {
             $status = null;

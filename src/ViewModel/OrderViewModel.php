@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use App\Entity\OrderHeader;
+use App\ViewModel\UserViewModel;
 
 class OrderViewModel extends AbstractViewModel
 {
@@ -17,6 +18,8 @@ class OrderViewModel extends AbstractViewModel
     public ?int $status;
 
     public ?string $amount;
+
+    public string $createdAt;
 
     public static function fromOrderHeader(OrderHeader $orderHeader, ServicesPresenter $services)
     {
@@ -46,6 +49,7 @@ class OrderViewModel extends AbstractViewModel
 
     public function getMemberFullName(): string
     {
-        return $this->user->getMember['fullName'];
+        return $this->user->member->fullName;
+
     }
 }

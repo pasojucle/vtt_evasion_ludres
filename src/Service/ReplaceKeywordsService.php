@@ -111,7 +111,7 @@ class ReplaceKeywordsService
             $user->getFullNameChildren(),
             $user->getBirthDateChildren(),
             '<br>',
-            $licence->getRegistrationTitle($user),
+            $licence->getRegistrationTitle(),
             $this->translator->trans($licence->type),
             $this->translator->trans($licence->coverageStr),
             $user->isMedicalCertificateRequired(),

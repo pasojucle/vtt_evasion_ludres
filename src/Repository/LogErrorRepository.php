@@ -24,7 +24,7 @@ class LogErrorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return LogError[] Returns an array of LogError objects
+     * @return QueryBuilder
      */
     public function findLogErrorQuery(int $statusCode): QueryBuilder
     {

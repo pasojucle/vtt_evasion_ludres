@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\IdentityRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -48,7 +49,7 @@ class Identity
     private ?string $firstName = null;
 
     #[Column(type: 'date', nullable: true)]
-    private ?DateTime $birthDate = null;
+    private ?DateTimeInterface $birthDate = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $birthplace = null;

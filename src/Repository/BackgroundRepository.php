@@ -41,7 +41,7 @@ class BackgroundRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Background[] Returns an array of Background objects
+     * @return QueryBuilder
      */
     public function findAllQuery(): QueryBuilder
     {

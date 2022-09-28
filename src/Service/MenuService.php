@@ -128,13 +128,17 @@ class MenuService
     public function getIndexableRoutes(): array
     {
         $routes = [];
-        $allMenus = array_merge($this->getMenus(), $this->getFooter());
-        foreach ($allMenus as $menu) {
-            if (empty($menu['subMenus'])) {
-                $routes[] = $menu['route'];
-            } else {
-                foreach ($menu['subMenus'] as $subMenu) {
-                    $routes[] = $subMenu['route'];
+        $menuByType = ['menus' => $this->getMenus(), 'footer' => $this->getFooter()];
+
+        foreach ($menuByType as $type => $menus) {
+            foreach($menus as $menu) {
+                $priority = ('menus' === $type) ? 1 : 0.5;
+                if (empty($menu['subMenus'])) {
+                    $routes[] = ['route' => $menu['route'], 'priority' => $priority];
+                } else {
+                    foreach ($menu['subMenus'] as $subMenu) {
+                        $routes[] = ['route' => $subMenu['route'], 'priority' => $priority];
+                    }
                 }
             }
         }

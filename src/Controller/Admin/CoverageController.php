@@ -32,7 +32,7 @@ class CoverageController extends AbstractController
     ): Response {
         return $this->render(
             'coverage/admin/list.html.twig',
-            $getCoveragesFiltered->list($request, $filtered, 'admin_users_filters', 'admin_users')
+            $getCoveragesFiltered->list($request, $filtered)
         );
     }
 

@@ -48,7 +48,7 @@ class LinkService
             if (array_key_exists('https://api.w.org/', $links)) {
                 $content = json_decode(file_get_contents($links['https://api.w.org/']['value'], true));
                 if (null !== $content && array_key_exists('description', $content)) {
-                    $description = $content->description;
+                    $description = $content['description'];
                 }
             }
             if (array_key_exists('image_src', $links) && null === $image) {
@@ -99,17 +99,13 @@ class LinkService
 
         // Check if we need to go somewhere else
 
-        if (isset($contents) && is_string($contents)) {
+        if (false !== $contents && is_string($contents)) {
             preg_match_all('/<[\s]*meta[\s]*http-equiv="?REFRESH"?' . '[\s]*content="?[0-9]*;[\s]*URL[\s]*=[\s]*([^>"]*)"?' . '[\s]*[\/]?[\s]*>/si', $contents, $match);
 
             if (isset($match) && is_array($match) && 2 === count($match) && 1 === count($match[1])) {
                 if (!isset($maximumRedirections) || $currentRedirection < $maximumRedirections) {
                     return $this->getUrlContents($match[1][0], $maximumRedirections, ++$currentRedirection);
                 }
-
-                $result = false;
-            } else {
-                $result = $contents;
             }
         }
 

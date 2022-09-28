@@ -6,18 +6,19 @@ namespace App\Controller\Admin;
 
 use App\Entity\Link;
 use App\Form\LinkType;
-use App\Repository\LinkRepository;
 use App\Service\LinkService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\Repository\LinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class LinkController extends AbstractController
 {
@@ -61,7 +62,7 @@ class LinkController extends AbstractController
             $link = $form->getData();
 
             $isNew = null === $link->getTitle() && null === $link->getDescription() && null === $link->getImage();
-            /** @var SubmitButoon $search */
+            /** @var SubmitButton $search */
             $search = $form->get('search');
             if (null !== $link->getUrl() && ($isNew || ($form->has('search') && $search->isClicked()))) {
                 $data = $linkService->getUrlData($link->getUrl());

@@ -36,7 +36,7 @@ class LinkRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return User[] Returns an array of link objects
+     * @return Link[] Returns an array of link objects
      */
     public function findByPosition(int $position): array
     {

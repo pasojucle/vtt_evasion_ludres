@@ -18,6 +18,7 @@ use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -132,10 +133,10 @@ class BikeRideService
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            if ($form->has('next') && $form->get('next')->isClicked()) {
+            if ($form->has('next') && $form->get('next') instanceof ClickableInterface && $form->get('next')->isClicked()) {
                 $data['direction'] = BikeRide::DIRECTION_NEXT;
             }
-            if ($form->has('prev') && $form->get('prev')->isClicked()) {
+            if ($form->has('prev') && $form->get('prev') instanceof ClickableInterface && $form->get('prev')->isClicked()) {
                 $data['direction'] = BikeRide::DIRECTION_PREV;
             }
             // if ($form->has('today') && $form->get('today')->isClicked()) {

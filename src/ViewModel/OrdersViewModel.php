@@ -13,7 +13,7 @@ class OrdersViewModel
     public static function fromOrders(Paginator $orders, ServicesPresenter $services): OrdersViewModel
     {
         $ordersViewModel = [];
-        if (!empty($orders)) {
+        if (null !== $orders->count()) {
             foreach ($orders as $order) {
                 $ordersViewModel[] = OrderViewModel::fromOrderHeader($order, $services);
             }

@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\RespondentRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -29,19 +30,19 @@ class Respondent
     private User $user;
 
     #[Column(type: 'datetime')]
-    private DateTime $createdAt;
+    private DateTimeInterface $createdAt;
 
     public function geId(): ?int
     {
         return $this->id;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 

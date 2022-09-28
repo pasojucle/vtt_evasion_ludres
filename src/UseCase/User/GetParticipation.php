@@ -15,6 +15,7 @@ use App\ViewModel\SessionsPresenter;
 use App\ViewModel\UserPresenter;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -73,7 +74,7 @@ class GetParticipation
         ];
     }
 
-    private function createForm(array $filters): Form
+    private function createForm(array $filters): FormInterface
     {
         return $this->formFactory->create(ParticipationFilterType::class, $filters);
     }

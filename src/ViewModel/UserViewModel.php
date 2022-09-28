@@ -47,10 +47,9 @@ class UserViewModel extends AbstractViewModel
         $userView->services = $services;
         $userView->licenceNumber = $user->getLicenceNumber();
         $userView->setIdentities();
-        $userView->translator = $services->translator;
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
-        $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);
+        $userView->health = HealthViewModel::fromHealth($user->getHealth());
         $userView->titleColors = $userView->getTitleColors();
         $userView->mainEmail = $userView->getMainEmail();
 

@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\HealthRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -34,7 +35,7 @@ class Health
     private ?string $bloodGroup = null;
 
     #[Column(type: 'date', nullable: true)]
-    private ?DateTime $tetanusBooster = null;
+    private ?DateTimeInterface $tetanusBooster = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $doctorName = null;
@@ -55,7 +56,7 @@ class Health
     private Collection $diseases;
 
     #[Column(type: 'date', nullable: true)]
-    private ?DateTime $medicalCertificateDate = null;
+    private ?DateTimeInterface $medicalCertificateDate = null;
 
     public function __construct()
     {

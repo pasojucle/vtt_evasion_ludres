@@ -49,7 +49,7 @@ class LogError
     private ?User $user;
 
     #[Column(type: 'datetime')]
-    private DateTime $createdAt;
+    private DateTimeInterface $createdAt;
 
     public function getId(): ?int
     {

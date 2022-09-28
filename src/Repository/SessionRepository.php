@@ -54,9 +54,6 @@ class SessionRepository extends ServiceEntityRepository
         ;
     }
 
-    /**
-     * @return Session[] Returns an array of enent objects
-     */
     public function findByUserAndFilters(User $user, array $filters): QueryBuilder
     {
         $qb = $this->createQueryBuilder('s');

@@ -27,7 +27,7 @@ class BikeRideRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return BikeRide[] Returns an array of BikeRide objects
+     * @return QueryBuilder
      */
     public function findAllQuery(array $filters): QueryBuilder
     {

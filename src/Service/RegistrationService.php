@@ -15,8 +15,8 @@ use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
@@ -75,7 +75,7 @@ class RegistrationService
         $isAllreadyRegistered = false;
 
         if (null !== $user) {
-            $licence = $user->getSeasonService($this->season);
+            $licence = $user->getSeasonLicence($this->season);
             if (null !== $licence) {
                 if ($licence->isFinal() && Licence::STATUS_IN_PROCESSING < $licence->getStatus()) {
                     $isAllreadyRegistered = true;
@@ -89,7 +89,7 @@ class RegistrationService
         return $isAllreadyRegistered;
     }
 
-    private function getForm(RegistrationStep $registrationStep, bool $isKinship, ?int $category, int $step): ?Form
+    private function getForm(RegistrationStep $registrationStep, bool $isKinship, ?int $category, int $step): ?FormInterface
     {
         $form = null;
 

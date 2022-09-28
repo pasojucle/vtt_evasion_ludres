@@ -94,7 +94,7 @@ class PdfService
             ],
             [
                 'value' => 'X',
-                'x' => $coverage[$this->userPresenter->viewModel()->getCoverage($this->seasonService->getCurrentSeason())],
+                'x' => $coverage[$this->userPresenter->viewModel()->getCoverage()],
                 'y' => 247.5,
             ],
             [

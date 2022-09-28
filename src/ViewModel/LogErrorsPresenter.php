@@ -12,7 +12,7 @@ class LogErrorsPresenter extends AbstractPresenter
 
     public function present(Paginator $logErrors): void
     {
-        if (!empty($logErrors)) {
+        if (null !== $logErrors->count()) {
             $this->viewModel = LogErrorsViewModel::fromLogErrors($logErrors, $this->services);
         } else {
             $this->viewModel = new LogErrorsViewModel();

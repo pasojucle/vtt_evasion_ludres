@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
+use DateTime;
 use App\Entity\Health;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 
 class HealthViewModel extends AbstractViewModel
@@ -36,6 +38,8 @@ class HealthViewModel extends AbstractViewModel
     public ?string $medicalCertificateDate;
 
     public ?bool $isMedicalCertificateRequired;
+
+    public DateTime|DateTimeInterface|null $medicalCertificateDateObject;
 
     public static function fromHealth(?Health $health)
     {

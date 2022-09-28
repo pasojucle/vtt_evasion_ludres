@@ -8,6 +8,7 @@ use App\Form\Admin\SurveyType;
 use App\Repository\SurveyRepository;
 use DateInterval;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -32,10 +33,10 @@ class Survey
     private string $content;
 
     #[Column(type: 'datetime')]
-    private DateTime $startAt;
+    private DateTimeInterface $startAt;
 
     #[Column(type: 'datetime')]
-    private DateTime $endAt;
+    private DateTimeInterface $endAt;
 
     #[OneToMany(targetEntity: SurveyIssue::class, mappedBy: 'survey', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     private Collection $surveyIssues;
@@ -89,14 +90,14 @@ class Survey
         return $this->startAt;
     }
 
-    public function setStartAt(\DateTimeInterface $startAt): self
+    public function setStartAt(DateTimeInterface $startAt): self
     {
         $this->startAt = $startAt;
 
         return $this;
     }
 
-    public function getEndAt(): ?\DateTimeInterface
+    public function getEndAt(): ?DateTimeInterface
     {
         return $this->endAt;
     }

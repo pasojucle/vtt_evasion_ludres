@@ -15,6 +15,7 @@ class ContentsViewModel
     public static function fromContents(array|Collection $contents, ServicesPresenter $services): ContentsViewModel
     {
         $contentsViewModel = [];
+        $homeContentsViewModel = [];
         if (!empty($contents)) {
             foreach ($contents as $content) {
                 $contentView = ContentViewModel::fromContent($content, $services);

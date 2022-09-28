@@ -19,6 +19,7 @@ use App\Service\ParameterService;
 use App\Service\SeasonService;
 use App\Service\StringService;
 use App\Service\UploadService;
+use App\Service\ValidatorService;
 use App\Validator\UniqueMember;
 use App\ViewModel\UserPresenter;
 use DateInterval;
@@ -33,7 +34,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\SecurityEvents;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EditRegistration
 {
@@ -50,7 +50,7 @@ class EditRegistration
         private SeasonService $seasonService,
         private ParameterService $parameterService,
         private MailerService $mailerService,
-        private ValidatorInterface $validator,
+        private ValidatorService $validator,
         private EventDispatcherInterface $dispatcher,
         private TokenStorageInterface $tokenStorage,
         private LicenceService $licenceService,
@@ -129,10 +129,10 @@ class EditRegistration
             'name' => $identity->getName(),
             'firstName' => $identity->getFirstName(),
         ];
-        $violations = $this->validator->validate($values, [new UniqueMember()]);
+        $violations = $this->validator->ValidateToArray($values, [new UniqueMember()]);
 
-        if (!empty((string) $violations)) {
-            $form->addError(new FormError((string) $violations));
+        if (!empty($violations)) {
+            $form->addError(new FormError(implode('<br>', $violations)));
         }
     }
 

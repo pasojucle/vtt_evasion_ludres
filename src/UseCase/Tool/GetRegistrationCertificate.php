@@ -27,15 +27,15 @@ class GetRegistrationCertificate
     ) {
     }
 
-    public function execute(Request $request, ?User $user, ?string $content = null): array
+    public function execute(Request $request, User $user, ?string $content = null): array
     {
         $filename = null;
-        if ($user) {
-            $this->presenter->present($user);
-            $user = $this->presenter->viewModel();
-            $licence = $user->seasonLicence;
-        }
-            $content = $this->getContent($user, $licence);
+
+        $this->presenter->present($user);
+        $user = $this->presenter->viewModel();
+        $licence = $user->seasonLicence;
+        $content = $this->getContent($user, $licence);
+
 
         if (!$request->isXmlHttpRequest() && $content) {
             $filename = $this->makePdf($content);

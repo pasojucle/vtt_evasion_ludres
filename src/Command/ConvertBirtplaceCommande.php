@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Commune;
 use App\Entity\Identity;
+use App\Repository\IdentityRepository;
 use App\Service\GeoService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -24,7 +25,7 @@ class ConvertBirtplaceCommande extends Command
     private OutputInterface $output;
     private SymfonyStyle $ssio;
 
-    public function __construct(private GeoService $geoService, private EntityManagerInterface $entityManager)
+    public function __construct(private GeoService $geoService, private EntityManagerInterface $entityManager, private IdentityRepository $identityRepository)
     {
         parent::__construct();
     }
@@ -41,7 +42,7 @@ class ConvertBirtplaceCommande extends Command
         $this->output = $output;
         $this->ssio = new SymfonyStyle($input, $this->output);
 
-        $identities = $this->entityManager->getRepository(Identity::class)->findAllBirthplaceToConvert();
+        $identities = $this->identityRepository->findAllBirthplaceToConvert();
         $count = count($identities);
         $this->progressBar = new ProgressBar($this->output, $count);
         $this->progressBar->start();
@@ -83,14 +84,14 @@ class ConvertBirtplaceCommande extends Command
         return Command::SUCCESS;
     }
 
-    private function searchCommune(Identity $identity): string|false|null
+    private function searchCommune(Identity $identity): string|false|null|int
     {
         $birthplace = $identity->getBirthplace();
 
         $commune = array_search(strtolower($birthplace), [
-            54395 => 'nancy',
-            97411 => 'st denis de la réunion',
-            10387 => 'troyes'
+            '54395' => 'nancy',
+            '97411' => 'st denis de la réunion',
+            '10387' => 'troyes'
         ]);
      
         if (false !== $commune) {

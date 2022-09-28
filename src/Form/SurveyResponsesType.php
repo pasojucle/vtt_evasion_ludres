@@ -24,7 +24,8 @@ class SurveyResponsesType extends AbstractType
                 ],
             ])
             ;
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             if (null === $form->getParent()) {
                 $form
