@@ -13,7 +13,6 @@ class CommandLineService
     public function __construct(
         private ParameterBagInterface $parameterBag
     ) {
-        
     }
     
     public function getRequirePhpVersion(): string
@@ -31,7 +30,7 @@ class CommandLineService
     
     public function getBinConsole(): string|false
     {
-        return $this->getBinay().' bin/console';
+        return $this->getBinay() . ' bin/console';
     }
     
     public function getBinay(): string|false

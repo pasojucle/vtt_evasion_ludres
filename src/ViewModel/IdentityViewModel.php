@@ -105,13 +105,13 @@ class IdentityViewModel extends AbstractViewModel
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
     }
 
-    private function getBirthplace():string
+    private function getBirthplace(): string
     {
         $birthCommune = $this->entity->getBirthCommune();
         
-        if($birthCommune) {
+        if ($birthCommune) {
             return ($birthCommune->getDepartment())
-                ? $birthCommune->getName(). ' ('.$birthCommune->getDepartment()?->getName() . ')'
+                ? $birthCommune->getName() . ' (' . $birthCommune->getDepartment()?->getName() . ')'
                 : $birthCommune->getName();
         }
 

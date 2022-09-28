@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateInterval;
-use App\Entity\User;
-use App\Entity\Level;
-use DateTimeImmutable;
-use App\Entity\Cluster;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
+use App\Entity\Level;
+use App\Entity\User;
 use App\Form\Admin\LevelType;
-use App\ViewModel\UserPresenter;
 use App\Repository\LevelRepository;
+use App\Repository\SessionRepository;
 use App\ViewModel\ClusterPresenter;
 use App\ViewModel\SessionPresenter;
-use App\Repository\SessionRepository;
+use App\ViewModel\UserPresenter;
+use DateInterval;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 
 class SessionService

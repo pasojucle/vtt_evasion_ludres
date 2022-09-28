@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
 use App\Entity\Level;
-use App\Form\Admin\UserType;
-use App\Service\MailerService;
-use App\ViewModel\UserPresenter;
-use App\Service\PaginatorService;
-use App\ViewModel\UsersPresenter;
-use App\Repository\UserRepository;
+use App\Entity\User;
 use App\Form\Admin\CertificateType;
-use App\UseCase\User\GetParticipation;
+use App\Form\Admin\UserType;
+use App\Repository\UserRepository;
+use App\Service\MailerService;
+use App\Service\PaginatorService;
+use App\UseCase\Tool\GetRegistrationCertificate;
 use App\UseCase\User\GetMembersFiltered;
+use App\UseCase\User\GetParticipation;
+use App\ViewModel\UserPresenter;
+use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\UseCase\Tool\GetRegistrationCertificate;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -166,14 +166,14 @@ class UserController extends AbstractController
         UserRepository $userRepository,
     ): JsonResponse {
         $query = $request->query->get('q');
-        $users = (null !== $query) 
+        $users = (null !== $query)
             ? $userRepository->findByNumberLicenceOrFullName($query)
             : $userRepository->findAllAsc();
         $response = [];
-        foreach($users as $user) {
+        foreach ($users as $user) {
             $text = $user->getLicenceNumber();
             if (null !== $user->GetFirstIdentity()) {
-                $text .= ' '. $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
+                $text .= ' ' . $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
             }
             $response[] = [
                 'id' => $user->getId(),

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use DateTime;
 use App\Entity\Health;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 

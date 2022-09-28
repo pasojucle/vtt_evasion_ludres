@@ -4,35 +4,35 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use DateTime;
-use DateInterval;
 use App\Entity\Commune;
-use App\Entity\Licence;
 use App\Entity\Identity;
-use App\Validator\Phone;
+use App\Entity\Licence;
 use App\Validator\BirthDate;
+use App\Validator\Phone;
+use DateInterval;
+use DateTime;
 use PhpParser\Builder;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class IdentityType extends AbstractType
 {
@@ -88,9 +88,9 @@ class IdentityType extends AbstractType
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                                 'data-multiple-fields' => 1,
-                                'autocomplete'=>'off',
+                                'autocomplete' => 'off',
                             ]
-                            : ['data-constraint' => '', 'autocomplete'=>'off',],
+                            : ['data-constraint' => '', 'autocomplete' => 'off', ],
                         'disabled' => $disabled,
                     ])
                     ->add('mobile', TextType::class, [
@@ -103,7 +103,7 @@ class IdentityType extends AbstractType
                         ],
                         'attr' => [
                             'data-constraint' => 'app-Phone',
-                            'autocomplete'=>'off',
+                            'autocomplete' => 'off',
                         ],
                     ])
                     ->add('email', EmailType::class, [
@@ -116,7 +116,7 @@ class IdentityType extends AbstractType
                         ],
                         'attr' => [
                             'data-constraint' => 'symfony-Email',
-                            'autocomplete'=>'off',
+                            'autocomplete' => 'off',
                         ],
                     ])
                     ->add('address', AddressType::class, [
@@ -128,7 +128,7 @@ class IdentityType extends AbstractType
 
                 if (Identity::TYPE_SECOND_CONTACT !== $type) {
                     $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
-                    $dateMin =  (new DateTime())->sub(new DateInterval('P80Y'));
+                    $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
                     $form
                         ->add('phone', TextType::class, [
                             'label' => 'Téléphone fixe',
@@ -141,7 +141,7 @@ class IdentityType extends AbstractType
                             ],
                             'attr' => [
                                 'data-constraint' => 'app-Phone',
-                                'autocomplete'=>'off',
+                                'autocomplete' => 'off',
                             ],
                         ])
                         ->add('birthDate', DateTimeType::class, [
@@ -153,7 +153,7 @@ class IdentityType extends AbstractType
                                 'class' => 'js-datepicker',
                                 'data-max-date' => $dateMax->format('Y-m-d'),
                                 'data-min-date' => $dateMin->format('Y-m-d'),
-                                'data-year-range' => $dateMin->format('Y').':'.$dateMax->format('Y'),
+                                'data-year-range' => $dateMin->format('Y') . ':' . $dateMax->format('Y'),
                                 'autocomplete' => 'off',
                                 'data-constraint' => 'app-BirthDate',
                             ],

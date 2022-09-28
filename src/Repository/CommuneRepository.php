@@ -76,12 +76,12 @@ class CommuneRepository extends ServiceEntityRepository
         ;
     }
 
-   public function findCount(): int
-   {
-       return $this->createQueryBuilder('c')
-            ->select((new Expr)->count('c.id'))
+    public function findCount(): int
+    {
+        return $this->createQueryBuilder('c')
+            ->select((new Expr())->count('c.id'))
            ->getQuery()
            ->getSingleScalarResult();
-       ;
-   }
+        ;
+    }
 }

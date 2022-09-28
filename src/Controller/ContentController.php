@@ -118,7 +118,7 @@ class ContentController extends AbstractController
         UserPresenter $userPresenter
     ): Response {
         $user = $this->getUser();
-        $data =  null;
+        $data = null;
         if (null !== $user) {
             $mainContact = $identityService->getMainContact($user);
             $data = ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()];
@@ -129,7 +129,7 @@ class ContentController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            if($user) {
+            if ($user) {
                 $userPresenter->present($user);
                 $data['user'] = $userPresenter->viewModel();
             }

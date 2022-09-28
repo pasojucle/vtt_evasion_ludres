@@ -8,12 +8,12 @@ use App\Repository\CommuneRepository;
 use App\Repository\DepartmentRepository;
 use App\Service\GeoService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'geo:load:data',
@@ -29,14 +29,13 @@ class LoadGeoDataCommand extends Command
     private SymfonyStyle $ssio;
 
     public function __construct(
-        private GeoService $geoService, 
-        private EntityManagerInterface $entityManager, 
+        private GeoService $geoService,
+        private EntityManagerInterface $entityManager,
         private CommuneRepository $communeRepository,
         private DepartmentRepository $departmentRepository
-        )
-    {
+    ) {
         parent::__construct();
-        $this->departmentIds = array_merge(range(1,19), range(21,95),range(971,974), ['2A', '2B', 976]);
+        $this->departmentIds = array_merge(range(1, 19), range(21, 95), range(971, 974), ['2A', '2B', 976]);
     }
 
     protected function configure(): void
@@ -69,7 +68,7 @@ class LoadGeoDataCommand extends Command
         while (!empty($departmentIds)) {
             $this->departmentsToReload = [];
             foreach ($departmentIds as $departmentId) {
-                $departmentId = (strlen((string) $departmentId) === 1) ? '0'.$departmentId : $departmentId;
+                $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
                 if (!$this->addDepartment($departmentId)) {
                     $this->departmentsToReload[] = $departmentId;
                 } else {
@@ -96,7 +95,7 @@ class LoadGeoDataCommand extends Command
             $this->departments[$data['code']] = $department;
             
             return true;
-        } 
+        }
         return false;
     }
 
@@ -108,7 +107,7 @@ class LoadGeoDataCommand extends Command
         while (!empty($departmentIds)) {
             $this->departmentsToReload = [];
             foreach ($departmentIds as $departmentId) {
-                $departmentId = (strlen((string) $departmentId) === 1) ? '0'.$departmentId : $departmentId;
+                $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
                 if (!$this->addCommunesByDepartment($departmentId)) {
                     $this->departmentsToReload[] = $departmentId;
                 } else {
@@ -128,15 +127,15 @@ class LoadGeoDataCommand extends Command
             $this->addCommunes($dataCommunes);
 
             return true;
-        } 
+        }
         
         return false;
     }
 
-    private function addCommunes(array $dataCommunes):void
+    private function addCommunes(array $dataCommunes): void
     {
         if (!empty($dataCommunes)) {
-            foreach($dataCommunes as $data) {
+            foreach ($dataCommunes as $data) {
                 if (!empty($data['code'])) {
                     $commune = new Commune();
                     $commune->setId($data['code'])

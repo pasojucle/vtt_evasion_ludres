@@ -41,7 +41,7 @@ class EditIdentity
             }
         }
 
-        if($user->getMemberIdentity()->getBirthCommune()) {
+        if ($user->getMemberIdentity()->getBirthCommune()) {
             $this->communeService->addIfNotExists($user->getMemberIdentity()->getBirthCommune());
         };
 

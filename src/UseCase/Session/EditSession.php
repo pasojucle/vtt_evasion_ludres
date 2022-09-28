@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use DateTime;
-use App\Entity\User;
-use App\Entity\Licence;
 use App\Entity\BikeRide;
+use App\Entity\Licence;
 use App\Entity\Respondent;
+use App\Entity\User;
 use App\Service\MailerService;
-use App\ViewModel\UserPresenter;
-use App\ViewModel\UserViewModel;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRideViewModel;
+use App\ViewModel\UserPresenter;
+use App\ViewModel\UserViewModel;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 

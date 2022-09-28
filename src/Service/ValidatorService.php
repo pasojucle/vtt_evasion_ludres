@@ -8,12 +8,10 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-
-class ValidatorService 
+class ValidatorService
 {
-    public function __construct(private readOnly ValidatorInterface $validator)
+    public function __construct(private readonly ValidatorInterface $validator)
     {
-        
     }
     public function ValidateToArray(mixed $value, Constraint|array $constraints = null, string|GroupSequence|array $groups = null): array
     {

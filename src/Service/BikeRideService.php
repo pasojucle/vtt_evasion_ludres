@@ -219,7 +219,7 @@ class BikeRideService
         return $bikeRide;
     }
 
-    public function getStringMonth(int $month):string
+    public function getStringMonth(int $month): string
     {
         return [
            1 => 'Janvier',

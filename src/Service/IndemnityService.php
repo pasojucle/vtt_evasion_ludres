@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\User;
 use App\Entity\Session;
+use App\Entity\User;
 use App\Model\Currency;
-use Doctrine\ORM\QueryBuilder;
-use App\Repository\SessionRepository;
 use App\Repository\IndemnityRepository;
+use App\Repository\SessionRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class IndemnityService
 {

@@ -7,12 +7,12 @@ use App\Entity\Identity;
 use App\Repository\IdentityRepository;
 use App\Service\GeoService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'geo:convert:birthplace',
@@ -20,7 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class ConvertBirtplaceCommande extends Command
 {
-
     private ProgressBar $progressBar;
     private OutputInterface $output;
     private SymfonyStyle $ssio;
@@ -49,9 +48,9 @@ class ConvertBirtplaceCommande extends Command
 
         $communesFound = [];
         $communesnotFound = [];
-        while(!empty($identities)) {
+        while (!empty($identities)) {
             $identitiesToCReload = [];
-            foreach($identities as $identity) {
+            foreach ($identities as $identity) {
                 $communeCode = $this->searchCommune($identity);
                 if (false === $communeCode) {
                     $identitiesToCReload[] = $identity;
@@ -70,9 +69,8 @@ class ConvertBirtplaceCommande extends Command
 
         $this->progressBar->finish();
 
-        $this->ssio->writeln(count($communesFound).' / '.$count);
+        $this->ssio->writeln(count($communesFound) . ' / ' . $count);
         if (!empty($communesnotFound)) {
-            
             $this->ssio->writeln('Communes non trouvées');
             foreach ($communesnotFound as $commune) {
                 $this->ssio->writeln($commune);
@@ -102,7 +100,7 @@ class ConvertBirtplaceCommande extends Command
 
         if (is_array($communes)) {
             $this->progressBar->advance();
-            return match(count($communes)) {
+            return match (count($communes)) {
                 0 => null,
                 1 => $communes[0]['code'],
                 default => $this->searchByDepartment($communes, $identity->getBirthDepartment())
@@ -110,7 +108,6 @@ class ConvertBirtplaceCommande extends Command
         }
 
         return false;
-
     }
 
     private function searchByDepartment(array $communes, ?string $department): ?string

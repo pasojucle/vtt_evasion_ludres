@@ -13,13 +13,12 @@ class CommuneService
 {
     public function __construct(private CommuneRepository $communeRepository, private EntityManagerInterface $entityManager)
     {
-
     }
 
     public function addIfNotExists(Commune $commune): Commune
     {
         if (!$commune->exists()) {
-            $id = 'E'.$this->communeRepository->findCount();
+            $id = 'E' . $this->communeRepository->findCount();
             $commune->setId($id);
             $this->entityManager->persist($commune);
         }

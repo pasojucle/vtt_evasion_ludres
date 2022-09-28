@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Service\SeasonService;
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Form\Form;
-use App\Service\PaginatorService;
-use App\ViewModel\UsersPresenter;
 use App\Form\Admin\UserFilterType;
 use App\Repository\UserRepository;
+use App\Service\PaginatorService;
+use App\Service\SeasonService;
+use App\ViewModel\UsersPresenter;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class GetUsersFiltered

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\User;
 use App\Entity\Licence;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 class IdentityService
@@ -30,10 +30,11 @@ class IdentityService
         }
     }
 
-    public function getMainContact(User $user) {
+    public function getMainContact(User $user)
+    {
         $licence = $user->getLastLicence();
         return (Licence::CATEGORY_MINOR === $licence->getCategory())
-        ?  $user->getKinshipIdentity()
+        ? $user->getKinshipIdentity()
         : $user->getMemberIdentity();
     }
 }

@@ -8,22 +8,21 @@ use App\Entity\Address;
 use App\Entity\Commune;
 use App\Repository\CommuneRepository;
 use App\Service\GeoService;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Validator\Constraints\Length;
 
 class AddressType extends AbstractType
 {
     public function __construct(private GeoService $geoService, private CommuneRepository $communeRepository)
     {
-        
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -70,7 +69,7 @@ class AddressType extends AbstractType
                     'placeholder' => 'Sélectionner une commune',
                     'row_attr' => [
                         'class' => 'form-group-inline' . $options['row_class'],
-                        'id' => 'commune-'.$form->getParent()->getName(),
+                        'id' => 'commune-' . $form->getParent()->getName(),
                     ],
                     'attr' => [
                         'data-constraint' => '',

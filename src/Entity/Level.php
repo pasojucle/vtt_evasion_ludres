@@ -29,7 +29,7 @@ class Level
     public const TYPES = [
         self::TYPE_SCHOOL_MEMBER => 'level.type.school_member',
         self::TYPE_FRAME => 'level.type.frame',
-        self::TYPE_ADULT_MEMBER =>  'level.type.adult_member',
+        self::TYPE_ADULT_MEMBER => 'level.type.adult_member',
     ];
 
     #[Column(type: 'integer')]

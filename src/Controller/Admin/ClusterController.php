@@ -42,8 +42,6 @@ class ClusterController extends AbstractController
         ExportCluster $exportCluster,
         Cluster $cluster
     ): Response {
-
-        
         return $exportCluster->execute($cluster);
     }
 }

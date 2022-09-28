@@ -68,10 +68,9 @@ class EditRegistration
         if ($form->get('plainPassword') && $form->get('plainPassword')->getData()) {
             $identity = $this->registerNewUser($user, $form);
             $this->uniqueMemberValidator($form, $identity);
-
         }
 
-        if($user->getMemberIdentity()->getBirthCommune()) {
+        if ($user->getMemberIdentity()->getBirthCommune()) {
             $this->communeService->addIfNotExists($user->getMemberIdentity()->getBirthCommune());
         };
 

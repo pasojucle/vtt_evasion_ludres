@@ -95,7 +95,6 @@ class LogErrorController extends AbstractController
         Request $request,
         int $statusCode
     ): Response {
-
         $logErrorRepository->deletAllBySatusCode($statusCode);
 
         $query = $logErrorRepository->findLogErrorQuery($statusCode);

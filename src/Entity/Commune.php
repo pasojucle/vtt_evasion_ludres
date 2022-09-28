@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use ReflectionProperty;
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CommuneRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use ReflectionProperty;
 
 #[ORM\Entity(repositoryClass: CommuneRepository::class)]
 class Commune
@@ -35,9 +35,8 @@ class Commune
 
     public function __toString(): string
     {
-
         if ($this->exists()) {
-            return $this->name. ' - ' . $this->department->getId().' '. $this->department->getName(); 
+            return $this->name . ' - ' . $this->department->getId() . ' ' . $this->department->getName();
         }
 
         return $this->name;

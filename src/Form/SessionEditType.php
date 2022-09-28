@@ -22,8 +22,8 @@ class SessionEditType extends AbstractType
             $session = $event->getData();
             $form = $event->getForm();
 
-                if (null !== $options['bike_ride'] && $options['bike_ride']->accessAvailability) {
-                    $form
+            if (null !== $options['bike_ride'] && $options['bike_ride']->accessAvailability) {
+                $form
                         ->add('availability', ChoiceType::class, [
                             'label' => false,
                             'choices' => array_flip(Session::AVAILABILITIES),
@@ -32,9 +32,9 @@ class SessionEditType extends AbstractType
                             'block_prefix' => 'customcheck',
                         ])
                     ;
-                } else {
-                    if (null === $session->getCluster()) {
-                        $form
+            } else {
+                if (null === $session->getCluster()) {
+                    $form
                             ->add('cluster', EntityType::class, [
                                 'label' => false,
                                 'class' => Cluster::class,
@@ -44,13 +44,12 @@ class SessionEditType extends AbstractType
                                 'block_prefix' => 'customcheck',
                             ])
                         ;
-                    } else {
-                        $form
+                } else {
+                    $form
                             ->add('cluster', HiddenClusterType::class)
                         ;
-                    }
                 }
-
+            }
         });
 
         $builder

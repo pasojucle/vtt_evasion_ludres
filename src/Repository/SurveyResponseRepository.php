@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\User;
 use App\Entity\Survey;
-use Doctrine\ORM\Query\Expr;
 use App\Entity\SurveyResponse;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method SurveyResponse|null find($id, $lockMode = null, $lockVersion = null)

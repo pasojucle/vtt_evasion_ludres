@@ -273,7 +273,7 @@ class Identity
 
     public function getBirthCommune(): ?Commune
     {
-        return ($this->birthCommune) 
+        return ($this->birthCommune)
             ? $this->birthCommune
             : (($this->birthplace) ? (new Commune())->setName($this->birthplace) : null);
     }

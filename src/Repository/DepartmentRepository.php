@@ -50,16 +50,15 @@ class DepartmentRepository extends ServiceEntityRepository
             ->getSingleScalarResult() ?? 0;
     }
 
-   /**
-    * @return Department[] Returns an array of Department objects
-    */
-   public function findAll(): array
-   {
-       return  $this->createQueryBuilder('d')
+    /**
+     * @return Department[] Returns an array of Department objects
+     */
+    public function findAll(): array
+    {
+        return  $this->createQueryBuilder('d')
            ->orderBy('d.id', 'ASC')
            ->getQuery()
            ->getResult()
        ;
-
-   }
+    }
 }

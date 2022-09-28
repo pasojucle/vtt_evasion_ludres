@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use DateTime;
-use App\Entity\User;
 use App\Entity\Licence;
+use App\Entity\User;
 use App\Form\Admin\ToolType;
-use App\Form\ToolImportType;
-use App\Service\UserService;
-use App\Service\MailerService;
-use App\Service\SeasonService;
-use App\Service\LicenceService;
-use App\ViewModel\UserPresenter;
-use App\Service\ParameterService;
 use App\Form\Admin\UserSearchType;
+use App\Form\ToolImportType;
 use App\Repository\UserRepository;
-use Symfony\Component\Form\FormError;
+use App\Service\LicenceService;
+use App\Service\MailerService;
+use App\Service\ParameterService;
+use App\Service\SeasonService;
+use App\Service\UserService;
+use App\ViewModel\UserPresenter;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ToolController extends AbstractController
 {
@@ -39,9 +39,10 @@ class ToolController extends AbstractController
     }
 
     #[Route('/admin/tool/delete/user', name: 'admin_tool_delete_user', methods: ['GET', 'POST'])]
-    public function adminDeleteUser(): Response {
+    public function adminDeleteUser(): Response
+    {
         $form = $this->createForm(UserSearchType::class, null, [
-            'action' => $this->generateUrl( 'admin_tool_confirm_delete_user'),
+            'action' => $this->generateUrl('admin_tool_confirm_delete_user'),
         ]);
 
         return $this->render('tool/delete_user.html.twig', [
@@ -57,7 +58,7 @@ class ToolController extends AbstractController
     ): Response {
         if (null !== $user) {
             $form = $this->createForm(FormType::class, null, [
-                'action' => $this->generateUrl( 'admin_tool_confirm_delete_user', [
+                'action' => $this->generateUrl('admin_tool_confirm_delete_user', [
                     'user' => $user->getId(),
                 ]),
             ]);
@@ -65,7 +66,7 @@ class ToolController extends AbstractController
 
             $fullname = $user->getLicenceNumber();
             if (null !== $user->GetFirstIdentity()) {
-                $fullname .= ' '. $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
+                $fullname .= ' ' . $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
             }
             $form->handleRequest($request);
             if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {

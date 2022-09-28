@@ -6,8 +6,8 @@ namespace App\UseCase\Cluster;
 
 use App\Entity\Cluster;
 use App\Repository\SessionRepository;
-use App\Service\StringService;
 use App\Service\PdfService;
+use App\Service\StringService;
 use App\ViewModel\ClusterPresenter;
 use App\ViewModel\ClusterViewModel;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

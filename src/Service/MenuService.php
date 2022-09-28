@@ -131,7 +131,7 @@ class MenuService
         $menuByType = ['menus' => $this->getMenus(), 'footer' => $this->getFooter()];
 
         foreach ($menuByType as $type => $menus) {
-            foreach($menus as $menu) {
+            foreach ($menus as $menu) {
                 $priority = ('menus' === $type) ? 1 : 0.5;
                 if (empty($menu['subMenus'])) {
                     $routes[] = ['route' => $menu['route'], 'priority' => $priority];

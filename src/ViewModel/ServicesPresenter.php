@@ -5,27 +5,27 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use App\Entity\User;
-use App\Twig\AppExtension;
-use App\Service\UserService;
-use App\Service\SeasonService;
+use App\Repository\IndemnityRepository;
+use App\Repository\LevelRepository;
+use App\Repository\LicenceRepository;
+use App\Repository\MembershipFeeAmountRepository;
+use App\Repository\SessionRepository;
+use App\Repository\UserRepository;
 use App\Service\ClusterService;
 use App\Service\IdentityService;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
-use App\Repository\UserRepository;
-use App\Repository\LevelRepository;
-use App\Repository\LicenceRepository;
-use App\Repository\SessionRepository;
-use App\Repository\IndemnityRepository;
 use App\Service\ReplaceKeywordsService;
+use App\Service\SeasonService;
+use App\Service\UserService;
+use App\Twig\AppExtension;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Form\FormFactoryInterface;
-use App\Repository\MembershipFeeAmountRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ServicesPresenter
 {
@@ -53,7 +53,6 @@ class ServicesPresenter
         public IndemnityService $indemnityService,
         public ClusterService $clusterService,
         public IdentityService $identityService,
-
         public UrlGeneratorInterface $router,
         public FormFactoryInterface $formFactory,
         public RequestStack $requestStack,

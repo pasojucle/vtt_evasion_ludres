@@ -6,9 +6,9 @@ namespace App\UseCase\Tool;
 
 use App\Entity\Licence;
 use App\Entity\User;
-use App\Service\StringService;
 use App\Service\ParameterService;
 use App\Service\PdfService;
+use App\Service\StringService;
 use App\ViewModel\LicenceViewModel;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UserViewModel;

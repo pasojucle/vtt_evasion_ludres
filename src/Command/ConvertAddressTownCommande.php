@@ -7,12 +7,12 @@ use App\Entity\Commune;
 use App\Entity\Identity;
 use App\Service\GeoService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'geo:convert:town',
@@ -20,7 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class ConvertAddressTownCommande extends Command
 {
-
     private ProgressBar $progressBar;
     private OutputInterface $output;
     private SymfonyStyle $ssio;
@@ -49,9 +48,9 @@ class ConvertAddressTownCommande extends Command
 
         $communesFound = [];
         $communesnotFound = [];
-        while(!empty($addresses)) {
+        while (!empty($addresses)) {
             $addressesToReload = [];
-            foreach($addresses as $address) {
+            foreach ($addresses as $address) {
                 $communeCode = $this->searchCommune($address);
                 if (false === $communeCode) {
                     $addressesToReload[] = $address;
@@ -70,9 +69,8 @@ class ConvertAddressTownCommande extends Command
 
         $this->progressBar->finish();
 
-        $this->ssio->writeln(count($communesFound).' / '.$count);
+        $this->ssio->writeln(count($communesFound) . ' / ' . $count);
         if (!empty($communesnotFound)) {
-            
             $this->ssio->writeln('Communes non trouvées');
             foreach ($communesnotFound as $commune) {
                 $this->ssio->writeln($commune);
@@ -94,12 +92,12 @@ class ConvertAddressTownCommande extends Command
         }
 
         $town = preg_replace('#\s#', '-', strtolower($town));
-        $town = preg_replace(['#^st-#','#-(st)-#'], ['saint-', '-saint-'], strtolower($town));
+        $town = preg_replace(['#^st-#', '#-(st)-#'], ['saint-', '-saint-'], strtolower($town));
         $communes = $this->geoService->getCommunesByName($town);
         
         if (is_array($communes)) {
             $this->progressBar->advance();
-            return match(count($communes)) {
+            return match (count($communes)) {
                 0 => null,
                 1 => $communes[0]['code'],
                 default => $this->searchByPostalCode($communes, $address->getPostalCode())
@@ -107,7 +105,6 @@ class ConvertAddressTownCommande extends Command
         }
 
         return false;
-
     }
 
     private function searchByPostalCode(array $communes, ?string $postalCode): ?string

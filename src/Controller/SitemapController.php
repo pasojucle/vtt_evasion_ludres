@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Service\MenuService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SitemapController extends AbstractController
 {
@@ -16,7 +16,7 @@ class SitemapController extends AbstractController
         $urls = [];
         foreach ($menuService->getIndexableRoutes() as $menu) {
             $urls[] = [
-                'loc' =>  $this->generateUrl($menu['route'], [], UrlGeneratorInterface::ABSOLUTE_URL),
+                'loc' => $this->generateUrl($menu['route'], [], UrlGeneratorInterface::ABSOLUTE_URL),
                 'priority' => $menu['priority']
             ];
         }
@@ -33,8 +33,8 @@ class SitemapController extends AbstractController
     #[Route('/robots.txt', name: 'robots')]
     public function robots(MenuService $menuService): Response
     {
-        $content = "User-agent : *".PHP_EOL.PHP_EOL
-            . 'Sitemap : ' . $this->generateUrl('sitemap', [], UrlGeneratorInterface::ABSOLUTE_URL); 
+        $content = "User-agent : *" . PHP_EOL . PHP_EOL
+            . 'Sitemap : ' . $this->generateUrl('sitemap', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $response = new Response(
             $content
         );

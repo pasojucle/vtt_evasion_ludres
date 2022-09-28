@@ -106,7 +106,7 @@ class UserFilterType extends AbstractType
         $levels = $this->levelRepository->findAll();
         if (!empty($levels)) {
             foreach ($levels as $level) {
-                match($level->getType()) {
+                match ($level->getType()) {
                     Level::TYPE_SCHOOL_MEMBER => $levelChoices[self::LEVEL_GROUP_SCHOOL][$level->getTitle()] = $level->getId(),
                     Level::TYPE_FRAME => $levelChoices[self::LEVEL_GROUP_FRAME][$level->getTitle()] = $level->getId(),
                     default => $levelChoices[$level->getTitle()] = $level->getId()

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\CommandLineService;
 use App\Repository\ParameterRepository;
+use App\Service\CommandLineService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -49,12 +49,11 @@ class UpdateCommand extends Command
         }
 
         if ('Déjà à jour.' !== $output) {
+            $io->writeln('version php :' . $this->commandLineService->getPhpVersion());
 
-            $io->writeln('version php :'.$this->commandLineService->getPhpVersion());
-
-            $cmdComposer = ('patrick' === getenv('USER')) 
-                ? 'composer install' 
-                : $this->commandLineService->getBinay().' ../composer.phar install';
+            $cmdComposer = ('patrick' === getenv('USER'))
+                ? 'composer install'
+                : $this->commandLineService->getBinay() . ' ../composer.phar install';
 
             $io->writeln($cmdComposer);
             $output = shell_exec($cmdComposer);
@@ -67,10 +66,10 @@ class UpdateCommand extends Command
                 ['cmd' => 'geo:convert:town', 'onlyOne' => true],
             ];
 
-            foreach($commands as $command) {
-                $filename = $this->parameterBag->get('cmd_directory_path').str_replace([':', ' '], '', $command['cmd']);
-                if (!($command['onlyOne'] && file_exists($filename)) ) {
-                    $cmd = $this->commandLineService->getBinConsole().' '.$command['cmd'] ;
+            foreach ($commands as $command) {
+                $filename = $this->parameterBag->get('cmd_directory_path') . str_replace([':', ' '], '', $command['cmd']);
+                if (!($command['onlyOne'] && file_exists($filename))) {
+                    $cmd = $this->commandLineService->getBinConsole() . ' ' . $command['cmd'];
                     $io->writeln($cmd);
                     $output = shell_exec($cmd);
                     $io->writeln($output);

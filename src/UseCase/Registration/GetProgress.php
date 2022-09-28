@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Entity\User;
-use App\Entity\Health;
-use App\Form\UserType;
 use App\Entity\Address;
-use App\Entity\Disease;
-use App\Entity\Licence;
 use App\Entity\Approval;
-use App\Entity\Identity;
+use App\Entity\Disease;
+use App\Entity\Health;
 use App\Entity\HealthQuestion;
-use App\Service\SeasonService;
-use App\Service\LicenceService;
+use App\Entity\Identity;
+use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use App\ViewModel\UserPresenter;
-use App\Repository\UserRepository;
+use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\LevelRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\Collections\Collection;
-use App\ViewModel\RegistrationStepPresenter;
-use Symfony\Component\Security\Core\Security;
 use App\Repository\RegistrationStepRepository;
+use App\Repository\UserRepository;
+use App\Service\LicenceService;
+use App\Service\SeasonService;
+use App\ViewModel\RegistrationStepPresenter;
+use App\ViewModel\UserPresenter;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 class GetProgress
 {

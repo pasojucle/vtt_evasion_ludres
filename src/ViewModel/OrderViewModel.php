@@ -50,6 +50,5 @@ class OrderViewModel extends AbstractViewModel
     public function getMemberFullName(): string
     {
         return $this->user->member->fullName;
-
     }
 }
