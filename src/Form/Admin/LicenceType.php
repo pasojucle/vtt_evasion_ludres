@@ -56,6 +56,13 @@ class LicenceType extends AbstractType
                         'label' => 'VTT à assistance électrique',
                         'required' => false,
                     ])
+                    ->add('coverage', ChoiceType::class, [
+                        'label' => 'Selectionnez une formule d\'assurance',
+                        'choices' => array_flip(Licence::COVERAGES),
+                        'row_attr' => [
+                            'class' => 'form-group-inline',
+                        ],
+                    ])
                     ;
             }
         });
