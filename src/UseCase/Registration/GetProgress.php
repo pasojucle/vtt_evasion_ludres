@@ -63,7 +63,6 @@ class GetProgress
         $progress['currentIndex'] = null;
         $progress['current'] = null;
         $progress['steps'] = null;
-        $progress['max_step'] = count($steps);
 
         foreach ($steps as $key => $registrationStep) {
             $index = $key + 1;
