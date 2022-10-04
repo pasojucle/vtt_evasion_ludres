@@ -192,10 +192,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb
             ->andWhere(
                 $qb->expr()->gt('li.status', ':status'),
-                $qb->expr()->eq('li.final', ':final'),
+                $qb->expr()->eq('li.final', ':finalMember'),
             )
             ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
-            ->setParameter('final', true)
+            ->setParameter('finalMember', true)
         ;
     }
 
@@ -203,9 +203,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb
             ->andWhere(
-                $qb->expr()->eq('li.final', ':final'),
+                $qb->expr()->eq('li.final', ':finalNew'),
             )
-            ->setParameter('final', true)
+            ->setParameter('finalNew', true)
             ->groupBy('s.user')
             ->andHaving(
                 $qb->expr()->eq($qb->expr()->count('li.id'), 1)
@@ -218,9 +218,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb
             ->andWhere(
-                $qb->expr()->eq('li.final', ':final'),
+                $qb->expr()->eq('li.final', ':finalRenew'),
             )
-            ->setParameter('final', true)
+            ->setParameter('finalRenew', true)
             ->groupBy('s.user')
             ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('li.id'), 1)
@@ -253,14 +253,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $qb->expr()->orX(
                     $qb->expr()->andX(
                         $qb->expr()->eq('s.isPresent', 1),
-                        $qb->expr()->eq('l.type', ':type')
+                        $qb->expr()->eq('l.type', ':typeSchool')
                     ),
-                    $qb->expr()->neq('l.type', ':type'),
-                    $qb->expr()->isnull('u.level')
+                    $qb->expr()->neq('l.type', ':typeAdulte'),
                 )
             )
             ->setParameter('final', false)
-            ->setParameter('type', Level::TYPE_SCHOOL_MEMBER)
+            ->setParameter('typeSchool', Level::TYPE_SCHOOL_MEMBER)
+            ->setParameter('typeAdulte', Level::TYPE_ADULT_MEMBER)
             ->groupBy('s.user')
             ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('s.id'), 2)

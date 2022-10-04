@@ -51,6 +51,8 @@ class LicenceViewModel extends AbstractViewModel
 
     public string $isVae;
 
+    public bool $isValid = false;
+
     private ServicesPresenter $services;
 
     public static function fromLicence(?Licence $licence, bool $isNewMember, ServicesPresenter $services)
@@ -82,6 +84,7 @@ class LicenceViewModel extends AbstractViewModel
             $licenceView->lock = $licence->getSeason() !== $services->currentSeason;
             $licenceView->currentSeasonForm = $licenceView->getCurrentSeasonForm();
             $licenceView->isVae = $licenceView->isVae();
+            $licenceView->toValidate = $licenceView->getToValidate();
 
             $licenceView->isNewMember = $isNewMember;
         }
@@ -154,13 +157,17 @@ class LicenceViewModel extends AbstractViewModel
             : $this->services->currentSeason;
 
         $coverageFormStartAt = new DateTimeImmutable(implode('-', array_reverse($this->services->coverageFormStartAt)));
-        $coverageFormStartAt->setTime(0, 0, 0);
 
-        return $coverageFormStartAt < new DateTime() && !$this->entity->getCurrentSeasonForm();
+        return $coverageFormStartAt->setTime(0, 0, 0) < new DateTime() && !$this->entity->getCurrentSeasonForm();
     }
 
     private function isVae(): string
     {
         return $this->entity->isVae() ? 'VTT à assistance électrique' : '';
+    }
+
+    private function getToValidate():bool
+    {
+        return in_array($this->status, [Licence::STATUS_WAITING_VALIDATE, Licence::STATUS_WAITING_RENEW]);
     }
 }
