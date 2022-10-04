@@ -12,7 +12,6 @@ use App\Entity\User;
 use App\Form\SessionType;
 use App\Repository\SessionRepository;
 use App\Service\BikeRideService;
-use App\Service\MailerService;
 use App\Service\SessionService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRideViewModel;
@@ -21,7 +20,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Security;
 
 class GetFormSession
 {
@@ -29,8 +27,6 @@ class GetFormSession
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MailerService $mailerService,
-        private Security $security,
         private BikeRideService $bikeRideService,
         private SessionRepository $sessionRepository,
         private BikeRidePresenter $bikeRidePresenter,

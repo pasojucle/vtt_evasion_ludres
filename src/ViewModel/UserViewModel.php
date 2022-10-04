@@ -251,9 +251,8 @@ class UserViewModel extends AbstractViewModel
     public function isEndTesting(): bool
     {
         if (false === $this->seasonLicence->isFinal) {
-            $count = (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
 
-            return 2 < $count;
+            return 2 < $this->entity->getSessions()->count();
         }
 
         return false;
@@ -262,7 +261,7 @@ class UserViewModel extends AbstractViewModel
     public function testingBikeRides(): ?int
     {
         if (false === $this->seasonLicence->isFinal) {
-            return (null !== $this->entity->getSessions()) ? $this->entity->getSessions()->count() : 0;
+            return $this->entity->getSessions()->count();
         }
 
         return null;
@@ -300,31 +299,19 @@ class UserViewModel extends AbstractViewModel
         return LicenceViewModel::fromLicence($licence, $this->isNewMember, $this->services);
     }
 
-    private function getKinship(Identity $identity): ?IdentityViewModel
+    private function getKinship(Identity $identity): IdentityViewModel
     {
-        if ($identity) {
-            return IdentityViewModel::fromIdentity($identity, $this->services, $this->member);
-        }
-
-        return null;
+        return IdentityViewModel::fromIdentity($identity, $this->services, $this->member);
     }
 
-    private function getSecondKinShip(Identity $identity): ?IdentityViewModel
+    private function getSecondKinShip(Identity $identity): IdentityViewModel
     {
-        if ($identity) {
-            return IdentityViewModel::fromIdentity($identity, $this->services, $this->member);
-        }
-
-        return null;
+        return IdentityViewModel::fromIdentity($identity, $this->services, $this->member);
     }
 
-    private function getMember(Identity $identity): ?IdentityViewModel
+    private function getMember(Identity $identity): IdentityViewModel
     {
-        if ($identity) {
-            return IdentityViewModel::fromIdentity($identity, $this->services);
-        }
-
-        return null;
+        return IdentityViewModel::fromIdentity($identity, $this->services);
     }
 
     private function getTitleColors(): ?array

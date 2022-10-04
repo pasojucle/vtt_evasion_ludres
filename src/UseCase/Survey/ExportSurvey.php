@@ -75,7 +75,7 @@ class ExportSurvey
         }
     }
 
-    private function GetResults(array $surveyResponsesByUuid): array
+    private function getResults(array $surveyResponsesByUuid): array
     {
         $results = [];
         foreach (array_keys(SurveyResponse::VALUES) as $choice) {

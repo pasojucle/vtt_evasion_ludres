@@ -8,12 +8,10 @@ use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Repository\SurveyResponseRepository;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GetAnonymousSurveyResults
 {
     public function __construct(
-        private TranslatorInterface $translator,
         private SurveyResponseRepository $surveyResponseRepository
     ) {
     }

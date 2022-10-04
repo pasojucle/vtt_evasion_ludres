@@ -19,7 +19,6 @@ class PdfService
 {
     public function __construct(
         private StringService $ftringService,
-        private SeasonService $seasonService,
         private KernelInterface $kernel,
         private UserPresenter $userPresenter,
         private ParameterBagInterface $parameterBag

@@ -7,15 +7,9 @@ namespace App\UseCase\Survey;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Form\Admin\SurveyType;
-use App\Service\ParameterService;
 
 class GetSurvey
 {
-    public function __construct(
-        private ParameterService $parameterService
-    ) {
-    }
-
     public function execute(?Survey &$survey): void
     {
         $this->getSurvey($survey);

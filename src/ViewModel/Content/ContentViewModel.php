@@ -87,7 +87,7 @@ class ContentViewModel extends AbstractViewModel
 
     private function getFileRatio(): ?float
     {
-        if ($this->entity->getFileName() && is_file($this->services->uploadsDirectoryPath . $this->entity->getFileName())) {
+        if ($this->entity->getFileName() && is_file($this->services->uploadsDirectoryPath . $this->entity->getFileName()) && null !== $this->fileTag) {
             list($width, $height) = match ($this->fileTag) {
                 'pdf' => $this->getPdfSize(),
                 'img' => $this->getImageSize()

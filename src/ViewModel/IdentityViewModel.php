@@ -93,12 +93,12 @@ class IdentityViewModel extends AbstractViewModel
         return (null !== $this->entity->getPicture()) ? $this->services->uploadsDirectory . $this->entity->getPicture() : null;
     }
 
-    private function getPhoneAnchor(?string $phone): ?string
+    private function getPhoneAnchor(?string $phone): string
     {
         return ($phone) ? '<a class="phone" href="tel:' . $phone . '">' . $phone . '</a>' : '';
     }
 
-    private function getPhonesAnchor(): ?string
+    private function getPhonesAnchor(): string
     {
         $identity = $this->entity;
 
@@ -111,7 +111,7 @@ class IdentityViewModel extends AbstractViewModel
         
         if ($birthCommune) {
             return ($birthCommune->getDepartment())
-                ? $birthCommune->getName() . ' (' . $birthCommune->getDepartment()?->getName() . ')'
+                ? $birthCommune->getName() . ' (' . $birthCommune->getDepartment()->getName() . ')'
                 : $birthCommune->getName();
         }
 

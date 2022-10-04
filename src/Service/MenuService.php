@@ -4,20 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-
 class MenuService
 {
     private array $menus;
 
-    private array $menusAdmin;
-
     private array $footer;
 
-    public function __construct(
-        private ParameterBagInterface $parameterBag
-    ) {
-        $this->parameterBag = $parameterBag;
+    public function __construct() {
         $this->menus = [
             [
                 'label' => 'Le club',

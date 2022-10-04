@@ -22,7 +22,6 @@ use Symfony\Component\Security\Core\Security;
 class RegistrationStepPresenter extends AbstractPresenter
 {
     private $viewModel;
-    private int $season;
 
     public function present(?RegistrationStep $registrationStep, ?UserViewModel $user, ?int $step, int $render, ?string $class = null): void
     {

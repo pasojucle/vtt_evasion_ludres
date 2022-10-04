@@ -8,7 +8,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class OrdersViewModel
 {
-    public ?array $orders;
+    public ?array $orders = [];
 
     public static function fromOrders(Paginator $orders, ServicesPresenter $services): OrdersViewModel
     {

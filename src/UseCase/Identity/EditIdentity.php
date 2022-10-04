@@ -8,7 +8,6 @@ use App\Entity\User;
 use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\UploadService;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 class EditIdentity
 {
     public function __construct(
-        private UserPresenter $presenter,
         private EntityManagerInterface $entityManager,
         private IdentityService $identityService,
         private UploadService $uploadService,

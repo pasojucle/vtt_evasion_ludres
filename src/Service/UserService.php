@@ -5,25 +5,17 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\OrderHeader;
-use App\Entity\Respondent;
-use App\Entity\Survey;
-use App\Entity\SurveyResponse;
 use App\Entity\User;
 use App\Repository\OrderLineRepository;
 use App\Repository\SurveyResponseRepository;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UserViewModel;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\Void_;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 class UserService
 {
     public function __construct(
-        private ParameterBagInterface $params,
-        private SluggerInterface $slugger,
-        private SeasonService $seasonService,
         private EntityManagerInterface $entityManager,
         private UserPresenter $userPresenter,
         private SurveyResponseRepository $surveyResponseRepository,

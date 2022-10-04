@@ -8,13 +8,12 @@ use App\Entity\Licence;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SeasonService
 {
     private ?array $seasonStartAt;
 
-    public function __construct(private TranslatorInterface $translator, private ParameterService $parameterService)
+    public function __construct( private ParameterService $parameterService)
     {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
@@ -32,11 +31,10 @@ class SeasonService
     {
         $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
         $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
-        $endAt->sub(new DateInterval('P1D'));
 
         $interval = [
             'startAt' => $startAt->setTime(0, 0, 0, ),
-            'endAt' => $endAt->setTime(0, 0, 0, ),
+            'endAt' => $endAt->sub(new DateInterval('P1D'))->setTime(0, 0, 0, ),
         ];
 
         return $interval;

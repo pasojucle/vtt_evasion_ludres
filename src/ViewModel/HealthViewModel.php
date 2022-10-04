@@ -79,7 +79,7 @@ class HealthViewModel extends AbstractViewModel
         return $diseases;
     }
 
-    private function isMedicalCertificateRequired(): ?bool
+    private function isMedicalCertificateRequired(): bool
     {
         $isMedicalCertificateRequired = false;
         if (!$this->entity->getHealthQuestions()->isEmpty()) {

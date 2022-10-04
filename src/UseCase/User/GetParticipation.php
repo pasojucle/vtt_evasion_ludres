@@ -10,14 +10,11 @@ use App\Repository\SessionRepository;
 use App\Service\IndemnityService;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
-use App\ViewModel\SessionPresenter;
 use App\ViewModel\SessionsPresenter;
 use App\ViewModel\UserPresenter;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GetParticipation
 {
@@ -27,9 +24,7 @@ class GetParticipation
     public function __construct(
         private PaginatorService $paginator,
         private FormFactoryInterface $formFactory,
-        private UrlGeneratorInterface $urlGenerator,
         private UserPresenter $userPresenter,
-        private SessionPresenter $sessionPresenter,
         private SessionsPresenter $sessionsPresenter,
         private SessionRepository $sessionRepository,
         private SeasonService $seasonService,
@@ -77,15 +72,6 @@ class GetParticipation
     private function createForm(array $filters): FormInterface
     {
         return $this->formFactory->create(ParticipationFilterType::class, $filters);
-    }
-
-    private function setRedirect(Request $request, User $user): void
-    {
-        $request->getSession()->set('admin_user_redirect', $this->urlGenerator->generate($request->get('_route'), [
-            'user' => $user->getId(),
-            'filtered' => true,
-            'p' => $request->query->get('p'),
-        ]));
     }
 
     private function getFilters(Request $request, bool $filtered): array

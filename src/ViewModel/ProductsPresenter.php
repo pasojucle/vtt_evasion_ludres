@@ -12,7 +12,7 @@ class ProductsPresenter extends AbstractPresenter
 
     public function present(Paginator $products): void
     {
-        if (null !== $products->count()) {
+        if (0 !== $products->count()) {
             $this->viewModel = ProductsViewModel::fromProducts($products, $this->services);
         } else {
             $this->viewModel = new ProductsViewModel();

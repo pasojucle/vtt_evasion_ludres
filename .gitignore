@@ -24,3 +24,4 @@
 data/cmd/doctrinemigrationmigrate-n
 data/cmd/geoconvertbirthplace
 data/cmd/geoloaddata
+data/cmd/geoconverttown

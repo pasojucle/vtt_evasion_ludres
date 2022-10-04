@@ -5,42 +5,17 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\LevelRepository;
-use App\Repository\LicenceRepository;
-use App\Repository\RegistrationStepRepository;
-use App\Repository\SessionRepository;
-use App\Repository\UserRepository;
 use App\ViewModel\UserPresenter;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
 
 class RegistrationService
 {
-    private ?User $user;
-
     private int $season;
-    private ?Licence $seasonLicence;
 
     public function __construct(
-        private RegistrationStepRepository $registrationStepRepository,
-        private Security $security,
-        private UrlGeneratorInterface $router,
-        private FormFactoryInterface $formFactory,
-        private RequestStack $requestStack,
-        private EntityManagerInterface $entityManager,
-        private UserRepository $userRepository,
-        private LicenceRepository $licenceRepository,
         private SeasonService $seasonService,
-        private LevelRepository $levelRepository,
-        private UserPresenter $userPresenter,
-        private SessionRepository $sessionRepository
+        private UserPresenter $userPresenter
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
@@ -89,24 +64,24 @@ class RegistrationService
         return $isAllreadyRegistered;
     }
 
-    private function getForm(RegistrationStep $registrationStep, bool $isKinship, ?int $category, int $step): ?FormInterface
-    {
-        $form = null;
+    // private function getForm(RegistrationStep $registrationStep, bool $isKinship, ?int $category, int $step): ?FormInterface
+    // {
+    //     $form = null;
 
-        if (null !== $registrationStep->getForm() && UserType::FORM_REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
-            $form = $this->formFactory->create(UserType::class, $this->user, [
-                'attr' => [
-                    'action' => $this->router->generate('registration_form', [
-                        'step' => $step,
-                    ]),
-                ],
-                'current' => $registrationStep,
-                'is_kinship' => $isKinship,
-                'category' => $category,
-                'season_licence' => $this->seasonLicence,
-            ]);
-        }
+    //     if (null !== $registrationStep->getForm() && UserType::FORM_REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
+    //         $form = $this->formFactory->create(UserType::class, $this->user, [
+    //             'attr' => [
+    //                 'action' => $this->router->generate('registration_form', [
+    //                     'step' => $step,
+    //                 ]),
+    //             ],
+    //             'current' => $registrationStep,
+    //             'is_kinship' => $isKinship,
+    //             'category' => $category,
+    //             'season_licence' => $this->seasonLicence,
+    //         ]);
+    //     }
 
-        return $form;
-    }
+    //     return $form;
+    // }
 }

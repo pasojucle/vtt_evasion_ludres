@@ -4,15 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExportService
 {
-    public function __construct(
-        private TranslatorInterface $translator
-    ) {
-    }
-
     public function exportUsers(array $users): string
     {
         $content = [];

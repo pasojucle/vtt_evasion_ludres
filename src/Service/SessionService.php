@@ -8,10 +8,7 @@ use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\User;
-use App\Form\Admin\LevelType;
-use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
-use App\ViewModel\ClusterPresenter;
 use App\ViewModel\SessionPresenter;
 use App\ViewModel\UserPresenter;
 use DateInterval;
@@ -25,9 +22,7 @@ class SessionService
     public function __construct(
         private SessionRepository $sessionRepository,
         private UserPresenter $userPresenter,
-        private LevelRepository $levelRepository,
         private MailerService $mailerService,
-        private ClusterPresenter $clusterPresenter,
         private ParameterService $parameterService,
         private ClusterService $clusterService,
         private SessionPresenter $sessionPresenter,
@@ -117,11 +112,10 @@ class SessionService
     {
         $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
         $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
-        $endAt->sub(new DateInterval('PT1D'));
 
         $interval = [
-            'startAt' => $startAt->setTime(0, 0, 0, ),
-            'endAt' => $endAt->setTime(0, 0, 0, ),
+            'startAt' => $startAt->setTime(0, 0, 0),
+            'endAt' => $endAt->sub(new DateInterval('PT1D'))->setTime(0, 0, 0),
         ];
 
         return $interval;

@@ -11,9 +11,7 @@ use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\ContentRepository;
 use App\Repository\LevelRepository;
-use App\Repository\ParameterRepository;
 use App\ViewModel\BikeRidesPresenter;
-use App\ViewModel\ClusterPresenter;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -32,9 +30,7 @@ class BikeRideService
         private BikeRideRepository $bikeRideRepository,
         private LevelRepository $levelRepository,
         private EntityManagerInterface $entityManager,
-        private ParameterRepository $parameterRepository,
         private BikeRidesPresenter $bikeRidesPresenter,
-        private ClusterPresenter $clusterPresenter,
         private BikeRideTypeRepository $bikeRideTypeRepository,
         private ContentRepository $contentRepository
     ) {

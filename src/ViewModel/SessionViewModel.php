@@ -26,8 +26,6 @@ class SessionViewModel extends AbstractViewModel
 
     private array $allIndemnities;
 
-    private IndemnityService $indemnityService;
-
     public static function fromSession(Session $session, ServicesPresenter $services)
     {
         $sessionView = new self();
@@ -37,7 +35,6 @@ class SessionViewModel extends AbstractViewModel
         $sessionView->user = UserViewModel::fromUser($session->getUser(), $services);
         $sessionView->userIsOnSite = $session->isPresent();
         $sessionView->allIndemnities = $services->allIndemnities;
-        $sessionView->indemnityService = $services->indemnityService;
         $sessionView->indemnity = $sessionView->getIndemnity();
         $sessionView->indemnityStr = ($sessionView->getIndemnity()) ? $sessionView->getIndemnity()->toString() : null;
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\UseCase\Cluster;
 
 use App\Entity\Cluster;
-use App\Repository\SessionRepository;
 use App\Service\PdfService;
 use App\Service\StringService;
 use App\ViewModel\ClusterPresenter;
@@ -23,7 +22,6 @@ class ExportCluster
     private string $dirName;
 
     public function __construct(
-        private SessionRepository $sessionRepository,
         private StringService $stringService,
         private ClusterPresenter $presenter,
         private PdfService $pdfService,
@@ -31,8 +29,6 @@ class ExportCluster
         private ParameterBagInterface $parameterBag,
     ) {
     }
-
-    private const SEPARATOR = ',';
 
     public function execute(Cluster $cluster): Response
     {

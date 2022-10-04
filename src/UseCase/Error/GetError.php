@@ -6,7 +6,6 @@ namespace App\UseCase\Error;
 
 use App\Entity\LogError;
 use App\Service\ParameterService;
-use App\ViewModel\UserPresenter;
 use DateTime;
 use ErrorException;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +18,6 @@ class GetError
 {
     public function __construct(
         private Security $security,
-        private UserPresenter $presenter,
         private ParameterService $parameterService
     ) {
     }

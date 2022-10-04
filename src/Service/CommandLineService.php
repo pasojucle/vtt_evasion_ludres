@@ -8,8 +8,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class CommandLineService
 {
-    private ?string $phpVersion = null;
-
     public function __construct(
         private ParameterBagInterface $parameterBag
     ) {
@@ -20,7 +18,7 @@ class CommandLineService
         $composer = json_decode(file_get_contents($this->parameterBag->get('project_directory') . 'composer.json'), true);
         preg_match('#([0-9.]+)$#', $composer['require']['php'], $matches);
 
-        return $this->phpVersion = $matches[1];
+        return $matches[1];
     }
     
     public function getPhpVersion(): string
