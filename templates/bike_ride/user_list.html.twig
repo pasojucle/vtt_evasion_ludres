@@ -26,7 +26,7 @@
                                         {{ bikeRide.bikeRide.period }}
                                         </b>
                                     </div>
-                                    <div class="col-md-5 col-xs-8">
+                                    <div class="col-md-3 col-xs-12">
                                         <div class="row">
                                             <div class="col-md-12 col-xs-12">{{ bikeRide.bikeRide.title }}</div>
                                             {% if bikeRide.availability is not empty %}
@@ -34,11 +34,11 @@
                                             {% endif %}
                                         </div>
                                     </div>
-                                    <div class="col-md-2 col-xs-4">
+                                    <div class="col-md-4 col-xs-12">
                                         {% if bikeRide.availability is empty %}
-                                            <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-primary btn-ico" title="Annuler"><i class="fas fa-times-circle"></i></a>
+                                            <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
                                         {% else %}
-                                            <a href="{{ path('session_availability_edit',{'session': bikeRide.sessionId}) }}" class="btn btn-primary btn-ico" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i></a>
+                                            <a href="{{ path('session_availability_edit',{'session': bikeRide.sessionId}) }}" class="btn btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>
                                         {% endif %}
                                     </div>
                                 </div>
