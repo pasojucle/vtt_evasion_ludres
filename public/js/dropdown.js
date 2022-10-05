@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $(document).on('click', 'button:not(.dropdown-toggle), a[data-toggle="modal"]', hideDropdown);
+    $(document).on('click', 'button:not(.dropdown-toggle), a[data-toggle="modal"], a.dropdown-item', hideDropdown);
     $(document).on('click', 'button.dropdown-toggle', toggleDropdown);
 });
 

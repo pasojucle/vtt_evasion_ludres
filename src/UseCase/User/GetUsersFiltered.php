@@ -98,9 +98,16 @@ abstract class GetUsersFiltered
         $session = $request->getSession();
         $filters = $session->get($this->filterName);
         $query = $this->getQuery($filters);
-        $emails = $query->select('i.email')->getQuery()->getScalarResult();
+        $users = $query->getQuery()->getResult();
+        $emails = [];
+        if (!empty($users)) {
+            $this->usersPresenter->present($users);
+            foreach ($this->usersPresenter->viewModel()->users as $user) {
+                $emails[] = $user->mainEmail;
+            }
+        }
 
-        return implode(',', array_column($emails, 'email'));
+        return implode(',', $emails);
     }
 
     public function choices(array $filters, ?string $fullName): array
@@ -154,14 +161,14 @@ abstract class GetUsersFiltered
     private function getExportContent(array $users): string
     {
         $content = [];
-        $row = ['Prénom', 'Nom', 'Mail', 'Date de naissance', 'Numéro de licence', 'Année', '3 séances d\'essai'];
+        $row = ['Numéro de licence', 'Nom', 'Prénom', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
         if (!empty($users)) {
-            foreach ($users as $user) {
-                $identity = $user->getFirstIdentity();
-                $licence = $user->getLastLicence();
-                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), false === $licence->isFinal()];
+            $this->usersPresenter->present($users);
+            foreach ($this->usersPresenter->viewModel()->users as $user) {
+                $isTesting = ($user->seasonLicence->isFinal) ? 0 : 1;
+                $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->mainEmail, $user->member->birthDate, $user->seasonLicence->season, $isTesting];
                 $content[] = implode(',', $row);
             }
         }
