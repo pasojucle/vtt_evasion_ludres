@@ -52,25 +52,25 @@ class MenuAdminService
             [
                 'label' => 'Programme',
                 'route' => 'admin_bike_rides',
-                'pattern' => '/bike_ride/',
+                'pattern' => '/^admin_bike_ride/',
                 'role' => 'ROLE_FRAME',
             ],
             [
                 'label' => 'Adhérents',
                 'route' => 'admin_users',
-                'pattern' => '/user/',
+                'pattern' => '/^admin_user/',
                 'role' => 'ROLE_REGISTER',
             ],
             [
                 'label' => 'Inscriptions',
                 'route' => 'admin_registrations',
-                'pattern' => '/admin_registrations/',
+                'pattern' => '/^admin_registration/',
                 'role' => 'ROLE_REGISTER',
             ],
             [
                 'label' => 'Assurances ' . $this->seasonService->getCurrentSeason(),
                 'route' => 'admin_coverage_list',
-                'pattern' => '/admin_coverage/',
+                'pattern' => '/^admin_coverage/',
                 'role' => 'ROLE_REGISTER',
             ],
             [

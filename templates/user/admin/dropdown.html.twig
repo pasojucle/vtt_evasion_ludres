@@ -19,8 +19,8 @@
             <li><a class="dropdown-item" href="{{ path('admin_session_delete', {'session' : session.entity.id}) }}" title="Supprimer"><i class="fas fa-times"></i> Supprimer de la sortie</a></li>
         {% endif %}
       {% endif %}
-      <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.entity.id}) }}"><i class="fas fa-chart-line"></i> Participation</a></li>
       {% if is_granted('ROLE_ADMIN') %}
+        <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.entity.id}) }}"><i class="fas fa-chart-line"></i> Participation</a></li>
         <li><a class="dropdown-item" href="{{ path('admin_user_certificate', {'user': user.entity.id}) }}"><i class="fas fa-file-contract"></i> Attestation d'inscription CE</a></li>
       {% endif %}      
       {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}

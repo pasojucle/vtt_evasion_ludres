@@ -64,6 +64,9 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/{user}', name: 'user', methods: ['GET'])]
+    #[Route('/inscription/adherent/{user}', name: 'registration_user', methods: ['GET'])]
+    #[Route('/adherent/calendrier/{user}', name: 'bike_rides_user', methods: ['GET'])]
+    #[Route('/adherent/assyrance/{user}', name: 'coverage_user', methods: ['GET'])]
     public function adminUser(
         User $user,
         Request $request
