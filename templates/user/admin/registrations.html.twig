@@ -25,7 +25,7 @@
                     <li class="col-list col-1md-1sx-btn">
                         <div class="list-dropdown">
                             <a href="{{ path('admin_user', {'user': user.entity.id})}}"
-                                {% if user.titleColors is not null %} style="background-color: {{ user.titleColors.background }}; color: {{ user.titleColors.color }}"{% endif %}>
+                                {% if user.levelColors is not null %} style="background-color: {{ user.levelColors.background }}; color: {{ user.levelColors.color }}"{% endif %}>
                                 <div class="row">
                                     <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
                                     {% if user.seasonLicence is not empty and user.seasonLicence.isFinal is same as(false) %}

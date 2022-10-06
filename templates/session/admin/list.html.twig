@@ -1,7 +1,7 @@
 <li id="session-{{ session.entity.id }}" class="col-list col-list-1btn">
     <div class="list-dropdown">
         <a href="{{ path('admin_user', {'user': user.entity.id})}}"
-            {% if user.titleColors is not null %} style="background-color: {{ user.titleColors.background }}; color: {{ user.titleColors.color }}"{% endif %}>
+            {% if user.levelColors is not null %} style="background-color: {{ user.levelColors.background }}; color: {{ user.levelColors.color }}"{% endif %}>
             <div class="row">
                 <div class="col-md-9 col-xs-10">
                     <div class="row">

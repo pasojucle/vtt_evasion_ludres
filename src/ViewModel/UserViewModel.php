@@ -35,7 +35,7 @@ class UserViewModel extends AbstractViewModel
 
     private ServicesPresenter $services;
 
-    public ?array $titleColors;
+    public ?array $levelColors;
 
     public ?string $mainEmail;
 
@@ -50,7 +50,7 @@ class UserViewModel extends AbstractViewModel
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth());
-        $userView->titleColors = $userView->getTitleColors();
+        $userView->levelColors = $userView->getLevelColors();
         $userView->mainEmail = $userView->getMainEmail();
 
         return $userView;
@@ -314,7 +314,7 @@ class UserViewModel extends AbstractViewModel
         return IdentityViewModel::fromIdentity($identity, $this->services);
     }
 
-    private function getTitleColors(): ?array
+    private function getLevelColors(): ?array
     {
         if ($this->entity->getLevel() && $this->entity->getLevel()->getColor()) {
             $background = $this->entity->getLevel()->getColor();

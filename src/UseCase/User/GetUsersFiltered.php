@@ -161,14 +161,14 @@ abstract class GetUsersFiltered
     private function getExportContent(array $users): string
     {
         $content = [];
-        $row = ['Numéro de licence', 'Nom', 'Prénom', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai'];
+        $row = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
         if (!empty($users)) {
             $this->usersPresenter->present($users);
             foreach ($this->usersPresenter->viewModel()->users as $user) {
                 $isTesting = ($user->seasonLicence->isFinal) ? 0 : 1;
-                $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->mainEmail, $user->member->birthDate, $user->lastLicence->season, $isTesting];
+                $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->getLevel()?->getTitle(), $user->mainEmail, $user->member->birthDate, $user->lastLicence->season, $isTesting];
                 $content[] = implode(',', $row);
             }
         }
