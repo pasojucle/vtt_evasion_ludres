@@ -7,13 +7,11 @@ namespace App\Controller\Admin;
 use App\Entity\Link;
 use App\Form\LinkType;
 use App\Repository\LinkRepository;
-use App\Service\LinkService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +49,6 @@ class LinkController extends AbstractController
     #[Route('/admin/lien/{link}', name: 'admin_link_edit', methods: ['GET', 'POST'], defaults:['link' => null])]
     public function adminLinkEdit(
         Request $request,
-        LinkService $linkService,
         SluggerInterface $slugger,
         ?Link $link
     ): Response {
@@ -61,19 +58,6 @@ class LinkController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $link = $form->getData();
 
-            $isNew = null === $link->getTitle() && null === $link->getDescription() && null === $link->getImage();
-            /** @var SubmitButton $search */
-            $search = $form->get('search');
-            if (null !== $link->getUrl() && ($isNew || ($form->has('search') && $search->isClicked()))) {
-                $data = $linkService->getUrlData($link->getUrl());
-
-                if ($data) {
-                    $link->setTitle($data['title'])
-                        ->setDescription($data['description'])
-                        ->setImage($data['image'])
-                    ;
-                }
-            }
             if ($request->files->get('link')) {
                 $pictureFile = $request->files->get('link')['imageFile'];
                 if ($pictureFile) {
@@ -95,17 +79,12 @@ class LinkController extends AbstractController
                     $link->setImage($newFilename);
                 }
             }
-            if (null === $link->getOrderBy() && null !== $link->getPosition()) {
+            if (-1 === $link->getOrderBy() && null !== $link->getPosition()) {
                 $order = $this->linkRepository->findNexOrderByPosition($link->getPosition());
                 $link->setOrderBy($order);
             }
             $this->entityManager->persist($link);
             $this->entityManager->flush();
-            if ($isNew) {
-                return $this->redirectToRoute('admin_link_edit', [
-                    'link' => $link->getId(),
-                ]);
-            }
 
             return $this->redirectToRoute('admin_links', [
                 'position' => $link->getPosition(),

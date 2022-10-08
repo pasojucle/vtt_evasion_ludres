@@ -1226,8 +1226,9 @@ h3 + ul.block.background-ligth {
 }
 .card.card-link {
     background-color: var(--primary-color);
+    height: max-content;
 }
-.card.card-link a {
+.card.card-link a, .card.card-link i {
     color: var(--white-color);
 }
 .card-img {
@@ -1278,7 +1279,26 @@ h3 + ul.block.background-ligth {
 }
 .card-body {
     padding: 15px;
-    /* height: calc(100% - 150px); */
+}
+.card-link .card-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 100px;
+    padding: 5px 15px;
+}
+.card-body.card-dropdown {
+    max-height: 0px;
+    overflow: hidden;
+    transition: all 1s ease-in;
+    padding: 0px;
+
+}
+.card-body.card-dropdown.down {
+    max-height: 600px;
+    height: auto;
+    padding: 0 15px 15px 15px;
 }
 .card-background .card-body {
     padding: 5px;
@@ -1289,7 +1309,7 @@ h3 + ul.block.background-ligth {
     text-align: center;
 }
 .card h3 {
-    font-weight: normal;
+    font-size: 20px;
 }
 
 @media screen and (min-width: 800px) {

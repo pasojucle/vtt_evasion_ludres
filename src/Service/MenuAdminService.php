@@ -122,7 +122,7 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
-                'label' => 'Gestion des liens',
+                'label' => 'Liens',
                 'route' => 'admin_links',
                 'pattern' => '/link/',
                 'role' => 'ROLE_ADMIN',

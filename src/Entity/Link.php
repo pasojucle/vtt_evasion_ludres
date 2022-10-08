@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\LinkRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -45,7 +46,10 @@ class Link
     private int $position = 1;
 
     #[Column(type: 'integer')]
-    private int $orderBy;
+    private int $orderBy = -1;
+
+    #[Column(type: Types::TEXT, nullable: true)]
+    private ?string $content = null;
 
     public function getId(): ?int
     {
@@ -120,6 +124,18 @@ class Link
     public function setOrderBy(int $orderBy): self
     {
         $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(?string $content): self
+    {
+        $this->content = $content;
 
         return $this;
     }

@@ -16,30 +16,29 @@
         </div>
         <div class="wrapper-body">
             <div class="form-group">
+                {{ form_row(form.title) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.position) }}
+            </div>
+            <div class="form-group">
                 {{ form_row(form.url) }}
             </div>
-            {% if link is not null %}
-                <div class="form-group">
-                    {{ form_row(form.title) }}
+                        <div class="form-group">
+                {{ form_row(form.image) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.imageFile) }}
+                <div class="form-group-inline">
+                    {% set src = '' %}
+                    {% if link is not null %}
+                        {% set src =  link.image matches '/^http/' or  link.image is null ? link.image : '/uploads/' ~ link.image %}
+                    {% endif %}
+                    <img class="user-picture" src="{{ src }}" alt="{{ src }}">   
                 </div>
-                {{ form_row(form.description) }}
-                <div class="form-group">
-                    {{ form_row(form.image) }}
-                </div>
-                <div class="form-group">
-                    {{ form_row(form.imageFile) }}
-                    <div class="form-group-inline">
-                        {% set src = '' %}
-                        {% if link is not null %}
-                            {% set src =  link.image matches '/^http/' or  link.image is null ? link.image : '/uploads/' ~ link.image %}
-                        {% endif %}
-                        <img class="user-picture" src="{{ src }}" alt="{{ src }}">   
-                    </div>
-                </div>
-                <div class="form-group">
-                    {{ form_row(form.position) }}
-                </div>
-            {% endif %}
+            </div>
+            {{ form_row(form.description) }}
+            {{ form_row(form.content) }}
         </div>
         <div class="wrapper-footer">
             {{ form_widget(form.save) }}

@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des liens{% endblock %}
+{% block title %}Lens{% endblock %}
 
 {% block body %}
  <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Gestion des liens</h1>
+            <h1>Liens</h1>
         </div>
             <nav  class="nav-tab">
                 {% for position, label in constant('App\\Entity\\Link::POSITIONS') %}

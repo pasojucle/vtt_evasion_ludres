@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Link;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class LinkType extends AbstractType
 {
@@ -29,6 +30,67 @@ class LinkType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
+
+            ->add('title', TextType::class, [
+                'label' => 'Titre',
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'Description',
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
+                'required' => false,
+            ])    
+            ->add('content', CKEditorType::class, [
+                'label' => 'Détail (optionnel)',
+                'config_name' => 'minimum_config',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
+            ])
+            ->add('image', TextType::class, [
+                'label' => 'Url ou nom de l\'image',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+            ])
+            ->add('imageFile', FileType::class, [
+                'label' => false,
+                'mapped' => false,
+                'required' => false,
+                'block_prefix' => 'custom_file',
+                'attr' => [
+                    'accept' => '.bmp,.jpeg,.jpg,.png,.gif,.svg',
+                ],
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/bmp',
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/svg+xml',
+                        ],
+                        'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
+                    ]),
+                ],
+            ])
+            ->add('position', ChoiceType::class, [
+                'label' => 'Position',
+                'choices' => array_flip(Link::POSITIONS),
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',
                 'attr' => [
@@ -36,72 +98,6 @@ class LinkType extends AbstractType
                 ],
             ])
             ;
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $link = $event->getData();
-            $form = $event->getForm();
-            if (null !== $link) {
-                $form
-                    ->add('title', TextType::class, [
-                        'label' => 'Titre',
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                    ])
-                    ->add('description', TextareaType::class, [
-                        'label' => 'Description',
-                        'row_attr' => [
-                            'class' => 'form-group',
-                        ],
-                        'required' => false,
-                    ])
-                    ->add('image', TextType::class, [
-                        'label' => 'Url ou nom de l\'image',
-                        'required' => false,
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                    ])
-                    ->add('imageFile', FileType::class, [
-                        'label' => false,
-                        'mapped' => false,
-                        'required' => false,
-                        'block_prefix' => 'custom_file',
-                        'attr' => [
-                            'accept' => '.bmp,.jpeg,.jpg,.png,.gif,.svg',
-                        ],
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                        'constraints' => [
-                            new File([
-                                'maxSize' => '1024k',
-                                'mimeTypes' => [
-                                    'image/bmp',
-                                    'image/jpeg',
-                                    'image/png',
-                                    'image/gif',
-                                    'image/svg+xml',
-                                ],
-                                'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
-                            ]),
-                        ],
-                    ])
-                    ->add('position', ChoiceType::class, [
-                        'label' => 'Position',
-                        'choices' => array_flip(Link::POSITIONS),
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                    ])
-                    ->add('search', SubmitType::class, [
-                        'label' => 'Rechercher les infos SEO',
-                        'attr' => [
-                            'class' => 'btn btn-secondary  float-right',
-                        ],
-                    ])
-                ;
-            }
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
