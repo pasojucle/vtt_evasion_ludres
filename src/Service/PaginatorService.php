@@ -32,8 +32,6 @@ class PaginatorService
 
     public function lastPage(Paginator $paginator): int
     {
-        dump($paginator->count());
-        dump($paginator->getQuery()->getMaxResults());
         return (int) ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
     }
 

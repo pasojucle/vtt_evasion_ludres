@@ -23,8 +23,6 @@ class EditBackground
 
     public function execute(Background $background, Request $request, ?string $currentFilename): void
     {
-        dump($request->files->get('background'));
-        dump($request->files->get('background')['backgroundFile']);
         if ($request->files->get('background') && $request->files->get('background')['backgroundFile']) {
             $file = $request->files->get('background')['backgroundFile'];
             $background->setFileName($this->uploadService->uploadFile($file, 'backgrounds_directory_path'));
