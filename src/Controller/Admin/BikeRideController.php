@@ -6,22 +6,23 @@ namespace App\Controller\Admin;
 
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
-use App\Repository\BikeRideRepository;
-use App\Repository\BikeRideTypeRepository;
-use App\Repository\UserRepository;
 use App\Service\BikeRideService;
-use App\UseCase\BikeRide\EditBikeRide;
-use App\UseCase\BikeRide\ExportBikeRide;
-use App\ViewModel\BikeRidePresenter;
-use App\ViewModel\BikeRidesPresenter;
 use App\ViewModel\UserPresenter;
 use App\ViewModel\UsersPresenter;
+use App\Repository\UserRepository;
+use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRidesPresenter;
+use App\Repository\BikeRideRepository;
+use App\UseCase\BikeRide\EditBikeRide;
+use App\UseCase\BikeRide\ExportBikeRide;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\BikeRideTypeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class BikeRideController extends AbstractController
@@ -157,6 +158,34 @@ class BikeRideController extends AbstractController
         return $this->render('bike_ride/admin/framer_list.html.twig', [
             'framers' => $usersPresenter->viewModel()->users,
             'bike_ride' => $bikeRidePresenter->viewModel(),
+        ]);
+    }
+
+    #[Route('/admin/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
+    public function adminLevelDelete(
+        Request $request,
+        BikeRide $bikeRide
+    ): Response {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl(
+                'admin_level_delete',
+                [
+                    'level' => $bikeRide->getId(),
+                ]
+            ),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $bikeRide->setDeleted(true);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_bike_rides');
+        }
+
+        return $this->render('bike_ride/admin/delete.modal.html.twig', [
+            'bike_ride' => $bikeRide,
+            'form' => $form->createView(),
         ]);
     }
 }

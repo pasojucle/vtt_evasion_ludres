@@ -45,9 +45,9 @@ class BikeRideRepository extends ServiceEntityRepository
             $qb->setParameter('endAt', $filters['endAt']);
         }
 
-        if (!empty($andX->getParts())) {
-            $qb->andWhere($andX);
-        }
+        $andX->add((new Expr())->eq('br.deleted', ':deleted'),);
+        $qb->setParameter('deleted', 0);
+        $qb->andWhere($andX);
 
         return $qb
             ->orderBy('br.startAt', 'ASC')
@@ -76,8 +76,10 @@ class BikeRideRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('br')
             ->andWhere(
                 (new Expr())->gte('br.startAt', ':today'),
+                (new Expr())->eq('br.deleted', ':deleted'),
             )
             ->setParameter('today', $today)
+            ->setParameter('deleted', 0)
             ->orderBy('br.startAt', 'ASC')
             ->andHaving("DATE_SUB(br.startAt, br.displayDuration, 'DAY') <= :today")
             ->getQuery()
@@ -102,9 +104,11 @@ class BikeRideRepository extends ServiceEntityRepository
             $orX->add((new Expr())->eq('br.startAt', ':query'));
             $params['query'] = $startAt->setTime(0, 0, 0);
         }
+        $params['deleted'] = 0;
 
         return $this->createQueryBuilder('br')
             ->andWhere($orX)
+            ->andWhere((new Expr())->eq('br.deleted', ':deleted'),)
             ->setParameters($params)
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
@@ -118,6 +122,8 @@ class BikeRideRepository extends ServiceEntityRepository
     public function findAllDESC(): array
     {
         return $this->createQueryBuilder('br')
+            ->andWhere((new Expr())->eq('br.deleted', ':deleted'),)
+            ->setParameter('deleted', 0)
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
             ->getResult()

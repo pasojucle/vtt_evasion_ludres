@@ -80,6 +80,9 @@ class BikeRide
     #[OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
     private ?Survey $survey = null;
 
+    #[Column(type: 'boolean', options: ['default' => 0])]
+    private bool $deleted = false;
+
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
@@ -247,6 +250,18 @@ class BikeRide
         }
 
         $this->survey = $survey;
+
+        return $this;
+    }
+
+    public function isDeleted(): ?bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): self
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

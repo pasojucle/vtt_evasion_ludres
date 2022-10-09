@@ -151,6 +151,7 @@ class BikeRideService
         if (null === $filters['limit']) {
             $query = $this->bikeRideRepository->findAllQuery($filters);
             $bikeRides = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+            dump($bikeRides);
             $parameters['lastPage'] = $this->paginator->lastPage($bikeRides);
         } else {
             $bikeRides = $this->bikeRideRepository->findAllFiltered($filters);
