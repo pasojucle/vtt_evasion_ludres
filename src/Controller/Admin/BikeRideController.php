@@ -164,6 +164,7 @@ class BikeRideController extends AbstractController
     #[Route('/admin/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
     public function adminLevelDelete(
         Request $request,
+        BikeRidePresenter $presenter,
         BikeRide $bikeRide
     ): Response {
         $form = $this->createForm(FormType::class, null, [
@@ -183,8 +184,9 @@ class BikeRideController extends AbstractController
             return $this->redirectToRoute('admin_bike_rides');
         }
 
+        $presenter->present($bikeRide);
         return $this->render('bike_ride/admin/delete.modal.html.twig', [
-            'bike_ride' => $bikeRide,
+            'bike_ride' => $presenter->viewModel(),
             'form' => $form->createView(),
         ]);
     }

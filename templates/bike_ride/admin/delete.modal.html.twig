@@ -1,9 +1,9 @@
 {% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_bike_ride_delete', {'bikeRide' : bike_ride.id}) %}
+{% set button_href = path('admin_bike_ride_delete', {'bikeRide' : bike_ride.entity.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
 {% block modal_title %}Supprimer une sortie {{ bike_ride.title }}{% endblock %}
 {% block body %}
-    <p>Etes vous certain de supprimer la sortie {{ bike_ride.title}} ?</p>
+    <p>Etes vous certain de supprimer<br>la sortie {{ bike_ride.title }} du  {{ bike_ride.period }} ?</p>
 {% endblock %}
 {% block footer %}
     {% set button_text = 'Supprimer' %}
