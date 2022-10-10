@@ -17,6 +17,8 @@ class OrderViewModel extends AbstractViewModel
 
     public ?int $status;
 
+    public ?string $statusToString ='';
+
     public ?string $amount;
 
     public string $createdAt;
@@ -29,6 +31,7 @@ class OrderViewModel extends AbstractViewModel
         $orderView->createdAt = $createdAt->format('d/m/Y');
         $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $services);
         $orderView->status = $orderHeader->getStatus();
+        $orderView->statusToString = $services->translator->trans(OrderHeader::STATUS[$orderView->status]);
         $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $orderView->user, $services);
         $orderView->amount = $orderView->getAmount();
 
@@ -40,7 +43,7 @@ class OrderViewModel extends AbstractViewModel
         $amount = 0;
         if (!empty($this->orderLines->lines)) {
             foreach ($this->orderLines->lines as $line) {
-                $amount += $line['amount_float'];
+                $amount += $line->amount;
             }
         }
 

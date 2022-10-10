@@ -6,6 +6,14 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion des commandes - <span class="badge badge-info">{{ count }}</span></h1>
+            <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                    <div class="dropdown-menu" data-target="dropdown-tools">
+                        <ul class="dropdown-body">
+                            <li><a href="{{ path('admin_order_headers_export') }}" class="dropdown-item" title="Export la sélection"><i class="fas fa-file-csv"></i> Export la sélection</a></li>
+                        </ul>
+                    </div>
+                </div>
         </div>
         <div class="wrapper-body">
             {% if form is defined %}

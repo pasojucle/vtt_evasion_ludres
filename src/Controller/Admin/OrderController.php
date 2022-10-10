@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\OrderHeader;
-use App\Form\Admin\OrderFilterType;
-use App\Repository\OrderHeaderRepository;
+use App\Service\ExportService;
 use App\Service\PaginatorService;
 use App\ViewModel\OrderPresenter;
 use App\ViewModel\OrdersPresenter;
+use App\Form\Admin\OrderFilterType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\OrderHeaderRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OrderController extends AbstractController
 {
@@ -102,5 +104,32 @@ class OrderController extends AbstractController
         return $this->render('order/admin/show.html.twig', [
             'order' => $this->presenter->viewModel(),
         ]);
+    }
+
+
+    #[Route('/admin/export/commande', name: 'admin_order_headers_export', methods: ['GET'])]
+    public function adminOrderHeadersExport(
+        ExportService $exportService,
+        OrdersPresenter $presenter,
+        Request $request,
+        PaginatorService $paginator
+    ): Response
+    {
+        $filters = $request->getSession()->get('admin_orders_filters');
+
+        $query = $this->orderHeaderRepository->findOrdersQuery($filters);
+        $orderHeaders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $presenter->present($orderHeaders);
+        $content = $exportService->exportOrderHeaders($presenter->viewModel()->orders);
+
+        $response = new Response($content);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            'export_commandes.csv'
+        );
+        
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 }

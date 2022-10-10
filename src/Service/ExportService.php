@@ -24,4 +24,24 @@ class ExportService
 
         return implode(PHP_EOL, $content);
     }
+
+    public function exportOrderHeaders(array $orderHeaders): string
+    {
+        $content = [];
+        $row = ['Prénom', 'Nom', 'N°CDE', 'Produit', 'Ref', 'Taille', 'Quantité', 'Prix', 'Statut'];
+        $content[] = implode(',', $row);
+
+        if (!empty($orderHeaders)) {
+            foreach($orderHeaders as $orderHeader) {
+                foreach ($orderHeader->orderLines->lines as $orderLine) {
+                    $row = [$orderHeader->user->member->firstName, $orderHeader->user->member->name, $orderHeader->id, $orderLine->product->name, $orderLine->product->ref, $orderLine->size, $orderLine->quantity, $orderLine->amountToString, $orderHeader->statusToString];
+                }
+                $content[] = implode(',', $row);
+            }
+        }
+
+        return implode(PHP_EOL, $content);
+    }
+
+
 }
