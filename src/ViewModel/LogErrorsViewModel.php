@@ -8,9 +8,13 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class LogErrorsViewModel
 {
-    public ?array $logErrors;
+    public ?array $logErrors = [];
 
-    public ?array $tabs;
+    public array $tabs = [
+        500 => 'Erreur d\'application',
+        404 => 'Page inexistantes',
+        403 => 'Problème d\'authorisation',
+    ];
 
     public static function fromLogErrors(Paginator $logErrors, ServicesPresenter $services): LogErrorsViewModel
     {
@@ -23,17 +27,8 @@ class LogErrorsViewModel
 
         $logErrorsView = new self();
         $logErrorsView->logErrors = $logErrorsViewModel;
-        $logErrorsView->tabs = $logErrorsView->getTabs();
+   
 
         return $logErrorsView;
-    }
-
-    private function getTabs()
-    {
-        return [
-            500 => 'Erreur d\'application',
-            404 => 'Page inexistantes',
-            403 => 'Problème d\'authorisation',
-        ];
     }
 }
