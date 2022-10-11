@@ -117,8 +117,7 @@ class OrderController extends AbstractController
     {
         $filters = $request->getSession()->get('admin_orders_filters');
 
-        $query = $this->orderHeaderRepository->findOrdersQuery($filters);
-        $orderHeaders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $orderHeaders = $this->orderHeaderRepository->findOrdersQuery($filters)->getQuery()->getResult();
         $presenter->present($orderHeaders);
         $content = $exportService->exportOrderHeaders($presenter->viewModel()->orders);
 

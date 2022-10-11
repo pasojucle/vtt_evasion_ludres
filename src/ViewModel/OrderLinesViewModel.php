@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 
 class OrderLinesViewModel extends AbstractViewModel
 {
-    public ?array $lines = [];
+    public array $lines = [];
 
     public static function fromOrderLines(collection $orderLines, UserViewModel $orderUser, ServicesPresenter $services)
     {

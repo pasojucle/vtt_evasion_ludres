@@ -10,9 +10,10 @@ class OrdersPresenter extends AbstractPresenter
 {
     private $viewModel;
 
-    public function present(Paginator $orders): void
+    public function present(Paginator|Array $orders): void
     {
-        if (0 !== $orders->count()) {
+        $isEmpty = ($orders instanceof Paginator) ? 0 === $orders->count() : empty($orders);
+        if (!$isEmpty) {
             $this->viewModel = OrdersViewModel::fromOrders($orders, $this->services);
         } else {
             $this->viewModel = new OrdersViewModel();

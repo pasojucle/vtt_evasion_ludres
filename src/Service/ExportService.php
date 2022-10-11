@@ -35,8 +35,8 @@ class ExportService
             foreach($orderHeaders as $orderHeader) {
                 foreach ($orderHeader->orderLines->lines as $orderLine) {
                     $row = [$orderHeader->user->member->firstName, $orderHeader->user->member->name, $orderHeader->id, $orderLine->product->name, $orderLine->product->ref, $orderLine->size, $orderLine->quantity, $orderLine->amountToString, $orderHeader->statusToString];
+                    $content[] = implode(',', $row);
                 }
-                $content[] = implode(',', $row);
             }
         }
 

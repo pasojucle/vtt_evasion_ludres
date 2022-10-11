@@ -10,10 +10,11 @@ class OrdersViewModel
 {
     public ?array $orders = [];
 
-    public static function fromOrders(Paginator $orders, ServicesPresenter $services): OrdersViewModel
+    public static function fromOrders(Paginator|array $orders, ServicesPresenter $services): OrdersViewModel
     {
         $ordersViewModel = [];
-        if (null !== $orders->count()) {
+        $isEmpty = ($orders instanceof Paginator) ? 0 === $orders->count() : empty($orders);
+        if (!$isEmpty) {
             foreach ($orders as $order) {
                 $ordersViewModel[] = OrderViewModel::fromOrderHeader($order, $services);
             }
