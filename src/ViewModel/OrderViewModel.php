@@ -17,7 +17,7 @@ class OrderViewModel extends AbstractViewModel
 
     public ?int $status;
 
-    public ?string $statusToString ='';
+    public ?string $statusToString = '';
 
     public ?string $amount;
 

@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\UseCase\ModalWindow;
 
-
-use App\Service\UserService;
-use App\Repository\SurveyRepository;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Repository\SurveyRepository;
+use App\Service\UserService;
 use App\ViewModel\ModalWindow\ModalWindowsPresenter;
 use App\ViewModel\ModalWindow\ModalWindowViewModel;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 class ShowModalWindow
 {
@@ -56,10 +55,8 @@ class ShowModalWindow
                     return $modalWindow;
                 }
             }
-
         }
 
         return null;
     }
-
 }

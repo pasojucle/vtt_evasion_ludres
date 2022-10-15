@@ -166,7 +166,7 @@ class LicenceViewModel extends AbstractViewModel
         return $this->entity->isVae() ? 'VTT à assistance électrique' : '';
     }
 
-    private function getToValidate():bool
+    private function getToValidate(): bool
     {
         return in_array($this->status, [Licence::STATUS_WAITING_VALIDATE, Licence::STATUS_WAITING_RENEW]);
     }

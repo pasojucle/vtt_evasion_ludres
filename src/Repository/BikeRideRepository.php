@@ -44,7 +44,7 @@ class BikeRideRepository extends ServiceEntityRepository
             $qb->setParameter('endAt', $filters['endAt']);
         }
 
-        $andX->add((new Expr())->eq('br.deleted', ':deleted'),);
+        $andX->add((new Expr())->eq('br.deleted', ':deleted'), );
         $qb->setParameter('deleted', 0);
         $qb->andWhere($andX);
 
@@ -107,7 +107,7 @@ class BikeRideRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('br')
             ->andWhere($orX)
-            ->andWhere((new Expr())->eq('br.deleted', ':deleted'),)
+            ->andWhere((new Expr())->eq('br.deleted', ':deleted'), )
             ->setParameters($params)
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
@@ -121,7 +121,7 @@ class BikeRideRepository extends ServiceEntityRepository
     public function findAllDESC(): array
     {
         return $this->createQueryBuilder('br')
-            ->andWhere((new Expr())->eq('br.deleted', ':deleted'),)
+            ->andWhere((new Expr())->eq('br.deleted', ':deleted'), )
             ->setParameter('deleted', 0)
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()

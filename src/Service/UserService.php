@@ -12,7 +12,6 @@ use App\ViewModel\UserPresenter;
 use App\ViewModel\UserViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 
-
 class UserService
 {
     public function __construct(

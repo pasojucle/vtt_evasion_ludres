@@ -19,7 +19,7 @@ class LogErrorsViewModel
     public static function fromLogErrors(Paginator $logErrors, ServicesPresenter $services): LogErrorsViewModel
     {
         $logErrorsViewModel = [];
-        if ( 0 !== $logErrors->count()) {
+        if (0 !== $logErrors->count()) {
             foreach ($logErrors as $logError) {
                 $logErrorsViewModel[] = LogErrorViewModel::fromLogError($logError, $services);
             }

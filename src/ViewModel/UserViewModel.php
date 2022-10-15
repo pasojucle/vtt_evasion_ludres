@@ -251,7 +251,6 @@ class UserViewModel extends AbstractViewModel
     public function isEndTesting(): bool
     {
         if (false === $this->seasonLicence->isFinal) {
-
             return 2 < $this->entity->getSessions()->count();
         }
 

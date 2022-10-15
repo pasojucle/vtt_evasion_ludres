@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
-use DateTime;
-use App\Entity\User;
-use ReflectionClass;
-use App\Entity\Product;
-use App\Entity\OrderLine;
 use App\Entity\OrderHeader;
-use Symfony\Component\Form\Form;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\OrderLine;
+use App\Entity\Product;
+use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
-use Symfony\Component\Security\Core\Security;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 class OrderAddService
 {
@@ -24,7 +24,6 @@ class OrderAddService
         private Security $security,
         private RequestStack $requestStack
     ) {
-
     }
 
     public function execute(Product $product, Form &$form): void
@@ -76,7 +75,7 @@ class OrderAddService
         return $orderLine;
     }
 
-    private function addToModalWindowShowOn(OrderHeader $orderHeader):void
+    private function addToModalWindowShowOn(OrderHeader $orderHeader): void
     {
         $session = $this->requestStack->getSession();
         $modalWindowShowOn = $session->get('modal_window_show_on');

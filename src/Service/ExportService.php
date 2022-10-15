@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-
 class ExportService
 {
     public function exportUsers(array $users): string
@@ -32,7 +31,7 @@ class ExportService
         $content[] = implode(',', $row);
 
         if (!empty($orderHeaders)) {
-            foreach($orderHeaders as $orderHeader) {
+            foreach ($orderHeaders as $orderHeader) {
                 foreach ($orderHeader->orderLines->lines as $orderLine) {
                     $row = [$orderHeader->user->member->firstName, $orderHeader->user->member->name, $orderHeader->id, $orderLine->product->name, $orderLine->product->ref, $orderLine->size, $orderLine->quantity, $orderLine->amountToString, $orderHeader->statusToString];
                     $content[] = implode(',', $row);
@@ -42,6 +41,4 @@ class ExportService
 
         return implode(PHP_EOL, $content);
     }
-
-
 }

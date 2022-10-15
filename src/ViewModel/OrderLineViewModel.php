@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Entity\Size;
-use App\Entity\Product;
-use App\Entity\OrderLine;
 use App\Entity\OrderHeader;
+use App\Entity\OrderLine;
+use App\Entity\Product;
+use App\Entity\Size;
 use App\ViewModel\UserViewModel;
 
 class OrderLineViewModel extends AbstractViewModel

@@ -19,7 +19,7 @@ class QuantityType extends AbstractType
                 'min' => 1,
             ],
             'constraints' => [
-                new Range(['min' =>1]),
+                new Range(['min' => 1]),
             ]
         ]);
     }

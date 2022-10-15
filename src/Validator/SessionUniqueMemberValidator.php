@@ -11,7 +11,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class SessionUniqueMemberValidator extends ConstraintValidator
-{   
+{
     public function __construct(
         private SessionRepository $sessionRepository,
         private RequestStack $request
@@ -25,7 +25,7 @@ class SessionUniqueMemberValidator extends ConstraintValidator
         }
 
         $session = $this->context->getRoot()->getData();
-        $clusters = unserialize($this->request->getSession()->get('admin_session_add_clusters')) ;
+        $clusters = unserialize($this->request->getSession()->get('admin_session_add_clusters'));
 
         dump($clusters, $session->getUser());
 

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\ViewModel\ModalWindow;
 
-use ReflectionClass;
-use App\Entity\Survey;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
+use App\Entity\Survey;
 use App\ViewModel\AbstractViewModel;
 use App\ViewModel\ServicesPresenter;
-
+use ReflectionClass;
 
 class ModalWindowViewModel extends AbstractViewModel
 {

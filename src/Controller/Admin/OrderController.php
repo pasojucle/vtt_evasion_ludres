@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\OrderHeader;
+use App\Form\Admin\OrderFilterType;
+use App\Repository\OrderHeaderRepository;
 use App\Service\ExportService;
 use App\Service\PaginatorService;
 use App\ViewModel\OrderPresenter;
 use App\ViewModel\OrdersPresenter;
-use App\Form\Admin\OrderFilterType;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\OrderHeaderRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OrderController extends AbstractController
 {
@@ -113,8 +113,7 @@ class OrderController extends AbstractController
         OrdersPresenter $presenter,
         Request $request,
         PaginatorService $paginator
-    ): Response
-    {
+    ): Response {
         $filters = $request->getSession()->get('admin_orders_filters');
 
         $orderHeaders = $this->orderHeaderRepository->findOrdersQuery($filters)->getQuery()->getResult();

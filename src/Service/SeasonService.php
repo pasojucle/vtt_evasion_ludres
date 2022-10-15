@@ -13,7 +13,7 @@ class SeasonService
 {
     private ?array $seasonStartAt;
 
-    public function __construct( private ParameterService $parameterService)
+    public function __construct(private ParameterService $parameterService)
     {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }

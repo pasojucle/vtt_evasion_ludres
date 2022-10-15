@@ -10,7 +10,8 @@ class MenuService
 
     private array $footer;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->menus = [
             [
                 'label' => 'Le club',

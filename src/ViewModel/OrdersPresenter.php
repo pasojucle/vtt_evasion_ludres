@@ -10,7 +10,7 @@ class OrdersPresenter extends AbstractPresenter
 {
     private $viewModel;
 
-    public function present(Paginator|Array $orders): void
+    public function present(Paginator|array $orders): void
     {
         $isEmpty = ($orders instanceof Paginator) ? 0 === $orders->count() : empty($orders);
         if (!$isEmpty) {

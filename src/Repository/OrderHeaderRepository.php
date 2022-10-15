@@ -56,7 +56,6 @@ class OrderHeaderRepository extends ServiceEntityRepository
             )
             ->setParameter('status', OrderHeader::STATUS_IN_PROGRESS)
             ->setParameter('user', $user);
-
     }
 
     public function findOneOrderInProgressByUser(User $user): ?OrderHeader
@@ -109,7 +108,7 @@ class OrderHeaderRepository extends ServiceEntityRepository
     private function addHavingOrderLineCriteria(QueryBuilder &$qb): QueryBuilder
     {
         return $qb->join('oh.orderLines', 'ol')
-            ->having((new Expr())->gt((new Expr)->count('ol'), 0))
+            ->having((new Expr())->gt((new Expr())->count('ol'), 0))
             ->groupBy('oh');
     }
 }
