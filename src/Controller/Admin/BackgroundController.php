@@ -8,7 +8,6 @@ use App\Entity\Background;
 use App\Form\Admin\BackgroundType;
 use App\Repository\BackgroundRepository;
 use App\Service\PaginatorService;
-use App\Service\UploadService;
 use App\UseCase\Background\EditBackground;
 use App\ViewModel\Background\BackgroundPresenter;
 use App\ViewModel\Background\BackgroundsPresenter;
@@ -24,8 +23,7 @@ class BackgroundController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private BackgroundRepository $backgroundRepository,
-        private UploadService $uploadService
+        private BackgroundRepository $backgroundRepository
     ) {
     }
 

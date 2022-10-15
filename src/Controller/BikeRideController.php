@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
 use App\Service\BikeRideService;
 use App\Service\PaginatorService;
 use App\ViewModel\UserPresenter;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BikeRideController extends AbstractController
 {
     public function __construct(
-        private BikeRideRepository $bikeRideRepository,
-        private RequestStack $requestStack,
-        private EntityManagerInterface $entityManager,
         private BikeRideService $bikeRideService
     ) {
     }

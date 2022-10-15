@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use App\Entity\RegistrationStep;
 use DateTime;
+use Twig\TwigFilter;
 use DateTimeImmutable;
 use IntlDateFormatter;
+use App\Entity\RegistrationStep;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 
 class AppExtension extends AbstractExtension
 {

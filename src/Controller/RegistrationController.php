@@ -10,23 +10,16 @@ use App\Entity\User as UserEntity;
 use App\Form\UserType;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
-use App\Repository\RegistrationStepGroupRepository;
 use App\Repository\RegistrationStepRepository;
-use App\Service\MailerService;
-use App\Service\OrderByService;
 use App\Service\ParameterService;
 use App\Service\PdfService;
 use App\Service\RegistrationService;
 use App\Service\SeasonService;
-use App\Service\UploadService;
-use App\Service\UserService;
 use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
-use App\UseCase\RegistrationStep\GetReplaces;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,15 +31,8 @@ class RegistrationController extends AbstractController
 {
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
-        private RegistrationStepGroupRepository $registrationStepGroupRepository,
-        private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
         private SeasonService $seasonService,
-        private MailerService $mailerService,
-        private UserService $userService,
-        private UploadService $uploadService,
-        private GetReplaces $getReplaces,
-        private OrderByService $orderByService,
         private RegistrationService $registrationService,
         private GetProgress $getProgress,
         private ContentRepository $contentRepository

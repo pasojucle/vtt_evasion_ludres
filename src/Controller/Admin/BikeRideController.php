@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Service\BikeRideService;
-use App\ViewModel\UserPresenter;
 use App\ViewModel\UsersPresenter;
 use App\Repository\UserRepository;
 use App\ViewModel\BikeRidePresenter;
@@ -30,8 +29,7 @@ class BikeRideController extends AbstractController
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
         private EntityManagerInterface $entityManager,
-        private BikeRideService $bikeRideService,
-        private UserPresenter $userPresenter
+        private BikeRideService $bikeRideService
     ) {
     }
 

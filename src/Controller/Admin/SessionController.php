@@ -16,7 +16,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,7 +23,6 @@ class SessionController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private RequestStack $requestStack,
         private SessionService $sessionService
     ) {
     }
@@ -75,37 +73,30 @@ class SessionController extends AbstractController
     #[Route('/admin/rando/inscription/{bikeRide}', name: 'admin_session_add', methods: ['GET', 'POST'])]
     public function adminSessionAdd(
         Request $request,
-        SessionRepository $sessionRepository,
         BikeRidePresenter $bikeRidePresenter,
         BikeRide $bikeRide
     ): Response {
         $clusters = $bikeRide->getClusters();
-
+        $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
         $form = $this->createForm(SessionType::class);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $userSession = $form->getData();
             $user = $userSession->getUser();
-            if ($sessionRepository->findByUserAndClusters($user, $clusters)) {
-                $form->addError(new FormError('Cet adhérent est déjà inscrit'));
-            }
+            $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
+            $userSession->setCluster($userCluster);
+            $user->addSession($userSession);
+            $this->entityManager->persist($userSession);
 
-            if ($form->isValid()) {
-                $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
-                $userSession->setCluster($userCluster);
-                $user->addSession($userSession);
-                $this->entityManager->persist($userSession);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Le participant a bien été inscrit');
 
-                $this->entityManager->flush();
-                $this->addFlash('success', 'Le participant a bien été inscrit');
+            $this->sessionService->checkEndTesting($user);
 
-                $this->sessionService->checkEndTesting($user);
-
-                return $this->redirectToRoute('admin_bike_ride_cluster_show', [
-                    'bikeRide' => $bikeRide->getId(),
-                ]);
-            }
+            return $this->redirectToRoute('admin_bike_ride_cluster_show', [
+                'bikeRide' => $bikeRide->getId(),
+            ]);
         }
 
         $bikeRidePresenter->present($bikeRide);

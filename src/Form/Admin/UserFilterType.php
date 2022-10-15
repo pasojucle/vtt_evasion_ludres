@@ -7,15 +7,12 @@ namespace App\Form\Admin;
 use App\Entity\Level;
 use App\Entity\User;
 use App\Repository\LevelRepository;
-use App\Service\LicenceService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Security;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class UserFilterType extends AbstractType
@@ -27,10 +24,7 @@ class UserFilterType extends AbstractType
     public const LEVEL_GROUP_FRAME = 'Encadrement';
 
     public function __construct(
-        private LevelRepository $levelRepository,
-        private Security $security,
-        private LicenceService $licenceService,
-        private RouterInterface $router
+        private LevelRepository $levelRepository
     ) {
     }
 

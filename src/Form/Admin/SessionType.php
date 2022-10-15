@@ -6,6 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Session;
 use App\Entity\User;
+use App\Validator\SessionUniqueMember;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -40,6 +41,7 @@ class SessionType extends AbstractType
                 ],
                 'constraints' => [
                     new NotBlank(),
+                    new SessionUniqueMember(),
                 ],
             ])
             ->add('submit', SubmitType::class, [

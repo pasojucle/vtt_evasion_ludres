@@ -10,10 +10,8 @@ use App\Form\Admin\ToolType;
 use App\Form\Admin\UserSearchType;
 use App\Form\ToolImportType;
 use App\Repository\UserRepository;
-use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
-use App\Service\SeasonService;
 use App\Service\UserService;
 use App\ViewModel\UserPresenter;
 use DateTime;
@@ -32,9 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ToolController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private LicenceService $licenceService,
-        private SeasonService $seasonService
+        private EntityManagerInterface $entityManager
     ) {
     }
 

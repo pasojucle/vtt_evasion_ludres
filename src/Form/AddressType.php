@@ -112,10 +112,8 @@ class AddressType extends AbstractType
         $choices = [];
         if (!empty($communes)) {
             $communeCodes = array_column($communes, 'code');
+            
             return $this->communeRepository->findByCodes($communeCodes);
-            foreach ($communes as $commune) {
-                $choices[$commune['code']] = $commune['nom'];
-            }
         }
 
         return array_flip($choices);

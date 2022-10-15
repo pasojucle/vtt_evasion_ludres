@@ -29,7 +29,7 @@ class GetError
 
         $logError->setUrl($request->getRequestUri())
             ->setErrorMessage($exception->getMessage() . ' / ' . get_class($exception))
-            ->setMessage('Une erreur est survenue !<br>Si le problème persite, contacter le club')
+            ->setMessage('Une erreur est survenue !<br>Veuillez réessayer plus tard"')
             ->setUserAgent($request->headers->get('user-agent'))
             ->setCreatedAt(new DateTime())
             ->setStatusCode(500)

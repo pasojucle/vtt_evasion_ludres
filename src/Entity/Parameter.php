@@ -88,9 +88,9 @@ class Parameter
 
     public function getValue(): string|bool|array|null
     {
-        if (null === $this->value) {
-            return $this->value;
-        }
+        // if (null === $this->value) {
+        //     return $this->value;
+        // }
 
         return match ($this->type) {
             self::TYPE_BOOL => (bool) $this->value,

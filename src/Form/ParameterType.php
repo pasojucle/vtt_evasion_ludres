@@ -22,9 +22,9 @@ class ParameterType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $parameter = $event->getData();
             if (null !== $parameter) {
-                $type = $parameter?->getType();
-                $value = $parameter?->getValue();
-                $label = $parameter?->getLabel();
+                $type = $parameter->getType();
+                $value = $parameter->getValue();
+                $label = $parameter->getLabel();
                 $form = $event->getForm();
                 $fieldOptions = [];
 

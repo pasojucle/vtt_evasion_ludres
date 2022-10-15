@@ -38,7 +38,7 @@ class IndemnityController extends AbstractController
     ): Response {
         $form = $this->createForm(IndemnityType::class, $indemnity, [
             'action' => $this->generateUrl('admin_indemnity_edit', [
-                'indemnity' => $indemnity?->getId(),
+                'indemnity' => $indemnity->getId(),
             ]),
         ]);
 

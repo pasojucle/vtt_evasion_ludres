@@ -11,7 +11,7 @@ class HiddenArrayTransformer implements DataTransformerInterface
     /**
      * Transforms an string (json) to a array (array).
      *
-     * @param string $json
+     * @param ?string $json
      *
      * @return array
      */

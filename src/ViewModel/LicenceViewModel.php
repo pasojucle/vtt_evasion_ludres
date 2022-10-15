@@ -51,7 +51,7 @@ class LicenceViewModel extends AbstractViewModel
 
     public string $isVae;
 
-    public bool $isValid = false;
+    public bool $toValidate = false;
 
     private ServicesPresenter $services;
 

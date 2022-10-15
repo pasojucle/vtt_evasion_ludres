@@ -10,12 +10,10 @@ use App\Form\Admin\CertificateType;
 use App\Form\Admin\UserType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
-use App\Service\PaginatorService;
 use App\UseCase\Tool\GetRegistrationCertificate;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetParticipation;
 use App\ViewModel\UserPresenter;
-use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,11 +25,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     public function __construct(
-        private UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
-        private UsersPresenter $usersPresenter,
-        private UserPresenter $userPresenter,
-        private PaginatorService $paginator
+        private UserPresenter $userPresenter
     ) {
     }
 

@@ -12,12 +12,10 @@ use App\Service\SessionService;
 use App\UseCase\Session\EditSession;
 use App\UseCase\Session\GetFormSession;
 use App\ViewModel\BikeRidePresenter;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -25,9 +23,7 @@ class SessionController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private RequestStack $requestStack,
-        private SessionService $sessionService,
-        private UserPresenter $userPresenter
+        private SessionService $sessionService
     ) {
     }
 

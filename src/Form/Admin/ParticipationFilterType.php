@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
-use App\Repository\LevelRepository;
 use App\Service\SeasonService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -15,8 +14,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class ParticipationFilterType extends AbstractType
 {
     public function __construct(
-        private LevelRepository $levelRepository,
-        private SeasonService $seasonService,
+        private SeasonService $seasonService
     ) {
     }
 

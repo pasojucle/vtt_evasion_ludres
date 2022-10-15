@@ -8,7 +8,6 @@ use App\Entity\Licence;
 use App\UseCase\Coverage\GetCoveragesFiltered;
 use App\UseCase\Coverage\ValidateCoverage;
 use App\ViewModel\UserPresenter;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,11 +18,6 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin/assurance', name: 'admin_coverage')]
 class CoverageController extends AbstractController
 {
-    public function __construct(
-        private EntityManagerInterface $entityManager,
-    ) {
-    }
-
     #[Route('s/{filtered}', name: '_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     public function list(
         GetCoveragesFiltered $getCoveragesFiltered,

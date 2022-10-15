@@ -22,10 +22,10 @@ class SurveyResponseType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $surveyResponse = $event->getData();
             $form = $event->getForm();
-
-            if (SurveyIssue::RESPONSE_TYPE_STRING !== $surveyResponse->getSurveyIssue()->getResponseType()) {
+            $responseType = $surveyResponse->getSurveyIssue()->getResponseType();
+            if (SurveyIssue::RESPONSE_TYPE_STRING !== $responseType) {
                 $choices = SurveyResponse::VALUES;
-                if (SurveyIssue::RESPONSE_TYPE_CHECK) {
+                if (SurveyIssue::RESPONSE_TYPE_CHECK === $responseType) {
                     unset($choices[SurveyResponse::VALUE_NO_OPINION]);
                 }
                 $form
