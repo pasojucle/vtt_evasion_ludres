@@ -1,5 +1,4 @@
 import('./js-datepicker.js');
-import('./modal.js');
 import('./reveal.js');
 import('./input-file.js');
 import('./constraints.js');
@@ -62,8 +61,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
             addTagFormDeleteLink(item);
         } 
     })
-    if ($('#modal_window_show').length > 0) {
-        $('#modal_window_show').click();
+
+    if (document.querySelector('#modal_window_show')) {
+        callShowModal('#modal_window_show');
     }
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
 
@@ -264,8 +264,9 @@ function setOrderLineQuantity(e) {
     const form = $(this).closest('form');
     let data = {};
     data[$(this).attr('name')] = $(this).val();
-    const id = $(this).parent().find('input[type="hidden"]');
-    data[id.attr('name')] = id.val();
+
+    data[$(this).parent().data('lineName')] = $(this).parent().data('lineId');
+    console.log(data);
 
     $.ajax({
         url : form.attr('action'),

@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\OrderHeader;
+use App\Form\OrderLineType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class OrderType extends AbstractType
 {
@@ -20,14 +23,21 @@ class OrderType extends AbstractType
                 'label' => false,
                 'entry_type' => OrderLineType::class,
             ])
-            ->add('save', SubmitType::class, [
-                'label' => '<i class="fas fa-check"></i> Valider la commande',
-                'label_html' => true,
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
-            ])
         ;
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+            if (!$data->getOrderLines()->isEmpty()) {
+                $form
+                    ->add('save', SubmitType::class, [
+                        'label' => '<i class="fas fa-check"></i> Valider la commande',
+                        'label_html' => true,
+                        'attr' => [
+                            'class' => 'btn btn-primary float-right',
+                        ],
+                    ]);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

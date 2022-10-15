@@ -4,32 +4,27 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
-use App\Entity\OrderHeader;
-use App\Entity\OrderLine;
-use App\Entity\Product;
-use App\Entity\User;
-use App\Repository\OrderHeaderRepository;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\User;
+use ReflectionClass;
+use App\Entity\Product;
+use App\Entity\OrderLine;
+use App\Entity\OrderHeader;
 use Symfony\Component\Form\Form;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\OrderHeaderRepository;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class OrderAddService
 {
-    private EntityManagerInterface $entityManager;
-
-    private OrderHeaderRepository $orderHeaderRepository;
-
-    private Security $security;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        OrderHeaderRepository $orderHeaderRepository,
-        Security $security
+        private EntityManagerInterface $entityManager,
+        private OrderHeaderRepository $orderHeaderRepository,
+        private Security $security,
+        private RequestStack $requestStack
     ) {
-        $this->entityManager = $entityManager;
-        $this->orderHeaderRepository = $orderHeaderRepository;
-        $this->security = $security;
+
     }
 
     public function execute(Product $product, Form &$form): void
@@ -44,12 +39,13 @@ class OrderAddService
         if ($form->isValid()) {
             $this->entityManager->persist($orderLine);
             $this->entityManager->flush();
+            $this->addToModalWindowShowOn($orderHeader);
         }
     }
 
     private function getOrderHeader(User $user): OrderHeader
     {
-        $orderHeader = $this->orderHeaderRepository->findOneOrderByUser($user);
+        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($user);
         if (null === $orderHeader) {
             $orderHeader = new OrderHeader();
             $orderHeader->setUser($user)
@@ -78,5 +74,14 @@ class OrderAddService
         $orderLine->setOrderHeader($orderHeader);
 
         return $orderLine;
+    }
+
+    private function addToModalWindowShowOn(OrderHeader $orderHeader):void
+    {
+        $session = $this->requestStack->getSession();
+        $modalWindowShowOn = $session->get('modal_window_show_on');
+        $modalWindowShowOn = (null !== $modalWindowShowOn) ? json_decode($modalWindowShowOn) : [];
+        $modalWindowShowOn[] = $this->security->getUser()->getLicenceNumber() . '-' . (new ReflectionClass($orderHeader))->getShortName() . '-' . $orderHeader->getId();
+        $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
     }
 }

@@ -1,13 +1,24 @@
 $(function () {
     $('body').append('<div class="modal" tabindex="-1"></div>');
-    $(document).on('click', 'a[data-toggle="modal"]', showModal);
+    $(document).on('click', 'a[data-toggle="modal"]', handleShowModal);
     $(document).on('click', 'button.close[data-dismiss="modal"]', closeModal);
+
 });
 
-function showModal(event) {
+function handleShowModal(event) {
     event.preventDefault();
     var route = $(this).attr("href");
     const modalType = $(this).data("type")
+    showModal(route, modalType);
+}
+
+function callShowModal(target) {
+    var route = $(target).attr("href");
+    const modalType = $(target).data("type")
+    showModal(route, modalType);
+}
+
+function showModal(route, modalType) {
     $.ajax({
         url: route,
         type: "get",

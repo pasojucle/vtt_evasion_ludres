@@ -30,7 +30,7 @@ class OrderLinesSetService
             foreach ($order['orderLines'] as $line) {
                 $orderLine = $this->orderLineRepository->find($line['lineId']);
                 if (array_key_exists('quantity', $line)) {
-                    $orderLine->setQuantity($line['quantity']);
+                    $orderLine->setQuantity((int) $line['quantity']);
                 }
                 if (array_key_exists('remove', $line)) {
                     $this->entityManager->remove($orderLine);

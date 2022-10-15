@@ -7,7 +7,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Repository\OrderHeaderRepository;
-use App\Repository\UserRepository;
 use App\Service\PaginatorService;
 use App\ViewModel\OrdersPresenter;
 use App\ViewModel\UserPresenter;
@@ -22,7 +21,6 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class UserController extends AbstractController
 {
     public function __construct(
-        private UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
         private UserPresenter $userPresenter
     ) {
@@ -42,15 +40,10 @@ class UserController extends AbstractController
             $this->redirectToRoute('login');
         }
 
-        $query = $ordersHeaderRepository->findOrdersByUserQuery($user);
-        $ordersHeader = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-
-        $ordersPresenter->present($ordersHeader);
         $this->userPresenter->present($user);
 
         return $this->render('user/account.html.twig', [
             'user' => $this->userPresenter->viewModel(),
-            'orders' => $ordersPresenter->viewModel()->orders,
         ]);
     }
 

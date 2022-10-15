@@ -27,6 +27,6 @@ class OrderGetService
             return null;
         }
 
-        return $this->orderHeaderRepository->findOneOrderByUser($user);
+        return $this->orderHeaderRepository->findOneOrderNotEmpty($user);
     }
 }

@@ -43,8 +43,11 @@ class ModalWindowRepository extends ServiceEntityRepository
             ->andWhere(
                 (new Expr())->lte('m.startAt', ':today'),
                 (new Expr())->gte('m.endAt', ':today'),
+                (new Expr())->eq('m.isDisabled', ':disabled'),
             )
-            ->setParameter('today', $today->format('Y-m-d H:i:s'));
+            ->setParameter('today', $today->format('Y-m-d H:i:s'))
+            ->setParameter('disabled', 0);
+
         if (null !== $age) {
             $qb->andWhere(
                 (new Expr())->orX(

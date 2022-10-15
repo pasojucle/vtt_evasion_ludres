@@ -34,21 +34,7 @@ class OrderLine
     #[Column(type: 'integer')]
     private int $quantity;
 
-    private $lineId;
-
     public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setLineId(int $lineId): self
-    {
-        $this->lineId = $lineId;
-
-        return $this;
-    }
-
-    public function getLineId(): ?int
     {
         return $this->id;
     }

@@ -47,7 +47,7 @@ class OrderController extends AbstractController
         if (null === $user) {
             return $this->redirectToRoute('home');
         }
-        $orderHeader = $this->orderHeaderRepository->findOneOrderByUser($user);
+        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($user);
         if ($request->isXmlHttpRequest()) {
             $orderLinesSetService->execute($request);
         }

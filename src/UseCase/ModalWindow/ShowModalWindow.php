@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\UseCase\ModalWindow;
 
-use App\Entity\Survey;
-use App\Repository\ModalWindowRepository;
-use App\Repository\SurveyRepository;
+
 use App\Service\UserService;
-use ReflectionClass;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Repository\SurveyRepository;
+use App\Repository\ModalWindowRepository;
+use App\Repository\OrderHeaderRepository;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
+use App\ViewModel\ModalWindow\ModalWindowsPresenter;
+use App\ViewModel\ModalWindow\ModalWindowViewModel;
 
 class ShowModalWindow
 {
@@ -21,42 +22,44 @@ class ShowModalWindow
         private UserService $userService,
         private ModalWindowRepository $modalWindowRepository,
         private SurveyRepository $surveyRepository,
-        private UrlGeneratorInterface $urlGenerator
+        private OrderHeaderRepository $orderHeaderRepository,
+        private ModalWindowsPresenter $modalWindowsPresenter
     ) {
     }
 
-    public function execute(): ?array
+    public function execute(): ?ModalWindowViewModel
     {
         $session = $this->requestStack->getCurrentRequest()->getSession();
         $modalWindowShowOn = (null !== $session->get('modal_window_show_on'))
             ? json_decode($session->get('modal_window_show_on'), true)
             : [];
         $user = $this->security->getUser();
+
         if (null !== $user) {
             $user = $this->userService->convertToUser($user);
             $modalWindows = $this->modalWindowRepository->findLastByAge($user->member?->age);
             $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user->entity);
             $modalWindows = array_merge($modalWindows, $surveys);
+            $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($user->entity);
 
-            if (!empty($modalWindows)) {
-                foreach ($modalWindows as $modalWindow) {
-                    $index = $user->licenceNumber . '-' . (new ReflectionClass($modalWindow))->getShortName() . '-' . $modalWindow->getId();
+            if (null !== $orderHeaderToValidate) {
+                $modalWindows = array_merge($modalWindows, [$orderHeaderToValidate]);
+            }
+            
+            $this->modalWindowsPresenter->present($modalWindows);
 
-                    if (!in_array($index, $modalWindowShowOn)) {
-                        $modalWindowShowOn[] = $index;
-                        $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
 
-                        return [
-                            'title' => $modalWindow->getTitle(),
-                            'content' => $modalWindow->getContent(),
-                            'url' => ($modalWindow instanceof Survey)
-                                ? $this->urlGenerator->generate('survey', ['survey' => $modalWindow->getId()]) : null,
-                        ];
-                    }
+            foreach ($this->modalWindowsPresenter->viewModel()->modalWindows as $modalWindow) {
+                if (!in_array($modalWindow->index, $modalWindowShowOn)) {
+                    $modalWindowShowOn[] = $modalWindow->index;
+                    $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
+                    return $modalWindow;
                 }
             }
+
         }
 
         return null;
     }
+
 }

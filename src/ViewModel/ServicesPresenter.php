@@ -40,6 +40,7 @@ class ServicesPresenter
     public array $seasonsStatus;
     public ?User $user;
     public array $allIndemnities;
+    public string $modalWindowOrderInProgress;
 
     public function __construct(
         private SeasonService $seasonService,
@@ -73,6 +74,7 @@ class ServicesPresenter
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
         $this->coverageFormStartAt = $this->parameterService->getParameterByName('COVERAGE_FORM_AVAILABLE_AT');
+        $this->modalWindowOrderInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
         $this->allIndemnities = $this->indemnityRepository->findAll();
     }
 }

@@ -39,26 +39,45 @@ class OrderHeaderRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('oh')
             ->andWhere(
-                (new Expr())->gte('oh.status', ':status'),
                 (new Expr())->neq('oh.status', ':statusCanceled'),
                 (new Expr())->eq('oh.user', ':user'),
             )
-            ->setParameter('status', OrderHeader::STATUS_ORDERED)
             ->setParameter('statusCanceled', OrderHeader::STATUS_CANCELED)
             ->setParameter('user', $user)
         ;
     }
 
-    public function findOneOrderByUser(User $user): ?OrderHeader
+    private function getOrderInProgressByUserQuery(User $user): QueryBuilder
+    {
+        return $this->createQueryBuilder('oh')
+            ->andWhere(
+                (new Expr())->eq('oh.status', ':status'),
+                (new Expr())->eq('oh.user', ':user'),
+            )
+            ->setParameter('status', OrderHeader::STATUS_IN_PROGRESS)
+            ->setParameter('user', $user);
+
+    }
+
+    public function findOneOrderInProgressByUser(User $user): ?OrderHeader
     {
         try {
-            return $this->createQueryBuilder('oh')
-                ->andWhere(
-                    (new Expr())->eq('oh.status', ':status'),
-                    (new Expr())->eq('oh.user', ':user'),
-                )
-                ->setParameter('status', OrderHeader::STATUS_IN_PROGRESS)
-                ->setParameter('user', $user)
+            $qb = $this->getOrderInProgressByUserQuery($user);
+            return $qb
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
+
+    public function findOneOrderNotEmpty(User $user): ?OrderHeader
+    {
+        try {
+            $qb = $this->getOrderInProgressByUserQuery($user);
+            $this->addHavingOrderLineCriteria($qb);
+            return $qb
                 ->getQuery()
                 ->getOneOrNullResult()
             ;
@@ -80,8 +99,17 @@ class OrderHeaderRepository extends ServiceEntityRepository
             ;
         }
 
+        $this->addHavingOrderLineCriteria($qb);
+
         return $qb
             ->orderBy('oh.id', 'DESC')
         ;
+    }
+
+    private function addHavingOrderLineCriteria(QueryBuilder &$qb): QueryBuilder
+    {
+        return $qb->join('oh.orderLines', 'ol')
+            ->having((new Expr())->gt((new Expr)->count('ol'), 0))
+            ->groupBy('oh');
     }
 }

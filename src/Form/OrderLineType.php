@@ -28,6 +28,7 @@ class OrderLineType extends AbstractType
                     ],
                     'attr' => [
                         'class' => 'orderline-quantity',
+                        'min' => 1,
                     ],
                 ])
                 ->add('remove', SubmitType::class, [
@@ -37,7 +38,6 @@ class OrderLineType extends AbstractType
                         'class' => 'orderline-remove',
                     ],
                 ])
-                ->add('lineId', HiddenType::class)
             ;
         });
     }
