@@ -89,8 +89,9 @@ class ProductController extends AbstractController
             return $this->redirectToRoute('admin_products');
         }
 
+        $presenter->present($product);
         return $this->render('product/admin/delete.modal.html.twig', [
-            'product' => $presenter($product)->viewModel(),
+            'product' => $presenter->viewModel(),
             'form' => $form->createView(),
         ]);
     }
