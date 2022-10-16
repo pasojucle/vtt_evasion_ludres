@@ -44,6 +44,7 @@ class OrderHeaderRepository extends ServiceEntityRepository
             )
             ->setParameter('statusCanceled', OrderHeader::STATUS_CANCELED)
             ->setParameter('user', $user)
+            ->orderBy('oh.createdAt', 'DESC')
         ;
     }
 

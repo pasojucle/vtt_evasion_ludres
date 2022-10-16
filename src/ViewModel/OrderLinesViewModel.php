@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use Symfony\Component\Form\Form;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Form\Form;
 
 class OrderLinesViewModel extends AbstractViewModel
 {
