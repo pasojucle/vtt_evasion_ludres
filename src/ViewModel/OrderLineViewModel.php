@@ -37,7 +37,6 @@ class OrderLineViewModel extends AbstractViewModel
         $orderLineView->amount = $orderLineView->quantity * $orderLineView->product->sellingPrice;
         $orderLineView->amountToString = number_format($orderLineView->amount, 2) . ' €';
         $orderLineView->formName = $formName;
-        dump($formName);
 
         return $orderLineView;
     }
