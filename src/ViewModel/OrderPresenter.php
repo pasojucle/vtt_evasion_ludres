@@ -11,7 +11,7 @@ class OrderPresenter extends AbstractPresenter
 {
     private $viewModel;
 
-    public function present(?OrderHeader $orderHeader, Form $form): void
+    public function present(?OrderHeader $orderHeader, ?Form $form = null): void
     {
         if (null !== $orderHeader) {
             $this->viewModel = OrderViewModel::fromOrderHeader($orderHeader, $this->services, $form);
