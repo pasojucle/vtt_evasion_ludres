@@ -9,6 +9,7 @@ use App\Entity\OrderLine;
 use App\Entity\Product;
 use App\Entity\Size;
 use App\ViewModel\UserViewModel;
+use Symfony\Component\Form\Form;
 
 class OrderLineViewModel extends AbstractViewModel
 {
@@ -24,7 +25,9 @@ class OrderLineViewModel extends AbstractViewModel
 
     public string $amountToString = '';
 
-    public static function fromOrderLine(OrderLine $orderLine, UserViewModel $orderUser, ServicesPresenter $services)
+    public ?string $formName;
+
+    public static function fromOrderLine(OrderLine $orderLine, UserViewModel $orderUser, ServicesPresenter $services, ?string $formName = null)
     {
         $orderLineView = new self();
         $orderLineView->id = $orderLine->getId();
@@ -33,6 +36,8 @@ class OrderLineViewModel extends AbstractViewModel
         $orderLineView->size = $orderLine->getSize()->getName();
         $orderLineView->amount = $orderLineView->quantity * $orderLineView->product->sellingPrice;
         $orderLineView->amountToString = number_format($orderLineView->amount, 2) . ' €';
+        $orderLineView->formName = $formName;
+        dump($formName);
 
         return $orderLineView;
     }

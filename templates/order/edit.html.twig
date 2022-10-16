@@ -26,14 +26,14 @@
                             Prix/unitaire : <span class="{{ line.product.priceClass }}">{{ line.product.price }}</span>
                             {% if line.product.discountPrice %} <span class="price">{{ line.product.discountPrice }}</span>{% endif %}
                         </div>
-                        <div class="col-md-2 col-xs-2 align-right form-group" data-line-name="{{ orderLineFormName(orderLine[key])}}" data-line-id="{{ orderLine[key].vars.value.id }}">
+                        <div class="col-md-2 col-xs-2 align-right form-group" data-line-name="{{ line.formName }}" data-line-id="{{ orderLine[key].vars.value.id }}">
                             {{ form_widget(orderLine[key].quantity) }}
                             {{ form_errors(orderLine[key].quantity) }}
                         </div>
                         <div class="col-md-2 col-xs-2 align-right form-group">
                            <div>{{ line.amountToString }}</div>
                            <br>
-                           <div data-line-name="{{ orderLineFormName(orderLine[key])}}" data-line-id="{{ orderLine[key].vars.value.id }}">{{ form_widget(orderLine[key].remove) }}</div>
+                           <div data-line-name="{{ line.formName }}" data-line-id="{{ orderLine[key].vars.value.id }}">{{ form_widget(orderLine[key].remove) }}</div>
                         </div>
                     </li>
                 {% endfor %}

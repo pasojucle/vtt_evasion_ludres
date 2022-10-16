@@ -64,7 +64,7 @@ class OrderController extends AbstractController
             }
         }
 
-        $this->presenter->present($orderHeader);
+        $this->presenter->present($orderHeader, $form);
 
         return $this->render('order/edit.html.twig', [
             'order' => $this->presenter->viewModel(),

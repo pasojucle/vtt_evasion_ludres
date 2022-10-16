@@ -6,6 +6,7 @@ namespace App\ViewModel;
 
 use App\Entity\OrderHeader;
 use App\ViewModel\UserViewModel;
+use Symfony\Component\Form\Form;
 
 class OrderViewModel extends AbstractViewModel
 {
@@ -23,7 +24,7 @@ class OrderViewModel extends AbstractViewModel
 
     public string $createdAt;
 
-    public static function fromOrderHeader(OrderHeader $orderHeader, ServicesPresenter $services)
+    public static function fromOrderHeader(OrderHeader $orderHeader, ServicesPresenter $services, ?Form $form = null)
     {
         $orderView = new self();
         $orderView->id = $orderHeader->getId();
@@ -32,7 +33,7 @@ class OrderViewModel extends AbstractViewModel
         $orderView->user = UserViewModel::fromUser($orderHeader->getUser(), $services);
         $orderView->status = $orderHeader->getStatus();
         $orderView->statusToString = $services->translator->trans(OrderHeader::STATUS[$orderView->status]);
-        $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $orderView->user, $services);
+        $orderView->orderLines = OrderLinesViewModel::fromOrderLines($orderHeader->getOrderLines(), $orderView->user, $services, $form?->all()['orderLines']);
         $orderView->amount = $orderView->getAmount();
 
         return $orderView;
