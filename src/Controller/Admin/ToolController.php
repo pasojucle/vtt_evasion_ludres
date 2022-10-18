@@ -130,45 +130,7 @@ class ToolController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
-    #[Route('/admin/outil/departements', name: 'admin_departments', methods: ['GET', 'POST'])]
-    public function adminDepartments(
-        Request $request,
-        ParameterBagInterface $parameterBag
-    ): Response {
-        $form = $this->createForm(ToolImportType::class);
-        $form->handleRequest($request);
-        $departments = [];
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            if ($request->files->get('tool_import')) {
-                $userListFile = $request->files->get('tool_import')['userList'];
-
-                if (($handle = fopen($userListFile, 'r')) !== false) {
-                    while (($row = fgetcsv($handle, 1000, ',')) !== false) {
-                        list(
-                            $number,
-                            $name
-                        ) = $row;
-
-                        if (preg_match('#^(NUMÉRO)$#', $number)) {
-                            continue;
-                        }
-                        $departments[$name] = $number . ' - ' . $name;
-                    }
-                    fclose($handle);
-                    file_put_contents($parameterBag->get('data_directory_path') . 'departments', json_encode($departments));
-                }
-            }
-        }
-
-        return $this->render('tool/import.html.twig', [
-            'form' => $form->createView(),
-            'count' => count($departments),
-            'title' => 'Liste des départements',
-        ]);
-    }
-
+    
     #[Route('/admin/outil/export_email', name: 'admin_export_email', methods: ['GET', 'POST'])]
     public function adminExportEmail(
         UserRepository $userRepository

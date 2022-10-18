@@ -40,7 +40,7 @@ class ParameterType extends AbstractType
                     case Parameter::TYPE_TEXT:
                         $classType = CKEditorType::class;
                         $fieldOptions = [
-                            'config_name' => 'minimum_config',
+                            'config_name' => 'full_config',
                         ];
                         break;
                     case Parameter::TYPE_ARRAY:

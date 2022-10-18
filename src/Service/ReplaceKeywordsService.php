@@ -76,12 +76,15 @@ class ReplaceKeywordsService
         return [
             '{{ prenom_nom }}',
             '{{ adresse }}',
+            '{{ date_naissance }}',
+            '{{ lieu_naissance }}',
             '{{ saison }}',
             '{{ numero_licence }}',
             '{{ cotisation }}',
             '{{ date }}',
             '{{ prenom_nom_parent }}',
             '{{ date_naissance_parent }}',
+            '{{ adresse_parent }}',
             '{{ prenom_nom_enfant }}',
             '{{ date_naissance_enfant }}',
             '{{ saut_page }}',
@@ -89,6 +92,7 @@ class ReplaceKeywordsService
             '{{ type_licence }}',
             '{{ type_assurance}}',
             '{{ necessite_sertificat_medical }}',
+            '{{ montant }}',
             '<p>&nbsp;</p>',
         ];
     }
@@ -96,25 +100,30 @@ class ReplaceKeywordsService
     private function replaces(UserViewModel $user): array
     {
         $address = $user->member->address->toString();
+        $kinshipAddress = $user->kinship?->address->toString();
         $today = new DateTime();
-        $licence = $user->seasonLicence;
+        $licence = $user->lastLicence;
 
         return [
             $user->member->fullName,
             $address,
+            $user->member->birthDate,
+            $user->member->birthPlace,
             $licence->season,
             $user->getLicenceNumber(),
             $licence->getAmount()['str'],
             $today->format('d/m/Y'),
-            $user->getFullName(),
-            $user->getBirthDate(),
-            $user->getFullNameChildren(),
-            $user->getBirthDateChildren(),
+            $user->kinship?->fullName,
+            $user->kinship?->birthDate,
+            $kinshipAddress,
+            $user->member->fullName,
+            $user->member->birthDate,
             '<br>',
             $licence->getRegistrationTitle(),
             $this->translator->trans($licence->type),
             $this->translator->trans($licence->coverageStr),
             $user->isMedicalCertificateRequired(),
+            $licence->getAmount()['value']?->toString(),
             '<br>',
         ];
     }

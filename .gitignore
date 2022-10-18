@@ -25,3 +25,5 @@ data/cmd/doctrinemigrationmigrate-n
 data/cmd/geoconvertbirthplace
 data/cmd/geoloaddata
 data/cmd/geoconverttown
+data/Attestation_d_adulte_accompaganteur.pdf
+data/Attestation_d_inscription.pdf

@@ -10,7 +10,6 @@ use App\Form\Admin\CertificateType;
 use App\Form\Admin\UserType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
-use App\UseCase\Tool\GetRegistrationCertificate;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetParticipation;
 use App\ViewModel\UserPresenter;
@@ -180,29 +179,5 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse($response);
-    }
-
-    #[Route('/admin/adherent/certificate/{user}', name: 'user_certificate', methods: ['GET', 'POST'])]
-    public function adminRegistrationCertificate(
-        Request $request,
-        GetRegistrationCertificate $getRegistrationCertificate,
-        User $user
-    ): Response {
-        list($content) = $getRegistrationCertificate->execute($request, $user);
-        $form = $this->createForm(CertificateType::class, [
-            'content' => $content,
-        ]);
-        $form->handleRequest($request);
-        $filename = null;
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            list($content, $filename) = $getRegistrationCertificate->execute($request, $user, utf8_encode($data['content']));
-        }
-
-        return $this->render('tool/registration_certificate.html.twig', [
-            'form' => $form->createView(),
-            'filename' => $filename,
-        ]);
     }
 }

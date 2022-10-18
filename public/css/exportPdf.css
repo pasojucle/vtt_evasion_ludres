@@ -185,10 +185,13 @@ td.background {
 .align-top {
     vertical-align: top;
 }
+.accompanying-adult-cerficate {
+    margin-top: 75px;
+}
 .registration-cerficate {
     margin-top: 150px;
 }
-.registration-cerficate p {
+.cerficate p {
     font-size: 16px;
     line-height: 24px;
 }
@@ -215,4 +218,8 @@ div.page_break + div.page_break{
 .logo-75 {
     height: 75px;
     width: 75px;
+}
+li::before {
+    content: '\2022';
+    margin: auto 15px;
 }
