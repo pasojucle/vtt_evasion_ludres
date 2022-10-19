@@ -66,6 +66,11 @@ final class Version20221016160933 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-
+        $this->addSql('DELETE FROM `parameter` WHERE `name` = \'ACCOMPANYING_ADULT_CERTIFICATE\'');
+        $parameterGroupId = $this->connection->fetchOne('SELECT id FROM `parameter_group` WHERE `name` = \'CERTIFICATES\'');
+        if (false !== $parameterGroupId) {
+            $parameterGroup = ['id' => $parameterGroupId, 'name' => 'REGISTRATION_CERTIFICATE', 'label' => 'Attestations'];
+            $this->addSql('UPDATE `parameter_group` SET `name` = :name, `label` = :label WHERE `id` = :id', $parameterGroup);
+        }
     }
 }
