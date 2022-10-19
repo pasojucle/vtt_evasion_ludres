@@ -23,7 +23,9 @@ class LicenceViewModel extends AbstractViewModel
 
     public ?string $createdAt;
 
-    public ?int $season;
+    public ?string $season;
+
+    public ?string $fullSeason;
 
     public ?bool $isFinal;
 
@@ -71,7 +73,8 @@ class LicenceViewModel extends AbstractViewModel
             }
             $licenceView->entity = $licence;
             $licenceView->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
-            $licenceView->season = $licence->getSeason();
+            $licenceView->season = $licenceView->getSeason();
+            $licenceView->fullSeason = $licenceView->getFullSeason();
             $licenceView->isFinal = $licence->isFinal();
             $licenceView->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
             $licenceView->coverageStr = (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
@@ -105,7 +108,7 @@ class LicenceViewModel extends AbstractViewModel
             if (null !== $membershipFee) {
                 $amount = $membershipFee->getAmount();
             }
-            $indemnities = $this->services->indemnityService->getUserIndemnities($this->entity->getUser(), $this->season - 1);
+            $indemnities = $this->services->indemnityService->getUserIndemnities($this->entity->getUser(), $this->entity->getSeason() - 1);
 
             if (null !== $amount && null !== $indemnities) {
                 $amount -= $indemnities->getAmount();
@@ -169,5 +172,19 @@ class LicenceViewModel extends AbstractViewModel
     private function getToValidate(): bool
     {
         return in_array($this->status, [Licence::STATUS_WAITING_VALIDATE, Licence::STATUS_WAITING_RENEW]);
+    }
+
+    private function getSeason(): string
+    {
+        $season = $this->entity->getSeason();
+
+        return sprintf('%s - %s', (string) ($season - 1), (string) $season);
+    }
+
+    private function getFullSeason(): string
+    {
+        $season = $this->entity->getSeason();
+
+        return sprintf('%s - %s (jusqu\'au 31 décembre %s) ', (string) ($season - 1), (string) $season, (string) $season);
     }
 }

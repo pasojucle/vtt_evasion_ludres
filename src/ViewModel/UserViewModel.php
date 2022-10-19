@@ -281,7 +281,7 @@ class UserViewModel extends AbstractViewModel
     {
         $lastLicence = $this->getLastLicence();
 
-        return 1 === $this->entity->getLicences()->count() && $lastLicence->season === $this->services->currentSeason && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
+        return 1 === $this->entity->getLicences()->count() && $lastLicence->entity->getSeason() === $this->services->currentSeason && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
     }
 
     private function getSeasonLicence(): LicenceViewModel
