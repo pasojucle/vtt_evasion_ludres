@@ -486,6 +486,9 @@ main:not(.admin) {
     background: var(--light-color);
     padding: 5px;
 }
+.form-group > input:disabled {
+    background: unset;
+}
 .background-ligth .form-group > textarea {
     background: var(--white-color);
 }

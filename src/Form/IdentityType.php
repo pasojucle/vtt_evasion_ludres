@@ -58,7 +58,7 @@ class IdentityType extends AbstractType
                             new NotNull(),
                             new NotBlank(),
                         ],
-                        'attr' => (Identity::TYPE_MEMBER === $type)
+                        'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                             ]
@@ -74,7 +74,7 @@ class IdentityType extends AbstractType
                             new NotNull(),
                             new NotBlank(),
                         ],
-                        'attr' => (Identity::TYPE_MEMBER === $type)
+                        'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                                 'data-multiple-fields' => 1,

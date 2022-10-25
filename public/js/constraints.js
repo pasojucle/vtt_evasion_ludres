@@ -69,17 +69,20 @@ function validate(element){
                     target.replaceWith($(response.html));
                 }
             }
-            if (response.status === 'SUCCESS') {
-                if (response.multiple === true) {
-                    $('[data-constraint="'+input.data('constraint')+'"]').parent().removeClass('warning').addClass('success');
+            if (!input.is(':disabled')) {
+                if (response.status === 'SUCCESS') {
+                    if (response.multiple === true) {
+                        $('[data-constraint="'+input.data('constraint')+'"]').parent().removeClass('alert-warning').addClass('success');
+                    } else {
+                        input.parent().removeClass('alert-warning').addClass('success');
+                    }
+                } else if (response.status === 'ALERT_WARNING') {
+                    input.parent().removeClass('success').addClass('alert-warning');
                 } else {
-                    input.parent().removeClass('alert-warning').addClass('success');
+                    input.parent().removeClass('success').removeClass('alert-warning');
                 }
-            } else if (response.status === 'ALERT_WARNING') {
-                input.parent().removeClass('success').addClass('alert-warning');
-            } else {
-                input.parent().removeClass('success').removeClass('alert-warning');
             }
+
         }
     });
 }
