@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
+use App\Entity\User;
 use App\Form\SurveyResponsesType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyRepository;
@@ -28,6 +29,7 @@ class SurveyController extends AbstractController
     public function show(Request $request, RespondentRepository $respondentRepository, Survey $survey): Response
     {
         $form = $message = $respondent = null;
+        /** @var User $user */
         $user = $this->getUser();
         $surveyResponses = [];
         $now = new DateTime();
@@ -108,9 +110,11 @@ class SurveyController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        /** @var ?User $user */
+        $user = $this->getUser();
         return $this->render('survey/list.html.twig', [
-            'surveys' => $surveyRepository->findActive($this->getUser()),
-            'respondents' => $respondentRepository->findActiveSurveysByUser($this->getUser()),
+            'surveys' => $surveyRepository->findActive($user),
+            'respondents' => $respondentRepository->findActiveSurveysByUser($user),
         ]);
     }
 }

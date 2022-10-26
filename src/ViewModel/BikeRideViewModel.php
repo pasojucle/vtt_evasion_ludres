@@ -60,6 +60,9 @@ class BikeRideViewModel extends AbstractViewModel
 
     public static function fromBikeRide(BikeRide $bikeRide, ServicesPresenter $services)
     {
+        /** @var User $user */
+        $user = $services->security->getUser();
+
         $bikeRideView = new self();
         $bikeRideView->entity = $bikeRide;
         $bikeRideView->bikeRideType = $bikeRide->getBikeRideType();
@@ -76,9 +79,9 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->displayAt = $bikeRideView->startAt->setTime(0, 0, 0);
         $bikeRideView->closingAt = $bikeRideView->startAt->setTime(23, 59, 59);
         $bikeRideView->displayClass = $bikeRideView->getDisplayClass();
-        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($services->security->getUser());
+        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($user);
         $bikeRideView->period = $bikeRideView->getPeriod($services->appExtension);
-        $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($services->security->getUser());
+        $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($user);
         $bikeRideView->isRegistrable = $bikeRideView->isRegistrable();
         $bikeRideView->survey = $bikeRide->getSurvey();
 

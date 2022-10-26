@@ -35,6 +35,7 @@ class UserController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        /** @var ?User $user */
         $user = $this->getUser();
         if (null === $user) {
             $this->redirectToRoute('login');

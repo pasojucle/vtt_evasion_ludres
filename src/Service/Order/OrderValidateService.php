@@ -8,7 +8,7 @@ use App\Entity\OrderHeader;
 use App\Service\MailerService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OrderValidateService
@@ -29,7 +29,7 @@ class OrderValidateService
         $this->router = $router;
     }
 
-    public function execute(Form $form): void
+    public function execute(FormInterface $form): void
     {
         $orderHeader = $form->getData();
 

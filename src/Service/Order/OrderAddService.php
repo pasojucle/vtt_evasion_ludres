@@ -18,6 +18,8 @@ use Symfony\Component\Security\Core\Security;
 
 class OrderAddService
 {
+    private User $user;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private OrderHeaderRepository $orderHeaderRepository,
@@ -28,9 +30,11 @@ class OrderAddService
 
     public function execute(Product $product, Form &$form): void
     {
-        $user = $this->security->getUser();
+        /** @var User $userConnected */
+        $userConnected = $this->security->getUser();
+        $this->user = $userConnected;
         $orderLine = $form->getData();
-        $orderHeader = $this->getOrderHeader($user);
+        $orderHeader = $this->getOrderHeader();
 
         $orderLine->setProduct($product);
         $orderLine = $this->setOrderLine($orderHeader, $orderLine);
@@ -42,12 +46,12 @@ class OrderAddService
         }
     }
 
-    private function getOrderHeader(User $user): OrderHeader
+    private function getOrderHeader(): OrderHeader
     {
-        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($user);
+        $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($this->user);
         if (null === $orderHeader) {
             $orderHeader = new OrderHeader();
-            $orderHeader->setUser($user)
+            $orderHeader->setUser($this->user)
                 ->setCreatedAt(new DateTime())
                 ->setStatus(OrderHeader::STATUS_IN_PROGRESS)
                 ;
@@ -80,7 +84,7 @@ class OrderAddService
         $session = $this->requestStack->getSession();
         $modalWindowShowOn = $session->get('modal_window_show_on');
         $modalWindowShowOn = (null !== $modalWindowShowOn) ? json_decode($modalWindowShowOn) : [];
-        $modalWindowShowOn[] = $this->security->getUser()->getLicenceNumber() . '-' . (new ReflectionClass($orderHeader))->getShortName() . '-' . $orderHeader->getId();
+        $modalWindowShowOn[] = $this->user->getLicenceNumber() . '-' . (new ReflectionClass($orderHeader))->getShortName() . '-' . $orderHeader->getId();
         $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
     }
 }

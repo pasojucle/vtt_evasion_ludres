@@ -67,8 +67,7 @@ class Identity
     private ?int $kinship = null;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'identities')]
-    #[JoinColumn(nullable: false)]
-    private User $user;
+    private ?User $user;
 
     #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $email = null;

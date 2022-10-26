@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Order;
 
 use App\Entity\OrderHeader;
+use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
 use Symfony\Component\Security\Core\Security;
 
@@ -22,8 +23,9 @@ class OrderGetService
 
     public function getOrderByUser(): ?OrderHeader
     {
+        /** @var ?User $user */
         $user = $this->security->getUser();
-        if (!$user) {
+        if (null === $user) {
             return null;
         }
 

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\ModalWindow;
 
+use App\Entity\User;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
-use App\Service\UserService;
 use App\ViewModel\ModalWindow\ModalWindowsPresenter;
 use App\ViewModel\ModalWindow\ModalWindowViewModel;
+use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
@@ -18,11 +19,11 @@ class ShowModalWindow
     public function __construct(
         private RequestStack $requestStack,
         private Security $security,
-        private UserService $userService,
         private ModalWindowRepository $modalWindowRepository,
         private SurveyRepository $surveyRepository,
         private OrderHeaderRepository $orderHeaderRepository,
-        private ModalWindowsPresenter $modalWindowsPresenter
+        private ModalWindowsPresenter $modalWindowsPresenter,
+        private UserPresenter $userPresenter
     ) {
     }
 
@@ -32,10 +33,14 @@ class ShowModalWindow
         $modalWindowShowOn = (null !== $session->get('modal_window_show_on'))
             ? json_decode($session->get('modal_window_show_on'), true)
             : [];
+            
+        /** @var User $user */
         $user = $this->security->getUser();
 
         if (null !== $user) {
-            $user = $this->userService->convertToUser($user);
+            $this->userPresenter->present($user);
+            $user = $this->userPresenter->viewModel();
+
             $modalWindows = $this->modalWindowRepository->findLastByAge($user->member?->age);
             $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user->entity);
             $modalWindows = array_merge($modalWindows, $surveys);

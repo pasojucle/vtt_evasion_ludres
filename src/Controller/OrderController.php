@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\OrderHeader;
+use App\Entity\User;
 use App\Form\OrderType;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
@@ -42,7 +43,7 @@ class OrderController extends AbstractController
         Request $request
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
-
+        /** @var ?User $user */
         $user = $this->getUser();
         if (null === $user) {
             return $this->redirectToRoute('home');
@@ -152,6 +153,7 @@ class OrderController extends AbstractController
         Request $request
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        /** @var User $user */
         $user = $this->getUser();
         $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);

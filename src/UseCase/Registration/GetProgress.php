@@ -102,8 +102,10 @@ class GetProgress
         $userId = ($sesssion->has('registration_user_id')) ? $sesssion->get('registration_user_id') : null;
         $user = (null !== $userId) ? $this->userRepository->find($userId) : null;
 
+        /** @var User $userConnected */
+        $userConnected = $this->security->getUser();
         $this->user = ('user_registration_form' === $this->requestStack->getCurrentRequest()->get('_route'))
-            ? $this->security->getUser()
+            ? $userConnected
             : $user;
 
 
@@ -153,7 +155,6 @@ class GetProgress
             if (!$this->user->getApprovals()->isEmpty()) {
                 $this->removeMinorApprovals();
             }
-
             if (!$this->user->getIdentities()->isEmpty()) {
                 $this->removeKinship();
             }
@@ -316,7 +317,7 @@ class GetProgress
     private function removeKinship(): void
     {
         foreach ($this->user->getIdentities() as $identity) {
-            if (null !== $identity->getKinship()) {
+            if (Identity::TYPE_MEMBER !== $identity->getType()) {
                 if ($identity->isEmpty()) {
                     $address = $identity->getAddress();
                     if (null !== $address) {

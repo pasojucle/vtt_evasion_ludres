@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class OrderLinesViewModel extends AbstractViewModel
 {
     public array $lines = [];
 
-    public static function fromOrderLines(collection $orderLines, UserViewModel $orderUser, ServicesPresenter $services, ?Form $form = null)
+    public static function fromOrderLines(collection $orderLines, UserViewModel $orderUser, ServicesPresenter $services, ?FormInterface $form = null)
     {
         $linesView = new self();
         if (!$orderLines->isEmpty()) {

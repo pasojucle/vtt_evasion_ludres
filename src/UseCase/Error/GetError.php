@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Error;
 
 use App\Entity\LogError;
+use App\Entity\User;
 use App\Service\ParameterService;
 use DateTime;
 use ErrorException;
@@ -46,7 +47,7 @@ class GetError
             $logError->setStatusCode($statusCode);
 
             if (403 === $statusCode) {
-                $logError->setRoute($exception->getPrevious()->getSubject()->attributes->get('_route'))
+                $logError->setRoute($exception->getPrevious()->subject->attributes->get('_route'))
                     ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.')
                 ;
             }
@@ -76,8 +77,9 @@ class GetError
         }
     }
 
-    private function addUser(LogError &$logError): void
+    public function addUser(LogError &$logError): void
     {
+        /** @var ?User $user */
         $user = $this->security->getUser();
         if ($user) {
             $logError->setUser($user);

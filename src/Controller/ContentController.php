@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Link;
+use App\Entity\User;
 use App\Form\ContactType;
 use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
@@ -113,6 +114,7 @@ class ContentController extends AbstractController
         MailerService $mailerService,
         UserPresenter $userPresenter
     ): Response {
+        /** @var ?User $user */
         $user = $this->getUser();
         $data = null;
         if (null !== $user) {

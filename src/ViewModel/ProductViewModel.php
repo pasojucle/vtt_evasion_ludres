@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use App\Entity\Product;
+use App\Entity\User;
 use App\ViewModel\UserViewModel;
 use Doctrine\Common\Collections\Collection;
 
@@ -57,8 +58,10 @@ class ProductViewModel extends AbstractViewModel
         $productView->discountPrice = null;
         $productView->discountTitle = null;
 
-        if (null === $user && $services->security->getUser()) {
-            $user = UserViewModel::fromUser($services->security->getUser(), $services);
+        /** @var ?User $userConnected */
+        $userConnected = $services->security->getUser();
+        if (null === $user && $userConnected) {
+            $user = UserViewModel::fromUser($userConnected, $services);
         }
         
         if (null !== $user && $user instanceof UserViewModel) {

@@ -26,8 +26,7 @@ class HealthQuestion
     private ?bool $value = null;
 
     #[ManyToOne(targetEntity: Health::class, inversedBy: 'healthQuestions')]
-    #[JoinColumn(nullable: false)]
-    private Health $health;
+    private ?Health $health;
 
     public function getId(): ?int
     {
@@ -58,12 +57,12 @@ class HealthQuestion
         return $this;
     }
 
-    public function getHealth(): Health
+    public function getHealth(): ?Health
     {
         return $this->health;
     }
 
-    public function setHealth(Health $health): self
+    public function setHealth(?Health $health): self
     {
         $this->health = $health;
 

@@ -6,7 +6,7 @@ namespace App\ViewModel;
 
 use App\Entity\OrderHeader;
 use App\ViewModel\UserViewModel;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class OrderViewModel extends AbstractViewModel
 {
@@ -24,7 +24,7 @@ class OrderViewModel extends AbstractViewModel
 
     public string $createdAt;
 
-    public static function fromOrderHeader(OrderHeader $orderHeader, ServicesPresenter $services, ?Form $form = null)
+    public static function fromOrderHeader(OrderHeader $orderHeader, ServicesPresenter $services, ?FormInterface $form = null)
     {
         $orderView = new self();
         $orderView->id = $orderHeader->getId();

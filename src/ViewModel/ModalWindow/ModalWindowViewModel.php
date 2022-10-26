@@ -7,6 +7,7 @@ namespace App\ViewModel\ModalWindow;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
+use App\Entity\User;
 use App\ViewModel\AbstractViewModel;
 use App\ViewModel\ServicesPresenter;
 use ReflectionClass;
@@ -66,6 +67,8 @@ class ModalWindowViewModel extends AbstractViewModel
 
     private function getIndex(Survey|OrderHeader|ModalWindow $entity)
     {
-        return $this->services->security->getUser()->getLicenceNumber() . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
+        /** @var User $user */
+        $user = $this->services->security->getUser();
+        return $user->getLicenceNumber() . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
     }
 }
