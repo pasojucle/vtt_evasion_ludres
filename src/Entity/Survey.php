@@ -48,7 +48,7 @@ class Survey
     private Collection $respondents;
 
     #[Column(type: 'boolean', options:['default' => true])]
-    private bool $isAnonymous = true;
+    private bool $isAnonymous = false;
 
     #[OneToOne(inversedBy: 'survey', targetEntity: BikeRide::class, cascade: ['persist', 'remove'])]
     private ?BikeRide $bikeRide = null;

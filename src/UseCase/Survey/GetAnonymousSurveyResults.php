@@ -27,7 +27,7 @@ class GetAnonymousSurveyResults
         }
         foreach ($surveyResponsesByIssues as $responses) {
             foreach ($responses as $response) {
-                if (SurveyIssue::RESPONSE_TYPE_CHOICE === $response->getSurveyIssue()->getResponseType()) {
+                if (SurveyIssue::RESPONSE_TYPE_STRING !== $response->getSurveyIssue()->getResponseType()) {
                     $surveyIssueId = $response->getSurveyIssue()->getId();
                     if (!array_key_exists($surveyIssueId, $results)) {
                         $results[$surveyIssueId]['results'] = $values;

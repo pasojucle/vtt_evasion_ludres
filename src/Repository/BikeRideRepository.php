@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\Survey;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -107,7 +108,10 @@ class BikeRideRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('br')
             ->andWhere($orX)
-            ->andWhere((new Expr())->eq('br.deleted', ':deleted'), )
+            ->andWhere(
+                (new Expr())->eq('br.deleted', ':deleted'),
+                (new Expr())->notIn('br', $this->getBikeRideWithSurvey()),
+            )
             ->setParameters($params)
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
@@ -121,11 +125,25 @@ class BikeRideRepository extends ServiceEntityRepository
     public function findAllDESC(): array
     {
         return $this->createQueryBuilder('br')
-            ->andWhere((new Expr())->eq('br.deleted', ':deleted'), )
+            ->andWhere(
+                (new Expr())->eq('br.deleted', ':deleted'),
+                (new Expr())->notIn('br', $this->getBikeRideWithSurvey()),
+            )
             ->setParameter('deleted', 0)
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    private function getBikeRideWithSurvey(): string
+    {
+        return $this->_em->createQueryBuilder()
+            ->select('(s.bikeRide)')
+            ->from(Survey::class, 's')
+            ->where(
+                (new Expr())->isNotNull('s.bikeRide')
+            )
+            ->getDQL();
     }
 }
