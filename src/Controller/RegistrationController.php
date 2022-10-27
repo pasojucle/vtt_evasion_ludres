@@ -77,6 +77,10 @@ class RegistrationController extends AbstractController
         EditRegistration $editRegistration,
         int $step
     ): Response {
+        if ('registration_form' === $request->attributes->get('_route') && null !== $this->getUser()) {
+            return $this->redirectToRoute('user_registration_form', ['step' => $step]);
+        }
+        
         if ((int) $this->requestStack->getSession()->get('registrationMaxStep') < $step) {
             $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
