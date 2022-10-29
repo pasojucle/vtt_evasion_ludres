@@ -18,7 +18,7 @@ parameters:
     cmd_directory_path: '%kernel.project_dir%/data/cmd/'
     environment: '%env(APP_ENV)%'
     maintenance:
-        ipAuthorized: ["127.0.0.1","88.166.188.236"] 
+        ipAuthorized: ["127.0.0.1","88.166.188.236","86.216.124.78","81.51.249.36"] 
 
 services:
     # default configuration for services in *this* file
