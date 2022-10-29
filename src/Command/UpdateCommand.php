@@ -20,6 +20,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class UpdateCommand extends Command
 {
+    private bool $isMaintenance;
+    private SymfonyStyle $ssio;
+
     public function __construct(
         private ParameterRepository $parameterRepository,
         private EntityManagerInterface $entityManager,
@@ -31,33 +34,33 @@ class UpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->ssio = new SymfonyStyle($input, $output);
 
         $maintenance = $this->parameterRepository->findOneByName('MAINTENANCE_MODE');
-        $io->writeln('Mise du site en maintenance');
-        $maintenance->setValue('1');
-        $this->entityManager->flush();
+        $this->isMaintenance = (bool) $maintenance->getValue();
+
+        $this->setMaintenance('1');
 
         if ('patrick' !== getenv('USER')) {
-            $io->writeln('git reset --hard');
+            $this->ssio->writeln('git reset --hard');
             $output = shell_exec('git reset --hard');
-            $io->writeln($output);
+            $this->ssio->writeln($output);
 
-            $io->writeln('git pull');
+            $this->ssio->writeln('git pull');
             $output = shell_exec('git pull');
-            $io->writeln($output);
+            $this->ssio->writeln($output);
         }
 
         if ('Déjà à jour.' !== $output) {
-            $io->writeln('version php :' . $this->commandLineService->getPhpVersion());
+            $this->ssio->writeln('version php :' . $this->commandLineService->getPhpVersion());
 
             $cmdComposer = ('patrick' === getenv('USER'))
                 ? 'composer install'
                 : $this->commandLineService->getBinay() . ' ../composer.phar install';
 
-            $io->writeln($cmdComposer);
+            $this->ssio->writeln($cmdComposer);
             $output = shell_exec($cmdComposer);
-            $io->writeln($output);
+            $this->ssio->writeln($output);
 
             $commands = [
                 ['cmd' => 'doctrine:migration:migrate -n', 'onlyOne' => false],
@@ -70,9 +73,9 @@ class UpdateCommand extends Command
                 $filename = $this->parameterBag->get('cmd_directory_path') . str_replace([':', ' '], '', $command['cmd']);
                 if (!($command['onlyOne'] && file_exists($filename))) {
                     $cmd = $this->commandLineService->getBinConsole() . ' ' . $command['cmd'];
-                    $io->writeln($cmd);
+                    $this->ssio->writeln($cmd);
                     $output = shell_exec($cmd);
-                    $io->writeln($output);
+                    $this->ssio->writeln($output);
                 }
                 if ($command['onlyOne']) {
                     file_put_contents($filename, '');
@@ -80,12 +83,19 @@ class UpdateCommand extends Command
             }
         }
 
-        $io->writeln('Suppression du mode maintenance');
-        $maintenance->setValue('0');
-        $this->entityManager->flush();
+        $this->setMaintenance('0');
 
-        $io->success('Mise à jour effectuée.');
+        $this->ssio->success('Mise à jour effectuée.');
 
         return Command::SUCCESS;
     }
+
+     private function setMaintenance(string $value): void
+     {
+        if (false === $this->isMaintenance) {
+            $messsage = ('0' === $value) ? 'Suppression du mode maintenance' : 'Mise du site en maintenance';
+            $this->entityManager->flush();
+            $this->ssio->writeln($messsage);
+        }
+     }
 }
