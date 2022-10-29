@@ -13,8 +13,15 @@ class BackgroundService
     {
     }
 
-    public function getDefault(): Collection
+    public function getDefaults(): Collection
     {
         return $this->contentRepository->findOneByRoute('default')?->getBackgrounds();
+    }
+
+    public function getDefault(): ?string
+    {
+        $defaults = $this->getDefaults();
+    
+        return (!$defaults->isEmpty()) ? '/images/background/landscape_xl/' . $defaults->first()->getFilename() : null;
     }
 }

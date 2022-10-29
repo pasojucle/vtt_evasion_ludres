@@ -1,5 +1,5 @@
 {% if backgrounds is not defined or backgrounds is empty %}
-    {% set backgrounds = background_service.default %}
+    {% set backgrounds = background_service.defaults %}
 {% endif %}
 {% if backgrounds is defined %}
     <div is="my-carrousel" class="full-background">

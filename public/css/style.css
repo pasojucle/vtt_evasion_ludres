@@ -276,8 +276,14 @@ p + p {
     padding-top: 150px;
     padding-bottom: 150px;
 }
-.wrapper {
+.wrapper:not(.wrapper-maintenance) {
     min-height: calc(100vh - 200px);
+}
+.wrapper-maintenance {
+    min-height: 100vh;
+}
+.wrapper-full-width.wrapper-maintenance h1 {
+    color: var(--primary-color-darker);
 }
 .news-container {
     grid-area: news;
@@ -370,12 +376,6 @@ button[type="submit"] {
 .bike-rides .bike-ride-btn {
     display: none;
 }
-/*.full-background {
-    background-image: url(../images/20210708_134713.jpg);
-    background-size: cover;
-    background-attachment: fixed;
-    min-height: 100vh;
-}*/
 .wrapper-full-background h1, .wrapper-medium-width h1, .wrapper-full-width h1 {
     margin-bottom: 100px;
     color: rgba(255,255,255,0.4);

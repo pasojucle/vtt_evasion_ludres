@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventListeners;
 
+use App\Service\BackgroundService;
 use App\Service\ParameterService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -14,7 +15,7 @@ class MaintenanceListener
     private bool $maintenanceMode;
     private array $ipAuthorized;
 
-    public function __construct(array $maintenance, private Environment $environment, private ParameterService $parameterService)
+    public function __construct(array $maintenance, private Environment $environment, private ParameterService $parameterService, private BackgroundService $backgroundService)
     {
         $this->environment = $environment;
         $this->parameterService = $parameterService;
@@ -33,7 +34,7 @@ class MaintenanceListener
         if ($maintenance and !in_array($currentIP, $this->ipAuthorized, true)) {
             // We load our maintenance template
 
-            $template = $this->environment->render('maintenance/maintenance.html.twig');
+            $template = $this->environment->render('maintenance/maintenance.html.twig', ['default_background' => $this->backgroundService->getDefault()]);
             // We send our response with a 503 response code (service unavailable)
             $event->setResponse(new Response($template, 503));
             $event->stopPropagation();
