@@ -3,32 +3,31 @@
 {% block title %}Gestion des images de fond{% endblock %}
 
 {% block body %}
- <div class="wrapper">
-            <div class="wrapper-title">
-                <h1>Gestion des images de fond</h1>
-            </div>
-            <div class="wrapper-body">
-                <span class="tools">
-                    <a href="{{ path('admin_background_edit') }}" class="btn btn-primary" title="Ajouter une image"><i class="fas fa-plus"></i> Ajouter une image</a>
-                </span>
-                <ul style="display: flex; flex-wrap: wrap;">
-                    {% for background in backgrounds %}
-                        <li class="card card-background">
-                            <a href="{{ path('admin_background_edit', {'background' : background.entity.id}) }}">
-                                <div class="card-img" style="background-image: url({{ background.path }})"></div>
-                                <div class="card-body">{{ background.filename }} </div>
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Gestion des images de fond</h1>
+        </div>
+        <div class="wrapper-body">
+            <span class="tools">
+                <a href="{{ path('admin_background_edit') }}" class="btn btn-primary" title="Ajouter une image"><i class="fas fa-plus"></i> Ajouter une image</a>
+            </span>
+            <ul style="display: flex; flex-wrap: wrap;">
+                {% for background in backgrounds %}
+                    <li class="card card-background">
+                        <a href="{{ path('admin_background_edit', {'background' : background.entity.id}) }}">
+                            <div class="card-img" style="background-image: url({{ background.path }})"></div>
+                            <div class="card-body">{{ background.filename }} </div>
+                        </a>
+                        <span class="tools">
+                            <a class="btn btn-danger" href="{{ path('admin_background_delete', {'background' : background.entity.id}) }}"  title="Supprimer" data-toggle="modal" data-type="danger">
+                                <i class="fas fa-times-circle"></i>
                             </a>
-                            <span class="tools">
-                                <a class="btn btn-danger" href="{{ path('admin_background_delete', {'background' : background.entity.id}) }}"  title="Supprimer" data-toggle="modal" data-type="danger">
-                                    <i class="fas fa-times-circle"></i>
-                                </a>
-                            </span>
-                        </li>
-                        {# <a class="btn btn-primary btn-ico" href="{{ path('admin_product', {'product' : product.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                        <a class="btn btn-danger btn-ico" href="{{ path('admin_product_delete', {'product' : product.id}) }}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a> #}
-                    {% endfor %}
-                </ul>
-            </div>
+                        </span>
+                    </li>
+                    {# <a class="btn btn-primary btn-ico" href="{{ path('admin_product', {'product' : product.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                    <a class="btn btn-danger btn-ico" href="{{ path('admin_product_delete', {'product' : product.id}) }}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a> #}
+                {% endfor %}
+            </ul>
         </div>
         {% include('common/pagination.html.twig') %}
     </div>

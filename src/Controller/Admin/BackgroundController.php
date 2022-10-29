@@ -38,6 +38,7 @@ class BackgroundController extends AbstractController
         return $this->render('background/admin/list.html.twig', [
             'backgrounds' => $presenter->viewModel()->backgrounds,
             'lastPage' => $paginator->lastPage($backgrounds),
+            'count' => $paginator->total($backgrounds),
         ]);
     }
 
