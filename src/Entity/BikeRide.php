@@ -68,7 +68,7 @@ class BikeRide
     private Collection $clusters;
 
     #[Column(type: 'integer', options: ['default' => 1])]
-    private $closingDuration = 1;
+    private $closingDuration = 2;
 
     #[ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'bikeRides')]
     #[JoinColumn(nullable: false)]
