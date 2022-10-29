@@ -285,6 +285,11 @@ p + p {
 .wrapper-full-width.wrapper-maintenance h1 {
     color: var(--primary-color-darker);
 }
+.wrapper-full-width.wrapper-maintenance .address-ip {
+    color: var(--primary-color-darker);
+    background-color: rgba(256, 256, 256, 0.8);
+    padding: 10px;
+}
 .news-container {
     grid-area: news;
 }

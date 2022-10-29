@@ -34,7 +34,10 @@ class MaintenanceListener
         if ($maintenance and !in_array($currentIP, $this->ipAuthorized, true)) {
             // We load our maintenance template
 
-            $template = $this->environment->render('maintenance/maintenance.html.twig', ['default_background' => $this->backgroundService->getDefault()]);
+            $template = $this->environment->render('maintenance/maintenance.html.twig', [
+                'default_background' => $this->backgroundService->getDefault(),
+                'address_ip' => $_SERVER['REMOTE_ADDR'],
+            ]);
             // We send our response with a 503 response code (service unavailable)
             $event->setResponse(new Response($template, 503));
             $event->stopPropagation();
