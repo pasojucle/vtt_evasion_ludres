@@ -19,6 +19,8 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 
     public string $remoteRoute = 'admin_registration_choices';
 
+    public string $exportFilename = 'export_des_inscriptions.csv';
+
     public function getQuery(array $filters): QueryBuilder
     {
         return $this->userRepository->findLicenceInProgressQuery($filters);

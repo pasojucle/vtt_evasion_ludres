@@ -18,6 +18,8 @@ class GetCoveragesFiltered extends GetUsersFiltered
 
     public string $remoteRoute = 'admin_coverage_choices';
 
+    public string $exportFilename = 'export_list_assurances.csv';
+
     public function getQuery(array $filters): QueryBuilder
     {
         return $this->userRepository->findCoverageQuery($filters);

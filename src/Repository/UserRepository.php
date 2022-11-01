@@ -204,9 +204,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb
             ->andWhere(
                 $qb->expr()->eq('li.final', ':finalNew'),
+                $qb->expr()->eq('li.status', ':statusNew'),
             )
             ->setParameter('finalNew', true)
-            ->groupBy('s.user')
+            ->setParameter('statusNew', Licence::STATUS_WAITING_VALIDATE)
+            ->groupBy('u.id')
             ->andHaving(
                 $qb->expr()->eq($qb->expr()->count('li.id'), 1)
             )
@@ -219,9 +221,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb
             ->andWhere(
                 $qb->expr()->eq('li.final', ':finalRenew'),
+                $qb->expr()->gte('li.status', ':statusRenew'),
             )
             ->setParameter('finalRenew', true)
-            ->groupBy('s.user')
+            ->setParameter('statusRenew', Licence::STATUS_WAITING_VALIDATE)
+            ->groupBy('u.id')
             ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('li.id'), 1)
             )
@@ -261,7 +265,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('final', false)
             ->setParameter('typeSchool', Level::TYPE_SCHOOL_MEMBER)
             ->setParameter('typeAdulte', Level::TYPE_ADULT_MEMBER)
-            ->groupBy('s.user')
+            ->groupBy('u.id')
             ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('s.id'), 2)
             )
@@ -381,15 +385,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $this->addCriteriaBySeason($qb, $currentSeason);
-        $qb
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->eq('li.status', ':inProgress'),
-                    $qb->expr()->eq('li.final', ':final')
-                )
-            )
-            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE)
-            ->setParameter('final', 0);
 
         return $this->orderByASC($qb);
     }

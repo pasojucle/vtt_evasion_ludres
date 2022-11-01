@@ -36,6 +36,5 @@ class DiseaseService
             }
             $user->getHealth()->addDisease($currentDisease);
         }
-
     }
 }

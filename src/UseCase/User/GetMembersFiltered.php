@@ -17,6 +17,8 @@ class GetMembersFiltered extends GetUsersFiltered
 
     public string $remoteRoute = 'admin_member_choices';
 
+    public string $exportFilename = 'export_adherents.csv';
+
     public function getQuery(array $filters): QueryBuilder
     {
         return $this->userRepository->findMemberQuery($filters);

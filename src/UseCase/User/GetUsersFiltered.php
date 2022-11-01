@@ -10,7 +10,6 @@ use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -24,6 +23,7 @@ abstract class GetUsersFiltered
     public string $filterName;
     public string $statusPlaceholder;
     public string $remoteRoute;
+    public string $exportFilename;
 
     public function __construct(
         private PaginatorService $paginator,
@@ -85,7 +85,7 @@ abstract class GetUsersFiltered
         $response = new Response($content);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            'export_email.csv'
+            $this->exportFilename
         );
 
         $response->headers->set('Content-Disposition', $disposition);
