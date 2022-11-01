@@ -54,15 +54,15 @@
                 </table>
                 {% if user.health.diseases is not empty %}
                     <table class="table-border">
-                        {% for type, diseases in user.health.diseases %}
+                        {% for category, diseases in user.health.diseases %}
                             {% for disease in diseases %}
                                 <tr>
-                                    <td><b>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</b></td>
+                                    <td><b>{{ disease.category|trans }}</b></td>
                                     {% if disease.title is not null %}
-                                        <td>{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                                        <td>{{ disease.label }}</td>
                                         <td>{{ disease.title }}</td>
                                     {% else %}
-                                        <td colspan="2">{{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}</td>
+                                        <td colspan="2">{{ disease.label }}</td>
                                     {% endif %}
                                     <td>{{ disease.curentTreatment }}</td>
                                     <td>{{ disease.emergencyTreatment }}</td>

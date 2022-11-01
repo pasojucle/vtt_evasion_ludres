@@ -17,6 +17,7 @@ use App\Form\UserType;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Repository\UserRepository;
+use App\Service\DiseaseService;
 use App\Service\LicenceService;
 use App\Service\SeasonService;
 use App\ViewModel\RegistrationStepPresenter;
@@ -43,7 +44,8 @@ class GetProgress
         private Security $security,
         private EntityManagerInterface $entityManager,
         private LicenceService $licenceService,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
+        private DiseaseService $diseaseService
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
@@ -144,9 +146,9 @@ class GetProgress
             if ($this->user->getApprovals()->count() < count(User::APPROVALS)) {
                 $this->createApproval(User::APPROVAL_GOING_HOME_ALONE);
             }
-            if ($this->user->getHealth()->getDiseases()->isEmpty()) {
-                $this->createDisease();
-            }
+
+            $this->diseaseService->updateAndSortdiseases($user);
+
             if (!$this->seasonLicence->isFinal()) {
                 $this->setAwaitingLevel();
             }
@@ -271,24 +273,7 @@ class GetProgress
         $this->entityManager->persist($aproval);
     }
 
-    private function createDisease(): void
-    {
-        foreach (array_keys(Disease::LABELS) as $label) {
-            $type = Disease::TYPE_DISEASE;
-            if (Disease::LABEL_OTHER < $label) {
-                $type = Disease::TYPE_ALLERGY;
-            }
-            if (Disease::LABEL_POLLEN_BEES < $label) {
-                $type = Disease::TYPE_INTOLERANCE;
-            }
-            $disease = new Disease();
-            $disease->setType($type)
-                ->setLabel($label)
-            ;
-            $this->entityManager->persist($disease);
-            $this->user->getHealth()->addDisease($disease);
-        }
-    }
+
 
     private function setAwaitingLevel(): void
     {

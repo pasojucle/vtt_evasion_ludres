@@ -90,12 +90,12 @@ class UpdateCommand extends Command
         return Command::SUCCESS;
     }
 
-     private function setMaintenance(string $value): void
-     {
+    private function setMaintenance(string $value): void
+    {
         if (false === $this->isMaintenance) {
             $messsage = ('0' === $value) ? 'Suppression du mode maintenance' : 'Mise du site en maintenance';
             $this->entityManager->flush();
             $this->ssio->writeln($messsage);
         }
-     }
+    }
 }

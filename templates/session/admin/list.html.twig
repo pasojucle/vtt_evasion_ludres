@@ -15,14 +15,19 @@
                         </div>
                     </div>
                 </div>
-                {% if user.approvalGoingHome is not null %}
-                    <span class="col-md-3 col-xs-2 home {{ user.approvalGoingHome.class.color }}"></span>
-                {% endif %}
-                {% if session.availability is not empty %}
-                    <div class="col-md-3 col-xs-2">
-                        <span class="{{ session.availability.class.badge }}"></span>
+                <div class="col-md-3 col-xs-2">
+                    <div class="row">
+                        {% if user.approvalGoingHome is not null %}
+                            <div class="home {{ user.approvalGoingHome.class.color }}"></div>
+                        {% endif %}
+                        {% if user.health.hasBikeRideAlert() %}
+                            <div class="medical-plus"></div>
+                        {% endif %}
+                        {% if session.availability is not empty %}
+                            <div class="{{ session.availability.class.badge }}"></div>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
             </div>
         </a>
         {% include 'user/admin/dropdown.html.twig' with {'session' : session} %}

@@ -160,7 +160,6 @@ body > script {display: none !important;}
     line-height: 30px;
     text-align: center;
     border: 2px solid var(--white-color);
-    margin: -10px;
 }
 .person.person-check::before,
 .person.person-question::before,
@@ -175,7 +174,7 @@ body > script {display: none !important;}
     line-height: 30px;
     text-align: center;
     border: 2px solid var(--white-color);
-    margin: -10px;
+    margin: -10px auto;
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
 }
@@ -220,6 +219,27 @@ body > script {display: none !important;}
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
+}
+.medical-plus, .home {
+    width: 30px;
+    height: 30px;
+}
+.medical-plus:not(:first-child), .home:not(:first-child) {
+    margin-left: 10px;
+}
+.medical-plus::before {
+    content: '\2b';
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 33px;
+    color: var(--danger-color);
+    background-color: var(--white-color);
+    height: 30px;
+    width: 30px;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 5px;
 }
 .fas.fa-check-circle {
     font-size: 20px;

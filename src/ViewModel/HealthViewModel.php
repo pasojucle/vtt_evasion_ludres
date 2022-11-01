@@ -72,7 +72,7 @@ class HealthViewModel extends AbstractViewModel
         $diseases = [];
         foreach ($allDiseases as $disease) {
             if (null !== $disease->getTitle() || null !== $disease->getCurentTreatment() || null !== $disease->getEmergencyTreatment()) {
-                $diseases[$disease->getType()][] = DiseaseViewModel::fromDisease($disease);
+                $diseases[$disease->getDiseaseKind()->getCategory()][] = DiseaseViewModel::fromDisease($disease);
             }
         }
 
@@ -91,5 +91,15 @@ class HealthViewModel extends AbstractViewModel
         }
 
         return $isMedicalCertificateRequired;
+    }
+
+    public function hasBikeRideAlert(): bool
+    {
+        foreach ($this->entity->getDiseases() as $disease) {
+            if ((null !== $disease->getTitle() || null !== $disease->getCurentTreatment() || null !== $disease->getEmergencyTreatment()) && $disease->getDiseaseKind()->hasBikeRideAlert()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\DiseaseKind;
 use App\Entity\Health;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -17,7 +18,7 @@ class HealthDiseaseType extends AbstractType
         $builder
             ->add('diseases', CollectionType::class, [
                 'label' => false,
-                'entry_type' => DiseaseType::class,
+                'entry_type' => DiseaseKind::class,
                 'entry_options' => [
                     'label' => false,
                 ],

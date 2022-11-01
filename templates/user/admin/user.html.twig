@@ -81,97 +81,94 @@
                     </ul>
                 </div>
             {% endif %}
-                <div class="block background-ligth">
-                    <div class="block-title">
-                        <h2>Licence</h2>
-                        {% if is_granted('ROLE_REGISTER') %}
-                            <div class="tools">
-                            <a href="{{ path('admin_user_edit', {'user': user.entity.id}) }}"
-                                    class="btn" title="Modifier">
-                                    <i class="fas fa-edit"></i> 
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="block-body">
-                        <ul>
-
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Numéro</b></div><div class="col-md-8 col-xs-6">{{ user.licenceNumber }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Saison</b></div><div class="col-md-8 col-xs-6">{{ licence.season }}</div></div></li>
-                            {% if licence.status is not null %}
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.statusStr|trans }}</div></div></li>
-                            {% endif %}
-                            {% if licence.isFinal is same as(false) %}
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6">{{ user.testingBikeRides }} sortie(s)</div></div></li>
-                            {% endif %}
-
-                            {% if licence.type is not null %}
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Type : </b></div><div class="col-md-8 col-xs-6">{{ licence.type|trans }}</div></div></li>
-                            {% endif %}
-                            {% if licence.coverage is not null %}
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
-                            {% endif %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
-                            {% if user.level is not null %}
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b></div><div class="col-md-8 col-xs-6">{{ user.level }}</div></div></li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
-            
-
-                {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal and user.health is not empty %}
-                    <div class="block background-ligth">
-                    <div class="block-title">
-                        <h2>Informations sanitaires</h2>
-                        {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
-                            <div class="tools">
-                            <a href="{{ path('admin_health_edit', {'user': user.entity.id}) }}"
-                                    class="btn" title="Modifier">
-                                    <i class="fas fa-edit"></i> 
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="block-body">
-                        <div class="col-md-6 col-xs-12">
-                            <ul>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>N° de sécurité sociale :</b></div><div class="col-md-8 col-xs-6">{{ user.health.socialSecurityNumber }}</div></div></li>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Groupe sanguin : </b></div><div class="col-md-8 col-xs-6">{{ user.health.bloodGroup }}</div></div></li>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Mutuelle : </b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualCompany }}</div></div></li>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualNumber }}</div></div></li>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>antitétanique : </b></div><div class="col-md-8 col-xs-6">{{ user.health.tetanusBooster }}</div></div></li>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b>Médecin traitant : </b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorName }}</div></div></li>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorPhone }}</div></div></li>
-                                <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorAddress }} {{ user.health.doctorTown }}</div></div></li>
-                            </ul>
+            <div class="block background-ligth">
+                <div class="block-title">
+                    <h2>Licence</h2>
+                    {% if is_granted('ROLE_REGISTER') %}
+                        <div class="tools">
+                        <a href="{{ path('admin_user_edit', {'user': user.entity.id}) }}"
+                                class="btn" title="Modifier">
+                                <i class="fas fa-edit"></i> 
+                            </a>
                         </div>
-                    
-                        {% if user.health.diseases is not empty %}
-                            <div class="col-md-6 col-xs-12">
-                                {% for type, diseases in user.health.diseases %}
-                                    <h3>{{ constant('App\\Entity\\Disease::TYPES')[type] | trans }}</h3>
-                                    <ul class="with-list-style">
-                                        {% for disease in diseases %}
-                                            <li>
-                                                {{ constant('App\\Entity\\Disease::LABELS')[disease.label] | trans }}
-                                                {% if disease.title is not null %} : {{ disease.title }}{% endif %}
-                                                    <li><div class="row">
-                                                            <div class="col-md-4 col-xs-4"><b> </b></div>
-                                                            <div class="col-md-4 col-xs-4">{{ disease.curentTreatment }}</div>
-                                                            <div class="col-md-4 col-xs-4">{{ user.health.doctorAddress }} {{ user.health.doctorTown }}</div>
-                                                        </div>
-                                                    </li>
-
-                                                <i class="fas fa-file-medical"></i> <i class="fas fa-ambulance"></i> {{ disease.emergencyTreatment }}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     {% endif %}
                 </div>
+                <div class="block-body">
+                    <ul>
+
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Numéro</b></div><div class="col-md-8 col-xs-6">{{ user.licenceNumber }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Saison</b></div><div class="col-md-8 col-xs-6">{{ licence.season }}</div></div></li>
+                        {% if licence.status is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.statusStr|trans }}</div></div></li>
+                        {% endif %}
+                        {% if licence.isFinal is same as(false) %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6">{{ user.testingBikeRides }} sortie(s)</div></div></li>
+                        {% endif %}
+
+                        {% if licence.type is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Type : </b></div><div class="col-md-8 col-xs-6">{{ licence.type|trans }}</div></div></li>
+                        {% endif %}
+                        {% if licence.coverage is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
+                        {% endif %}
+                        <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
+                        {% if user.level is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b></div><div class="col-md-8 col-xs-6">{{ user.level }}</div></div></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        
+
+            {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal and user.health is not empty %}
+                <div class="block background-ligth">
+                <div class="block-title">
+                    <h2>Informations sanitaires</h2>
+                    {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                        <div class="tools">
+                        <a href="{{ path('admin_health_edit', {'user': user.entity.id}) }}"
+                                class="btn" title="Modifier">
+                                <i class="fas fa-edit"></i> 
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="block-body">
+                    <div class="col-md-6 col-xs-12">
+                        <ul>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>N° de sécurité sociale :</b></div><div class="col-md-8 col-xs-6">{{ user.health.socialSecurityNumber }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Groupe sanguin : </b></div><div class="col-md-8 col-xs-6">{{ user.health.bloodGroup }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Mutuelle : </b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualCompany }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualNumber }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>antitétanique : </b></div><div class="col-md-8 col-xs-6">{{ user.health.tetanusBooster }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Médecin traitant : </b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorName }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorPhone }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorAddress }} {{ user.health.doctorTown }}</div></div></li>
+                        </ul>
+                    </div>
+                
+                    {% if user.health.diseases is not empty %}
+                        <div class="col-md-6 col-xs-12">
+                            {% for category, diseases in user.health.diseases %}
+                                <h3>{{ constant('App\\Entity\\DiseaseKind::CATEGORIES')[category] | trans }}</h3>
+                                <ul class="with-list-style">
+                                    {% for disease in diseases %}
+                                        <li><div class="row">
+                                                <div class="col-md-4 col-xs-4"><b>{{ disease.label }}{% if disease.title is not null %} : {{ disease.title }}{% endif %} </b></div>
+                                                <div class="col-md-4 col-xs-4">
+                                                    {% if disease.hasTreatment %}<i class="fas fa-file-medical"></i> {% endif %}
+                                                    {{ disease.curentTreatment }}
+                                                </div>
+                                                <div class="col-md-4 col-xs-4"> <i class="fas fa-ambulance"></i> {{ disease.emergencyTreatment }}</div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

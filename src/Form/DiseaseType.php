@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Disease;
+use App\Entity\DiseaseKind;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,13 +19,14 @@ class DiseaseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /**@var Disease $disease */
             $disease = $event->getData();
             $form = $event->getForm();
             $isActive = !empty($disease->getCurentTreatment()) || !empty($disease->getEmergencyTreatment());
 
             $curentTreatmentClass = 'widget-inline widget-curent-treatment';
-            $currentTraitementLabel = (Disease::TYPE_DISEASE === $disease->getType()) ? 'Traitement actuel' : 'Lesquelles';
-            if (Disease::LABEL_POLLEN_BEES >= $disease->getLabel()) {
+            $currentTraitementLabel = (DiseaseKind::CATEGORY_DISEASE === $disease->getDiseaseKind()->getCategory()) ? 'Traitement actuel' : 'Lesquelles';
+            if ($disease->getDiseaseKind()->hasEmergencyTreatment()) {
                 $curentTreatmentClass = 'widget-inline';
                 $form
                     ->add('emergencyTreatment', TextType::class, [
@@ -54,7 +56,7 @@ class DiseaseType extends AbstractType
                     ],
                 ])
             ;
-            if (Disease::LABEL_OTHER === $disease->getLabel()) {
+            if ($disease->getDiseaseKind()->hasCustomLabel()) {
                 $form
                     ->add('title', TextType::class, [
                         'attr' => [

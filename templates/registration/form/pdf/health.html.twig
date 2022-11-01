@@ -1,29 +1,29 @@
 {% if user.health.diseases is not empty %}
     <table class="table-fixed">
-        {% for type, diseases in user.health.diseases %}
+        {% for category, diseases in user.health.diseases %}
             {% if diseases is not empty %}
                 <tr>
                     <th>{% if loop.first %}<h3>Informations sanitaires</h3>{% endif %}</th>
-                    <th class="align-left background"><b>{{ constant('App\\Entity\\Disease::TYPES')[type]|trans }}</b></td>
-                    {% if type == constant('App\\Entity\\Disease::TYPE_DISEASE') %}
+                    <th class="align-left background"><b>{{ constant('App\\Entity\\DiseaseKind::CATEGORIES')[category]|trans }}</b></td>
+                    {% if category == constant('App\\Entity\\DiseaseKind::CATEGORY_DISEASE') %}
                         <th class="align-left background"><b>Traitement actuel</b></td>
                         <th class="align-left background" v><b>Traitement d'urgence</b></td>
-                    {% elseif type == constant('App\\Entity\\Disease::TYPE_ALLERGY') %}
+                    {% elseif category == constant('App\\Entity\\DiseaseKind::CATEGORY_ALLERGY') %}
                         <th class="align-left background"><b>Lesquelles</b></td>
                         <th class="align-left background"><b>Traitement d'urgence</b></td>
-                    {% elseif type == constant('App\\Entity\\Disease::TYPE_INTOLERANCE') %}
+                    {% elseif category == constant('App\\Entity\\DiseaseKind::CATEGORY_INTOLERANCE') %}
                         <th class="align-left background" colspan="2"><b>Lesquelles</b></td>
                     {% endif %}
                 </tr>
                 {% for disease in diseases %}
                     <tr>
                         <td></td>
-                        {% set title = [constant('App\\Entity\\Disease::LABELS')[disease.label]|trans] %}
+                        {% set title = disease.label %}
                         {% if disease.title is not null %}
                             {% set title = title|merge([disease.title]) %}
                         {% endif %}
                         <td class="background">{{ title|join(' ') }}</td>
-                        {% if type == constant('App\\Entity\\Disease::TYPE_INTOLERANCE') %}
+                        {% if disease.hasEmergencyTreatment %}
                             <td colspan="2">{{ disease.curentTreatment }}</td>
                         {% else %}
                             <td class="background">{{ disease.curentTreatment }}</td>

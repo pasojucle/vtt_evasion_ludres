@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des pathologies{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Gestion des pathologies</h1>
+        </div>
+        <nav  class="nav-tab">
+            {% for category, label in constant('App\\Entity\\DiseaseKind::CATEGORIES') %}
+                <a href="{{ path('admin_disease_kind_list', {'category': category} )}}"{% if category == current_category %} class="active"{% endif %}>{{ label|trans}}</a>
+            {% endfor %}
+        </nav>
+        <div class="wrapper-body">
+            <a href="{{ path('admin_disease_kind_edit') }}" class="btn btn-primary" title="Ajouter une pathologie"><i class="fas fa-plus"></i> Ajouter une pathologie</a>
+            <ul class="sortable" data-route="admin_disease_kind_order" data-parameter="diseaseKind">
+                {% for disease_kind in disease_kinds %}     
+                    <li class="ui-state-default col-list col-list-2btn" data-id="{{ disease_kind.id }}">
+                        <div class="list-item">{{ disease_kind.name }}</div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <div>
+                            <a class="btn btn-primary btn-ico" href="{{ path('admin_disease_kind_edit', {'diseaseKind': disease_kind.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                        </div>
+                        <div>
+                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_disease_kind_delete', {'diseaseKind': disease_kind.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                        </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% include('common/pagination.html.twig') %}
+    </div>
+{% endblock %}
