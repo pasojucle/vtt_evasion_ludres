@@ -6,6 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Level;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -42,6 +43,17 @@ class LevelType extends AbstractType
                 'choices' => array_flip(Level::TYPES),
                 'row_attr' => [
                     'class' => 'form-group-inline',
+                ],
+            ])
+            ->add('accompanyingCertificat', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Réaliser une attestation adulte accompagnateur avec ce niveau',
+                    'data-switch-off' => 'Pas d\'attestation adulte accompagnateur',
                 ],
             ])
             ->add('save', SubmitType::class, [
