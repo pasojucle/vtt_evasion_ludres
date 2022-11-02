@@ -22,7 +22,7 @@
       {% if is_granted('ROLE_ADMIN') %}
         <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.entity.id}) }}"><i class="fas fa-chart-line"></i> Participation</a></li>
         <li><a class="dropdown-item" href="{{ path('admin_user_certificate', {'user': user.entity.id}) }}"><i class="fas fa-file-contract"></i> Attestation d'inscription CE</a></li>
-        {% if user.isFramer %}
+        {% if user.level.accompanyingCertificat %}
           <li><a class="dropdown-item" href="{{ path('admin_user_accompanying_certificate', {'user': user.entity.id}) }}"><i class="fas fa-file-contract"></i> Attestation adulte accompagnateur</a></li>
         {% endif %}
       {% endif %}      

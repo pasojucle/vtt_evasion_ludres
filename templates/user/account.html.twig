@@ -29,7 +29,7 @@
                                 <li>
                                     <div  class="row padding-top-5">
                                         <div class="col-md-5"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</b></div>
-                                        <div class="col-md-7">{{ user.level }}</div>
+                                        <div class="col-md-7">{{ user.level.title }}</div>
                                     </div>
                                 </li>
                             {% endif %}

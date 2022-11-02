@@ -35,7 +35,7 @@ class UserViewModel extends AbstractViewModel
 
     private ServicesPresenter $services;
 
-    public ?array $levelColors;
+    public ?LevelViewModel $level;
 
     public ?string $mainEmail;
 
@@ -50,7 +50,7 @@ class UserViewModel extends AbstractViewModel
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
         $userView->health = HealthViewModel::fromHealth($user->getHealth());
-        $userView->levelColors = $userView->getLevelColors();
+        $userView->level = LevelViewModel::fromLevel($user->getLevel());
         $userView->mainEmail = $userView->getMainEmail();
 
         return $userView;
@@ -202,11 +202,6 @@ class UserViewModel extends AbstractViewModel
         return $approvalGoingHome;
     }
 
-    public function getLevel(): ?Level
-    {
-        return $this->entity->getLevel();
-    }
-
     public function getLicenceNumber(): ?string
     {
         return $this->entity->getLicenceNumber();
@@ -266,17 +261,6 @@ class UserViewModel extends AbstractViewModel
         return null;
     }
 
-    // public function getContactEmail(): ?string
-    // {
-    //     $member = $this->member;
-    //     $licence = $this->getLastLicence();
-    //     if (Licence::CATEGORY_MINOR === $licence->category) {
-    //         $member = $this->kinship;
-    //     }
-
-    //     return $member->email;
-    // }
-
     public function mustProvideRegistration(): bool
     {
         $lastLicence = $this->getLastLicence();
@@ -311,19 +295,6 @@ class UserViewModel extends AbstractViewModel
     private function getMember(Identity $identity): IdentityViewModel
     {
         return IdentityViewModel::fromIdentity($identity, $this->services);
-    }
-
-    private function getLevelColors(): ?array
-    {
-        if ($this->entity->getLevel() && $this->entity->getLevel()->getColor()) {
-            $background = $this->entity->getLevel()->getColor();
-            list($r, $g, $b) = sscanf($background, '#%02x%02x%02x');
-            $color = (0.3 * $r + 0.59 * $g + 0.11 * $b > 200) ? '#000' : '#fff';
-
-            return ['color' => $color, 'background' => $background];
-        }
-
-        return null;
     }
 
     public function getFramerAvailabilityByBikeRide(BikeRide $bikeRide): array

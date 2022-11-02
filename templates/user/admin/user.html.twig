@@ -3,9 +3,9 @@
 {% block title %}{{ user.member.fullName }}{% endblock %}
 
 {% block body %}
-    {% set licence = user.lastLicence %}
+    {% set licence = user.lastLicence %}      
     <div class="wrapper">
-        <div class="wrapper-title" {% if user.levelColors is not null %} style="background-color: {{ user.levelColors.background }}; color: {{ user.levelColors.color }}"{% endif %}>
+        <div class="wrapper-title" {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
             <h1>
                 {{ user.member.fullName }}
             </h1>
@@ -112,8 +112,8 @@
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
                         {% endif %}
                         <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
-                        {% if user.level is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b></div><div class="col-md-8 col-xs-6">{{ user.level }}</div></div></li>
+                        {% if user.level.type is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }} : </b></div><div class="col-md-8 col-xs-6">{{ user.level.title }}</div></div></li>
                         {% endif %}
                     </ul>
                 </div>

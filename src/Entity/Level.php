@@ -66,6 +66,9 @@ class Level
     #[OneToMany(mappedBy: 'level', targetEntity: Indemnity::class)]
     private $indemnities;
 
+    #[Column(type: 'boolean', options: ['default' => false])]
+    private bool $accompanyingCertificat = false;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -253,6 +256,18 @@ class Level
                 $indemnity->setLevel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isAccompanyingCertificat(): bool
+    {
+        return $this->accompanyingCertificat;
+    }
+
+    public function setAccompanyingCertificat(bool $accompanyingCertificat): self
+    {
+        $this->accompanyingCertificat = $accompanyingCertificat;
 
         return $this;
     }

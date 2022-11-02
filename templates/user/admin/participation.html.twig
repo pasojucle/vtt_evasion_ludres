@@ -5,7 +5,7 @@
 {% block body %}
     {% set licence = user.lastLicence %}
     <div class="wrapper">
-        <div class="wrapper-title" {% if user.levelColors is not null %} style="background-color: {{ user.levelColors.background }}; color: {{ user.levelColors.color }}"{% endif %}>
+        <div class="wrapper-title" {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
             <h1>Participation - <span class="badge badge badge-info">{{ count }}</span></h1>
             <span class="tools">
                 <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}"
