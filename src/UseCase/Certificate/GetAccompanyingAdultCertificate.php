@@ -35,9 +35,10 @@ class GetAccompanyingAdultCertificate
 
         $this->presenter->present($user);
         $user = $this->presenter->viewModel();
-        $content = $this->getContent($user);
-
-
+        if (null === $content) {
+            $content = $this->getContent($user);
+        }
+        
         if (!$request->isXmlHttpRequest() && $content) {
             $filename = $this->makePdf($content);
         }

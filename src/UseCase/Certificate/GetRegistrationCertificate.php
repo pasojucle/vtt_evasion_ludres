@@ -39,8 +39,9 @@ class GetRegistrationCertificate
         $this->presenter->present($user);
         $user = $this->presenter->viewModel();
         $licence = $user->seasonLicence;
-        $content = $this->getContent($user, $licence);
-
+        if (null === $content) {
+           $content = $this->getContent($user, $licence);
+        }
 
         if (!$request->isXmlHttpRequest() && $content) {
             $filename = $this->makePdf($content);
@@ -49,17 +50,12 @@ class GetRegistrationCertificate
         return [$content, $filename];
     }
 
-    private function getContent(UserViewModel $user, LicenceViewModel $licence)
+    private function getContent(UserViewModel $user)
     {
-        $today = new DateTime();
-        $todayStr = $today->format('d/m/Y');
-
         if (Licence::CATEGORY_ADULT === $user->lastLicence->category) {
             $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_ADULT');
-        // list($search, $replace) = $this->getMemberData($user, $licence, $todayStr);
         } else {
             $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_SCHOOL');
-            // list($search, $replace) = $this->getKinShipData($user, $licence, $todayStr);
         }
 
         return $this->replaceKeywordsService->replace($user, $content, RegistrationStep::RENDER_FILE);
