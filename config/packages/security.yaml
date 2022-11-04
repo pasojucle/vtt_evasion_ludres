@@ -61,6 +61,8 @@ security:
         - { path: ^/admin/inscription, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin/identite, roles: ROLE_REGISTER, requires_channel: https }
         - { path: ^/admin/send, roles: ROLE_REGISTER, requires_channel: https }
+        - { path: ^/admin/assurance, roles: ROLE_REGISTER, requires_channel: https }
+        - { path: ^/admin/adhérent/choices, roles: ROLE_FRAME, requires_channel: https }
         - { path: ^/admin, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/vote, roles: ROLE_USER, requires_channel: https }
         - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
