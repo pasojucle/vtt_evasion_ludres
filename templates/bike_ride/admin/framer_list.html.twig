@@ -16,10 +16,10 @@
                 {% for framer in framers %}                      
                     <li class="list-dropdown"> 
                         <a href="{{ path('admin_user', {'user': framer.entity.id})}}"
-                            {% if framer.level is not null %}style="background-color: {{ framer.level.color }}"{% endif %}>
+                            {% if framer.level is not null %}style="background-color: {{ framer.level.colors.background }}"{% endif %}>
                             <div class="row">
                                 <div class="col-md-4 col-xs-12">{{ framer.member.fullName }}</div>
-                                <div class="col-md-4 col-xs-12"> {{ framer.level }}</div>
+                                <div class="col-md-4 col-xs-12"> {{ framer.level.title }}</div>
                                 {% set availability = framer.getFramerAvailabilityByBikeRide(bike_ride.entity) %}
                                 <div class="col-md-1 col-xs-3 {{ availability.class.badge}}"></div>
                                 <div class="col-md-3 col-xs-9">{{availability.text|trans }}</div>
