@@ -81,6 +81,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (null !== $filters['fullName']) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
             }
+            if (!empty($filters['user'])) {
+                $this->addCriteriaByUser($qb, $filters['user']);
+            }
             if (null !== $filters['levels']) {
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
