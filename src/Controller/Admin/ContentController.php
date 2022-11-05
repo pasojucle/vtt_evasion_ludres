@@ -103,7 +103,7 @@ class ContentController extends AbstractController
         UploadService $uploadService,
         ?Content $content
     ): Response {
-        if (null === $content->getParent() && 'admin_home_content_edit' === $request->attributes->get('_route')) {
+        if (null === $content?->getParent() && 'admin_home_content_edit' === $request->attributes->get('_route')) {
             $parent = $this->contentRepository->findOneByRoute('home');
             $content = new Content();
             $content->setRoute('home')
