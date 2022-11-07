@@ -110,7 +110,6 @@ class GetProgress
             ? $userConnected
             : $user;
 
-
         if (null === $this->user) {
             $this->createUser();
         }
@@ -147,7 +146,7 @@ class GetProgress
                 $this->createApproval(User::APPROVAL_GOING_HOME_ALONE);
             }
 
-            $this->diseaseService->updateAndSortdiseases($user);
+            $this->diseaseService->updateAndSortdiseases($this->user);
 
             if (!$this->seasonLicence->isFinal()) {
                 $this->setAwaitingLevel();
