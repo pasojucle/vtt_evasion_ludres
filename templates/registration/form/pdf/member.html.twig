@@ -1,7 +1,7 @@
  <h2>Renseignements concernant l'adhérent</h2>
 <table {% if user.member.picture %}class="table-fixed"{% endif %}>
     <tr>
-        {% if user.member.picture %}<td rowspan="8" colspan="2"><img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 100px;"></td>{% endif %}
+        {% if user.member.picture %}<td rowspan="8" colspan="2"><img src="{{ user.member.picture|imgPath(media) }}" style="width: 100px;"></td>{% endif %}
         <td colspan="3" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
         {% if health is same as(true) %}
             <td colspan="3"><b>Numéro de sécurité sociale : </b>{{ user.health.socialSecurityNumber }}</td>
