@@ -50,6 +50,7 @@ class BikeRideTypeController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $bikeRideType = $form->getData();
 
+            $this->entityManager->persist($bikeRideType);
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_bike_ride_types');
