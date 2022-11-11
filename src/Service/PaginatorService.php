@@ -29,19 +29,4 @@ class PaginatorService
 
         return new Paginator($query);
     }
-
-    public function lastPage(Paginator $paginator): int
-    {
-        return (int) ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
-    }
-
-    public function total(Paginator $paginator): int
-    {
-        return $paginator->count();
-    }
-
-    public function currentPageHasNoResult(Paginator $paginator): bool
-    {
-        return !$paginator->getIterator()->count();
-    }
 }

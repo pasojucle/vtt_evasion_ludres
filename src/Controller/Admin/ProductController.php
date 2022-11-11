@@ -9,6 +9,7 @@ use App\Form\Admin\ProductType;
 use App\Repository\ProductRepository;
 use App\Service\PaginatorService;
 use App\Service\Product\ProductEditService;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use App\ViewModel\ProductPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,15 +30,17 @@ class ProductController extends AbstractController
     #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]
     public function adminList(
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         ProductRepository $productRepository,
         Request $request
     ): Response {
         $query = $productRepository->findAllQuery();
         $products = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $paginatorPresenter->present($products);
 
         return $this->render('product/admin/list.html.twig', [
             'products' => $products,
-            'lastPage' => $paginator->lastPage($products),
+            'paginator' => $paginatorPresenter->viewModel(),
         ]);
     }
 

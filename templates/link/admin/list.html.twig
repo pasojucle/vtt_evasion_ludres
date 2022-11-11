@@ -14,6 +14,7 @@
             </nav>
         <div class="wrapper-body">
             <a href="{{ path('admin_link_edit') }}" class="btn btn-primary" title="Ajouter un lien"><i class="fas fa-plus"></i> Ajouter un lien</a>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
             <ul class="sortable" data-route="admin_link_order" data-parameter="link">
                 {% for link in links %}     
                     <li class="ui-state-default col-list col-list-2btn" data-id="{{ link.id }}">
@@ -27,8 +28,8 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
-    {% include('common/pagination.html.twig') %}
 </div>
 {% endblock %}

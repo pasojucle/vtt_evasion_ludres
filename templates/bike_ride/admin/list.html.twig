@@ -18,7 +18,8 @@
                         <a href="{{ path('admin_bike_ride_edit') }}" class="btn btn-primary" title="Ajouter une sortie"><i class="fas fa-plus"></i> Ajouter une sortie</a>
                     {% endif %}
                 </div>
-            </div>    
+            </div>
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}    
             <ul>
                 {% for bikeRide in bikeRides %}                      
                     <li class="list-dropdown{% if not bikeRide.bikeRideType.isRegistrable %} light-separator{% endif %}">
@@ -60,7 +61,7 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}    
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

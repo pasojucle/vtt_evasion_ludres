@@ -5,7 +5,7 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Gestion des commandes - <span class="badge badge-info">{{ count }}</span></h1>
+            <h1>Gestion des commandes - <span class="badge badge-info">{{ paginator.total }}</span></h1>
             <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                     <div class="dropdown-menu" data-target="dropdown-tools">
@@ -25,6 +25,7 @@
             </div>
             {{ form_end(form) }}
             {% endif %}
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul id="orders_container">
                 {% for order in orders %}
                     <li class="col-list col-1md-1sx-btn">
@@ -60,7 +61,7 @@
                 {% endfor %}
             </ul>
             {% if orders is empty %}Aucune commande{% endif %}
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

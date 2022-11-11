@@ -9,6 +9,7 @@
             <h1>{{ title }}</h1>
         </div>
         <div class="wrapper-body">
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %} 
             <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
                 {% for content in contents %}     
                     <li class="ui-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" data-id="{{ content.id }}">
@@ -31,7 +32,7 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %} 
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

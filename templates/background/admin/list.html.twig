@@ -11,6 +11,7 @@
             <span class="tools">
                 <a href="{{ path('admin_background_edit') }}" class="btn btn-primary" title="Ajouter une image"><i class="fas fa-plus"></i> Ajouter une image</a>
             </span>
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
             <ul style="display: flex; flex-wrap: wrap;">
                 {% for background in backgrounds %}
                     <li class="card card-background">
@@ -28,7 +29,8 @@
                     <a class="btn btn-danger btn-ico" href="{{ path('admin_product_delete', {'product' : product.id}) }}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a> #}
                 {% endfor %}
             </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %} 
         </div>
-        {% include('common/pagination.html.twig') %}
+        
     </div>
 {% endblock %}

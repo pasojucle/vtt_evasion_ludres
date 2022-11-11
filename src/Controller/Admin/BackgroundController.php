@@ -11,6 +11,7 @@ use App\Service\PaginatorService;
 use App\UseCase\Background\EditBackground;
 use App\ViewModel\Background\BackgroundPresenter;
 use App\ViewModel\Background\BackgroundsPresenter;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -28,17 +29,21 @@ class BackgroundController extends AbstractController
     }
 
     #[Route('/images_de_fond', name: 'admin_background_list', methods: ['GET'])]
-    public function adminList(PaginatorService $paginator, Request $request, BackgroundsPresenter $presenter): Response
-    {
+    public function adminList(
+        PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
+        Request $request,
+        BackgroundsPresenter $presenter
+    ): Response {
         $query = $this->backgroundRepository->findAllQuery();
         $backgrounds = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $presenter->present($backgrounds);
+        $paginatorPresenter->present($backgrounds);
 
         return $this->render('background/admin/list.html.twig', [
             'backgrounds' => $presenter->viewModel()->backgrounds,
-            'lastPage' => $paginator->lastPage($backgrounds),
-            'count' => $paginator->total($backgrounds),
+            'paginator' => $paginatorPresenter->viewModel(),
         ]);
     }
 

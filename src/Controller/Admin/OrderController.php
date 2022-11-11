@@ -11,6 +11,7 @@ use App\Service\ExportService;
 use App\Service\PaginatorService;
 use App\ViewModel\OrderPresenter;
 use App\ViewModel\OrdersPresenter;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -31,10 +32,11 @@ class OrderController extends AbstractController
     public function adminOrders(
         OrdersPresenter $presenter,
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         Request $request,
         bool $filtered
     ): Response {
-        $filters = ($filtered) ? $request->getSession()->get('admin_orders_filters') : [];
+        $filters = ($filtered) ? $request->getSession()->get('admin_orders_filters') ?? [] : [];
 
         $form = $this->createForm(OrderFilterType::class, $filters);
         $form->handleRequest($request);
@@ -55,13 +57,12 @@ class OrderController extends AbstractController
         $query = $this->orderHeaderRepository->findOrdersQuery($filters);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($orders);
+        $paginatorPresenter->present($orders, array_merge($filters, ['filtered' => (int) $filtered]));
 
         return $this->render('order/admin/list.html.twig', [
             'form' => $form->createView(),
             'orders' => $presenter->viewModel()->orders,
-            'lastPage' => $paginator->lastPage($orders),
-            'current_filters' => $filters,
-            'count' => $paginator->total($orders),
+            'paginator' => $paginatorPresenter->viewModel(),
         ]);
     }
 
@@ -69,6 +70,7 @@ class OrderController extends AbstractController
     public function adminOrderValidate(
         OrdersPresenter $presenter,
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         Request $request,
         OrderHeader $orderHeader,
         int $status
@@ -79,15 +81,11 @@ class OrderController extends AbstractController
         $query = $this->orderHeaderRepository->findOrdersQuery($filters);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($orders);
+        $paginatorPresenter->present($orders, array_merge($filters, ['filtered' => true]), 'admin_orders');
 
         return $this->render('order/admin/list.html.twig', [
             'orders' => $presenter->viewModel()->orders,
-            'lastPage' => $paginator->lastPage($orders),
-            'count' => $paginator->total($orders),
-            'target_route' => 'admin_orders',
-            'current_Filters' => [
-                'filterd' => true,
-            ],
+            'paginator' => $paginatorPresenter->viewModel()
         ]);
     }
 

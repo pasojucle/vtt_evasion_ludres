@@ -12,6 +12,7 @@ use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Service\UploadService;
 use App\ViewModel\Content\ContentPresenter;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -42,6 +43,7 @@ class ContentController extends AbstractController
     #[Route('/page/accueil/contenus/{tab}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'tab' => self::HOME_TAB_FLASH])]
     public function listHome(
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         Request $request,
         ?string $route,
         int $tab
@@ -57,41 +59,36 @@ class ContentController extends AbstractController
 
         $query = $this->contentRepository->findContentQuery($route, $isFlash);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $paginatorPresenter->present($contents, ['route' => $route, 'tab' => $tab, ], );
 
         return $this->render('content/admin/home_contents.html.twig', [
             'contents' => $contents,
             'form' => $form->createView(),
-            'lastPage' => $paginator->lastPage($contents),
+            'paginator' => $paginatorPresenter->viewModel(),
             'current_route' => $route,
             'is_flash' => $isFlash,
             'tabs' => self::HOME_TABS,
             'tab' => $tab,
-            'current_filters' => [
-                'route' => $route,
-                'tab' => $tab,
-            ],
         ]);
     }
 
     #[Route('/contenus', name: 'admin_contents', methods: ['GET'], defaults:['route' => null, 'isFlash' => false])]
     public function list(
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         Request $request,
         ?string $route,
         bool $isFlash
     ): Response {
         $query = $this->contentRepository->findContentQuery($route, $isFlash);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $paginatorPresenter->present($contents, ['route' => $route, 'isFlash' => $isFlash], );
 
         return $this->render('content/admin/list.html.twig', [
             'contents' => $contents,
-            'lastPage' => $paginator->lastPage($contents),
+            'paginator' => $paginatorPresenter->viewModel(),
             'current_route' => $route,
             'is_flash' => $isFlash,
-            'current_filters' => [
-                'route' => $route,
-                'isFlash' => $isFlash,
-            ],
         ]);
     }
 

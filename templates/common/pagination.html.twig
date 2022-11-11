@@ -1,34 +1,39 @@
-{% set _currentPage = app.request.query.get('p') ?: 1 %}
-{% set _currentRoute = app.request.attributes.get('_route') %}
-{% if target_route is defined %}
-    {% set _currentRoute = target_route %}
-{% endif %}
-{% set _currentParams = app.request.query.all %}
-{% if current_filters is defined and current_filters is not empty %}
-    {% set _currentParams = _currentParams|merge(current_filters) %}
-{% endif %}
 
-{% if lastPage > 1 %}
-    <nav class="paginator">
+{% if paginator is not null and paginator.lastPage > 1 %}
+    <nav class="paginator{% if margin is defined %} margin-{{ margin }}{% endif %}">
         <ul>
-            {% if _currentPage > 1 %}
+            {% if paginator.first is not null %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ path(_currentRoute, _currentParams|merge({p: _currentPage - 1})) }}" aria-label="Previous">
-                        <span aria-hidden="true"><i class="fas fa-angle-left"></i></span>
-                        <span class="sr-only">Previous</span>
+                    <a class="page-link" href="{{ paginator.first.url }}" aria-label="Previous">
+                        <span aria-hidden="true"><i class="fas fa-angle-double-left"></i></span>
                     </a>
                 </li>
             {% endif %}
-            {% for i in 1..lastPage %}
+            {% if paginator.previous is not null %}
                 <li class="page-item">
-                    <a class="page-link{% if i == _currentPage %} active{% endif %}" href="{{ path(_currentRoute, _currentParams|merge({p: i})) }}">{{ i }}</a>
+                    <a class="page-link" href="{{ paginator.previous.url }}" aria-label="Previous">
+                        <span aria-hidden="true"><i class="fas fa-angle-left"></i></span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for item in paginator.pages %}
+                <li class="page-item{% if item.page == paginator.currentPage %} active{% endif %}">
+                    <a class="page-link" href="{{ item.url }}">{{ item.page }}</a>
                 </li>
             {% endfor %}
-            {% if _currentPage < lastPage %}
+
+            {% if paginator.next is not null %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ path(_currentRoute, _currentParams|merge({p: _currentPage + 1})) }}" aria-label="Next">
+                    <a class="page-link" href="{{ paginator.next.url }}" aria-label="Next">
                         <span aria-hidden="true"><i class="fas fa-angle-right"></i></span>
-                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if paginator.last is not null %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ paginator.last.url }}" aria-label="Next">
+                        <span aria-hidden="true"><i class="fas fa-angle-double-right"></i></span>
                     </a>
                 </li>
             {% endif %}

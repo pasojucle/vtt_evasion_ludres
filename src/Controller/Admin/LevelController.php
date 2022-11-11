@@ -9,6 +9,7 @@ use App\Form\Admin\LevelType;
 use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -28,19 +29,18 @@ class LevelController extends AbstractController
     #[Route('/admin/niveaux/{type}', name: 'admin_levels', methods: ['GET'], defaults:['type' => 1])]
     public function adminList(
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         Request $request,
         int $type
     ): Response {
         $query = $this->levelRepository->findLevelQuery($type);
         $levels = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $paginatorPresenter->present($levels, ['type' => (int) $type]);
 
         return $this->render('level/admin/list.html.twig', [
             'levels' => $levels,
-            'lastPage' => $paginator->lastPage($levels),
+            'paginator' => $paginatorPresenter->viewModel(),
             'current_type' => $type,
-            'current_filters' => [
-                'type' => (int) $type,
-            ],
         ]);
     }
 

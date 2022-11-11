@@ -5,7 +5,7 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Journal des erreurs - <span class="badge badge-info">{{ count }}</span></h1>
+            <h1>Journal des erreurs - <span class="badge badge-info">{{ paginator.total }}</span></h1>
         </div>
         <nav class="nav-tab">
             {% for statuscode, label in tabs %}
@@ -13,6 +13,7 @@
             {% endfor %}
         </nav>
         <div class="wrapper-body">
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul id="errors_container">
                 <a href="{{ path('admin_log_errors_delete', {'statusCode': status_code})}}" class="btn btn-danger delete-error">Supprimer tout</a>
                 {% for error in errors %}
@@ -35,7 +36,7 @@
                 {% endfor %}
                 {% if errors is empty %}<li>Aucune erreur</li>{% endif %}
             </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

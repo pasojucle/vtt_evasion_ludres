@@ -8,6 +8,7 @@ use App\Form\Admin\UserFilterType;
 use App\Repository\UserRepository;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -31,7 +32,8 @@ abstract class GetUsersFiltered
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $urlGenerator,
         private UsersPresenter $usersPresenter,
-        public UserRepository $userRepository
+        public UserRepository $userRepository,
+        private PaginatorPresenter $paginatorPresenter
     ) {
     }
 
@@ -62,15 +64,13 @@ abstract class GetUsersFiltered
         $users = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         $this->usersPresenter->present($users);
+        $this->paginatorPresenter->present($users, ['filtered' => (int) $filtered]);
 
         return [
             'users' => $this->usersPresenter->viewModel()->users,
-            'lastPage' => $this->paginator->lastPage($users),
+            'paginator' => $this->paginatorPresenter->viewModel(),
             'form' => $form->createView(),
-            'current_filters' => [
-                'filtered' => (int) $filtered,
-            ],
-            'count' => $this->paginator->total($users),
+            'count' => $this->paginatorPresenter->viewModel()->total,
         ];
     }
 

@@ -12,12 +12,14 @@ use App\Repository\BikeRideTypeRepository;
 use App\Repository\ContentRepository;
 use App\Repository\LevelRepository;
 use App\ViewModel\BikeRidesPresenter;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -25,6 +27,7 @@ class BikeRideService
 {
     public function __construct(
         private PaginatorService $paginator,
+        private PaginatorPresenter $paginatorPresenter,
         private RequestStack $requestStack,
         private FormFactoryInterface $formFactory,
         private BikeRideRepository $bikeRideRepository,
@@ -129,10 +132,14 @@ class BikeRideService
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            if ($form->has('next') && $form->get('next') instanceof ClickableInterface && $form->get('next')->isClicked()) {
+            /** @var ?SubmitButton  $next */
+            $next = ($form->has('next') && $form->get('next') instanceof ClickableInterface) ? $form->get('next') : null;
+            /** @var ?SubmitButton  $prev */
+            $prev = ($form->has('prev') && $form->get('prev') instanceof ClickableInterface) ? $form->get('prev') : null;
+            if ($next && $next->isClicked()) {
                 $data['direction'] = BikeRide::DIRECTION_NEXT;
             }
-            if ($form->has('prev') && $form->get('prev') instanceof ClickableInterface && $form->get('prev')->isClicked()) {
+            if ($prev && $prev->isClicked()) {
                 $data['direction'] = BikeRide::DIRECTION_PREV;
             }
             // if ($form->has('today') && $form->get('today')->isClicked()) {
@@ -151,19 +158,21 @@ class BikeRideService
         if (null === $filters['limit']) {
             $query = $this->bikeRideRepository->findAllQuery($filters);
             $bikeRides = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-            $parameters['lastPage'] = $this->paginator->lastPage($bikeRides);
+            $this->paginatorPresenter->present($bikeRides, $filters);
+            $parameters['paginator'] = $this->paginatorPresenter->viewModel();
         } else {
             $bikeRides = $this->bikeRideRepository->findAllFiltered($filters);
-            $parameters['lastPage'] = null;
+            $parameters['paginator'] = null;
         }
 
         $this->bikeRidesPresenter->present($bikeRides);
+        
 
         $parameters += [
             'form' => $form->createView(),
             'bikeRides' => $this->bikeRidesPresenter->viewModel()->bikeRides,
-            'current_filters' => $filters,
             'backgrounds' => $this->contentRepository->findOneByRoute('schedule')?->getBackgrounds(),
+            'current_filters' => $filters,
         ];
 
         return [

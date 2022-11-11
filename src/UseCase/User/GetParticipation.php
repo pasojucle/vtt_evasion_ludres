@@ -6,10 +6,12 @@ namespace App\UseCase\User;
 
 use App\Entity\User;
 use App\Form\Admin\ParticipationFilterType;
+use App\Repository\BikeRideTypeRepository;
 use App\Repository\SessionRepository;
 use App\Service\IndemnityService;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use App\ViewModel\SessionsPresenter;
 use App\ViewModel\UserPresenter;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -23,12 +25,14 @@ class GetParticipation
 
     public function __construct(
         private PaginatorService $paginator,
+        private PaginatorPresenter $paginatorPresenter,
         private FormFactoryInterface $formFactory,
         private UserPresenter $userPresenter,
         private SessionsPresenter $sessionsPresenter,
         private SessionRepository $sessionRepository,
         private SeasonService $seasonService,
-        private IndemnityService $indemnityService
+        private IndemnityService $indemnityService,
+        private BikeRideTypeRepository $bikeRideTypeRepository
     ) {
     }
 
@@ -53,18 +57,15 @@ class GetParticipation
 
         $this->userPresenter->present($user);
         $this->sessionsPresenter->present($sessions);
+        $season = ($filters['season']) ? (int) str_replace('SEASON_', '', $filters['season']) : null;
+        $this->paginatorPresenter->present($sessions, ['filtered' => (int) $filtered, 'user' => $user->getId()]);
 
         return [
             'user' => $this->userPresenter->viewModel(),
             'sessions' => $this->sessionsPresenter->viewModel()->sessions,
-            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, (int) str_replace('SEASON_', '', $filters['season'])),
+            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, $season),
             'form' => $form->createView(),
-            'lastPage' => $this->paginator->lastPage($sessions),
-            'current_filters' => [
-                'filtered' => (int) $filtered,
-                'user' => $user->getId(),
-            ],
-            'count' => $this->paginator->total($sessions),
+            'paginator' => $this->paginatorPresenter->viewModel(),
             'referer' => $session->get('admin_user_redirect'),
         ];
     }
@@ -76,9 +77,16 @@ class GetParticipation
 
     private function getFilters(Request $request, bool $filtered): array
     {
-        return ($filtered) ? $request->getSession()->get($this->filterName) : [
-        'season' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
-        'bikeRideType' => null,
+        if ($filtered) {
+            $filters = $request->getSession()->get($this->filterName);
+            if ($filters['bikeRideType']) {
+                $filters['bikeRideType'] = $this->bikeRideTypeRepository->find($filters['bikeRideType']->getId());
+            }
+            return $filters;
+        }
+        return  [
+            'season' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
+            'bikeRideType' => null,
         ];
     }
 }

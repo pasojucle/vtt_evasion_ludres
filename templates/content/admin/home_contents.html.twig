@@ -15,6 +15,7 @@
             {% endfor %}
         </nav>
         <div class="wrapper-body">
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
             {% if tab != constant('App\\Controller\\Admin\\ContentController::HOME_TAB_BACKGROUNDS') %}
             {% set class_ul ='sortable' %}
                 <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un contenu"><i class="fas fa-plus"></i> Ajouter un contenu</a>
@@ -49,7 +50,7 @@
                 </div>
                 {{ form_end(form)}}
             {% endif %}
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %} 
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

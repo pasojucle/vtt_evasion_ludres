@@ -15,6 +15,7 @@ use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
 use App\UseCase\Survey\GetSurveyResults;
 use App\UseCase\Survey\SetSurvey;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use App\ViewModel\SurveyResponsesPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,14 +35,15 @@ class SurveyController extends AbstractController
     }
 
     #[Route('s', name: 'admin_surveys', methods: ['GET'])]
-    public function list(Request $request, PaginatorService $paginator, SurveyRepository $surveyRepository): Response
+    public function list(Request $request, PaginatorService $paginator, PaginatorPresenter $paginatorPresenter, SurveyRepository $surveyRepository): Response
     {
         $query = $surveyRepository->findAllDESCQuery();
         $surveys = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $paginatorPresenter->present($surveys);
 
         return $this->render('survey/admin/list.html.twig', [
             'surveys' => $surveys,
-            'lastPage' => $paginator->lastPage($surveys),
+            'paginator' => $paginatorPresenter->viewModel(),
         ]);
     }
 

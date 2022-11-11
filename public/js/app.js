@@ -266,7 +266,6 @@ function setOrderLineQuantity(e) {
     data[$(this).attr('name')] = $(this).val();
 
     data[$(this).parent().data('lineName')] = $(this).parent().data('lineId');
-    console.log(data);
 
     $.ajax({
         url : form.attr('action'),
@@ -284,19 +283,15 @@ function anchorAsynchronous(e) {
     e.preventDefault();
     const route = $(this).attr('href');
     const container = $(this).closest('ul').attr('id');
-    const badgeInfo = '.wrapper-title .badge.badge-info';
-    const paginator = 'nav.paginator';
-
+    const elementsToUpdate = ['#'+container, '.wrapper-title .badge.badge-info','nav.paginator.top','nav.paginator.bottom','nav.paginator.both'];
     $.ajax({
         url : route,
         success: function(html) {
-            $('#'+container).replaceWith($(html).find('#'+container));
-            if ($(badgeInfo)) {
-                $(badgeInfo).replaceWith($(html).find(badgeInfo));
-            }
-            if ($(paginator)) {
-                $(paginator).replaceWith($(html).find(paginator));
-            }
+            elementsToUpdate.forEach((element) => {
+                if ($(element)) {
+                    $(element).replaceWith($(html).find(element));
+                }
+            });
         }
       });
 }

@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des adhérents{% endblock %}
+{% block title %}Gestion des assurances{% endblock %}
 
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Gestion des assurances {{ season_service.currentSeason }} - <span class="badge badge-info">{{ count }}</span></h1>
+            <h1>Gestion des assurances {{ season_service.currentSeason }} - <span class="badge badge-info">{{ paginator.total }}</span></h1>
             {% if is_granted('ROLE_ADMIN') %}
                 <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
@@ -20,6 +20,7 @@
         </div>
         {% include('user/admin/filters.html.twig') %}
         <div class="wrapper-body">
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
             <ul>
                 {% for user in users %}
                     <li class="col-list col-1md-btn">
@@ -45,7 +46,7 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

@@ -5,7 +5,7 @@ nav {
     text-align: center;
     position: relative;
 }
-nav::after {
+nav:not(.paginator)::after {
     content: '';
     position: absolute;
     display: block;

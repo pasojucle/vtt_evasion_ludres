@@ -1,0 +1,29 @@
+.paginator.margin-top {
+    margin-top: 15px;
+}
+.paginator.margin-bottom {
+    margin-bottom: 15px;
+}
+.paginator.margin-both {
+    margin: 15px auto;
+}
+.paginator > ul > li {
+    display: inline-block;
+    margin: 0 -4px;
+}
+.paginator ul > li > a {
+    padding: 4px;
+    text-decoration: none;
+    color: var(--white-color);
+}
+.paginator > ul > li.page-item {
+    padding: 8px 4px;
+    background-color: var(--clear-color);
+    color: var(--white-color);
+}
+.paginator > ul > li.page-item:not(:first-child) {
+    margin-left: 1px;
+}
+.paginator > ul > li.page-item.active {
+    background-color: var(--primary-color);
+}

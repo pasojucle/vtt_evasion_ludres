@@ -13,6 +13,7 @@
         </div>
         <div class="wrapper-body">
             {% include('bike_ride/filter.html.twig') %}
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
             <div class="bike-rides  reveal">
                 {% for bikeRide in bikeRides %}
                     <div class="bike-ride-date item-center align-center {{ bikeRide.displayClass }}">
@@ -50,7 +51,7 @@
                     {% endif %}
                 {% endfor %}
             </div>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %} 
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}

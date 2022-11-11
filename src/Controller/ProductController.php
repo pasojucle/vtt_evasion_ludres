@@ -9,6 +9,7 @@ use App\Form\OrderLineAddType;
 use App\Repository\ProductRepository;
 use App\Service\Order\OrderAddService;
 use App\Service\PaginatorService;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use App\ViewModel\ProductPresenter;
 use App\ViewModel\ProductsPresenter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ class ProductController extends AbstractController
     #[Route('/boutique', name: 'products', methods: ['GET'])]
     public function list(
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         ProductRepository $productRepository,
         ProductsPresenter $presenter,
         Request $request
@@ -28,10 +30,11 @@ class ProductController extends AbstractController
         $query = $productRepository->findAllQuery();
         $products = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         $presenter->present($products);
+        $paginatorPresenter->present($products);
 
         return $this->render('product/list.html.twig', [
             'products' => $presenter->viewModel()->products,
-            'lastPage' => $paginator->lastPage($products),
+            'paginator' => $paginatorPresenter->viewModel(),
         ]);
     }
 

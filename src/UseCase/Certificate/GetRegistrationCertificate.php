@@ -38,9 +38,8 @@ class GetRegistrationCertificate
 
         $this->presenter->present($user);
         $user = $this->presenter->viewModel();
-        $licence = $user->seasonLicence;
         if (null === $content) {
-           $content = $this->getContent($user, $licence);
+            $content = $this->getContent($user);
         }
 
         if (!$request->isXmlHttpRequest() && $content) {

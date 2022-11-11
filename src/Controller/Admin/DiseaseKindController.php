@@ -9,6 +9,7 @@ use App\Form\Admin\DiseaseKindType;
 use App\Repository\DiseaseKindRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -28,19 +29,18 @@ class DiseaseKindController extends AbstractController
     #[Route('/admin/pathologies/{category}', name: 'admin_disease_kind_list', methods: ['GET'], defaults:['category' => 1])]
     public function adminList(
         PaginatorService $paginator,
+        PaginatorPresenter $paginatorPresenter,
         Request $request,
         int $category
     ): Response {
         $query = $this->diseaseKindRepository->findDiseaseKindQuery($category);
         $diseaseKinds = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $paginatorPresenter->present($diseaseKinds, ['category' => (int) $category]);
 
         return $this->render('disease_kind/admin/list.html.twig', [
             'disease_kinds' => $diseaseKinds,
-            'lastPage' => $paginator->lastPage($diseaseKinds),
+            'paginator' => $paginatorPresenter->viewModel(),
             'current_category' => $category,
-            'current_filters' => [
-                'category' => (int) $category,
-            ],
         ]);
     }
 

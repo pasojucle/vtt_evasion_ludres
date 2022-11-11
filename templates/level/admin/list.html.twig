@@ -14,6 +14,7 @@
         </nav>
         <div class="wrapper-body">
             <a href="{{ path('admin_level_edit') }}" class="btn btn-primary" title="Ajouter un niveau"><i class="fas fa-plus"></i> Ajouter un niveau</a>
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul class="sortable" data-route="admin_level_order" data-parameter="level">
                 {% for level in levels %}     
                     <li class="{% if not level.isProtected %}ui-state-default {% endif %}col-list col-list-2btn" {% if not level.isProtected %}data-id="{{ level.id }}"{% endif %}>
@@ -32,7 +33,7 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
         </div>
-        {% include('common/pagination.html.twig') %}
     </div>
 {% endblock %}
