@@ -202,6 +202,30 @@ class UserViewModel extends AbstractViewModel
         return $approvalGoingHome;
     }
 
+    public function getApprovalRightImage(): ?array
+    {
+        $approvalRightImage = null;
+        if (!$this->entity->getApprovals()->isEmpty()) {
+            foreach ($this->entity->getApprovals() as $approval) {
+                if (User::APPROVAL_RIGHT_TO_THE_IMAGE === $approval->getType()) {
+                    $approvalRightImage = ($approval->getValue())
+                        ? [
+                            'class' => ['color' => 'success', 'icon' => '<i class="fa-solid fa-camera"></i>'],
+                            'message' => 'Autorise le club à utiliser mon image',
+                            'value' => $approval->getValue(),
+                        ]
+                        : [
+                            'class' => ['color' => 'alert-danger', 'icon' => '<i class="fa-solid fa-slash fa-camera"></i>'],
+                            'message' => 'N\'autorise pas le club à utiliser mon image',
+                            'value' => $approval->getValue(),
+                        ];
+                }
+            }
+        }
+
+        return $approvalRightImage;
+    }
+
     public function getLicenceNumber(): ?string
     {
         return $this->entity->getLicenceNumber();

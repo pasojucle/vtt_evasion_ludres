@@ -20,6 +20,9 @@
                         {% if user.approvalGoingHome is not null %}
                             <div class="home {{ user.approvalGoingHome.class.color }}"></div>
                         {% endif %}
+                        {% if user.getApprovalRightImage.value is same as false %}
+                            <div class="camera {{ user.getApprovalRightImage.class.color }}"></div>
+                        {% endif %}
                         {% if user.health.hasBikeRideAlert() %}
                             <div class="medical-plus"></div>
                         {% endif %}

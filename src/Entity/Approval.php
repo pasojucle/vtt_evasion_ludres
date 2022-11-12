@@ -23,7 +23,7 @@ class Approval
     private int $type;
 
     #[Column(type: 'boolean', nullable: true)]
-    private ?bool $value;
+    private ?bool $value = null;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'approvals')]
     #[JoinColumn(nullable:true)]

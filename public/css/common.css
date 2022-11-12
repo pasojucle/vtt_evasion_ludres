@@ -161,6 +161,37 @@ body > script {display: none !important;}
     text-align: center;
     border: 2px solid var(--white-color);
 }
+.camera.alert-danger::before {
+    content: '\f030';
+    color: var(--danger-color);
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+    border: 2px solid var(--danger-color);
+    background-color: var(--white-color);
+}
+.fa-slash, .camera.alert-danger {
+    position: relative;
+}
+.fa-slash::after, .camera.alert-danger::after {
+    content: '';
+    height: 28px;
+    width: 3px;
+    position: absolute;
+    left: 8px;
+    top: -5px;
+    rotate: 45deg;
+    display: block;
+    background-color:var(--danger-color);
+}
+.camera.alert-danger::after {
+    top: 3px;
+    left:16px;
+    color: var(--white-color);
+}
 .person.person-check::before,
 .person.person-question::before,
 .person.person-xmark::before,

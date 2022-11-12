@@ -24,7 +24,7 @@ class ReplaceKeywordsService
                 $content = $this->removeButton($content);
             }
             if (null !== $content) {
-                $content = str_replace($this->search(), $this->replaces($user), $content);
+                $content = str_replace($this->search(), $this->replaces($user, $render), $content);
                 $content = $this->splitHeaderAndFooter($content);
             }
         }
@@ -95,10 +95,11 @@ class ReplaceKeywordsService
             '{{ necessite_sertificat_medical }}',
             '{{ montant }}',
             '<p>&nbsp;</p>',
+            '{{ autorisation_droit_image }}',
         ];
     }
 
-    private function replaces(UserViewModel $user): array
+    private function replaces(UserViewModel $user, int $render): array
     {
         $address = $user->member->address->toString();
         $kinshipAddress = $user->kinship?->address->toString();
@@ -127,6 +128,7 @@ class ReplaceKeywordsService
             $user->isMedicalCertificateRequired(),
             $licence->getAmount()['value']?->toString(),
             '<br>',
+            (RegistrationStep::RENDER_FILE) ? sprintf('<b>%s</b>', $user->getApprovals()['rightToImage']['string']) : 'autorise',
         ];
     }
 }

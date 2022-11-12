@@ -101,6 +101,12 @@ class BikeRideViewModel extends AbstractViewModel
         $intervalDisplay = new DateInterval('P' . $this->displayDuration . 'D');
         $intervalClosing = new DateInterval('P' . $this->closingDuration . 'D');
 
+
+
+dump($this->displayAt->sub($intervalDisplay));
+dump($today);
+dump($this->closingAt->sub($intervalClosing));
+dump($this->displayAt->sub($intervalDisplay) <= $today && $today <= $this->closingAt->sub($intervalClosing));
         return $this->displayAt->sub($intervalDisplay) <= $today && $today <= $this->closingAt->sub($intervalClosing);
     }
 
