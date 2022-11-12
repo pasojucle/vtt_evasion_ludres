@@ -32,7 +32,7 @@
             </li>
             {% for disease in diseases %}
                 <li class="row">
-                    {% set title = disease.label %}
+                    {% set title = [disease.label] %}
                     {% if disease.title is not null %}
                         {% set title = title|merge([disease.title]) %}
                     {% endif %}

@@ -18,7 +18,7 @@
                 {% for disease in diseases %}
                     <tr>
                         <td></td>
-                        {% set title = disease.label %}
+                        {% set title = [disease.label] %}
                         {% if disease.title is not null %}
                             {% set title = title|merge([disease.title]) %}
                         {% endif %}

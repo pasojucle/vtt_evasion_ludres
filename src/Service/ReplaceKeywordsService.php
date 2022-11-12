@@ -128,7 +128,7 @@ class ReplaceKeywordsService
             $user->isMedicalCertificateRequired(),
             $licence->getAmount()['value']?->toString(),
             '<br>',
-            (RegistrationStep::RENDER_FILE) ? sprintf('<b>%s</b>', $user->getApprovals()['rightToImage']['string']) : 'autorise',
+            (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->getApprovals()['rightToImage']['string']) : 'autorise',
         ];
     }
 }
