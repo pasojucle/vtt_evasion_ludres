@@ -9,7 +9,7 @@
                 <tr>
                     <td rowspan="5" style="width: 150px">
                         {% if user.member.picture %}
-                            <img src="{{ 'uploads/' ~ user.member.picture }}" style="width: 80px;">
+                            <img src="{{ user.member.picture|imgPath(media) }}" style="width: 80px;">
                         {% endif %}
                     </td>
                     <td colspan="3" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>

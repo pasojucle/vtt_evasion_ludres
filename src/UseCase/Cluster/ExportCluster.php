@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Cluster;
 
 use App\Entity\Cluster;
+use App\Entity\RegistrationStep;
 use App\Service\PdfService;
 use App\Service\StringService;
 use App\ViewModel\ClusterPresenter;
@@ -51,6 +52,7 @@ class ExportCluster
                 if ($session['isPresent']) {
                     $render = $this->twig->render('cluster/export.html.twig', [
                         'user' => $session['user'],
+                        'media' => RegistrationStep::RENDER_FILE,
                     ]);
                     $tmp = $session['user']->entity->getId() . '_tmp';
                     $pdfFilepath = $this->pdfService->makePdf($render, $tmp, $this->dirName, 'B6');
