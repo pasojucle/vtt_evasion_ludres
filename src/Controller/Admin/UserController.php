@@ -6,7 +6,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Level;
 use App\Entity\User;
-use App\Form\Admin\CertificateType;
 use App\Form\Admin\UserType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
@@ -74,7 +73,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], defaults:['filtered' => false])]
+    #[Route('/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], defaults:['filtered' => false])]
     public function adminUserParticipation(
         GetParticipation $getParticipation,
         Request $request,
@@ -87,7 +86,7 @@ class UserController extends AbstractController
         );
     }
 
-    #[Route('/admin/adherent/edit/{user}', name: 'user_edit', methods: ['GET', 'POST'])]
+    #[Route('/adherent/edit/{user}', name: 'user_edit', methods: ['GET', 'POST'])]
     public function adminUserEdit(
         Request $request,
         User $user

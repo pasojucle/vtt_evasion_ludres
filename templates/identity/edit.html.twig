@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="wrapper">
-            <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.color }}"{% endif %}>
+            <div class="wrapper-title" {% if user.level is not null %} style="background-color: {{ user.level.colors.background }}"{% endif %}>
                 <h1>{{ user.member.fullName }}</h1>
                 <span class="tools">
                     <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
