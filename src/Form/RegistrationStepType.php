@@ -37,7 +37,7 @@ class RegistrationStepType extends AbstractType
             ])
             ->add('category', ChoiceType::class, [
                 'label' => 'Catégorie',
-                'placeholder' => 'Mineur et adulte',
+                'placeholder' => 'licence.category.place_holder',
                 'choices' => array_flip(Licence::CATEGORIES),
                 'required' => false,
                 'row_attr' => [

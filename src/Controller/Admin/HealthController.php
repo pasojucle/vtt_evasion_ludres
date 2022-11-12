@@ -24,7 +24,7 @@ class HealthController extends AbstractController
         DiseaseService $diseaseService,
         User $user
     ): Response {
-        $diseaseService->updateAndSortdiseases($user);
+        $diseaseService->updateAndSortdiseases($user, $user->getLastLicence()->getCategory());
         $form = $this->createForm(HealthType::class, $user->getHealth());
         $form->handleRequest($request);
 

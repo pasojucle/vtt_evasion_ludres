@@ -44,6 +44,8 @@ class Licence
 
     public const CATEGORY_ADULT = 2;
 
+    public const CATEGORY_BOTH = 3;
+
     public const CATEGORIES = [
         self::CATEGORY_MINOR => 'licence.category.minor',
         self::CATEGORY_ADULT => 'licence.category.adult',

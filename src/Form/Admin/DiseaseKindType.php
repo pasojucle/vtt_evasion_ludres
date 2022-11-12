@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\DiseaseKind;
+use App\Entity\Licence;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -25,8 +26,17 @@ class DiseaseKindType extends AbstractType
                 ],
             ])
             ->add('category', ChoiceType::class, [
-                'label' => 'Categorie',
+                'label' => 'Famille',
                 'choices' => array_flip(DiseaseKind::CATEGORIES),
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+            ])
+            ->add('licenceCategory', ChoiceType::class, [
+                'label' => 'Catégory',
+                'placeholder' => 'licence.category.place_holder',
+                'choices' => array_flip(Licence::CATEGORIES),
+                'required' => false,
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],

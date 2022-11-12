@@ -11,11 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 class DiseaseKind
 {
     public const CATEGORY_DISEASE = 1;
-
     public const CATEGORY_ALLERGY = 2;
-
     public const CATEGORY_INTOLERANCE = 3;
-
     public const CATEGORIES = [
         self::CATEGORY_DISEASE => 'disease.type.diseases',
         self::CATEGORY_ALLERGY => 'disease.type.allergies',
@@ -50,6 +47,9 @@ class DiseaseKind
 
     #[ORM\Column(type: 'integer')]
     private int $orderBy = -1;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $licenceCategory = null;
 
     public function __construct()
     {
@@ -171,6 +171,18 @@ class DiseaseKind
     public function setOrderBy(int $orderBy): self
     {
         $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function getLicenceCategory(): ?int
+    {
+        return $this->licenceCategory;
+    }
+
+    public function setLicenceCategory(?int $licenceCategory): self
+    {
+        $this->licenceCategory = $licenceCategory;
 
         return $this;
     }

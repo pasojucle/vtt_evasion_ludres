@@ -44,13 +44,20 @@ class DiseaseKindRepository extends ServiceEntityRepository
     /**
      * @return DiseaseKind[] Returns an array of DiseaseKind objects
      */
-    public function findAllOrderByCategory(): array
+    public function findAllOrderByCategory(int $licenceCategory): array
     {
         return $this->createQueryBuilder('d')
-        ->andWhere(
-            (new Expr())->eq('d.deleted', ':deleted'),
-        )
-        ->setParameter('deleted', 0)
+            ->andWhere(
+                (new Expr())->eq('d.deleted', ':deleted'),
+                (new Expr())->orX(
+                    (new Expr())->eq('d.licenceCategory', ':licenceCategory'),
+                    (new Expr())->isNull('d.licenceCategory'),
+                ),
+            )
+            ->setParameters([
+                'deleted' => 0,
+                'licenceCategory' => $licenceCategory,
+            ])
            ->orderBy('d.category', 'ASC')
            ->addOrderBy('d.orderBy', 'ASC')
            ->getQuery()

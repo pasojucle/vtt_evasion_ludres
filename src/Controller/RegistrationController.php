@@ -6,19 +6,15 @@ namespace App\Controller;
 
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use App\Entity\User as UserEntity;
+use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
-use App\Repository\RegistrationStepRepository;
 use App\Service\ParameterService;
-use App\Service\PdfService;
-use App\Service\RegistrationService;
 use App\Service\SeasonService;
 use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
-use App\ViewModel\RegistrationStepPresenter;
-use App\ViewModel\UserPresenter;
+use App\UseCase\Registration\GetRegistrationFile;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -30,10 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class RegistrationController extends AbstractController
 {
     public function __construct(
-        private RegistrationStepRepository $registrationStepRepository,
         private RequestStack $requestStack,
         private SeasonService $seasonService,
-        private RegistrationService $registrationService,
         private GetProgress $getProgress,
         private ContentRepository $contentRepository
     ) {
@@ -132,7 +126,7 @@ class RegistrationController extends AbstractController
 
     #[Route('/inscription/telechargement/{user}', name: 'registration_download', methods: ['GET'])]
     public function registrationDownload(
-        UserEntity $user
+        User $user
     ): Response {
         $season = $this->seasonService->getCurrentSeason();
 
@@ -144,93 +138,10 @@ class RegistrationController extends AbstractController
 
     #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
     public function registrationFile(
-        MembershipFeeRepository $membershipFeeRepository,
-        PdfService $pdfService,
-        UserPresenter $presenter,
-        RegistrationStepPresenter $registrationStepPresenter,
-        UserEntity $user
+        GetRegistrationFile $getRegistrationFile,
+        User $user
     ): Response {
-        $season = $this->seasonService->getCurrentSeason();
-        $seasonLicence = $user->getSeasonLicence($season);
-        $category = $seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal(), RegistrationStep::RENDER_FILE);
-
-        $allmembershipFee = $membershipFeeRepository->findAll();
-        if ($this->getUser() === $user) {
-            $today = new DateTime();
-            $seasonLicence->setCreatedAt($today);
-        }
-        $presenter->present($user);
-        $files = [];
-        $registrationDocumentSteps = [];
-
-        $registrationDocumentForms = [
-            UserType::FORM_REGISTRATION_DOCUMENT,
-            UserType::FORM_MEMBER,
-            UserType::FORM_KINSHIP,
-            UserType::FORM_HEALTH,
-            UserType::FORM_APPROVAL,
-        ];
-        if (!empty($steps)) {
-            foreach ($steps as $step) {
-                $registrationStepPresenter->present($step, $presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
-                $step = $registrationStepPresenter->viewModel();
-                if (null !== $step->filename) {
-                    $filename = './files/' . $step->filename;
-                    $files[] = [
-                        'filename' => $filename,
-                        'form' => $step->form,
-                    ];
-                }
-                if (in_array($step->form, $registrationDocumentForms, true)) {
-                    $registrationDocumentSteps[$step->form] = $step->content;
-                } elseif (null !== $step->content) {
-                    $html = null;
-                    if (null !== $step->form) {
-                        $form = $step->formObject;
-                        $html = $this->renderView('registration/registrationPdf.html.twig', [
-                            'user' => $presenter->viewModel(),
-                            'all_membership_fee' => $allmembershipFee,
-                            'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
-                            'current' => $step,
-                            'form' => $form->createView(),
-                            'media' => RegistrationStep::RENDER_FILE,
-                            'template' => $this->registrationService->getTemplate($step->form),
-                        ]);
-                    } else {
-                        $html = $step->content;
-                    }
-
-                    if (null !== $html) {
-                        $pdfFilepath = $pdfService->makePdf($html, $step->title);
-                        $files[] = [
-                            'filename' => $pdfFilepath,
-                            'form' => $step->form,
-                        ];
-                    }
-                }
-            }
-        }
-        if (!empty($registrationDocumentSteps)) {
-            $registration = $this->renderView('registration/registrationPdf.html.twig', [
-                'user' => $presenter->viewModel(),
-                'user_entity' => $user,
-                'registration_document_steps' => $registrationDocumentSteps,
-                'category' => $seasonLicence->getCategory(),
-                'licence' => $presenter->viewModel()->seasonLicence,
-                'media' => RegistrationStep::RENDER_FILE,
-            ]);
-            $pdfFilepath = $pdfService->makePdf($registration, 'registration_temp');
-            array_unshift($files, [
-                'filename' => $pdfFilepath,
-                'form' => null,
-            ]);
-        }
-
-        $filename = $pdfService->joinPdf($files, $user);
-
-        $fileContent = file_get_contents($filename);
-
+        $fileContent = $getRegistrationFile->execute($user);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

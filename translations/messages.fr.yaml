@@ -11,8 +11,9 @@ licence:
     small_gear: Petit braquet
     high_gear: Grand braquet 
   category:
-    minor: mineur
-    adult: adulte
+    minor: Mineur
+    adult: Adulte
+    place_holder: Mineur et adulte
   status:
     none: Non renouvelée
     waiting_renew: En attente de renouvellement

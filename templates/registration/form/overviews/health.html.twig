@@ -1,0 +1,52 @@
+<h3>Informations sanitaires</h3>
+<ul class="block background-ligth">
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Numéro de sécurité sociale : </b></span><span class="col-md-8 col-sx-6">{{ user.health.socialSecurityNumber }}</span>
+        <span class="col-md-4 col-sx-6"><b>Groupe sanguin : </b></span><span class="col-md-8 col-sx-6">{{ user.health.bloodGroup }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Mutuelle : </b></span><span class="col-md-8 col-sx-6">{{ user.health.mutualCompany }}</span>
+        <span class="col-md-4 col-sx-6"><b>Numéro : </b></span><span class="col-md-8 col-sx-6">{{ user.health.mutualNumber }}</span>
+        <span class="col-md-4 col-sx-6"><b>Date du dernier rappel antitétanique : </b></span><span class="col-md-8 col-sx-6">{{ user.health.tetanusBooster }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Médecin traitant : </b></span><span class="col-md-8 col-sx-6">{{ user.health.doctorName }} {{ user.health.doctorAddress }} {{ user.health.doctorTown }}</span>
+        <span class="col-md-4 col-sx-6"><b>Téléphone du médecin : </b></span><span class="col-md-8 col-sx-6">{{ user.health.doctorPhone }}</span>
+    </li>
+</ul>
+{% if user.health.diseases is not empty %}
+    <ul class="block background-ligth">
+        {% for category, diseases in user.health.diseases %}
+        {% if diseases is not empty %}
+            <li class="row">
+                <span class="col-md-4 col-sx-4"><b>{{ constant('App\\Entity\\DiseaseKind::CATEGORIES')[category]|trans }}</b></span>
+                {% if category == constant('App\\Entity\\DiseaseKind::CATEGORY_DISEASE') %}
+                    <span class="col-md-4 col-sx-4"><b>Traitement actuel</b></span>
+                    <span class="col-md-4 col-sx-4"><b>Traitement d'urgence</b></span>
+                {% elseif category == constant('App\\Entity\\DiseaseKind::CATEGORY_ALLERGY') %}
+                    <span class="col-md-4 col-sx-4"><b>Lesquelles</b></span>
+                    <span class="col-md-4 col-sx-4"><b>Traitement d'urgence</b></span>
+                {% elseif category == constant('App\\Entity\\DiseaseKind::CATEGORY_INTOLERANCE') %}
+                    <span class="col-md-8 col-sx-8"><b>Lesquelles</b></span>
+                {% endif %}
+            </li>
+            {% for disease in diseases %}
+                <li class="row">
+                    {% set title = disease.label %}
+                    {% if disease.title is not null %}
+                        {% set title = title|merge([disease.title]) %}
+                    {% endif %}
+                    <span class="col-md-4 col-sx-4">{{ title|join(' ') }}</span>
+                    {% if disease.hasEmergencyTreatment %}
+                        <span colspan="2">{{ disease.curentTreatment }}</span>
+                    {% else %}
+                        <span class="col-md-4 col-sx-4">{{ disease.curentTreatment }}</span>
+                        <span class="col-md-4 col-sx-4">{{ disease.emergencyTreatment }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    </ul>
+    <br>
+{% endif %}

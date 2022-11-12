@@ -14,9 +14,9 @@ class DiseaseService
     public function __construct(private DiseaseKindRepository $diseaseKindRepository, private EntityManagerInterface $entityManager)
     {
     }
-    public function updateAndSortdiseases(User &$user): void
+    public function updateAndSortdiseases(User &$user, int $licenceCategory): void
     {
-        $diseaseKinds = $this->diseaseKindRepository->findAllOrderByCategory();
+        $diseaseKinds = $this->diseaseKindRepository->findAllOrderByCategory($licenceCategory);
         $diseases = $user->getHealth()->getDiseases()->getValues();
 
         $user->getHealth()->getDiseases()->clear();

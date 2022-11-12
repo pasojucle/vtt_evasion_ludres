@@ -138,6 +138,7 @@ class GetProgress
             $this->createApproval(User::APPROVAL_RIGHT_TO_THE_IMAGE);
         }
 
+        $this->diseaseService->updateAndSortdiseases($this->user, $this->seasonLicence->getCategory());
         if (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) {
             if ($this->user->getIdentities()->count() < 2) {
                 $this->createIdentitiesKinship();
@@ -145,8 +146,6 @@ class GetProgress
             if ($this->user->getApprovals()->count() < count(User::APPROVALS)) {
                 $this->createApproval(User::APPROVAL_GOING_HOME_ALONE);
             }
-
-            $this->diseaseService->updateAndSortdiseases($this->user);
 
             if (!$this->seasonLicence->isFinal()) {
                 $this->setAwaitingLevel();

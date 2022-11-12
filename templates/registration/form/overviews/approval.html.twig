@@ -1,0 +1,8 @@
+
+{% if user.getApprovalGoingHome is not null %}
+    <ul class="block background-ligth">
+        <li class="row">
+            <span class="col-md-4 col-sx-6"><b>Autorisation parentale</b></span><span class="col-md-8 col-sx-6">{{ user.getApprovalGoingHome.class.icon|raw }} {{ user.getApprovalGoingHome.message }}</span>
+        </li>
+    </ul>
+{% endif %}

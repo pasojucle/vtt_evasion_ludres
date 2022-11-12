@@ -6,12 +6,13 @@ namespace App\ViewModel;
 
 use App\Entity\RegistrationStep;
 use App\Form\UserType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\FormInterface;
 
 class RegistrationStepViewModel extends AbstractViewModel
 {
     public ?FormInterface $formObject;
+
+    public ?RegistrationStep $entity;
 
     public ?string $template;
 
@@ -19,11 +20,15 @@ class RegistrationStepViewModel extends AbstractViewModel
 
     public null|string|array $content;
 
+    public ?string $overviewTemplate;
+
     public ?string $filename;
 
     public ?string $title;
 
     public ?int $form;
+
+    public ?array $registrationDocumentForms;
 
     private ServicesPresenter $services;
 
@@ -36,6 +41,8 @@ class RegistrationStepViewModel extends AbstractViewModel
         ?string $class = null
     ) {
         $registrationStepView = new self();
+        $registrationStepView->entity = $registrationStep;
+        $registrationStepView->registrationDocumentForms = $registrationStepView->getRegistrationDocumentForms();
         $registrationStepView->class = $class;
         $registrationStepView->title = $registrationStep->getTitle();
         $registrationStepView->form = $registrationStep->getForm();
@@ -45,11 +52,10 @@ class RegistrationStepViewModel extends AbstractViewModel
             $registrationStepView->formObject = $registrationStepView->getForm($registrationStep, $user, $step, $services);
             $registrationStepView->template = $registrationStepView->getTemplate($registrationStep);
         }
-        if (null !== $user) {
-            $registrationStepView->content = $services->replaceKeywordsService->replace($user, $registrationStep->getContent(), $render);
-        } else {
-            $registrationStepView->content = $registrationStep->getContent();
-        }
+
+        $registrationStepView->content = $registrationStepView->getContent($user, $render);
+
+        $registrationStepView->overviewTemplate = $registrationStepView->getOverviewTemplate();
 
         return $registrationStepView;
     }
@@ -88,5 +94,33 @@ class RegistrationStepViewModel extends AbstractViewModel
         }
 
         return 'registration/form/' . str_replace('form.', '', UserType::FORMS[$form]) . '.html.twig';
+    }
+
+    private function getContent(?UserViewModel $user, int $render): null|string|array
+    {
+        return (null !== $user)
+             ? $this->services->replaceKeywordsService->replace($user, $this->entity->getContent(), $render)
+            : $this->entity->getContent();
+    }
+
+    private function getOverviewTemplate(): ?string
+    {
+        if (array_key_exists($this->entity->getForm(), $this->registrationDocumentForms)) {
+            return sprintf('registration/form/overviews/%s.html.twig', $this->registrationDocumentForms[$this->entity->getForm()]);
+        }
+
+        return null;
+    }
+
+    private function getRegistrationDocumentForms(): array
+    {
+        return [
+            UserType::FORM_MEMBER => 'member',
+            UserType::FORM_KINSHIP => 'kindship',
+            UserType::FORM_HEALTH => 'health',
+            UserType::FORM_APPROVAL => 'approval',
+            UserType::FORM_LICENCE_COVERAGE => 'coverage',
+            UserType::FORM_REGISTRATION_DOCUMENT => null,
+        ];
     }
 }
