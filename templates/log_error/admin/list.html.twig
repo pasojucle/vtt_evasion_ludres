@@ -17,18 +17,18 @@
             <ul id="errors_container">
                 <a href="{{ path('admin_log_errors_delete', {'statusCode': status_code})}}" class="btn btn-danger delete-error">Supprimer tout</a>
                 {% for error in errors %}
-                    <li class="row row-list">
+                    <li class="row row-list row-log-error">
                         <div class="col-md-11 col-xs-10">
                             <a href="{{ path('admin_log_error', {'error': error.id}) }}" class="btn btn-list btn-light" title="Voir l'erreur">
                                 <div class="row">
-                                    <div class="col-md-5 col-xs-8">{{ error.createdAt }}<br>{{ error.url }}</div>
-                                    <div class="col-md-7 col-xs-12">{{ error.errorMessage }}</div>
+                                    <div class="col-md-5 col-xs-12">{{ error.createdAt }}<br>{{ error.url }}</div>
+                                    <div class="col-md-7 col-xs-12">{{ error.errorMessage|raw }}</div>
                                 </div>
                             </a>
                         </div>
                         <div class="col-md-1 col-xs-2">
                             <a class="btn btn-danger delete-error" 
-                                href="{{ path('admin_log_error_delete', {'error': error.id}) }}" title="Annuler">
+                                href="{{ path('admin_log_error_delete', {'error': error.id, 'total': paginator.total, 'p': paginator.currentPage }) }}" title="Annuler">
                                 <i class="fas fa-times"></i>
                             </a>
                         </div>

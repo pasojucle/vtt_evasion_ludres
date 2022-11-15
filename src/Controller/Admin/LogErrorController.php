@@ -7,9 +7,8 @@ namespace App\Controller\Admin;
 use App\Entity\LogError;
 use App\Repository\LogErrorRepository;
 use App\Service\PaginatorService;
+use App\UseCase\LogError\GetLogErrors;
 use App\ViewModel\LogErrorPresenter;
-use App\ViewModel\LogErrorsPresenter;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,9 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class LogErrorController extends AbstractController
 {
     public function __construct(
-        private PaginatorService $paginator,
-        private PaginatorPresenter $paginatorPresenter,
-        private LogErrorsPresenter $presenter,
+        private GetLogErrors $getLogErrors,
         private LogErrorRepository $logErrorRepository
     ) {
     }
@@ -31,17 +28,9 @@ class LogErrorController extends AbstractController
         Request $request,
         int $statusCode
     ): Response {
-        $query = $this->logErrorRepository->findLogErrorQuery($statusCode);
-        $errors = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $this->presenter->present($errors);
-        $this->paginatorPresenter->present($errors, ['statusCode' => $statusCode]);
+        $params = $this->getLogErrors->execute($statusCode, $request);
 
-        return $this->render('log_error/admin/list.html.twig', [
-            'errors' => $this->presenter->viewModel()->logErrors,
-            'tabs' => $this->presenter->viewModel()->tabs,
-            'status_code' => $statusCode,
-            'paginator' => $this->paginatorPresenter->viewModel(),
-        ]);
+        return $this->render('log_error/admin/list.html.twig', $params);
     }
 
     #[Route('/admin/log/error/show/{error}', name: 'admin_log_error', methods: ['GET'])]
@@ -56,28 +45,27 @@ class LogErrorController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/log/error/delete/{error}', name: 'admin_log_error_delete', methods: ['GET'])]
+    #[Route('/admin/log/error/delete/{error}/{total}', name: 'admin_log_error_delete', methods: ['GET'])]
     public function delete(
         EntityManagerInterface $entityManager,
         Request $request,
-        LogError $error
+        LogError $error,
+        int $total
     ): Response {
         $statusCode = $error->getStatusCode();
 
         $entityManager->remove($error);
         $entityManager->flush();
 
-        $query = $this->logErrorRepository->findLogErrorQuery($statusCode);
-        $errors = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $this->presenter->present($errors);
-        $this->paginatorPresenter->present($errors, ['statusCode' => $statusCode], 'admin_log_errors');
+        --$total;
+        $currentPage = (int) $request->query->get('p');
+        if (0 === $total % PaginatorService::PAGINATOR_PER_PAGE && $total / PaginatorService::PAGINATOR_PER_PAGE < $currentPage) {
+            $request->query->set('p', --$currentPage);
+        }
 
-        return $this->render('log_error/admin/list.html.twig', [
-            'errors' => $this->presenter->viewModel()->logErrors,
-            'tabs' => $this->presenter->viewModel()->tabs,
-            'status_code' => $statusCode,
-            'paginator' => $this->paginatorPresenter->viewModel(),
-        ]);
+        $params = $this->getLogErrors->execute($statusCode, $request);
+
+        return $this->render('log_error/admin/list.html.twig', $params);
     }
 
     #[Route('/admin/log/errors/delete/{statusCode}', name: 'admin_log_errors_delete', methods: ['GET'])]
@@ -87,16 +75,8 @@ class LogErrorController extends AbstractController
     ): Response {
         $this->logErrorRepository->deletAllBySatusCode($statusCode);
 
-        $query = $this->logErrorRepository->findLogErrorQuery($statusCode);
-        $errors = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $this->presenter->present($errors);
-        $this->paginatorPresenter->present($errors, ['statusCode' => $statusCode], 'admin_log_errors');
-        
-        return $this->render('log_error/admin/list.html.twig', [
-            'errors' => $this->presenter->viewModel()->logErrors,
-            'tabs' => $this->presenter->viewModel()->tabs,
-            'status_code' => $statusCode,
-            'paginator' => $this->paginatorPresenter->viewModel(),
-        ]);
+        $params = $this->getLogErrors->execute($statusCode, $request);
+
+        return $this->render('log_error/admin/list.html.twig', $params);
     }
 }

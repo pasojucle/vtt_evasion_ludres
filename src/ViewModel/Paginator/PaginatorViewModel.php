@@ -42,8 +42,7 @@ class PaginatorViewModel extends AbstractViewModel
 
         $paginatorViewModel->total = $paginator->count();
 
-        $querry = $services->requestStack->getCurrentRequest()->query->get('p');
-        $paginatorViewModel->currentPage = ($querry) ? (int) $querry : 1;
+        $paginatorViewModel->currentPage = $paginatorViewModel->getCurrentPage();
 
         $paginatorViewModel->currentRoute = $targetRoute ?? $services->requestStack->getCurrentRequest()->attributes->get('_route');
 
@@ -59,6 +58,15 @@ class PaginatorViewModel extends AbstractViewModel
         $paginatorViewModel->next = ($paginatorViewModel->currentPage < $paginatorViewModel->lastPage) ? $paginatorViewModel->getPageData($paginatorViewModel->currentPage + 1) : null;
 
         return $paginatorViewModel;
+    }
+
+    private function getCurrentPage(): int
+    {
+        $querry = $this->services->requestStack->getCurrentRequest()->query->get('p');
+
+        $currentPage = ($querry) ? (int) $querry : 1;
+
+        return $currentPage;
     }
 
     private function getPages(): array

@@ -1572,6 +1572,10 @@ h3 + ul.block.background-ligth {
     .row.row-list .btn-ico, .row.row-list .one-line {
         line-height: 65px;
     }
+    .row.row-list.row-log-error .btn {
+        height: unset;
+        overflow: hidden;
+    }
     footer li {
         display: block;
         line-height: 30px;

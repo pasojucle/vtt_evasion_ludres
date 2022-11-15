@@ -283,7 +283,7 @@ function anchorAsynchronous(e) {
     e.preventDefault();
     const route = $(this).attr('href');
     const container = $(this).closest('ul').attr('id');
-    const elementsToUpdate = ['#'+container, '.wrapper-title .badge.badge-info','nav.paginator.top','nav.paginator.bottom','nav.paginator.both'];
+    const elementsToUpdate = ['#'+container, '.wrapper-title .badge.badge-info','nav.paginator.margin-top','nav.paginator.margin-bottom','nav.paginator.margin-both'];
     $.ajax({
         url : route,
         success: function(html) {
