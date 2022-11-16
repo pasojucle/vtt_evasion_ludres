@@ -52,6 +52,13 @@
                                     <b></b>
                                 </li>
                             {% endif %}
+                            <li>
+                                <div class="row padding-top-5">
+                                    <div class="col-md-5"><b>Dernière licence</b></div>
+                                    <div class="col-md-7">{{ user.lastLicence.season }}</div>
+                                </div>
+                                <b></b>
+                            </li>
                             {% if user.seasonLicence.entity is not null and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
                                 <li>
                                     <div class="row padding-top-5">
@@ -74,7 +81,12 @@
                                 </li>
                             {% endif %}
                             <li>
-                                <a href="{{ path('change_password') }}">Modifier mon mot de passe</a>
+                                <div class="row padding-top-5">
+                                    <div class="col-md-5">
+                                        <a class="btn btn-secondary btn-xs" href="{{ path('change_password') }}">Modifier mon mot de passe</a>
+                                    </div>
+                                </div>
+                                
                             </li>
                         </ul>
                     </div>    
