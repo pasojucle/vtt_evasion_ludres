@@ -52,7 +52,7 @@
                                     <b></b>
                                 </li>
                             {% endif %}
-                            {% if user.seasonLicence is not empty and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
+                            {% if user.seasonLicence.entity is not null and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon dossier d'inscription</b></div>
@@ -63,7 +63,7 @@
                                     <b></b>
                                 </li>
                             {% endif %}
-                            {% if user.seasonLicence.getCurrentSeasonForm %}
+                            {% if user.seasonLicence.entity is not null and user.seasonLicence.getCurrentSeasonForm %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon bulletin d'assurance {{ season_service.currentSeason }}</b></div>
