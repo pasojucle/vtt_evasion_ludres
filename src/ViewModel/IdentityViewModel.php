@@ -27,6 +27,8 @@ class IdentityViewModel extends AbstractViewModel
 
     public ?string $phone;
 
+    public ?string $emergencyPhone;
+
     public ?string $phonesAnchor;
 
     public ?string $picture;
@@ -52,6 +54,7 @@ class IdentityViewModel extends AbstractViewModel
         $identityView->address = $identityView->getAddress($member);
         $identityView->email = $identity->getEmail();
         $identityView->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
+        $identityView->emergencyPhone = $identity->getEmergencyPhone();
         $identityView->phonesAnchor = $identityView->getPhonesAnchor();
         $identityView->picture = $identityView->getPicture();
         $identityView->type = (null !== $identity->getKinShip()) ? Identity::KINSHIPS[$identity->getKinShip()] : null;

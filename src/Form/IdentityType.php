@@ -168,6 +168,19 @@ class IdentityType extends AbstractType
                             ],
                             'required' => false,
                         ])
+                        ->add('emergencyPhone', TextType::class, [
+                            'label' => 'Télephone de la personne à prévenir en cas d\'urgence',
+                            'row_attr' => [
+                                'class' => 'form-group-inline full-width',
+                            ],
+                            'constraints' => [
+                                new Phone(),
+                            ],
+                            'attr' => [
+                                'data-constraint' => 'app-Phone',
+                                'autocomplete' => 'off',
+                            ],
+                        ])
                     ;
                 }
 

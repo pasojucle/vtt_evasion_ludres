@@ -46,6 +46,9 @@
         <div class="form-group">{{ form_row(identity.profession) }}</div>
     {% endif %}
       
+    {% if identity.emergencyPhone is defined %}
+        <div class="form-group">{{ form_row(identity.emergencyPhone) }}</div>
+    {% endif %}
     {% if identity.email is defined %}
         <div class="form-group">{{ form_row(identity.email) }}</div>
     {% endif %}

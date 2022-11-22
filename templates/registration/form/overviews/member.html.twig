@@ -1,21 +1,27 @@
 <h3>Renseignements concernant l'adhérent</h3>
+<ul class="block background-ligth">
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Non et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.member.fullName }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Date naissance : </b></span><span class="col-md-8 col-sx-6">{{ user.member.birthDate }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Lieu de naissance : </b></span><span class="col-md-8 col-sx-6">{{ user.member.birthPlace }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Adresse : </b> </span><span class="col-md-8 col-sx-6">{{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.member.email }}</span>
+    </li>
+    <li class="row">
+        <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.member.phone}}</span>
+    </li>
+</ul>
+
+{% if user.member.emergencyPhone is not null %}
     <ul class="block background-ligth">
-        <li class="row">
-            <span class="col-md-4 col-sx-6"><b>Non et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.member.fullName }}</span>
-        </li>
-        <li class="row">
-            <span class="col-md-4 col-sx-6"><b>Date naissance : </b></span><span class="col-md-8 col-sx-6">{{ user.member.birthDate }}</span>
-        </li>
-        <li class="row">
-            <span class="col-md-4 col-sx-6"><b>Lieu de naissance : </b></span><span class="col-md-8 col-sx-6">{{ user.member.birthPlace }}</span>
-        </li>
-        <li class="row">
-            <span class="col-md-4 col-sx-6"><b>Adresse : </b> </span><span class="col-md-8 col-sx-6">{{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</span>
-        </li>
-        <li class="row">
-            <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.member.email }}</span>
-        </li>
-        <li class="row">
-            <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.member.phone}}</span>
-        </li>
+        <li><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</li>
     </ul>
+{% endif %}

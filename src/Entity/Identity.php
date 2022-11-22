@@ -87,6 +87,9 @@ class Identity
     #[ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
     private ?Commune $birthCommune = null;
 
+    #[Column(length: 10, nullable: true)]
+    private ?string $emergencyPhone = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -280,6 +283,18 @@ class Identity
     public function setBirthCommune(?Commune $birthCommune): self
     {
         $this->birthCommune = $birthCommune;
+
+        return $this;
+    }
+
+    public function getEmergencyPhone(): ?string
+    {
+        return $this->emergencyPhone;
+    }
+
+    public function setEmergencyPhone(?string $emergencyPhone): self
+    {
+        $this->emergencyPhone = $emergencyPhone;
 
         return $this;
     }

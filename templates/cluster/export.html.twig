@@ -7,7 +7,7 @@
             <br>
             <table class="table-fixed">
                 <tr>
-                    <td rowspan="5" style="width: 150px">
+                    <td rowspan="6" style="width: 150px">
                         {% if user.member.picture %}
                             <img src="{{ user.member.picture|imgPath(media) }}" style="width: 80px;">
                         {% endif %}
@@ -26,51 +26,54 @@
                 <tr>
                     <td colspan="3" ><b>Téléphone : </b>{{ user.member.phone}}</td>
                 </tr>
-            </table>
-            {% if user.lastLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
-                <table class="table-border">
+                {% if user.member.emergencyPhone is not null %}
                     <tr>
-                        <td><b>Numéro de sécurité sociale</b></td>
-                        <td>{{ user.health.socialSecurityNumber }}</td>
+                        <td colspan="7"><b>Personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</td>
                     </tr>
-                    <tr>
-                        <td><b>Groupe sanguin</b></td>
-                        <td>{{ user.health.bloodGroup }}</td>
-                    </tr>
-                    <tr>
-                        <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
-                        <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
-                    </tr>
-                    <tr>
-                        <td><b>Date du dernier rappel antitétanique</b></td>
-                        <td>{{ user.health.tetanusBooster }}</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Médecin traitant : </b>{{ user.health.doctorName }}<br>{{ user.health.doctorAddress }} {{ user.health.doctorTown }}
-                        </td>
-                        <td><img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}</td>
-                    </tr>
-                </table>
-                {% if user.health.diseases is not empty %}
-                    <table class="table-border">
-                        {% for category, diseases in user.health.diseases %}
-                            {% for disease in diseases %}
-                                <tr>
-                                    <td><b>{{ disease.category|trans }}</b></td>
-                                    {% if disease.title is not null %}
-                                        <td>{{ disease.label }}</td>
-                                        <td>{{ disease.title }}</td>
-                                    {% else %}
-                                        <td colspan="2">{{ disease.label }}</td>
-                                    {% endif %}
-                                    <td>{{ disease.curentTreatment }}</td>
-                                    <td>{{ disease.emergencyTreatment }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endfor %}
-                    </table>
                 {% endif %}
+            </table>
+            <table class="table-border">
+                <tr>
+                    <td><b>Numéro de sécurité sociale</b></td>
+                    <td>{{ user.health.socialSecurityNumber }}</td>
+                </tr>
+                <tr>
+                    <td><b>Groupe sanguin</b></td>
+                    <td>{{ user.health.bloodGroup }}</td>
+                </tr>
+                <tr>
+                    <td><b>Mutuelle : </b>{{ user.health.mutualCompany }}</td>
+                    <td><b>Numéro : </b>{{ user.health.mutualNumber }}</td>
+                </tr>
+                <tr>
+                    <td><b>Date du dernier rappel antitétanique</b></td>
+                    <td>{{ user.health.tetanusBooster }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Médecin traitant : </b>{{ user.health.doctorName }}<br>{{ user.health.doctorAddress }} {{ user.health.doctorTown }}
+                    </td>
+                    <td><img src="data:image/png;base64,{{ user.health.phonePicto }}" alt=""> {{ user.health.doctorPhone }}</td>
+                </tr>
+            </table>
+            {% if user.health.diseases is not empty %}
+                <table class="table-border">
+                    {% for category, diseases in user.health.diseases %}
+                        {% for disease in diseases %}
+                            <tr>
+                                <td><b>{{ disease.category|trans }}</b></td>
+                                {% if disease.title is not null %}
+                                    <td>{{ disease.label }}</td>
+                                    <td>{{ disease.title }}</td>
+                                {% else %}
+                                    <td colspan="2">{{ disease.label }}</td>
+                                {% endif %}
+                                <td>{{ disease.curentTreatment }}</td>
+                                <td>{{ disease.emergencyTreatment }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </table>
             {% endif %}
         </div>
         {% if user.kinship %}
