@@ -19,7 +19,7 @@ class ToolType extends AbstractType
         $builder
             ->add('user', Select2EntityType::class, [
                 'multiple' => false,
-                'remote_route' => 'admin_member_choices',
+                'remote_route' => 'admin_all_user_choices',
                 'class' => User::class,
                 'primary_key' => 'id',
                 'text_property' => 'fullName',
