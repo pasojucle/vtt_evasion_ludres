@@ -17,8 +17,8 @@ use App\Service\IndemnityService;
 use App\Service\ParameterService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
-use App\Service\UserService;
 use App\Twig\AppExtension;
+use App\UseCase\BikeRide\IsRegistrable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -63,7 +63,8 @@ class ServicesPresenter
         public LevelRepository $levelRepository,
         // private UserService $userService,
         public SessionRepository $sessionRepository,
-        public ReplaceKeywordsService $replaceKeywordsService
+        public ReplaceKeywordsService $replaceKeywordsService,
+        public IsRegistrable $isRegistrable
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
         $this->uploadsDirectoryPath = $this->parameterBag->get('uploads_directory_path');

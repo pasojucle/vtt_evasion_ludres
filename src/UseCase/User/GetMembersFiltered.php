@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Form\Admin\UserFilterType;
+use App\Service\LevelService;
 use Doctrine\ORM\QueryBuilder;
 
 class GetMembersFiltered extends GetUsersFiltered
 {
-    public int $statusType = UserFilterType::STATUS_TYPE_MEMBER;
+    public int $statusType = LevelService::STATUS_TYPE_MEMBER;
 
     public string $statusPlaceholder = 'Sélectionnez une saison';
 

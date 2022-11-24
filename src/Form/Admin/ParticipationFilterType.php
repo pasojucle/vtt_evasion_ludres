@@ -28,7 +28,7 @@ class ParticipationFilterType extends AbstractType
                 'multiple' => false,
                 'choices' => $this->seasonService->getSeasons(),
                 'attr' => [
-                    'class' => 'select2',
+                    'class' => 'customSelect2',
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionnez une saison',
                     'data-language' => 'fr',
@@ -41,7 +41,7 @@ class ParticipationFilterType extends AbstractType
                 'class' => BikeRideType::class,
                 'choice_label' => 'name',
                 'attr' => [
-                    'class' => 'select2',
+                    'class' => 'customSelect2',
                     'data-width' => '100%',
                     'data-placeholder' => 'Séléctionnez un type de sortie',
                     'data-language' => 'fr',

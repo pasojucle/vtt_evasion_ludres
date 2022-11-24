@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
@@ -20,6 +21,10 @@ use Doctrine\ORM\Mapping\OneToOne;
 #[Entity(repositoryClass: BikeRideRepository::class)]
 class BikeRide
 {
+    public const DEFAULT_TITLE = '';
+    public const DEFAULT_DISPLAY_DURATION = 8;
+    public const DEFAULT_CLOSING_DURATION = 2;
+
     public const PERIOD_DAY = 'jour';
 
     public const PERIOD_WEEK = 'semaine';
@@ -59,7 +64,7 @@ class BikeRide
     private ?DateTimeImmutable $endAt = null;
 
     #[Column(type: 'integer')]
-    private int $displayDuration = 8;
+    private int $displayDuration = self::DEFAULT_DISPLAY_DURATION;
 
     #[Column(type: 'integer', nullable: true)]
     private $minAge;
@@ -68,7 +73,7 @@ class BikeRide
     private Collection $clusters;
 
     #[Column(type: 'integer', options: ['default' => 1])]
-    private $closingDuration = 2;
+    private $closingDuration = self::DEFAULT_CLOSING_DURATION;
 
     #[ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'bikeRides')]
     #[JoinColumn(nullable: false)]
@@ -83,10 +88,24 @@ class BikeRide
     #[Column(type: 'boolean', options: ['default' => 0])]
     private bool $deleted = false;
 
+    #[ManyToMany(targetEntity: User::class, inversedBy: 'bikeRides')]
+    private Collection $users;
+
+    #[ManyToMany(targetEntity: Level::class)]
+    private Collection $levels;
+
+    #[Column(type: 'json', options: ['default' => '[]'])]
+    private array $levelTypes = [];
+
+    private ?int $restriction = null;
+    private array $levelFilter = [];
+
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
         $this->startAt = new DateTimeImmutable();
+        $this->users = new ArrayCollection();
+        $this->levels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,12 +215,12 @@ class BikeRide
         return $this;
     }
 
-    public function getClosingDuration(): ?int
+    public function getClosingDuration(): int
     {
         return $this->closingDuration;
     }
 
-    public function setClosingDuration(?int $closingDuration): self
+    public function setClosingDuration(int $closingDuration): self
     {
         $this->closingDuration = $closingDuration;
 
@@ -262,6 +281,104 @@ class BikeRide
     public function setDeleted(bool $deleted): self
     {
         $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function clearUsers(): self
+    {
+        $this->users->clear();
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Level>
+     */
+    public function getLevels(): Collection
+    {
+        return $this->levels;
+    }
+
+    public function addLevel(Level $level): self
+    {
+        if (!$this->levels->contains($level)) {
+            $this->levels->add($level);
+        }
+
+        return $this;
+    }
+
+    public function removeLevel(Level $level): self
+    {
+        $this->levels->removeElement($level);
+
+        return $this;
+    }
+
+    public function clearLevels(): self
+    {
+        $this->levels->clear();
+
+        return $this;
+    }
+
+    public function setRestriction(?int $restriction): self
+    {
+        $this->restriction = $restriction;
+
+        return $this;
+    }
+
+    public function getRestriction(): ?int
+    {
+        return $this->restriction;
+    }
+
+    public function getLevelTypes(): array
+    {
+        return $this->levelTypes;
+    }
+
+    public function setLevelTypes(?array $levelTypes): self
+    {
+        $this->levelTypes = $levelTypes;
+
+        return $this;
+    }
+
+    public function getLevelFilter(): array
+    {
+        return $this->levelFilter;
+    }
+
+    public function setLevelFilter(array $levelFilter): self
+    {
+        $this->levelFilter = $levelFilter;
 
         return $this;
     }

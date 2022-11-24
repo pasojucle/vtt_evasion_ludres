@@ -9,9 +9,10 @@ use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\UserRepository;
-use App\Service\BikeRideService;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
+use App\UseCase\BikeRide\GetFilters;
+use App\UseCase\BikeRide\GetSchedule;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRidesPresenter;
 use App\ViewModel\UsersPresenter;
@@ -29,7 +30,8 @@ class BikeRideController extends AbstractController
     public function __construct(
         private BikeRideRepository $bikeRideRepository,
         private EntityManagerInterface $entityManager,
-        private BikeRideService $bikeRideService
+        private GetSchedule $getSchedule,
+        private GetFilters $getFilters
     ) {
     }
 
@@ -47,7 +49,7 @@ class BikeRideController extends AbstractController
         ?int $month,
         ?int $day
     ): Response {
-        $response = $this->bikeRideService->getSchedule($request, $period, $year, $month, $day);
+        $response = $this->getSchedule->execute($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);
@@ -68,19 +70,18 @@ class BikeRideController extends AbstractController
             $bikeRide = new BikeRide();
             $bikeRide->setBikeRideType($bikeRideTypeRepository->findDefault());
         }
-        $bikeRide = $this->bikeRideService->setDefaultContent($request, $bikeRide);
+
         $filters = $request->getSession()->get('admin_bike_rides_filters');
         $form = $this->createForm(BikeRideType::class, $bikeRide);
 
-        if (!$request->isXmlHttpRequest()) {
-            $form->handleRequest($request);
-        }
+        $form->handleRequest($request);
+
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $editBikeRide->execute($form, $request);
 
             $this->addFlash('success', 'La sortie à bien été enregistrée');
 
-            $filters = $this->bikeRideService->getFilters(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
+            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
 
             return $this->redirectToRoute('admin_bike_rides', $filters);
         }

@@ -29,9 +29,6 @@ class UserEntityType extends AbstractType
             'placeholder' => 'Saisisez un nom et prénom',
             'width' => '100%',
             'label' => 'Adhérent',
-            'remote_params' => [
-                'filters' => json_encode([]),
-            ],
             'required' => true,
         ]);
     }

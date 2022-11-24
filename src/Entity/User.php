@@ -93,6 +93,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Column(type: 'boolean', options:['default' => false])]
     private $protected = false;
 
+    #[ManyToMany(targetEntity: BikeRide::class, mappedBy: 'users', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
+    private Collection $bikeRides;
+
     public function __construct()
     {
         $this->identities = new ArrayCollection();
@@ -103,6 +106,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->health = null;
         $this->respondents = new ArrayCollection();
         $this->surveys = new ArrayCollection();
+        $this->bikeRides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -571,6 +575,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProtected(bool $protected): self
     {
         $this->protected = $protected;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BikeRide[]
+     */
+    public function getBikeRides(): Collection
+    {
+        return $this->bikeRides;
+    }
+
+    public function addBikeRide(BikeRide $bikeRide): self
+    {
+        if (!$this->bikeRides->contains($bikeRide)) {
+            $this->bikeRides[] = $bikeRide;
+            $bikeRide->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBikeRide(BikeRide $bikeRide): self
+    {
+        if ($this->bikeRides->removeElement($bikeRide)) {
+            $bikeRide->removeUser($this);
+        }
 
         return $this;
     }

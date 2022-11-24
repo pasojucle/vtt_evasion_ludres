@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     $(document).on('change', '.filters .select2, .filters select, .filters .btn', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
 
-    $(document).on('change', '#bike_ride_bikeRideType', modifierBikeRide);
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.disease-active', toggleDisease);
@@ -67,13 +66,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
 
-    if ($('.select2').length > 0) {
-        $('.select2').select2();
+    if ($('.customSelect2').length > 0) {
+        $('.customSelect2').select2();
     }
     
-    $(document).on('select2:open', (event) => {
+    $(document).on('customSelect2:open', (event) => {
         const id = event.target.id;
-        document.querySelector('.select2-search__field[aria-controls="select2-'+id+'-results"]').focus();
+        document.querySelector('.select2-search__field[aria-controls="customSelect2-'+id+'-results"]').focus();
     });
     $(document).on('click', '#user_search_submit', confirmDeleteUser)
 });
@@ -168,30 +167,6 @@ function updateLinkOrder(item) {
     });
 }
 
-function modifierBikeRide() {
-    var form = $(this).closest('form');
-    var data = {};
-    $.each(form[0].elements,function() {
-        if ($(this).attr('type') !== 'hidden') {
-            data[$(this).attr('name')] = $(this).val();
-        }
-    });
-
-    $.ajax({
-        url : form.attr('action'),
-        type: form.attr('method'),
-        data : data,
-        success: function(html) {
-          $('#bike_ride_container').replaceWith(
-            $(html).find('#bike_ride_container')
-          );
-          $('.js-datepicker').datepicker({
-            format: 'yyyy-mm-dd hh:ii',
-        });
-        }
-      });
-}
-
 function formModifier() {
     const form = $(this).closest('form');
     const selector = '#' + $(this).data('modifier');
@@ -202,6 +177,13 @@ function formModifier() {
             let value = ($(this).attr('name').includes('commune')) ? null : $(this).val();
             data[$(this).attr('name')] = value;
         }
+        // if ($(this).attr('type') === 'checkbox' && !$(this).is(':checked')) {
+        //     data[$(this).attr('name')] = 0;
+        // }
+        // if ($(this).attr('type') === 'checkbox') {
+        //     console.log('checkbox', $(this).is(':checked'));
+        // }
+
     });
 
     $.ajax({
@@ -215,6 +197,10 @@ function formModifier() {
             $(html).find(selector)
           );
           $('.select2entity').select2entity();
+          $('.customSelect2').select2();
+          $('.js-datepicker').datepicker({
+            format: 'yyyy-mm-dd hh:ii',
+        });
         }
       });
 }
@@ -298,6 +284,7 @@ function anchorAsynchronous(e) {
 
 function submitAsynchronous(e) {
     e.preventDefault();
+    console.log('submitAsynchronous');
     const form = $(this).closest('form');
     let selector = 'form[name="'+form.attr('name')+'"]';
     let data = {};

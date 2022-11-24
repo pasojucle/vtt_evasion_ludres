@@ -16,7 +16,7 @@ licence:
     place_holder: Mineur et adulte
   status:
     none: Non renouvelée
-    waiting_renew: En attente de renouvellement
+    waiting_renew: Licences non renouvelées
     in_processing: En cours de création
     waiting_validate: En attente de validation
     valid: Valide

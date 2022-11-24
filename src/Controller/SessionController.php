@@ -9,6 +9,7 @@ use App\Entity\Session;
 use App\Entity\User;
 use App\Form\SessionAvailabilityType;
 use App\Service\SessionService;
+use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\Session\EditSession;
 use App\UseCase\Session\GetFormSession;
 use App\ViewModel\BikeRidePresenter;
@@ -32,10 +33,19 @@ class SessionController extends AbstractController
         Request $request,
         GetFormSession $getFormSession,
         EditSession $editSession,
+        IsRegistrable $isRegistrable,
         BikeRide $bikeRide
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+
+
+        $isRegistrable = $isRegistrable->execute($bikeRide, $user);
+        if (!$isRegistrable) {
+            return $this->render('session/unregistrable.html.twig', [
+                'bikeRide' => $bikeRide,
+            ]);
+        }
 
         $form = $getFormSession->execute($user, $bikeRide);
         $form->handleRequest($request);

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\UseCase\Coverage;
 
 use App\Form\Admin\UserFilterType;
+use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
 
 class GetCoveragesFiltered extends GetUsersFiltered
 {
-    public int $statusType = UserFilterType::STATUS_TYPE_COVERAGE;
+    public int $statusType = LevelService::STATUS_TYPE_COVERAGE;
 
     public string $statusPlaceholder = 'Toutes les saisons';
 

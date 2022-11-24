@@ -410,8 +410,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaTestinInProgress($qb),
                     Licence::STATUS_TESTING_COMPLETE => $this->addCriteriaTestinComplete($qb),
                     Licence::STATUS_NEW => $this->addCriteriaNew($qb),
-                    Licence::STATUS_RENEW =>  $this->addCriteriaRenew($qb),
-                    Licence::STATUS_WAITING_RENEW =>  $this->addCriteriaWaitingRenew($qb, $currentSeason),
+                    Licence::STATUS_RENEW => $this->addCriteriaRenew($qb),
+                    Licence::STATUS_WAITING_RENEW => $this->addCriteriaWaitingRenew($qb, $currentSeason),
                     default => null,
                 };
             }

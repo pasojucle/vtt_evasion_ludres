@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Level;
 use App\Entity\User;
-use App\Repository\LevelRepository;
+use App\Service\LevelService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,14 +16,8 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class UserFilterType extends AbstractType
 {
-    public const STATUS_TYPE_MEMBER = 1;
-    public const STATUS_TYPE_REGISTRATION = 2;
-    public const STATUS_TYPE_COVERAGE = 3;
-    public const LEVEL_GROUP_SCHOOL = 'École VTT';
-    public const LEVEL_GROUP_FRAME = 'Encadrement';
-
     public function __construct(
-        private LevelRepository $levelRepository
+        private LevelService $levelService
     ) {
     }
 
@@ -54,9 +47,9 @@ class UserFilterType extends AbstractType
             ->add('levels', ChoiceType::class, [
                 'label' => false,
                 'multiple' => true,
-                'choices' => $this->getLevelChoices(),
+                'choices' => $this->levelService->getLevelChoices(),
                 'attr' => [
-                    'class' => 'select2',
+                    'class' => 'customSelect2',
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
                     'data-maximum-selection-length' => 4,
@@ -77,7 +70,7 @@ class UserFilterType extends AbstractType
                         'multiple' => false,
                         'choices' => $options['status_choices'],
                         'attr' => [
-                            'class' => 'select2',
+                            'class' => 'customSelect2',
                             'data-width' => '100%',
                             'data-placeholder' => $options['status_placeholder'],
                             'data-language' => 'fr',
@@ -88,27 +81,6 @@ class UserFilterType extends AbstractType
                 ;
             }
         });
-    }
-
-    private function getLevelChoices(): array
-    {
-        $levelChoices = [
-            self::LEVEL_GROUP_SCHOOL => ['Toute l\'école VTT' => Level::TYPE_ALL_MEMBER],
-            self::LEVEL_GROUP_FRAME => ['Tout l\'encadrement' => Level::TYPE_ALL_FRAME],
-        ];
-
-        $levels = $this->levelRepository->findAll();
-        if (!empty($levels)) {
-            foreach ($levels as $level) {
-                match ($level->getType()) {
-                    Level::TYPE_SCHOOL_MEMBER => $levelChoices[self::LEVEL_GROUP_SCHOOL][$level->getTitle()] = $level->getId(),
-                    Level::TYPE_FRAME => $levelChoices[self::LEVEL_GROUP_FRAME][$level->getTitle()] = $level->getId(),
-                    default => $levelChoices[$level->getTitle()] = $level->getId()
-                };
-            }
-        }
-
-        return $levelChoices;
     }
 
     public function configureOptions(OptionsResolver $resolver)

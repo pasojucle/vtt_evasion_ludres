@@ -522,8 +522,12 @@ main:not(.admin) {
     background: var(--light-color);
     padding: 5px;
 }
-.form-group > input:disabled {
-    background: unset;
+.form-group > input:disabled,
+.form-group-inline > input:disabled,
+.select2-container--default.select2-container--disabled .select2-selection--multiple,
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background: #dfbbaa;
+    opacity: 0.7;
 }
 .background-ligth .form-group > textarea {
     background: var(--white-color);

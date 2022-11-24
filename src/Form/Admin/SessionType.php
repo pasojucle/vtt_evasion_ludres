@@ -36,9 +36,6 @@ class SessionType extends AbstractType
                 'placeholder' => 'Saisisez un nom et prénom',
                 'width' => '100%',
                 'label' => 'Participant',
-                'remote_params' => [
-                    'filters' => json_encode([]),
-                ],
                 'constraints' => [
                     new NotBlank(),
                     new SessionUniqueMember(),

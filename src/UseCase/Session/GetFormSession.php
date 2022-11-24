@@ -11,8 +11,8 @@ use App\Entity\SurveyResponse;
 use App\Entity\User;
 use App\Form\SessionType;
 use App\Repository\SessionRepository;
-use App\Service\BikeRideService;
 use App\Service\SessionService;
+use App\UseCase\BikeRide\CreateClusters;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRideViewModel;
 use App\ViewModel\UserPresenter;
@@ -27,7 +27,7 @@ class GetFormSession
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private BikeRideService $bikeRideService,
+        private CreateClusters $createClusters,
         private SessionRepository $sessionRepository,
         private BikeRidePresenter $bikeRidePresenter,
         private FormFactoryInterface $formFactory,
@@ -59,7 +59,7 @@ class GetFormSession
         /** @var COllection $clusters */
         $clusters = $bikeRide->getClusters();
         if ($clusters->isEmpty()) {
-            $this->bikeRideService->createClusters($bikeRide);
+            $this->createClusters->execute($bikeRide);
             $this->entityManager->flush();
             $clusters = $bikeRide->getClusters();
         }

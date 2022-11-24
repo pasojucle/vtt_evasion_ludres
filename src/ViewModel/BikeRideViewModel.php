@@ -82,26 +82,13 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($user);
         $bikeRideView->period = $bikeRideView->getPeriod($services->appExtension);
         $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($user);
-        $bikeRideView->isRegistrable = $bikeRideView->isRegistrable();
+        $bikeRideView->isRegistrable = $services->isRegistrable->execute($bikeRide, $user);
         $bikeRideView->survey = $bikeRide->getSurvey();
 
         $bikeRideView->services = $services;
         $bikeRideView->filename = $bikeRideView->getFilename();
 
         return $bikeRideView;
-    }
-
-    public function isRegistrable(): bool
-    {
-        if (!$this->entity->getBikeRideType()->isRegistrable()) {
-            return false;
-        }
-
-        $today = new DateTime();
-        $intervalDisplay = new DateInterval('P' . $this->displayDuration . 'D');
-        $intervalClosing = new DateInterval('P' . $this->closingDuration . 'D');
-
-        return $this->displayAt->sub($intervalDisplay) <= $today && $today <= $this->closingAt->sub($intervalClosing);
     }
 
     private function getAccessAvailabity(?User $user): bool
