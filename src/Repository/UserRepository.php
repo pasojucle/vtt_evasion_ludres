@@ -204,7 +204,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $usersWhithOnlyOneLicence = $this->_em->createQueryBuilder()
             ->select('user')
             ->from(User::class, 'user')
-            ->join('u.licences', 'userLicence')
+            ->join('user.licences', 'userLicence')
             ->groupBy('user.id')
             ->andHaving(
                 $qb->expr()->eq($qb->expr()->count('userLicence.id'), 1),
@@ -227,7 +227,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $usersWhithMoreThanLicence = $this->_em->createQueryBuilder()
             ->select('user')
             ->from(User::class, 'user')
-            ->join('u.licences', 'userLicence')
+            ->join('user.licences', 'userLicence')
             ->groupBy('user.id')
             ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('userLicence.id'), 1),
@@ -250,7 +250,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $usersWhithCurrentSeasonLicence = $this->_em->createQueryBuilder()
             ->select('user')
             ->from(User::class, 'user')
-            ->join('u.licences', 'userLicence')
+            ->join('user.licences', 'userLicence')
             ->andWhere(
                 $qb->expr()->eq('userLicence.final', ':finalWaitingRenew'),
                 $qb->expr()->gte('userLicence.status', ':statusWaitingRenew'),
