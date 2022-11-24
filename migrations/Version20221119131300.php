@@ -26,7 +26,8 @@ final class Version20221119131300 extends AbstractMigration
         $this->addSql('ALTER TABLE bike_ride_user ADD CONSTRAINT FK_25973ADFA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE bike_ride_level ADD CONSTRAINT FK_832EFE8E8A96134D FOREIGN KEY (bike_ride_id) REFERENCES bike_ride (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE bike_ride_level ADD CONSTRAINT FK_832EFE8E5FB14BA7 FOREIGN KEY (level_id) REFERENCES level (id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE bike_ride ADD level_types LONGTEXT DEFAULT \'[]\' NOT NULL COMMENT \'(DC2Type:json)\'');
+        $this->addSql('ALTER TABLE bike_ride ADD level_types LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\'');
+        $this->addSql('UPDATE `bike_ride` SET `level_types`=\'[]\'');
     }
 
     public function down(Schema $schema): void
