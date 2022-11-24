@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\UseCase\Registration;
 
 use App\Entity\Licence;
-use App\Form\Admin\UserFilterType;
+use App\Service\LevelService;
 use App\UseCase\User\GetUsersFiltered;
 use Doctrine\ORM\QueryBuilder;
 
 class GetRegistrationsFiltered extends GetUsersFiltered
 {
-    public int $statusType = UserFilterType::STATUS_TYPE_REGISTRATION;
+    public int $statusType = LevelService::STATUS_TYPE_REGISTRATION;
 
     public string $statusPlaceholder = 'Sélectionnez un statut';
 
@@ -33,6 +33,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
             'licence.status.testing_complete' => Licence::STATUS_TESTING_COMPLETE,
             'licence.status.new' => Licence::STATUS_NEW,
             'licence.status.renew' => Licence::STATUS_RENEW,
+            'licence.status.waiting_renew' => Licence::STATUS_WAITING_RENEW,
         ];
     }
 }

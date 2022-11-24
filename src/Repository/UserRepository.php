@@ -153,9 +153,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     case Level::TYPE_ALL_FRAME:
                         $types[] = Level::TYPE_FRAME;
                         break;
-                    case Level::TYPE_ADULT_MEMBER:
-                        $types[] = Level::TYPE_ADULT_MEMBER;
-                        break;
                     default:
                         $levels[] = $level;
                 }
@@ -204,34 +201,73 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaNew(QueryBuilder &$qb): void
     {
+        $usersWhithOnlyOneLicence = $this->_em->createQueryBuilder()
+            ->select('user')
+            ->from(User::class, 'user')
+            ->join('u.licences', 'userLicence')
+            ->groupBy('user.id')
+            ->andHaving(
+                $qb->expr()->eq($qb->expr()->count('userLicence.id'), 1),
+            );
+
         $qb
             ->andWhere(
                 $qb->expr()->eq('li.final', ':finalNew'),
                 $qb->expr()->eq('li.status', ':statusNew'),
+                $qb->expr()->in('u', $usersWhithOnlyOneLicence->getDQL()),
             )
             ->setParameter('finalNew', true)
             ->setParameter('statusNew', Licence::STATUS_WAITING_VALIDATE)
-            ->groupBy('u.id')
-            ->andHaving(
-                $qb->expr()->eq($qb->expr()->count('li.id'), 1)
-            )
             ->orderBy('i.name', 'ASC')
         ;
     }
 
     private function addCriteriaRenew(QueryBuilder &$qb): void
     {
+        $usersWhithMoreThanLicence = $this->_em->createQueryBuilder()
+            ->select('user')
+            ->from(User::class, 'user')
+            ->join('u.licences', 'userLicence')
+            ->groupBy('user.id')
+            ->andHaving(
+                $qb->expr()->gt($qb->expr()->count('userLicence.id'), 1),
+            );
+
         $qb
             ->andWhere(
                 $qb->expr()->eq('li.final', ':finalRenew'),
-                $qb->expr()->gte('li.status', ':statusRenew'),
+                $qb->expr()->eq('li.status', ':statusRenew'),
+                $qb->expr()->in('u', $usersWhithMoreThanLicence->getDQL()),
             )
             ->setParameter('finalRenew', true)
             ->setParameter('statusRenew', Licence::STATUS_WAITING_VALIDATE)
-            ->groupBy('u.id')
-            ->andHaving(
-                $qb->expr()->gt($qb->expr()->count('li.id'), 1)
+            ->orderBy('i.name', 'ASC')
+        ;
+    }
+
+    private function addCriteriaWaitingRenew(QueryBuilder &$qb, int $currentSeason): void
+    {
+        $usersWhithCurrentSeasonLicence = $this->_em->createQueryBuilder()
+            ->select('user')
+            ->from(User::class, 'user')
+            ->join('u.licences', 'userLicence')
+            ->andWhere(
+                $qb->expr()->eq('userLicence.final', ':finalWaitingRenew'),
+                $qb->expr()->gte('userLicence.status', ':statusWaitingRenew'),
+                $qb->expr()->eq('userLicence.season', ':currentSeason'),
+            );
+
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('li.final', ':finalWaitingRenew'),
+                $qb->expr()->gt('li.status', ':statusWaitingRenew'),
+                $qb->expr()->eq('li.season', ':previousSeason'),
+                $qb->expr()->notIn('u', $usersWhithCurrentSeasonLicence->getDQL()),
             )
+            ->setParameter('previousSeason', $currentSeason - 1)
+            ->setParameter('currentSeason', $currentSeason)
+            ->setParameter('finalWaitingRenew', true)
+            ->setParameter('statusWaitingRenew', Licence::STATUS_WAITING_VALIDATE)
             ->orderBy('i.name', 'ASC')
         ;
     }
@@ -370,24 +406,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
             if (null !== $filters['status']) {
-                switch ($filters['status']) {
-                    case Licence::STATUS_TESTING_IN_PROGRESS:
-                        $this->addCriteriaTestinInProgress($qb);
-                        break;
-                    case Licence::STATUS_TESTING_COMPLETE:
-                        $this->addCriteriaTestinComplete($qb);
-                        break;
-                    case Licence::STATUS_NEW:
-                        $this->addCriteriaNew($qb);
-                        break;
-                    case Licence::STATUS_RENEW:
-                        $this->addCriteriaRenew($qb);
-                        break;
-                }
+                match ($filters['status']) {
+                    Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaTestinInProgress($qb),
+                    Licence::STATUS_TESTING_COMPLETE => $this->addCriteriaTestinComplete($qb),
+                    Licence::STATUS_NEW => $this->addCriteriaNew($qb),
+                    Licence::STATUS_RENEW =>  $this->addCriteriaRenew($qb),
+                    Licence::STATUS_WAITING_RENEW =>  $this->addCriteriaWaitingRenew($qb, $currentSeason),
+                    default => null,
+                };
             }
         }
-
-        $this->addCriteriaBySeason($qb, $currentSeason);
+        if (null === $filters['status'] || (array_key_exists('status', $filters) && $filters['status'] !== Licence::STATUS_WAITING_RENEW)) {
+            $this->addCriteriaBySeason($qb, $currentSeason);
+        }
+        
 
         return $this->orderByASC($qb);
     }

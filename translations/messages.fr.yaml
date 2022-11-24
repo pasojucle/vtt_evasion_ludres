@@ -23,8 +23,8 @@ licence:
     testing: 3 séances gratuites
     testing_in_processing: 3 séances en cours
     testing_complete: 3 séances terminées
-    new: Nouvelles inscriptions
-    renew: Renouvellements
+    new: Nouvelles inscriptions à valider
+    renew: Renouvellements à valider
   all_users: Tous les utilisateurs
 
 identity:
