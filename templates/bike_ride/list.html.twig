@@ -19,7 +19,7 @@
                     <div class="bike-ride-date item-center align-center {{ bikeRide.displayClass }}">
                         <div>
                             {{ bikeRide.period }}
-                            {% if bikeRide.isRegistrable or bikeRide.accessAvailability %}
+                            {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
                                 <div class="bike-ride-date-btn">
                                     <br>
                                     <a href="{{ path('session_add', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
@@ -44,7 +44,7 @@
                             <p>{{ bikeRide.content | raw}}</p>
                         {% endif %}
                     </div>
-                    {% if bikeRide.isRegistrable or bikeRide.accessAvailability %}
+                    {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
                         <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
                             <a href="{{ path('session_add', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
                         </div>

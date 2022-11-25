@@ -32,7 +32,7 @@ class BikeRideViewModel extends AbstractViewModel
 
     public ?int $closingDuration;
 
-    public ?bool $accessAvailability;
+    public ?bool $isWritableAvailability;
 
     public ?bool $isRegistrable;
 
@@ -79,29 +79,16 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->displayAt = $bikeRideView->startAt->setTime(0, 0, 0);
         $bikeRideView->closingAt = $bikeRideView->startAt->setTime(23, 59, 59);
         $bikeRideView->displayClass = $bikeRideView->getDisplayClass();
-        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($user);
         $bikeRideView->period = $bikeRideView->getPeriod($services->appExtension);
-        $bikeRideView->accessAvailability = $bikeRideView->getAccessAvailabity($user);
+        $bikeRideView->isWritableAvailability = $services->isWritableAvailability->execute($bikeRide, $user);
         $bikeRideView->isRegistrable = $services->isRegistrable->execute($bikeRide, $user);
+        $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($user);
         $bikeRideView->survey = $bikeRide->getSurvey();
 
         $bikeRideView->services = $services;
         $bikeRideView->filename = $bikeRideView->getFilename();
 
         return $bikeRideView;
-    }
-
-    private function getAccessAvailabity(?User $user): bool
-    {
-        $bikeRideType = $this->entity->getBikeRideType();
-        if (!$bikeRideType->isRegistrable()) {
-            return false;
-        }
-
-        $level = (null !== $user) ? $user->getLevel() : null;
-        $type = (null !== $level) ? $level->getType() : null;
-
-        return Level::TYPE_FRAME === $type && $bikeRideType->isSchool() && $this->today <= $this->closingAt;
     }
 
     public function isOver(): bool
@@ -130,7 +117,7 @@ class BikeRideViewModel extends AbstractViewModel
 
     private function getBtnLabel(?User $user): string
     {
-        if ($this->getAccessAvailabity($user)) {
+        if ($this->isWritableAvailability) {
             return 'Disponibilité';
         }
 

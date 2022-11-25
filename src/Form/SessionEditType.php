@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Entity\Cluster;
 use App\Entity\Session;
+use App\UseCase\BikeRide\IsWritableAvailability;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,7 +23,7 @@ class SessionEditType extends AbstractType
             $session = $event->getData();
             $form = $event->getForm();
 
-            if (null !== $options['bike_ride'] && $options['bike_ride']->accessAvailability) {
+            if (true === $options['is_writable_availability']) {
                 $form
                         ->add('availability', ChoiceType::class, [
                             'label' => false,
@@ -62,7 +63,7 @@ class SessionEditType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Session::class,
             'clusters' => [],
-            'bike_ride' => null,
+            'is_writable_availability' => false,
             'is_already_registered' => false,
             'is_end_testing' => false,
             'submited_label' => null,

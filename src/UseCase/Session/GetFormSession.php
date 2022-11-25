@@ -13,6 +13,7 @@ use App\Form\SessionType;
 use App\Repository\SessionRepository;
 use App\Service\SessionService;
 use App\UseCase\BikeRide\CreateClusters;
+use App\UseCase\BikeRide\IsWritableAvailability;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRideViewModel;
 use App\ViewModel\UserPresenter;
@@ -32,7 +33,8 @@ class GetFormSession
         private BikeRidePresenter $bikeRidePresenter,
         private FormFactoryInterface $formFactory,
         private SessionService $sessionService,
-        private UserPresenter $userPresenter
+        private UserPresenter $userPresenter,
+        private IsWritableAvailability $isWritableAvailability
     ) {
     }
 
@@ -47,7 +49,7 @@ class GetFormSession
 
         $isEndTesting = $this->userPresenter->viewModel()->isEndTesting();
 
-        $form = $this->getForm($userSession, $this->bikeRidePresenter->viewModel(), $clusters, $isAlreadyRegistered, $isEndTesting);
+        $form = $this->getForm($userSession, $bikeRide, $clusters, $isAlreadyRegistered, $isEndTesting);
 
         $this->setParams($form, $bikeRide, $framers, $members, $isAlreadyRegistered, $isEndTesting);
 
@@ -101,14 +103,14 @@ class GetFormSession
         return [$isAlreadyRegistered, $userSession];
     }
 
-    private function getForm(Session $userSession, BikeRideViewModel $bikeRide, Collection $clusters, bool $isAlreadyRegistered, bool $isEndTesting): FormInterface
+    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isAlreadyRegistered, bool $isEndTesting): FormInterface
     {
         return $this->formFactory->create(SessionType::class, [
             'session' => $userSession,
-            'responses' => ['surveyResponses' => $this->getSurveyResponse($bikeRide->entity)],
+            'responses' => ['surveyResponses' => $this->getSurveyResponse($bikeRide)],
         ], [
             'clusters' => $clusters,
-            'bike_ride' => $bikeRide,
+            'is_writable_availability' => $this->isWritableAvailability->execute($bikeRide, $userSession->getUser()),
             'is_already_registered' => $isAlreadyRegistered,
             'is_end_testing' => $isEndTesting
         ]);
