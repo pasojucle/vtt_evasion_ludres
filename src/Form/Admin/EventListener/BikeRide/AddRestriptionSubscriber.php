@@ -109,7 +109,7 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
             ;
     }
 
-    private function cleanData(int $restriction, array &$data, BikeRide $bikeRide): void
+    private function cleanData(?int $restriction, array &$data, BikeRide $bikeRide): void
     {
         if (BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction) {
             $data['users'] = [];
