@@ -100,8 +100,9 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
+            $data = $request->request->all('user');
 
-            if (null !== $user->getLevel() && Level::TYPE_FRAME === $user->getLevel()->getType()) {
+            if (array_key_exists('isFramer', $data) && $data['isFramer']) {
                 $user->addRole('ROLE_FRAME');
             } else {
                 $user->removeRole('ROLE_FRAME');
