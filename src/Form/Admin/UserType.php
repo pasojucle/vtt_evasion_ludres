@@ -93,7 +93,7 @@ class UserType extends AbstractType
                             'class' => 'form-group-inline',
                         ],
                         'attr' => [
-                            'data-switch-on' => 'Donner les accès admin pour les sortie',
+                            'data-switch-on' => 'Donner les accès admin pour les sorties',
                             'data-switch-off' => 'Aucun accès admin',
                         ],
                         'data' => in_array('ROLE_FRAME', $user->getRoles()),
