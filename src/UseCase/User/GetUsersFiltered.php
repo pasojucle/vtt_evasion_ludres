@@ -168,7 +168,7 @@ abstract class GetUsersFiltered
             $this->usersPresenter->present($users);
             foreach ($this->usersPresenter->viewModel()->users as $user) {
                 $isTesting = ($user->seasonLicence->isFinal) ? 0 : 1;
-                $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->getLevel()?->getTitle(), $user->mainEmail, $user->member->birthDate, $user->lastLicence->season, $isTesting];
+                $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->level?->title, $user->mainEmail, $user->member->birthDate, $user->lastLicence->season, $isTesting];
                 $content[] = implode(',', $row);
             }
         }
