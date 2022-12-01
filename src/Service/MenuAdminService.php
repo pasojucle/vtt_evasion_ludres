@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 class MenuAdminService
 {
-    public function __construct(private RequestStack $request, private SeasonService $seasonService)
+    public function __construct(private RequestStack $request, private SeasonService $seasonService, private Security $security)
     {
     }
 
@@ -48,12 +49,12 @@ class MenuAdminService
 
     private function getManagementMenus(): array
     {
-        return [
+        return $this->getMenusGranted([
             [
                 'label' => 'Programme',
                 'route' => 'admin_bike_rides',
                 'pattern' => '/^admin_bike_ride/',
-                'role' => 'ROLE_FRAME',
+                'role' => 'ROLE_REGISTER',
             ],
             [
                 'label' => 'Adhérents',
@@ -97,12 +98,12 @@ class MenuAdminService
                 'pattern' => '/popup/',
                 'role' => 'ROLE_ADMIN',
             ],
-        ];
+        ]);
     }
 
     private function getSettingMenu(): array
     {
-        return [
+        return $this->getMenusGranted([
             [
                 'label' => 'Page d\'accueil',
                 'route' => 'admin_home_contents',
@@ -169,12 +170,12 @@ class MenuAdminService
                 'pattern' => '/disease_kind/',
                 'role' => 'ROLE_ADMIN',
             ],
-        ];
+        ]);
     }
 
     private function getToolsMenu(): array
     {
-        return [
+        return $this->getMenusGranted([
             [
                 'label' => 'Notification d\'erreur à l\'inscription',
                 'route' => 'admin_registration_error',
@@ -193,6 +194,18 @@ class MenuAdminService
                 'pattern' => '/produit/',
                 'role' => 'ROLE_ADMIN',
             ],
-        ];
+        ]);
+    }
+
+    private function getMenusGranted(array $menus): array
+    {
+        $menusGranted = [];
+        foreach ($menus as $menu) {
+            if ($this->security->isGranted($menu['role'])) {
+                $menusGranted[] = $menu;
+            }
+        }
+
+        return $menusGranted;
     }
 }

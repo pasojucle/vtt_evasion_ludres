@@ -4,28 +4,27 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
+use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class UserType extends AbstractType
 {
     public function __construct(private Security $security)
     {
-        
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -83,7 +82,7 @@ class UserType extends AbstractType
             ])
         ;
 
-        $formModifier = function(FormInterface $form, ?Level $level, User $user) {
+        $formModifier = function (FormInterface $form, ?Level $level, User $user) {
             if ($this->security->isGranted('ROLE_ADMIN') && Level::TYPE_FRAME === $level?->getType()) {
                 $form
                     ->add('isFramer', CheckboxType::class, [
@@ -103,12 +102,11 @@ class UserType extends AbstractType
             }
         };
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event)  use ($formModifier)  {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
             $form = $event->getForm();
             $data = $event->getData();
 
             $formModifier($form, $data->getLevel(), $data);
-            
         });
 
 

@@ -44,7 +44,7 @@ class SessionType extends AbstractType
                 'label' => false,
                 'clusters' => [],
                 'is_writable_availability' => $options['is_writable_availability'],
-                'is_already_registered' => false,
+                'is_already_registered' => $options['is_already_registered'],
                 'is_end_testing' => false,
                 'submited_label' => $submitLabel,
             ])

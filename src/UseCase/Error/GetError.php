@@ -30,7 +30,7 @@ class GetError
 
         $logError->setUrl($request->getRequestUri())
             ->setErrorMessage($exception->getMessage() . ' / ' . get_class($exception))
-            ->setMessage('Une erreur est survenue !<br>Veuillez réessayer plus tard"')
+            ->setMessage('Une erreur est survenue !<br>Veuillez réessayer plus tard')
             ->setUserAgent($request->headers->get('user-agent'))
             ->setCreatedAt(new DateTime())
             ->setStatusCode(500)
@@ -47,7 +47,7 @@ class GetError
             $logError->setStatusCode($statusCode);
 
             if (403 === $statusCode) {
-                $logError->setRoute($exception->getPrevious()->subject->attributes->get('_route'))
+                $logError->setRoute($exception->getPrevious()?->subject->attributes->get('_route'))
                     ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.')
                 ;
             }

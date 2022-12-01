@@ -6,7 +6,6 @@ namespace App\Form;
 
 use App\Entity\Cluster;
 use App\Entity\Session;
-use App\UseCase\BikeRide\IsWritableAvailability;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -31,6 +30,7 @@ class SessionEditType extends AbstractType
                             'expanded' => true,
                             'multiple' => false,
                             'block_prefix' => 'customcheck',
+                            'disabled' => $options['is_already_registered'],
                         ])
                     ;
             } else {

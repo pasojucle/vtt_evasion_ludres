@@ -7,16 +7,19 @@ $(document).ready(function(){
 function toggleDropdown(event) {
     const dropdownButton = event.target;
     const dropdownMenu = dropdownButton.parentElement.querySelector('[data-target="'+dropdownButton.dataset.toggle +'"]');
+    const isActive = dropdownButton.classList.contains('active');
     hideDropdown();
-    dropdownButton.classList.toggle('active');
-    dropdownMenu.classList.toggle('active');
-    let buttonTop = dropdownButton.getBoundingClientRect().top;
-    let wrapperTop = document.querySelector('.wrapper').getBoundingClientRect().top;
-    let positionY = (wrapperTop > 0) ? wrapperTop : 0;
-    let margingTop = buttonTop - positionY;
-    let margingBottom = window.screen.height - Math.abs(wrapperTop)- buttonTop;
-    let classMenu = (margingTop > dropdownMenu.offsetHeight && margingBottom < dropdownMenu.offsetHeight) ?'active-bottom' : 'active-top';
-    dropdownMenu.classList.toggle(classMenu);
+    if (!isActive) {
+        dropdownButton.classList.toggle('active');
+        dropdownMenu.classList.toggle('active');
+        let buttonTop = dropdownButton.getBoundingClientRect().top;
+        let wrapperTop = document.querySelector('.wrapper').getBoundingClientRect().top;
+        let positionY = (wrapperTop > 0) ? wrapperTop : 0;
+        let margingTop = buttonTop - positionY;
+        let margingBottom = window.screen.height - Math.abs(wrapperTop)- buttonTop;
+        let classMenu = (margingTop > dropdownMenu.offsetHeight && margingBottom < dropdownMenu.offsetHeight) ?'active-bottom' : 'active-top';
+        dropdownMenu.classList.toggle(classMenu);
+    }
 }
 
 function hideDropdown() {

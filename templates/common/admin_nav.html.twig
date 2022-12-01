@@ -7,33 +7,32 @@
 
 <nav class="admin">
     {% for key, group in groups %}
-        {% set angle = (key == menu_actived) ? 'fas fa-angle-up' : 'fas fa-angle-down' %}
-        {% set body_class = (key == menu_actived) ? 'down' : 'up' %}
-        <div class="nav-group block" data-group="{{ key }}" data-toggle="block-body">
-         <a href="" data-action="toggle-down">
-            <div class="block-title">
-                <h2>{{ group.label|trans }}</h2>
-                <span class="tools angle">
-                    <i class="{{ angle }}"></i>
-                </span>
-            </div></a>
-            <div class="block-body {{ body_class }}" data-target="block-body">
-                <ul>
-                {% for menu in group.subMenus %}
-                    {% if is_granted(menu.role) %}
-                    <li>
-                        <a href="{{ path(menu.route) }}"
-                            {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
-                            {{ menu.label }}
-                        </a>
-                    </li>
-                    {% endif %}
-                {% endfor %}
-                </ul>
-            </div>         
-        </div>         
+        {% if group.subMenus is not empty %}
+            {% set angle = (key == menu_actived) ? 'fas fa-angle-up' : 'fas fa-angle-down' %}
+            {% set body_class = (key == menu_actived) ? 'down' : 'up' %}
+            <div class="nav-group block" data-group="{{ key }}" data-toggle="block-body">
+            <a href="" data-action="toggle-down">
+                <div class="block-title">
+                    <h2>{{ group.label|trans }}</h2>
+                    <span class="tools angle">
+                        <i class="{{ angle }}"></i>
+                    </span>
+                </div></a>
+                <div class="block-body {{ body_class }}" data-target="block-body">
+                    <ul>
+                    {% for menu in group.subMenus %}
+                        <li>
+                            <a href="{{ path(menu.route) }}"
+                                {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
+                                {{ menu.label }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>         
+            </div>
+        {% endif %}      
     {% endfor %}
-    <br>
     <div class="nav-group block">
         <div class="block-body">
             <ul>

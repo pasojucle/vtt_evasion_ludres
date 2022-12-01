@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\DataTransferObject\User;
 use App\Entity\BikeRide;
+use App\Entity\Level;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
@@ -86,6 +88,9 @@ class SessionController extends AbstractController
             $user = $userSession->getUser();
             $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
             $userSession->setCluster($userCluster);
+            if ($user->getLevel()->getType() === Level::TYPE_FRAME) {
+                $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
+            }
             $user->addSession($userSession);
             $this->entityManager->persist($userSession);
 

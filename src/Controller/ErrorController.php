@@ -16,11 +16,6 @@ class ErrorController extends AbstractController
     #[Route('/erreur', name: 'error', methods: ['GET'])]
     public function show(Request $request, EntityManagerInterface $entityManager, GetError $getError)
     {
-        if ('dev' === $this->getParameter('environment')) {
-            $referer = $request->headers->get('referer');
-            $this->redirectToRoute($referer);
-        }
-
         $logError = $getError->execute($request);
 
         if ($logError->getPersist()) {

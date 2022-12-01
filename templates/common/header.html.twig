@@ -86,10 +86,9 @@
             </li>
         {% endif %}
         {% if is_granted('ROLE_FRAME') %}
-            {% set admin_route = (is_granted('ROLE_ADMIN')) ? 'admin_home' : 'admin_bike_rides' %}
             <li class="nav-bar-xs">
                 <div class="nav-bar-title">
-                    <a class="btn-logger" href="{{ path(admin_route) }}" title="Admin">admin</a>
+                    <a class="btn-logger" href="{{ path('admin_home') }}" title="Admin">admin</a>
                 </div>
             </li>
         {% endif %}

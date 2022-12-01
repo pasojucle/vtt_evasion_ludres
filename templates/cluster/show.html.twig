@@ -5,9 +5,11 @@
 <div class="wrapper">
     <div class="wrapper-title">
         <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
-        <span class="tools">
-            <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-        </span>
+        {% if is_granted('ROLE_ADMIN') %}
+            <span class="tools">
+                <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+            </span>
+        {% endif %}
     </div>
     <div id="sessions_container" class="wrapper-body">
         {% for cluster in bikeRide.getClusters().clusters %}

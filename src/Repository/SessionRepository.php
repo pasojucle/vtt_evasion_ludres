@@ -8,8 +8,10 @@ use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Service\SeasonService;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -84,5 +86,30 @@ class SessionRepository extends ServiceEntityRepository
         }
 
         return $qb;
+    }
+
+    public function findOfTheDayByUser(User $user): ?Session
+    {
+        try {
+            $today = new DateTimeImmutable();
+            return $this->createQueryBuilder('s')
+                ->join('s.cluster', 'c')
+                ->join('c.bikeRide', 'br')
+                ->andWhere(
+                    (new Expr())->eq('s.availability', ':availability'),
+                    (new Expr())->eq('s.user', ':user'),
+                    (new Expr())->between('br.startAt', ':start', ':end'),
+                )
+                ->setParameters([
+                    'availability' => Session::AVAILABILITY_REGISTERED,
+                    'user' => $user,
+                    'start' => $today->setTime(0, 0, 0),
+                    'end' => $today->setTime(18, 0, 0),
+                ])
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 }
