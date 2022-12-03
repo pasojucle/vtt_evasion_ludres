@@ -68,7 +68,7 @@ class BikeRideController extends AbstractController
         ?int $month,
         ?int $day
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_REGISTER');
         $response = $this->getSchedule->execute($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
