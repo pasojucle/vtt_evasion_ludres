@@ -28,6 +28,8 @@ class SurveyController extends AbstractController
     #[Route('sondage/{survey}', name: 'survey', methods: ['GET', 'POST'])]
     public function show(Request $request, RespondentRepository $respondentRepository, Survey $survey): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        
         $form = $message = $respondent = null;
         /** @var User $user */
         $user = $this->getUser();
@@ -36,13 +38,13 @@ class SurveyController extends AbstractController
         if ($now < $survey->getStartAt()) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le survey sera accessible à partir du ' . $survey->getStartAt()->format('d/m/Y'),
+                'content' => 'Le sondage sera accessible à partir du ' . $survey->getStartAt()->format('d/m/Y'),
             ];
         }
         if ($survey->getEndAt() < $now) {
             $message = [
                 'class' => 'alert-warning',
-                'content' => 'Le survey est clôturé depuis le ' . $survey->getEndAt()->format('d/m/Y'),
+                'content' => 'Le sondage est clôturé depuis le ' . $survey->getEndAt()->format('d/m/Y'),
             ];
         }
         if (!$message) {
