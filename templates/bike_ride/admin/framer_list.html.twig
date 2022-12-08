@@ -6,26 +6,35 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>Encadrement</h1>
+            <h2>Sortie {{ bike_ride.title }} du {{ bike_ride.period }}</h2>
             <span class="tools">
                 <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bike_ride.entity.id}) }}" class="btn btn-ico" title="Retour à la sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
+        
+        <div>
+            {{ form_start(form)}}
+        <div class="row filters">
+            <div class="col-md-6 col-xs-12">{{ form_widget(form.user) }}</div>
+            <div class="col-md-6 col-xs-12"> {{ form_widget(form.availability)}}</div>
+        </div>
+            {{ form_end(form)}}
+        </div>
         <div class="wrapper-body">
-            <h2>Sortie {{ bike_ride.title }} du {{ bike_ride.period }}</h2>
+            
             <ul>
                 {% for framer in framers %}                      
                     <li class="list-dropdown"> 
-                        <a href="{{ path('admin_user', {'user': framer.entity.id})}}"
-                            {% if framer.level is not null %}style="background-color: {{ framer.level.colors.background }}"{% endif %}>
+                        <a href="{{ path('admin_user', {'user': framer.user.entity.id})}}"
+                            {% if framer.user.level is not null %}style="background-color: {{ framer.user.level.colors.background }}"{% endif %}>
                             <div class="row">
-                                <div class="col-md-4 col-xs-12">{{ framer.member.fullName }}</div>
-                                <div class="col-md-4 col-xs-12"> {{ framer.level.title }}</div>
-                                {% set availability = framer.getFramerAvailabilityByBikeRide(bike_ride.entity) %}
-                                <div class="col-md-1 col-xs-3 {{ availability.class.badge}}"></div>
-                                <div class="col-md-3 col-xs-9">{{availability.text|trans }}</div>
+                                <div class="col-md-4 col-xs-12">{{ framer.user.member.fullName }}</div>
+                                <div class="col-md-4 col-xs-12"> {{ framer.user.level.title }}</div>
+                                <div class="col-md-1 col-xs-3 {{ framer.availability.class.badge}}"></div>
+                                <div class="col-md-3 col-xs-9">{{framer.availability.text|trans }}</div>
                             </div>
                         </a> 
-                        {% include 'user/admin/dropdown.html.twig' with {'user': framer} %}
+                        {% include 'user/admin/dropdown.html.twig' with {'user': framer.user} %}
                     </li>
                 {% endfor %}
             </ul>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Service\SeasonService;
@@ -51,6 +52,25 @@ class SessionRepository extends ServiceEntityRepository
                 (new Expr())->eq('c.bikeRide', ':bikeRide'),
             )
             ->setParameter('bikeRide', $bikeRide)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
+    public function findFramersByBikeRide(int $bikeRideId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.cluster', 'c')
+            ->leftJoin('c.bikeRide', 'b')
+            ->join('s.user', 'u')
+            ->join('u.level', 'l')
+            ->andWhere(
+                (new Expr())->eq('b.id', ':bikeRideId'),
+                (new Expr())->eq('l.type', ':levelType'),
+            )
+            ->setParameter('bikeRideId', $bikeRideId)
+            ->setParameter('levelType', Level::TYPE_FRAME)
             ->getQuery()
             ->getResult()
         ;

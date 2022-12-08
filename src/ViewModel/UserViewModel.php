@@ -320,22 +320,4 @@ class UserViewModel extends AbstractViewModel
     {
         return IdentityViewModel::fromIdentity($identity, $this->services);
     }
-
-    public function getFramerAvailabilityByBikeRide(BikeRide $bikeRide): array
-    {
-        $sessions = $this->entity?->getSessions();
-
-        if (!$sessions?->isEmpty()) {
-            foreach ($sessions as $session) {
-                if ($session->getCluster()?->getBikeRide() === $bikeRide) {
-                    return SessionViewModel::fromSession($session, $this->services)->availability;
-                }
-            }
-        }
-
-        return [
-            'class' => ['badge' => 'person person-rays', 'icon' => '<i class="fa-solid fa-person-rays"></i>'],
-            'text' => 'session.availability.undefined',
-        ];
-    }
 }

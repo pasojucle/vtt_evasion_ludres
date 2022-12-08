@@ -7,6 +7,8 @@ namespace App\ViewModel;
 use App\Entity\Session;
 use App\Model\Currency;
 use App\Service\IndemnityService;
+use App\Service\SessionService;
+use PHPStan\Symfony\Service;
 
 class SessionViewModel extends AbstractViewModel
 {
@@ -43,21 +45,24 @@ class SessionViewModel extends AbstractViewModel
 
     private function getAvailability(): array
     {
+        $availability = $this->entity->getAvailability();
+
         $availbilityClass = [
             1 => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>', 'color' => 'success-color'],
             2 => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 'color' => 'warning-color'],
             3 => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
         ];
-        $availability = [];
+
+        $availabilityView = [];
         if (null !== $this->entity->getAvailability()) {
-            $availability = [
-                'class' => $availbilityClass[$this->entity->getAvailability()],
-                'text' => Session::AVAILABILITIES[$this->entity->getAvailability()],
-                'value' => $this->entity->getAvailability(),
+            $availabilityView = [
+                'class' => $availbilityClass[$availability],
+                'text' => Session::AVAILABILITIES[$availability],
+                'value' => $availability,
             ];
         }
 
-        return $availability;
+        return $availabilityView;
     }
 
     private function getIndemnity(): ?Currency

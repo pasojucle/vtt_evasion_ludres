@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -447,19 +448,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    public function findFramers(): array
+    public function findFramers(array $filters): QueryBuilder
     {
-        return $this->createQueryBuilder('u')
+        $qb = $this->createQueryBuilder('u')
             ->leftJoin('u.sessions', 's')
             ->leftJoin('u.level', 'l')
+            ->join('u.identities', 'i');
+
+        if (!empty($filters)) {
+            if (null !== $filters['fullName']) {
+                $this->addCriteriaByName($qb, $filters['fullName']);
+            }
+            if (!empty($filters['user'])) {
+                $this->addCriteriaByUser($qb, $filters['user']);
+            }
+        }
+
+        return $qb
             ->andWhere(
                 (new Expr())->eq('l.type', ':levelType'),
+                (new Expr())->eq('i.type', ':member'),
             )
-            ->setParameters([
-                'levelType' => Level::TYPE_FRAME,
-            ])
-            ->getQuery()
-            ->getResult()
+            ->setParameter('levelType', Level::TYPE_FRAME)
+            ->setParameter('member', Identity::TYPE_MEMBER)
+            ->orderBy('i.name', 'ASC')
             ;
     }
 

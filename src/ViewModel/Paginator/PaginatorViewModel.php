@@ -46,7 +46,7 @@ class PaginatorViewModel extends AbstractViewModel
 
         $paginatorViewModel->currentRoute = $targetRoute ?? $services->requestStack->getCurrentRequest()->attributes->get('_route');
 
-        $paginatorViewModel->currentParams = $services->requestStack->getCurrentRequest()->query->all();
+        $paginatorViewModel->currentParams = $services->requestStack->getCurrentRequest()->get('_route_params');
 
         if (!empty($filters)) {
             $paginatorViewModel->currentParams = array_merge($paginatorViewModel->currentParams, $filters);

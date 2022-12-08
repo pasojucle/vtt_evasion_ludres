@@ -15,6 +15,8 @@ use Doctrine\ORM\Mapping\ManyToOne;
 #[Entity(repositoryClass: SessionRepository::class)]
 class Session
 {
+    public const AVAILABILITY_UNDEFINED = 0;
+
     public const AVAILABILITY_REGISTERED = 1;
 
     public const AVAILABILITY_AVAILABLE = 2;

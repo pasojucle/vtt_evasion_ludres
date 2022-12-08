@@ -16,6 +16,7 @@ use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
+use App\UseCase\User\GetFramersFiltered;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRidesPresenter;
 use App\ViewModel\UsersPresenter;
@@ -176,20 +177,19 @@ class BikeRideController extends AbstractController
         return new JsonResponse($response);
     }
 
-    #[Route('/sortie/encadrement/{bikeRide}', name: 'admin_bike_ride_framer_list', methods: ['GET'])]
+    #[Route('/sortie/encadrement/{bikeRide}/{filtered}', name: 'admin_bike_ride_framer_list', methods: ['GET', 'POST'], defaults:['filtered' => false])]
     public function adminBikeRideFramerList(
-        UserRepository $userRepository,
-        UsersPresenter $usersPresenter,
         BikeRidePresenter $bikeRidePresenter,
-        BikeRide $bikeRide
+        GetFramersFiltered $getFramersFiltered,
+        Request $request,
+        BikeRide $bikeRide,
+        bool $filtered
     ) {
-        $usersPresenter->present($userRepository->findFramers());
         $bikeRidePresenter->present($bikeRide);
+        $params = $getFramersFiltered->list($request, $bikeRide, $filtered);
+        $params['bike_ride'] = $bikeRidePresenter->viewModel();
 
-        return $this->render('bike_ride/admin/framer_list.html.twig', [
-            'framers' => $usersPresenter->viewModel()->users,
-            'bike_ride' => $bikeRidePresenter->viewModel(),
-        ]);
+        return $this->render('bike_ride/admin/framer_list.html.twig', $params);
     }
 
     #[Route('/admin/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]

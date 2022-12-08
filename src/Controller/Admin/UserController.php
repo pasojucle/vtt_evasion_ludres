@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\Admin\UserType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
+use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetParticipation;
 use App\ViewModel\UserPresenter;
@@ -156,6 +157,19 @@ class UserController extends AbstractController
         $filters = ($filtersQuery) ? json_decode($filtersQuery, true) : [];
 
         return new JsonResponse($getMembersFiltered->choices($filters, $query));
+    }
+
+    #[Route('/encadrant/choices', name: 'framer_choices', methods: ['GET'])]
+    public function framerChoices(
+        GetFramersFiltered $getFramersFiltered,
+        Request $request
+    ): JsonResponse {
+        $query = $request->query->get('q');
+        
+        $filtersQuery = $request->query->get('filters');
+        $filters = ($filtersQuery) ? json_decode($filtersQuery, true) : [];
+
+        return new JsonResponse($getFramersFiltered->choices($filters, $query));
     }
 
     #[Route('/all/user/choices', name: 'all_user_choices', methods: ['GET'])]
