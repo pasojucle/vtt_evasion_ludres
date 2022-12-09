@@ -18,7 +18,6 @@ class SessionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        dump($options['filters']);
         $builder
             ->add('user', Select2EntityType::class, [
                 'multiple' => false,
