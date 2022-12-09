@@ -18,6 +18,7 @@ class SessionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        dump($options['filters']);
         $builder
             ->add('user', Select2EntityType::class, [
                 'multiple' => false,
@@ -36,6 +37,9 @@ class SessionType extends AbstractType
                 'placeholder' => 'Saisisez un nom et prénom',
                 'width' => '100%',
                 'label' => 'Participant',
+                'remote_params' => [
+                    'filters' => json_encode($options['filters']),
+                ],
                 'constraints' => [
                     new NotBlank(),
                     new SessionUniqueMember(),
@@ -54,6 +58,7 @@ class SessionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Session::class,
+            'filters' => null,
         ]);
     }
 }

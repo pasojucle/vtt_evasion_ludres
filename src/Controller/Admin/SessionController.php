@@ -80,7 +80,7 @@ class SessionController extends AbstractController
     ): Response {
         $clusters = $bikeRide->getClusters();
         $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
-        $form = $this->createForm(SessionType::class);
+        $form = $this->createForm(SessionType::class, null, ['filters' => ['bikeRide' => $bikeRide->getId()]]);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {

@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
+use App\Entity\Session;
 use App\Entity\User;
 use App\Service\SeasonService;
 use DateInterval;
@@ -67,11 +68,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (array_key_exists('status', $filters) && null !== $filters['status'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
+            if (array_key_exists('bikeRide', $filters) && null !== $filters['bikeRide']) {
+                $this->addCriteriaWithNoSession($qb, $filters['bikeRide']);
+            }
         }
 
         $this->addCriteriaMember($qb);
 
         return $this->orderByASC($qb);
+    }
+
+    private function addCriteriaWithNoSession(QueryBuilder $qb, int $bikeRidId): QueryBuilder
+    {
+        $usersWithSession = $this->_em->createQueryBuilder()
+            ->select('user.id')
+            ->from(Session::class, 'session')
+            ->join('session.cluster', 'cluster')
+            ->join('session.user', 'user')
+            ->join('cluster.bikeRide', 'bikeRide')
+            ->andWhere(
+                (new Expr())->eq('bikeRide.id', ':bikeRideId')
+            );
+        
+        return $qb->andWhere(
+            $qb->expr()->notIn('u.id', $usersWithSession->getDQL())
+        )
+            ->setParameter('bikeRideId', $bikeRidId);
     }
 
     public function findCoverageQuery(?array $filters): QueryBuilder
