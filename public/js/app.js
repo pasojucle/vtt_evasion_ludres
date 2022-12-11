@@ -61,9 +61,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         } 
     })
 
-    if (document.querySelector('#modal_window_show')) {
-        callShowModal('#modal_window_show');
-    }
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
 
     if ($('.customSelect2').length > 0) {

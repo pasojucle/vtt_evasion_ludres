@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\ViewModel\ModalWindow;
 
+use App\Entity\Licence;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\ViewModel\AbstractViewModel;
+use App\ViewModel\LicenceViewModel;
 use App\ViewModel\ServicesPresenter;
 use ReflectionClass;
 
@@ -26,13 +28,10 @@ class ModalWindowViewModel extends AbstractViewModel
 
     public ?string $labelButton;
 
-    private ServicesPresenter $services;
-
     public static function fromModalWindow(ModalWindow $modalWindow, ServicesPresenter $services)
     {
         $modalWindowView = new self();
-        $modalWindowView->services = $services;
-        $modalWindowView->index = $modalWindowView->getIndex($modalWindow);
+        $modalWindowView->index = $services->modalWindowService->getIndex($modalWindow);
         $modalWindowView->title = $modalWindow->getTitle();
         $modalWindowView->content = $modalWindow->getContent();
 
@@ -42,8 +41,7 @@ class ModalWindowViewModel extends AbstractViewModel
     public static function fromSuvey(Survey $survey, ServicesPresenter $services)
     {
         $modalWindowView = new self();
-        $modalWindowView->services = $services;
-        $modalWindowView->index = $modalWindowView->getIndex($survey);
+        $modalWindowView->index = $services->modalWindowService->getIndex($survey);
         $modalWindowView->title = $survey->getTitle();
         $modalWindowView->content = $survey->getContent();
         $modalWindowView->url = $services->router->generate('survey', ['survey' => $survey->getId()]);
@@ -55,8 +53,7 @@ class ModalWindowViewModel extends AbstractViewModel
     public static function fromOrderHeader(OrderHeader $orderHeader, ServicesPresenter $services)
     {
         $modalWindowView = new self();
-        $modalWindowView->services = $services;
-        $modalWindowView->index = $modalWindowView->getIndex($orderHeader);
+        $modalWindowView->index = $services->modalWindowService->getIndex($orderHeader);
         $modalWindowView->title = 'Commande en cours';
         $modalWindowView->content = $services->modalWindowOrderInProgress;
         $modalWindowView->url = $services->router->generate('order_edit');
@@ -65,10 +62,15 @@ class ModalWindowViewModel extends AbstractViewModel
         return $modalWindowView;
     }
 
-    private function getIndex(Survey|OrderHeader|ModalWindow $entity)
+    public static function fromLicence(LicenceViewModel $licence, ServicesPresenter $services)
     {
-        /** @var User $user */
-        $user = $this->services->security->getUser();
-        return $user->getLicenceNumber() . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
+        $modalWindowView = new self();
+        $modalWindowView->index = $services->modalWindowService->getIndex($licence->entity);
+        $modalWindowView->title = 'Dossier d\'inscription en cours';
+        $modalWindowView->content = $services->modalWindowRegistrationInProgress;
+        $modalWindowView->url = $services->router->generate('user_registration_form', ['step' => 1]);
+        $modalWindowView->labelButton = 'Finaliser mon inscription';
+
+        return $modalWindowView;
     }
 }

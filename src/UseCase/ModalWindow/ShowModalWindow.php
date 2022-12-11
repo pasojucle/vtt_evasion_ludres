@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\ModalWindow;
 
+use App\Entity\Licence;
 use App\Entity\User;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;
@@ -49,9 +50,12 @@ class ShowModalWindow
             if (null !== $orderHeaderToValidate) {
                 $modalWindows = array_merge($modalWindows, [$orderHeaderToValidate]);
             }
-            
-            $this->modalWindowsPresenter->present($modalWindows);
 
+            if (Licence::STATUS_IN_PROCESSING === $user->seasonLicence->status) {
+                $modalWindows = array_merge($modalWindows, [$user->seasonLicence]);
+            }
+
+            $this->modalWindowsPresenter->present($modalWindows);
 
             foreach ($this->modalWindowsPresenter->viewModel()->modalWindows as $modalWindow) {
                 if (!in_array($modalWindow->index, $modalWindowShowOn)) {

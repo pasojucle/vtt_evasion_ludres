@@ -3,6 +3,11 @@ $(function () {
     $(document).on('click', 'a[data-toggle="modal"]', handleShowModal);
     $(document).on('click', 'button.close[data-dismiss="modal"]', closeModal);
 
+    console.log('modal window', document.querySelector('#modal_window_show'));
+    if (document.querySelector('#modal_window_show')) {
+        callShowModal('#modal_window_show');
+    }
+
 });
 
 function handleShowModal(event) {

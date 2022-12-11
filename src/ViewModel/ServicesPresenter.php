@@ -14,6 +14,7 @@ use App\Repository\UserRepository;
 use App\Service\ClusterService;
 use App\Service\IdentityService;
 use App\Service\IndemnityService;
+use App\Service\ModalWindowService;
 use App\Service\ParameterService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
@@ -42,6 +43,7 @@ class ServicesPresenter
     public ?User $user;
     public array $allIndemnities;
     public string $modalWindowOrderInProgress;
+    public string $modalWindowRegistrationInProgress;
 
     public function __construct(
         private SeasonService $seasonService,
@@ -66,7 +68,8 @@ class ServicesPresenter
         public SessionRepository $sessionRepository,
         public ReplaceKeywordsService $replaceKeywordsService,
         public IsRegistrable $isRegistrable,
-        public IsWritableAvailability $isWritableAvailability
+        public IsWritableAvailability $isWritableAvailability,
+        public ModalWindowService $modalWindowService
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
         $this->uploadsDirectoryPath = $this->parameterBag->get('uploads_directory_path');
@@ -78,6 +81,7 @@ class ServicesPresenter
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
         $this->coverageFormStartAt = $this->parameterService->getParameterByName('COVERAGE_FORM_AVAILABLE_AT');
         $this->modalWindowOrderInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
+        $this->modalWindowRegistrationInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
         $this->allIndemnities = $this->indemnityRepository->findAll();
     }
 }

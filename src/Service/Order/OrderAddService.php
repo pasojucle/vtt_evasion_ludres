@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
-use App\Entity\OrderHeader;
-use App\Entity\OrderLine;
-use App\Entity\Product;
-use App\Entity\User;
-use App\Repository\OrderHeaderRepository;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\User;
 use ReflectionClass;
+use App\Entity\Product;
+use App\Entity\OrderLine;
+use App\Entity\OrderHeader;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Service\ModalWindowService;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\OrderHeaderRepository;
 use Symfony\Component\Security\Core\Security;
 
 class OrderAddService
@@ -24,7 +24,7 @@ class OrderAddService
         private EntityManagerInterface $entityManager,
         private OrderHeaderRepository $orderHeaderRepository,
         private Security $security,
-        private RequestStack $requestStack
+        private ModalWindowService $modalWindowService
     ) {
     }
 
@@ -42,7 +42,7 @@ class OrderAddService
         if ($form->isValid()) {
             $this->entityManager->persist($orderLine);
             $this->entityManager->flush();
-            $this->addToModalWindowShowOn($orderHeader);
+            $this->modalWindowService->addToModalWindowShowOn($orderHeader);
         }
     }
 
@@ -77,14 +77,5 @@ class OrderAddService
         $orderLine->setOrderHeader($orderHeader);
 
         return $orderLine;
-    }
-
-    private function addToModalWindowShowOn(OrderHeader $orderHeader): void
-    {
-        $session = $this->requestStack->getSession();
-        $modalWindowShowOn = $session->get('modal_window_show_on');
-        $modalWindowShowOn = (null !== $modalWindowShowOn) ? json_decode($modalWindowShowOn) : [];
-        $modalWindowShowOn[] = $this->user->getLicenceNumber() . '-' . (new ReflectionClass($orderHeader))->getShortName() . '-' . $orderHeader->getId();
-        $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
     }
 }

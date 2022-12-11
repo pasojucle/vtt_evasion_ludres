@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\ViewModel\ModalWindow;
 
+use App\Entity\Licence;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
+use App\ViewModel\LicenceViewModel;
 use App\ViewModel\ServicesPresenter;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -28,6 +30,9 @@ class ModalWindowsViewModel
                 }
                 if ($modalWindow instanceof OrderHeader) {
                     $modalWindowsViewModel[] = ModalWindowViewModel::fromOrderHeader($modalWindow, $services);
+                }
+                if ($modalWindow instanceof LicenceViewModel) {
+                    $modalWindowsViewModel[] = ModalWindowViewModel::fromLicence($modalWindow, $services);
                 }
             }
         }
