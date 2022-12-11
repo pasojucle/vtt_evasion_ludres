@@ -5,23 +5,19 @@ declare(strict_types=1);
 namespace App\UseCase\Session;
 
 use App\Entity\BikeRide;
+use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Respondent;
 use App\Entity\User;
-use App\Service\MailerService;
-use App\ViewModel\BikeRidePresenter;
-use App\ViewModel\UserPresenter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 
-class EditSession
+class AddSession
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MailerService $mailerService,
-        private UserPresenter $userPresenter,
-        private BikeRidePresenter $bikeRidePresenter
+        private ConfirmationSession $confirmationSession
     ) {
     }
 
@@ -31,7 +27,7 @@ class EditSession
         $user->addSession($data['session']);
 
         $this->answerTheSurvey($data, $user, $bikeRide);
-        $this->confirmationRegistration($user, $bikeRide);
+        $this->confirmationSession->execute($user, $bikeRide);
 
         $this->entityManager->persist($data['session']);
         $this->entityManager->flush();
@@ -63,14 +59,16 @@ class EditSession
         $this->bikeRidePresenter->present($bikeRide);
         $user = $this->userPresenter->viewModel();
         $bikeRide = $this->bikeRidePresenter->viewModel();
-        if (Licence::CATEGORY_MINOR === $user->seasonLicence->category) {
-            $this->mailerService->sendMailToMember([
-                'name' => $user->member->name,
-                'firstName' => $user->member->firstName,
-                'email' => $user->mainEmail,
-                'subject' => 'Confirmation d\'inscription à une sortie',
-                'bikeRideTitleAndPeriod' => $bikeRide->title . ' du ' . $bikeRide->period,
-            ], 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION');
-        }
+        $content = (Licence::CATEGORY_MINOR === $user->seasonLicence->category)
+            ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_MINOR'
+            : (Level::TYPE_FRAME === $user->level->type ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAME' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
+
+        $this->mailerService->sendMailToMember([
+            'name' => $user->member->name,
+            'firstName' => $user->member->firstName,
+            'email' => $user->mainEmail,
+            'subject' => 'Confirmation d\'inscription à une sortie',
+            'bikeRideTitleAndPeriod' => $bikeRide->title . ' du ' . $bikeRide->period,
+        ], $content);
     }
 }

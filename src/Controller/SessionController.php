@@ -11,7 +11,8 @@ use App\Form\SessionAvailabilityType;
 use App\Service\SessionService;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
-use App\UseCase\Session\EditSession;
+use App\UseCase\Session\AddSession;
+use App\UseCase\Session\ConfirmationSession;
 use App\UseCase\Session\GetFormSession;
 use App\ViewModel\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,7 +34,7 @@ class SessionController extends AbstractController
     public function sessionAdd(
         Request $request,
         GetFormSession $getFormSession,
-        EditSession $editSession,
+        AddSession $AddSession,
         IsRegistrable $isRegistrable,
         IsWritableAvailability $isWritableAvailability,
         BikeRide $bikeRide
@@ -53,7 +54,7 @@ class SessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $editSession->execute($form, $user, $bikeRide);
+            $AddSession->execute($form, $user, $bikeRide);
 
             $this->addFlash('success', 'Votre inscription a bien été prise en compte');
 
@@ -69,6 +70,7 @@ class SessionController extends AbstractController
     public function sessionAvailabilityEdit(
         Request $request,
         BikeRidePresenter $bikeRidePresenter,
+        ConfirmationSession $confirmationSession,
         Session $session
     ) {
         $bikeRide = $session->getCluster()->getBikeRide();
@@ -83,6 +85,7 @@ class SessionController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Votre disponibilité a bien été modifiée');
+            $confirmationSession->execute($session->getUser(), $bikeRide);
 
             return $this->redirectToRoute('user_bike_rides');
         }
