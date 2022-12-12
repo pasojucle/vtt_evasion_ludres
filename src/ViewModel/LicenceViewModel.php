@@ -155,7 +155,7 @@ class LicenceViewModel extends AbstractViewModel
     public function getCurrentSeasonForm()
     {
         $this->services->coverageFormStartAt['year'] = ($this->services->seasonStartAt['month'] <= $this->services->coverageFormStartAt['month']
-            && $this->services->seasonStartAt['month'] <= $this->services->coverageFormStartAt['month'])
+            && $this->services->seasonStartAt['day'] <= $this->services->coverageFormStartAt['day'])
             ? $this->services->currentSeason - 1
             : $this->services->currentSeason;
 

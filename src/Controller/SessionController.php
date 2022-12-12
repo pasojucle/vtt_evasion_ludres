@@ -14,6 +14,7 @@ use App\UseCase\BikeRide\IsWritableAvailability;
 use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
 use App\UseCase\Session\GetFormSession;
+use App\UseCase\Session\UnregistrableSessionMessage;
 use App\ViewModel\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,18 +36,17 @@ class SessionController extends AbstractController
         Request $request,
         GetFormSession $getFormSession,
         AddSession $AddSession,
-        IsRegistrable $isRegistrable,
-        IsWritableAvailability $isWritableAvailability,
+        UnregistrableSessionMessage $unregistrableSessionMessage,
         BikeRide $bikeRide
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
 
-        $isRegistrable = $isRegistrable->execute($bikeRide, $user);
-        $isWritableAvailability = $isWritableAvailability->execute($bikeRide, $user);
-        if (!$isRegistrable && !$isWritableAvailability) {
+        $unregistrableMessage = $unregistrableSessionMessage->execute($user, $bikeRide);
+        if (null !== $unregistrableMessage) {
             return $this->render('session/unregistrable.html.twig', [
                 'bikeRide' => $bikeRide,
+                'unregistrableMessage' => $unregistrableMessage,
             ]);
         }
 
