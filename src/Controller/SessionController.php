@@ -9,8 +9,6 @@ use App\Entity\Session;
 use App\Entity\User;
 use App\Form\SessionAvailabilityType;
 use App\Service\SessionService;
-use App\UseCase\BikeRide\IsRegistrable;
-use App\UseCase\BikeRide\IsWritableAvailability;
 use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
 use App\UseCase\Session\GetFormSession;
@@ -85,7 +83,7 @@ class SessionController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Votre disponibilité a bien été modifiée');
-            $confirmationSession->execute($session->getUser(), $bikeRide);
+            $confirmationSession->execute($session);
 
             return $this->redirectToRoute('user_bike_rides');
         }

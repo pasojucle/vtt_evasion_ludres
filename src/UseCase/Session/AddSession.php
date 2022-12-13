@@ -25,7 +25,7 @@ class AddSession
         $user->addSession($data['session']);
 
         $this->answerTheSurvey($data, $user, $bikeRide);
-        $this->confirmationSession->execute($user, $bikeRide);
+        $this->confirmationSession->execute($data['session']);
 
         $this->entityManager->persist($data['session']);
         $this->entityManager->flush();

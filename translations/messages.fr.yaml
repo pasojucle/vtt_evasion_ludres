@@ -96,6 +96,10 @@ session:
     available: Dispo. si besoin
     unavailable: Absent
     undefined: Non défini
+  availability_status:
+    presence: précence
+    absence: absence
+    availability: précence, si besoin
 
 role:
    ROLE_FRAME: Encadrant

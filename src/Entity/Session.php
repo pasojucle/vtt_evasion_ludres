@@ -45,7 +45,7 @@ class Session
     private bool $isPresent = false;
 
     #[Column(type: 'integer', nullable: true)]
-    private ?int $availability;
+    private ?int $availability = null;
 
     public function getId(): ?int
     {
