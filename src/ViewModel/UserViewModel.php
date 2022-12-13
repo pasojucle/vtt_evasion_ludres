@@ -33,7 +33,7 @@ class UserViewModel extends AbstractViewModel
 
     public ?HealthViewModel $health;
 
-    private ServicesPresenter $services;
+    public ServicesPresenter $services;
 
     public ?LevelViewModel $level;
 
@@ -43,6 +43,7 @@ class UserViewModel extends AbstractViewModel
     {
         $userView = new self();
         $userView->entity = $user;
+        $userView->services = $services;
         $userView->isNewMember = $userView->isNewMember();
         $userView->services = $services;
         $userView->licenceNumber = $user->getLicenceNumber();

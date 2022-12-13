@@ -96,6 +96,7 @@ class ReplaceKeywordsService
             '{{ montant }}',
             '<p>&nbsp;</p>',
             '{{ autorisation_droit_image }}',
+            '{{ saison_actuelle }}',
         ];
     }
 
@@ -129,6 +130,7 @@ class ReplaceKeywordsService
             $licence->getAmount()['value']?->toString(),
             '<br>',
             (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->getApprovals()['rightToImage']['string']) : 'autorise',
+            $user->services->currentSeason,
         ];
     }
 }
