@@ -59,8 +59,11 @@ class UnregistrableSessionMessage
             : $currentSeason;
 
         $requirementSeasonLicenceAt = new DateTime(implode('-', array_reverse($requirementSeasonLicenceAtParam)));
-        if (null !== $seasonLicence && $requirementSeasonLicenceAt <= new DateTime() ) {
-            return $seasonLicence->isFinal() && Licence::STATUS_WAITING_VALIDATE < $seasonLicence->getStatus();
+        if ($requirementSeasonLicenceAt <= new DateTime() ) {
+
+            return (null !== $seasonLicence ) 
+                ? $seasonLicence->isFinal() && Licence::STATUS_WAITING_VALIDATE < $seasonLicence->getStatus()
+                : false;
         }
         return true;
     }
