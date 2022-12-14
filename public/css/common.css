@@ -623,6 +623,7 @@ main:not(.admin) {
 .disabled {
     pointer-events: none;
     background-color: var(--light-color);
+    border: none;
 }
 .inputGroup {
     background-color: var(--white-color);

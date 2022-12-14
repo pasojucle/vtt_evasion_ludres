@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\BikeRide;
-use App\Entity\Session;
 use App\Entity\User;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\SessionRepository;
-use App\Repository\UserRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetFilters;
@@ -19,14 +17,12 @@ use App\UseCase\BikeRide\GetSchedule;
 use App\UseCase\User\GetFramersFiltered;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\BikeRidesPresenter;
-use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/admin')]
@@ -46,19 +42,7 @@ class BikeRideController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_FRAME');
 
-        if ($this->isGranted('ROLE_REGISTER')) {
-            return $this->redirectToRoute('admin_bike_rides');
-        }
-
-        /** @var User $user */
-        $user = $this->getUser();
-        $session = $this->sessionRepository->findOfTheDayByUser($user);
-
-        if ($session) {
-            return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $session->getCluster()->getBikeRide()->getId()]);
-        }
-        
-        return $this->render('bike_ride/admin/no_frame_session.html.twig');
+        return $this->redirectToRoute('admin_bike_rides');
     }
 
     #[Route('/calendrier/{period}/{year}/{month}/{day}', name: 'admin_bike_rides', methods: ['GET', 'POST'], defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null])]
@@ -69,7 +53,7 @@ class BikeRideController extends AbstractController
         ?int $month,
         ?int $day
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_REGISTER');
+        $this->denyAccessUnlessGranted('ROLE_FRAME');
         $response = $this->getSchedule->execute($request, $period, $year, $month, $day);
 
         if (array_key_exists('redirect', $response)) {
@@ -125,12 +109,13 @@ class BikeRideController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_FRAME');
 
+        $permission = 7;
         if (!$this->isGranted('ROLE_ADMIN')) {
             /** @var User $user */
             $user = $this->getUser();
             $session = $this->sessionRepository->findOfTheDayByUser($user);
             if (!$session || $session->getCluster()->getBikeRide() !== $bikeRide) {
-                throw new AccessDeniedHttpException();
+                $permission = 4;
             }
         }
         
@@ -144,6 +129,7 @@ class BikeRideController extends AbstractController
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $presenter->viewModel(),
             'bike_rides_filters' => ($filters) ? $filters : [],
+            'permission' => $permission,
         ]);
     }
 

@@ -5,11 +5,9 @@
 <div class="wrapper">
     <div class="wrapper-title">
         <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
-        {% if is_granted('ROLE_ADMIN') %}
-            <span class="tools">
-                <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-            </span>
-        {% endif %}
+        <span class="tools">
+            <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
+        </span>
     </div>
     <div id="sessions_container" class="wrapper-body">
         {% for cluster in bikeRide.getClusters().clusters %}
@@ -20,24 +18,24 @@
             {% if cluster.sessions | length > 0 %}
                 <ul>
                     {% for session in cluster.availableSessions %}             
-                        {% include 'session/admin/list.html.twig' with {'user': session.user} %}
+                        {% include 'session/admin/list.html.twig' with {'user': session.user, 'permission': permission} %}
                     {% endfor %}
                 </ul>
                 {% if hasClusters and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
                     <div>
                         {% if not cluster.isComplete %}
-                            <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete" data-cluster-id="{{ cluster.id }}" target="_blank">
+                            <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if permission < 7 %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" target="_blank">
                                 <i class="fas fa-check"></i> Valider le groupe
                             </a>
                         {% else %}
                             <div class="row row-list">
                                 <div class="col-md-9 col-xs-8">
-                                    <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete" data-cluster-id="{{ cluster.id }}">
+                                    <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete{% if permission < 7 %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}">
                                         <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
                                     </a>
                                 </div>
                                 <div class="col-md-3 col-xs-4">
-                                    <a id="cluster_export_{{ cluster.id }}" href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success">
+                                    <a id="cluster_export_{{ cluster.id }}" href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success{% if permission < 7 %} disabled{% endif %}">
                                         <i class="fas fa-file-pdf"></i> Exporter
                                     </a>
                                 </div>

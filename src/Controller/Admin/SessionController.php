@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\DataTransferObject\User;
 use App\Entity\BikeRide;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
-use App\Repository\SessionRepository;
 use App\Service\SessionService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,6 +41,7 @@ class SessionController extends AbstractController
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $bikeRidePresenter->viewModel(),
             'bike_rides_filters' => [],
+            'permission' => 7,
         ]);
     }
 
