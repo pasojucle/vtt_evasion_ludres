@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ViewModel\ModalWindow;
 
-use App\ViewModel\AbstractPresenter;
 use App\Service\ModalWindowService;
+use App\ViewModel\AbstractPresenter;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ModalWindowsPresenter extends AbstractPresenter

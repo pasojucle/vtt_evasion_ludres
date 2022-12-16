@@ -37,6 +37,7 @@ class HealthViewModel extends AbstractViewModel
 
     public ?string $medicalCertificateDate;
 
+
     public ?bool $isMedicalCertificateRequired;
 
     public DateTime|DateTimeInterface|null $medicalCertificateDateObject;

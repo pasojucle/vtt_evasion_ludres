@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
-use DateTime;
-use App\Entity\User;
-use ReflectionClass;
-use App\Entity\Product;
-use App\Entity\OrderLine;
 use App\Entity\OrderHeader;
-use Symfony\Component\Form\Form;
-use App\Service\ModalWindowService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\OrderLine;
+use App\Entity\Product;
+use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
+use App\Service\ModalWindowService;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Security;
 
 class OrderAddService

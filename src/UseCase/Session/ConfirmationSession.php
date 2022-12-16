@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use DateTime;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
 use App\Service\MailerService;
-use App\ViewModel\UserPresenter;
 use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\UserPresenter;
+use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ConfirmationSession

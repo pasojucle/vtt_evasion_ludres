@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTime;
-use App\Entity\User;
-use ReflectionClass;
-use App\Entity\Survey;
 use App\Entity\Licence;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
-use Symfony\Component\Security\Core\Security;
+use App\Entity\Survey;
+use App\Entity\User;
+use DateTime;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 class ModalWindowService
 {
     public function __construct(
-
         private Security $security,
         private RequestStack $requestStack
     ) {

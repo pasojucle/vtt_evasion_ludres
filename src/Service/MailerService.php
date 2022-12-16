@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Exception;
 use App\Entity\Session;
-use Symfony\Component\Mime\Address;
 use App\Repository\ParameterRepository;
+use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 
 class MailerService
 {
     public function __construct(
-        private MailerInterface $mailer, 
+        private MailerInterface $mailer,
         private ParameterRepository $parameterRepository
-    )
-    {
-
+    ) {
     }
 
     public function sendMailToClub(array $data): bool
@@ -55,9 +53,9 @@ class MailerService
                 $content = str_replace('{{ bikeRideTitleAndPeriod }}', $data['bikeRideTitleAndPeriod'], $content);
             }
 
-        if (array_key_exists('sessionAvailability', $data) && null !== $data['sessionAvailability']) {
-            $content = str_replace('{{ disponibilite }}', $data['sessionAvailability'], $content);
-        }
+            if (array_key_exists('sessionAvailability', $data) && null !== $data['sessionAvailability']) {
+                $content = str_replace('{{ disponibilite }}', $data['sessionAvailability'], $content);
+            }
         }
         if (array_key_exists('content', $data)) {
             $content = $data['content'];
