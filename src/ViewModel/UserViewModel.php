@@ -9,6 +9,7 @@ use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
+use DateInterval;
 use DateTime;
 
 class UserViewModel extends AbstractViewModel
@@ -150,11 +151,28 @@ class UserViewModel extends AbstractViewModel
         $message = '';
         $licence = $this->entity->getSeasonLicence($this->services->currentSeason);
 
+        if ($this->health->medicalCertificateDate) {
+            $message .= 'Date du dernier certificat médical : ' . $this->health->medicalCertificateDate
+                    . sprintf(' (Valable jusqu\'au %s)', $this->getMedicalCertificateEndAt()) . PHP_EOL;
+        }
+
         if (null !== $licence && $licence->isMedicalCertificateRequired()) {
-            $message = 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
+            $message .= 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
         }
 
         return $message;
+    }
+
+    private function getMedicalCertificateEndAt(): string
+    {
+        $duration = (Licence::TYPE_SPORT === $this->entity->getLastLicence()->getType())
+            ? $this->services->sportMedicalCertificateDuration
+            : $this->services->hikeMedicalCertificateDuration;
+        /** @var DateTime $medicalCertificateAt */
+        $medicalCertificateAt = $this->health->medicalCertificateDateObject;
+        $endAt = $medicalCertificateAt->add(new DateInterval(sprintf('P%sY', $duration)));
+
+        return $endAt->format('d/m/Y');
     }
 
     public function getApprovals()

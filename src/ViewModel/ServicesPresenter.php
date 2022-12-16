@@ -44,6 +44,8 @@ class ServicesPresenter
     public array $allIndemnities;
     public string $modalWindowOrderInProgress;
     public string $modalWindowRegistrationInProgress;
+    public int $hikeMedicalCertificateDuration;
+    public int $sportMedicalCertificateDuration;
 
     public function __construct(
         private SeasonService $seasonService,
@@ -83,5 +85,7 @@ class ServicesPresenter
         $this->modalWindowOrderInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
         $this->modalWindowRegistrationInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
         $this->allIndemnities = $this->indemnityRepository->findAll();
+        $this->hikeMedicalCertificateDuration = $parameterService->getParameterByName('HIKE_MEDICAL_CERTIFICATE_DURATION');
+        $this->sportMedicalCertificateDuration = $parameterService->getParameterByName('SPORT_MEDICAL_CERTIFICATE_DURATION');
     }
 }

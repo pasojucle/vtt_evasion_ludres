@@ -38,7 +38,7 @@
         {% endif %}
         {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
         {% if registration_document_steps[key]is defined %}
-            {{ registration_document_steps[key]['footer']|raw }}
+            {{ registration_document_steps[key]['footer']|raw|nl2br }}
         {% endif %}
     {% else %}
         <main>

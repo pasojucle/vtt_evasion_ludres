@@ -27,7 +27,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class EditRegistration
 {
@@ -155,7 +154,9 @@ class EditRegistration
         $user = $progress['user'];
         if (Licence::TYPE_RIDE !== $user->seasonLicence->type) {
             $medicalCertificateDate = $user->health->medicalCertificateDateObject;
-            $medicalCertificateDuration = (Licence::TYPE_HIKE === $user->seasonLicence->type) ? 5 : 3;
+            $medicalCertificateDuration = (Licence::TYPE_HIKE === $user->seasonLicence->type)
+                ? $this->parameterService->getParameterByName('SPORT_MEDICAL_CERTIFICATE_DURATION')
+                : $this->parameterService->getParameterByName('HIKE_MEDICAL_CERTIFICATE_DURATION');
             $intervalDuration = new DateInterval('P' . $medicalCertificateDuration . 'Y');
             $today = new DateTime();
             if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->health->isMedicalCertificateRequired) {

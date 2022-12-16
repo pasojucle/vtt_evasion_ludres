@@ -86,7 +86,7 @@ class Parameter
         return $this;
     }
 
-    public function getValue(): string|bool|array|null
+    public function getValue(): string|bool|array|int|null
     {
         // if (null === $this->value) {
         //     return $this->value;
