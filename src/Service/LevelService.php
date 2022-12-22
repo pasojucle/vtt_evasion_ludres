@@ -29,6 +29,8 @@ class LevelService
         $levels = $this->levelRepository->findAll();
         $this->addLevels($levels, $levelChoices);
 
+        $levelChoices['Membres du bureau et comité'] = Level::TYPE_BOARD_MEMBER;
+
         return $levelChoices;
     }
 

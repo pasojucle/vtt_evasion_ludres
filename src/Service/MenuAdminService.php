@@ -135,6 +135,12 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
+                'label' => 'Roles du bureau et comité',
+                'route' => 'admin_board_role_list',
+                'pattern' => '/board_role/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Types de rando',
                 'route' => 'admin_bike_ride_types',
                 'pattern' => '/bike_ride_type/',

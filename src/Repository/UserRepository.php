@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\BoardRole;
 use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
@@ -167,6 +168,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $types = [];
         $levels = [];
+        $isBoardmember = false;
         if (!empty($filterLevels)) {
             foreach ($filterLevels as $level) {
                 switch ($level) {
@@ -175,6 +177,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                         break;
                     case Level::TYPE_ALL_FRAME:
                         $types[] = Level::TYPE_FRAME;
+                        break;
+                    case Level::TYPE_BOARD_MEMBER:
+                        $isBoardmember = true;
                         break;
                     default:
                         $levels[] = $level;
@@ -192,6 +197,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if (!empty($types)) {
             $orX->add($qb->expr()->in('l.type', ':types'));
             $qb->setParameter('types', $types);
+        }
+
+        if ($isBoardmember) {
+            $orX->add($qb->expr()->isNotNull('u.boardRole'));
         }
 
         if (0 < $orX->count()) {
@@ -527,4 +536,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ->getResult()
         ;
     }
+
+    public function removeBoardRole(BoardRole $boardRole): void
+    {
+        $this->_em->createQueryBuilder()
+            ->update(User::class, 'u')
+            ->set('u.boardRole', ':null')
+            ->where(
+                (new Expr())->eq('u.boardRole', ':boardRole')
+            )
+            ->setParameter('null', null)
+            ->setParameter('boardRole', $boardRole)
+            ->getQuery()
+            ->execute();
+    }       
 }

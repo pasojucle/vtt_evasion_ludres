@@ -187,6 +187,10 @@ body > script {display: none !important;}
     display: block;
     background-color:var(--danger-color);
 }
+.fa-solid.fa-crown {
+    color: var(--primary-color);
+  -webkit-text-stroke: .5px #000;
+}
 .camera.alert-danger::after {
     top: 3px;
     left:16px;

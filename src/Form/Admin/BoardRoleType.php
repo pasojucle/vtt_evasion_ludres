@@ -4,40 +4,38 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Licence;
-use App\Entity\User;
+use App\Entity\BoardRole;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserType extends AbstractType
+class BoardRoleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('licenceNumber', TextType::class, [
-                'label' => 'numéro de licence',
+            ->add('name', TextType::class, [
+                'label' => 'Foncton',
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('licences', CollectionType::class, [
-                'label' => false,
-                'entry_type' => LicenceType::class,
-                'entry_options' => [
-                    'label' => false,
-                    'season_licence' => $options['season_licence'],
+            ->add('board', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Fait parti du bureau et du comité',
+                    'data-switch-off' => 'Fait parti uniquement du comité',
                 ],
             ])
-            ->add('health', HealthType::class, [
-                'label' => false,
-            ])
             ->add('save', SubmitType::class, [
-                'label' => '<i class="fas fa-check"></i> Modifier',
-                'label_html' => true,
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],
@@ -48,9 +46,7 @@ class UserType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
-            'category' => Licence::CATEGORY_ADULT,
-            'season_licence' => null,
+            'data_class' => BoardRole::class,
         ]);
     }
 }

@@ -22,9 +22,6 @@
                     <a href="{{ path('admin_send_number_licence', {'user': user.entity.id })}}" class="btn btn-xs btn-success"><i class="fas fa-paper-plane"></i> Envoyer le numéro de licence</a>
                 </div>
             </div>
-            <div class="form-group">
-            {{ form_row(form.level) }}
-            </div>
 
             {% for licence in form.licences %}
                 {% if licence.status is defined and licence.final is defined %}
@@ -35,9 +32,6 @@
                 {% endif %}
             {% endfor %}
             <div class="form-group">{{ form_row(form.health.medicalCertificateDate) }}</div>
-            {% if form.isFramer is defined %}
-                <div id="framer_container" class="form-group switch-group ">{{ form_row(form.isFramer) }}</div>
-            {% endif %}
         </div>
         <div class="wrapper-footer">
             {{ form_row(form.save) }}

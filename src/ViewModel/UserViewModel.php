@@ -38,6 +38,8 @@ class UserViewModel extends AbstractViewModel
 
     public ?LevelViewModel $level;
 
+    public ?string $boardRole;
+
     public ?string $mainEmail;
 
     public static function fromUser(User $user, ServicesPresenter $services)
@@ -54,6 +56,7 @@ class UserViewModel extends AbstractViewModel
         $userView->health = HealthViewModel::fromHealth($user->getHealth());
         $userView->level = LevelViewModel::fromLevel($user->getLevel());
         $userView->mainEmail = $userView->getMainEmail();
+        $userView->boardRole = $user->getBoardRole()?->getName();
 
         return $userView;
     }
@@ -338,5 +341,22 @@ class UserViewModel extends AbstractViewModel
     private function getMember(Identity $identity): IdentityViewModel
     {
         return IdentityViewModel::fromIdentity($identity, $this->services);
+    }
+
+    public function getAccessControl(): ?string
+    {
+        $reachableRoles = $this->services->roleHierarchy->getReachableRoleNames($this->entity->getRoles());
+
+        return match(true) {
+            in_array('ROLE_ADMIN', $reachableRoles) => 'Accès total au menu admin',
+            in_array('ROLE_REGISTER', $reachableRoles) => 'Accès à l\'admin pour gérere les inscriptions',
+            in_array('ROLE_FRAME', $reachableRoles) => 'Accès à l\'admin pour les sorties',
+            default => null,
+        };
+    }
+
+    public function isBoardMember(): bool
+    {
+        return null !== $this->entity->getBoardRole();
     }
 }

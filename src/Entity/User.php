@@ -96,6 +96,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ManyToMany(targetEntity: BikeRide::class, mappedBy: 'users', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     private Collection $bikeRides;
 
+    #[ManyToOne(inversedBy: 'users')]
+    private ?BoardRole $boardRole = null;
+
     public function __construct()
     {
         $this->identities = new ArrayCollection();
@@ -602,6 +605,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->bikeRides->removeElement($bikeRide)) {
             $bikeRide->removeUser($this);
         }
+
+        return $this;
+    }
+
+    public function getBoardRole(): ?BoardRole
+    {
+        return $this->boardRole;
+    }
+
+    public function setBoardRole(?BoardRole $boardRole): self
+    {
+        $this->boardRole = $boardRole;
 
         return $this;
     }

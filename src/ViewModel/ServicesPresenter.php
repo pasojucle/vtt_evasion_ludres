@@ -5,29 +5,30 @@ declare(strict_types=1);
 namespace App\ViewModel;
 
 use App\Entity\User;
-use App\Repository\IndemnityRepository;
-use App\Repository\LevelRepository;
-use App\Repository\LicenceRepository;
-use App\Repository\MembershipFeeAmountRepository;
-use App\Repository\SessionRepository;
-use App\Repository\UserRepository;
+use App\Twig\AppExtension;
+use App\Service\SeasonService;
 use App\Service\ClusterService;
 use App\Service\IdentityService;
 use App\Service\IndemnityService;
-use App\Service\ModalWindowService;
 use App\Service\ParameterService;
+use App\Repository\UserRepository;
+use App\Repository\LevelRepository;
+use App\Service\ModalWindowService;
+use App\Repository\LicenceRepository;
+use App\Repository\SessionRepository;
+use App\Repository\IndemnityRepository;
 use App\Service\ReplaceKeywordsService;
-use App\Service\SeasonService;
-use App\Twig\AppExtension;
 use App\UseCase\BikeRide\IsRegistrable;
-use App\UseCase\BikeRide\IsWritableAvailability;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
+use App\UseCase\BikeRide\IsWritableAvailability;
+use Symfony\Component\Form\FormFactoryInterface;
+use App\Repository\MembershipFeeAmountRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ServicesPresenter
 {
@@ -71,7 +72,8 @@ class ServicesPresenter
         public ReplaceKeywordsService $replaceKeywordsService,
         public IsRegistrable $isRegistrable,
         public IsWritableAvailability $isWritableAvailability,
-        public ModalWindowService $modalWindowService
+        public ModalWindowService $modalWindowService,
+        public RoleHierarchyInterface $roleHierarchy
     ) {
         $this->productDirectory = $this->parameterBag->get('products_directory');
         $this->uploadsDirectoryPath = $this->parameterBag->get('uploads_directory_path');

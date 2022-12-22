@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Level;
 use App\Entity\User;
+use App\Entity\Level;
 use App\Form\Admin\UserType;
-use App\Repository\UserRepository;
 use App\Service\MailerService;
+use App\ViewModel\UserPresenter;
+use App\Repository\UserRepository;
+use App\Form\Admin\UserBoardRoleType;
+use App\UseCase\User\GetParticipation;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
-use App\UseCase\User\GetParticipation;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -101,13 +102,6 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            $data = $request->request->all('user');
-
-            if (array_key_exists('isFramer', $data) && $data['isFramer']) {
-                $user->addRole('ROLE_FRAME');
-            } else {
-                $user->removeRole('ROLE_FRAME');
-            }
 
             $this->entityManager->flush();
 
@@ -118,6 +112,40 @@ class UserController extends AbstractController
         $this->userPresenter->present($user);
 
         return $this->render('user/admin/edit.html.twig', [
+            'user' => $this->userPresenter->viewModel(),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/adherent/role/{user}', name: 'user_board_role', methods: ['GET', 'POST'])]
+    public function adminUserRole(
+        Request $request,
+        User $user
+    ): Response {
+
+        $form = $this->createForm(UserBoardRoleType::class, $user);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            $data = $request->request->all('user_board_role');
+
+            if (array_key_exists('isFramer', $data) && $data['isFramer']) {
+                $user->addRole('ROLE_FRAME');
+            } else {
+                $user->removeRole('ROLE_FRAME');
+                $user->addRole('ROLE_USER');
+            }
+
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_user', [
+                'user' => $user->getId(),
+            ]);
+        }
+        $this->userPresenter->present($user);
+
+        return $this->render('user/admin/boardRole.html.twig', [
             'user' => $this->userPresenter->viewModel(),
             'form' => $form->createView(),
         ]);

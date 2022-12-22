@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.member.fullName }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title" {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
+            <h1>{{ user.member.fullName }}</h1>
+            <span class="tools">
+                <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.entity.id}) }}"
+                    class="btn btn-ico" title="Retour à la fiche de l'adhérents">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
+        </div>
+
+        {{ form_start(form) }}
+        <div class="wrapper-body">
+            <div class="form-group">{{ form_row(form.level) }}</div>
+            <div class="form-group">{{ form_row(form.boardRole) }}</div>
+            {% if form.isFramer is defined %}
+                <div id="framer_container" class="form-group switch-group ">{{ form_row(form.isFramer) }}</div>
+            {% endif %}
+        </div>
+        <div class="wrapper-footer">
+            {{ form_row(form.save) }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

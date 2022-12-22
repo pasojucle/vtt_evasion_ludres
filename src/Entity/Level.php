@@ -24,6 +24,8 @@ class Level
 
     public const TYPE_ALL_FRAME = 'ALL_FRAME';
 
+    public const TYPE_BOARD_MEMBER = 'BOARD_MEMBER';
+
     public const TYPE_ADULT_MEMBER = 3;
 
     public const TYPES = [
