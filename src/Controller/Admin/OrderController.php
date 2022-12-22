@@ -37,19 +37,20 @@ class OrderController extends AbstractController
         bool $filtered
     ): Response {
         $filters = ($filtered) ? $request->getSession()->get('admin_orders_filters') ?? [] : [];
+        $filters['p'] = $request->query->get('p');
 
         $form = $this->createForm(OrderFilterType::class, $filters);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
-            $request->getSession()->set('admin_orders_filters', $filters);
             $request->query->set('p', 1);
 
             return $this->redirectToRoute('admin_orders', [
                 'filtered' => true,
             ]);
         }
+        $request->getSession()->set('admin_orders_filters', $filters);
         $request->getSession()->set('order_return', $this->generateUrl('admin_orders', [
             'filtered' => (int) $filtered,
         ]));
@@ -75,7 +76,8 @@ class OrderController extends AbstractController
         OrderHeader $orderHeader,
         int $status
     ): Response {
-        $filters = $request->getSession()->get('admin_orders_filters');
+        $filters = $request->getSession()->get('admin_orders_filters') ?? [];
+        $request->query->set('p', $filters['p']);
         $orderHeader->setStatus($status);
         $this->entityManager->flush();
         $query = $this->orderHeaderRepository->findOrdersQuery($filters);
