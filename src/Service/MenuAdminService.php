@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class MenuAdminService
 {

@@ -15,7 +15,7 @@ use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\RegistrationStepViewModel;
 use App\ViewModel\UserPresenter;
 use DateTime;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Environment;
 
 class GetRegistrationFile

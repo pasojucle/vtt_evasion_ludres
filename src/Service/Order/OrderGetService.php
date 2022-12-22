@@ -7,7 +7,7 @@ namespace App\Service\Order;
 use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class OrderGetService
 {

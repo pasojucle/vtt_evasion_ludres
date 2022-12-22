@@ -12,7 +12,7 @@ use App\Entity\User;
 use DateTime;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class ModalWindowService
 {

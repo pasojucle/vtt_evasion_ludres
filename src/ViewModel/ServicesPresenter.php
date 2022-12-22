@@ -20,7 +20,7 @@ use App\Repository\IndemnityRepository;
 use App\Service\ReplaceKeywordsService;
 use App\UseCase\BikeRide\IsRegistrable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use Symfony\Component\Form\FormFactoryInterface;
 use App\Repository\MembershipFeeAmountRepository;
