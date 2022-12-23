@@ -347,7 +347,7 @@ class UserViewModel extends AbstractViewModel
     {
         $reachableRoles = $this->services->roleHierarchy->getReachableRoleNames($this->entity->getRoles());
 
-        return match(true) {
+        return match (true) {
             in_array('ROLE_ADMIN', $reachableRoles) => 'Accès total au menu admin',
             in_array('ROLE_REGISTER', $reachableRoles) => 'Accès à l\'admin pour gérere les inscriptions',
             in_array('ROLE_FRAME', $reachableRoles) => 'Accès à l\'admin pour les sorties',

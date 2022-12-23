@@ -9,10 +9,10 @@ use App\Entity\User;
 use App\Service\ParameterService;
 use DateTime;
 use ErrorException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Error\RuntimeError;
 
 class GetError

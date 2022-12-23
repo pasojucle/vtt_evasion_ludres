@@ -549,5 +549,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('boardRole', $boardRole)
             ->getQuery()
             ->execute();
-    }       
+    }
 }

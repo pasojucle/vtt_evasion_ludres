@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
 use App\Entity\Level;
-use App\Form\Admin\UserType;
-use App\Service\MailerService;
-use App\ViewModel\UserPresenter;
-use App\Repository\UserRepository;
+use App\Entity\User;
 use App\Form\Admin\UserBoardRoleType;
-use App\UseCase\User\GetParticipation;
+use App\Form\Admin\UserType;
+use App\Repository\UserRepository;
+use App\Service\MailerService;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
+use App\UseCase\User\GetParticipation;
+use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -122,7 +122,6 @@ class UserController extends AbstractController
         Request $request,
         User $user
     ): Response {
-
         $form = $this->createForm(UserBoardRoleType::class, $user);
         $form->handleRequest($request);
 

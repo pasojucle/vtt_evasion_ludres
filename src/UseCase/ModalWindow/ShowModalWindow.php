@@ -12,8 +12,8 @@ use App\Repository\SurveyRepository;
 use App\ViewModel\ModalWindow\ModalWindowsPresenter;
 use App\ViewModel\ModalWindow\ModalWindowViewModel;
 use App\ViewModel\UserPresenter;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ShowModalWindow
 {

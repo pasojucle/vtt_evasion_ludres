@@ -14,10 +14,10 @@ use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class RegistrationStepPresenter extends AbstractPresenter
 {

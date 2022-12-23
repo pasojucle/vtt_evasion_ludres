@@ -68,7 +68,7 @@ class Validate
     {
         if (!empty($violations)) {
             $status = 'ALERT_WARNING';
-        } elseif (empty($violations) && !$isEmptyValue) {
+        } elseif (!$isEmptyValue) {
             $status = 'SUCCESS';
         } else {
             $status = null;

@@ -11,8 +11,8 @@ use App\Entity\Survey;
 use App\Entity\User;
 use DateTime;
 use ReflectionClass;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ModalWindowService
 {

@@ -3,25 +3,24 @@
 namespace App\Controller\Admin;
 
 use App\Entity\BoardRole;
-use App\Service\OrderByService;
 use App\Form\Admin\BoardRoleType;
-use App\Service\PaginatorService;
 use App\Repository\BoardRoleRepository;
 use App\Repository\UserRepository;
+use App\Service\OrderByService;
+use App\Service\PaginatorService;
+use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/bureau/role', name: 'admin_board_role')]
 class BoardRoleController extends AbstractController
 {
     public function __construct(private BoardRoleRepository $boardRoleRepository, private EntityManagerInterface $entityManager, private OrderByService $orderByService)
     {
-        
     }
 
     #[Route('s', name: '_list', methods: ['GET'], defaults:['type' => 1])]

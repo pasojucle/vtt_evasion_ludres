@@ -24,8 +24,8 @@ use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class GetProgress
 {
