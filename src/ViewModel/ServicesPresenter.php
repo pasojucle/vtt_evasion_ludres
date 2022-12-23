@@ -45,8 +45,8 @@ class ServicesPresenter
     public array $allIndemnities;
     public ?string $modalWindowOrderInProgress;
     public ?string $modalWindowRegistrationInProgress;
-    public int $hikeMedicalCertificateDuration;
-    public int $sportMedicalCertificateDuration;
+    public ?int $hikeMedicalCertificateDuration;
+    public ?int $sportMedicalCertificateDuration;
 
     public function __construct(
         private SeasonService $seasonService,
