@@ -43,8 +43,8 @@ class ServicesPresenter
     public array $seasonsStatus;
     public ?User $user;
     public array $allIndemnities;
-    public string $modalWindowOrderInProgress;
-    public string $modalWindowRegistrationInProgress;
+    public ?string $modalWindowOrderInProgress;
+    public ?string $modalWindowRegistrationInProgress;
     public int $hikeMedicalCertificateDuration;
     public int $sportMedicalCertificateDuration;
 
