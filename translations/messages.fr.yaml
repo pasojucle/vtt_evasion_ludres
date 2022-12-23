@@ -138,6 +138,7 @@ content:
     user_account: Compte utilisateur
     links: Liens
     default: Fonds par défaut (login, formulaires ...)
+    user_change_infos: Page demande de modifications d'infos personnelles
   type:
     flash: Message flash
     content: Contenu

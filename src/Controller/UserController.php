@@ -6,11 +6,16 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
+use App\Form\ChangeUserInfosType;
+use App\Repository\ContentRepository;
 use App\Repository\OrderHeaderRepository;
+use App\Service\IdentityService;
+use App\Service\MailerService;
 use App\Service\PaginatorService;
 use App\ViewModel\OrdersPresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPStan\Symfony\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,6 +88,43 @@ class UserController extends AbstractController
 
         return $this->render('reset_password/reset.html.twig', [
             'resetForm' => $form->createView(),
+        ]);
+    }
+
+
+    #[Route('mon_compte/demande/modification', name: 'user_change_infos', methods: ['GET', 'POST'])]
+    public function changeInfos(
+        Request $request,
+        IdentityService $identityService,
+        UserPresenter $userPresenter,
+        MailerService $mailerService,
+        ContentRepository $contentRepository
+    ): Response {
+
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $mainContact = $identityService->getMainContact($user);
+        $data = ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()];
+
+        $form = $this->createForm(ChangeUserInfosType::class, $data);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $userPresenter->present($user);
+            $data['user'] = $userPresenter->viewModel();
+            $data['subject'] = 'Demande de modification d\'informations personnelles';
+            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_CHANGE_USER_INFOS')) {
+                $this->addFlash('success', 'Votre message a bien été envoyé');
+
+                return $this->redirectToRoute('user_change_infos');
+            }
+            $this->addFlash('danger', 'Une erreure est survenue');
+        }
+        dump($contentRepository->findOneByRoute('user_change_infos')->getBackgrounds()->toArray());
+        return $this->render('user/change_infos.html.twig', [
+            'content' => $contentRepository->findOneByRoute('user_change_infos'),
+            'form' => $form->createView(),
         ]);
     }
 }

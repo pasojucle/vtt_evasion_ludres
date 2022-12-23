@@ -80,16 +80,12 @@
                                     </div>
                                 </li>
                             {% endif %}
-                            <li>
-                                <div class="row padding-top-5">
-                                    <div class="col-md-5">
-                                        <a class="btn btn-secondary btn-xs" href="{{ path('change_password') }}">Modifier mon mot de passe</a>
-                                    </div>
-                                </div>
-                                
-                            </li>
                         </ul>
-                    </div>    
+                    </div>   
+                    <div class="block-footer">
+                        <a class="btn btn-secondary btn-xs" href="{{ path('change_password') }}">Modifier mon mot de passe</a>
+                        <a class="btn btn-secondary btn-xs" href="{{ path('user_change_infos') }}">Modifier une information</a>
+                    </div> 
                 </div>
             {% endif %}
         </div>

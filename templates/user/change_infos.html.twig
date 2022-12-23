@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% form_theme form '@EWZRecaptcha/Form/v3/ewz_recaptcha_widget.html.twig' %}
 
-{% block title %}Contact{% endblock %}
+{% block title %}Modifier mes infos{% endblock %}
 
 {% block stylesheets %}
     {{ parent()}}
@@ -10,6 +10,7 @@
     <div class="wrapper background-blue background-color col-content">
         <div is="my-carrousel" class="wrapper-img slider">
             {% for background in content.backgrounds %}
+                {% dump(background.filename) %}
                 <picture>
                     <source media="(max-width: 400px)" srcset="/images/background/landscape_xs/{{ background.filename }}">
                     <source media="(max-width: 800px)" srcset="/images/background/landscape_md/{{ background.filename }}">
@@ -20,21 +21,9 @@
         <div class="wrapper-content">
             <div class="reveal">
                 {{ content.content | raw}}
+                <br>
                 {{ form_start(form) }}
-                <div class="form-group">
-                    {{ form_row(form.firstName) }}
-                    {{ form_row(form.name) }}
-                </div>
-                <div class="form-group">
-                    {{ form_row(form.email) }}
-                </div>
                 {{ form_row(form.message) }}
-                <div class="form-group">
-                    {{ form_widget(form.recaptcha) }}
-                    <div class="form-errors">
-                        {{ form_errors(form.recaptcha) }}
-                    </div>
-                </div>
                 {{ form_row(form.submit) }}
                 {{ form_end(form) }}
             </div>

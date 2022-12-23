@@ -44,6 +44,7 @@ class Content
         'user_account' => 'content.route.user_account',
         'default' => 'content.route.default',
         'links' => 'content.route.links',
+        'user_change_infos' => 'content.route.user_change_infos',
     ];
 
     #[Column(type: 'integer')]
