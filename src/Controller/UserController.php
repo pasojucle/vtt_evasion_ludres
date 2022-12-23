@@ -121,7 +121,7 @@ class UserController extends AbstractController
             }
             $this->addFlash('danger', 'Une erreure est survenue');
         }
-        dump($contentRepository->findOneByRoute('user_change_infos')->getBackgrounds()->toArray());
+
         return $this->render('user/change_infos.html.twig', [
             'content' => $contentRepository->findOneByRoute('user_change_infos'),
             'form' => $form->createView(),
