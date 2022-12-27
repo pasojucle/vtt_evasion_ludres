@@ -53,7 +53,7 @@ class UserViewModel extends AbstractViewModel
         $userView->setIdentities();
         $userView->lastLicence = $userView->getLastLicence();
         $userView->seasonLicence = $userView->getSeasonLicence();
-        $userView->health = HealthViewModel::fromHealth($user->getHealth());
+        $userView->health = HealthViewModel::fromHealth($user->getHealth(), $services);
         $userView->level = LevelViewModel::fromLevel($user->getLevel());
         $userView->mainEmail = $userView->getMainEmail();
         $userView->boardRole = $user->getBoardRole()?->getName();
@@ -147,35 +147,6 @@ class UserViewModel extends AbstractViewModel
     public function isNewMember(): bool
     {
         return 2 > $this->entity->getLicences()->count();
-    }
-
-    public function isMedicalCertificateRequired(): string
-    {
-        $message = '';
-        $licence = $this->entity->getSeasonLicence($this->services->currentSeason);
-
-        if ($this->health->medicalCertificateDate) {
-            $message .= 'Date du dernier certificat médical : ' . $this->health->medicalCertificateDate
-                    . sprintf(' (Valable jusqu\'au %s)', $this->getMedicalCertificateEndAt()) . PHP_EOL;
-        }
-
-        if (null !== $licence && $licence->isMedicalCertificateRequired()) {
-            $message .= 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
-        }
-
-        return $message;
-    }
-
-    private function getMedicalCertificateEndAt(): string
-    {
-        $duration = (Licence::TYPE_SPORT === $this->entity->getLastLicence()->getType())
-            ? $this->services->sportMedicalCertificateDuration
-            : $this->services->hikeMedicalCertificateDuration;
-        /** @var DateTime $medicalCertificateAt */
-        $medicalCertificateAt = $this->health->medicalCertificateDateObject;
-        $endAt = $medicalCertificateAt->add(new DateInterval(sprintf('P%sY', $duration)));
-
-        return $endAt->format('d/m/Y');
     }
 
     public function getApprovals()

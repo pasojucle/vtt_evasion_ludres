@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
-    $(document).on('click', '.disease-active', toggleDisease);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.cluster-complete', clusterComplete);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
@@ -228,18 +227,6 @@ function adminSessionPresent(e) {
         }
       });
 }
-
-function toggleDisease() {
-    const parent = $(this).closest('div.form-group');
-    parent.find('input[type="text"]').toggleClass('disabled');
-    if(!$(this).is(':checked')) {
-        parent.find('input[type="text"]').removeAttr('required').removeAttr('required').val('');
-
-    } else {
-        parent.find('input[type="text"]').attr('required', true);
-    }
-}
-
 
 function setOrderLineQuantity(e) {
     e.preventDefault();

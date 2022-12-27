@@ -56,7 +56,7 @@ class IdentityViewModel extends AbstractViewModel
         $identityView->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
         $identityView->emergencyPhone = $identity->getEmergencyPhone();
         $identityView->phonesAnchor = $identityView->getPhonesAnchor();
-        $identityView->picture = $identityView->getPicture();
+        $identityView->picture = $identityView->getPicture() ?? '/images/default-user-picture.jpg';
         $identityView->type = (null !== $identity->getKinShip()) ? Identity::KINSHIPS[$identity->getKinShip()] : null;
 
         $identityView->age = $identityView->getAge();

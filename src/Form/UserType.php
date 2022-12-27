@@ -6,6 +6,7 @@ namespace App\Form;
 
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Form\HealthType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

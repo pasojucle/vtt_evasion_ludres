@@ -2,7 +2,7 @@
 
 <p>{{ user.seasonLicence.getAmount()['str']|raw }}</p>
 <br>
-<p>{{ user.isMedicalCertificateRequired(season_service.currentSeason) }}</p>
+<p>{{ user.health.isMedicalCertificateRequired }}</p>
 <br>
 
 <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user.entity.id }) }}">Télécharger le dossier</a>

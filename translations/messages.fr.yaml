@@ -34,25 +34,6 @@ identity:
     guardianship: Réprésentant légal
     other: Autre
 
-disease:
-  type:
-    diseases: Pathologies
-    allergies: Allergies
-    intolerances: Intolérances
-  label: 
-    enuresis: Enurésie
-    tetany: Tétanie
-    asthma: Asthme
-    hemophilia: Hémophilie
-    epilepsy: Epilepsie
-    diabetes: Diabète
-    other: Autres
-    dietary: Alimentaires
-    medicated: Médicamenteuses
-    pollen_bees: Pollen, Abeilles
-    food: Aux aliments 
-    medicines: Aux médicaments
-
 registration_step:
   type:
     default: Bulletin d'inscription

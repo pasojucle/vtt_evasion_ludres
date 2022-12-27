@@ -9,6 +9,8 @@ use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Validator\BirthDate;
 use App\Validator\Phone;
+use App\Validator\SchoolTestingRegistration;
+use App\Validator\UniqueMember;
 use DateInterval;
 use DateTime;
 use Symfony\Component\Form\AbstractType;
@@ -17,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -57,6 +60,7 @@ class IdentityType extends AbstractType
                         'constraints' => [
                             new NotNull(),
                             new NotBlank(),
+                            new UniqueMember()
                         ],
                         'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
                             ? [
@@ -73,6 +77,7 @@ class IdentityType extends AbstractType
                         'constraints' => [
                             new NotNull(),
                             new NotBlank(),
+                            new UniqueMember()
                         ],
                         'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
                             ? [
@@ -151,7 +156,9 @@ class IdentityType extends AbstractType
                                 'class' => $row_class,
                             ],
                             'disabled' => $disabled,
-                            'constraints' => [new BirthDate()],
+                            'constraints' => [
+                                new BirthDate(),
+                            ],
                         ])
                         ;
                 }
@@ -263,7 +270,13 @@ class IdentityType extends AbstractType
                                 ]),
                             ],
                         ])
-                        ;
+                        ->add('schoolTestingRegistration', HiddenType::class, [
+                            'mapped' => false,
+                            'constraints' => [
+                                new SchoolTestingRegistration(),
+                            ],
+                        ]);
+                    ;
                 }
             }
         });

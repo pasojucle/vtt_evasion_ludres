@@ -170,12 +170,6 @@ class MenuAdminService
                 'pattern' => '/registration_step/',
                 'role' => 'ROLE_ADMIN',
             ],
-            [
-                'label' => 'Pathologies',
-                'route' => 'admin_disease_kind_list',
-                'pattern' => '/disease_kind/',
-                'role' => 'ROLE_ADMIN',
-            ],
         ]);
     }
 

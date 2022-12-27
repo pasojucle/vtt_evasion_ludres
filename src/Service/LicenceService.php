@@ -7,14 +7,19 @@ namespace App\Service;
 use App\Entity\Licence;
 use App\Entity\User;
 use DateTime;
+use DateTimeInterface;
 
 class LicenceService
 {
     public function getCategory(User $user): int
     {
-        $today = new DateTime();
-        $age = $today->diff($user->getIdentities()->first()->getBirthDate());
+        return $this->getCategoryByBirthDate($user->getMemberIdentity()->getBirthDate());
+    }
 
+    public function getCategoryByBirthDate(DateTimeInterface $birthDate): int
+    {
+        $today = new DateTime();
+        $age = $today->diff($birthDate);
         return (18 > (int) $age->format('%y')) ? Licence::CATEGORY_MINOR : Licence::CATEGORY_ADULT;
     }
 }

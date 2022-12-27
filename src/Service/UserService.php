@@ -33,10 +33,6 @@ class UserService
     {
         $allData = [
             [
-                'entity' => $user->getHealth(),
-                'methods' => ['getDiseases', 'getHealthQuestions'],
-            ],
-            [
                 'entity' => $user,
                 'methods' => ['getSessions', 'getLicences', 'getApprovals', 'getIdentities', 'getOrderHeaders', 'getRespondents', 'getSurveys'],
             ],

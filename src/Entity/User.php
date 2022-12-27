@@ -57,7 +57,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(targetEntity: Identity::class, mappedBy: 'user')]
     private Collection $identities;
 
-    #[OneToOne(targetEntity: Health::class, cascade: ['persist', 'remove'])]
+    #[OneToOne(targetEntity: Health::class, inversedBy: 'user', cascade: ['persist', 'remove'])]
+
+    // #[OneToOne(targetEntity: Health::class, cascade: ['persist', 'remove'])]
     private ?Health $health;
 
     #[OneToMany(targetEntity: Approval::class, mappedBy: 'user')]

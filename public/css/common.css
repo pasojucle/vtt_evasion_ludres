@@ -568,10 +568,6 @@ main:not(.admin) {
     vertical-align: middle;
     line-height: 30px;
 }
-.form-group > input.disease-active {
-    /* width: unset;
-    height: unset; */
-}
 
 .form-group > textarea {
     height: 100px;
@@ -580,20 +576,11 @@ main:not(.admin) {
     display: inline-block;
     width: 25%;
 }
-.form-group > .widget-inline.disease-active {
-    width: 20px;
-}
-.form-group > .widget-inline.disease-label {
-    display: inline-block;
-    width: calc(25% + 60px);
-    margin-left: 20px;
-}
+
 .form-group > .widget-inline.widget-curent-treatment {
     width: calc(50% + 4px);
 }
-.form-group > .widget-inline.disease-label.disease-label-other {
-    width: 56px;
-}
+
 .form-group-inline {
     display: inline-block;
     width: calc(50% - 3px);

@@ -128,7 +128,7 @@ class ReplaceKeywordsService
             $this->translator->trans($licence->type),
             $this->translator->trans($licence->coverageStr),
             ($licence->isVae) ? 'Oui' : 'Non',
-            $user->isMedicalCertificateRequired(),
+            $user->health->isMedicalCertificateRequired(),
             $licence->getAmount()['value']?->toString(),
             '<br>',
             (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->getApprovals()['rightToImage']['string']) : 'autorise',

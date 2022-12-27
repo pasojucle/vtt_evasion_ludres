@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\User;
-use App\Form\HealthType;
-use App\Service\DiseaseService;
+use App\Form\Admin\HealthType;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,10 +20,8 @@ class HealthController extends AbstractController
         Request $request,
         UserPresenter $presenter,
         EntityManagerInterface $entityManager,
-        DiseaseService $diseaseService,
         User $user
     ): Response {
-        $diseaseService->updateAndSortdiseases($user, $user->getLastLicence()->getCategory());
         $form = $this->createForm(HealthType::class, $user->getHealth());
         $form->handleRequest($request);
 
@@ -39,7 +36,7 @@ class HealthController extends AbstractController
         }
         $presenter->present($user);
 
-        return $this->render('health/edit.html.twig', [
+        return $this->render('health/admin/edit.html.twig', [
             'user' => $presenter->viewModel(),
             'form' => $form->createView(),
         ]);

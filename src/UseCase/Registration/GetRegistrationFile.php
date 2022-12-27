@@ -16,6 +16,7 @@ use App\ViewModel\RegistrationStepViewModel;
 use App\ViewModel\UserPresenter;
 use DateTime;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 
 class GetRegistrationFile
@@ -34,7 +35,8 @@ class GetRegistrationFile
         private Security $security,
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
-        private ContentRepository $contentRepository
+        private ContentRepository $contentRepository,
+        private RequestStack $requestStack
     ) {
     }
 
@@ -50,6 +52,10 @@ class GetRegistrationFile
         if ($this->security->getUser() === $user) {
             $today = new DateTime();
             $seasonLicence->setCreatedAt($today);
+            $healthQuestions = $this->requestStack->getSession()->get('health_questions');
+            if ($healthQuestions) {
+                $this->user->getHealth()->setHealthQuestions($healthQuestions);
+            }
         }
         $this->presenter->present($user);
 

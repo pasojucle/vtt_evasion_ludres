@@ -163,37 +163,9 @@
                 <div class="block-body">
                     <div class="col-md-6 col-xs-12">
                         <ul>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>N° de sécurité sociale :</b></div><div class="col-md-8 col-xs-6">{{ user.health.socialSecurityNumber }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Groupe sanguin : </b></div><div class="col-md-8 col-xs-6">{{ user.health.bloodGroup }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Mutuelle : </b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualCompany }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.mutualNumber }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>antitétanique : </b></div><div class="col-md-8 col-xs-6">{{ user.health.tetanusBooster }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Médecin traitant : </b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorName }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorPhone }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b></b></div><div class="col-md-8 col-xs-6">{{ user.health.doctorAddress }} {{ user.health.doctorTown }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Certificat médical :</b></div><div class="col-md-8 col-xs-6">{{ user.health.medicalCertificateDate}}</div></div></li>
                         </ul>
                     </div>
-                
-                    {% if user.health.diseases is not empty %}
-                        <div class="col-md-6 col-xs-12">
-                            {% for category, diseases in user.health.diseases %}
-                                <h3>{{ constant('App\\Entity\\DiseaseKind::CATEGORIES')[category] | trans }}</h3>
-                                <ul class="with-list-style">
-                                    {% for disease in diseases %}
-                                        <li><div class="row">
-                                                <div class="col-md-4 col-xs-4"><b>{{ disease.label }}{% if disease.title is not null %} : {{ disease.title }}{% endif %} </b></div>
-                                                <div class="col-md-4 col-xs-4">
-                                                    {% if disease.hasTreatment %}<i class="fas fa-file-medical"></i> {% endif %}
-                                                    {{ disease.curentTreatment }}
-                                                </div>
-                                                <div class="col-md-4 col-xs-4"> <i class="fas fa-ambulance"></i> {{ disease.emergencyTreatment }}</div>
-                                            </div>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 {% endif %}
             </div>
         </div>

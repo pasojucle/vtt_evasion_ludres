@@ -13,16 +13,10 @@ use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\LicenceService;
 use App\Service\MailerService;
-use App\Service\ParameterService;
 use App\Service\StringService;
 use App\Service\UploadService;
-use App\Service\ValidatorService;
-use App\Validator\UniqueMember;
 use App\ViewModel\UserPresenter;
-use DateInterval;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -38,9 +32,7 @@ class EditRegistration
         private UserPasswordHasherInterface $passwordHasher,
         private UrlGeneratorInterface $urlGenerator,
         private IdentityService $identityService,
-        private ParameterService $parameterService,
         private MailerService $mailerService,
-        private ValidatorService $validator,
         private LicenceService $licenceService,
         private StringService $stringService,
         private CommuneService $communeService
@@ -55,7 +47,6 @@ class EditRegistration
 
         if (null !== $form->get('plainPassword') && $form->get('plainPassword')->getData()) {
             $identity = $this->registerNewUser($user, $form);
-            $this->uniqueMemberValidator($form, $identity);
         }
 
         if ($user->getMemberIdentity()->getBirthCommune()) {
@@ -66,17 +57,16 @@ class EditRegistration
             $category = $this->licenceService->getCategory($user);
             $user->getSeasonLicence($season)->setCategory($category);
             if (Licence::CATEGORY_MINOR === $category) {
-                $this->schoolTestingRegistrationValidator($form, $progress);
                 $this->identityService->setAddress($user);
             }
         }
+        
+        $user->getHealth()->setAtLeastOnePositveResponse();
+        $session->set('health_questions', $user->getHealth()->getHealthQuestions());
+
         $this->UploadFile($request, $user);
 
         $category = $user->getSeasonLicence($season)->getCategory();
-
-
-        $isMedicalCertificateRequired = $this->isMedicalCertificateRequired($progress);
-        $user->getSeasonLicence($season)->setMedicalCertificateRequired($isMedicalCertificateRequired);
 
         if ($form->isValid()) {
             if (UserType::FORM_OVERVIEW === $progress['current']->form) {
@@ -110,27 +100,6 @@ class EditRegistration
         return $identity;
     }
 
-    private function uniqueMemberValidator(FormInterface &$form, Identity $identity): void
-    {
-        $values = [
-            'name' => $identity->getName(),
-            'firstName' => $identity->getFirstName(),
-        ];
-        $violations = $this->validator->ValidateToArray($values, [new UniqueMember()]);
-
-        if (!empty($violations)) {
-            $form->addError(new FormError(implode('<br>', $violations)));
-        }
-    }
-
-    private function schoolTestingRegistrationValidator(FormInterface &$form, array $progress)
-    {
-        $schoolTestingRegistration = $this->parameterService->getSchoolTestingRegistration($progress['user']);
-        if (!$schoolTestingRegistration['value'] && !$progress['user']->seasonLicence->isFinal) {
-            $form->addError(new FormError($schoolTestingRegistration['message']));
-        }
-    }
-
     private function sendMailToUser(User $user): void
     {
         $this->userPresenter->present($user);
@@ -146,25 +115,6 @@ class EditRegistration
                 'user' => $user->entity->getId(),
             ]),
         ], 'EMAIL_REGISTRATION');
-    }
-
-    private function isMedicalCertificateRequired(array $progress): bool
-    {
-        $isMedicalCertificateRequired = false;
-        $user = $progress['user'];
-        if (Licence::TYPE_RIDE !== $user->seasonLicence->type) {
-            $medicalCertificateDate = $user->health->medicalCertificateDateObject;
-            $medicalCertificateDuration = (Licence::TYPE_HIKE === $user->seasonLicence->type)
-                ? $this->parameterService->getParameterByName('SPORT_MEDICAL_CERTIFICATE_DURATION')
-                : $this->parameterService->getParameterByName('HIKE_MEDICAL_CERTIFICATE_DURATION');
-            $intervalDuration = new DateInterval('P' . $medicalCertificateDuration . 'Y');
-            $today = new DateTime();
-            if (null === $medicalCertificateDate || $medicalCertificateDate < $today->sub($intervalDuration) || $user->health->isMedicalCertificateRequired) {
-                $isMedicalCertificateRequired = true;
-            }
-        }
-
-        return $isMedicalCertificateRequired;
     }
 
     private function UploadFile(Request $request, User $user): void
@@ -192,14 +142,4 @@ class EditRegistration
             ], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
     }
-
-    // private function authenticating(Request $request, User $user): void
-    // {
-    //     $token = new UsernamePasswordToken($user, $user->getPassword(), $user->getRoles());
-    //     $this->tokenStorage->setToken($token);
-
-    //     // $event = new SecurityEvents($request);
-    //     $event = new SecurityEvents();
-    //     $this->dispatcher->dispatch($event, SecurityEvents::INTERACTIVE_LOGIN);
-    // }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\HealthRepository;
-use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +12,8 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity(repositoryClass: HealthRepository::class)]
 class Health
@@ -22,46 +22,20 @@ class Health
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 15, nullable: true)]
-    private ?string $socialSecurityNumber = null;
-
-    #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $mutualCompany = null;
-
-    #[Column(type: 'string', length: 25, nullable: true)]
-    private ?string $mutualNumber = null;
-
-    #[Column(type: 'string', length: 5, nullable: true)]
-    private ?string $bloodGroup = null;
-
-    #[Column(type: 'date', nullable: true)]
-    private ?DateTimeInterface $tetanusBooster = null;
-
-    #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $doctorName = null;
-
-    #[Column(type: 'string', length: 255, nullable: true)]
-    private ?string $doctorAddress = null;
-
-    #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $doctorTown = null;
-
-    #[Column(type: 'string', length: 10, nullable: true)]
-    private ?string $doctorPhone = null;
-
-    #[OneToMany(targetEntity: HealthQuestion::class, mappedBy: 'health')]
-    private Collection $healthQuestions;
-
-    #[OneToMany(targetEntity: Disease::class, mappedBy: 'health')]
-    private Collection $diseases;
-
     #[Column(type: 'date', nullable: true)]
     private ?DateTimeInterface $medicalCertificateDate = null;
+
+    #[Column(type:'boolean', options: ['default' => false])]
+    private bool $atLeastOnePositveResponse = false;
+
+    #[OneToOne(targetEntity: User::class, mappedBy: 'health')]
+    private ?User $user;
+
+    private Collection $healthQuestions;
 
     public function __construct()
     {
         $this->healthQuestions = new ArrayCollection();
-        $this->diseases = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,182 +43,57 @@ class Health
         return $this->id;
     }
 
-    public function getSocialSecurityNumber(): ?string
+    public function getMedicalCertificateDate(): ?DateTimeInterface
     {
-        return $this->socialSecurityNumber;
+        return $this->medicalCertificateDate;
     }
 
-    public function setSocialSecurityNumber(string $socialSecurityNumber): self
+    public function setMedicalCertificateDate(?DateTimeInterface $medicalCertificateDate): self
     {
-        $this->socialSecurityNumber = $socialSecurityNumber;
+        $this->medicalCertificateDate = $medicalCertificateDate;
 
         return $this;
     }
 
-    public function getMutualCompany(): ?string
+    public function hasAtLeastOnePositveResponse(): ?bool
     {
-        return $this->mutualCompany;
+        return $this->atLeastOnePositveResponse;
     }
 
-    public function setMutualCompany(?string $mutualCompany): self
+    public function setAtLeastOnePositveResponse(): self
     {
-        $this->mutualCompany = $mutualCompany;
+        $atLeastOnePositveResponse = false;
 
+        foreach ($this->healthQuestions as $question) {
+            if (true === $question->getValue()) {
+                $atLeastOnePositveResponse = true;
+            }
+        }
+
+        $this->atLeastOnePositveResponse = $atLeastOnePositveResponse;
         return $this;
     }
 
-    public function getMutualNumber(): ?string
-    {
-        return $this->mutualNumber;
-    }
-
-    public function setMutualNumber(?string $mutualNumber): self
-    {
-        $this->mutualNumber = $mutualNumber;
-
-        return $this;
-    }
-
-    public function getBloodGroup(): ?string
-    {
-        return $this->bloodGroup;
-    }
-
-    public function setBloodGroup(?string $bloodGroup): self
-    {
-        $this->bloodGroup = $bloodGroup;
-
-        return $this;
-    }
-
-    public function getTetanusBooster(): ?\DateTimeInterface
-    {
-        return $this->tetanusBooster;
-    }
-
-    public function setTetanusBooster(?\DateTimeInterface $tetanusBooster): self
-    {
-        $this->tetanusBooster = $tetanusBooster;
-
-        return $this;
-    }
-
-    public function getDoctorName(): ?string
-    {
-        return $this->doctorName;
-    }
-
-    public function setDoctorName(?string $doctorName): self
-    {
-        $this->doctorName = $doctorName;
-
-        return $this;
-    }
-
-    public function getDoctorAddress(): ?string
-    {
-        return $this->doctorAddress;
-    }
-
-    public function setDoctorAddress(?string $doctorAddress): self
-    {
-        $this->doctorAddress = $doctorAddress;
-
-        return $this;
-    }
-
-    public function getDoctorTown(): ?string
-    {
-        return $this->doctorTown;
-    }
-
-    public function setDoctorTown(?string $doctorTown): self
-    {
-        $this->doctorTown = $doctorTown;
-
-        return $this;
-    }
-
-    public function getDoctorPhone(): ?string
-    {
-        return $this->doctorPhone;
-    }
-
-    public function setDoctorPhone(?string $doctorPhone): self
-    {
-        $this->doctorPhone = $doctorPhone;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|HealthQuestion[]
-     */
     public function getHealthQuestions(): Collection
     {
         return $this->healthQuestions;
     }
 
-    public function addHealthQuestion(HealthQuestion $healthQuestion): self
+    public function setHealthQuestions(ArrayCollection $healthQuestions): self
     {
-        if (!$this->healthQuestions->contains($healthQuestion)) {
-            $this->healthQuestions[] = $healthQuestion;
-            $healthQuestion->setHealth($this);
-        }
+        $this->healthQuestions = $healthQuestions;
 
         return $this;
     }
 
-    public function removeHealthQuestion(HealthQuestion $healthQuestion): self
+    public function getUser(): User
     {
-        if ($this->healthQuestions->removeElement($healthQuestion)) {
-            // set the owning side to null (unless already changed)
-            if ($healthQuestion->getHealth() === $this) {
-                $healthQuestion->setHealth(null);
-            }
-        }
-
-        return $this;
+        return $this->user;
     }
 
-    /**
-     * @return Collection|Disease[]
-     */
-    public function getDiseases(): Collection
+    public function setUser(User $user): self
     {
-        return $this->diseases;
-    }
-
-    public function addDisease(Disease $disease): self
-    {
-        if (!$this->diseases->contains($disease)) {
-            $this->diseases[] = $disease;
-            $disease->setHealth($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDisease(Disease $disease): self
-    {
-        if ($this->diseases->removeElement($disease)) {
-            // set the owning side to null (unless already changed)
-            if ($disease->getHealth() === $this) {
-                $disease->setHealth(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getMedicalCertificateDate(): ?\DateTimeInterface
-    {
-        return $this->medicalCertificateDate;
-    }
-
-    public function setMedicalCertificateDate(?\DateTimeInterface $medicalCertificateDate): self
-    {
-        $this->medicalCertificateDate = $medicalCertificateDate;
+        $this->user = $user;
 
         return $this;
     }

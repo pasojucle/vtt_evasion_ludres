@@ -25,3 +25,7 @@
         <li><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</li>
     </ul>
 {% endif %}
+
+    <ul class="block background-ligth">
+        <li>{{ user.health.isMedicalCertificateRequired()|raw }}</li>
+    </ul>

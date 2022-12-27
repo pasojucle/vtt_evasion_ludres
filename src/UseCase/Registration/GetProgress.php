@@ -6,7 +6,6 @@ namespace App\UseCase\Registration;
 
 use App\Entity\Address;
 use App\Entity\Approval;
-use App\Entity\Disease;
 use App\Entity\Health;
 use App\Entity\HealthQuestion;
 use App\Entity\Identity;
@@ -17,12 +16,11 @@ use App\Form\UserType;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Repository\UserRepository;
-use App\Service\DiseaseService;
 use App\Service\LicenceService;
 use App\Service\SeasonService;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -44,8 +42,7 @@ class GetProgress
         private Security $security,
         private EntityManagerInterface $entityManager,
         private LicenceService $licenceService,
-        private RequestStack $requestStack,
-        private DiseaseService $diseaseService
+        private RequestStack $requestStack
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
@@ -113,22 +110,23 @@ class GetProgress
         if (null === $this->user) {
             $this->createUser();
         }
+
         $this->seasonLicence = $this->user->getSeasonLicence($this->season);
         if (null === $this->seasonLicence) {
             $this->createNewLicence();
         }
+
         if (null === $this->user->getHealth()) {
             $this->createHealth();
         }
-        $formQuestionCount = (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) ? 23 : 8;
-        $healthQuestionCount = $this->user->getHealth()->getHealthQuestions()->count();
-        if ($healthQuestionCount < $formQuestionCount) {
-            $this->createHealthQuestions($healthQuestionCount, $formQuestionCount);
+        
+        $healthQuestions = $this->requestStack->getSession()->get('health_questions');
+        $formQuestionCount = (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) ? 24 : 9;
+        if (empty($healthQuestions) || $formQuestionCount !== count($healthQuestions)) {
+            $healthQuestions = $this->createHealthQuestions($formQuestionCount);
         }
-
-        if ($healthQuestionCount > $formQuestionCount) {
-            $this->removeHealthQuestions($this->user->getHealth()->getHealthQuestions(), $formQuestionCount);
-        }
+        
+        $this->user->getHealth()->setHealthQuestions($healthQuestions);
 
         if ($this->user->getIdentities()->isEmpty()) {
             $this->createIdentityMember();
@@ -138,7 +136,6 @@ class GetProgress
             $this->createApproval(User::APPROVAL_RIGHT_TO_THE_IMAGE);
         }
 
-        $this->diseaseService->updateAndSortdiseases($this->user, $this->seasonLicence->getCategory());
         if (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) {
             if ($this->user->getIdentities()->count() < 2) {
                 $this->createIdentitiesKinship();
@@ -212,24 +209,17 @@ class GetProgress
         $this->entityManager->persist($health);
     }
 
-    private function createHealthQuestions(int $healthQuestionCount, int $formQuestionCount): void
+    private function createHealthQuestions(int $formQuestionCount): ArrayCollection
     {
-        foreach (range($healthQuestionCount, $formQuestionCount) as $number) {
+        /** @var ArrayCollection<int, HealthQuestion> $healthQuestions */
+        $healthQuestions = new ArrayCollection();
+        foreach (range(0, $formQuestionCount - 1) as $number) {
             $healthQuestion = new HealthQuestion();
             $healthQuestion->setField($number);
-            $this->user->getHealth()->addHealthQuestion($healthQuestion);
-            $this->entityManager->persist($healthQuestion);
+            $healthQuestions[] = $healthQuestion;
         }
-    }
 
-    private function removeHealthQuestions(Collection $healthQuestions, int $formQuestionCount): void
-    {
-        foreach ($healthQuestions as $key => $healthQuestion) {
-            if ($formQuestionCount < $key) {
-                $this->entityManager->remove($healthQuestion);
-            }
-        }
-        $this->entityManager->flush();
+        return $healthQuestions;
     }
 
     private function createIdentityMember(): void

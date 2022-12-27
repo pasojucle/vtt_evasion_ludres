@@ -24,9 +24,11 @@ class AppExtension extends AbstractExtension
     public function imgPath($content, $media = RegistrationStep::RENDER_VIEW)
     {
         if (RegistrationStep::RENDER_FILE === $media) {
-            $pattern = ['#src="\/images#', '#\/uploads\/#'];
-            $replace = ['src="./images', './uploads/'];
+            dump($content, $media);
+            $pattern = ['#\/images\/#', '#\/uploads\/#'];
+            $replace = ['./images/', './uploads/'];
             $content = preg_replace($pattern, $replace, $content);
+            dump($content);
         }
         
         return $content;

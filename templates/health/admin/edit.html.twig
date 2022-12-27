@@ -14,8 +14,8 @@
             </span>
         </div>
         {{ form_start(form) }}
-        <div class="wrapper-body padding-10">
-            {% include('health/form.html.twig') %}
+        <div class="wrapper-body">
+            {{ form_row(form.medicalCertificateDate) }}
         </div>
         <div class="wrapper-footer">
             {{ form_errors(form) }}

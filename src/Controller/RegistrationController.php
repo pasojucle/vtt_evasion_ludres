@@ -90,7 +90,7 @@ class RegistrationController extends AbstractController
 
         $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress['user']);
         if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress['current']->form && !$progress['user']->licenceNumber) {
-            $this->addFlash('success', $schoolTestingRegistration['message']);
+            $this->addFlash('success', html_entity_decode($schoolTestingRegistration['message']));
         }
         $maxStep = $step;
         $this->requestStack->getSession()->set('registrationMaxStep', $maxStep);
