@@ -16,11 +16,11 @@ use App\Form\UserType;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Repository\UserRepository;
+use App\Service\HealthService;
 use App\Service\LicenceService;
 use App\Service\SeasonService;
 use App\ViewModel\RegistrationStepPresenter;
 use App\ViewModel\UserPresenter;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -41,6 +41,7 @@ class GetProgress
         private UserRepository $userRepository,
         private Security $security,
         private EntityManagerInterface $entityManager,
+        private HealthService $healthService,
         private LicenceService $licenceService,
         private RequestStack $requestStack
     ) {
@@ -121,9 +122,9 @@ class GetProgress
         }
         
         $healthQuestions = $this->requestStack->getSession()->get('health_questions');
-        $formQuestionCount = (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) ? 24 : 9;
+        $formQuestionCount = $this->healthService->getHealthQuestionsCount($this->seasonLicence->getCategory());
         if (empty($healthQuestions) || $formQuestionCount !== count($healthQuestions)) {
-            $healthQuestions = $this->createHealthQuestions($formQuestionCount);
+            $healthQuestions = $this->healthService->createHealthQuestions($formQuestionCount);
         }
         
         $this->user->getHealth()->setHealthQuestions($healthQuestions);
@@ -209,18 +210,7 @@ class GetProgress
         $this->entityManager->persist($health);
     }
 
-    private function createHealthQuestions(int $formQuestionCount): ArrayCollection
-    {
-        /** @var ArrayCollection<int, HealthQuestion> $healthQuestions */
-        $healthQuestions = new ArrayCollection();
-        foreach (range(0, $formQuestionCount - 1) as $number) {
-            $healthQuestion = new HealthQuestion();
-            $healthQuestion->setField($number);
-            $healthQuestions[] = $healthQuestion;
-        }
 
-        return $healthQuestions;
-    }
 
     private function createIdentityMember(): void
     {

@@ -1,11 +1,12 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
+
     {% if template is not defined %}
-        <main class="minimize">
+        <div class="minimize">
         {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
         {% if registration_document_steps[key]is defined %}
-            {{ registration_document_steps[key]['header']|imgPath(media)|raw|nl2br }}
+            {{ registration_document_steps[key]['header']|imgPath(media)|raw }}
         {% endif %}
         {# <div class="block"> #}
             {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
@@ -40,9 +41,8 @@
         {% if registration_document_steps[key]is defined %}
             {{ registration_document_steps[key]['footer']|raw|nl2br }}
         {% endif %}
+        </div>
     {% else %}
-        <main>
         {% include(template) %}
     {% endif %}
-    </main>
 {% endblock %}

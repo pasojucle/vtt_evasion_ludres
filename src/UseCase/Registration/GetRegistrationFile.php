@@ -9,6 +9,8 @@ use App\Entity\User;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
 use App\Repository\RegistrationStepRepository;
+use App\Service\HealthService;
+use App\Service\LicenceService;
 use App\Service\PdfService;
 use App\Service\SeasonService;
 use App\ViewModel\RegistrationStepPresenter;
@@ -33,6 +35,8 @@ class GetRegistrationFile
         private RegistrationStepPresenter $registrationStepPresenter,
         private Environment $twig,
         private Security $security,
+        private LicenceService $licenceService,
+        private HealthService $healthService,
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
         private ContentRepository $contentRepository,
@@ -43,6 +47,7 @@ class GetRegistrationFile
     public function execute(User $user): string
     {
         $this->user = $user;
+        $healthQuestions = null;
         $season = $this->seasonService->getCurrentSeason();
         $seasonLicence = $user->getSeasonLicence($season);
         $category = $seasonLicence->getCategory();
@@ -53,10 +58,13 @@ class GetRegistrationFile
             $today = new DateTime();
             $seasonLicence->setCreatedAt($today);
             $healthQuestions = $this->requestStack->getSession()->get('health_questions');
-            if ($healthQuestions) {
-                $this->user->getHealth()->setHealthQuestions($healthQuestions);
-            }
         }
+        if (!$healthQuestions) {
+            $formQuestionCount = $this->healthService->getHealthQuestionsCount($this->licenceService->getCategory($user));
+            $healthQuestions = $this->healthService->createHealthQuestions($formQuestionCount);
+        }
+
+        $this->user->getHealth()->setHealthQuestions($healthQuestions);
         $this->presenter->present($user);
 
         if (!empty($steps)) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Form\UserType;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -27,6 +28,13 @@ final class Version20221223145821 extends AbstractMigration
         $this->addSql('DROP TABLE disease');
         $this->addSql('DROP TABLE health_question');
         $this->addSql('ALTER TABLE health ADD at_least_one_positve_response TINYINT(0) DEFAULT 1 NOT NULL, DROP social_security_number, DROP mutual_company, DROP mutual_number, DROP blood_group, DROP tetanus_booster, DROP doctor_name, DROP doctor_address, DROP doctor_town, DROP doctor_phone');
+    
+        $registrationStep = [
+            'registrationStepGroup' => 7,
+            'form' => UserType::FORM_HEALTH,
+        ];
+        $this->addSql('DELETE FROM `registration_step` WHERE registration_step_group_id = :registrationStepGroup AND form = :form', $registrationStep);
+
     }
 
     public function down(Schema $schema): void
@@ -39,5 +47,8 @@ final class Version20221223145821 extends AbstractMigration
         $this->addSql('ALTER TABLE disease ADD CONSTRAINT FK_F3B6AC1310FF969 FOREIGN KEY (disease_kind_id) REFERENCES disease_kind (id)');
         $this->addSql('ALTER TABLE health_question ADD CONSTRAINT FK_5ED234E0A08E947C FOREIGN KEY (health_id) REFERENCES health (id)');
         $this->addSql('ALTER TABLE health ADD social_security_number VARCHAR(15) DEFAULT NULL, ADD mutual_company VARCHAR(100) DEFAULT NULL, ADD mutual_number VARCHAR(25) DEFAULT NULL, ADD blood_group VARCHAR(5) DEFAULT NULL, ADD tetanus_booster DATE DEFAULT NULL, ADD doctor_name VARCHAR(100) DEFAULT NULL, ADD doctor_address VARCHAR(255) DEFAULT NULL, ADD doctor_town VARCHAR(100) DEFAULT NULL, ADD doctor_phone VARCHAR(10) DEFAULT NULL, DROP at_least_one_positve_response');
+        
+        $this->addSql('INSERT INTO `registration_step` (`id`, `title`, `filename`, `form`, `order_by`, `content`, `category`, `testing_render`, `registration_step_group_id`, `final_render`) VALUES
+        (6, \'Fiche sanitaire\', NULL, 3, 2, NULL, NULL, 0, 7, 3)');
     }
 }

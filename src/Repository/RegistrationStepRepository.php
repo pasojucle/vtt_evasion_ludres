@@ -88,4 +88,20 @@ class RegistrationStepRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+    public function findByGroupAndCategory(int $group, int $category): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere(
+                (new Expr())->eq('r.registrationStepGroup', ':group'),
+                (new Expr())->eq('r.category', ':category')
+            )
+            ->setParameters([
+                'group' => $group,
+                'category' => $category,
+            ])
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

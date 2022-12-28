@@ -95,7 +95,7 @@ body {
 main {
     margin: 20px;
 }
-main.minimize {
+.minimize {
     font-size: 12px;
     line-height: 16px;
     margin: 0px;
