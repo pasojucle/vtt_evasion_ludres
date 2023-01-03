@@ -14,6 +14,7 @@ use App\ViewModel\UserPresenter;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\Security;
 
 class SessionService
 {
@@ -26,6 +27,7 @@ class SessionService
         private ParameterService $parameterService,
         private ClusterService $clusterService,
         private SessionPresenter $sessionPresenter,
+        private Security $security
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
@@ -69,8 +71,8 @@ class SessionService
                         $userCluster = $cluster;
                     }
                 }
-
-                if (null !== $cluster->getRole() && ($user->hasRole($cluster->getRole()) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
+                    
+                if (null !== $cluster->getRole() && ($this->security->isGranted($cluster->getRole(), $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
                     $userCluster = $cluster;
                 }
             }
@@ -79,7 +81,7 @@ class SessionService
                 $cluster = new Cluster();
                 $count = count($clustersLevelAsUser) + 1;
                 $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
-                    ->setLevel($$user->getLevel())
+                    ->setLevel($user->getLevel())
                     ->setBikeRide($bikeRide)
                     ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
                 ;
