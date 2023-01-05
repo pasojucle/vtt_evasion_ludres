@@ -53,10 +53,10 @@ class AddContentSubscriber implements EventSubscriberInterface
 
         $bikeRideType = $this->bikeRideTypeRepository->find($bikeRideTypeId);
         $bikeRide->setBikeRideType($bikeRideType);
-        if (empty($bikeRide->getContent())) {
+        if (empty($bikeRide->getContent()) && empty($data['content'])) {
             $data['content'] = $bikeRideType->getContent();
         }
-        if (empty($bikeRide->getTitle())) {
+        if (empty($bikeRide->getTitle()) && empty($data['title'])) {
             $data['title'] = $bikeRideType->getName();
         }
 
