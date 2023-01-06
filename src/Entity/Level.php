@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
+use phpDocumentor\Reflection\Types\Nullable;
 
 #[Entity(repositoryClass: LevelRepository::class)]
 class Level
@@ -53,8 +54,8 @@ class Level
     #[OneToMany(targetEntity: Cluster::class, mappedBy: 'level')]
     private Collection $clusters;
 
-    #[Column(type: 'integer')]
-    private int $orderBy;
+    #[Column(type: 'integer', nullable: true)]
+    private ?int $orderBy = NULL;
 
     #[Column(type: 'integer')]
     private int $type;
@@ -63,7 +64,7 @@ class Level
     private bool $isProtected = false;
 
     #[Column(type: 'boolean')]
-    private bool $isDeleted;
+    private bool $isDeleted = false;
 
     #[OneToMany(mappedBy: 'level', targetEntity: Indemnity::class)]
     private $indemnities;
@@ -189,7 +190,7 @@ class Level
         return $this->orderBy;
     }
 
-    public function setOrderBy(int $orderBy): self
+    public function setOrderBy(?int $orderBy): self
     {
         $this->orderBy = $orderBy;
 
