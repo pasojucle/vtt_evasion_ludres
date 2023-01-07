@@ -24,10 +24,14 @@ class SessionUniqueMemberValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, SessionUniqueMember::class);
         }
 
-        $session = $this->context->getRoot()->getData();
+        $data = $this->context->getRoot()->getData();
+        if (null === $data['user']) {
+            return;
+        }
+
         $clusters = unserialize($this->request->getSession()->get('admin_session_add_clusters'));
 
-        if ($this->sessionRepository->findByUserAndClusters($session->getUser(), $clusters)) {
+        if ($this->sessionRepository->findByUserAndClusters($data['user'], $clusters)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ name }}', $value['name'])
                 ->setParameter('{{ firstName }}', $value['firstName'])

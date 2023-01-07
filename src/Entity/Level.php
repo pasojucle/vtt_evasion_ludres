@@ -55,7 +55,7 @@ class Level
     private Collection $clusters;
 
     #[Column(type: 'integer', nullable: true)]
-    private ?int $orderBy = NULL;
+    private ?int $orderBy = null;
 
     #[Column(type: 'integer')]
     private int $type;

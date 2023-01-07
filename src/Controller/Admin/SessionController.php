@@ -9,6 +9,7 @@ use App\Entity\Level;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
+use App\Service\SeasonService;
 use App\Service\SessionService;
 use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
@@ -74,18 +75,22 @@ class SessionController extends AbstractController
     public function adminSessionAdd(
         Request $request,
         BikeRidePresenter $bikeRidePresenter,
+        SeasonService $seasonService,
         BikeRide $bikeRide
     ): Response {
         $clusters = $bikeRide->getClusters();
         $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
-        $form = $this->createForm(SessionType::class, null, ['filters' => ['bikeRide' => $bikeRide->getId()]]);
+        $form = $this->createForm(SessionType::class, ['season' => 'SEASON_' . $seasonService->getCurrentSeason()], ['filters' => ['bikeRide' => $bikeRide->getId()]]);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $userSession = $form->getData();
-            $user = $userSession->getUser();
+            $data = $form->getData();
+            $user = $data['user'];
+            $userSession = new Session();
+            
             $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
-            $userSession->setCluster($userCluster);
+            $userSession->setUser($user)
+                ->setCluster($userCluster);
             if ($user->getLevel()->getType() === Level::TYPE_FRAME) {
                 $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
             }

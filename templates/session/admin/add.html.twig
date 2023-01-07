@@ -16,10 +16,17 @@
     <div class="wrapper-body">
         <h3>Ajouter un nouveau participant</h3>
         <br>
-        <div class="form-group">
-            {{ form_row(form.user)}}
+
+        <div id="admin_session_add" class="row">
+            <div class="col-md-6 col-xs-12">
+                {{ form_widget(form.user)}}
+            </div>
+            <div class="col-md-6 col-xs-12">
+                {{ form_widget(form.season)}}
+            </div>
         </div>
     </div>
+
     <div class="wrapper-footer">
         {{ form_row(form.submit) }}
         {{ form_errors(form) }}

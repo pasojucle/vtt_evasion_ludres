@@ -69,6 +69,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (array_key_exists('status', $filters) && null !== $filters['status'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
+            if (array_key_exists('season', $filters) && null !== $filters['season'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches)) {
+                $this->addCriteriaBySeason($qb, (int) $matches[1]);
+            }
             if (array_key_exists('bikeRide', $filters) && null !== $filters['bikeRide']) {
                 $this->addCriteriaWithNoSession($qb, $filters['bikeRide']);
             }

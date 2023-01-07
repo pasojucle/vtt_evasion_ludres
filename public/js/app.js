@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
     $(document).on('change', '.identity-other-address', updateIdentity);
 
-    $(document).on('change', '.filters .select2, .filters select, .filters .btn', submitFom);
+    $(document).on('change', '.filters .customSelect2, .filters select, .filters .btn', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
 
     $(document).on('change', '.form-modifier', formModifier);
@@ -166,7 +166,6 @@ function updateLinkOrder(item) {
 function formModifier() {
     const form = $(this).closest('form');
     const selector = '#' + $(this).data('modifier');
-    console.log(selector);
     const data = {};
     $.each(form[0].elements,function() {
         if ($(this).attr('name') !== undefined && ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden')) {
