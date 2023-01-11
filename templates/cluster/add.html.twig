@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ bikeRide.title }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+    {{ form_start(form) }}
+    <div class="wrapper-title">
+        <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
+        <span class="tools">
+            <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-ico" title="Retour à la liste des groupes">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </span>
+    </div>
+    <div class="wrapper-body">
+        <h3>Ajouter un groupe</h3>
+        <br>
+            <div class="form-group">
+                {{ form_row(form.title)}}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.maxUsers)}}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.level)}}
+                {{ form_row(form.role)}}
+            </div>
+    </div>
+
+    <div class="wrapper-footer">
+        {{ form_row(form.submit) }}
+        {{ form_errors(form) }}
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

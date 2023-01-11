@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ bikeRide.title }}{% endblock %}
 
+{% set hasClusters = bikeRide.getClusters().hasClusters %}
+
 {% block body %}
 <div class="wrapper">
     <div class="wrapper-title">
@@ -8,12 +10,40 @@
         <span class="tools">
             <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
         </span>
+        {% if is_granted('ROLE_REGISTER') %}
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                <div class="dropdown-menu" data-target="dropdown-tools">
+                    <ul class="dropdown-body">
+                        {% if bikeRide.getClusters().hasFramerCluster() %}
+                            <li><a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.entity.id})}}"  class="dropdown-item" title="Voir l'encadrement"><i class="fa-solid fa-user-tie"></i> Voir l'encadrement</a></li>
+                        {% endif %}
+                        <li><a href="{{ path('admin_session_add', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Ajouter un participant"><i class="fa-solid fa-user"></i> Ajouter un participant</a></li>
+                        <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Ajouter un goupe"><i class="fa-solid fa-users"></i> Ajouter un groupe</a></li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
     </div>
     <div id="sessions_container" class="wrapper-body">
         {% for cluster in bikeRide.getClusters().clusters %}
-            {% set hasClusters = bikeRide.getClusters().hasClusters %}
             {% if hasClusters %}
-                <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
+                <div class="cluster-title">
+                    <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
+                        {% if is_granted('ROLE_REGISTER') %}
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                            <div class="dropdown-menu" data-target="dropdown-tools">
+                                <ul class="dropdown-body">
+                                    <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.entity.id, 'cluster': cluster.id}) }}" class="dropdown-item" title="Renomer"><i class="fa-solid fa-pen-to-square"></i> Renommer</a></li>
+                                    {% if 0 == cluster.sessions|length %}
+                                        <li><a href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" class="dropdown-item' title="Supprimer"><i class="fa-solid fa-circle-xmark"></i> Supprimer</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             {% endif %} 
             {% if cluster.sessions | length > 0 %}
                 <ul>
@@ -46,15 +76,7 @@
             {% else %}
                 <p class="padding-10">Auncun inscrit</p>
             {% endif %}
-            {% if hasClusters and cluster.title == constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
-                <div class="btn-container">
-                    <a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.entity.id})}}" class="btn btn-secondary">Voir l'encadrement</a>
-                </div>
-            {% endif %}
             <br>
         {% endfor %}
-    </div>
-    <div class="wrapper-footer">
-        <a class="btn btn-primary" href="{{ path('admin_session_add', {'bikeRide': bikeRide.entity.id}) }}">Ajouter un participant</a>
     </div>
 {% endblock %}

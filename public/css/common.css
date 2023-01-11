@@ -613,8 +613,9 @@ main:not(.admin) {
 
 .disabled {
     pointer-events: none;
-    background-color: var(--light-color);
+    /* background-color: var(--light-color); */
     border: none;
+    opacity: .4;
 }
 .inputGroup {
     background-color: var(--white-color);
@@ -1131,6 +1132,12 @@ nav.nav-tab::before {
 .background-color .wrapper-img, .card-img {
     width: 100%;
 }
+.cluster-title {
+    padding: 5px 10px;
+    background-color: var(--clear-color);
+    margin-bottom: 10px;
+    position: relative;
+}
 .card-img {
     width: 100%;
     background-position: center;
@@ -1249,6 +1256,9 @@ h3 + ul.block.background-ligth {
     color: var(--white-color);
 }
 
+.wrapper .wrapper-title .tools:not(last-child) {
+    right: 20px;
+}
 
 .card {
     position: relative;

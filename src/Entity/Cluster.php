@@ -75,8 +75,9 @@ class Cluster
         return $this;
     }
 
-    /**     * @return Collection|Session[]
-     */
+    /**
+    * * @return Collection|Session[]
+    */
     public function getSessions(): Collection
     {
         return $this->sessions;

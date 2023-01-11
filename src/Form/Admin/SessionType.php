@@ -91,9 +91,9 @@ class SessionType extends AbstractType
         $builder->get('season')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
-                    $season = $event->getForm()->getData();
-                    $formModifier($event->getForm()->getParent(), $season);
-                }
+                $season = $event->getForm()->getData();
+                $formModifier($event->getForm()->getParent(), $season);
+            }
         );
     }
 
