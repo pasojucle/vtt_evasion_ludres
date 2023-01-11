@@ -27,7 +27,7 @@ class Cluster
     private int $id;
 
     #[Column(type: 'string', length: 100)]
-    private string $title;
+    private string $title = '';
 
     #[OneToMany(targetEntity: Session::class, mappedBy: 'cluster')]
     private Collection $sessions;

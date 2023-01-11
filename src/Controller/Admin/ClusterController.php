@@ -38,13 +38,12 @@ class ClusterController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/groupe/edit/{bikeRide}/{cluster}', name: 'admin_cluster_edit', defaults:['cluster' => null], methods: ['GET', 'POST'])]
+    #[Route('/admin/groupe/ajoute/{bikeRide}', name: 'admin_cluster_add', methods: ['GET', 'POST'])]
     public function adminClusterAdd(
         Request $request,
-        BikeRide $bikeRide,
-        ?Cluster $cluster
+        BikeRide $bikeRide
     ): Response {
-        $form = $this->createForm(ClusterType::class, $cluster);
+        $form = $this->createForm(ClusterType::class);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $cluster = $form->getData();
@@ -56,7 +55,29 @@ class ClusterController extends AbstractController
         }
 
         $this->presenter->present($bikeRide);
-        return $this->render('cluster/add.html.twig', [
+        return $this->render('cluster/edit.html.twig', [
+            'bikeRide' => $this->presenter->viewModel(),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/groupe/edit/{bikeRide}/{cluster}', name: 'admin_cluster_edit', methods: ['GET', 'POST'])]
+    public function adminClusterEdit(
+        Request $request,
+        BikeRide $bikeRide,
+        Cluster $cluster
+    ): Response {
+        dump($cluster);
+        $form = $this->createForm(ClusterType::class, $cluster);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
+        }
+
+        $this->presenter->present($bikeRide);
+        return $this->render('cluster/edit.html.twig', [
             'bikeRide' => $this->presenter->viewModel(),
             'form' => $form->createView(),
         ]);
@@ -72,7 +93,6 @@ class ClusterController extends AbstractController
 
     #[Route('/admin/groupe/supprime/{cluster}', name: 'admin_cluster_delete', methods: ['GET'])]
     public function adminClusterDelete(
-        ExportCluster $exportCluster,
         Cluster $cluster
     ): Response {
         $bikeRide = $cluster->getBikeRide();
