@@ -37,7 +37,7 @@ class UserFilterType extends AbstractType
                 'cache' => true,
                 'cache_timeout' => 60000,
                 'language' => 'fr',
-                'placeholder' => 'Saisisez un nom et prénom',
+                'placeholder' => 'Saisissez un nom et prénom',
                 'width' => '100%',
                 'label' => 'Participant',
                 'remote_params' => [

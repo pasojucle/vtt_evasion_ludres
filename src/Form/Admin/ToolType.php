@@ -31,7 +31,7 @@ class ToolType extends AbstractType
                 'cache_timeout' => 60000,
                 // if 'cache' is true
                 'language' => 'fr',
-                'placeholder' => 'Saisisez un nom et prénom',
+                'placeholder' => 'Saisissez un nom et prénom',
                 'width' => '100%',
                 'label' => 'Adhérent',
                 'remote_params' => [

@@ -76,7 +76,7 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
                 'cache' => true,
                 'cache_timeout' => 60000,
                 'language' => 'fr',
-                'placeholder' => 'Saisisez un nom et prénom',
+                'placeholder' => 'Saisissez un nom et prénom',
                 'width' => '100%',
                 'label' => false,
                 'required' => !$disabledUsers,
