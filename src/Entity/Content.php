@@ -34,6 +34,7 @@ class Content
         'school_overview' => 'content.route.school_overview',
         'school_operating' => 'content.route.school_operating',
         'school_equipment' => 'content.route.school_equipment',
+        'school_documentation' => 'content.route.school_documentation',
         'contact' => 'content.route.contact',
         'rules' => 'content.route.rules',
         'legal_notices' => 'content.route.legal_notices',

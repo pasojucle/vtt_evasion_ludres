@@ -44,6 +44,11 @@ class MenuService
                         'route' => 'school_equipment',
                         'pattern' => '/school_equipment/',
                     ],
+                    [
+                        'label' => 'Documentation',
+                        'route' => 'school_documentation',
+                        'pattern' => '/school_documentation/',
+                    ],
                 ],
             ],
             [

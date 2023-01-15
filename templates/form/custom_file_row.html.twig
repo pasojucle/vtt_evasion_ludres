@@ -4,6 +4,7 @@
         {{ form_label(form) }}
         <button class="input-file-button" type="button">Selectionner un fichier</button>
         <p id="filename">{{ form.vars.value }}</p>  
-        {{ form_widget(form) }} 
+        {{ form_widget(form) }}   
+        {{ form_errors(form) }} 
     </div>
 {% endblock %}

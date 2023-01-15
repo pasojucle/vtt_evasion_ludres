@@ -9,12 +9,14 @@ use App\Entity\User;
 use App\Form\ContactType;
 use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
+use App\Repository\DocumentationRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
 use App\ViewModel\BikeRidesPresenter;
 use App\ViewModel\Content\ContentsPresenter;
+use App\ViewModel\Documentation\DocumentationsPresenter;
 use App\ViewModel\UserPresenter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,40 +72,47 @@ class ContentController extends AbstractController
             'content' => $this->contentRepository->findOneByRoute('school_practices'),
             'levels' => $levelRepository->findAllTypeMemberNotProtected(),
             'background_color' => 'red',
-            'background_img' => 'ecole_vtt_disciplines.jpg',
         ]);
     }
 
     #[Route('/ecole_vtt/presentation', name: 'school_overview', methods: ['GET'])]
-    public function schoolOverview(
-        LevelRepository $levelRepository
-    ): Response {
+    public function schoolOverview(): Response
+    {
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_overview'),
             'background_color' => 'green',
-            'background_img' => 'ecole_vtt_groupe.jpg',
         ]);
     }
 
     #[Route('/ecole_vtt/fonctionnement', name: 'school_operating', methods: ['GET'])]
-    public function schoolOperating(
-        LevelRepository $levelRepository
-    ): Response {
+    public function schoolOperating(): Response
+    {
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_operating'),
             'background_color' => 'blue',
-            'background_img' => 'ecole_vtt_fonctionnement.jpg',
         ]);
     }
 
     #[Route('/ecole_vtt/equipement', name: 'school_equipment', methods: ['GET'])]
-    public function schoolEquipment(
-        LevelRepository $levelRepository
-    ): Response {
+    public function schoolEquipment(): Response
+    {
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_equipment'),
             'background_color' => 'green',
-            'background_img' => 'ecole_vtt_equipement.jpg',
+        ]);
+    }
+
+    #[Route('/ecole_vtt/documentation', name: 'school_documentation', methods: ['GET'])]
+    public function schoolDocumentation(
+        DocumentationRepository $documentationRepository,
+        DocumentationsPresenter $documentationsPresenter,
+    ): Response {
+        $documentationsPresenter->present($documentationRepository->findAllAsc());
+
+        return $this->render('content/school.html.twig', [
+            'content' => $this->contentRepository->findOneByRoute('school_documentation'),
+            'documentations' => $documentationsPresenter->viewModel()->documentations,
+            'background_color' => 'red',
         ]);
     }
 

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% set title = (documentation is null) ? 'Ajouter uns documentation' : 'Modifier une documentation' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        {{ form_start(form) }}
+            <div class="wrapper-title">
+                <h1>{{ title }}</h1>
+                <span class="tools">
+                    <a href="{{ path('admin_documentation_list') }}" class="btn btn-ico" title="Retour à la liste des documentations"><i class="fas fa-chevron-left"></i></a>
+                </span>
+            </div>
+            <div class="wrapper-body">
+                <div class="form-group">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="form-group">
+
+                    {{ documentation.filename }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.file) }}
+                        <div class="form-group-inline"  data-ratio="1.41">
+                        <object class="sizing{% if documentation.mimeType != 'application/pdf' %} hidden{% endif %}" width="100%" height="350" type="application/pdf" data="{{ documentation.source }}">
+                            <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
+                        </object>
+                        <img class="user-picture{% if documentation.mimeType == 'application/pdf' %} hidden{% endif %}" src="{{ documentation.source }}" alt="{{ documentation.filename }}">
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper-footer">
+                {{ form_errors(form) }}
+                {{ form_widget(form.save) }}
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

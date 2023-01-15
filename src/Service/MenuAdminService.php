@@ -135,6 +135,12 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
+                'label' => 'Documentation',
+                'route' => 'admin_documentation_list',
+                'pattern' => '/documentation/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Roles du bureau et comité',
                 'route' => 'admin_board_role_list',
                 'pattern' => '/board_role/',

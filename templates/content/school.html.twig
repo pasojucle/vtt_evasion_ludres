@@ -32,6 +32,15 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
+                {% if app.request.get('_route') == 'school_documentation' %}
+                    <ul class="list-outside">
+                        {% for documentation in documentations %}
+                            <li>
+                                <a href="{{ documentation.source }}" target="_blank">{{ documentation.name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des documentations{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Gestion des documentations</h1>
+        </div>
+        <div class="wrapper-body">
+            <a href="{{ path('admin_documentation_edit') }}" class="btn btn-primary" title="Ajouter un documentation"><i class="fas fa-plus"></i> Ajouter une documentation</a>
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+            <ul class="sortable" data-route="admin_documentation_order" data-parameter="documentation">
+                {% for documentation in documentations %}     
+                    <li class="ui-state-default col-list col-list-2btn" data-id="{{ documentation.id }}">
+                        <div class="list-item">{{ documentation.name }}</div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div>
+                                <a class="btn btn-primary btn-ico" href="{{ path('admin_documentation_edit', {'documentation': documentation.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                            </div>
+                            <div>
+                                <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_documentation_delete', {'documentation': documentation.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+        </div>
+    </div>
+{% endblock %}

@@ -39,6 +39,7 @@ class ServicesPresenter
     public string $uploadsDirectoryPath;
     public string $backgroundsDirectory;
     public string $backgroundsDirectoryPath;
+    public string $documentationDirectoryPath;
     public int $currentSeason;
     public array $seasonsStatus;
     public ?User $user;
@@ -79,6 +80,7 @@ class ServicesPresenter
         $this->uploadsDirectoryPath = $this->parameterBag->get('uploads_directory_path');
         $this->backgroundsDirectory = $this->parameterBag->get('backgrounds_directory');
         $this->backgroundsDirectoryPath = $this->parameterBag->get('backgrounds_directory_path');
+        $this->documentationDirectoryPath = $this->parameterBag->get('documentation_directory_path');
         $this->uploadsDirectory = $this->parameterBag->get('uploads_directory');
         $this->currentSeason = $this->seasonService->getCurrentSeason();
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();

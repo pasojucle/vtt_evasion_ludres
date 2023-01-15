@@ -4,16 +4,23 @@ $(document).ready(function(){
 });
 
 function previewFile() {
-    const previews = $(this).parent().parent().find('img, canvas');
+    const previews = $(this).parent().parent().find('img, canvas, object');
     const [file] = this.files;
     if (file) {
         const image = URL.createObjectURL(file);
         previews.each(function() {
-            if (this instanceof HTMLImageElement) {
+            this.classList.add('hidden');
+            if (this instanceof HTMLImageElement && file.type.includes('image')) {
                 this.src = image;
+                this.classList.remove('hidden');
             }
-            if (this instanceof HTMLCanvasElement) {
+            if (this instanceof HTMLCanvasElement && file.type.includes('image')) {
                 this.dataset.src =  image;
+                this.classList.remove('hidden');
+            }
+            if (this instanceof HTMLObjectElement && 'application/pdf' === file.type) {
+                this.classList.remove('hidden');
+                this.data =  image;
             }
         });
     }
@@ -24,7 +31,7 @@ function getFile(e) {
     const $inputFile = $('input[type="file"]');
     $inputFile.click();
     $inputFile.on('change',  function(event) {
-        filename = event.target.value.split('\\').pop();
+        let filename = event.target.value.split('\\').pop();
         $('#filename').text(filename);
     });
     return false;

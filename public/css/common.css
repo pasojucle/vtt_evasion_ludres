@@ -585,6 +585,7 @@ main:not(.admin) {
     display: inline-block;
     width: calc(50% - 3px);
     box-sizing: border-box;
+    vertical-align: top;
 }
 .form-group-inline.full-width {
     width: 100%;
