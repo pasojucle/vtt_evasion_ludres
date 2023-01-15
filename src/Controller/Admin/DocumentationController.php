@@ -59,7 +59,6 @@ class DocumentationController extends AbstractController
             $documentation = $form->getData();
             if ($request->files->get('documentation')) {
                 $file = $request->files->get('documentation')['file'];
-                dump($file);
                 $documentation->setFileName($uploadService->uploadFile($file, 'documentation_directory_path'));
             }
             if (null === $documentation->getOrderBy()) {
