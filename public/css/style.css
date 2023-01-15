@@ -276,7 +276,7 @@ p + p {
     padding-top: 150px;
     padding-bottom: 150px;
 }
-.wrapper:not(.wrapper-maintenance) {
+.wrapper:not(.wrapper-maintenance), .wrapper .wrapper-content {
     min-height: calc(100vh - 200px);
 }
 .wrapper-maintenance {
