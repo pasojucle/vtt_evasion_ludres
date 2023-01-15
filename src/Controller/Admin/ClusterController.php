@@ -67,7 +67,6 @@ class ClusterController extends AbstractController
         BikeRide $bikeRide,
         Cluster $cluster
     ): Response {
-        dump($cluster);
         $form = $this->createForm(ClusterType::class, $cluster);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
