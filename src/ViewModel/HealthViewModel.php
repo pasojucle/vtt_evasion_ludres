@@ -20,6 +20,8 @@ class HealthViewModel extends AbstractViewModel
 
     public ?bool $isMedicalCertificateRequired;
 
+    public ?string $content = null;
+
     public DateTime|DateTimeInterface|null $medicalCertificateDateObject;
 
     private ServicesPresenter $services;
@@ -33,6 +35,7 @@ class HealthViewModel extends AbstractViewModel
             $healthView->services = $services;
             $healthView->medicalCertificateDate = ($medicalCertificateDate) ? $medicalCertificateDate->format('d/m/Y') : null;
             $healthView->medicalCertificateDateObject = $medicalCertificateDate;
+            $healthView->content = $health->getContent();
         }
 
         return $healthView;

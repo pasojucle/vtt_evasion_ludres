@@ -23,6 +23,9 @@
                         {% if user.getApprovalRightImage.value is same as false %}
                             <div class="camera {{ user.getApprovalRightImage.class.color }}"></div>
                         {% endif %}
+                        {% if user.health.content is not null %}
+                            <div class="medical-plus"></div>
+                        {% endif %}
                         {% if session.availability is not empty %}
                             <div class="{{ session.availability.class.badge }}"></div>
                         {% endif %}

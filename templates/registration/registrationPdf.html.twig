@@ -9,7 +9,6 @@
             {{ registration_document_steps[key]['header']|imgPath(media)|raw }}
         {% endif %}
         {# <div class="block"> #}
-            {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
             {% set health = registration_document_steps[key] is defined %}
             {% set key = constant('App\\Form\\UserType::FORM_MEMBER') %}
             {% if registration_document_steps[key] is defined %}

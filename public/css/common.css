@@ -708,6 +708,10 @@ main:not(.admin) {
     opacity: 0;
     z-index: -1;
 }
+.textarea {
+    width: 100%;
+    min-height: 100px;
+}
 span.select2-selection.select2-selection--single {
     height: 32px;
 }

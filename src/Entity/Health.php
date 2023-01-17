@@ -8,11 +8,11 @@ use App\Repository\HealthRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity(repositoryClass: HealthRepository::class)]
@@ -32,6 +32,9 @@ class Health
     private ?User $user;
 
     private Collection $healthQuestions;
+
+    #[Column(type: Types::TEXT, nullable: true)]
+    private ?string $content = null;
 
     public function __construct()
     {
@@ -94,6 +97,18 @@ class Health
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(?string $content): self
+    {
+        $this->content = $content;
 
         return $this;
     }

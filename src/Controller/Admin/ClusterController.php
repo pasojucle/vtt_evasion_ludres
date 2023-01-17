@@ -35,6 +35,7 @@ class ClusterController extends AbstractController
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $this->presenter->viewModel(),
             'bike_rides_filters' => [],
+            'permission' => 4,
         ]);
     }
 

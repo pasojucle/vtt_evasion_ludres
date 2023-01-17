@@ -62,6 +62,13 @@
                 </tr>
             </table>
         {% endif %}
+        {% if user.health.content is not null %}
+        <table class="table-background table-fixed">
+            <tr>
+                <td colspan="7">{{ user.health.content }}</td>
+            </tr>
+        </table>
+        {% endif %}
         <ul>
             <li><b>Type de licence : </b>{{ user.lastLicence.type|trans}}</li>
             <li><b>Type d'assurance : </b>{{ user.lastLicence.coverageStr|trans }}</li>
