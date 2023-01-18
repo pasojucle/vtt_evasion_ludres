@@ -146,6 +146,25 @@
                     </ul>
                 </div>
             </div>
+            <div class="block background-ligth">
+                <div class="block-title">
+                    <h2>Santé</h2>
+                    {% if is_granted('ROLE_REGISTER') %}
+                        <div class="tools">
+                        <a href="{{ path('admin_health_edit', {'user': user.entity.id}) }}"
+                                class="btn" title="Modifier">
+                                <i class="fas fa-edit"></i> 
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="block-body">
+                    <ul>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Certificat médical du</b></div><div class="col-md-8 col-xs-6">{{ user.health.medicalCertificateDate }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Pathologie</b></div><div class="col-md-8 col-xs-6">{{ user.health.content}}</div></div></li>
+                       </ul>
+                </div>
+            </div>
 
             {% if licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') and licence.isFinal and user.health is not empty %}
                 <div class="block background-ligth">

@@ -17,6 +17,7 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        dump('ici');
         $builder
             ->add('licenceNumber', TextType::class, [
                 'label' => 'numéro de licence',
@@ -31,9 +32,6 @@ class UserType extends AbstractType
                     'label' => false,
                     'season_licence' => $options['season_licence'],
                 ],
-            ])
-            ->add('health', HealthType::class, [
-                'label' => false,
             ])
             ->add('save', SubmitType::class, [
                 'label' => '<i class="fas fa-check"></i> Modifier',
