@@ -9,7 +9,6 @@ use App\Service\LicenceService;
 use App\Service\ParameterService;
 use App\Validator\SchoolTestingRegistration;
 use App\ViewModel\UserPresenter;
-use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -26,8 +25,9 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, SchoolTestingRegistration::class);
         }
 
-        $user = $this->context->getRoot()->getData();
-        $category = $this->licenceService->getCategoryByBirthDate($this->context->getObject()?->getParent()->getData()->getBirthDate());
+        $identity = $this->context->getObject()?->getParent()->getData();
+        $user = $identity->getUser();
+        $category = $this->licenceService->getCategoryByBirthDate($identity->getBirthDate());
         $this->presenter->present($user);
   
         if ('schoolTestingRegistration' !== $this->context->getObject()?->getName() || Licence::CATEGORY_MINOR !== $category) {
