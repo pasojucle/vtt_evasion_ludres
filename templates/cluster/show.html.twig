@@ -10,7 +10,7 @@
         <span class="tools">
             <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
         </span>
-        {% if is_granted('ROLE_REGISTER') %}
+        {% if is_granted('ROLE_FRAME') %}
             <div class="dropdown">
                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                 <div class="dropdown-menu" data-target="dropdown-tools">
