@@ -36,7 +36,7 @@ class ModalWindowRepository extends ServiceEntityRepository
     /**
      * @return ModalWindow[] Returns an array of FlashInfo objects
      */
-    public function findLastByAge(?int $age): array
+    public function findByAge(?int $age): array
     {
         $today = new DateTime();
         $qb = $this->createQueryBuilder('m')
@@ -44,9 +44,11 @@ class ModalWindowRepository extends ServiceEntityRepository
                 (new Expr())->lte('m.startAt', ':today'),
                 (new Expr())->gte('m.endAt', ':today'),
                 (new Expr())->eq('m.isDisabled', ':disabled'),
+                (new Expr())->eq('m.public', ':public'),
             )
             ->setParameter('today', $today->format('Y-m-d H:i:s'))
-            ->setParameter('disabled', 0);
+            ->setParameter('disabled', 0)
+            ->setParameter('public', 0);
 
         if (null !== $age) {
             $qb->andWhere(
@@ -68,6 +70,30 @@ class ModalWindowRepository extends ServiceEntityRepository
                 ->setMaxResults(1)
                 ->getQuery()
                 ->getResult()
+        ;
+    }
+
+    /**
+     * @return ModalWindow[] Returns an array of FlashInfo objects
+     */
+    public function findPublic(): array
+    {
+        $today = new DateTime();
+        return $this->createQueryBuilder('m')
+            ->andWhere(
+                (new Expr())->lte('m.startAt', ':today'),
+                (new Expr())->gte('m.endAt', ':today'),
+                (new Expr())->eq('m.isDisabled', ':disabled'),
+                (new Expr())->eq('m.public', ':public')
+            )
+            ->setParameters([
+                'today' => $today->format('Y-m-d H:i:s'),
+                'disabled' => 0,
+                'public' => 1,
+            ])
+            ->orderBy('m.id', 'DESC')
+            ->getQuery()
+            ->getResult()
         ;
     }
 }

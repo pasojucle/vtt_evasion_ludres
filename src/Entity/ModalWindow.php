@@ -35,6 +35,9 @@ class ModalWindow
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private $isDisabled = false;
 
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
+    private bool $public = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +123,18 @@ class ModalWindow
     public function setIsDisabled(bool $isDisabled): self
     {
         $this->isDisabled = $isDisabled;
+
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): self
+    {
+        $this->public = $public;
 
         return $this;
     }

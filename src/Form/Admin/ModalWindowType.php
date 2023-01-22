@@ -6,6 +6,7 @@ use App\Entity\ModalWindow;
 use App\Validator\Period;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -79,6 +80,14 @@ class ModalWindowType extends AbstractType
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
+            ])
+            ->add('public', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'attr' => [
+                    'data-switch-on' => 'Mode public activé',
+                    'data-switch-off' => 'Afficher uniquement aux utilisateurs connectés',
+                ],
+                'required' => false,
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',

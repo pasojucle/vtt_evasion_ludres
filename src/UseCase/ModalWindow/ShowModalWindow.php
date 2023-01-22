@@ -38,23 +38,11 @@ class ShowModalWindow
         /** @var User $user */
         $user = $this->security->getUser();
 
-        if (null !== $user) {
-            $this->userPresenter->present($user);
-            $user = $this->userPresenter->viewModel();
+        $modalWindows = (null !== $user)
+            ? $this->getUserModalWindows($user)
+            : $this->modalWindowRepository->findPublic();
 
-            $modalWindows = $this->modalWindowRepository->findLastByAge($user->member?->age);
-            $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user->entity);
-            $modalWindows = array_merge($modalWindows, $surveys);
-            $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($user->entity);
-
-            if (null !== $orderHeaderToValidate) {
-                $modalWindows = array_merge($modalWindows, [$orderHeaderToValidate]);
-            }
-
-            if (Licence::STATUS_IN_PROCESSING === $user->seasonLicence->status) {
-                $modalWindows = array_merge($modalWindows, [$user->seasonLicence]);
-            }
-
+        if (!empty($modalWindows)) {
             $this->modalWindowsPresenter->present($modalWindows);
 
             foreach ($this->modalWindowsPresenter->viewModel()->modalWindows as $modalWindow) {
@@ -67,5 +55,25 @@ class ShowModalWindow
         }
 
         return null;
+    }
+
+    private function getUserModalWindows(User $user): array
+    {
+        $this->userPresenter->present($user);
+        $user = $this->userPresenter->viewModel();
+
+        $modalWindows = $this->modalWindowRepository->findByAge($user->member?->age);
+        $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user->entity);
+        $modalWindows = array_merge($modalWindows, $surveys);
+        $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($user->entity);
+
+        if (null !== $orderHeaderToValidate) {
+            $modalWindows = array_merge($modalWindows, [$orderHeaderToValidate]);
+        }
+
+        if (Licence::STATUS_IN_PROCESSING === $user->seasonLicence->status) {
+            $modalWindows = array_merge($modalWindows, [$user->seasonLicence]);
+        }
+        return $modalWindows;
     }
 }

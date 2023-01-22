@@ -11,13 +11,13 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('.slider, .full-background')) {
+    if (document.querySelector('.wrapper-img.slider, .full-background')) {
         let carrousel = document.querySelector('.slider, .full-background');
         carrousel.addPictures();
         carrousel.run();
     }
     document.addEventListener(visibilityChange, handleVisibilityChange, false);
-  }, false);
+}, false);
 
 const resizeObserver = new ResizeObserver(entries => {
     for (let entry of entries) {
@@ -28,7 +28,8 @@ const resizeObserver = new ResizeObserver(entries => {
     }
 });
 
-if (document.querySelector('.slider, .full-background')) {
+if (document.querySelector('.wrapper-img.slider, .full-background')) {
+    console.log('resizeObserver');
     resizeObserver.observe(document.querySelector('.slider, .full-background'));
 }
 
