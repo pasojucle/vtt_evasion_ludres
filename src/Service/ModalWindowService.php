@@ -26,7 +26,6 @@ class ModalWindowService
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        dump($user);
         $id = (null !== $user) ? $user->getLicenceNumber() : 'PUBLIC_ACCESS';
         return $id . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
     }

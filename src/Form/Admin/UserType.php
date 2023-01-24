@@ -17,7 +17,6 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        dump('ici');
         $builder
             ->add('licenceNumber', TextType::class, [
                 'label' => 'numéro de licence',
