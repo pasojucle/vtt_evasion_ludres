@@ -289,7 +289,10 @@ function toggleDown(e) {
     e.preventDefault();
     const icon = $(this).find('i');
     const block = $(this).closest('[data-toggle]');
+    console.log('block', block);
+    console.log('selecteur', '.block-body, *[data-target="'+block.data('toggle')+'"]');
     const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
+    console.log('blockBody', blockBody);
     blockBody.toggleClass('down').toggleClass('up');
     $('.down[data-target="'+block.data('toggle')+'"]').each(function() {
         if (!$(this).is(blockBody)) {

@@ -931,8 +931,11 @@ span.select2-selection.select2-selection--single {
 .row > .col-md-3:not(:first-child) {
     padding-left: 25px;
 }
-.marging-bottom-20 {
+.marging-bottom-20, .mb-20 {
     margin-bottom: 20px;
+}
+.mt-10 {
+    margin-top: 10px;
 }
 .align-center {
     text-align: center;
@@ -1338,16 +1341,18 @@ h3 + ul.block.background-ligth {
     min-height: 100px;
     padding: 5px 15px;
 }
-.card-body.card-dropdown {
+.card-body.card-dropdown, .info-dropdown {
     max-height: 0px;
     overflow: hidden;
     transition: all 1s ease-in;
-    padding: 0px;
+    padding: 0 15px;
 
 }
-.card-body.card-dropdown.down {
+.card-body.card-dropdown.down,  .info-dropdown.down {
     max-height: 600px;
     height: auto;
+}
+.card-body.card-dropdown.down {
     padding: 0 15px 15px 15px;
 }
 .card-background .card-body {
@@ -1467,6 +1472,10 @@ h3 + ul.block.background-ligth {
     }
     main > .wrapper {
         margin-top: 50px;
+        padding: unset;
+    }
+    main > .wrapper .wrapper-body {
+        padding: unset;
     }
     nav:not(.paginator, nav.nav-tab) {
         position: absolute;

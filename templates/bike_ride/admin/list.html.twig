@@ -49,11 +49,11 @@
                                         <li><a class="dropdown-item  modal-trigger" data-toggle="modal" data-type="danger" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier">
                                             <i class="fas fa-times"></i> Annuler
                                         </a></li>
-                                        {% else %}
+                                        {% endif %}
                                             <li><a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Exporter la séance">
                                                 <i class="fas fa-file-download"></i> Exporter la séance
                                             </a></li>
-                                        {% endif %}
+                                        
                                     </ul>
                                 </div>
                             </div>

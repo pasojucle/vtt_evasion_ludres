@@ -20,25 +20,26 @@
                     <ul>
                         {% for bikeRide in user.bikeRides %}
                             <li>
-                                <div class="row">
-                                    <div class="col-md-5 col-xs-12">
-                                        <b>
-                                        {{ bikeRide.bikeRide.period }}
-                                        </b>
+                                <div class="row background-ligth list-dropdown mb-20">
+                                    <div class="col-md-9 col-xs-11"  data-toggle="bike-ride-content">
+                                        <h2>{{ bikeRide.bikeRide.period }}</h2>
+                                        <b>{{ bikeRide.bikeRide.title }}</b>
+                                        {% if bikeRide.availability is not empty %}
+                                            <p class="{{ bikeRide.availability.class.color }}">{{ bikeRide.availability.class.icon|raw }} {{ bikeRide.availability.text|trans }}</p>
+                                        {% endif %}
+                                        <p>{{ bikeRide.bikeRide.content|raw }}</p>
+                                        {% if bikeRide.bikeRide.survey is not null %}
+                                            <div class="mt-10">
+                                                <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Info complémentaires</span>
+                                            </div>
+                                            <div class="info-dropdown"  data-target="bike-ride-content"><p>{{ bikeRide.bikeRide.survey.content|raw }}</p></div>
+                                        {% endif %}
                                     </div>
                                     <div class="col-md-3 col-xs-12">
-                                        <div class="row">
-                                            <div class="col-md-12 col-xs-12">{{ bikeRide.bikeRide.title }}</div>
-                                            {% if bikeRide.availability is not empty %}
-                                                <div class="col-md-12 col-xs-12 {{ bikeRide.availability.class.color }}">{{ bikeRide.availability.class.icon|raw }} {{ bikeRide.availability.text|trans }}</div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-xs-12">
                                         {% if bikeRide.availability is empty %}
-                                            <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
+                                            <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-xs btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
                                         {% else %}
-                                            <a href="{{ path('session_availability_edit',{'session': bikeRide.sessionId}) }}" class="btn btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                            <a href="{{ path('session_availability_edit',{'session': bikeRide.sessionId}) }}" class="btn btn-xs btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>
                                         {% endif %}
                                     </div>
                                 </div>
