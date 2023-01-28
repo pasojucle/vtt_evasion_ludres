@@ -39,7 +39,7 @@ class ExportBikeRide
     {
         $this->fileContent[] = $this->bikeRide->getTitle() . ' - ' . $this->bikeRide->getStartAt()->format('d/m/Y');
         $this->fileContent[] = '';
-        $row = ['n° de Licence', 'Nom', 'Prénom', 'Présent', 'Niveau'];
+        $row = ['n° de Licence', 'Nom', 'Prénom', 'Date de naissance','Niveau', 'Présent'];
         $this->fileContent[] = implode(self::SEPARATOR, $row);
     }
 
@@ -51,9 +51,15 @@ class ExportBikeRide
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
                     $this->userPresenter->present($session->getUser());
 
-                    $member = $this->userPresenter->viewModel()->member;
+                    $user = $this->userPresenter->viewModel();
                     $present = ($session->isPresent()) ? 'oui' : 'non';
-                    $row = [$this->userPresenter->viewModel()->getLicenceNumber(), $member->name, $member->firstName, $present, $this->userPresenter->viewModel()->level->title];
+                    $row = [
+                        $user->getLicenceNumber(), 
+                        $user->member->name, $user->member->firstName, 
+                        $user->member->birthDate, 
+                        $user->level->title,
+                        $present, 
+                    ];
                     $this->fileContent[] = implode(self::SEPARATOR, $row);
                 }
             }
