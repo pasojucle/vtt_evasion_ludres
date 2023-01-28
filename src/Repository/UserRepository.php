@@ -54,8 +54,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findMemberQuery(?array $filters): QueryBuilder
     {
-        $qb = $qb = $this->createQuery();
-
+        $qb = $this->createQuery();
+        $isFinalLicence = true;
         if (!empty($filters)) {
             if (null !== $filters['fullName']) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
@@ -69,15 +69,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (array_key_exists('status', $filters) && null !== $filters['status'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
-            if (array_key_exists('season', $filters) && null !== $filters['season'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches)) {
+            if (array_key_exists('season', $filters) && null !== $filters['season'] && is_string($filters['season']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
+            }
+            if (array_key_exists('season', $filters) && Licence::STATUS_TESTING_IN_PROGRESS === $filters['season']) {
+                $currentSeason = $this->seasonService->getCurrentSeason();
+                $this->addCriteriaTestinInProgress($qb);
+                $this->addCriteriaBySeason($qb, $currentSeason);
+                $isFinalLicence = false;
             }
             if (array_key_exists('bikeRide', $filters) && null !== $filters['bikeRide']) {
                 $this->addCriteriaWithNoSession($qb, $filters['bikeRide']);
             }
         }
 
-        $this->addCriteriaMember($qb);
+        if ($isFinalLicence) {
+            $this->addCriteriaMember($qb);
+        }
 
         return $this->orderByASC($qb);
     }

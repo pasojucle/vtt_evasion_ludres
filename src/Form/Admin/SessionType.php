@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Session;
+use App\Entity\Licence;
 use App\Entity\User;
 use App\Service\SeasonService;
 use App\Validator\SessionUniqueMember;
@@ -31,7 +31,7 @@ class SessionType extends AbstractType
             ->add('season', ChoiceType::class, [
                 'label' => false,
                 'multiple' => false,
-                'choices' => $this->seasonService->getSeasons(),
+                'choices' => $this->getSeasonChoices(),
                 'attr' => [
                     'class' => 'customSelect2 form-modifier',
                     'data-modifier' => 'admin_session_add',
@@ -50,20 +50,20 @@ class SessionType extends AbstractType
             ])
             ;
 
-        $formModifier = function (FormInterface $form, ?string $season) use ($options) {
+        $formModifier = function (FormInterface $form, null|int|string $season) use ($options) {
             $filters = $options['filters'];
             $filters['season'] = $season;
             $form
-                    ->add('user', Select2EntityType::class, [
-                        'multiple' => false,
-                        'remote_route' => 'admin_member_choices',
-                        'class' => User::class,
-                        'primary_key' => 'id',
-                        'text_property' => 'fullName',
-                        'minimum_input_length' => 0,
-                        'page_limit' => 10,
-                        'allow_clear' => true,
-                        'delay' => 250,
+                ->add('user', Select2EntityType::class, [
+                    'multiple' => false,
+                    'remote_route' => 'admin_member_choices',
+                    'class' => User::class,
+                    'primary_key' => 'id',
+                    'text_property' => 'fullName',
+                    'minimum_input_length' => 0,
+                    'page_limit' => 10,
+                    'allow_clear' => true,
+                    'delay' => 250,
                     'cache' => true,
                     'cache_timeout' => 60000,
                     // if 'cache' is true
@@ -102,5 +102,14 @@ class SessionType extends AbstractType
         $resolver->setDefaults([
             'filters' => null,
         ]);
+    }
+
+    private function getSeasonChoices(): array
+    {
+        $seasonChoices = $this->seasonService->getSeasons();
+
+        $seasonChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;
+
+        return $seasonChoices;
     }
 }
