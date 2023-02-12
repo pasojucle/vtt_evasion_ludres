@@ -94,7 +94,7 @@ class BikeRide
     #[ManyToMany(targetEntity: Level::class)]
     private Collection $levels;
 
-    #[Column(type: 'json', options: ['default' => '[]'])]
+    #[Column(type: 'json')]
     private array $levelTypes = [];
 
     private ?int $restriction = null;
