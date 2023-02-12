@@ -36,6 +36,9 @@ class BikeRideType
     #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: Indemnity::class)]
     private $indemnities;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $displayLevel = true;
+
     public function __construct()
     {
         $this->bikeRides = new ArrayCollection();
@@ -163,6 +166,18 @@ class BikeRideType
                 $indemnity->setBikeRideType(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isDisplayLevel(): bool
+    {
+        return $this->displayLevel;
+    }
+
+    public function setDisplayLevel(bool $displayLevel): self
+    {
+        $this->displayLevel = $displayLevel;
 
         return $this;
     }
