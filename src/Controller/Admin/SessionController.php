@@ -91,7 +91,7 @@ class SessionController extends AbstractController
             $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
             $userSession->setUser($user)
                 ->setCluster($userCluster);
-            if ($user->getLevel()->getType() === Level::TYPE_FRAME) {
+            if ($bikeRide->getBikeRideType()->isSchool() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
                 $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
             }
             $user->addSession($userSession);
