@@ -14,7 +14,7 @@ use App\ViewModel\UserPresenter;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SessionService
 {
@@ -59,39 +59,38 @@ class SessionService
         return [$framers, $members];
     }
 
-    public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): Cluster
+    public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): ?Cluster
     {
         $userCluster = null;
-        if ($bikeRide->getBikeRideType()->isSchool()) {
-            $clustersLevelAsUser = [];
-            foreach ($bikeRide->getClusters() as $cluster) {
-                if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
-                    $clustersLevelAsUser[] = $cluster;
-                    if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
-                        $userCluster = $cluster;
-                    }
-                }
-                    
-                if (null !== $cluster->getRole() && ($this->security->isGranted($cluster->getRole(), $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
+
+        $clustersLevelAsUser = [];
+        foreach ($bikeRide->getClusters() as $cluster) {
+            if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
+                $clustersLevelAsUser[] = $cluster;
+                if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
                     $userCluster = $cluster;
                 }
             }
-
-            if (null === $userCluster) {
-                $cluster = new Cluster();
-                $count = count($clustersLevelAsUser) + 1;
-                $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
-                    ->setLevel($user->getLevel())
-                    ->setBikeRide($bikeRide)
-                    ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
-                ;
+                
+            if (null !== $cluster->getRole() && ($this->security->isGranted($cluster->getRole(), $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
+                $userCluster = $cluster;
             }
         }
 
-        if (null === $userCluster && 1 === $clusters->count()) {
-            $userCluster = $clusters->first();
+        if ($bikeRide->getBikeRideType()->isSchool() && null === $userCluster) {
+            $cluster = new Cluster();
+            $count = count($clustersLevelAsUser) + 1;
+            $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
+                ->setLevel($user->getLevel())
+                ->setBikeRide($bikeRide)
+                ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
+            ;
         }
 
+        if (null === $userCluster && 0 < $clusters->count()) {
+            $userCluster = $clusters->first();
+        }
+        dump($userCluster);
         return $userCluster;
     }
 

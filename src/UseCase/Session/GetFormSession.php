@@ -15,7 +15,6 @@ use App\Service\SessionService;
 use App\UseCase\BikeRide\CreateClusters;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use App\ViewModel\BikeRidePresenter;
-use App\ViewModel\BikeRideViewModel;
 use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -93,11 +92,12 @@ class GetFormSession
 
         if (null === $userSession) {
             $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
-
-            $userSession = new Session();
-            $userSession->setUser($user)
-                ->setCluster($userCluster)
-            ;
+            if (null !== $userCluster) {
+                $userSession = new Session();
+                $userSession->setUser($user)
+                    ->setCluster($userCluster)
+                ;
+            }
         }
 
         return [$isAlreadyRegistered, $userSession];

@@ -56,7 +56,7 @@ class ClusterType extends AbstractType
             ->add('role', ChoiceType::class, [
                 'label' => 'Role (optionnel)',
                 'choices' => [
-                    Cluster::CLUSTER_FRAME => Cluster::CLUSTER_FRAME
+                    Cluster::CLUSTER_FRAME => 'ROLE_FRAME'
                 ],
                 'placeholder' => 'Aucun',
                 'row_attr' => [
