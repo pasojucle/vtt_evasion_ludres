@@ -90,7 +90,7 @@ class SessionService
         if (null === $userCluster && 0 < $clusters->count()) {
             $userCluster = $clusters->first();
         }
-        dump($userCluster);
+
         return $userCluster;
     }
 
