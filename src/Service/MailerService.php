@@ -52,7 +52,6 @@ class MailerService
             if (array_key_exists('bikeRideTitleAndPeriod', $data)) {
                 $content = str_replace('{{ bikeRideTitleAndPeriod }}', $data['bikeRideTitleAndPeriod'], $content);
             }
-
             if (array_key_exists('sessionAvailability', $data) && null !== $data['sessionAvailability']) {
                 $content = str_replace('{{ disponibilite }}', $data['sessionAvailability'], $content);
             }

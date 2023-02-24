@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
+use App\Entity\BikeRideType;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
@@ -29,9 +30,10 @@ class ConfirmationSession
         $this->bikeRidePresenter->present($session->getCluster()->getBikeRide());
         $user = $this->userPresenter->viewModel();
         $bikeRide = $this->bikeRidePresenter->viewModel();
+
         $content = (Licence::CATEGORY_MINOR === $user->seasonLicence->category)
             ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_MINOR'
-            : (Level::TYPE_FRAME === $user->level->type ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
+            : (Level::TYPE_FRAME === $user->level->type && $bikeRide->bikeRideType->isSchool() ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
         
         $this->mailerService->sendMailToMember([
             'name' => $user->member->name,
