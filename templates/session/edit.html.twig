@@ -40,7 +40,12 @@
                             {% endfor %}
                         {% endif %}
                     </div>
-                    {% include('session/registered_list.html.twig') %}
+                    {% if form.availability is defined %}
+                        {% include('session/registered_list_by_type.html.twig') %}
+                    {% endif %}
+                    {% if bikeRide.bikeRideType.showMemberList  %}
+                        {% include('session/registered_list.html.twig') %}
+                    {% endif %}
                     {{ form_errors(form)}}
                     {{ form_row(form.user)}}
                 </div>

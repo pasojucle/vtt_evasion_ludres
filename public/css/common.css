@@ -1518,9 +1518,6 @@ h3 + ul.block.background-ligth {
         padding: unset;
         gap: 20px;
     }
-    .col-list {
-        /* grid-template-columns: auto 140px; */
-    }
     .row {
         line-height: unset;
     }
@@ -1622,9 +1619,6 @@ h3 + ul.block.background-ligth {
     .block.background-ligth, .block.background-clear, .block.background-color {
         padding: 10px;
     }
-    /* .list-dropdown > a {
-        padding: 5px;
-    } */
     .list-dropdown .row {
         min-height: 45px;
     }

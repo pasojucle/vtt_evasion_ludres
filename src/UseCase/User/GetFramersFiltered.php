@@ -8,7 +8,7 @@ use App\Entity\BikeRide;
 use App\Form\Admin\FramerFilterType;
 use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
-use App\ViewModel\SessionsPresenter;
+use App\ViewModel\Session\SessionsPresenter;
 use App\ViewModel\UsersPresenter;
 use App\ViewModel\UserViewModel;
 use Symfony\Component\Form\FormFactoryInterface;

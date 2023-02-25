@@ -65,7 +65,7 @@ class BikeRideTypeType extends AbstractType
                     'data-switch-off' => 'Un seul groupe',
                 ],
             ])
-            ->add('displayLevel', CheckboxType::class, [
+            ->add('useLevels', CheckboxType::class, [
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,
@@ -75,6 +75,18 @@ class BikeRideTypeType extends AbstractType
                 'attr' => [
                     'data-switch-on' => 'Afficher le niveau des inscrits',
                     'data-switch-off' => 'ne pas afficher le niveau des inscrits',
+                ],
+            ])
+            ->add('showMemberList', CheckboxType::class, [
+                'label_html' => true,
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Afficher la liste des participants à l\'inscrition',
+                    'data-switch-off' => 'ne pas afficher la liste des participants à l\'inscrition',
                 ],
             ])
             ->add('save', SubmitType::class, [

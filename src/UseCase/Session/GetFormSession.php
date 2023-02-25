@@ -44,13 +44,15 @@ class GetFormSession
 
         $this->userPresenter->present($user);
         $this->bikeRidePresenter->present($bikeRide);
-        list($framers, $members) = $this->sessionService->getSessionsBytype($bikeRide);
+        $sessions = (null !== $userSession->getAvailability())
+            ? $this->sessionService->getSessionsBytype($bikeRide)
+            : $this->sessionService->getSessions($bikeRide);
 
         $isEndTesting = $this->userPresenter->viewModel()->isEndTesting();
 
         $form = $this->getForm($userSession, $bikeRide, $clusters, $isAlreadyRegistered, $isEndTesting);
 
-        $this->setParams($form, $bikeRide, $framers, $members, $isAlreadyRegistered, $isEndTesting);
+        $this->setParams($form, $bikeRide, $sessions, $isAlreadyRegistered, $isEndTesting);
 
         return $form;
     }
@@ -116,13 +118,12 @@ class GetFormSession
         ]);
     }
 
-    private function setParams(FormInterface $form, BikeRide $bikeRide, array $framers, array $members, bool $isAlreadyRegistered, bool $isEndTesting): void
+    private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions, bool $isAlreadyRegistered, bool $isEndTesting): void
     {
         $this->params = [
             'form' => $form->createView(),
             'bikeRide' => $bikeRide,
-            'framers' => $framers,
-            'members' => $members,
+            'sessions' => $sessions,
             'is_already_registered' => $isAlreadyRegistered,
             'is_end_testing' => $isEndTesting,
         ];

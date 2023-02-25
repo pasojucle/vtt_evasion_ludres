@@ -12,7 +12,7 @@ use App\Service\IndemnityService;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use App\ViewModel\Paginator\PaginatorPresenter;
-use App\ViewModel\SessionsPresenter;
+use App\ViewModel\Session\SessionsPresenter;
 use App\ViewModel\UserPresenter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;

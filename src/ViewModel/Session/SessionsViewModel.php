@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\ViewModel;
+namespace App\ViewModel\Session;
 
+use App\ViewModel\ServicesPresenter;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class SessionsViewModel

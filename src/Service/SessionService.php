@@ -9,7 +9,8 @@ use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\User;
 use App\Repository\SessionRepository;
-use App\ViewModel\SessionPresenter;
+use App\ViewModel\Session\SessionPresenter;
+use App\ViewModel\Session\SessionsPresenter;
 use App\ViewModel\UserPresenter;
 use DateInterval;
 use DateTimeImmutable;
@@ -27,6 +28,7 @@ class SessionService
         private ParameterService $parameterService,
         private ClusterService $clusterService,
         private SessionPresenter $sessionPresenter,
+        private SessionsPresenter $sessionsPresenter,
         private Security $security
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
@@ -56,7 +58,16 @@ class SessionService
             }
         }
 
-        return [$framers, $members];
+        return ['framers' => $framers, 'members' => $members];
+    }
+
+
+
+    public function getSessions(BikeRide $bikeRide): array
+    {
+        $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
+        $this->sessionsPresenter->present($sessions);
+        return $this->sessionsPresenter->viewModel()->sessions;
     }
 
     public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): ?Cluster

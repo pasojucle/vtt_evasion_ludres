@@ -28,11 +28,18 @@
                                             <p class="{{ bikeRide.availability.class.color }}">{{ bikeRide.availability.class.icon|raw }} {{ bikeRide.availability.text|trans }}</p>
                                         {% endif %}
                                         <p>{{ bikeRide.bikeRide.content|raw }}</p>
-                                        {% if bikeRide.bikeRide.survey is not null %}
+                                        {% if bikeRide.bikeRide.survey is not null or bikeRide.bikeRide.bikeRideType.showMemberList %}
                                             <div class="mt-10">
                                                 <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Info complémentaires</span>
                                             </div>
-                                            <div class="info-dropdown"  data-target="bike-ride-content"><p>{{ bikeRide.bikeRide.survey.content|raw }}</p></div>
+                                            <div class="info-dropdown"  data-target="bike-ride-content">
+                                                {% if bikeRide.bikeRide.survey is not null %}
+                                                    <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
+                                                {% endif %}
+                                                {% if bikeRide.bikeRide.bikeRideType.showMemberList %}
+                                                    {% include 'session/registered_list.html.twig' with {'sessions': bikeRide.memberList} %}
+                                                {% endif %}
+                                            </div>
                                         {% endif %}
                                     </div>
                                     <div class="col-md-3 col-xs-12">

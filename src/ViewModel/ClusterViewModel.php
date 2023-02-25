@@ -7,6 +7,7 @@ namespace App\ViewModel;
 use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\Session;
+use App\ViewModel\Session\SessionViewModel;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class ClusterViewModel extends AbstractViewModel
@@ -74,6 +75,7 @@ class ClusterViewModel extends AbstractViewModel
     {
         $sortedSessions = [];
         if (!$this->entity->getSessions()->isEmpty()) {
+            /** @var Session $session */
             foreach ($this->entity->getSessions() as $session) {
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
                     $sortedSessions[] = SessionViewModel::fromSession($session, $this->services);

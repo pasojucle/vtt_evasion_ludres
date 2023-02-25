@@ -68,7 +68,6 @@ class ServicesPresenter
         public UserRepository $userRepository,
         public LicenceRepository $licenceRepository,
         public LevelRepository $levelRepository,
-        // private UserService $userService,
         public SessionRepository $sessionRepository,
         public ReplaceKeywordsService $replaceKeywordsService,
         public IsRegistrable $isRegistrable,

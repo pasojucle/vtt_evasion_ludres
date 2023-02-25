@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\ViewModel;
+namespace App\ViewModel\Session;
 
 use App\Entity\Session;
+use App\ViewModel\AbstractPresenter;
 
 class SessionPresenter extends AbstractPresenter
 {

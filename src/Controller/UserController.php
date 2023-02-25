@@ -8,14 +8,10 @@ use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ChangeUserInfosType;
 use App\Repository\ContentRepository;
-use App\Repository\OrderHeaderRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
-use App\Service\PaginatorService;
-use App\ViewModel\OrdersPresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPStan\Symfony\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,12 +28,8 @@ class UserController extends AbstractController
     }
 
     #[Route('/mon-compte', name: 'user_account', methods: ['GET'])]
-    public function userAccount(
-        OrderHeaderRepository $ordersHeaderRepository,
-        PaginatorService $paginator,
-        OrdersPresenter $ordersPresenter,
-        Request $request
-    ): Response {
+    public function userAccount(): Response
+    {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         /** @var ?User $user */

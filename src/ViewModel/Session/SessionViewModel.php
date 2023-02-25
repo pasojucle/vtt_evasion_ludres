@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\ViewModel;
+namespace App\ViewModel\Session;
 
 use App\Entity\Session;
 use App\Model\Currency;
-use App\Service\IndemnityService;
-use App\Service\SessionService;
-use PHPStan\Symfony\Service;
+use App\ViewModel\AbstractViewModel;
+use App\ViewModel\BikeRideViewModel;
+use App\ViewModel\ServicesPresenter;
+use App\ViewModel\UserViewModel;
 
 class SessionViewModel extends AbstractViewModel
 {
@@ -28,10 +29,13 @@ class SessionViewModel extends AbstractViewModel
 
     private array $allIndemnities;
 
+    private ServicesPresenter $services;
+
     public static function fromSession(Session $session, ServicesPresenter $services)
     {
         $sessionView = new self();
         $sessionView->entity = $session;
+        $sessionView->services = $services;
         $sessionView->availability = $sessionView->getAvailability();
         $sessionView->bikeRide = BikeRideViewModel::fromBikeRide($session->getCluster()->getBikeRide(), $services);
         $sessionView->user = UserViewModel::fromUser($session->getUser(), $services);
@@ -75,6 +79,16 @@ class SessionViewModel extends AbstractViewModel
                     return $amount;
                 }
             }
+        }
+
+        return null;
+    }
+
+    public function getBikeRideMemberList(): ?array
+    {
+        if ($this->bikeRide->bikeRideType->isShowMemberList()) {
+            $sessions = $this->services->sessionRepository->findByBikeRide($this->bikeRide->entity);
+            return SessionsViewModel::fromSessions($sessions, $this->services)->sessions;
         }
 
         return null;

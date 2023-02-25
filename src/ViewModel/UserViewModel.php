@@ -9,6 +9,7 @@ use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
+use App\ViewModel\Session\SessionViewModel;
 use DateInterval;
 use DateTime;
 
@@ -238,6 +239,7 @@ class UserViewModel extends AbstractViewModel
                         'bikeRide' => $session->bikeRide,
                         'availability' => $session->availability,
                         'sessionId' => $session->entity->getId(),
+                        'memberList' => $session->getBikeRideMemberList(),
                     ];
                 }
             }

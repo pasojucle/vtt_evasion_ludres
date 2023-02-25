@@ -37,7 +37,10 @@ class BikeRideType
     private $indemnities;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $displayLevel = true;
+    private bool $useLevels = true;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $showMemberList = false;
 
     public function __construct()
     {
@@ -170,14 +173,26 @@ class BikeRideType
         return $this;
     }
 
-    public function isDisplayLevel(): bool
+    public function isUseLevels(): bool
     {
-        return $this->displayLevel;
+        return $this->useLevels;
     }
 
-    public function setDisplayLevel(bool $displayLevel): self
+    public function setuseLevel(bool $useLevels): self
     {
-        $this->displayLevel = $displayLevel;
+        $this->useLevels = $useLevels;
+
+        return $this;
+    }
+
+    public function isShowMemberList(): bool
+    {
+        return $this->showMemberList;
+    }
+
+    public function setShowMemberList(bool $showMemberList): self
+    {
+        $this->showMemberList = $showMemberList;
 
         return $this;
     }
