@@ -8,6 +8,8 @@ use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Form\SessionAvailabilityType;
+use App\Repository\RespondentRepository;
+use App\Repository\SurveyResponseRepository;
 use App\Service\SessionService;
 use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
@@ -101,13 +103,20 @@ class SessionController extends AbstractController
     public function sessionDelete(
         FormFactoryInterface $formFactory,
         Request $request,
+        SurveyResponseRepository $surveyResponseRepository,
+        RespondentRepository $respondentRepository,
         Session $session
     ) {
         $form = $formFactory->create();
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->remove($session);
+            if ($survey = $session->getCluster()->getBikeRide()->getSurvey()) {
+                $surveyResponseRepository->deleteResponsesByUserAndSurvey($session->getUser(), $survey);
+                $respondentRepository->deleteResponsesByUserAndSurvey($session->getUser(), $survey);
+            }
+
+            $this->entityManager->remove($session); 
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Votre désinscription à bien été prise en compte');

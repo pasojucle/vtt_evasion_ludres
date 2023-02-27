@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Survey;
+use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -97,6 +98,31 @@ class SurveyResponseRepository extends ServiceEntityRepository
             (new Expr())->eq('r.user', ':user')
         )
         ->setParameter('user', $user)
+        ->getQuery()
+        ->getResult()
+    ;
+    }
+
+    public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
+    {
+        $issues = $this->_em->createQueryBuilder()
+        ->select('(issue)')
+        ->from(SurveyIssue::class, 'issue')
+        ->where(
+            (new Expr())->eq('issue.survey', ':survey')
+        );
+
+        $this->createQueryBuilder('r')
+        ->delete()
+        ->andWhere(
+            (new Expr())->eq('r.user', ':user'),
+            (new Expr())->in('r.surveyIssue', $issues->getDQL())
+
+        )
+        ->setParameters([
+            'user'=> $user,
+            'survey' => $survey,
+        ])
         ->getQuery()
         ->getResult()
     ;

@@ -76,4 +76,23 @@ class RespondentRepository extends ServiceEntityRepository
             'surveysCreatedAt' => $surveysCreatedAt,
         ];
     }
+
+    
+    public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
+    {
+        $this->createQueryBuilder('r')
+        ->delete()
+        ->andWhere(
+            (new Expr())->eq('r.user', ':user'),
+            (new Expr())->in('r.survey', ':survey')
+
+        )
+        ->setParameters([
+            'user'=> $user,
+            'survey' => $survey,
+        ])
+        ->getQuery()
+        ->getResult()
+    ;
+    }
 }
