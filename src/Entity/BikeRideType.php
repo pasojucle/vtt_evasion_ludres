@@ -178,7 +178,7 @@ class BikeRideType
         return $this->useLevels;
     }
 
-    public function setuseLevel(bool $useLevels): self
+    public function setuseLevels(bool $useLevels): self
     {
         $this->useLevels = $useLevels;
 
