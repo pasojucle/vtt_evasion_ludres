@@ -9,7 +9,7 @@ use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
 use App\Service\MailerService;
-use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRide\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -33,7 +33,7 @@ class ConfirmationSession
 
         $content = (Licence::CATEGORY_MINOR === $user->seasonLicence->category)
             ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_MINOR'
-            : (Level::TYPE_FRAME === $user->level->type && $bikeRide->bikeRideType->isSchool() ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
+            : (Level::TYPE_FRAME === $user->level->type && $bikeRide->bikeRideType->isSchool ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
         
         $this->mailerService->sendMailToMember([
             'name' => $user->member->name,

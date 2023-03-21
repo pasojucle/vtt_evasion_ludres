@@ -3,6 +3,7 @@
 namespace App\Form\Admin\EventListener\BikeRide;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType as BikeRideKind;
 use App\Entity\User;
 use App\Form\Admin\BikeRideType;
 use App\Service\LevelService;
@@ -57,7 +58,7 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
         $bikeRide,
         ?int $restriction
     ): void {
-        $disabled = !$bikeRide->getBikeRideType()->isRegistrable();
+        $disabled = BikeRideKind::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
         $disabledLevelFilter = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_LEVELS !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MIN_AGE !== $restriction;

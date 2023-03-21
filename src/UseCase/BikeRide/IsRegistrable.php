@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\User;
 use DateInterval;
 use DateTime;
@@ -13,7 +14,7 @@ class IsRegistrable
 {
     public function execute(BikeRide $bikeRide, ?User $user): bool
     {
-        if (!$user || !$bikeRide->getBikeRideType()->isRegistrable()) {
+        if (!$user || BikeRideType::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration()) {
             return false;
         }
 

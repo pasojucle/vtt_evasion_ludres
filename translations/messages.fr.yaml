@@ -71,6 +71,12 @@ bike_ride:
     next: Prochainement
     all: Tous
 
+bike_ride_type:
+  registration:
+    none: Fermé aux inscriptions
+    school: Inscription par groupes de niveaux de l'école VTT',
+    clusters: Inscription par groupes définis
+
 session:
   availability:
     registered: Sera présent

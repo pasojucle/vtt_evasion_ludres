@@ -614,7 +614,6 @@ main:not(.admin) {
 
 .disabled {
     pointer-events: none;
-    /* background-color: var(--light-color); */
     border: none;
     opacity: .4;
 }
@@ -626,8 +625,7 @@ main:not(.admin) {
     position: relative;
 }
 .inputGroup label {
-    padding: 12px 30px;
-    /* width: 70%; */
+    padding: 12px 30px 12px 12px;
     display: block;
     text-align: left;
     color: var(--gray-color);
@@ -673,7 +671,7 @@ main:not(.admin) {
     border-radius: 50%;
     z-index: 2;
     position: absolute;
-    right: 30px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;

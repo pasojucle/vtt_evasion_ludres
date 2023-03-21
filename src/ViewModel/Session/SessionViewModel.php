@@ -7,7 +7,7 @@ namespace App\ViewModel\Session;
 use App\Entity\Session;
 use App\Model\Currency;
 use App\ViewModel\AbstractViewModel;
-use App\ViewModel\BikeRideViewModel;
+use App\ViewModel\BikeRide\BikeRideViewModel;
 use App\ViewModel\ServicesPresenter;
 use App\ViewModel\UserViewModel;
 
@@ -27,6 +27,8 @@ class SessionViewModel extends AbstractViewModel
 
     public ?string $indemnityStr;
 
+    public ?string $cluster;
+
     private array $allIndemnities;
 
     private ServicesPresenter $services;
@@ -43,6 +45,7 @@ class SessionViewModel extends AbstractViewModel
         $sessionView->allIndemnities = $services->allIndemnities;
         $sessionView->indemnity = $sessionView->getIndemnity();
         $sessionView->indemnityStr = ($sessionView->getIndemnity()) ? $sessionView->getIndemnity()->toString() : null;
+        $sessionView->cluster = $session->getCluster()->getTitle();
 
         return $sessionView;
     }
@@ -86,9 +89,9 @@ class SessionViewModel extends AbstractViewModel
 
     public function getBikeRideMemberList(): ?array
     {
-        if ($this->bikeRide->bikeRideType->isShowMemberList()) {
+        if ($this->bikeRide->bikeRideType->isShowMemberList) {
             $sessions = $this->services->sessionRepository->findByBikeRide($this->bikeRide->entity);
-            return SessionsViewModel::fromSessions($sessions, $this->services)->sessions;
+            return SessionsViewModel::fromSessions($sessions, $this->services)->bikeRideMembers();
         }
 
         return null;

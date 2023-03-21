@@ -117,10 +117,9 @@ class SurveyResponseRepository extends ServiceEntityRepository
         ->andWhere(
             (new Expr())->eq('r.user', ':user'),
             (new Expr())->in('r.surveyIssue', $issues->getDQL())
-
         )
         ->setParameters([
-            'user'=> $user,
+            'user' => $user,
             'survey' => $survey,
         ])
         ->getQuery()

@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\ViewModel;
+namespace App\ViewModel\BikeRide;
 
+use App\ViewModel\ServicesPresenter;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 

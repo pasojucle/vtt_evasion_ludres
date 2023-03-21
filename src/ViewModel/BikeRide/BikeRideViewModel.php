@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\ViewModel;
+namespace App\ViewModel\BikeRide;
 
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
-use App\Entity\Level;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Twig\AppExtension;
+use App\ViewModel\AbstractViewModel;
+use App\ViewModel\BikeRideType\BikeRideTypeViewModel;
+use App\ViewModel\ClustersViewModel;
+use App\ViewModel\ServicesPresenter;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -44,7 +47,7 @@ class BikeRideViewModel extends AbstractViewModel
 
     public ?string $period;
 
-    public BikeRideType $bikeRideType;
+    public BikeRideTypeViewModel $bikeRideType;
 
     public ?Survey $survey;
 
@@ -65,7 +68,7 @@ class BikeRideViewModel extends AbstractViewModel
 
         $bikeRideView = new self();
         $bikeRideView->entity = $bikeRide;
-        $bikeRideView->bikeRideType = $bikeRide->getBikeRideType();
+        $bikeRideView->bikeRideType = BikeRideTypeViewModel::fromBikeRideType($bikeRide->getBikeRideType());
         $bikeRideView->title = $bikeRide->getTitle();
         $bikeRideView->type = $bikeRide->getBikeRideType()->getName();
         $bikeRideView->content = $bikeRide->getContent();

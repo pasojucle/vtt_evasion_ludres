@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\ViewModel;
+namespace App\ViewModel\BikeRide;
 
 use App\Entity\BikeRide;
+use App\ViewModel\AbstractPresenter;
 
 class BikeRidePresenter extends AbstractPresenter
 {

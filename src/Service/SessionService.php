@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\User;
@@ -39,7 +40,6 @@ class SessionService
         $members = [];
         $framers = [];
         $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
-
         if (null !== $sessions) {
             foreach ($sessions as $session) {
                 if (null === $session->getAvailability()) {
@@ -67,35 +67,40 @@ class SessionService
     {
         $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
         $this->sessionsPresenter->present($sessions);
-        return $this->sessionsPresenter->viewModel()->sessions;
+        return $this->sessionsPresenter->viewModel()->bikeRideMembers();
     }
 
     public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): ?Cluster
     {
         $userCluster = null;
+        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $clusters->count()) {
+            return $userCluster;
+        }
 
-        $clustersLevelAsUser = [];
-        foreach ($bikeRide->getClusters() as $cluster) {
-            if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
-                $clustersLevelAsUser[] = $cluster;
-                if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
+        if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
+            $clustersLevelAsUser = [];
+            foreach ($bikeRide->getClusters() as $cluster) {
+                if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
+                    $clustersLevelAsUser[] = $cluster;
+                    if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
+                        $userCluster = $cluster;
+                    }
+                }
+                    
+                if (null !== $cluster->getRole() && ($this->security->isGranted($cluster->getRole(), $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
                     $userCluster = $cluster;
                 }
             }
-                
-            if (null !== $cluster->getRole() && ($this->security->isGranted($cluster->getRole(), $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
-                $userCluster = $cluster;
-            }
-        }
 
-        if ($bikeRide->getBikeRideType()->isSchool() && null === $userCluster) {
-            $cluster = new Cluster();
-            $count = count($clustersLevelAsUser) + 1;
-            $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
-                ->setLevel($user->getLevel())
-                ->setBikeRide($bikeRide)
-                ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
-            ;
+            if (null === $userCluster) {
+                $cluster = new Cluster();
+                $count = count($clustersLevelAsUser) + 1;
+                $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
+                    ->setLevel($user->getLevel())
+                    ->setBikeRide($bikeRide)
+                    ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
+                ;
+            }
         }
 
         if (null === $userCluster && 0 < $clusters->count()) {

@@ -10,6 +10,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: BikeRideTypeRepository::class)]
 class BikeRideType
 {
+    public const REGISTRATION_NONE = 0;
+    public const REGISTRATION_SCHOOL = 1;
+    public const REGISTRATION_CLUSTERS = 2;
+
+    public const REGISTRATIONS = [
+        self::REGISTRATION_NONE => 'bike_ride_type.registration.none',
+        self::REGISTRATION_SCHOOL => 'bike_ride_type.registration.school',
+        self::REGISTRATION_CLUSTERS => 'bike_ride_type.registration.clusters',
+    ];
+
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -27,12 +38,6 @@ class BikeRideType
     #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: BikeRide::class)]
     private Collection $bikeRides;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $isRegistrable = true;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $isSchool = false;
-
     #[ORM\OneToMany(mappedBy: 'bikeRideType', targetEntity: Indemnity::class)]
     private $indemnities;
 
@@ -41,6 +46,15 @@ class BikeRideType
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $showMemberList = false;
+
+    #[ORM\Column(type: 'json')]
+    private array $clusters = [];
+
+    #[ORM\Column(type: 'integer', options: ['default' => self::REGISTRATION_NONE])]
+    private int $registration = self::REGISTRATION_NONE;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $clusterChoice = false;
 
     public function __construct()
     {
@@ -119,30 +133,6 @@ class BikeRideType
         return $this;
     }
 
-    public function isRegistrable(): ?bool
-    {
-        return $this->isRegistrable;
-    }
-
-    public function setIsRegistrable(bool $isRegistrable): self
-    {
-        $this->isRegistrable = $isRegistrable;
-
-        return $this;
-    }
-
-    public function isSchool(): ?bool
-    {
-        return $this->isSchool;
-    }
-
-    public function setIsSchool(bool $isSchool): self
-    {
-        $this->isSchool = $isSchool;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Indemnity[]
      */
@@ -193,6 +183,42 @@ class BikeRideType
     public function setShowMemberList(bool $showMemberList): self
     {
         $this->showMemberList = $showMemberList;
+
+        return $this;
+    }
+
+    public function getClusters(): array
+    {
+        return $this->clusters;
+    }
+
+    public function setClusters(?array $clusters): self
+    {
+        $this->clusters = $clusters;
+
+        return $this;
+    }
+
+    public function getRegistration(): ?int
+    {
+        return $this->registration;
+    }
+
+    public function setRegistration(int $registration): self
+    {
+        $this->registration = $registration;
+
+        return $this;
+    }
+
+    public function isClusterChoice(): ?bool
+    {
+        return $this->clusterChoice;
+    }
+
+    public function setClusterChoice(bool $clusterChoice): self
+    {
+        $this->clusterChoice = $clusterChoice;
 
         return $this;
     }

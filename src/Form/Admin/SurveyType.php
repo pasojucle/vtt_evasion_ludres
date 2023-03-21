@@ -8,6 +8,7 @@ use App\Entity\BikeRide;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Form\Transformer\BikeRideTransformer;
+use App\Validator\CKEditorBlank;
 use Doctrine\Common\Collections\Collection;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
@@ -42,7 +43,10 @@ class SurveyType extends AbstractType
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'minimum_config',
-                'required' => false,
+                // 'required' => false,
+                'constraints' => [
+                    new CKEditorBlank(),
+                ],
             ])
             ->add('startAt', DateTimeType::class, [
                 'label' => 'Date de début',

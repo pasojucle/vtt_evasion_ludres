@@ -50,15 +50,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
     }
-    document
-        .querySelectorAll('.add_item_link')
-        .forEach(btn => btn.addEventListener("click", addFormToCollection));
-    const collectionItems = document.querySelectorAll('ul.collection_container > li')
+    initAddItemLink();
+    const collectionItems = document.querySelectorAll('.collection_container .form-group-collection');
+    console.log('collectionItems', collectionItems);
     collectionItems.forEach((item) => {
         if ($(item).find('input:disabled').length < 1) {
             addTagFormDeleteLink(item);
         } 
     })
+
 
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
 
@@ -168,16 +168,16 @@ function formModifier() {
     const selector = '#' + $(this).data('modifier');
     const data = {};
     $.each(form[0].elements,function() {
-        if ($(this).attr('name') !== undefined && ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden')) {
+        if ($(this).attr('name') !== undefined && ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'checkbox' && $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden')) {
             let value = ($(this).attr('name').includes('commune')) ? null : $(this).val();
             data[$(this).attr('name')] = value;
         }
         // if ($(this).attr('type') === 'checkbox' && !$(this).is(':checked')) {
         //     data[$(this).attr('name')] = 0;
         // }
-        // if ($(this).attr('type') === 'checkbox') {
-        //     console.log('checkbox', $(this).is(':checked'));
-        // }
+        if ($(this).attr('type') === 'checkbox' && $(this).is(':checked')) {
+            data[$(this).attr('name')] = $(this).is(':checked');
+        }
 
     });
 
@@ -188,14 +188,15 @@ function formModifier() {
         success: function(html) {   
             console.log($(selector));   
             console.log($(html).find(selector));
-          $(selector).replaceWith(
-            $(html).find(selector)
-          );
-          $('.select2entity').select2entity();
-          $('.customSelect2').select2();
-          $('.js-datepicker').datepicker({
-            format: 'yyyy-mm-dd hh:ii',
-        });
+            $(selector).replaceWith(
+                $(html).find(selector)
+            );
+            $('.select2entity').select2entity();
+            $('.customSelect2').select2();
+            $('.js-datepicker').datepicker({
+                format: 'yyyy-mm-dd hh:ii',
+            });
+            initAddItemLink();
         }
       });
 }
@@ -328,36 +329,37 @@ function addUp(e) {
 }
 
 const addFormToCollection = (e) => {
-    const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+    const collectionHolder = document.querySelector('#' + e.currentTarget.dataset.collectionHolderClass);
+  const container = collectionHolder.closest('.collection_container');
   
-    const item = document.createElement('li');
   
-    item.innerHTML = collectionHolder
+    const html = container
       .dataset
       .prototype
       .replace(
         /__name__/g,
-        collectionHolder.dataset.index
+        container.dataset.index
       );
+
+    const item = document.createRange().createContextualFragment(html)
   
     collectionHolder.appendChild(item);
   
-    collectionHolder.dataset.index++;
-    addTagFormDeleteLink(item);
+    container.dataset.index++;
+    addTagFormDeleteLink(collectionHolder.lastChild);
   };
 
-  const addTagFormDeleteLink = (itemFormLi) => {
-    const row = $(itemFormLi).find('.row');
+  const addTagFormDeleteLink = (itemForm) => {
     const removeFormButton = document.createElement('button');
     removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger', 'col-md-1');
     removeFormButton.innerHTML ='<i class="fas fa-times"></i>';
-    
-    row.append(removeFormButton);
+    console.log('itemForm', itemForm)
+    console.log('itemForm', $(itemForm))
+    $(itemForm).append(removeFormButton);
 
     removeFormButton.addEventListener('click', (e) => {
         e.preventDefault()
-        // remove the li for the tag form
-        itemFormLi.remove();
+        itemForm.remove();
     });
 }
 
@@ -369,4 +371,6 @@ function resize(object) {
     object.height = parent.dataset.ratio * width;
 }
 
-
+const initAddItemLink = () => {
+    document.querySelectorAll('.add_item_link').forEach(btn => btn.addEventListener("click", addFormToCollection));
+}

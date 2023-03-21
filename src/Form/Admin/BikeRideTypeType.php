@@ -5,13 +5,20 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
+use App\Validator\NotEmptyArray;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Blank;
 
 class BikeRideTypeType extends AbstractType
 {
@@ -31,17 +38,6 @@ class BikeRideTypeType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ->add('isRegistrable', CheckboxType::class, [
-                'block_prefix' => 'switch',
-                'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-                'attr' => [
-                    'data-switch-on' => 'Ouvert aux inscriptions',
-                    'data-switch-off' => 'Fermé aux inscriptions',
-                ],
-            ])
             ->add('isCompensable', CheckboxType::class, [
                 'block_prefix' => 'switch',
                 'required' => false,
@@ -53,16 +49,15 @@ class BikeRideTypeType extends AbstractType
                     'data-switch-off' => 'Aucune d\'indemnité',
                 ],
             ])
-            ->add('isSchool', CheckboxType::class, [
-                'label_html' => true,
-                'block_prefix' => 'switch',
-                'required' => false,
+            ->add('registration', ChoiceType::class, [
+                'label' => 'Inscriptions',
+                'choices' => array_flip(BikeRideType::REGISTRATIONS),
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
                 'attr' => [
-                    'data-switch-on' => 'Inscription par groupes de niveaux de l\'école VTT',
-                    'data-switch-off' => 'Un seul groupe',
+                    'class' => 'form-modifier',
+                    'data-modifier' => 'bikeRideTypeContainer',
                 ],
             ])
             ->add('useLevels', CheckboxType::class, [
@@ -96,6 +91,45 @@ class BikeRideTypeType extends AbstractType
                 ],
             ])
         ;
+        $formModifier = function (FormInterface $form, int $registration) {
+            if (BikeRideType::REGISTRATION_CLUSTERS === $registration) {
+                $form->add('clusters', CollectionType::class, [
+                    'label' => 'Groupes',
+                    'entry_options' => [
+                        'label' => false,
+                        'row_attr' => [
+                            'class' => 'row form-group-collection',
+                        ],
+                        'attr' => [
+                            'class' => 'col-md-11',
+                        ],
+                    ],
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'constraints' => [
+                        new NotEmptyArray(),
+                    ],
+                    'error_bubbling' => false,
+                ]);
+            } else {
+                $form->remove('clusters');
+            }
+        };
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            $formModifier($form, $data->getRegistration());
+        });
+
+        $builder->get('registration')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($formModifier) {
+            $registration = $event->getForm()->getData();
+            $formModifier($event->getForm()->getParent(), $registration);
+        }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver)

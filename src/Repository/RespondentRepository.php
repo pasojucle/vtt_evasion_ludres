@@ -85,10 +85,9 @@ class RespondentRepository extends ServiceEntityRepository
         ->andWhere(
             (new Expr())->eq('r.user', ':user'),
             (new Expr())->in('r.survey', ':survey')
-
         )
         ->setParameters([
-            'user'=> $user,
+            'user' => $user,
             'survey' => $survey,
         ])
         ->getQuery()

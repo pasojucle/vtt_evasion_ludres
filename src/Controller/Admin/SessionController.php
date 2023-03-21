@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
 use App\Service\SeasonService;
 use App\Service\SessionService;
-use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRide\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -91,7 +92,7 @@ class SessionController extends AbstractController
             $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
             $userSession->setUser($user)
                 ->setCluster($userCluster);
-            if ($bikeRide->getBikeRideType()->isSchool() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
+            if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
                 $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
             }
             $user->addSession($userSession);

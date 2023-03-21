@@ -46,9 +46,12 @@ class BikeRideTypeController extends AbstractController
     ): Response {
         $form = $this->createForm(BikeRideTypeType::class, $bikeRideType);
         $form->handleRequest($request);
-
+        
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $bikeRideType = $form->getData();
+            if (BikeRideType::REGISTRATION_CLUSTERS !== $bikeRideType->getRegistration()) {
+                $bikeRideType->setClusters([]);
+            }
 
             $this->entityManager->persist($bikeRideType);
             $this->entityManager->flush();

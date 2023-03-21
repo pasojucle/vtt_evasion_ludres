@@ -37,19 +37,17 @@
                     </li>
                     {% elseif parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_ARRAY') %}
                     <li>
-                        <b>{{ form_label(parameter.value) }}</b>
+                        <b>{{ form_label(parameter) }}</b>
                         <div class="row row-align-top">
                             <div class="col-md-8">
-                                <ul class="collection_container {{ parameter.vars.value.name }}"
+                                <div class="collection_container"
                                 data-index="{{ parameter|length > 0 ? parameter|last.vars.value|length + 1 : 0 }}" 
                                 data-prototype="{{ form_row(parameter.children.value.vars.prototype)|e('html_attr') }}">
-                                    {% for item in parameter.value %}
-                                        <li>{{ form_row(item) }}</li>
-                                    {% endfor %}
-                                </ul>
+                                        {{ form_widget(parameter) }}
+                                </div>
                             </div>
                             <div class="col-md-4">
-                                <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ parameter.vars.value.name }}">
+                                <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ parameter.vars.id }}">
                                 <i class="fas fa-plus-circle"></i> Ajouter une valeur
                                 </button>
                             </div>

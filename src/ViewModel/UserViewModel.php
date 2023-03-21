@@ -9,6 +9,7 @@ use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
+use App\ViewModel\Session\SessionsViewModel;
 use App\ViewModel\Session\SessionViewModel;
 use DateInterval;
 use DateTime;
@@ -230,18 +231,15 @@ class UserViewModel extends AbstractViewModel
         $bikeRides = [];
         $today = new DateTime();
 
-        $sessions = $this->entity?->getSessions();
-        if (!$sessions?->isEmpty()) {
-            foreach ($sessions as $session) {
-                $session = SessionViewModel::fromSession($session, $this->services);
-                if ($today <= $session->bikeRide->startAt->setTime(14, 0, 0)) {
-                    $bikeRides[] = [
-                        'bikeRide' => $session->bikeRide,
-                        'availability' => $session->availability,
-                        'sessionId' => $session->entity->getId(),
-                        'memberList' => $session->getBikeRideMemberList(),
-                    ];
-                }
+        $sessions = SessionsViewModel::fromSessions($this->entity?->getSessions(), $this->services);
+        foreach ($sessions->sessions as $session) {
+            if ($today <= $session->bikeRide->startAt->setTime(14, 0, 0)) {
+                $bikeRides[] = [
+                    'bikeRide' => $session->bikeRide,
+                    'availability' => $session->availability,
+                    'sessionId' => $session->entity->getId(),
+                    'memberList' => $session->getBikeRideMemberList(),
+                ];
             }
         }
 

@@ -15,7 +15,7 @@ use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
 use App\UseCase\Session\GetFormSession;
 use App\UseCase\Session\UnregistrableSessionMessage;
-use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRide\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -77,7 +77,7 @@ class SessionController extends AbstractController
         $form = $this->createForm(SessionAvailabilityType::class, $session);
         $form->handleRequest($request);
 
-        list($framers, $members) = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
+        $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $session = $form->getData();
@@ -94,8 +94,8 @@ class SessionController extends AbstractController
         return $this->render('session/edit.html.twig', [
             'form' => $form->createView(),
             'bikeRide' => $bikeRidePresenter->viewModel(),
-            'framers' => $framers,
-            'members' => $members,
+            'framers' => $sessions['framers'],
+            'members' => $sessions['members'],
         ]);
     }
 
@@ -116,7 +116,7 @@ class SessionController extends AbstractController
                 $respondentRepository->deleteResponsesByUserAndSurvey($session->getUser(), $survey);
             }
 
-            $this->entityManager->remove($session); 
+            $this->entityManager->remove($session);
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Votre désinscription à bien été prise en compte');

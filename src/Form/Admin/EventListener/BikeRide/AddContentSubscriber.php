@@ -48,25 +48,23 @@ class AddContentSubscriber implements EventSubscriberInterface
     public function preSubmit(FormEvent $event): void
     {
         $data = $event->getData();
-        $bikeRideTypeId = (array_key_exists('bikeRideType', $data)) ? $data['bikeRideType'] : null;
+        $bikeRideTypeId = (array_key_exists('bikeRideType', $data)) ? (int)$data['bikeRideType'] : null;
         $bikeRide = $event->getForm()->getData();
 
         $bikeRideType = $this->bikeRideTypeRepository->find($bikeRideTypeId);
-        $bikeRide->setBikeRideType($bikeRideType);
-        if (empty($bikeRide->getContent()) && empty($data['content'])) {
+        
+        if ($bikeRide->getBikeRideType()->getId() !== $bikeRideTypeId) {
             $data['content'] = $bikeRideType->getContent();
-        }
-        if (empty($bikeRide->getTitle()) && empty($data['title'])) {
             $data['title'] = $bikeRideType->getName();
         }
-
         $event->setData($data);
+       
         $this->modifier($event->getForm(), $bikeRideType);
     }
 
     private function modifier(FormInterface $form, ?BikeRideKind $bikeRideType): void
     {
-        $isDiabled = !$bikeRideType?->isRegistrable();
+        $isDiabled = BikeRideKind::REGISTRATION_NONE === $bikeRideType?->getRegistration();
             
         $form
                 ->add('title', TextType::class, [

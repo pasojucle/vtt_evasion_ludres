@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
+use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,32 +20,43 @@ class CreateClusters
     
     public function execute($bikeRide)
     {
-        if ($bikeRide->getBikeRideType()->isRegistrable()) {
-            if ($bikeRide->getBikeRideType()->isSchool()) {
+        if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
+            $this->addSchoolClusters($bikeRide);
+        }
+        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration()) {
+            $this->addClusters($bikeRide);
+        }
+    }
+
+    private function addSchoolClusters(BikeRide $bikeRide): void
+    {
+        $cluster = new Cluster();
+        $cluster->setTitle(Cluster::CLUSTER_FRAME)
+            ->setRole('ROLE_FRAME')
+        ;
+        $bikeRide->addCluster($cluster);
+        $this->entityManager->persist($cluster);
+        $levels = $this->levelRepository->findAllTypeMember();
+        if (null !== $levels) {
+            foreach ($levels as $level) {
                 $cluster = new Cluster();
-                $cluster->setTitle(Cluster::CLUSTER_FRAME)
-                    ->setRole('ROLE_FRAME')
+                $cluster->setTitle($level->getTitle())
+                    ->setLevel($level)
+                    ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
                 ;
                 $bikeRide->addCluster($cluster);
                 $this->entityManager->persist($cluster);
-                $levels = $this->levelRepository->findAllTypeMember();
-                if (null !== $levels) {
-                    foreach ($levels as $level) {
-                        $cluster = new Cluster();
-                        $cluster->setTitle($level->getTitle())
-                            ->setLevel($level)
-                            ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
-                        ;
-                        $bikeRide->addCluster($cluster);
-                        $this->entityManager->persist($cluster);
-                    }
-                }
-            } else {
-                $cluster = new Cluster();
-                $cluster->setTitle('1er Groupe');
-                $bikeRide->addCluster($cluster);
-                $this->entityManager->persist($cluster);
             }
+        }
+    }
+
+    private function addClusters(BikeRide $bikeRide): void
+    {
+        foreach ($bikeRide->getBikeRideType()->getClusters() as $clusterTitle) {
+            $cluster = new Cluster();
+            $cluster->setTitle($clusterTitle);
+            $bikeRide->addCluster($cluster);
+            $this->entityManager->persist($cluster);
         }
     }
 }

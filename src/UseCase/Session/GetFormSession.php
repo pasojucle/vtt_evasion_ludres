@@ -14,7 +14,6 @@ use App\Repository\SessionRepository;
 use App\Service\SessionService;
 use App\UseCase\BikeRide\CreateClusters;
 use App\UseCase\BikeRide\IsWritableAvailability;
-use App\ViewModel\BikeRidePresenter;
 use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,7 +28,6 @@ class GetFormSession
         private EntityManagerInterface $entityManager,
         private CreateClusters $createClusters,
         private SessionRepository $sessionRepository,
-        private BikeRidePresenter $bikeRidePresenter,
         private FormFactoryInterface $formFactory,
         private SessionService $sessionService,
         private UserPresenter $userPresenter,
@@ -43,7 +41,6 @@ class GetFormSession
         list($isAlreadyRegistered, $userSession) = $this->getUserSession($bikeRide, $user, $clusters);
 
         $this->userPresenter->present($user);
-        $this->bikeRidePresenter->present($bikeRide);
         $sessions = (null !== $userSession->getAvailability())
             ? $this->sessionService->getSessionsBytype($bikeRide)
             : $this->sessionService->getSessions($bikeRide);
@@ -94,11 +91,12 @@ class GetFormSession
 
         if (null === $userSession) {
             $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
-            if (null !== $userCluster) {
-                $userSession = new Session();
-                $userSession->setUser($user)
-                    ->setCluster($userCluster)
+            $userSession = new Session();
+            $userSession->setUser($user)
                 ;
+
+            if (null !== $userCluster) {
+                $userSession->setCluster($userCluster);
             }
         }
 

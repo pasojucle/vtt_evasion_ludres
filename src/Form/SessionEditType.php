@@ -52,7 +52,7 @@ class SessionEditType extends AbstractType
                 }
             }
         });
-
+        
         $builder
             ->add('user', HiddenUserType::class)
         ;

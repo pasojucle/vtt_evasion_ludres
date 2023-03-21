@@ -8,7 +8,7 @@ use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
 use App\UseCase\Cluster\ExportCluster;
-use App\ViewModel\BikeRidePresenter;
+use App\ViewModel\BikeRide\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

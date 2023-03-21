@@ -14,7 +14,7 @@ use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
-use App\ViewModel\BikeRidesPresenter;
+use App\ViewModel\BikeRide\BikeRidesPresenter;
 use App\ViewModel\Content\ContentsPresenter;
 use App\ViewModel\Documentation\DocumentationsPresenter;
 use App\ViewModel\UserPresenter;

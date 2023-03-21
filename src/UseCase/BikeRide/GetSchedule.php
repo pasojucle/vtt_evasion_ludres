@@ -10,7 +10,7 @@ use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
 use App\Service\PaginatorService;
 use App\UseCase\BikeRide\GetFilters;
-use App\ViewModel\BikeRidesPresenter;
+use App\ViewModel\BikeRide\BikeRidesPresenter;
 use App\ViewModel\Paginator\PaginatorPresenter;
 use DateInterval;
 use DateTime;

@@ -18,7 +18,7 @@
                 </div>
                 <div class="block-body">
                     <ul>
-                        {% for bikeRide in user.bikeRides %}
+                        {% for bikeRide in user.getBikeRides() %}
                             <li>
                                 <div class="row background-ligth list-dropdown mb-20">
                                     <div class="col-md-9 col-xs-11"  data-toggle="bike-ride-content">
@@ -28,7 +28,7 @@
                                             <p class="{{ bikeRide.availability.class.color }}">{{ bikeRide.availability.class.icon|raw }} {{ bikeRide.availability.text|trans }}</p>
                                         {% endif %}
                                         <p>{{ bikeRide.bikeRide.content|raw }}</p>
-                                        {% if bikeRide.bikeRide.survey is not null or bikeRide.bikeRide.bikeRideType.showMemberList %}
+                                        {% if bikeRide.bikeRide.survey is not null or bikeRide.bikeRide.bikeRideType.isShowMemberList %}
                                             <div class="mt-10">
                                                 <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Info complémentaires</span>
                                             </div>
@@ -36,7 +36,7 @@
                                                 {% if bikeRide.bikeRide.survey is not null %}
                                                     <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
                                                 {% endif %}
-                                                {% if bikeRide.bikeRide.bikeRideType.showMemberList %}
+                                                {% if bikeRide.bikeRide.bikeRideType.isShowMemberList %}
                                                     {% include 'session/registered_list.html.twig' with {'sessions': bikeRide.memberList} %}
                                                 {% endif %}
                                             </div>

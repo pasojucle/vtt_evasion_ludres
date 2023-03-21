@@ -42,7 +42,7 @@ class SessionType extends AbstractType
         $builder
             ->add('session', SessionEditType::class, [
                 'label' => false,
-                'clusters' => [],
+                'clusters' => $options['clusters'],
                 'is_writable_availability' => $options['is_writable_availability'],
                 'is_already_registered' => $options['is_already_registered'],
                 'is_end_testing' => false,

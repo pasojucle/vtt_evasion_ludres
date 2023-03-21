@@ -39,7 +39,7 @@ class Session
 
     #[ManyToOne(targetEntity: Cluster::class, inversedBy: 'sessions')]
     #[JoinColumn(nullable: false)]
-    private Cluster $cluster;
+    private ?Cluster $cluster = null;
 
     #[Column(type: 'boolean')]
     private bool $isPresent = false;

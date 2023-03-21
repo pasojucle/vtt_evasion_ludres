@@ -3,9 +3,18 @@
         <h2>Participants</h2>
         {% if sessions is not empty %}
             <ul>
-                {% for session in sessions %}
+                <li class="row row-list">
+                    {% for cluster in sessions.header %}
+                    
+                        <div class="col-md-4">{{ cluster }}</div>
+                    
+                    {% endfor %}
+                </li>
+                {% for row in sessions.rows %}
                     <li class="row row-list">
-                        <div class="col-md-12">{{ session.user.member.fullName }}</div>
+                    {% for session in row %}
+                        <div class="col-md-4">{{ session }}</div>
+                        {% endfor %}
                     </li>
                 {% endfor %}
             </ul>
