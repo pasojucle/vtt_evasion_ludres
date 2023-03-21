@@ -94,8 +94,7 @@ class SessionController extends AbstractController
         return $this->render('session/edit.html.twig', [
             'form' => $form->createView(),
             'bikeRide' => $bikeRidePresenter->viewModel(),
-            'framers' => $sessions['framers'],
-            'members' => $sessions['members'],
+            'sessions' => $sessions,
         ]);
     }
 

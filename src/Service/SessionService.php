@@ -40,20 +40,19 @@ class SessionService
         $members = [];
         $framers = [];
         $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
-        if (null !== $sessions) {
-            foreach ($sessions as $session) {
-                if (null === $session->getAvailability()) {
-                    $level = $session->getUser()->getLevel();
-                    $levelId = (null !== $level) ? $level->getId() : 0;
-                    $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';
-                    $members[$levelId]['members'][] = $session->getUser();
-                    $members[$levelId]['title'] = $levelTitle;
-                } else {
-                    if ($user !== $session->getUser()) {
-                        $this->userPresenter->present($session->getUser());
-                        $this->sessionPresenter->present($session);
-                        $framers[] = $this->sessionPresenter->viewModel();
-                    }
+
+        foreach ($sessions as $session) {
+            if (null === $session->getAvailability()) {
+                $level = $session->getUser()->getLevel();
+                $levelId = (null !== $level) ? $level->getId() : 0;
+                $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';
+                $members[$levelId]['members'][] = $session->getUser();
+                $members[$levelId]['title'] = $levelTitle;
+            } else {
+                if ($user !== $session->getUser()) {
+                    $this->userPresenter->present($session->getUser());
+                    $this->sessionPresenter->present($session);
+                    $framers[] = $this->sessionPresenter->viewModel();
                 }
             }
         }
