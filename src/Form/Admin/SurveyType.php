@@ -100,6 +100,7 @@ class SurveyType extends AbstractType
 
         $formModifier = function (FormInterface $form, array $options, ?int $displayCriteria, ?BikeRide $bikeRide, ?Collection $members) {
             $disabled = (null !== $displayCriteria);
+
             $form
                 ->add('surveyIssues', CollectionType::class, [
                     'label' => false,
@@ -107,13 +108,12 @@ class SurveyType extends AbstractType
                     'entry_options' => [
                         'label' => false,
                         'attr' => [
-                            'class' => 'row form-group-collection',
+                            'class' => ($options['display_disabled']) ? 'row form-group-collection not-deleted' : 'row form-group-collection',
                         ],
                     ],
                     'allow_add' => true,
                     'allow_delete' => true,
                     'by_reference' => false,
-                    'disabled' => $options['display_disabled'],
                 ])
                 ->add('isAnonymous', CheckboxType::class, [
                     'block_prefix' => 'switch',
@@ -142,7 +142,7 @@ class SurveyType extends AbstractType
                     'width' => '100%',
                     'label' => false,
                     'required' => false,
-                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_BIKE_RIDE !== $displayCriteria : $disabled,
+                    // 'disabled' => (!$options['display_disabled']) ? self::DISPLAY_BIKE_RIDE !== $displayCriteria : $disabled,
                     'data' => (self::DISPLAY_BIKE_RIDE === $displayCriteria) ? $bikeRide : null,
                 ])
                 ->add('members', Select2EntityType::class, [
@@ -163,7 +163,7 @@ class SurveyType extends AbstractType
                     'width' => '100%',
                     'label' => false,
                     'required' => false,
-                    'disabled' => (!$options['display_disabled']) ? self::DISPLAY_MEMBER_LIST !== $displayCriteria : $disabled,
+                    // 'disabled' => (!$options['display_disabled']) ? self::DISPLAY_MEMBER_LIST !== $displayCriteria : $disabled,
                     'remote_params' => [
                         'filters' => json_encode($options['filters']),
                     ],

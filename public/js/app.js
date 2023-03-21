@@ -51,8 +51,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
     }
     initAddItemLink();
-    const collectionItems = document.querySelectorAll('.collection_container .form-group-collection');
-    console.log('collectionItems', collectionItems);
+    const collectionItems = document.querySelectorAll('.collection_container .form-group-collection:not(.not-deleted)');
     collectionItems.forEach((item) => {
         if ($(item).find('input:disabled').length < 1) {
             addTagFormDeleteLink(item);
@@ -330,9 +329,7 @@ function addUp(e) {
 
 const addFormToCollection = (e) => {
     const collectionHolder = document.querySelector('#' + e.currentTarget.dataset.collectionHolderClass);
-  const container = collectionHolder.closest('.collection_container');
-  
-  
+    const container = collectionHolder.closest('.collection_container');
     const html = container
       .dataset
       .prototype
