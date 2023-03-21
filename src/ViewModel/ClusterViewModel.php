@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
+use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\Session;
@@ -99,14 +100,19 @@ class ClusterViewModel extends AbstractViewModel
     public function getUsersOnSiteCount(): int
     {
         $userOnSiteSessions = [];
-        if (!$this->entity->getSessions()->isEmpty()) {
-            foreach ($this->entity->getSessions() as $session) {
+        foreach ($this->entity->getSessions() as $session) {
+            if (BikeRideType::REGISTRATION_SCHOOL === $this->entity->getBikeRide()->getBikeRideType()->getRegistration()) {
                 $level = $session->getUser()->getLevel();
                 $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
                 if ($session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $levelType) {
                     $userOnSiteSessions[] = $session;
                 }
+            } else {
+                if ($session->isPresent()) {
+                    $userOnSiteSessions[] = $session;
+                }
             }
+
         }
 
         return count($userOnSiteSessions);
