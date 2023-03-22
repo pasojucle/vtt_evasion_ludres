@@ -39,7 +39,7 @@
             </div>
 
             <b>{{ form_label(form.surveyIssues) }}</b>
-                <ul class="collection_container {{ form.surveyIssues.vars.name }}"
+                <ul id="{{ form.surveyIssues.vars.name }}" class="collection_container"
                 data-index="{{ form.surveyIssues|length > 0 ? form.surveyIssues|last.vars.name + 1 : 0 }}" 
                 data-prototype="{{ form_widget(form.surveyIssues.vars.prototype)|e('html_attr') }}">
                     {% for item in form.surveyIssues %}

@@ -126,9 +126,9 @@ class BikeRideTypeType extends AbstractType
         $builder->get('registration')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
-            $registration = $event->getForm()->getData();
-            $formModifier($event->getForm()->getParent(), $registration);
-        }
+                $registration = $event->getForm()->getData();
+                $formModifier($event->getForm()->getParent(), $registration);
+            }
         );
     }
 

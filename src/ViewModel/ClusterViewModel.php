@@ -112,7 +112,6 @@ class ClusterViewModel extends AbstractViewModel
                     $userOnSiteSessions[] = $session;
                 }
             }
-
         }
 
         return count($userOnSiteSessions);
