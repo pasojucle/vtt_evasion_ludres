@@ -47,19 +47,17 @@ class ExportCluster
 
     private function addSessions(): void
     {
-        if (!empty($this->cluster->sessions)) {
-            foreach ($this->cluster->sessions as $session) {
-                if ($session['isPresent']) {
-                    $render = $this->twig->render('cluster/export.html.twig', [
-                        'user' => $session['user'],
-                        'media' => RegistrationStep::RENDER_FILE,
-                    ]);
-                    $tmp = $session['user']->entity->getId() . '_tmp';
-                    $pdfFilepath = $this->pdfService->makePdf($render, $tmp, $this->dirName, 'B6');
-                    $this->files[] = [
-                        'filename' => $pdfFilepath,
-                    ];
-                }
+        foreach ($this->cluster->sessions as $session) {
+            if ($session['isPresent']) {
+                $render = $this->twig->render('cluster/export.html.twig', [
+                    'user' => $session['user'],
+                    'media' => RegistrationStep::RENDER_FILE,
+                ]);
+                $tmp = $session['user']->entity->getId() . '_tmp';
+                $pdfFilepath = $this->pdfService->makePdf($render, $tmp, $this->dirName, 'B6');
+                $this->files[] = [
+                    'filename' => $pdfFilepath,
+                ];
             }
         }
     }

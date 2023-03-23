@@ -42,17 +42,24 @@
                                 <div class="dropdown-menu" data-target="dropdown-{{ bikeRide.entity.id }}">
                                     <div class="dropdown-title">{{ bikeRide.startAt | date('d/m/y') }} - {{ bikeRide.title }}</div>
                                     <ul class="dropdown-body">
-                                        <li><a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier">
-                                            <i class="fas fa-pencil-alt"></i> Modifier
-                                        </a></li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier">
+                                                <i class="fas fa-pencil-alt"></i> Modifier
+                                            </a>
+                                        </li>
                                         {% if bikeRide.startAt > date() %}
-                                        <li><a class="dropdown-item  modal-trigger" data-toggle="modal" data-type="danger" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier">
-                                            <i class="fas fa-times"></i> Annuler
-                                        </a></li>
+                                        <li>
+                                            <a class="dropdown-item  modal-trigger" data-toggle="modal" data-type="danger" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier">
+                                                <i class="fas fa-times"></i> Annuler
+                                            </a>
+                                        </li>
                                         {% endif %}
-                                        <li><a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Exporter la séance">
-                                            <i class="fas fa-file-download"></i> Exporter la séance
-                                        </a></li>
+                                        <li>
+                                            <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Exporter la séance">
+                                                <i class="fas fa-file-download"></i> Exporter la séance
+                                            </a>
+                                        </li>
+                                        <li><a href="{{ path('admin_bike_ride_members_email_to_clipboard', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item email-to-clipboard" title="Copier les emails des participants"><i class="fas fa-copy"></i> Copier les emails des participants</a></li>
                                     </ul>
                                 </div>
                             </div>

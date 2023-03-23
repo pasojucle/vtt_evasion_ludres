@@ -12,6 +12,7 @@ use App\Repository\BikeRideTypeRepository;
 use App\Repository\SessionRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
+use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
 use App\UseCase\User\GetFramersFiltered;
@@ -206,5 +207,13 @@ class BikeRideController extends AbstractController
             'bike_ride' => $presenter->viewModel(),
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/emails/adherents/{bikeRide}', name: 'admin_bike_ride_members_email_to_clipboard', methods: ['GET'])]
+    public function adminEmailMembers(
+        GetEmailMembers $getEmailMembers,
+        BikeRide $bikeRide
+    ): JsonResponse {
+        return new JsonResponse($getEmailMembers->execute($bikeRide));
     }
 }
