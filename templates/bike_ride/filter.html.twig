@@ -1,35 +1,27 @@
 <div class="filters">
     {{ form_start(form) }}
         {% if form.prev is defined and form.next is defined %}
-            <span>
-                <b>
-                {% if current_filters.period == constant('App\\Entity\\BikeRide::PERIOD_DAY') %}
-                    Du {{ current_filters.startAt | date('d/m/Y')}}
-                {% else %}
-                    Du {{ current_filters.startAt | date('d/m/Y')}} au  {{ current_filters.endAt | date('d/m/Y')}} 
-                {% endif %}
-                </b>
-            </span>
-            <ul>
-                <li>
-                    {{ form_widget(form.period)}}
-                </li>
-                <li>
-                    {{ form_widget(form.prev)}}
-                </li>
-                <li class="btn background-ligth">
-                    {{ current_filters.strMonth }}
-                </li>
-                <li >
-                    {{ form_widget(form.next)}}
-                </li>
-            </ul>
+            <div class="row no-padding">
+                <ul class="col-md-5 col-xs-12">
+                    <li> {{ form_widget(form.period)}}</li>
+                    <li> {{ form_widget(form.prev)}}</li>
+                    <li class="btn background-ligth">{{ current_filters.strMonth }}</li>
+                    <li>{{ form_widget(form.next)}}</li>
+                </ul>
+                <span class="col-md-4 col-xs-12">
+                    <b>
+                    {% if current_filters.period == constant('App\\Entity\\BikeRide::PERIOD_DAY') %}
+                        Du {{ current_filters.startAt | date('d/m/Y')}}
+                    {% else %}
+                        Du {{ current_filters.startAt | date('d/m/Y')}} au  {{ current_filters.endAt | date('d/m/Y')}} 
+                    {% endif %}
+                    </b>
+                </span>
+            </div>
         {% else %}
             <span></span>
             <ul>
-                <li>
-                    {{ form_widget(form.period)}}
-                </li>
+                <li>{{ form_widget(form.period)}}</li>
             </ul>
         {% endif %}
     {{ form_end(form) }}

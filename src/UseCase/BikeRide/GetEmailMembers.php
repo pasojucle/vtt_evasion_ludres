@@ -27,7 +27,7 @@ class GetEmailMembers
         $users = [];
         foreach ($bikeRide->getClusters() as $cluster) {
             foreach ($cluster->getSessions() as $session) {
-                if ( $session->getAvailability() < Session::AVAILABILITY_AVAILABLE) {
+                if ($session->getAvailability() < Session::AVAILABILITY_AVAILABLE) {
                     $users[] = $session->getUser();
                 }
             }

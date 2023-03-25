@@ -143,4 +143,24 @@ class BikeRideViewModel extends AbstractViewModel
     {
         return ($this->entity->getFileName()) ? $this->services->uploadsDirectory . $this->entity->getFileName() : null;
     }
+
+    public function getMembers(): string
+    {
+        $members = 0;
+        if ($this->startAt < $this->today && $this->bikeRideType->isRegistrable) {
+            foreach ($this->entity->getClusters() as $cluster) {
+                foreach ($cluster->getSessions() as $session) {
+                    if ($session->isPresent()) {
+                        ++$members;
+                    }
+                }
+            }
+        }
+
+        if (0 < $members) {
+            return  sprintf('%s participants', $members);
+        }
+
+        return '';
+    }
 }

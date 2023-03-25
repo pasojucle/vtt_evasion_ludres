@@ -11,21 +11,25 @@
         <div class="wrapper-title">
             <h1>Programme</h1>
         </div>
+            <div class="filters-schedule">
+                {% include('bike_ride/filter.html.twig') %}
+            </div>
         <div class="wrapper-body">
-            {% include('bike_ride/filter.html.twig') %}
+
             {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
             <div class="bike-rides  reveal">
                 {% for bikeRide in bikeRides %}
-                    <div class="bike-ride-date item-center align-center {{ bikeRide.displayClass }}">
+                    <div class="bike-ride-date {{ bikeRide.displayClass }}">
                         <div>
-                            {{ bikeRide.period }}
+                            {{ bikeRide.period }}</div>
                             {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
                                 <div class="bike-ride-date-btn">
                                     <br>
                                     <a href="{{ path('session_add', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
                                 </div>
                             {% endif %}
-                        </div>
+                        
+                        <div class="badge-members">{{ bikeRide.getMembers() }}</div>
                     </div>
                     <div class="bike-ride-detail {{ bikeRide.displayClass }}">
                         <h3>{{ bikeRide.title }}</h3>

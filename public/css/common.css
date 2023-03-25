@@ -751,12 +751,25 @@ input[type="file"] {
     padding: 3px;
     border-radius: 15px;
 }
+.badge-members:not(:empty) {
+    margin-top: 15px;
+    font-size: 10px;
+    background-color: var(--gray-color);
+    border-radius: 8px;
+    padding: 3px;
+    color: var(--light-color);
+}
 .nav-bar {
     display: none;
 }
 .filters input {
     padding: 10px;
 }
+.filters-schedule .filters span {
+    padding: 10px;
+    background-color: var(--clear-color);
+}
+
 .filters span b {
     color: var(--primary-color-darker);
 }
@@ -781,10 +794,14 @@ span.select2-selection.select2-selection--single {
 .row.filters {
     padding: 20px;
 }
-.filters > form> ul > li {
+.filters > form  ul > li {
     display: inline-block;
     vertical-align: middle;
 }
+.filters-schedule .filters {
+    padding: 20px;
+}
+
 .col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-content, .col-6, .col-list, .grid-background {
     display: grid;
     grid-auto-rows: max-content;
@@ -1575,8 +1592,11 @@ h3 + ul.block.background-ligth {
     .btn {
         padding: 8px;
     }
-    .filters ul > li {
+    .filters ul > li:not(.btn) {
         padding: unset;
+    }
+    .filters-schedule .filters {
+        padding: 20px 0;
     }
     .filters span > b {
         letter-spacing: -0.5px;

@@ -333,10 +333,17 @@ button[type="submit"] {
     row-gap: 25px;
     align-items: center;
 }
-.bike-rides > div {
+.bike-rides > div:not(.badge-members) {
     padding: 15px;
     box-sizing: border-box;
     height: 100%;
+}
+.bike-rides .bike-ride-date {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 .bike-rides .bike-ride-detail {
     background-color: var(--white-color);
@@ -349,12 +356,6 @@ button[type="submit"] {
     color: var(--white-color);
     font-weight: 700;
     font-size: 18px;
-}
-.item-center > div, .item-center > div::after {
-    vertical-align: middle;
-    display: inline-block;
-    content: '';
-    height: 100%;
 }
 .bike-rides .bike-ride-date.active, .bike-rides .bike-ride-btn, .block-title.bike-ride-date.active {
     background-color: var(--primary-color);

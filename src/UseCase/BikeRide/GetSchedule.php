@@ -95,7 +95,7 @@ class GetSchedule
     {
         $date = (null === $year && null === $month && null === $day) ? new DateTimeImmutable() : DateTimeImmutable::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
         if (null === $period) {
-            $period = ('admin_events' === $route) ? BikeRide::PERIOD_WEEK : BikeRide::PERIOD_NEXT;
+            $period = ('admin_events' === $route) ? BikeRide::PERIOD_WEEK : BikeRide::PERIOD_MONTH;
         }
 
         return $this->getFilters->execute($period, $date);
