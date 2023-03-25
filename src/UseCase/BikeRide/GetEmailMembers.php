@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
+use App\Entity\Session;
 use App\ViewModel\UsersPresenter;
 
 class GetEmailMembers
@@ -26,7 +27,9 @@ class GetEmailMembers
         $users = [];
         foreach ($bikeRide->getClusters() as $cluster) {
             foreach ($cluster->getSessions() as $session) {
-                $users[] = $session->getUser();
+                if ( $session->getAvailability() < Session::AVAILABILITY_AVAILABLE) {
+                    $users[] = $session->getUser();
+                }
             }
         }
 
