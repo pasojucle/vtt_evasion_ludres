@@ -28,6 +28,8 @@
         {% endblock %}
     </head>
     <body>
+        <link rel="apple-touch-icon" href="logo/apple-touch-icon.png">
+        <link rel="apple-touch-icon-precomposed" href="logo/apple-touch-icon.png" />
         {% block background %}{% endblock %}
         {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
             <div class="alert-mode">Mode Maintenance</div>
