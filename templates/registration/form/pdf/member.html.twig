@@ -3,6 +3,7 @@
     <tr>
         <td rowspan="9" colspan="2"><img src="{{ user.member.picture|imgPath(media) }}" style="width: 100px;"></td>
         <td colspan="5" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
+        <td colspan="2" class="licence-number">{{ user.getFFCTLicence() }}</td>
     </tr>
     <tr>
         <td colspan="5" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>

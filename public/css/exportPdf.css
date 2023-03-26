@@ -227,3 +227,8 @@ li::before {
     content: '\2022';
     margin: auto 15px;
 }
+.licence-number {
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+}

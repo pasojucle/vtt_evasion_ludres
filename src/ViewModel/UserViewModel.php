@@ -330,4 +330,13 @@ class UserViewModel extends AbstractViewModel
     {
         return null !== $this->entity->getBoardRole();
     }
+
+    public function getFFCTLicence(): string
+    {
+        if (1 === preg_match('#^\d+$#', $this->licenceNumber, $matches)) {
+            return sprintf('Licence n° %s', $this->licenceNumber);
+        }
+
+        return '';
+    }
 }
