@@ -17,12 +17,11 @@
                 </div>
                 <div class="col-md-3 col-xs-2">
                     <div class="row">
+                        <div class="camera {{ user.getApprovalRightImage.class.color }}"></div>
                         {% if user.approvalGoingHome is not null %}
                             <div class="home {{ user.approvalGoingHome.class.color }}"></div>
                         {% endif %}
-                        {% if user.getApprovalRightImage.value is same as false %}
-                            <div class="camera {{ user.getApprovalRightImage.class.color }}"></div>
-                        {% endif %}
+                        
                         {% if user.health.content is not null %}
                             <div class="medical-plus"></div>
                         {% endif %}
@@ -35,19 +34,17 @@
         </a>
         {% include 'user/admin/dropdown.html.twig' with {'session' : session} %}
     </div>
-    {# {% if bikeRide.bikeRideType.isSchool %} #}
-        {% if not cluster.isComplete %}
-            {% if not session.userIsOnSite %}
-                <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" 
-                class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} admin-session-present{% if permission < 7 %} disabled{% endif %}" title="Absent">
-                <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-check{% endif %}"></i></a>
-            {% else %}
-                <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" class="btn btn-success admin-session-present{% if permission < 7 %} disabled{% endif %}" title="Présent"><i class="fas fa-check-circle"></i></a>
-            {% endif %}
+    {% if not cluster.isComplete %}
+        {% if not session.userIsOnSite %}
+            <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" 
+            class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} admin-session-present{% if permission < 7 %} disabled{% endif %}" title="Absent">
+            <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-check{% endif %}"></i></a>
         {% else %}
-            {% if session.userIsOnSite %}
-                <div class="success-ico xl-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
-            {% endif %}
+            <a href="{{ path('admin_session_present', {'session': session.entity.id}) }}" class="btn btn-success admin-session-present{% if permission < 7 %} disabled{% endif %}" title="Présent"><i class="fas fa-check-circle"></i></a>
         {% endif %}
-    {# {% endif %} #}
+    {% else %}
+        {% if session.userIsOnSite %}
+            <div class="success-ico xl-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
+        {% endif %}
+    {% endif %}
 </li>

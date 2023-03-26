@@ -161,6 +161,18 @@ body > script {display: none !important;}
     text-align: center;
     border: 2px solid var(--white-color);
 }
+.camera.success::before {
+    content: '\f030'!important;
+    color: var(--success-color);
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+    border: 2px solid var(--success-color);
+    background-color: var(--white-color);
+}
 .camera.alert-danger::before {
     content: '\f030';
     color: var(--danger-color);
