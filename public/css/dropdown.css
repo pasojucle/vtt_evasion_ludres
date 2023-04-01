@@ -37,6 +37,7 @@ button.dropdown-toggle:hover, button.dropdown-toggle.active {
     background-color: #dddddd;
     border: 2px solid var(--white-color);
     width: max-content;
+    max-width: 400px;
 }
 
 .dropdown .dropdown-menu.active {
