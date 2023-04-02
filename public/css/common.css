@@ -1074,7 +1074,8 @@ span.select2-selection.select2-selection--single {
 .col-list:not(:first-child) .list-item::after,
 .btn-list::after,
 .col-list:not(:first-child) .list-dropdown::after,
-.list-dropdown:not(:first-child)::after {
+.list-dropdown:not(:first-child)::after,
+.list {
     content: '';
     position: absolute;
     top: 0;

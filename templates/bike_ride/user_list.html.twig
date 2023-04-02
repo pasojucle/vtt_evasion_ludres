@@ -37,9 +37,9 @@
                                                     <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
                                                     <ul class="mt-10">
                                                         {% for response in bikeRide.bikeRide.survey.getResponsesByUser(user).surveyResponses %}
-                                                        <li class="row row-list">
-                                                            <div class="fst-italic">{{ response.issue }} : </div>
-                                                            <div>{{ response.value }}</div>
+                                                        <li class="list">
+                                                            <span class="fst-italic">{{ response.issue }} : </span>
+                                                            <span>{{ response.value }}</span>
                                                         </li>
                                                         {% endfor %}
                                                     </ul>
