@@ -891,7 +891,7 @@ span.select2-selection.select2-selection--single {
     flex-wrap: wrap;
     align-items: center;
 }
-.row.row-list {
+.row.row-list, ul > li.list {
     position: relative;
     min-height: 45px;
 }
@@ -1075,7 +1075,7 @@ span.select2-selection.select2-selection--single {
 .btn-list::after,
 .col-list:not(:first-child) .list-dropdown::after,
 .list-dropdown:not(:first-child)::after,
-.list {
+ul > li.list::after {
     content: '';
     position: absolute;
     top: 0;
