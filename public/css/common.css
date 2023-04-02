@@ -891,9 +891,13 @@ span.select2-selection.select2-selection--single {
     flex-wrap: wrap;
     align-items: center;
 }
-.row.row-list, ul > li.list {
+.row.row-list {
     position: relative;
     min-height: 45px;
+}
+ul > li.list {
+    position: relative;
+    padding: 10px 0;
 }
 .row .align-self-center {
     align-self: center;
