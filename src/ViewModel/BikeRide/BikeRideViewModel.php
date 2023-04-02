@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\ViewModel\BikeRide;
 
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Twig\AppExtension;
@@ -13,6 +12,7 @@ use App\ViewModel\AbstractViewModel;
 use App\ViewModel\BikeRideType\BikeRideTypeViewModel;
 use App\ViewModel\ClustersViewModel;
 use App\ViewModel\ServicesPresenter;
+use App\ViewModel\Survey\SurveyViewModel;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -49,7 +49,7 @@ class BikeRideViewModel extends AbstractViewModel
 
     public BikeRideTypeViewModel $bikeRideType;
 
-    public ?Survey $survey;
+    public ?SurveyViewModel $survey;
 
     private ?DateTimeImmutable $today;
 
@@ -86,7 +86,7 @@ class BikeRideViewModel extends AbstractViewModel
         $bikeRideView->isWritableAvailability = $services->isWritableAvailability->execute($bikeRide, $user);
         $bikeRideView->isRegistrable = $services->isRegistrable->execute($bikeRide, $user);
         $bikeRideView->btnLabel = $bikeRideView->getBtnLabel($user);
-        $bikeRideView->survey = $bikeRide->getSurvey();
+        $bikeRideView->survey = ($bikeRide->getSurvey()) ? SurveyViewModel::fromSurvey($bikeRide->getSurvey(), $services) : null;
 
         $bikeRideView->services = $services;
         $bikeRideView->filename = $bikeRideView->getFilename();

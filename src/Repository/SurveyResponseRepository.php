@@ -126,4 +126,27 @@ class SurveyResponseRepository extends ServiceEntityRepository
         ->getResult()
     ;
     }
+
+    public function findResponsesByUserAndSurvey(User $user, Survey $survey): array
+    {
+        $issues = $this->_em->createQueryBuilder()
+        ->select('(issue)')
+        ->from(SurveyIssue::class, 'issue')
+        ->where(
+            (new Expr())->eq('issue.survey', ':survey')
+        );
+
+        return $this->createQueryBuilder('r')
+        ->andWhere(
+            (new Expr())->eq('r.user', ':user'),
+            (new Expr())->in('r.surveyIssue', $issues->getDQL())
+        )
+        ->setParameters([
+            'user' => $user,
+            'survey' => $survey,
+        ])
+        ->getQuery()
+        ->getResult()
+    ;
+    }
 }

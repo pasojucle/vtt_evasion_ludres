@@ -35,6 +35,14 @@
                                             <div class="info-dropdown"  data-target="bike-ride-content">
                                                 {% if bikeRide.bikeRide.survey is not null %}
                                                     <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
+                                                    <ul class="mt-10">
+                                                        {% for response in bikeRide.bikeRide.survey.getResponsesByUser(user).surveyResponses %}
+                                                        <li class="row row-list">
+                                                            <div class="fst-italic">{{ response.issue }} : </div>
+                                                            <div>{{ response.value }}</div>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
                                                 {% endif %}
                                                 {% if bikeRide.bikeRide.bikeRideType.isShowMemberList %}
                                                     {% include 'session/registered_list.html.twig' with {'sessions': bikeRide.memberList} %}
