@@ -72,6 +72,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (array_key_exists('season', $filters) && null !== $filters['season'] && is_string($filters['season']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
+            if (array_key_exists('season', $filters) && $this->seasonService::MIN_SEASON_TO_TAKE_PART === $filters['season']) {
+                $this->addCriteriaGteSeason($qb);
+            }
             if (array_key_exists('season', $filters) && Licence::STATUS_TESTING_IN_PROGRESS === $filters['season']) {
                 $currentSeason = $this->seasonService->getCurrentSeason();
                 $this->addCriteriaTestinInProgress($qb);
@@ -227,6 +230,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andHaving(
                 $qb->expr()->eq($qb->expr()->max('li.season'), ':season')
             )
+        ;
+    }
+
+    private function addCriteriaGteSeason(QueryBuilder &$qb): void
+    {
+        $qb
+            ->groupBy('u.id')
+            ->andHaving(
+                $qb->expr()->gte($qb->expr()->max('li.season'), ':minSeasonToTakePart')
+            )
+            ->setParameter('minSeasonToTakePart', $this->seasonService->getMinSeasonToTakePart())
         ;
     }
 

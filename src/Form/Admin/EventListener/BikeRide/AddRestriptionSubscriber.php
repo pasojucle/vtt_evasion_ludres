@@ -6,10 +6,15 @@ use App\Entity\BikeRide;
 use App\Entity\BikeRideType as BikeRideKind;
 use App\Entity\User;
 use App\Form\Admin\BikeRideType;
+use App\Repository\UserRepository;
 use App\Service\LevelService;
+use App\Service\SeasonService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -17,7 +22,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class AddRestriptionSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private LevelService $levelService)
+    public function __construct(private LevelService $levelService, private UserRepository $userRepository)
     {
     }
 
@@ -44,9 +49,18 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
 
         $data = $event->getData();
 
+        dump($data);
+
+        dump($event->getForm());
+        if (array_key_exists('addFramers', $data) && (bool) $data['addFramers']) {
+            dump($event->getForm()->get('addFramers')->getData());
+            $this->addFramers($data);
+        }
+        
         $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
 
         $this->cleanData($restriction, $data, $bikeRide);
+
         $event->setData($data);
         $event->getForm()->setData($bikeRide);
 
@@ -62,8 +76,21 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
         $disabledLevelFilter = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_LEVELS !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MIN_AGE !== $restriction;
+        $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;
+
+        $addFramersClass = 'btn btn-xs btn-primary form-modifier';
+        if ($disabledUsers) {
+            $addFramersClass .= ' disabled';
+        }
 
         $form
+            ->add('addFramers', ButtonType::class, [
+                'label' => 'Ajouter les encadrants',
+                'attr' => [
+                    'class' => $addFramersClass,
+                    'data-modifier' => 'bike_ride_Restriction',
+                ],
+            ])
             ->add('users', Select2EntityType::class, [
                 'multiple' => true,
                 'remote_route' => 'admin_member_choices',
@@ -82,6 +109,9 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
                 'label' => false,
                 'required' => !$disabledUsers,
                 'disabled' => $disabledUsers,
+                'remote_params' => [
+                    'filters' => json_encode($filters),
+                ],
             ])
             ->add('levelFilter', ChoiceType::class, [
                 'label' => false,
@@ -123,6 +153,21 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
         }
         if (BikeRideType::RESTRICTION_TO_MIN_AGE !== $restriction) {
             $data['minAge'] = '';
+        }
+    }
+
+    private function addFramers(array &$data): void
+    {
+        $framerObjects = $this->userRepository->findFramers([])->getQuery()->getResult();
+
+        if (!array_key_exists('users', $data)) {
+            $data['users'] = [];
+        }
+
+        foreach ($framerObjects as $framer) {
+            if (!in_array($framer->getId(), $data['users'])) {
+                $data['users'][] = $framer->getId();
+            }
         }
     }
 }

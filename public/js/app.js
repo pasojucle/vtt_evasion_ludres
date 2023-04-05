@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     $(document).on('click', '.nav-bar .btn', toggleMenu);
 
     $(document).on('change', '.form-modifier', formModifier);
+    $(document).on('click', 'button.form-modifier', formModifier);
     $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.cluster-complete', clusterComplete);
@@ -162,42 +163,39 @@ function updateLinkOrder(item) {
     });
 }
 
-function formModifier() {
-    const form = $(this).closest('form');
-    const selector = '#' + $(this).data('modifier');
-    const data = {};
-    $.each(form[0].elements,function() {
-        if ($(this).attr('name') !== undefined && ($(this).attr('type') === 'radio' && $(this).is(':checked') || $(this).attr('type') !== 'checkbox' && $(this).attr('type') !== 'radio' && $(this).attr('type') !== 'hidden')) {
-            let value = ($(this).attr('name').includes('commune')) ? null : $(this).val();
-            data[$(this).attr('name')] = value;
+function formModifier(event) {
+    event.preventDefault();
+    const form = event.target.closest('form');
+    const target = event.target.dataset.modifier
+    const data = new FormData(form, event.submitter);
+    for(let entry of data) {
+        console.log(entry)
+        if (entry[0].endsWith('[_token]')) {
+            data.set(entry[0], '');
         }
-        // if ($(this).attr('type') === 'checkbox' && !$(this).is(':checked')) {
-        //     data[$(this).attr('name')] = 0;
-        // }
-        if ($(this).attr('type') === 'checkbox' && $(this).is(':checked')) {
-            data[$(this).attr('name')] = $(this).is(':checked');
-        }
+    }
+    if (event.target.type === 'button') {
+        data.append(event.target.name, 1)
+    }
 
+    const url = form.getAttribute('action') ? form.getAttribute('action') : window.location.href;
+    fetch(url, {
+        method: form.getAttribute('method'),
+        body : data,
+    })
+    .then((response) => response.text())
+    .then((text)=> {
+        const htmlElement = document.createRange().createContextualFragment(text);
+        document.getElementById(target).replaceWith(
+            htmlElement.getElementById(target)
+        );
+        $('.select2entity').select2entity();
+        $('.customSelect2').select2();
+        $('.js-datepicker').datepicker({
+            format: 'yyyy-mm-dd hh:ii',
+        });
+        initAddItemLink();
     });
-
-    $.ajax({
-        url : form.attr('action'),
-        type: form.attr('method'),
-        data : data,
-        success: function(html) {   
-            console.log($(selector));   
-            console.log($(html).find(selector));
-            $(selector).replaceWith(
-                $(html).find(selector)
-            );
-            $('.select2entity').select2entity();
-            $('.customSelect2').select2();
-            $('.js-datepicker').datepicker({
-                format: 'yyyy-mm-dd hh:ii',
-            });
-            initAddItemLink();
-        }
-      });
 }
 
 function clusterComplete(event) {

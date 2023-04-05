@@ -9,6 +9,7 @@ use App\Entity\BikeRideType as EntityBikeRideType;
 use App\Form\Admin\EventListener\BikeRide\AddContentSubscriber;
 use App\Form\Admin\EventListener\BikeRide\AddRestriptionSubscriber;
 use App\Repository\BikeRideTypeRepository;
+use App\Repository\UserRepository;
 use App\Service\LevelService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -27,7 +28,7 @@ class BikeRideType extends AbstractType
     public const RESTRICTION_TO_LEVELS = 2;
     public const RESTRICTION_TO_MIN_AGE = 3;
 
-    public function __construct(private LevelService $levelService, private BikeRideTypeRepository $bikeRideTypeRepository)
+    public function __construct(private LevelService $levelService, private BikeRideTypeRepository $bikeRideTypeRepository, private UserRepository $userRepository)
     {
     }
 
@@ -104,7 +105,7 @@ class BikeRideType extends AbstractType
 
         $builder->addEventSubscriber(new AddContentSubscriber($this->bikeRideTypeRepository));
 
-        $builder->addEventSubscriber(new AddRestriptionSubscriber($this->levelService));
+        $builder->addEventSubscriber(new AddRestriptionSubscriber($this->levelService, $this->userRepository));
     }
 
     public function configureOptions(OptionsResolver $resolver)

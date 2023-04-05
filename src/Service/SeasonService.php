@@ -11,6 +11,7 @@ use DateTimeImmutable;
 
 class SeasonService
 {
+    public const MIN_SEASON_TO_TAKE_PART = 'minSeasonToTakepart';
     private ?array $seasonStartAt;
 
     public function __construct(private ParameterService $parameterService)
@@ -27,6 +28,17 @@ class SeasonService
             : (int) $today->format('Y');
     }
 
+    public function getMinSeasonToTakePart(): int
+    {
+        $today = new DateTime();
+
+        $requirementSeasonLicenceAtParam = $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_AT');
+
+        return ($requirementSeasonLicenceAtParam['month'] <= (int) $today->format('m') && $requirementSeasonLicenceAtParam['day'] <= (int) $today->format('d'))
+            ? (int) $today->format('Y')
+            : (int) $today->format('Y') - 1;
+    }
+    
     public function getSeasonInterval(int $season): array
     {
         $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));

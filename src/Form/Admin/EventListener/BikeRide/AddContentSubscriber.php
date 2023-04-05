@@ -128,11 +128,11 @@ class AddContentSubscriber implements EventSubscriberInterface
                     'disabled' => $isDiabled,
                 ])
                 ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
-            ]);
+                    'label' => 'Enregistrer',
+                    'attr' => [
+                        'class' => 'btn btn-primary float-right',
+                    ],
+                ]);
     }
 
     private function setRestriction(BikeRide &$bikeRide): void
