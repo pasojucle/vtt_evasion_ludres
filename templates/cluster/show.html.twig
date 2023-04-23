@@ -1,8 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ bikeRide.title }}{% endblock %}
 
-{% set hasClusters = bikeRide.getClusters().hasClusters %}
-
 {% block body %}
 <div class="wrapper">
     <div class="wrapper-title">
@@ -15,7 +13,7 @@
                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                 <div class="dropdown-menu" data-target="dropdown-tools">
                     <ul class="dropdown-body">
-                        {% if bikeRide.getClusters().hasFramerCluster() %}
+                        {% if bikeRide.bikeRideType.isNeedFramers %}
                             <li><a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.entity.id})}}"  class="dropdown-item" title="Voir l'encadrement"><i class="fa-solid fa-user-tie"></i> Voir l'encadrement</a></li>
                         {% endif %}
                         <li><a href="{{ path('admin_session_add', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Ajouter un participant"><i class="fa-solid fa-user"></i> Ajouter un participant</a></li>
@@ -27,7 +25,7 @@
     </div>
     <div id="sessions_container" class="wrapper-body">
         {% for cluster in bikeRide.getClusters().clusters %}
-            {% if hasClusters %}
+            {% if bikeRide.clusters is not empty %}
                 <div class="cluster-title">
                     <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
                         {% if is_granted('ROLE_REGISTER') %}
@@ -51,7 +49,7 @@
                         {% include 'session/admin/list.html.twig' with {'user': session.user, 'permission': permission} %}
                     {% endfor %}
                 </ul>
-                {% if hasClusters and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+                {% if bikeRide.clusters is not empty and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
                     <div>
                         {% if not cluster.isComplete %}
                             <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if permission < 7 %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" target="_blank">

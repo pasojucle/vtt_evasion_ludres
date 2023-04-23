@@ -72,7 +72,15 @@ class SessionService
     public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): ?Cluster
     {
         $userCluster = null;
-        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $clusters->count()) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && ($this->security->isGranted('ROLE_FRAME', $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
+            foreach ($bikeRide->getClusters() as $cluster) {
+                if ('ROLE_FRAME' === $cluster->getRole()) {
+                    return $cluster;
+                }
+            }
+        }
+
+        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->selectableClusterCount($bikeRide, $clusters)) {
             return $userCluster;
         }
 
@@ -84,10 +92,6 @@ class SessionService
                     if (count($this->clusterService->getMemberSessions($cluster)) <= $cluster->getMaxUsers()) {
                         $userCluster = $cluster;
                     }
-                }
-                    
-                if (null !== $cluster->getRole() && ($this->security->isGranted($cluster->getRole(), $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
-                    $userCluster = $cluster;
                 }
             }
 
@@ -135,5 +139,19 @@ class SessionService
         ];
 
         return $interval;
+    }
+
+    private function selectableClusterCount(BikeRide $bikeRide, Collection $clusters): int
+    {
+        if (!$bikeRide->getBikeRideType()->isNeedFramers()) {
+            return $clusters->count();
+        }
+        $count = 0;
+        foreach ($clusters as $cluster) {
+            if ('ROLE_FRAME' !== $cluster->getRole()) {
+                ++$count;
+            }
+        }
+        return $count;
     }
 }

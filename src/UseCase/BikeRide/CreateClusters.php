@@ -20,6 +20,9 @@ class CreateClusters
     
     public function execute($bikeRide)
     {
+        if ($bikeRide->getBikeRideType()->isNeedFramers()) {
+            $this->addFramer($bikeRide);
+        }
         if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
             $this->addSchoolClusters($bikeRide);
         }
@@ -30,12 +33,6 @@ class CreateClusters
 
     private function addSchoolClusters(BikeRide $bikeRide): void
     {
-        $cluster = new Cluster();
-        $cluster->setTitle(Cluster::CLUSTER_FRAME)
-            ->setRole('ROLE_FRAME')
-        ;
-        $bikeRide->addCluster($cluster);
-        $this->entityManager->persist($cluster);
         $levels = $this->levelRepository->findAllTypeMember();
         if (null !== $levels) {
             foreach ($levels as $level) {
@@ -58,5 +55,15 @@ class CreateClusters
             $bikeRide->addCluster($cluster);
             $this->entityManager->persist($cluster);
         }
+    }
+
+    private function addFramer(BikeRide $bikeRide): void
+    {
+        $cluster = new Cluster();
+        $cluster->setTitle(Cluster::CLUSTER_FRAME)
+            ->setRole('ROLE_FRAME')
+        ;
+        $bikeRide->addCluster($cluster);
+        $this->entityManager->persist($cluster);
     }
 }

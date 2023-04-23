@@ -54,7 +54,8 @@ class BikeRideType
     private int $registration = self::REGISTRATION_NONE;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $clusterChoice = false;
+    private bool $needFramers = false;
+
 
     public function __construct()
     {
@@ -211,14 +212,14 @@ class BikeRideType
         return $this;
     }
 
-    public function isClusterChoice(): ?bool
+    public function isNeedFramers(): bool
     {
-        return $this->clusterChoice;
+        return $this->needFramers;
     }
 
-    public function setClusterChoice(bool $clusterChoice): self
+    public function setNeedFramers(bool $needFramers): self
     {
-        $this->clusterChoice = $clusterChoice;
+        $this->needFramers = $needFramers;
 
         return $this;
     }

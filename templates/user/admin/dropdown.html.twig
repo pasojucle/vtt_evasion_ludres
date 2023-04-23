@@ -10,7 +10,7 @@
         {% if user.approvalGoingHome is not null %}
           <li class="info ">{{ user.approvalGoingHome.class.icon|raw }} {{ user.approvalGoingHome.message }}</li>
         {% endif %}
-        {% if hasClusters and not cluster.isComplete and (session.availability is empty or session.availability.value == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+        {% if bikeRide.clusters is not empty and not cluster.isComplete and (session.availability is empty or session.availability.value == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
           <li><a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.entity.id}) }}" class="dropdown-item" title="Changer de groupe">
               <i class="fa-solid fa-rotate"></i> Changer de groupe
           </a></li>

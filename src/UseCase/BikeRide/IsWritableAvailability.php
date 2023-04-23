@@ -15,15 +15,13 @@ class IsWritableAvailability
     public function execute(BikeRide $bikeRide, ?User $user): bool
     {
         $bikeRideType = $bikeRide->getBikeRideType();
-        ;
+
         if (BikeRideType::REGISTRATION_NONE === $bikeRideType->getRegistration()) {
             return false;
         }
 
-        $level = (null !== $user) ? $user->getLevel() : null;
-        $type = (null !== $level) ? $level->getType() : null;
         $today = new DateTimeImmutable();
-        
-        return Level::TYPE_FRAME === $type && BikeRideType::REGISTRATION_SCHOOL === $bikeRideType->getRegistration() && $today->setTime(0, 0, 0) <= $bikeRide->getStartAt()->setTime(23, 59, 59);
+       
+        return Level::TYPE_FRAME === $user?->getLevel()?->getType() && $bikeRideType->isNeedFramers() && $today->setTime(0, 0, 0) <= $bikeRide->getStartAt()->setTime(23, 59, 59);
     }
 }

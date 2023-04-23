@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Blank;
 
 class BikeRideTypeType extends AbstractType
 {
@@ -36,6 +35,17 @@ class BikeRideTypeType extends AbstractType
                 'config_name' => 'minimum_config',
                 'row_attr' => [
                     'class' => 'form-group',
+                ],
+            ])
+            ->add('needFramers', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Nécessites un encadrement',
+                    'data-switch-off' => 'Sans encadrement',
                 ],
             ])
             ->add('isCompensable', CheckboxType::class, [
@@ -68,8 +78,8 @@ class BikeRideTypeType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
                 'attr' => [
-                    'data-switch-on' => 'Afficher le niveau des inscrits',
-                    'data-switch-off' => 'ne pas afficher le niveau des inscrits',
+                    'data-switch-on' => 'Afficher le niveau des participants',
+                    'data-switch-off' => 'ne pas afficher le niveau des participants',
                 ],
             ])
             ->add('showMemberList', CheckboxType::class, [

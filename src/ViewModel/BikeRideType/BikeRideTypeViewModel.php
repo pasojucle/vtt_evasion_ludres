@@ -23,6 +23,8 @@ class BikeRideTypeViewModel extends AbstractViewModel
 
     public ?bool $isShowMemberList;
 
+    public bool $isNeedFramers = false;
+
     public static function fromBikeRideType(BikeRideType $bikeRideType)
     {
         $bikeRideTypeView = new self();
@@ -32,7 +34,7 @@ class BikeRideTypeViewModel extends AbstractViewModel
         $bikeRideTypeView->isShowMemberList = $bikeRideType->isShowMemberList();
         $bikeRideTypeView->isSchool = BikeRideType::REGISTRATION_SCHOOL === $bikeRideType->getRegistration();
         $bikeRideTypeView->isRegistrable = BikeRideType::REGISTRATION_NONE !== $bikeRideType->getRegistration();
-        ;
+        $bikeRideTypeView->isNeedFramers = $bikeRideType->isNeedFramers();
         
 
         return $bikeRideTypeView;
