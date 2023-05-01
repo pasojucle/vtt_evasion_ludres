@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\BikeRideType;
+use App\Entity\Cluster;
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Form\HiddenClusterType;
 use App\Service\SeasonService;
+use App\Service\SessionService;
 use App\Validator\SessionUniqueMember;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,7 +26,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class SessionType extends AbstractType
 {
-    public function __construct(private SeasonService $seasonService)
+    public function __construct(private SeasonService $seasonService, private SessionService $sessionService)
     {
     }
 
@@ -71,6 +76,7 @@ class SessionType extends AbstractType
                     'placeholder' => 'Saisissez un nom et prénom',
                     'width' => '100%',
                     'label' => 'Participant',
+                    'required' => true,
                     'remote_params' => [
                         'filters' => json_encode($filters),
                     ],
@@ -81,9 +87,27 @@ class SessionType extends AbstractType
                 ]);
         };
     
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier, $options) {
             $form = $event->getForm();
             $data = $event->getData();
+
+            $bikeRide = $options['bikeRide'];
+            if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
+                $form
+                        ->add('cluster', EntityType::class, [
+                            'label' => false,
+                            'class' => Cluster::class,
+                            'choices' => $bikeRide->getClusters(),
+                            'expanded' => true,
+                            'multiple' => false,
+                            'block_prefix' => 'customcheck',
+                        ])
+                    ;
+            } else {
+                $form
+                        ->add('cluster', HiddenClusterType::class)
+                    ;
+            }
 
             $formModifier($form, $data['season']);
         });
@@ -101,6 +125,7 @@ class SessionType extends AbstractType
     {
         $resolver->setDefaults([
             'filters' => null,
+            'bikeRide' => null,
         ]);
     }
 

@@ -16,7 +16,6 @@ use App\ViewModel\UserPresenter;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class SessionService
 {
@@ -29,8 +28,7 @@ class SessionService
         private ParameterService $parameterService,
         private ClusterService $clusterService,
         private SessionPresenter $sessionPresenter,
-        private SessionsPresenter $sessionsPresenter,
-        private Security $security
+        private SessionsPresenter $sessionsPresenter
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
@@ -72,7 +70,8 @@ class SessionService
     public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): ?Cluster
     {
         $userCluster = null;
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && ($this->security->isGranted('ROLE_FRAME', $user) || Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType())) {
+
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_SCHOOL_MEMBER !== $user->getLevel()->getType()) {
             foreach ($bikeRide->getClusters() as $cluster) {
                 if ('ROLE_FRAME' === $cluster->getRole()) {
                     return $cluster;
@@ -106,10 +105,19 @@ class SessionService
             }
         }
 
+        if (null === $userCluster) {
+            foreach ($bikeRide->getClusters() as $cluster) {
+                if ('ROLE_FRAME' !== $cluster->getRole()) {
+                    $userCluster = $cluster;
+                    continue;
+                }
+            }
+        }
+
         if (null === $userCluster && 0 < $clusters->count()) {
             $userCluster = $clusters->first();
         }
-
+        
         return $userCluster;
     }
 
@@ -141,7 +149,7 @@ class SessionService
         return $interval;
     }
 
-    private function selectableClusterCount(BikeRide $bikeRide, Collection $clusters): int
+    public function selectableClusterCount(BikeRide $bikeRide, Collection $clusters): int
     {
         if (!$bikeRide->getBikeRideType()->isNeedFramers()) {
             return $clusters->count();

@@ -81,18 +81,24 @@ class SessionController extends AbstractController
     ): Response {
         $clusters = $bikeRide->getClusters();
         $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
-        $form = $this->createForm(SessionType::class, ['season' => 'SEASON_' . $seasonService->getCurrentSeason()], ['filters' => ['bikeRide' => $bikeRide->getId()]]);
+        $form = $this->createForm(SessionType::class, ['season' => 'SEASON_' . $seasonService->getCurrentSeason()], [
+            'filters' => ['bikeRide' => $bikeRide->getId()],
+            'bikeRide' => $bikeRide,
+        ]);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $user = $data['user'];
-            $userSession = new Session();
             
-            $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
+            $userSession = new Session();
+            $userCluster = $data['cluster'];
+            if (null === $userCluster) {
+                $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
+            }
             $userSession->setUser($user)
                 ->setCluster($userCluster);
-            if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
+            if ($bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
                 $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
             }
             $user->addSession($userSession);

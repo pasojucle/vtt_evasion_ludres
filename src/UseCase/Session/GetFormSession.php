@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\UseCase\Session;
 
 use App\Entity\BikeRide;
-use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
