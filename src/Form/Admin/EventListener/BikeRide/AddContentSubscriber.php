@@ -8,7 +8,6 @@ use App\Entity\BikeRideType as BikeRideKind;
 use App\Entity\Level;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideTypeRepository;
-use App\Service\LevelService;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -56,6 +55,7 @@ class AddContentSubscriber implements EventSubscriberInterface
         if ($bikeRide->getBikeRideType()->getId() !== $bikeRideTypeId) {
             $data['content'] = $bikeRideType->getContent();
             $data['title'] = $bikeRideType->getName();
+            $data['closingDuration'] = $bikeRideType->getClosingDuration();
         }
         $event->setData($data);
        

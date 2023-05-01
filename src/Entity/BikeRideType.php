@@ -56,6 +56,9 @@ class BikeRideType
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $needFramers = false;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $closingDuration = null;
+
 
     public function __construct()
     {
@@ -220,6 +223,18 @@ class BikeRideType
     public function setNeedFramers(bool $needFramers): self
     {
         $this->needFramers = $needFramers;
+
+        return $this;
+    }
+
+    public function getClosingDuration(): ?int
+    {
+        return $this->closingDuration;
+    }
+
+    public function setClosingDuration(int $closingDuration): self
+    {
+        $this->closingDuration = $closingDuration;
 
         return $this;
     }

@@ -28,8 +28,11 @@ class BikeRideType extends AbstractType
     public const RESTRICTION_TO_LEVELS = 2;
     public const RESTRICTION_TO_MIN_AGE = 3;
 
-    public function __construct(private LevelService $levelService, private BikeRideTypeRepository $bikeRideTypeRepository, private UserRepository $userRepository)
-    {
+    public function __construct(
+        private LevelService $levelService,
+        private BikeRideTypeRepository $bikeRideTypeRepository,
+        private UserRepository $userRepository
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

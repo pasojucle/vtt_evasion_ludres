@@ -11,10 +11,8 @@ use App\Service\LevelService;
 use App\Service\SeasonService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -49,11 +47,7 @@ class AddRestriptionSubscriber implements EventSubscriberInterface
 
         $data = $event->getData();
 
-        dump($data);
-
-        dump($event->getForm());
         if (array_key_exists('addFramers', $data) && (bool) $data['addFramers']) {
-            dump($event->getForm()->get('addFramers')->getData());
             $this->addFramers($data);
         }
         

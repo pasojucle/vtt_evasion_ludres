@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -92,6 +93,17 @@ class BikeRideTypeType extends AbstractType
                 'attr' => [
                     'data-switch-on' => 'Afficher la liste des participants à l\'inscrition',
                     'data-switch-off' => 'ne pas afficher la liste des participants à l\'inscrition',
+                ],
+            ])
+            ->add('closingDuration', IntegerType::class, [
+                'label' => 'Fin d\'inscription (nbr de jours avant)',
+                'required' => false,
+                'attr' => [
+                    'min' => 0,
+                    'max' => 90,
+                ],
+                'row_attr' => [
+                    'class' => 'form-group-inline',
                 ],
             ])
             ->add('save', SubmitType::class, [
