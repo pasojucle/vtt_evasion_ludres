@@ -22,6 +22,9 @@
                 <div class="form-group">
                     {{ form_row(form.registration) }}
                 </div>
+                <div class="form-group">
+                    {{ form_row(form.closingDuration) }}
+                </div>
 
                 {% if form.clusters is defined %}
                     <b>{{ form_label(form.clusters) }}</b>
@@ -54,9 +57,6 @@
                 </div>
                 <div class="form-group switch-group">
                     {{ form_errors(form) }}
-                </div>
-                 <div class="form-group">
-                    {{ form_row(form.closingDuration) }}
                 </div>
             </div>
             <div class="wrapper-footer">
