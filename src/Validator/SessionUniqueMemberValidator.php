@@ -31,7 +31,7 @@ class SessionUniqueMemberValidator extends ConstraintValidator
 
         $clusters = unserialize($this->request->getSession()->get('admin_session_add_clusters'));
 
-        if ($this->sessionRepository->findByUserAndClusters($data['user'], $clusters)) {
+        if ($this->sessionRepository->findOneByUserAndClusters($data['user'], $clusters)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ name }}', $value['name'])
                 ->setParameter('{{ firstName }}', $value['firstName'])

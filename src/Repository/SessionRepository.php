@@ -30,9 +30,10 @@ class SessionRepository extends ServiceEntityRepository
         parent::__construct($registry, Session::class);
     }
 
-    public function findByUserAndClusters(User $user, Collection $clusers): ?Session
+    public function findOneByUserAndClusters(User $user, Collection $clusers): ?Session
     {
-        return $this->createQueryBuilder('s')
+        try {
+            return $this->createQueryBuilder('s')
             ->andWhere(
                 (new Expr())->in('s.cluster', ':clusers'),
                 (new Expr())->eq('s.user', ':user'),
@@ -41,7 +42,29 @@ class SessionRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult()
-        ;
+            ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
+    }
+
+    public function findOneByUserAndBikeRide(User $user, BikeRide $bikeRide): ?Session
+    {
+        try {
+            return $this->createQueryBuilder('s')
+            ->join('s.cluster', 'c')
+            ->andWhere(
+                (new Expr())->eq('c.bikeRide', ':bikeRide'),
+                (new Expr())->eq('s.user', ':user'),
+            )
+            ->setParameter('bikeRide', $bikeRide)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 
     public function findByBikeRide(BikeRide $bikeRide): array

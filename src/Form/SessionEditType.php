@@ -24,38 +24,33 @@ class SessionEditType extends AbstractType
 
             if (true === $options['is_writable_availability']) {
                 $form
-                        ->add('availability', ChoiceType::class, [
-                            'label' => false,
-                            'choices' => array_flip(Session::AVAILABILITIES),
-                            'expanded' => true,
-                            'multiple' => false,
-                            'block_prefix' => 'customcheck',
-                            'disabled' => $options['is_already_registered'],
-                        ])
-                    ;
+                    ->add('availability', ChoiceType::class, [
+                        'label' => false,
+                        'choices' => array_flip(Session::AVAILABILITIES),
+                        'expanded' => true,
+                        'multiple' => false,
+                        'block_prefix' => 'customcheck',
+                    ]);
             } else {
                 if (null === $session->getCluster()) {
                     $form
-                            ->add('cluster', EntityType::class, [
-                                'label' => false,
-                                'class' => Cluster::class,
-                                'choices' => $options['clusters'],
-                                'expanded' => true,
-                                'multiple' => false,
-                                'block_prefix' => 'customcheck',
-                            ])
-                        ;
+                        ->add('cluster', EntityType::class, [
+                            'label' => false,
+                            'class' => Cluster::class,
+                            'choices' => $options['clusters'],
+                            'expanded' => true,
+                            'multiple' => false,
+                            'block_prefix' => 'customcheck',
+                        ]);
                 } else {
                     $form
-                            ->add('cluster', HiddenClusterType::class)
-                        ;
+                        ->add('cluster', HiddenClusterType::class);
                 }
             }
         });
-        
+
         $builder
-            ->add('user', HiddenUserType::class)
-        ;
+            ->add('user', HiddenUserType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -64,9 +59,6 @@ class SessionEditType extends AbstractType
             'data_class' => Session::class,
             'clusters' => [],
             'is_writable_availability' => false,
-            'is_already_registered' => false,
-            'is_end_testing' => false,
-            'submited_label' => null,
         ]);
     }
 }

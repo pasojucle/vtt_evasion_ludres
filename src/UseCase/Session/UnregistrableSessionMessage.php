@@ -8,6 +8,7 @@ use App\Entity\BikeRide;
 use App\Entity\Licence;
 use App\Entity\Respondent;
 use App\Entity\User;
+use App\Repository\SessionRepository;
 use App\Service\ParameterService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
@@ -25,7 +26,8 @@ class UnregistrableSessionMessage
         private IsRegistrable $isRegistrable,
         private IsWritableAvailability $isWritableAvailability,
         private ReplaceKeywordsService $replaceKeywordsService,
-        private UserPresenter $userPresenter
+        private UserPresenter $userPresenter,
+        private SessionRepository $sessionRepository
     ) {
     }
 
@@ -33,14 +35,22 @@ class UnregistrableSessionMessage
     {
         $isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
         $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
+        $this->userPresenter->present($user);
 
         if (!$isRegistrable && !$isWritableAvailability) {
             return 'Inscription impossible';
         }
 
         if (!$this->checkSeasonLicence($user)) {
-            $this->userPresenter->present($user);
             return $this->replaceKeywordsService->replace($this->userPresenter->viewModel(), $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'));
+        }
+
+        if (null !== $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {
+            return 'Votre inscription a déjà été prise en compte !';
+        }
+
+        if ($this->userPresenter->viewModel()->isEndTesting()) {
+            return 'Votre période d\'essai est terminée ! Pour continuer à participer aux sorties, inscrivez-vous.';
         }
 
         return null;

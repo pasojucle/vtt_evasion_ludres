@@ -7,7 +7,6 @@ namespace App\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,20 +15,11 @@ class SessionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $submitLabel = null;
+        $submitLabel = (true === $options['is_writable_availability']) ? 'Enregistrer' : 'S\'inscrire';
 
-        if (!$options['is_already_registered'] && !$options['is_end_testing']) {
-            $submitLabel = (true === $options['is_writable_availability'])
-                ? 'Enregistrer' : 'S\'inscrire';
-        }
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $data = $event->getData();
-            if ($options['is_already_registered']) {
-                $form->addError(new FormError('Votre inscription a déjà été prise en compte !'));
-            } elseif ($options['is_end_testing']) {
-                $form->addError(new FormError('Votre période d\'essai est terminée ! Pour continuer à participer aux sorties, inscrivez-vous.'));
-            }
 
             if (null !== $data['responses']) {
                 $form
@@ -44,23 +34,15 @@ class SessionType extends AbstractType
                 'label' => false,
                 'clusters' => $options['clusters'],
                 'is_writable_availability' => $options['is_writable_availability'],
-                'is_already_registered' => $options['is_already_registered'],
-                'is_end_testing' => false,
-                'submited_label' => $submitLabel,
             ])
-        ;
 
-        if (null !== $submitLabel) {
-            $builder
-                ->add('submit', SubmitType::class, [
-                    'label' => '<i class="fas fa-chevron-circle-right"></i> ' . $submitLabel,
-                    'label_html' => true,
-                    'attr' => [
-                        'class' => 'btn btn-primary float-right',
-                    ],
-                ])
-            ;
-        }
+            ->add('submit', SubmitType::class, [
+                'label' => '<i class="fas fa-chevron-circle-right"></i> ' . $submitLabel,
+                'label_html' => true,
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -68,8 +50,6 @@ class SessionType extends AbstractType
         $resolver->setDefaults([
             'clusters' => [],
             'is_writable_availability' => false,
-            'is_already_registered' => false,
-            'is_end_testing' => false,
         ]);
     }
 }

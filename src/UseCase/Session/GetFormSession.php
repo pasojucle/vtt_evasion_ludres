@@ -37,7 +37,7 @@ class GetFormSession
     public function execute(User $user, BikeRide $bikeRide): FormInterface
     {
         $clusters = $this->getBikeRideClusters($bikeRide);
-        list($isAlreadyRegistered, $userSession) = $this->getUserSession($bikeRide, $user, $clusters);
+        $userSession = $this->getUserSession($bikeRide, $user, $clusters);
 
         $this->userPresenter->present($user);
         $sessions = (null !== $userSession->getAvailability())
@@ -46,9 +46,9 @@ class GetFormSession
 
         $isEndTesting = $this->userPresenter->viewModel()->isEndTesting();
 
-        $form = $this->getForm($userSession, $bikeRide, $clusters, $isAlreadyRegistered, $isEndTesting);
+        $form = $this->getForm($userSession, $bikeRide, $clusters, $isEndTesting);
 
-        $this->setParams($form, $bikeRide, $sessions, $isAlreadyRegistered, $isEndTesting);
+        $this->setParams($form, $bikeRide, $sessions);
 
         return $form;
     }
@@ -83,10 +83,9 @@ class GetFormSession
         return $surveyResponses;
     }
 
-    private function getUserSession(BikeRide $bikeRide, User $user, Collection $clusters): array
+    private function getUserSession(BikeRide $bikeRide, User $user, Collection $clusters): Session
     {
-        $userSession = $this->sessionRepository->findByUserAndClusters($user, $clusters);
-        $isAlreadyRegistered = ($userSession) ? true : false;
+        $userSession = $this->sessionRepository->findOneByUserAndClusters($user, $clusters);
 
         if (null === $userSession) {
             $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
@@ -99,10 +98,10 @@ class GetFormSession
             }
         }
 
-        return [$isAlreadyRegistered, $userSession];
+        return $userSession;
     }
 
-    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isAlreadyRegistered, bool $isEndTesting): FormInterface
+    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isEndTesting): FormInterface
     {
         return $this->formFactory->create(SessionType::class, [
             'session' => $userSession,
@@ -110,19 +109,15 @@ class GetFormSession
         ], [
             'clusters' => $clusters,
             'is_writable_availability' => $this->isWritableAvailability->execute($bikeRide, $userSession->getUser()),
-            'is_already_registered' => $isAlreadyRegistered,
-            'is_end_testing' => $isEndTesting
         ]);
     }
 
-    private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions, bool $isAlreadyRegistered, bool $isEndTesting): void
+    private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions): void
     {
         $this->params = [
             'form' => $form->createView(),
             'bikeRide' => $bikeRide,
             'sessions' => $sessions,
-            'is_already_registered' => $isAlreadyRegistered,
-            'is_end_testing' => $isEndTesting,
         ];
     }
 }
