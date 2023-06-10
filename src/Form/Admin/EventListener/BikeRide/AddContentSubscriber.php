@@ -48,16 +48,15 @@ class AddContentSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
         $bikeRideTypeId = (array_key_exists('bikeRideType', $data)) ? (int)$data['bikeRideType'] : null;
-        $bikeRide = $event->getForm()->getData();
-
         $bikeRideType = $this->bikeRideTypeRepository->find($bikeRideTypeId);
         
-        if ($bikeRide->getBikeRideType()->getId() !== $bikeRideTypeId) {
+        if (array_key_exists('bikeRideTypeChanged', $data) && 1 === (int)$data['bikeRideTypeChanged']) {
             $data['content'] = $bikeRideType->getContent();
             $data['title'] = $bikeRideType->getName();
-            $data['closingDuration'] = $bikeRideType->getClosingDuration();
+            $data['closingDuration'] = $bikeRideType->getClosingDuration() ?? 0;
+            $data['bikeRideTypeChanged'] = 0;
+            $event->setData($data);
         }
-        $event->setData($data);
        
         $this->modifier($event->getForm(), $bikeRideType);
     }

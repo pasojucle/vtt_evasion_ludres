@@ -71,6 +71,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
         document.querySelector('.select2-search__field[aria-controls="customSelect2-'+id+'-results"]').focus();
     });
     $(document).on('click', '#user_search_submit', confirmDeleteUser)
+    if (document.querySelector('select#bike_ride_bikeRideType')){
+        document.querySelector('select#bike_ride_bikeRideType').addEventListener('change', handleChangeBikeRideType)
+    }
 });
 
 function confirmDeleteUser(e) {
@@ -368,4 +371,8 @@ function resize(object) {
 
 const initAddItemLink = () => {
     document.querySelectorAll('.add_item_link').forEach(btn => btn.addEventListener("click", addFormToCollection));
+}
+
+const handleChangeBikeRideType = () => {
+    document.querySelector('#bike_ride_bikeRideTypeChanged').value = 1;
 }
