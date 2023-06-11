@@ -10,6 +10,7 @@ use App\Entity\Level;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
+use App\Repository\SessionRepository;
 use App\Service\SeasonService;
 use App\Service\SessionService;
 use App\ViewModel\BikeRide\BikeRidePresenter;
@@ -24,7 +25,8 @@ class SessionController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private SessionService $sessionService
+        private SessionService $sessionService,
+        private SessionRepository $sessionRepository
     ) {
     }
 
@@ -90,28 +92,31 @@ class SessionController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $user = $data['user'];
-            
-            $userSession = new Session();
-            $userCluster = $data['cluster'];
-            if (null === $userCluster) {
-                $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
+
+            if (null === $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {
+                $userSession = new Session();
+                $userCluster = $data['cluster'];
+                if (null === $userCluster) {
+                    $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
+                }
+                $userSession->setUser($user)
+                    ->setCluster($userCluster);
+                if ($bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
+                    $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
+                }
+                $user->addSession($userSession);
+                $this->entityManager->persist($userSession);
+
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Le participant a bien été inscrit');
+
+                $this->sessionService->checkEndTesting($user);
+
+                return $this->redirectToRoute('admin_bike_ride_cluster_show', [
+                    'bikeRide' => $bikeRide->getId(),
+                ]);
             }
-            $userSession->setUser($user)
-                ->setCluster($userCluster);
-            if ($bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
-                $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
-            }
-            $user->addSession($userSession);
-            $this->entityManager->persist($userSession);
-
-            $this->entityManager->flush();
-            $this->addFlash('success', 'Le participant a bien été inscrit');
-
-            $this->sessionService->checkEndTesting($user);
-
-            return $this->redirectToRoute('admin_bike_ride_cluster_show', [
-                'bikeRide' => $bikeRide->getId(),
-            ]);
+            $this->addFlash('danger', 'Le participant est déjà inscrit');
         }
 
         $bikeRidePresenter->present($bikeRide);
