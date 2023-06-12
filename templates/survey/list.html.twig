@@ -21,20 +21,37 @@
                         <ul>
                             {% for survey in surveys %}
                                 <li>
-                                    <div class="row">
-                                        <div class="col-md-5"><b>{{ survey.title }}</b></div>
+                                    <div class="row background-ligth list-dropdown mb-20" data-toggle="bike-ride-content">
 
-                                        {% if survey in respondents.surveys %}
-                                            <div class="col-md-7">
-                                                <span class="info">Sondage éffectué le {{ respondents.surveysCreatedAt[survey.id]|date('d/m/Y H:i:s') }}</span>
-                                            </div>
-                                        {% else %}
-                                            <div class="col-md-4">du {{ survey.startAt|date('d/m/Y') }} au {{ survey.endAt|date('d/m/Y') }}</div>
-                                            <div class="col-md-3">
-                                                <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Participer</a>
-                                            </div>
-                                        {% endif %}
-                                    </div>
+                                            <div class="col-md-4"><b>{{ survey.title }}</b></div>
+
+                                            {% if survey.id in respondents|keys %}
+                                                {% set user_survey = respondents[survey.id]%}
+                                                <div class="col-md-8">
+                                                    <span class="info">Sondage éffectué le {{ user_survey.createdAt|date('d/m/Y H:i:s') }}</span>
+                                                    <div class="mt-10">
+                                                        <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Détail</span>
+                                                    </div>
+                                                    <div class="info-dropdown"  data-target="bike-ride-content">
+                                                        <p>{{ survey.content|raw }}</p>
+                                                        <ul class="mt-10">
+                                                            {% for response in user_survey.responses %}
+                                                            <li class="list">
+                                                                <span class="fst-italic">{{ response.issue }} : </span>
+                                                                <span>{{ response.value }}</span>
+                                                            </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="col-md-5">du {{ survey.startAt|date('d/m/Y') }} au {{ survey.endAt|date('d/m/Y') }}</div>
+                                                <div class="col-md-3">
+                                                    <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Participer</a>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
                                 </li>
                             {% endfor %}
                         </ul>

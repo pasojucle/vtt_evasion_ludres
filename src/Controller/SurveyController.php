@@ -11,6 +11,8 @@ use App\Entity\User;
 use App\Form\SurveyResponsesType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyRepository;
+use App\ViewModel\Survey\SurveyPresenter;
+use App\ViewModel\UserPresenter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -108,15 +110,32 @@ class SurveyController extends AbstractController
     #[Route('/mes_sondages', name: 'user_surveys', methods: ['GET'])]
     public function surveys(
         SurveyRepository $surveyRepository,
-        RespondentRepository $respondentRepository
+        RespondentRepository $respondentRepository,
+        UserPresenter $userPresenter,
+        SurveyPresenter $surveyPresenter,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         /** @var ?User $user */
         $user = $this->getUser();
+        $userPresenter->present($user);
+
+        $userSurveys = $respondentRepository->findActiveSurveysByUser($user);
+        $respondents = [];
+        if (!empty($userSurveys)) {
+            foreach ($userSurveys as $userSurvey) {
+                $survey = $userSurvey->getSurvey();
+                $surveyPresenter->present($survey);
+                $respondents[$survey->getId()] = [
+                    'createdAt' => $userSurvey->getCreatedAt(),
+                    'responses' => $surveyPresenter->viewModel()->getResponsesByUser($userPresenter->viewModel())->surveyResponses,
+                ];
+            }
+        }
+
         return $this->render('survey/list.html.twig', [
             'surveys' => $surveyRepository->findActive($user),
-            'respondents' => $respondentRepository->findActiveSurveysByUser($user),
+            'respondents' => $respondents,
         ]);
     }
 }

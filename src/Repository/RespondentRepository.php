@@ -47,7 +47,7 @@ class RespondentRepository extends ServiceEntityRepository
 
     public function findActiveSurveysByUser(User $user): array
     {
-        $userSurveys = $this->createQueryBuilder('vu')
+        return  $this->createQueryBuilder('vu')
             ->join('vu.survey', 'v')
             ->andWhere(
                 (new Expr())->eq('vu.user', ':user'),
@@ -61,20 +61,6 @@ class RespondentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
-        $surveys = [];
-        $surveysCreatedAt = [];
-        if (!empty($userSurveys)) {
-            foreach ($userSurveys as $userSurvey) {
-                $survey = $userSurvey->getSurvey();
-                $surveys[] = $survey;
-                $surveysCreatedAt[$survey->getId()] = $userSurvey->getCreatedAt();
-            }
-        }
-
-        return [
-            'surveys' => $surveys,
-            'surveysCreatedAt' => $surveysCreatedAt,
-        ];
     }
 
     
