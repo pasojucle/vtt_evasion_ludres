@@ -71,7 +71,7 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/{survey}', name: 'admin_survey', methods: ['GET', 'POST'])]
+    #[Route('/{survey}', name: 'admin_survey', methods: ['GET', 'POST'], requirements: ['survey' => '\d+'])]
     public function show(
         GetSurveyResults $getSurveyResults,
         Request $request,
@@ -79,6 +79,7 @@ class SurveyController extends AbstractController
         SurveyIssueRepository $surveyIssueRepository,
         Survey $survey
     ): Response {
+        $session = $request->getSession();
         $issues = $surveyIssueRepository->findBySurvey($survey);
 
         $filter = ['issue' => $issues[0]];
@@ -90,6 +91,7 @@ class SurveyController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filter = $form->getData();
         }
+        $session->set('admin_survey_filter', $filter);
         $responses = $getSurveyResults->execute($filter);
         $surveyResponsesPresenter->present($responses);
 
@@ -98,6 +100,26 @@ class SurveyController extends AbstractController
             'responses' => $surveyResponsesPresenter->viewModel()->surveyResponses,
             'form' => $form->createView(),
         ]);
+    }
+
+
+    #[Route('/emails', name: 'admin_survey_email_to_clipboard', methods: ['GET'])]
+    public function adminEmailSurvey(
+        GetSurveyResults $getSurveyResults,
+        SurveyResponsesPresenter $surveyResponsesPresenter,
+        Request $request
+    ): JsonResponse {
+        $session = $request->getSession();
+        $filter = $session->get('admin_survey_filter');
+        $responses = $getSurveyResults->execute($filter);
+        $surveyResponsesPresenter->present($responses);
+
+        $emails = [];
+        foreach ($surveyResponsesPresenter->viewModel()->surveyResponses as $response) {
+            $emails[] = $response->user->mainEmail;
+        }
+
+        return new JsonResponse(implode(',', $emails));
     }
 
     #[Route('/anonyme/{survey}/{tab}', name: 'admin_anonymous_survey', methods: ['GET'], defaults: [

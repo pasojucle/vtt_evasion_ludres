@@ -6,6 +6,14 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>{{ survey.title }}</h1>
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                <div class="dropdown-menu" data-target="dropdown-tools">
+                    <ul class="dropdown-body">
+                        <li><a href="{{ path('admin_survey_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></li>
+                    </ul>
+                </div>
+            </div>
             <span class="tools">
                 <a href="{{ path('admin_surveys') }}" class="btn btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
             </span>
