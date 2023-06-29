@@ -23,7 +23,7 @@ class BikeRideTransformer implements DataTransformerInterface
     /**
      * @return ObjectManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManager
     {
         return $this->objectManager;
     }
@@ -53,7 +53,7 @@ class BikeRideTransformer implements DataTransformerInterface
      *
      * @return object|null
      */
-    public function reverseTransform($identifier)
+    public function reverseTransform($identifier): ?object
     {
         if (!$identifier) {
             return null;

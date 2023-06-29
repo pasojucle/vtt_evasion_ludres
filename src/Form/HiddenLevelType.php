@@ -19,7 +19,7 @@ class HiddenLevelType extends HiddenType
     {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // attach the specified model transformer for this entity list field
         // this will convert data between object and string formats

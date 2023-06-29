@@ -18,7 +18,7 @@ class UniqueMemberValidator extends ConstraintValidator
     ) {
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UniqueMember) {
             throw new UnexpectedTypeException($constraint, UniqueMember::class);

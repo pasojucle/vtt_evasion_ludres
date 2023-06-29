@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints\File;
 
 class ToolImportType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('userList', FileType::class, [

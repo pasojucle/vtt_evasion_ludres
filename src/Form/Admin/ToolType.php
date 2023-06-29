@@ -14,7 +14,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class ToolType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('user', Select2EntityType::class, [
@@ -55,7 +55,7 @@ class ToolType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'has_current_season' => false,

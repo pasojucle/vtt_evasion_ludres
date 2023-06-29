@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormEvents;
 
 class SurveyResponsesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('surveyResponses', CollectionType::class, [

@@ -20,7 +20,7 @@ class ParticipationFilterType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('season', ChoiceType::class, [

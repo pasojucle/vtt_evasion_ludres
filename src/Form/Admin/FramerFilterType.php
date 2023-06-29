@@ -14,7 +14,7 @@ use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class FramerFilterType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('user', Select2EntityType::class, [
@@ -61,7 +61,7 @@ class FramerFilterType extends AbstractType
         return array_flip($choices);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'filters' => [],

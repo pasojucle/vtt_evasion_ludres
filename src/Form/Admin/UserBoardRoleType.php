@@ -26,7 +26,7 @@ class UserBoardRoleType extends AbstractType
     public function __construct(private Security $security, private RoleHierarchyInterface $roleHierarchy)
     {
     }
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('level', EntityType::class, [
@@ -119,7 +119,7 @@ class UserBoardRoleType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,

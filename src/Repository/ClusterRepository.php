@@ -26,7 +26,7 @@ class ClusterRepository extends ServiceEntityRepository
     /**
      * @return Cluster[] Returns an array of Cluster objects
      */
-    public function findByBikeRide(BikeRide $bikeRide)
+    public function findByBikeRide(BikeRide $bikeRide): array
     {
         return $this->createQueryBuilder('c')
             ->andWhere(

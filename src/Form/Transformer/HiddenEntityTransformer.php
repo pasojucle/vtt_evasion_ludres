@@ -25,7 +25,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
     /**
      * @return ObjectManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManager
     {
         return $this->objectManager;
     }
@@ -37,7 +37,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
      *
      * @return string
      */
-    public function transform($entity)
+    public function transform($entity): string
     {
         if (null === $entity) {
             return '';
@@ -55,7 +55,7 @@ class HiddenEntityTransformer implements DataTransformerInterface
      *
      * @return object|null
      */
-    public function reverseTransform($identifier)
+    public function reverseTransform($identifier): ?object
     {
         if (!$identifier) {
             return null;

@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
 class LicenceValidateType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $disabled = count($options['licences']) > 1 || !$options['is_final'];
 
@@ -53,7 +53,7 @@ class LicenceValidateType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'licences' => [],

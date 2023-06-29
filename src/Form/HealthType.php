@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class HealthType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (null !== $options['current'] && UserType::FORM_HEALTH === $options['current']->getForm()) {
             $builder
@@ -55,7 +55,7 @@ class HealthType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Health::class,

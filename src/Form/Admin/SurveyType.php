@@ -31,7 +31,7 @@ class SurveyType extends AbstractType
     public const DISPLAY_BIKE_RIDE = 1;
     public const DISPLAY_MEMBER_LIST = 2;
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', TextType::class, [
@@ -189,7 +189,7 @@ class SurveyType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Survey::class,

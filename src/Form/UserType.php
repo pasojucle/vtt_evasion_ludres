@@ -69,7 +69,7 @@ class UserType extends AbstractType
         self::FORM_CHILDREN_GOING_HOME_ALONE => 'form_children.going_home_alone',
     ];
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (in_array($options['current']->getForm(), [self::FORM_HEALTH_QUESTION, self::FORM_HEALTH], true)) {
             $builder
@@ -190,7 +190,7 @@ class UserType extends AbstractType
         });
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,

@@ -36,7 +36,7 @@ class BikeRideType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('bikeRideType', EntityType::class, [
@@ -116,7 +116,7 @@ class BikeRideType extends AbstractType
         $builder->addEventSubscriber(new AddRestriptionSubscriber($this->levelService, $this->userRepository));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => BikeRide::class,

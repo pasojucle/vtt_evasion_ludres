@@ -19,7 +19,7 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
     {
     }
     
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof SchoolTestingRegistration) {
             throw new UnexpectedTypeException($constraint, SchoolTestingRegistration::class);

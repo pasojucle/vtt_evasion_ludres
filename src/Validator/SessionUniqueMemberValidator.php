@@ -18,7 +18,7 @@ class SessionUniqueMemberValidator extends ConstraintValidator
     ) {
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof SessionUniqueMember) {
             throw new UnexpectedTypeException($constraint, SessionUniqueMember::class);
