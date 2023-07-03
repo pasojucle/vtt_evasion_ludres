@@ -31,13 +31,13 @@ class HiddenEntityTransformer implements DataTransformerInterface
     }
 
     /**
-     * Transforms an object (entity) to a string (number).
+     * Transforms an object (entity) to a int (number).
      *
      * @param object|null $entity
      *
-     * @return string
+     * @return int
      */
-    public function transform($entity): string
+    public function transform($entity): int
     {
         if (null === $entity) {
             return '';
