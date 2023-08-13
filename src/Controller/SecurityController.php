@@ -53,6 +53,7 @@ class SecurityController extends AbstractController
             ]);
         }
 
+        $request->getSession()->remove('user_fullName');
         return $this->redirectToRoute('app_logout');
     }
 }

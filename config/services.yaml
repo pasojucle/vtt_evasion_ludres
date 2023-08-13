@@ -17,6 +17,17 @@ parameters:
     tmp_directory_path: '%kernel.project_dir%/data/tmp/'
     cmd_directory_path: '%kernel.project_dir%/data/cmd/'
     documentation_directory_path: '%kernel.project_dir%/data/documentation/'
+    project_directories: 
+        project: '%kernel.project_dir%'
+        public: 'public'
+        upload: 'public/uploads'
+        files: 'public/files'
+        products: 'public/uploads/products'
+        backgrounds: 'public/images/background'
+        data: 'data'
+        tmp: 'data/tmp'
+        cmd: 'data/cmd'
+        documentation: 'data/documentation'
     environment: '%env(APP_ENV)%'
     maintenance:
         ipAuthorized: ["127.0.0.1","88.166.188.236","86.216.124.78","81.51.249.36", "2a01:cb11:3e7:a00:44f1:6289:a76f:7283", "2a01:cb11:8a1:5000:69f7:2c40:a506:e3c4"] 
@@ -57,3 +68,11 @@ services:
     # App\EventListeners\ExceptionListener:
     #     tags:
     #         - { name: kernel.event_listener, event: kernel.exception }
+
+    App\EventListener\RegistrationChangeListener:
+        tags: 
+            - 
+                name: 'doctrine.orm.entity_listener'
+                event: 'postUpdate'
+        arguments: ['@App\Service\SeasonService']
+            

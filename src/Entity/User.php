@@ -101,6 +101,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ManyToOne(inversedBy: 'users')]
     private ?BoardRole $boardRole = null;
 
+    #[OneToMany(mappedBy: 'user', targetEntity: RegistrationChange::class)]
+    private Collection $registrationChanges;
+
     public function __construct()
     {
         $this->identities = new ArrayCollection();
@@ -112,6 +115,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->respondents = new ArrayCollection();
         $this->surveys = new ArrayCollection();
         $this->bikeRides = new ArrayCollection();
+        $this->registrationChanges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -614,6 +618,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBoardRole(?BoardRole $boardRole): self
     {
         $this->boardRole = $boardRole;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RegistrationChange>
+     */
+    public function getRegistrationChanges(): Collection
+    {
+        return $this->registrationChanges;
+    }
+
+    public function addRegistrationChange(RegistrationChange $registrationChange): static
+    {
+        if (!$this->registrationChanges->contains($registrationChange)) {
+            $this->registrationChanges->add($registrationChange);
+            $registrationChange->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistrationChange(RegistrationChange $registrationChange): static
+    {
+        if ($this->registrationChanges->removeElement($registrationChange)) {
+            // set the owning side to null (unless already changed)
+            if ($registrationChange->getUser() === $this) {
+                $registrationChange->setUser(null);
+            }
+        }
 
         return $this;
     }

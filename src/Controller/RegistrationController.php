@@ -101,11 +101,11 @@ class RegistrationController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $editRegistration->execute($request, $form, $progress);
-            if ($form->isValid()) {
-                return $this->redirectToRoute($request->attributes->get('_route'), [
-                    'step' => $progress['nextIndex'],
-                ]);
-            }
+            
+            return $this->redirectToRoute($request->attributes->get('_route'), [
+                'step' => $progress['nextIndex'],
+            ]);
+            
         }
 
         return $this->render('registration/registrationForm.html.twig', [

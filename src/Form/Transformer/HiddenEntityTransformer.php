@@ -37,10 +37,10 @@ class HiddenEntityTransformer implements DataTransformerInterface
      *
      * @return int
      */
-    public function transform($entity): int
+    public function transform($entity): ?int
     {
         if (null === $entity) {
-            return '';
+            return null;
         }
 
         return $entity->getId();

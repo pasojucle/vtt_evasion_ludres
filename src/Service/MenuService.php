@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+
+use Symfony\Component\HttpFoundation\RequestStack;
+
 class MenuService
 {
     private array $menus;
 
+    private array $user = [];
+
     private array $footer;
 
-    public function __construct()
+    public function __construct(
+        private RequestStack $requestStack
+    )
     {
         $this->menus = [
             [
@@ -98,6 +105,26 @@ class MenuService
                 'subMenus' => [],
             ],
         ];
+        
+        $this->user = [
+            [
+                'label' => 'Mon programme perso',
+                'route' => 'user_bike_rides',
+            ],
+            [
+                'label' => 'Mes infos',
+                'route' => 'user_account',
+            ],
+            [
+                'label' => 'Mes commandes',
+                'route' => 'user_orders',
+            ],
+            [
+                'label' => 'Sondages',
+                'route' => 'user_orders',
+            ],
+        ];
+
         $this->footer = [
             [
                 'label' => 'Réglement intérieur',
@@ -117,6 +144,16 @@ class MenuService
     public function getMenus(): array
     {
         return $this->menus;
+    }
+
+    public function getUser(): array
+    {
+        $fullName = $this->requestStack->getSession()->get('user_fullName');
+
+        return [
+            'fullName' => $fullName,
+            'menus' => ($fullName) ? $this->user : [],
+        ];
     }
 
     public function getFooter(): array
