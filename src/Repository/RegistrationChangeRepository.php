@@ -67,24 +67,24 @@ class RegistrationChangeRepository extends ServiceEntityRepository
     }
 
 
-    public function findOneBySeason(User $user, string $className, int $season): ?RegistrationChange
+    public function findBySeason(User $user, int $season): array
     {
-        try {
-            return $this->createQueryBuilder('r')
-                ->andWhere(
-                    (new Expr)->eq('r.entity', ':entity'),
-                    (new Expr)->eq('r.season', ':season'),
-                    (new Expr)->eq('r.user', ':user'),
-                )
-                ->setParameters([
-                    'entity' => $className,
-                    'season' => $season,
-                    'user' => $user
-                ])
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException) {
-            return null;
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere(
+                (new Expr)->eq('r.season', ':season'),
+                (new Expr)->eq('r.user', ':user'),
+            )
+            ->setParameters([
+                'season' => $season,
+                'user' => $user
+            ])
+            ->getQuery()
+            ->getResult();
+
+        $changes = [];
+        foreach($qb as $change) {
+            $changes[$change->getEntity()] = $change;
         }
+        return $changes;
     }
 }

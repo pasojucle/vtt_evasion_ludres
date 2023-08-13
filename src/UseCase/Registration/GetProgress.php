@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Entity\Address;
-use App\Entity\Approval;
-use App\Entity\Health;
-use App\Entity\HealthQuestion;
-use App\Entity\Identity;
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
+use App\Entity\Health;
 use App\Form\UserType;
-use App\Repository\LevelRepository;
-use App\Repository\RegistrationStepRepository;
-use App\Repository\UserRepository;
+use App\Entity\Address;
+use App\Entity\Licence;
+use App\Entity\Approval;
+use App\Entity\Identity;
 use App\Service\HealthService;
-use App\Service\LicenceService;
 use App\Service\SeasonService;
-use App\ViewModel\RegistrationStepPresenter;
-use App\ViewModel\UserPresenter;
+use App\Service\LicenceService;
+use App\Entity\RegistrationStep;
+use App\Repository\UserRepository;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Repository\RegistrationStepRepository;
+use App\Repository\RegistrationChangeRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 
 class GetProgress
 {
@@ -36,14 +36,15 @@ class GetProgress
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
         private LevelRepository $levelRepository,
-        private RegistrationStepPresenter $presenter,
-        private UserPresenter $userPresenter,
+        private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
+        private UserDtoTransformer $userDtoTransformer,
         private UserRepository $userRepository,
         private Security $security,
         private EntityManagerInterface $entityManager,
         private HealthService $healthService,
         private LicenceService $licenceService,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
+        private RegistrationChangeRepository $registrationChangeRepository,
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
@@ -55,15 +56,17 @@ class GetProgress
 
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
-
+        
         $stepIndex0 = $step - 1;
+        $changes = (UserType::FORM_OVERVIEW === $steps[$stepIndex0]->getForm()) ? $this->getChanges($this->user) : null;
+
         $progress = [];
         $progress['prevIndex'] = null;
         $progress['nextIndex'] = null;
         $progress['currentIndex'] = null;
         $progress['current'] = null;
         $progress['steps'] = null;
-
+        $userDto = $this->userDtoTransformer->fromEntity($this->user, $changes);
         foreach ($steps as $key => $registrationStep) {
             $index = $key + 1;
             $class = null;
@@ -78,12 +81,11 @@ class GetProgress
                     $progress['nextIndex'] = $index;
                 }
             }
-            $this->userPresenter->present($this->user);
-            $this->presenter->present($registrationStep, $this->userPresenter->viewModel(), $step, registrationStep::RENDER_VIEW, $class);
-            $progress['steps'][$index] = $this->presenter->viewModel();
+
+            $progress['steps'][$index] = $this->registrationStepDtoTransformer->fromEntity($registrationStep, $this->user, $step, registrationStep::RENDER_VIEW, $class);
         }
         $progress['current'] = $progress['steps'][$progress['currentIndex']];
-        $progress['user'] = $this->userPresenter->viewModel();
+        $progress['user'] = $userDto;
         // $progress['seasonLicence'] = $this->seasonLicence;
         $progress['season'] = $this->season;
         $progress['step'] = $step;
@@ -292,5 +294,11 @@ class GetProgress
                 }
             }
         }
+    }
+
+    private function getChanges(User $user): array
+    {
+        return $this->registrationChangeRepository->findBySeason($user, $this->season);
+
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\UserDto;
 use App\Repository\ParameterRepository;
-use App\ViewModel\UserViewModel;
 
 class ParameterService
 {
@@ -27,7 +27,7 @@ class ParameterService
         return $value;
     }
 
-    public function getSchoolTestingRegistration(UserViewModel $user): array
+    public function getSchoolTestingRegistration(UserDto $user): array
     {
         $value = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION');
         $message = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION_MESSAGE');

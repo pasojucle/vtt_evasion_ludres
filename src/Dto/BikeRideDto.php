@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Dto;
+
+use DateTimeImmutable;
+use App\Entity\BikeRide;
+
+
+class BikeRideDto
+{
+  
+    public ?BikeRide $entity;
+
+    public ?string $type;
+
+    public ?string $title;
+
+    public ?string $content;
+
+    public ?DateTimeImmutable $startAt;
+
+    public ?DateTimeImmutable $endAt;
+
+    public ?int $displayDuration;
+
+    public ?int $closingDuration;
+
+    public ?bool $isWritableAvailability;
+
+    public ?bool $isRegistrable;
+
+    public ?int $minAge;
+
+    public ?string $displayClass;
+
+    public ?string $btnLabel;
+
+    public ?string $period;
+
+    public BikeRideTypeDto $bikeRideType;
+
+    public ?SurveyDto $survey;
+
+    private ?DateTimeImmutable $today;
+
+    private ?DateTimeImmutable $displayAt;
+
+    private ?DateTimeImmutable $closingAt;
+
+    public ?string $filename;
+
+    public string $members = '';
+}

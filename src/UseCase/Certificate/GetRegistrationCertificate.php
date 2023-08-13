@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Certificate;
 
+use App\Dto\UserDto;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
@@ -11,10 +12,6 @@ use App\Service\ParameterService;
 use App\Service\PdfService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\StringService;
-use App\ViewModel\LicenceViewModel;
-use App\ViewModel\UserPresenter;
-use App\ViewModel\UserViewModel;
-use DateTime;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -22,7 +19,6 @@ use Twig\Environment;
 class GetRegistrationCertificate
 {
     public function __construct(
-        private UserPresenter $presenter,
         private PdfService $pdfService,
         private StringService $stringService,
         private Environment $twig,
@@ -32,12 +28,10 @@ class GetRegistrationCertificate
     ) {
     }
 
-    public function execute(Request $request, User $user, ?string $content = null): array
+    public function execute(Request $request, UserDto $user, ?string $content = null): array
     {
         $filename = null;
 
-        $this->presenter->present($user);
-        $user = $this->presenter->viewModel();
         if (null === $content) {
             $content = $this->getContent($user);
         }
@@ -49,7 +43,7 @@ class GetRegistrationCertificate
         return [$content, $filename];
     }
 
-    private function getContent(UserViewModel $user)
+    private function getContent(UserDto $user)
     {
         if (Licence::CATEGORY_ADULT === $user->lastLicence->category) {
             $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_ADULT');
@@ -57,7 +51,7 @@ class GetRegistrationCertificate
             $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_SCHOOL');
         }
 
-        return $this->replaceKeywordsService->replace($user, $content, RegistrationStep::RENDER_FILE);
+        return $this->replaceKeywordsService->replace($userDto, $content, RegistrationStep::RENDER_FILE);
     }
     
     private function makePdf(string $content): string

@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\RegistrationStep;
-use App\ViewModel\UserViewModel;
 use DateTime;
+use App\Dto\UserDto;
+use App\Entity\RegistrationStep;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReplaceKeywordsService
 {
     public function __construct(
-        private TranslatorInterface $translator
+        private TranslatorInterface $translator,
     ) {
     }
 
-    public function replace(UserViewModel $user, ?string $content, int $render = RegistrationStep::RENDER_VIEW): null|string|array
+    public function replace(UserDto $user, ?string $content, int $render = RegistrationStep::RENDER_VIEW): null|string|array
     {
+        
         if (null !== $content) {
             if (RegistrationStep::RENDER_FILE === $render) {
                 $content = $this->createPageBreak($content);
@@ -101,7 +102,7 @@ class ReplaceKeywordsService
         ];
     }
 
-    private function replaces(UserViewModel $user, int $render): array
+    private function replaces(UserDto $user, int $render): array
     {
         $address = $user->member->address->toString();
         $kinshipAddress = $user->kinship?->address->toString();
@@ -115,8 +116,8 @@ class ReplaceKeywordsService
             $user->member->birthPlace,
             $licence->season,
             $licence->fullSeason,
-            $user->getLicenceNumber(),
-            $licence->getAmount()['str'],
+            $user->licenceNumber,
+            $licence->amount['str'],
             $today->format('d/m/Y'),
             $user->kinship?->fullName,
             $user->kinship?->birthDate,
@@ -124,15 +125,15 @@ class ReplaceKeywordsService
             $user->member->fullName,
             $user->member->birthDate,
             '<br>',
-            $licence->getRegistrationTitle(),
+            $licence->registrationTitle,
             $this->translator->trans($licence->type),
             $this->translator->trans($licence->coverageStr),
             ($licence->isVae) ? 'Oui' : 'Non',
-            $user->health->isMedicalCertificateRequired(),
-            $licence->getAmount()['value']?->toString(),
+            $user->health->isMedicalCertificateRequired,
+            $licence->amount['value']?->toString(),
             '<br>',
-            (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->getApprovals()['rightToImage']['string']) : 'autorise',
-            $user->services->currentSeason,
+            (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->approvals['rightToImage']['string']) : 'autorise',
+            '$this->seasonService->getCurrentSeason()',
         ];
     }
 }

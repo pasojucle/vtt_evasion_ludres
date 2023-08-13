@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Dto\DtoTransformer;
+
+use App\Entity\SurveyIssue;
+
+use App\Dto\SurveyResponseDto;
+use App\Entity\SurveyResponse;
+use Doctrine\Common\Collections\Collection;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+class SurveyResponseDtoTransformer
+{
+    public function __construct(
+        private UserDtoTransformer $userDtoTransformer,
+        private TranslatorInterface $translator
+    )
+    {
+        
+    }
+
+
+    public function fromEntity(SurveyResponse $surveyResponse): SurveyResponseDto
+    {
+        $surveyResponseDto = new SurveyResponseDto();
+        $surveyResponseDto->issue = $surveyResponse->getSurveyIssue()->getContent();
+        $surveyResponseDto->user = (null !== $surveyResponse->getUser())
+            ? $this->userDtoTransformer->fromEntity($surveyResponse->getUser())
+            : null;
+        $surveyResponseDto->value = (SurveyIssue::RESPONSE_TYPE_STRING !== $surveyResponse->getSurveyIssue()->getResponseType())
+            ? $this->translator->trans(SurveyResponse::VALUES[$surveyResponse->getValue()])
+            : $surveyResponse->getValue();
+        $surveyResponseDto->uuid = $surveyResponse->getUuid();
+
+        return $surveyResponseDto;
+    }
+
+    public function fromEntities(Collection|array $SurveyResponseEntities): array
+    {
+        $surveyResponses = [];
+        foreach($SurveyResponseEntities as $SurveyResponseEntity) {
+            $surveyResponses[] = $this->fromEntity($SurveyResponseEntity);
+        }
+
+        return $surveyResponses;
+    }
+}

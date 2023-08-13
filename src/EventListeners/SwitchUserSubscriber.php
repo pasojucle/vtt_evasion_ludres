@@ -4,15 +4,16 @@ namespace App\EventListeners;
 
 // use App\Dto\DtoTransformer\UserDtoTransformer;
 
-use App\ViewModel\UserPresenter;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Security\Http\Event\SwitchUserEvent;
+use App\Entity\User;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\Security\Http\SecurityEvents;
+use Symfony\Component\Security\Http\Event\SwitchUserEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SwitchUserSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private UserPresenter $userPresenter,
+        private UserDtoTransformer $userDtoTransformer,
     )
     {
         
@@ -22,8 +23,10 @@ class SwitchUserSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        $userDto = $this->userPresenter->present($event->getTargetUser());
-        $request->getSession()->set('user_fullName', $this->userPresenter->viewModel()->member->fullName);
+        /** @var User $user */
+        $user = $event->getTargetUser();
+        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $request->getSession()->set('user_fullName', $userDto->member->fullName);
     }
 
     public static function getSubscribedEvents(): array

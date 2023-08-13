@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\ViewModel\UserPresenter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -30,7 +31,7 @@ class LoginAuthenticator extends AbstractAuthenticator
     public function __construct(
         private Security $security,
         private UrlGeneratorInterface $urlGenerator,
-        private UserPresenter $userPresenter
+        private UserDtoTransformer $userDtoTransformer
     ) {
     }
 
@@ -63,9 +64,10 @@ class LoginAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey): ?Response
     {
+        /** @var User $user */
         $user = $this->security->getUser();
-        $userDto = $this->userPresenter->present($user);
-        $request->getSession()->set('user_fullName', $this->userPresenter->viewModel()->member->fullName);
+        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $request->getSession()->set('user_fullName', $userDto->member->fullName);
 
         if ($user instanceof User && $user->isPasswordMustBeChanged()) {
             return new RedirectResponse($this->urlGenerator->generate('change_password'));

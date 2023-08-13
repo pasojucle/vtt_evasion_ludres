@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Level;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\Admin\UserBoardRoleType;
 use App\Form\Admin\UserType;
@@ -13,7 +13,6 @@ use App\Service\MailerService;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetParticipation;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +25,7 @@ class UserController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserPresenter $userPresenter
+        private UserDtoTransformer $userDtoTransformer
     ) {
     }
 
@@ -67,10 +66,9 @@ class UserController extends AbstractController
         Request $request
     ): Response {
         $session = $request->getSession();
-        $this->userPresenter->present($user);
 
         return $this->render('user/admin/user.html.twig', [
-            'user' => $this->userPresenter->viewModel(),
+            'user' => $this->userDtoTransformer->fromEntity($user),
             'referer' => $session->get('admin_user_redirect'),
         ]);
     }
@@ -109,10 +107,9 @@ class UserController extends AbstractController
                 'user' => $user->getId(),
             ]);
         }
-        $this->userPresenter->present($user);
 
         return $this->render('user/admin/edit.html.twig', [
-            'user' => $this->userPresenter->viewModel(),
+            'user' => $this->userDtoTransformer->fromEntity($user),
             'form' => $form->createView(),
         ]);
     }
@@ -142,28 +139,26 @@ class UserController extends AbstractController
                 'user' => $user->getId(),
             ]);
         }
-        $this->userPresenter->present($user);
 
         return $this->render('user/admin/boardRole.html.twig', [
-            'user' => $this->userPresenter->viewModel(),
+            'user' => $this->userDtoTransformer->fromEntity($user),
             'form' => $form->createView(),
         ]);
     }
 
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
     public function adminSendLicence(
-        UserPresenter $userPresenter,
         MailerService $mailerService,
         User $user
     ): Response {
-        $userPresenter->present($user);
+        $userDto = $this->userDtoTransformer->fromEntity($user);
 
         $mailerService->sendMailToMember([
             'subject' => 'Votre numero de licence',
-            'email' => $userPresenter->viewModel()->mainEmail,
-            'name' => $userPresenter->viewModel()->member->name,
-            'firstName' => $userPresenter->viewModel()->member->firstName,
-            'licenceNumber' => $userPresenter->viewModel()->licenceNumber,
+            'email' => $userDto->mainEmail,
+            'name' => $userDto->member->name,
+            'firstName' => $userDto->member->firstName,
+            'licenceNumber' => $userDto->licenceNumber,
         ], 'EMAIL_LICENCE_VALIDATE');
 
         $this->addFlash('success', 'Le messsage à été envoyé avec succès');

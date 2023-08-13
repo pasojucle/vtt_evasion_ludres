@@ -22,7 +22,7 @@
                     <h2>Adhérent</h2>
                     {% if is_granted('ROLE_REGISTER') %}
                         <div class="tools">
-                            <a href="{{ path('admin_identity_edit', {'user': user.entity.id}) }}"
+                            <a href="{{ path('admin_identity_edit', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
                                 <i class="fas fa-edit"></i> 
                             </a>
@@ -42,8 +42,8 @@
                             <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6">{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-7 col-xs-6">{{ user.member.email }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Téléphone : </b></div><div class="col-md-7 col-xs-6">{{ user.member.phonesAnchor|raw }}</div></div></li>
-                            {% if user.approvalGoingHome is not null %}
-                                <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6 {{ user.approvalGoingHome.class.color }}">{{ user.approvalGoingHome.message }}</div></div></li>
+                            {% if user.approvals.goingHome is defined %}
+                                <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6 {{ user.approvals.goingHome.class.color }}">{{ user.approvals.goingHome.message }}</div></div></li>
                             {% endif %}
                         </ul>
 
@@ -63,7 +63,7 @@
                         <h2>Parents</h2>
                         {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
                             <div class="tools">
-                            <a href="{{ path('admin_identity_edit', {'user': user.entity.id, 'isKinship': 1}) }}"
+                            <a href="{{ path('admin_identity_edit', {'user': user.id, 'isKinship': 1}) }}"
                                     class="btn" title="Modifier">
                                     <i class="fas fa-edit"></i> 
                                 </a>
@@ -92,7 +92,7 @@
                     <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
                     {% if is_granted('ROLE_REGISTER') %}
                         <div class="tools">
-                        <a href="{{ path('admin_user_board_role', {'user': user.entity.id}) }}"
+                        <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
                                 <i class="fas fa-edit"></i> 
                             </a>
@@ -107,8 +107,8 @@
                         {% if user.boardRole is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Fonction : </b></div><div class="col-md-8 col-xs-6">{{ user.boardRole }}</div></div></li>
                         {% endif %}
-                        {% if user.getAccessControl() is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Droits : </b></div><div class="col-md-8 col-xs-6">{{ user.getAccessControl() }}</div></div></li>
+                        {% if user.accessControl is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Droits : </b></div><div class="col-md-8 col-xs-6">{{ user.accessControl }}</div></div></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -118,7 +118,7 @@
                     <h2>Licence</h2>
                     {% if is_granted('ROLE_REGISTER') %}
                         <div class="tools">
-                        <a href="{{ path('admin_user_edit', {'user': user.entity.id}) }}"
+                        <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
                                 <i class="fas fa-edit"></i> 
                             </a>
@@ -152,7 +152,7 @@
                     <h2>Informations sanitaires</h2>
                     {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
                         <div class="tools">
-                        <a href="{{ path('admin_health_edit', {'user': user.entity.id}) }}"
+                        <a href="{{ path('admin_health_edit', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
                                 <i class="fas fa-edit"></i> 
                             </a>
