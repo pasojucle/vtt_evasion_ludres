@@ -377,11 +377,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getSeasonLicence(int $season): ?Licence
     {
-        if (!$this->licences->isEmpty()) {
-            foreach ($this->licences as $licence) {
-                if ($season === $licence->getSeason()) {
-                    return $licence;
-                }
+        foreach ($this->licences as $licence) {
+            if ($season === $licence->getSeason()) {
+                return $licence;
             }
         }
 
@@ -392,12 +390,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $lastSeason = 1900;
         $lastLicence = null;
-        if (!$this->licences->isEmpty()) {
-            foreach ($this->licences as $licence) {
-                if ($licence->getSeason() > $lastSeason) {
-                    $lastSeason = $licence->getSeason();
-                    $lastLicence = $licence;
-                }
+        foreach ($this->licences as $licence) {
+            if ($licence->getSeason() > $lastSeason) {
+                $lastSeason = $licence->getSeason();
+                $lastLicence = $licence;
             }
         }
 

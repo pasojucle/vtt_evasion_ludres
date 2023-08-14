@@ -11,7 +11,7 @@ class LevelDtoTransformer
 {
     public function fromEntity(?Level $level): LevelDto
     {
-        $levelDto = new LevelDto;
+        $levelDto = new LevelDto();
         $levelDto->title = $level->getTitle();
         $levelDto->type = $level->getType();
         $levelDto->entity = $level;

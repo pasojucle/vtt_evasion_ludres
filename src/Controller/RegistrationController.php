@@ -83,7 +83,7 @@ class RegistrationController extends AbstractController
         $user = $progress['user'];
         if (Licence::STATUS_IN_PROCESSING < $user->seasonLicence->status && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
             return $this->redirectToRoute('registration_download', [
-                'user' => $user->entity->getId(),
+                'user' => $user->id,
             ]);
         }
         $form = $progress['current']->formObject;
@@ -105,7 +105,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute($request->attributes->get('_route'), [
                 'step' => $progress['nextIndex'],
             ]);
-            
         }
 
         return $this->render('registration/registrationForm.html.twig', [

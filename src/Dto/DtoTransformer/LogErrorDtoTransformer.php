@@ -18,9 +18,7 @@ class LogErrorDtoTransformer
 
     public function __construct(
         private UserDtoTransformer $userDtoTransformer
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(LogError $logError): LogErrorDto

@@ -12,15 +12,12 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class BackgroundDtoTransformer
 {
-
     public function __construct(
         private ProjectDirService $projectDirService
-    )
-    {
-        
+    ) {
     }
 
-    public function fromEntity(Background $background): BackgroundDto
+    public function fromEntity(?Background $background): BackgroundDto
     {
         $backgroundDto = new BackgroundDto();
         if ($background) {

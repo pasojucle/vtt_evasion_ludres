@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-
 class FFCTLicenceDto
 {
     public string $fullName = '';
@@ -14,5 +13,4 @@ class FFCTLicenceDto
     public string $birthDate = '';
 
     public string $birthDateChildren = '';
-
 }

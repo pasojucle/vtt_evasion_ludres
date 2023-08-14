@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use DateTime;
-use DateInterval;
 use App\Dto\HealthDto;
 use App\Entity\Health;
 use App\Entity\Licence;
 use App\Service\ParameterService;
-
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
 
 class HealthDtoTransformer
 {
     public function __construct(
         private ParameterService $parameterService
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(?Health $health): HealthDto
@@ -34,14 +32,14 @@ class HealthDtoTransformer
         return $healthDto;
     }
 
-    public function isMedicalCertificateRequired(Health $health, ?DateTime $medicalCertificateDate): string
+    public function isMedicalCertificateRequired(Health $health, null|DateTime|DateTimeImmutable $medicalCertificateDate): string
     {
         $message = '';
         $medicalCertificateEndAt = null;
 
         if ($medicalCertificateDate) {
             $medicalCertificateEndAt = $this->getMedicalCertificateEndAt($health->getUser()->getLastLicence()->getType(), clone $medicalCertificateDate);
-            $message .= 'Date du dernier certificat médical : ' . $medicalCertificateDate->format('d/m/Y') 
+            $message .= 'Date du dernier certificat médical : ' . $medicalCertificateDate->format('d/m/Y')
                     . sprintf(' (Valable jusqu\'au %s) <br>', $medicalCertificateEndAt->format('d/m/Y'));
         }
 

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use App\Dto\RegistrationStepDto;
+use App\Dto\UserDto;
+use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Dto\RegistrationStepDto;
-use App\Entity\RegistrationStep;
 use App\Service\ReplaceKeywordsService;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,20 +22,17 @@ class RegistrationStepDtoTransformer
         public UrlGeneratorInterface $router,
         private FormFactoryInterface $formFactory,
         private ReplaceKeywordsService $replaceKeywordsService,
-        private UserDtoTransformer $userDtoTransformer,
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(
         RegistrationStep $registrationStep,
         ?User $user,
+        UserDto $userDto,
         int $step,
         int $render,
         ?string $class = null
-    ): RegistrationStepDto
-    {
+    ): RegistrationStepDto {
         $registrationStepDto = new RegistrationStepDto();
         $registrationStepDto->registrationDocumentForms = $this->getRegistrationDocumentForms();
         $registrationStepDto->class = $class;
@@ -42,21 +40,21 @@ class RegistrationStepDtoTransformer
         $registrationStepDto->form = $registrationStep->getForm();
         $registrationStepDto->filename = $registrationStep->getFilename();
         if (null !== $step) {
-            $registrationStepDto->formObject = $this->getForm($registrationStep, $user, $step);
+            $registrationStepDto->formObject = $this->getForm($registrationStep, $user, $userDto, $step);
             $registrationStepDto->template = $this->getTemplate($registrationStep);
         }
 
-        $registrationStepDto->content = $this->getContent($user, $render, $registrationStep->getContent());
+        $registrationStepDto->content = $this->getContent($userDto, $render, $registrationStep->getContent());
 
         $registrationStepDto->overviewTemplate = $this->getOverviewTemplate($registrationStep->getForm());
 
         return $registrationStepDto;
     }
 
-    private function getForm(RegistrationStep $registrationStep, ?User $user, int $step): ?FormInterface
+    private function getForm(RegistrationStep $registrationStep, ?User $user, UserDto $userDto, int $step): ?FormInterface
     {
         $form = null;
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+
         $seasonLicence = ($userDto->lastLicence->isSeasonLicence) ? $userDto->lastLicence : null;
 
         $route = ('user_registration_form' === $this->requestStack->getCurrentRequest()->get('_route')) ? 'user_registration_form' : 'registration_form';
@@ -88,10 +86,9 @@ class RegistrationStepDtoTransformer
         return 'registration/form/' . str_replace('form.', '', UserType::FORMS[$form]) . '.html.twig';
     }
 
-    private function getContent(?User $user, int $render, ?string $content): null|string|array
+    private function getContent(UserDto $userDto, int $render, ?string $content): null|string|array
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
-        return (null !== $user)
+        return (null !== $userDto->id)
              ? $this->replaceKeywordsService->replace($userDto, $content, $render)
             : $content;
     }

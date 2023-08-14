@@ -7,7 +7,6 @@ namespace App\Dto;
 use DateTime;
 use DateTimeInterface;
 
-
 class HealthDto
 {
     public ?string $medicalCertificateDate;

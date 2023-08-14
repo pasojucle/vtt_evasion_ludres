@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\UserDto;
-use App\Dto\OrderLineDto;
-use App\Entity\OrderLine;
-use Symfony\Component\Form\FormInterface;
-use Doctrine\Common\Collections\Collection;
 use App\Dto\DtoTransformer\ProductDtoTransformer;
+use App\Dto\OrderLineDto;
+use App\Dto\UserDto;
+use App\Entity\OrderLine;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Form\FormInterface;
 
 class OrderLineDtoTransformer
 {
     public function __construct(
         private ProductDtoTransformer $productDtoTransformer
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(OrderLine $orderLine, UserDto $orderUser, ?string $formName = null): OrderLineDto

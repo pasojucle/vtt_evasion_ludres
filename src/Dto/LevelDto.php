@@ -6,7 +6,6 @@ namespace App\Dto;
 
 use App\Entity\Level;
 
-
 class LevelDto
 {
     public ?Level $entity;

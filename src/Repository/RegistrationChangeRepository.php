@@ -2,12 +2,12 @@
 
 namespace App\Repository;
 
-use App\Entity\User;
 use App\Entity\RegistrationChange;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<RegistrationChange>
@@ -48,10 +48,10 @@ class RegistrationChangeRepository extends ServiceEntityRepository
         try {
             return $this->createQueryBuilder('r')
                 ->andWhere(
-                    (new Expr)->eq('r.entity', ':entity'),
-                    (new Expr)->eq('r.entityId', ':entityId'),
-                    (new Expr)->eq('r.user', ':user'),
-                    (new Expr)->eq('r.season', ':season'),
+                    (new Expr())->eq('r.entity', ':entity'),
+                    (new Expr())->eq('r.entityId', ':entityId'),
+                    (new Expr())->eq('r.user', ':user'),
+                    (new Expr())->eq('r.season', ':season'),
                 )
                 ->setParameters([
                     'entity' => $className,
@@ -71,8 +71,8 @@ class RegistrationChangeRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('r')
             ->andWhere(
-                (new Expr)->eq('r.season', ':season'),
-                (new Expr)->eq('r.user', ':user'),
+                (new Expr())->eq('r.season', ':season'),
+                (new Expr())->eq('r.user', ':user'),
             )
             ->setParameters([
                 'season' => $season,
@@ -82,7 +82,7 @@ class RegistrationChangeRepository extends ServiceEntityRepository
             ->getResult();
 
         $changes = [];
-        foreach($qb as $change) {
+        foreach ($qb as $change) {
             $changes[$change->getEntity()] = $change;
         }
         return $changes;

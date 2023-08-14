@@ -7,12 +7,11 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRideType;
 
-
 class BikeRideTypeDtoTransformer
 {
     public static function fromEntity(BikeRideType $bikeRideType): BikeRideTypeDto
     {
-        $bikeRideTypeDto = new BikeRideTypeDto;
+        $bikeRideTypeDto = new BikeRideTypeDto();
         $bikeRideTypeDto->entity = $bikeRideType;
         $bikeRideTypeDto->content = $bikeRideType->getContent();
         $bikeRideTypeDto->useLevels = $bikeRideType->isUseLevels();

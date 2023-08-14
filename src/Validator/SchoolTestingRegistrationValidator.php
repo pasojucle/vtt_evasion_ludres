@@ -16,9 +16,10 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class SchoolTestingRegistrationValidator extends ConstraintValidator
 {
     public function __construct(
-        private ParameterService $parameterService, 
-        private UserDtoTransformer $userDtoTransformer, 
-        private LicenceService $licenceService)
+        private ParameterService $parameterService,
+        private UserDtoTransformer $userDtoTransformer,
+        private LicenceService $licenceService
+    )
     {
     }
     

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\SurveyIssue;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 
 use App\Dto\SurveyResponseDto;
+use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use Doctrine\Common\Collections\Collection;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SurveyResponseDtoTransformer
@@ -17,9 +17,7 @@ class SurveyResponseDtoTransformer
     public function __construct(
         private UserDtoTransformer $userDtoTransformer,
         private TranslatorInterface $translator
-    )
-    {
-        
+    ) {
     }
 
 
@@ -41,7 +39,7 @@ class SurveyResponseDtoTransformer
     public function fromEntities(Collection|array $SurveyResponseEntities): array
     {
         $surveyResponses = [];
-        foreach($SurveyResponseEntities as $SurveyResponseEntity) {
+        foreach ($SurveyResponseEntities as $SurveyResponseEntity) {
             $surveyResponses[] = $this->fromEntity($SurveyResponseEntity);
         }
 

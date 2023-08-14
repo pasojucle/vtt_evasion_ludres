@@ -6,17 +6,17 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
-use DateTime;
-use DateInterval;
-use App\Entity\User;
-use App\Entity\Survey;
-
-use DateTimeImmutable;
 use App\Entity\BikeRide;
+use App\Entity\Survey;
+use App\Entity\User;
 use App\Service\ProjectDirService;
+
 use App\Twig\AppExtension;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -38,8 +38,7 @@ class BikeRideDtoTransformer
         private ProjectDirService $projectDirService,
         private BikeRideTypeDtoTransformer $bikeRideTypeDtoTransformer,
         private SurveyDtoTransformer $surveyDtoTransformer
-    )
-    {
+    ) {
         $this->today = (new DateTimeImmutable())->setTime(0, 0, 0);
     }
 
@@ -65,7 +64,7 @@ class BikeRideDtoTransformer
         $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
         $bikeRideDto->isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
         $bikeRideDto->isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
-        $bikeRideDto->btnLabel = $this->getBtnLabel($user);
+        $bikeRideDto->btnLabel = $this->getBtnLabel($bikeRideDto);
         $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
         $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
 
@@ -77,7 +76,7 @@ class BikeRideDtoTransformer
     public function fromEntities(Paginator|Collection|array $bikeRideEntities): array
     {
         $bikeRides = [];
-        foreach($bikeRideEntities as $bikeRideEntity) {
+        foreach ($bikeRideEntities as $bikeRideEntity) {
             $bikeRides[] = $this->fromEntity($bikeRideEntity);
         }
 
@@ -109,9 +108,9 @@ class BikeRideDtoTransformer
         return '';
     }
 
-    private function getBtnLabel(?User $user): string
+    private function getBtnLabel(?BikeRideDto $bikeRide): string
     {
-        if ($this->isWritableAvailability) {
+        if ($bikeRide->isWritableAvailability) {
             return 'Disponibilité';
         }
 

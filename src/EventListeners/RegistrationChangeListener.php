@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\EventListeners;
 
-use App\Entity\User;
-use ReflectionClass;
 use App\Entity\Approval;
-use Doctrine\ORM\Events;
-use App\Service\SeasonService;
 use App\Entity\RegistrationChange;
-use Doctrine\ORM\Event\PostUpdateEventArgs;
+use App\Entity\User;
+use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Events;
+use ReflectionClass;
 use function Symfony\Component\String\u;
 
 #[AsDoctrineListener(event: Events::postUpdate)]
@@ -19,15 +19,14 @@ class RegistrationChangeListener
 {
     public function __construct(private SeasonService $seasonService)
     {
-        
-    } 
+    }
 
     public function postUpdate(PostUpdateEventArgs $event): void
     {
         $entity = $event->getObject();
         $reflexionClass = new ReflectionClass($entity);
         $className = $reflexionClass->getShortName();
-        if (1 === preg_match('#Address|Approval|Health|Identity|Licence#', $className)) {   
+        if (1 === preg_match('#Address|Approval|Health|Identity|Licence#', $className)) {
             $objectManager = $event->getObjectManager();
             $unitOfWork = $objectManager->getUnitOfWork();
             $changeSet = $unitOfWork->getEntityChangeSet($entity);

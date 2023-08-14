@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\RegistrationStepDto;
+use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
+use App\Repository\RegistrationChangeRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\HealthService;
 use App\Service\LicenceService;
 use App\Service\PdfService;
 use App\Service\SeasonService;
-use App\ViewModel\RegistrationStepPresenter;
-use App\ViewModel\RegistrationStepViewModel;
-use App\ViewModel\UserPresenter;
 use DateTime;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -31,8 +33,8 @@ class GetRegistrationFile
     public function __construct(
         private MembershipFeeRepository $membershipFeeRepository,
         private PdfService $pdfService,
-        private UserPresenter $presenter,
-        private RegistrationStepPresenter $registrationStepPresenter,
+        private UserDtoTransformer $userDtoTransformer,
+        private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         private Environment $twig,
         private Security $security,
         private LicenceService $licenceService,
@@ -40,7 +42,8 @@ class GetRegistrationFile
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
         private ContentRepository $contentRepository,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
+        private RegistrationChangeRepository $registrationChangeRepository,
     ) {
     }
 
@@ -64,42 +67,41 @@ class GetRegistrationFile
             $healthQuestions = $this->healthService->createHealthQuestions($formQuestionCount);
         }
 
-        $this->user->getHealth()->setHealthQuestions($healthQuestions);
-        $this->presenter->present($user);
+        $user->getHealth()->setHealthQuestions($healthQuestions);
+        $changes = $this->registrationChangeRepository->findBySeason($user, $season);
+        $userDto = $this->userDtoTransformer->fromEntity($user, $changes);
 
-        if (!empty($steps)) {
-            foreach ($steps as $step) {
-                $this->registrationStepPresenter->present($step, $this->presenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
-                $step = $this->registrationStepPresenter->viewModel();
-                if (null !== $step->filename) {
-                    $filename = './files/' . $step->filename;
-                    $this->files[] = [
-                        'filename' => $filename,
-                        'form' => $step->form,
-                    ];
-                }
-                if (array_key_exists($step->form, $step->registrationDocumentForms)) {
-                    $this->registrationDocumentSteps[$step->form] = $step->content;
-                } elseif (null !== $step->content) {
-                    $this->addRegistrationStep($step);
-                }
+        foreach ($steps as $step) {
+            $step = $this->registrationStepDtoTransformer->fromEntity($step, $user, $userDto, 1, RegistrationStep::RENDER_FILE);
+            if (null !== $step->filename) {
+                $filename = './files/' . $step->filename;
+                $this->files[] = [
+                    'filename' => $filename,
+                    'form' => $step->form,
+                ];
+            }
+            if (array_key_exists($step->form, $step->registrationDocumentForms)) {
+                $this->registrationDocumentSteps[$step->form] = $step->content;
+            } elseif (null !== $step->content) {
+                $this->addRegistrationStep($step, $userDto);
             }
         }
+    
 
-        $this->addRegistrationDocument();
+        $this->addRegistrationDocument($userDto);
 
         $filename = $this->pdfService->joinPdf($this->files, $user);
 
         return file_get_contents($filename);
     }
 
-    private function addRegistrationStep(RegistrationStepViewModel $step)
+    private function addRegistrationStep(RegistrationStepDto $step, UserDto $userDto)
     {
         $html = null;
         if (null !== $step->form) {
             $form = $step->formObject;
             $html = $this->twig->render('registration/registrationPdf.html.twig', [
-                'user' => $this->presenter->viewModel(),
+                'user' => $userDto,
                 'all_membership_fee' => $this->allmembershipFee,
                 'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
                 'current' => $step,
@@ -120,14 +122,14 @@ class GetRegistrationFile
         }
     }
 
-    private function addRegistrationDocument()
+    private function addRegistrationDocument(UserDto $userDto)
     {
         if (!empty($this->registrationDocumentSteps)) {
             $registration = $this->twig->render('registration/registrationPdf.html.twig', [
-                'user' => $this->presenter->viewModel(),
+                'user' => $userDto,
                 'user_entity' => $this->user,
                 'registration_document_steps' => $this->registrationDocumentSteps,
-                'licence' => $this->presenter->viewModel()->seasonLicence,
+                'licence' => $userDto->seasonLicence,
                 'media' => RegistrationStep::RENDER_FILE,
             ]);
             $pdfFilepath = $this->pdfService->makePdf($registration, 'registration_temp');

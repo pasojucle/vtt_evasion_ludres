@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use DateTimeImmutable;
 use App\Entity\BikeRide;
-
+use DateTimeImmutable;
 
 class BikeRideDto
 {
-  
     public ?BikeRide $entity;
 
     public ?string $type;
@@ -42,12 +40,6 @@ class BikeRideDto
     public BikeRideTypeDto $bikeRideType;
 
     public ?SurveyDto $survey;
-
-    private ?DateTimeImmutable $today;
-
-    private ?DateTimeImmutable $displayAt;
-
-    private ?DateTimeImmutable $closingAt;
 
     public ?string $filename;
 

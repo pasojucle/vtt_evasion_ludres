@@ -6,10 +6,8 @@ namespace App\Dto;
 
 use App\Dto\UserDto;
 
-
 class SurveyResponseDto
 {
-
     public ?UserDto $user;
 
     public ?string $issue;

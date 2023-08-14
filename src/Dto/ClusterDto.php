@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Entity\Level;
 use App\Entity\Cluster;
+use App\Entity\Level;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class ClusterDto

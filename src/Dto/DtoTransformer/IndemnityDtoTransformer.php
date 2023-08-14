@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Model\Currency;
 use App\Dto\IndemnityDto;
 use App\Entity\Indemnity;
+use App\Model\Currency;
 
 class IndemnityDtoTransformer
 {
@@ -22,14 +22,12 @@ class IndemnityDtoTransformer
     }
 
 
-    public function fromEntities(array $indemnities): array
+    public function fromEntities(array $indemnitiesEntities): array
     {
         $indemnities = [];
-        if (!empty($indemnities)) {
-            foreach ($indemnities as $indemnity) {
-                $indemnityDto = $this->fromEntity($indemnity);
-                $indemnities[$indemnityDto->level->getId()][$indemnityDto->bikeRideType->getId()] = $indemnityDto;
-            }
+        foreach ($indemnitiesEntities as $indemnity) {
+            $indemnityDto = $this->fromEntity($indemnity);
+            $indemnities[$indemnityDto->level->getId()][$indemnityDto->bikeRideType->getId()] = $indemnityDto;
         }
         
         return $indemnities;

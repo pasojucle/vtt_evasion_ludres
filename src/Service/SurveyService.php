@@ -14,9 +14,7 @@ class SurveyService
     public function __construct(
         // private SurveyResponseRepository $surveyResponseRepository,
         // private SurveyResponseDtoTransformer $surveyResponseDtoTransformer
-    )
-    {
-        
+    ) {
     }
     // public function getResponsesByUser(Survey $survey, User $user): array
     // {

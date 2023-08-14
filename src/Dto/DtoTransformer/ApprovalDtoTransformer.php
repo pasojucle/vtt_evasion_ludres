@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\User;
 use App\Dto\ApprovalDto;
 use App\Entity\Approval;
-use function Symfony\Component\String\u;
+use App\Entity\User;
 use Doctrine\Common\Collections\Collection;
+use function Symfony\Component\String\u;
 
 class ApprovalDtoTransformer
-{   
+{
     public function fromEntity(Approval $approval, ?array $changes = null): ApprovalDto
     {
         $approvalDto = new ApprovalDto();
@@ -28,10 +28,10 @@ class ApprovalDtoTransformer
         return $approvalDto;
     }
 
-    public function fromEntities(Collection|array $approvalEntities,  ?array $changes = null): array
+    public function fromEntities(Collection|array $approvalEntities, ?array $changes = null): array
     {
         $approvals = [];
-        foreach($approvalEntities as $approvalEntity) {
+        foreach ($approvalEntities as $approvalEntity) {
             $approval = $this->fromEntity($approvalEntity, $changes);
             $approvals[$approval->name] = $approval;
         }
@@ -41,7 +41,7 @@ class ApprovalDtoTransformer
 
     private function toHtml(int $type, bool $value): array
     {
-        return match($type) {
+        return match ($type) {
             User::APPROVAL_GOING_HOME_ALONE => ($value)
             ? [
                 'class' => ['color' => 'success', 'icon' => '<i class="fa-solid fa-house-circle-check"></i>'],
@@ -67,10 +67,8 @@ class ApprovalDtoTransformer
     private function formatChanges(array $changes, ApprovalDto &$approvalDto): void
     {
         if (array_key_exists('Approval', $changes)) {
-
-            $approvalDto->toString = sprintf('<b>%s</b>', $approvalDto->toString); 
-            $approvalDto->toHtml['message'] = sprintf('<b>%s</b>', $approvalDto->toHtml['message']); 
-
+            $approvalDto->toString = sprintf('<b>%s</b>', $approvalDto->toString);
+            $approvalDto->toHtml['message'] = sprintf('<b>%s</b>', $approvalDto->toHtml['message']);
         }
     }
 }

@@ -7,7 +7,6 @@ namespace App\Dto;
 use App\Dto\AddressDto;
 use App\Entity\Identity;
 
-
 class IdentityDto
 {
     public ?string $name;

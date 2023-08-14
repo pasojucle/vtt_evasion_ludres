@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Certificate;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
@@ -24,16 +25,18 @@ class GetRegistrationCertificate
         private Environment $twig,
         private ParameterService $parameterService,
         private ParameterBagInterface $parameterBag,
-        private ReplaceKeywordsService $replaceKeywordsService
+        private ReplaceKeywordsService $replaceKeywordsService,
+        private UserDtoTransformer $userDtoTransformer,
     ) {
     }
 
-    public function execute(Request $request, UserDto $user, ?string $content = null): array
+    public function execute(Request $request, User $user, ?string $content = null): array
     {
         $filename = null;
+        $userDto = $this->userDtoTransformer->fromEntity($user);
 
         if (null === $content) {
-            $content = $this->getContent($user);
+            $content = $this->getContent($userDto);
         }
 
         if (!$request->isXmlHttpRequest() && $content) {
@@ -51,7 +54,7 @@ class GetRegistrationCertificate
             $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_SCHOOL');
         }
 
-        return $this->replaceKeywordsService->replace($userDto, $content, RegistrationStep::RENDER_FILE);
+        return $this->replaceKeywordsService->replace($user, $content, RegistrationStep::RENDER_FILE);
     }
     
     private function makePdf(string $content): string

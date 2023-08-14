@@ -7,7 +7,6 @@ namespace App\Dto;
 use App\Entity\RegistrationStep;
 use Symfony\Component\Form\FormInterface;
 
-
 class RegistrationStepDto
 {
     public ?FormInterface $formObject;

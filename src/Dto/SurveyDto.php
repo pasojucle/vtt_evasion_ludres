@@ -6,7 +6,6 @@ namespace App\Dto;
 
 use App\Entity\Survey;
 
-
 class SurveyDto
 {
     public ?int $id;

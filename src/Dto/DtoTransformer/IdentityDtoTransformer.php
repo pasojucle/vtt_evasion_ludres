@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use DateTime;
-use App\Entity\User;
 use App\Dto\AddressDto;
 use App\Dto\IdentityDto;
 use App\Entity\Identity;
-use App\Service\SeasonService;
-use App\Service\ProjectDirService;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\User;
 use App\Repository\RegistrationChangeRepository;
+use App\Service\ProjectDirService;
+use App\Service\SeasonService;
+use DateTime;
+use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 
 class IdentityDtoTransformer
 {
@@ -21,9 +22,7 @@ class IdentityDtoTransformer
         private ProjectDirService $projectDirService,
         private RegistrationChangeRepository $registrationChangeRepository,
         private SeasonService $seasonService,
-    )
-    {
-        
+    ) {
     }
     public function fromEntity(Identity $identity, ?array $changes = null): IdentityDto
     {
@@ -55,16 +54,16 @@ class IdentityDtoTransformer
     public function fromEntities(Collection $identityEntities, ?array $changes = null): array
     {
         $identities = [];
-        foreach($identityEntities as $identity) {
+        foreach ($identityEntities as $identity) {
             $identities[$identity->getType()] = $this->fromEntity($identity, $changes);
         }
-        $this->setKinshipAdress($identities);
+        $this->setKinshipAddress($identities);
 
 
         return $identities;
     }
 
-    private function getAge(?DateTime $birthDate): ? int
+    private function getAge(?DateTimeInterface $birthDate): ? int
     {
         if (null !== $birthDate) {
             $today = new DateTime();
@@ -76,12 +75,12 @@ class IdentityDtoTransformer
         return null;
     }
 
-    private function setKinshipAdress(array &$identities): void
+    private function setKinshipAddress(array &$identities): void
     {
         $kinships = [Identity::TYPE_KINSHIP, Identity::TYPE_SECOND_CONTACT];
         $memberAddress = $identities[Identity::TYPE_MEMBER]->address;
-        foreach($kinships as $kinship) {
-            if (array_key_exists($kinship, $identities) && null === $identities[$kinship]) {
+        foreach ($kinships as $kinship) {
+            if (array_key_exists($kinship, $identities) && null !== $identities[$kinship]) {
                 $identities[$kinship]->address = $memberAddress;
             }
         }
@@ -89,7 +88,7 @@ class IdentityDtoTransformer
 
     private function getPicture(?string $picture): string
     {
-        return (null !== $picture) ? $this->projectDirService->dir('upload', $picture ) : '/images/default-user-picture.jpg';
+        return (null !== $picture) ? $this->projectDirService->dir('upload', $picture) : '/images/default-user-picture.jpg';
     }
 
     private function getPhoneAnchor(?string $phone): string
@@ -99,7 +98,6 @@ class IdentityDtoTransformer
 
     private function getPhonesAnchor(Identity $identity): string
     {
-
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
     }
 
@@ -120,15 +118,15 @@ class IdentityDtoTransformer
     {
         if (array_key_exists('Identity', $changes)) {
             $properties = array_keys($changes['Identity']->getValue());
-            foreach($properties as $property) {
+            foreach ($properties as $property) {
                 if ('mobile' === $property) {
                     $property = 'phone';
                 }
-                if (1 === preg_match('#name|firstName#',$property)) {
+                if (1 === preg_match('#name|firstName#', $property)) {
                     $properties[] = 'fullName';
                 }
 
-                $identityDto->$property = sprintf('<b>%s</b>', $identityDto->$property); 
+                $identityDto->$property = sprintf('<b>%s</b>', $identityDto->$property);
             }
         }
     }

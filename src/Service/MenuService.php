@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class MenuService
@@ -17,8 +16,7 @@ class MenuService
 
     public function __construct(
         private RequestStack $requestStack
-    )
-    {
+    ) {
         $this->menus = [
             [
                 'label' => 'Le club',

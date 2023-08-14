@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProjectDirService
 {
-
     private array $directories;
 
     public function __construct(private ParameterBagInterface $parameterBag)
@@ -17,7 +16,7 @@ class ProjectDirService
     }
 
 
-    public function dir(... $dirNames): string
+    public function dir(...$dirNames): string
     {
         $dirs = [];
         foreach ($dirNames as $dirName) {
@@ -28,7 +27,7 @@ class ProjectDirService
     }
 
 
-    public function path(... $dirNames): string
+    public function path(...$dirNames): string
     {
         $dirs = [];
         $dirs[] = $this->directories['project'];

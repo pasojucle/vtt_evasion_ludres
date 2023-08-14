@@ -6,23 +6,20 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\ContentDto;
 use App\Entity\Content;
-use setasign\Fpdi\Fpdi;
 use App\Service\ProjectDirService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use setasign\Fpdi\Fpdi;
 use Symfony\Component\HttpFoundation\File\File;
-
 
 class ContentDtoTransformer
 {
     public function __construct(
         private ProjectDirService $projectDirService
-    )
-    {
-        
+    ) {
     }
 
-    public function fromEntity(Content $content): ContentDto
+    public function fromEntity(?Content $content): ContentDto
     {
         $backgroundDto = new ContentDto();
         if ($content) {
@@ -48,7 +45,7 @@ class ContentDtoTransformer
     public function fromEntities(Paginator|Collection|array $contentEntities): array
     {
         $contents = [];
-        foreach($contentEntities as $contentEntity) {
+        foreach ($contentEntities as $contentEntity) {
             $contents[] = $this->fromEntity($contentEntity);
         }
 
@@ -58,7 +55,7 @@ class ContentDtoTransformer
     public function FromHomeContents(Paginator|Collection|array $contentEntities): array
     {
         $contents = [];
-        foreach($contentEntities as $contentEntity) {
+        foreach ($contentEntities as $contentEntity) {
             $type = ($contentEntity->isFlash()) ? 'flashes' : 'contents';
             $contents[$type][] = $this->fromEntity($contentEntity);
         }

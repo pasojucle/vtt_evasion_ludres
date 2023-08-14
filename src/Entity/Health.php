@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\User;
+use App\Repository\HealthRepository;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\OneToOne;
-use App\Repository\HealthRepository;
 use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[Entity(repositoryClass: HealthRepository::class)]
 class Health

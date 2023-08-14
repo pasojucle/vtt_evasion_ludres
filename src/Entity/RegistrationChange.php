@@ -95,5 +95,4 @@ class RegistrationChange
 
         return $this;
     }
-
 }

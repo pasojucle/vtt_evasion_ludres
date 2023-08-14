@@ -3,32 +3,32 @@
     <tr>
         <td rowspan="9" colspan="2"><img src="{{ user.member.picture|imgPath(media) }}" style="width: 100px;"></td>
         <td colspan="5" style="width: 450px"><b>Non et prénom : </b>{{ user.member.fullName }}</td>
-        <td colspan="2" class="licence-number">{{ user.getFFCTLicence() }}</td>
+        <td colspan="2" class="licence-number">{{ user.licenceNumber }}</td>
     </tr>
     <tr>
-        <td colspan="5" ><b>Date naissance : </b>{{ user.member.birthDate }}</td>
+        <td colspan="5" ><b>Date naissance : </b>{{ user.member.birthDate|raw }}</td>
     </tr>
     <tr>
-        <td colspan="5" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
+        <td colspan="5" ><b>Lieu de naissance : </b>{{ user.member.birthPlace|raw }}</td>
     </tr>
     <tr>
-        <td colspan="5" ><b>Adresse : </b> {{ user.member.address.street }}</td>
+        <td colspan="5" ><b>Adresse : </b> {{ user.member.address.street|raw }}</td>
     </tr>
     <tr>
-        <td colspan="5" >{{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
+        <td colspan="5" >{{ user.member.address.postalCode|raw }} {{ user.member.address.town|raw }}</td>
     </tr>
     <tr>
-        <td colspan="5" ><b>Courriel : </b>{{ user.member.email }}</td>
+        <td colspan="5" ><b>Courriel : </b>{{ user.member.email|raw }}</td>
     </tr>
     <tr>
-        <td colspan="5" ><b>Téléphone : </b>{{ user.member.phone}}</td>
+        <td colspan="5" ><b>Téléphone : </b>{{ user.member.phone|raw}}</td>
     </tr>
     <tr>
         <td colspan="5" ></td>
     </tr>
     {% if user.member.emergencyPhone is not null %}
         <tr>
-            <td colspan="7"><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</td>
+            <td colspan="7"><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone|raw}}</td>
         </tr>
     {% endif %}
 </table>

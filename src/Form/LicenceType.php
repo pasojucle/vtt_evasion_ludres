@@ -20,8 +20,8 @@ class LicenceType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $licence = $event->getData();
             $form = $event->getForm();
-
-            if ($licence === $options['season_licence']) {
+            
+            if ($licence->getId() === $options['season_licence']->id) {
                 $choicesCoverage = array_flip(Licence::COVERAGES);
                 if (Licence::CATEGORY_MINOR === $options['category']) {
                     array_shift($choicesCoverage);

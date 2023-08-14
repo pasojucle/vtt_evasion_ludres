@@ -6,9 +6,9 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\OrderDto;
 use App\Entity\OrderHeader;
-use Symfony\Component\Form\FormInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderDtoTransformer
@@ -17,9 +17,7 @@ class OrderDtoTransformer
         private UserDtoTransformer $userDtoTransformer,
         private OrderLineDtoTransformer $orderLineDtoTransformer,
         private TranslatorInterface $translator
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(?OrderHeader $orderHeader, ?FormInterface $form = null): OrderDto
@@ -42,15 +40,15 @@ class OrderDtoTransformer
 
     public function fromEntities(Paginator|Collection|array $orderHeaderEntities): array
     {
-        $orderHeaders =[];
-        foreach($orderHeaderEntities as $orderHeaderEntity) {
+        $orderHeaders = [];
+        foreach ($orderHeaderEntities as $orderHeaderEntity) {
             $orderHeaders[] = $this->fromEntity($orderHeaderEntity);
         }
 
         return $orderHeaders;
     }
 
-    public function getAmount(array $orderLines ): string
+    public function getAmount(array $orderLines): string
     {
         $amount = 0;
         foreach ($orderLines as $line) {

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use DateTime;
-use App\Dto\UserDto;
-use App\Entity\User;
-use App\Entity\Level;
 use App\Dto\LicenceDto;
-use App\Entity\Licence;
+use App\Dto\UserDto;
 use App\Entity\Identity;
+use App\Entity\Level;
+use App\Entity\Licence;
+use App\Entity\User;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
@@ -25,16 +25,14 @@ class UserDtoTransformer
         private LicenceDtoTransformer $licenceDtoTransformer,
         private FFCTLicenceDtoTransformer $fFCTLicenceDtoTransformer,
         private RoleHierarchyInterface $roleHierarchy
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(User $user, ?array $changes = null): UserDto
     {
         $identitiesByType = $this->identityDtoTransformer->fromEntities($user->getIdentities(), $changes);
 
-        $userDto = new UserDto;
+        $userDto = new UserDto();
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
         $userDto->member = (array_key_exists(Identity::TYPE_MEMBER, $identitiesByType)) ? $identitiesByType[Identity::TYPE_MEMBER] : null;
@@ -65,7 +63,7 @@ class UserDtoTransformer
     public function fromEntities(Paginator|Collection|array $userEntities): array
     {
         $users = [];
-        foreach($userEntities as $userEntity) {
+        foreach ($userEntities as $userEntity) {
             $users[] = $this->fromEntity($userEntity);
         }
 
@@ -86,13 +84,11 @@ class UserDtoTransformer
 
     public function isMember(?Level $level): bool
     {
-
         return Level::TYPE_SCHOOL_MEMBER === $level?->getType();
     }
 
     public function isFramer(?Level $level): bool
     {
-
         return Level::TYPE_FRAME === $level?->getType();
     }
 

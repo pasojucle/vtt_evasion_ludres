@@ -7,23 +7,23 @@
     </tr>
     <tr>
     <td><b>Non et prénom :</b></td>
-       <td>{{ user.kinship.fullName }} ({{ user.kinship.type | trans  }})</td>
-       <td>{{ user.secondKinship.fullName}} ({{ user.secondKinship.type|trans}})</td>
+       <td>{{ user.kinship.fullName|raw }} ({{ user.kinship.type | trans  }})</td>
+       <td>{{ user.secondKinship.fullName|raw}} ({{ user.secondKinship.type|trans}})</td>
        
     </tr>
     <tr>
         <td><b>Téléphone : </b></td>
-        <td> {{ user.kinship.phone}}</td>
-        <td>{{ user.secondKinship.phone}}</td>
+        <td> {{ user.kinship.phone|raw}}</td>
+        <td>{{ user.secondKinship.phone|raw}}</td>
     </tr>
     <tr>
         <td><b>Adresse :</b></td>
-        <td>{{ user.kinship.address.street }}</td>
-        <td>{{ user.secondKinship.address.street }}</td>
+        <td>{{ user.kinship.address.street |raw}}</td>
+        <td>{{ user.secondKinship.address.street|raw }}</td>
     </tr>
     <tr>
         <td></td>
-        <td>{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</td>
-        <td>{{ user.secondKinship.address.postalCode }} {{ user.secondKinship.address.town }}</td>
+        <td>{{ user.kinship.address.postalCode|raw }} {{ user.kinship.address.town |raw}}</td>
+        <td>{{ user.secondKinship.address.postalCode|raw }} {{ user.secondKinship.address.town|raw }}</td>
     </tr>
 </table>

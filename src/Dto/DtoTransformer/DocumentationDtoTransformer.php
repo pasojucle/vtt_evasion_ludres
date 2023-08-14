@@ -13,13 +13,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DocumentationDtoTransformer
 {
-
     public function __construct(
         private ProjectDirService $projectDirService,
         private UrlGeneratorInterface $router,
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(Documentation $documentation): DocumentationDto
@@ -40,7 +37,7 @@ class DocumentationDtoTransformer
     public function fromEntities(Paginator|Collection|array $documentationEntities): array
     {
         $documentations = [];
-        foreach($documentationEntities as $documentationEntity) {
+        foreach ($documentationEntities as $documentationEntity) {
             $documentations[] = $this->fromEntity($documentationEntity);
         }
 

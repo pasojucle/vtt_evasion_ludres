@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTime;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
+use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReplaceKeywordsService
@@ -18,7 +18,6 @@ class ReplaceKeywordsService
 
     public function replace(UserDto $user, ?string $content, int $render = RegistrationStep::RENDER_VIEW): null|string|array
     {
-        
         if (null !== $content) {
             if (RegistrationStep::RENDER_FILE === $render) {
                 $content = $this->createPageBreak($content);
@@ -132,7 +131,7 @@ class ReplaceKeywordsService
             $user->health->isMedicalCertificateRequired,
             $licence->amount['value']?->toString(),
             '<br>',
-            (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->approvals['rightToImage']['string']) : 'autorise',
+            (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->approvals['rightToTheImage']->toString) : 'autorise',
             '$this->seasonService->getCurrentSeason()',
         ];
     }

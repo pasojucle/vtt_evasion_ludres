@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\UseCase\Certificate;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Service\ParameterService;
 use App\Service\PdfService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\StringService;
-use App\ViewModel\UserPresenter;
-use App\ViewModel\UserViewModel;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -19,7 +19,7 @@ use Twig\Environment;
 class GetAccompanyingAdultCertificate
 {
     public function __construct(
-        private UserPresenter $presenter,
+        private UserDtoTransformer $userDtoTransformer,
         private PdfService $pdfService,
         private StringService $stringService,
         private ReplaceKeywordsService $replaceKeywordsService,
@@ -33,8 +33,7 @@ class GetAccompanyingAdultCertificate
     {
         $filename = null;
 
-        $this->presenter->present($user);
-        $user = $this->presenter->viewModel();
+        $user = $this->userDtoTransformer->fromEntity($user);
         if (null === $content) {
             $content = $this->getContent($user);
         }
@@ -46,7 +45,7 @@ class GetAccompanyingAdultCertificate
         return [$content, $filename];
     }
 
-    private function getContent(UserViewModel $user)
+    private function getContent(UserDto $user)
     {
         $content = $this->parameterService->getParameterByName('ACCOMPANYING_ADULT_CERTIFICATE');
 

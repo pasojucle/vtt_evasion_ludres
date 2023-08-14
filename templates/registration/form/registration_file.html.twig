@@ -1,8 +1,8 @@
 <div class="container">{{ current.content | raw}}</div>
 
-<p>{{ user.seasonLicence.getAmount()['str']|raw }}</p>
+<p>{{ user.seasonLicence.amount['str']|raw }}</p>
 <br>
 <p>{{ user.health.isMedicalCertificateRequired }}</p>
 <br>
 
-<a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user.entity.id }) }}">Télécharger le dossier</a>
+<a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user.id }) }}">Télécharger le dossier</a>

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\UserDto;
-use App\Entity\User;
 use App\Dto\ProductDto;
+use App\Dto\UserDto;
 use App\Entity\Product;
+use App\Entity\User;
 use App\Service\ProjectDirService;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Bundle\SecurityBundle\Security;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class ProductDtoTransformer
 {
@@ -19,9 +19,7 @@ class ProductDtoTransformer
         private UserDtoTransformer $userDtoTransformer,
         private Security $security,
         private ProjectDirService $projectDirService
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(?Product $product, ?UserDto $user = null): ProductDto
@@ -30,13 +28,13 @@ class ProductDtoTransformer
         if ($product) {
             $productDto->id = $product->getId();
             $productDto->name = $product->getName();
-            $productDto->content = $product?->getContent();
+            $productDto->content = $product->getContent();
             $productDto->price = number_format($product->getPrice(), 2) . ' €';
             $productDto->priceClass = 'price';
             $productDto->ref = $product->getRef();
             $productDto->filename = $product->getFilename();
             $productDto->sizes = $this->getSizes($product->getSizes());
-            $productDto->pathName = $this->projectDirService->dir('','products', $productDto->filename);
+            $productDto->pathName = $this->projectDirService->dir('', 'products', $productDto->filename);
             $productDto->pathNameForPdf = $this->projectDirService->dir('products', $productDto->filename);
             $productDto->sellingPrice = $product->getPrice();
             $productDto->discountPrice = null;
@@ -76,9 +74,9 @@ class ProductDtoTransformer
     public function getSizes(?Collection $productSizes): array
     {
         $sizes = [];
-            foreach ($productSizes as $size) {
-                $sizes[] = $size->getName();
-            }
+        foreach ($productSizes as $size) {
+            $sizes[] = $size->getName();
+        }
         return $sizes;
     }
 }

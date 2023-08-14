@@ -6,7 +6,6 @@ namespace App\Dto;
 
 use App\Entity\BikeRideType;
 
-
 class BikeRideTypeDto
 {
     public ?BikeRideType $entity;

@@ -11,7 +11,6 @@ use App\Entity\Licence;
 
 class FFCTLicenceDtoTransformer
 {
-
     public function fromEntity(UserDto $user): FFCTLicenceDto
     {
         $subscriber = (Licence::CATEGORY_MINOR === $user->lastLicence->category)
@@ -19,7 +18,7 @@ class FFCTLicenceDtoTransformer
                 : $user->member;
         $children = ($user->member && $user->kinship) ? $user->member : null;
 
-        $FFCTLicenceDto = new FFCTLicenceDto;
+        $FFCTLicenceDto = new FFCTLicenceDto();
         $FFCTLicenceDto->fullName = $this->getFullName($subscriber);
         $FFCTLicenceDto->fullNameChildren = $this->getFullName($children);
         $FFCTLicenceDto->birthDate = $this->getBirthDate($subscriber);
@@ -32,7 +31,7 @@ class FFCTLicenceDtoTransformer
     public function getFullName(?IdentityDto $identity): string
     {
         if (null !== $identity) {
-            return sprintf('%s %s',$identity->name, $identity->firstName);
+            return sprintf('%s %s', $identity->name, $identity->firstName);
         }
 
         return '';
@@ -41,10 +40,9 @@ class FFCTLicenceDtoTransformer
     public function getBirthDate(?IdentityDto $identity): ?string
     {
         if (null !== $identity?->birthDate) {
-            return $identity?->birthDate;
+            return $identity->birthDate;
         }
 
         return '';
     }
 }
-

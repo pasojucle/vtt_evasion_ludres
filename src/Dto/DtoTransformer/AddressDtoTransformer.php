@@ -30,8 +30,9 @@ class AddressDtoTransformer
     private function formatChanges(array $changes, AddressDto &$addressDto): void
     {
         if (array_key_exists('Address', $changes)) {
-            foreach($changes['Address']->getValue() as $property) {
-                $addressDto->$property = sprintf('<b>%s</b>', $addressDto->$property); 
+            $properties = array_keys($changes['Address']->getValue());
+            foreach ($properties as $property) {
+                $addressDto->$property = sprintf('<b>%s</b>', $addressDto->$property);
             }
         }
     }

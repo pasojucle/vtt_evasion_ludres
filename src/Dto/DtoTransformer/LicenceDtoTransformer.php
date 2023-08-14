@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use DateTime;
-use App\Entity\User;
-use DateTimeImmutable;
 use App\Dto\LicenceDto;
 use App\Entity\Licence;
+use App\Entity\User;
 use App\Model\Currency;
-use App\Service\SeasonService;
+use App\Repository\MembershipFeeAmountRepository;
+use App\Repository\RegistrationChangeRepository;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
+use App\Service\SeasonService;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use App\Repository\RegistrationChangeRepository;
-use App\Repository\MembershipFeeAmountRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
@@ -37,8 +37,7 @@ class LicenceDtoTransformer
         private ParameterService $parameterService,
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
         private IndemnityService $indemnityService,
-    )
-    {
+    ) {
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
     }
 
@@ -57,19 +56,19 @@ class LicenceDtoTransformer
                     $status = Licence::STATUS_WAITING_RENEW;
                 }
             }
-            $licenceDto->entity = $licence;
+            $licenceDto->id = $licence->getId();
             $licenceDto->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
             $licenceDto->season = $this->getSeason($licence->getSeason());
             $licenceDto->fullSeason = $this->getFullSeason($licence->getSeason());
             $licenceDto->isFinal = $licence->isFinal();
             $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
-            $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? Licence::COVERAGES[$licence->getCoverage()] : null;
+            $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]) : null;
             $licenceDto->hasFamilyMember = $licence->getAdditionalFamilyMember();
             $licenceDto->category = $licence->getCategory();
             $licenceDto->statusClass = self:: STATUS_CLASS[$status];
             $licenceDto->status = $status;
             $licenceDto->statusStr = Licence::STATUS[$status];
-            $licenceDto->type = (!empty($licence->getType())) ? Licence::TYPES[$licence->getType()] : null;
+            $licenceDto->type = (!empty($licence->getType())) ? $this->translator->trans(Licence::TYPES[$licence->getType()]) : null;
             $licenceDto->lock = $licence->getSeason() !== $currentSeason;
             $licenceDto->currentSeasonForm = $this->getCurrentSeasonForm($licence, $currentSeason);
             $licenceDto->isVae = $this->isVae($licence->isVae());
@@ -86,11 +85,11 @@ class LicenceDtoTransformer
         return $licenceDto;
     }
 
-    public function fromEntities(Collection|array $licenceEntities, bool $viewChanges = false): array
+    public function fromEntities(Collection|array $licenceEntities, ?array $changes = null): array
     {
         $licences = [];
-        foreach($licenceEntities as $licenceEntity) {
-            $licences[] = $this->fromEntity($licenceEntity, $viewChanges);
+        foreach ($licenceEntities as $licenceEntity) {
+            $licences[] = $this->fromEntity($licenceEntity, $changes);
         }
 
         return $licences;
@@ -144,13 +143,11 @@ class LicenceDtoTransformer
 
     private function getSeason(int $season): string
     {
-        
         return sprintf('%s - %s', (string) ($season - 1), (string) $season);
     }
 
     private function getFullSeason(int $season): string
     {
-
         return sprintf('%s - %s (jusqu\'au 31 décembre %s) ', (string) ($season - 1), (string) $season, (string) $season);
     }
 
@@ -158,12 +155,16 @@ class LicenceDtoTransformer
     {
         if (array_key_exists('Licence', $changes)) {
             $properties = array_keys($changes['Licence']->getValue());
-            foreach($properties as $property) {
+            dump($properties);
+            foreach ($properties as $property) {
                 if ('coverage' === $property) {
                     $property = 'coverageStr';
                 }
+                if ('status' === $property) {
+                    continue;
+                }
 
-                $licenceDto->$property = sprintf('<b>%s</b>', $licenceDto->$property); 
+                $licenceDto->$property = sprintf('<b>%s</b>', $licenceDto->$property);
             }
         }
     }

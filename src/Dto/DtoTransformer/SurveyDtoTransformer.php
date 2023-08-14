@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-
 use App\Dto\SurveyDto;
 use App\Entity\Survey;
 use Doctrine\Common\Collections\Collection;
@@ -14,7 +13,7 @@ class SurveyDtoTransformer
 {
     public function fromEntity(Survey $survey): SurveyDto
     {
-        $surveyDto = new surveyDto;
+        $surveyDto = new surveyDto();
         $surveyDto->id = $survey->getId();
         $surveyDto->entity = $survey;
         $surveyDto->title = $survey->getTitle();
@@ -27,7 +26,7 @@ class SurveyDtoTransformer
     public function fromEntities(Paginator|Collection|array $surveyEntities): array
     {
         $surveys = [];
-        foreach($surveyEntities as $surveyEntity) {
+        foreach ($surveyEntities as $surveyEntity) {
             $surveys[] = $this->fromEntity($surveyEntity);
         }
 

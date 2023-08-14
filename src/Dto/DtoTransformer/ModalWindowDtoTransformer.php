@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\Survey;
 use App\Dto\LicenceDto;
 use App\Dto\ModalWindowDto;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
-use App\Service\ParameterService;
+use App\Entity\Survey;
 use App\Service\ModalWindowService;
+use App\Service\ParameterService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,8 +24,7 @@ class ModalWindowDtoTransformer
         private ModalWindowService $modalWindowService,
         private UrlGeneratorInterface $router,
         private ParameterService $parameterService
-    )
-    {
+    ) {
         $this->modalWindowOrderInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
         $this->modalWindowRegistrationInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
     }
@@ -79,20 +78,19 @@ class ModalWindowDtoTransformer
     public function fromEntities(array|Paginator|Collection $modalWindowEntities): array
     {
         $modalWindows = [];
-        if (!empty($modalWindows)) {
-            foreach ($modalWindowEntities as $modalWindowEntity) {
-                if ($modalWindowEntity instanceof ModalWindow) {
-                    $modalWindows[] = $this->fromModalWindow($modalWindowEntity);
-                }
-                if ($modalWindowEntity instanceof Survey) {
-                    $modalWindows[] = $this->fromSuvey($modalWindowEntity);
-                }
-                if ($modalWindowEntity instanceof OrderHeader) {
-                    $modalWindows[] = $this->fromOrderHeader($modalWindowEntity);
-                }
-                if ($modalWindowEntity instanceof LicenceDto) {
-                    $modalWindows[] = $this->fromLicence($modalWindowEntity);
-                }
+
+        foreach ($modalWindowEntities as $modalWindowEntity) {
+            if ($modalWindowEntity instanceof ModalWindow) {
+                $modalWindows[] = $this->fromModalWindow($modalWindowEntity);
+            }
+            if ($modalWindowEntity instanceof Survey) {
+                $modalWindows[] = $this->fromSuvey($modalWindowEntity);
+            }
+            if ($modalWindowEntity instanceof OrderHeader) {
+                $modalWindows[] = $this->fromOrderHeader($modalWindowEntity);
+            }
+            if ($modalWindowEntity instanceof LicenceDto) {
+                $modalWindows[] = $this->fromLicence($modalWindowEntity);
             }
         }
 

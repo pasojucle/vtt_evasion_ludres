@@ -6,10 +6,10 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
-use App\Entity\User;
 use App\Dto\SessionDto;
 use App\Dto\SessionsDto;
 use App\Entity\Session;
+use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
 use App\Repository\SessionRepository;
@@ -28,15 +28,13 @@ class SessionDtoTransformer
         private IndemnityRepository $indemnityRepository,
         private SessionRepository $sessionRepository,
         private UserDtoTransformer $userDtoTransformer
-    )
-    {
-        
+    ) {
     }
 
 
     public function fromEntity(?Session $session): SessionDto
     {
-        $sessionDto = new SessionDto;
+        $sessionDto = new SessionDto();
         if ($session) {
             $sessionDto->id = $session->getId();
             $sessionDto->availability = $this->getAvailability($session->getAvailability());
@@ -55,12 +53,12 @@ class SessionDtoTransformer
 
     public function fromEntities(Paginator|Collection|array $sessionEntities): SessionsDto
     {
-       $sessionsDto = new SessionsDto();
-       list($sessions, $sessionsByCluster, $bikeRides) = $this->analize($sessionEntities);
-       $sessionsDto->sessions = $sessions;
-       $sessionsDto->bikeRideMembers = $this->getBikeRideMembers($bikeRides, $sessionsByCluster);
+        $sessionsDto = new SessionsDto();
+        list($sessions, $sessionsByCluster, $bikeRides) = $this->analize($sessionEntities);
+        $sessionsDto->sessions = $sessions;
+        $sessionsDto->bikeRideMembers = $this->getBikeRideMembers($bikeRides, $sessionsByCluster);
 
-       return $sessionsDto;
+        return $sessionsDto;
     }
 
 
@@ -104,9 +102,8 @@ class SessionDtoTransformer
         return $availabilityView;
     }
 
-    private function getIndemnity(User $user, BikeRideTypeDto $bikeRideType, bool $userIsOnSite ): ?Currency
+    private function getIndemnity(User $user, BikeRideTypeDto $bikeRideType, bool $userIsOnSite): ?Currency
     {
-
         foreach ($this->indemnityRepository->findAll() as $indemnity) {
             if ($bikeRideType === $indemnity->getBikeRideType() && $user->getLevel() === $indemnity->getLevel() && $userIsOnSite) {
                 $amount = new Currency($indemnity->getAmount());
@@ -133,7 +130,7 @@ class SessionDtoTransformer
         $sessions = [];
         $sessionsByCluster = [];
         $bikeRides = [];
-        foreach($sessionEntities as $sessionEntity) {
+        foreach ($sessionEntities as $sessionEntity) {
             $sessionDto = $this->fromEntity($sessionEntity);
             $sessions[] = $this->fromEntity($sessionEntity);
             $cluster = $sessionEntity->getCluster();

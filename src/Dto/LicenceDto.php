@@ -9,7 +9,7 @@ use App\Model\Currency;
 
 class LicenceDto
 {
-    public ?Licence $entity;
+    public ?int $id;
 
     public ?string $createdAt;
 

@@ -11,7 +11,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PaginatorDtoTransformer
 {
-
     private ?string $currentRoute;
 
     private ?array $currentParams;
@@ -19,9 +18,7 @@ class PaginatorDtoTransformer
     public function __construct(
         private RequestStack $requestStack,
         private UrlGeneratorInterface $router,
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(Paginator $paginator, ?array $filters = [], ?string $targetRoute = null): PaginatorDto
@@ -89,7 +86,6 @@ class PaginatorDtoTransformer
 
     private function getPageData(int $page): array
     {
-
         $currentParams = array_merge($this->currentParams, ['p' => $page]);
         return [
             'page' => $page,

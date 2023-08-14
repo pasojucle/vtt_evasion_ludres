@@ -4,32 +4,30 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\Level;
 use App\Dto\ClusterDto;
-use App\Entity\Cluster;
-use App\Entity\Session;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
+use App\Entity\Cluster;
+use App\Entity\Level;
+use App\Entity\Session;
 use App\Service\ClusterService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class ClusterDtoTransformer
 {
     public function __construct(
         private SessionDtoTransformer $sessionDtoTransformer,
         private ClusterService $clusterService
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity(Cluster $cluster): ClusterDto
     {
         $sessionEntities = $cluster->getSessions();
 
-        $clusterDto = new ClusterDto;
+        $clusterDto = new ClusterDto();
         $clusterDto->id = $cluster->getId();
         $clusterDto->entity = $cluster;
         $clusterDto->title = $cluster->getTitle();
@@ -48,7 +46,7 @@ class ClusterDtoTransformer
     public function fromEntities(Paginator|Collection|array $clusterEntities): array
     {
         $clusters = [];
-        foreach($clusterEntities as $clusterEntity) {
+        foreach ($clusterEntities as $clusterEntity) {
             $clusters[] = $this->fromEntity($clusterEntity);
         }
 
