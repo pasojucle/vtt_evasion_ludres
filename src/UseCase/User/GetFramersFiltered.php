@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Dto\DtoTransformer\SessionDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\UserDto;
 use App\Entity\BikeRide;
 use App\Form\Admin\FramerFilterType;
 use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
-use App\ViewModel\Session\SessionsPresenter;
-use App\ViewModel\UsersPresenter;
-use App\ViewModel\UserViewModel;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,10 +23,10 @@ class GetFramersFiltered
     public function __construct(
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $urlGenerator,
-        private UsersPresenter $usersPresenter,
+        private UserDtoTransformer $userDtoTransformer,
         private UserRepository $userRepository,
         private SessionRepository $sessionRepository,
-        private SessionsPresenter $sessionsPresenter
+        private SessionDtoTransformer $sessionDtoTransformer
     ) {
     }
 
@@ -51,10 +51,8 @@ class GetFramersFiltered
 
         $this->setRedirect($request, $bikeRide);
 
-        $this->usersPresenter->present($users);
-
         return [
-            'framers' => $this->addUserAvailability($this->usersPresenter->viewModel()->users, $filters),
+            'framers' => $this->addUserAvailability($this->userDtoTransformer->fromEntities($users), $filters),
             'form' => $form->createView(),
         ];
     }
@@ -62,17 +60,16 @@ class GetFramersFiltered
     private function addUserAvailability(?array $users, array $filters): array
     {
         $sessions = $this->sessionRepository->findFramersByBikeRide($filters['bikeRideId']);
-        $this->sessionsPresenter->present($sessions);
 
         $sessionsByUser = [];
-        foreach ($this->sessionsPresenter->viewModel()->sessions as $session) {
-            $sessionsByUser[$session->entity->getUser()->getId()] = $session;
+        foreach ($this->sessionDtoTransformer->fromEntities($sessions)->sessions as $session) {
+            $sessionsByUser[$session->user->id] = $session;
         }
 
 
         $userWithAvailability = [];
         foreach ($users as $user) {
-            $userId = ($user instanceof UserViewModel) ? $user->entity->getId() : $user->getId();
+            $userId = ($user instanceof UserDto) ? $user->id : $user->getId();
 
             $availability = (array_key_exists($userId, $sessionsByUser))
                 ? $sessionsByUser[$userId]->availability

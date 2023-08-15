@@ -41,7 +41,7 @@ class ProjectDirService
     private function getDir(string $dirName): string
     {
         if (array_key_exists($dirName, $this->directories)) {
-            $dirs[] = $dirName;
+            return $this->directories[$dirName];
         }
         return $dirName;
     }

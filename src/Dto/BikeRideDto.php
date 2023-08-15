@@ -9,7 +9,7 @@ use DateTimeImmutable;
 
 class BikeRideDto
 {
-    public ?BikeRide $entity;
+    public ?int $id;
 
     public ?string $type;
 

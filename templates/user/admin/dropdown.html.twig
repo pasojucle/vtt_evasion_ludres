@@ -1,29 +1,29 @@
 <div class="dropdown">
-  <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ user.entity.id }}"></button>
-  <div class="dropdown-menu" data-target="dropdown-{{ user.entity.id }}">
+  <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ user.id }}"></button>
+  <div class="dropdown-menu" data-target="dropdown-{{ user.id }}">
     <div class="dropdown-title">{{ user.member.fullName }}</div>
     <ul class="dropdown-body">
       {% if session is defined %}
         {% if session.availability is not empty %}
           <li class="info">{{ session.availability.class.icon|raw }} {{ session.availability.text|trans }}</li>
         {% endif %}
-        {% if user.approvalGoingHome is not null %}
-          <li class="info ">{{ user.approvalGoingHome.class.icon|raw }} {{ user.approvalGoingHome.message }}</li>
+        {% if user.approvals.goingHomeAlone is defined %}
+          <li class="info ">{{ user.approvals.goingHomeAlone.toHtml.class.icon|raw }} {{ user.approvals.goingHomeAlone.toHtml.message }}</li>
         {% endif %}
-        {% if bikeRide.clusters is not empty and not cluster.isComplete and (session.availability is empty or session.availability.value == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
-          <li><a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.entity.id}) }}" class="dropdown-item" title="Changer de groupe">
+        {% if clusters is not empty and not cluster.isComplete and (session.availability is empty or session.availability.value == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+          <li><a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" class="dropdown-item" title="Changer de groupe">
               <i class="fa-solid fa-rotate"></i> Changer de groupe
           </a></li>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') and not cluster.isComplete %}
-            <li><a class="dropdown-item" href="{{ path('admin_session_delete', {'session' : session.entity.id}) }}" title="Supprimer"><i class="fas fa-times"></i> Supprimer de la sortie</a></li>
+            <li><a class="dropdown-item" href="{{ path('admin_session_delete', {'session' : session.id}) }}" title="Supprimer"><i class="fas fa-times"></i> Supprimer de la sortie</a></li>
         {% endif %}
       {% endif %}
       {% if is_granted('ROLE_ADMIN') %}
-        <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.entity.id}) }}"><i class="fas fa-chart-line"></i> Participation</a></li>
-        <li><a class="dropdown-item" href="{{ path('admin_user_certificate', {'user': user.entity.id}) }}"><i class="fas fa-file-contract"></i> Attestation d'inscription CE</a></li>
+        <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.id}) }}"><i class="fas fa-chart-line"></i> Participation</a></li>
+        <li><a class="dropdown-item" href="{{ path('admin_user_certificate', {'user': user.id}) }}"><i class="fas fa-file-contract"></i> Attestation d'inscription CE</a></li>
         {% if user.level.accompanyingCertificat %}
-          <li><a class="dropdown-item" href="{{ path('admin_user_accompanying_certificate', {'user': user.entity.id}) }}"><i class="fas fa-file-contract"></i> Attestation adulte accompagnateur</a></li>
+          <li><a class="dropdown-item" href="{{ path('admin_user_accompanying_certificate', {'user': user.id}) }}"><i class="fas fa-file-contract"></i> Attestation adulte accompagnateur</a></li>
         {% endif %}
       {% endif %}      
       {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}

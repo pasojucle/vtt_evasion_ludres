@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\BackgroundDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Background;
 use App\Form\Admin\BackgroundType;
 use App\Repository\BackgroundRepository;
 use App\Service\PaginatorService;
 use App\UseCase\Background\EditBackground;
 use App\ViewModel\Background\BackgroundPresenter;
-use App\ViewModel\Background\BackgroundsPresenter;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -24,26 +24,23 @@ class BackgroundController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private BackgroundRepository $backgroundRepository
+        private BackgroundRepository $backgroundRepository,
+        private BackgroundDtoTransformer $backgroundDtoTransformer
     ) {
     }
 
     #[Route('/images_de_fond', name: 'admin_background_list', methods: ['GET'])]
     public function adminList(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request,
-        BackgroundsPresenter $presenter
     ): Response {
         $query = $this->backgroundRepository->findAllQuery();
         $backgrounds = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $presenter->present($backgrounds);
-        $paginatorPresenter->present($backgrounds);
-
         return $this->render('background/admin/list.html.twig', [
-            'backgrounds' => $presenter->viewModel()->backgrounds,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'backgrounds' => $this->backgroundDtoTransformer->fromEntities($backgrounds),
+            'paginator' => $paginatorDtoTransformer->fromEntity($backgrounds),
         ]);
     }
 
@@ -60,10 +57,8 @@ class BackgroundController extends AbstractController
             return $this->redirectToRoute('admin_background_list');
         }
 
-        $presenter->present($background);
-
         return $this->render('background/admin/edit.html.twig', [
-            'background' => $presenter->viewModel(),
+            'background' => $this->backgroundDtoTransformer->fromEntity($background),
             'form' => $form->createView(),
         ]);
     }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
@@ -13,8 +15,6 @@ use App\Form\SessionSwitchType;
 use App\Repository\SessionRepository;
 use App\Service\SeasonService;
 use App\Service\SessionService;
-use App\ViewModel\BikeRide\BikeRidePresenter;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,24 +26,25 @@ class SessionController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private SessionService $sessionService,
-        private SessionRepository $sessionRepository
+        private SessionRepository $sessionRepository,
+        private BikeRideDtoTransformer $bikeRideDtoTransformer,
     ) {
     }
 
     #[Route('/admin/seance/{session}', name: 'admin_session_present', methods: ['GET'])]
     public function adminPresent(
         Session $session,
-        BikeRidePresenter $bikeRidePresenter
+        ClusterDtoTransformer $clusterDtoTransformer,
     ): Response {
         $isPresent = !$session->isPresent();
 
         $session->setIsPresent($isPresent);
         $this->entityManager->flush();
-
-        $bikeRidePresenter->present($session->getCluster()->getBikeRide());
+        $bikeRide = $session->getCluster()->getBikeRide();
 
         return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $bikeRidePresenter->viewModel(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
+            'clusters' => $clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
             'bike_rides_filters' => [],
             'permission' => 7,
         ]);
@@ -77,7 +78,6 @@ class SessionController extends AbstractController
     #[Route('/admin/rando/inscription/{bikeRide}', name: 'admin_session_add', methods: ['GET', 'POST'])]
     public function adminSessionAdd(
         Request $request,
-        BikeRidePresenter $bikeRidePresenter,
         SeasonService $seasonService,
         BikeRide $bikeRide
     ): Response {
@@ -119,25 +119,24 @@ class SessionController extends AbstractController
             $this->addFlash('danger', 'Le participant est déjà inscrit');
         }
 
-        $bikeRidePresenter->present($bikeRide);
         return $this->render('session/admin/add.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRidePresenter->viewModel(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
         ]);
     }
 
     #[Route('/admin/rando/supprime/{session}', name: 'admin_session_delete', methods: ['GET'])]
     public function adminSessionDelete(
         Session $session,
-        UserPresenter $userPresenter
+        UserDtoTransformer $userDtoTransformer,
     ) {
-        $userPresenter->present($session->getUser());
+        $userDto = $userDtoTransformer->fromEntity($session->getUser());
         $bikeRide = $session->getCluster()->getBikeRide();
 
         $this->entityManager->remove($session);
         $this->entityManager->flush();
 
-        $this->addFlash('success', $userPresenter->viewModel()->member->fullName . ' à bien été désincrit');
+        $this->addFlash('success', $userDto->member->fullName . ' à bien été désincrit');
 
         return $this->redirectToRoute('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),

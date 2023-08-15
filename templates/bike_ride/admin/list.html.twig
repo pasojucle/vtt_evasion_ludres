@@ -30,7 +30,7 @@
                             </div>
                         {% endset %}
                         {% if bikeRide.bikeRideType.isRegistrable %}
-                            <a class="" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.entity.id}) }}" title="Voir les participants">
+                            <a class="" href="{{ path('admin_bike_ride_cluster_show', {'bikeRide' : bikeRide.id}) }}" title="Voir les participants">
                                 {{ bikeRide_content }}
                             </a>
                         {% else %}
@@ -38,12 +38,12 @@
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <div class="dropdown">
-                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ bikeRide.entity.id }}"></button>
-                                <div class="dropdown-menu" data-target="dropdown-{{ bikeRide.entity.id }}">
+                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ bikeRide.id }}"></button>
+                                <div class="dropdown-menu" data-target="dropdown-{{ bikeRide.id }}">
                                     <div class="dropdown-title">{{ bikeRide.startAt | date('d/m/y') }} - {{ bikeRide.title }}</div>
                                     <ul class="dropdown-body">
                                         <li>
-                                            <a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.entity.id}) }}" title="Modifier">
+                                            <a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
                                                 <i class="fas fa-pencil-alt"></i> Modifier
                                             </a>
                                         </li>
@@ -55,11 +55,11 @@
                                         </li>
                                         {% endif %}
                                         <li>
-                                            <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item" title="Exporter la séance">
+                                            <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Exporter la séance">
                                                 <i class="fas fa-file-download"></i> Exporter la séance
                                             </a>
                                         </li>
-                                        <li><a href="{{ path('admin_bike_ride_members_email_to_clipboard', {'bikeRide': bikeRide.entity.id}) }}" class="dropdown-item email-to-clipboard" title="Copier les emails des participants"><i class="fas fa-copy"></i> Copier les emails des participants</a></li>
+                                        <li><a href="{{ path('admin_bike_ride_members_email_to_clipboard', {'bikeRide': bikeRide.id}) }}" class="dropdown-item email-to-clipboard" title="Copier les emails des participants"><i class="fas fa-copy"></i> Copier les emails des participants</a></li>
                                     </ul>
                                 </div>
                             </div>

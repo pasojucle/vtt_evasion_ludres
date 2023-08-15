@@ -8,7 +8,7 @@
             <h1>Encadrement</h1>
             <h2>Sortie {{ bike_ride.title }} du {{ bike_ride.period }}</h2>
             <span class="tools">
-                <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bike_ride.entity.id}) }}" class="btn btn-ico" title="Retour à la sorties"><i class="fas fa-chevron-left"></i></a>
+                <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bike_ride.id}) }}" class="btn btn-ico" title="Retour à la sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
         
@@ -25,7 +25,7 @@
             <ul>
                 {% for framer in framers %}                      
                     <li class="list-dropdown"> 
-                        <a href="{{ path('admin_user', {'user': framer.user.entity.id})}}"
+                        <a href="{{ path('admin_user', {'user': framer.user.id})}}"
                             {% if framer.user.level is not null %}style="background-color: {{ framer.user.level.colors.background }}"{% endif %}>
                             <div class="row">
                                 <div class="col-md-4 col-xs-12">{{ framer.user.member.fullName }}</div>

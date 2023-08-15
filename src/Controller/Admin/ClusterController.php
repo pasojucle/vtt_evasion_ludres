@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
 use App\UseCase\Cluster\ExportCluster;
-use App\ViewModel\BikeRide\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,8 @@ class ClusterController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private BikeRidePresenter $presenter,
+        private BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private ClusterDtoTransformer $clusterDtoTransformer,
     ) {
     }
     #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET'])]
@@ -30,10 +32,10 @@ class ClusterController extends AbstractController
         $this->entityManager->flush();
 
         $bikeRide = $cluster->getBikeRide();
-        $this->presenter->present($bikeRide);
 
         return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $this->presenter->viewModel(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
+            'clusters' => $this->clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
             'bike_rides_filters' => [],
             'permission' => 4,
         ]);
@@ -55,9 +57,8 @@ class ClusterController extends AbstractController
             return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
         }
 
-        $this->presenter->present($bikeRide);
         return $this->render('cluster/edit.html.twig', [
-            'bikeRide' => $this->presenter->viewModel(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
             'form' => $form->createView(),
         ]);
     }
@@ -76,9 +77,8 @@ class ClusterController extends AbstractController
             return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
         }
 
-        $this->presenter->present($bikeRide);
         return $this->render('cluster/edit.html.twig', [
-            'bikeRide' => $this->presenter->viewModel(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
             'form' => $form->createView(),
         ]);
     }

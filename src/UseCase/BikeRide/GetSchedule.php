@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
@@ -24,8 +26,8 @@ class GetSchedule
 {
     public function __construct(
         private PaginatorService $paginator,
-        private PaginatorPresenter $paginatorPresenter,
-        private BikeRidesPresenter $bikeRidesPresenter,
+        private PaginatorDtoTransformer $paginatorDtoTransformer,
+        private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private BikeRideRepository $bikeRideRepository,
         private ContentRepository $contentRepository,
         private GetFilters $getFilters,
@@ -69,19 +71,15 @@ class GetSchedule
         if (null === $filters['limit']) {
             $query = $this->bikeRideRepository->findAllQuery($filters);
             $bikeRides = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-            $this->paginatorPresenter->present($bikeRides, $filters);
-            $parameters['paginator'] = $this->paginatorPresenter->viewModel();
+            $parameters['paginator'] = $this->paginatorDtoTransformer->fromEntity($bikeRides, $filters);
         } else {
             $bikeRides = $this->bikeRideRepository->findAllFiltered($filters);
             $parameters['paginator'] = null;
         }
 
-        $this->bikeRidesPresenter->present($bikeRides);
-        
-
         $parameters += [
             'form' => $form->createView(),
-            'bikeRides' => $this->bikeRidesPresenter->viewModel()->bikeRides,
+            'bikeRides' => $this->bikeRideDtoTransformer->fromEntities($bikeRides),
             'backgrounds' => $this->contentRepository->findOneByRoute('schedule')?->getBackgrounds(),
             'current_filters' => $filters,
         ];

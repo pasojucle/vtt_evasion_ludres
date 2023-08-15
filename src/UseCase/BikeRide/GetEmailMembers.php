@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
-use App\ViewModel\UsersPresenter;
 
 class GetEmailMembers
 {
-    public function __construct(private UsersPresenter $usersPresenter)
+    public function __construct(private UserDtoTransformer $userDtoTransformer)
     {
     }
 
     public function execute(BikeRide $bikeRide): string
     {
-        $this->getUsers($bikeRide);
-        $emails = $this->getEmails();
+        $users = $this->getUsers($bikeRide);
+        $emails = $this->getEmails($users);
 
         return (!empty($emails)) ? implode(',', $emails) : 'aucun';
     }
 
-    private function getUsers(BikeRide $bikeRide): void
+    private function getUsers(BikeRide $bikeRide): array
     {
         $users = [];
         foreach ($bikeRide->getClusters() as $cluster) {
@@ -34,13 +34,13 @@ class GetEmailMembers
         }
 
         
-        $this->usersPresenter->present($users);
+        return $users;
     }
 
-    private function getEmails(): array
+    private function getEmails(array $users): array
     {
         $emails = [];
-        foreach ($this->usersPresenter->viewModel()->users as $user) {
+        foreach ($this->userDtoTransformer->fromEntities($users) as $user) {
             $emails[] = $user->mainEmail;
         }
         return $emails;

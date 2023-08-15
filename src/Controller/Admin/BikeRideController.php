@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\User;
 use App\Form\Admin\BikeRideType;
@@ -16,8 +18,6 @@ use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
 use App\UseCase\User\GetFramersFiltered;
-use App\ViewModel\BikeRide\BikeRidePresenter;
-use App\ViewModel\BikeRide\BikeRidesPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -34,7 +34,9 @@ class BikeRideController extends AbstractController
         private EntityManagerInterface $entityManager,
         private GetSchedule $getSchedule,
         private GetFilters $getFilters,
-        private SessionRepository $sessionRepository
+        private SessionRepository $sessionRepository,
+        private BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private ClusterDtoTransformer $clusterDtoTransformer,
     ) {
     }
 
@@ -69,7 +71,6 @@ class BikeRideController extends AbstractController
         Request $request,
         EditBikeRide $editBikeRide,
         BikeRideTypeRepository $bikeRideTypeRepository,
-        BikeRidePresenter $bikeRidePresenter,
         ?BikeRide $bikeRide
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -93,11 +94,9 @@ class BikeRideController extends AbstractController
             return $this->redirectToRoute('admin_bike_rides', $filters);
         }
 
-        $bikeRidePresenter->present($bikeRide);
-
         return $this->render('bike_ride/admin/edit.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRidePresenter->viewModel(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntities($bikeRide),
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }
@@ -105,7 +104,6 @@ class BikeRideController extends AbstractController
     #[Route('/sortie/groupe/{bikeRide}', name: 'admin_bike_ride_cluster_show', methods: ['GET'])]
     public function adminClusterShow(
         Request $request,
-        BikeRidePresenter $presenter,
         BikeRide $bikeRide
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_FRAME');
@@ -125,10 +123,9 @@ class BikeRideController extends AbstractController
             'bikeRide' => $bikeRide->getId(),
         ]));
 
-        $presenter->present($bikeRide);
-
         return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $presenter->viewModel(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
+            'clusters' => $this->clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
             'bike_rides_filters' => ($filters) ? $filters : [],
             'permission' => $permission,
         ]);
@@ -144,7 +141,6 @@ class BikeRideController extends AbstractController
 
     #[Route('/sortie_choices', name: 'admin_bike_ride_choices', methods: ['GET'])]
     public function bikeRideChoices(
-        BikeRidesPresenter $presenter,
         Request $request
     ): JsonResponse {
         $query = $request->query->get('q');
@@ -153,8 +149,7 @@ class BikeRideController extends AbstractController
             : $this->bikeRideRepository->findAllDESC();
 
         $response = [];
-        $presenter->present($bikeRides);
-        foreach ($presenter->viewModel()->bikeRides as $bikeRide) {
+        foreach ($this->bikeRideDtoTransformer->fromEntities($bikeRides) as $bikeRide) {
             $response[] = [
                 'id' => $bikeRide->entity->getId(),
                 'text' => $bikeRide->period . ' - ' . $bikeRide->title,
@@ -166,23 +161,19 @@ class BikeRideController extends AbstractController
 
     #[Route('/sortie/encadrement/{bikeRide}/{filtered}', name: 'admin_bike_ride_framer_list', methods: ['GET', 'POST'], defaults:['filtered' => false])]
     public function adminBikeRideFramerList(
-        BikeRidePresenter $bikeRidePresenter,
         GetFramersFiltered $getFramersFiltered,
         Request $request,
         BikeRide $bikeRide,
         bool $filtered
     ) {
-        $bikeRidePresenter->present($bikeRide);
         $params = $getFramersFiltered->list($request, $bikeRide, $filtered);
-        $params['bike_ride'] = $bikeRidePresenter->viewModel();
-
+        $params['bike_ride'] = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
         return $this->render('bike_ride/admin/framer_list.html.twig', $params);
     }
 
     #[Route('/admin/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
     public function adminLevelDelete(
         Request $request,
-        BikeRidePresenter $presenter,
         BikeRide $bikeRide
     ): Response {
         $form = $this->createForm(FormType::class, null, [
@@ -202,9 +193,8 @@ class BikeRideController extends AbstractController
             return $this->redirectToRoute('admin_bike_rides');
         }
 
-        $presenter->present($bikeRide);
         return $this->render('bike_ride/admin/delete.modal.html.twig', [
-            'bike_ride' => $presenter->viewModel(),
+            'bike_ride' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
             'form' => $form->createView(),
         ]);
     }

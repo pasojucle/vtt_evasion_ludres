@@ -15,12 +15,12 @@
             <ul style="display: flex; flex-wrap: wrap;">
                 {% for background in backgrounds %}
                     <li class="card card-background">
-                        <a href="{{ path('admin_background_edit', {'background' : background.entity.id}) }}">
+                        <a href="{{ path('admin_background_edit', {'background' : background.id}) }}">
                             <div class="card-img" style="background-image: url({{ background.path }})"></div>
                             <div class="card-body">{{ background.filename }} </div>
                         </a>
                         <span class="tools">
-                            <a class="btn btn-danger" href="{{ path('admin_background_delete', {'background' : background.entity.id}) }}"  title="Supprimer" data-toggle="modal" data-type="danger">
+                            <a class="btn btn-danger" href="{{ path('admin_background_delete', {'background' : background.id}) }}"  title="Supprimer" data-toggle="modal" data-type="danger">
                                 <i class="fas fa-times-circle"></i>
                             </a>
                         </span>

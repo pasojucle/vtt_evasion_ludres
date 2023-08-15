@@ -7,7 +7,6 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRide;
-use App\Entity\Survey;
 use App\Entity\User;
 use App\Service\ProjectDirService;
 
@@ -48,7 +47,7 @@ class BikeRideDtoTransformer
         $user = $this->security->getUser();
 
         $bikeRideDto = new BikeRideDto();
-        $bikeRideDto->entity = $bikeRide;
+        $bikeRideDto->id = $bikeRide->getId();
         $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
         $bikeRideDto->title = $bikeRide->getTitle();
         $bikeRideDto->type = $bikeRide->getBikeRideType()->getName();
@@ -148,9 +147,4 @@ class BikeRideDtoTransformer
 
         return '';
     }
-
-    // public function getClusters(Collection $clusters): array
-    // {
-    //     return $this->clusterDtoTransformer->fromEntities($clusters);
-    // }
 }
