@@ -6,6 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Content;
 use App\Form\Type\BackgroundsType;
+use App\Repository\ContentRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -17,11 +18,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
 class ContentType extends AbstractType
 {
+    public function __construct(
+        private RequestStack $requestStack,
+        private ContentRepository $contentRepository,
+    )
+    {
+        
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -39,6 +48,11 @@ class ContentType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $content = $event->getData();
             $form = $event->getForm();
+            if (null === $content?->getParent() && 'admin_home_content_edit' === $this->requestStack->getCurrentRequest()->attributes->get('_route')) {
+                $parent = $this->contentRepository->findOneByRoute('home');
+                $content->setRoute('home')->setParent($parent);
+                $event->setData($content);
+            }
 
             if (!$content->isBackgroundOnly()) {
                 $form
@@ -128,7 +142,6 @@ class ContentType extends AbstractType
                     ])
                 ;
             }
-
             if (null === $content?->getParent()) {
                 $form
                     ->add('backgrounds', BackgroundsType::class);

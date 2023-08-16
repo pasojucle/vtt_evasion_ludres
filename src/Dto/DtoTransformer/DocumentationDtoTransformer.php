@@ -19,17 +19,18 @@ class DocumentationDtoTransformer
     ) {
     }
 
-    public function fromEntity(Documentation $documentation): DocumentationDto
+    public function fromEntity(?Documentation $documentation): DocumentationDto
     {
-        $fileName = $documentation->getFilename();
-        $filePath = ($documentation->getFilename()) ? $this->projectDirService->path('documentation', $fileName) : null;
+        $fileName = $documentation?->getFilename();
+        $filePath = ($documentation?->getFilename()) ? $this->projectDirService->path('documentation', $fileName) : null;
 
         $documentationDto = new DocumentationDto();
-        $documentationDto->name = $documentation->getName();
-        $documentationDto->filename = $fileName;
-        $documentationDto->source = $this->getSource($filePath);
-        $documentationDto->mimeType = $this->getMimeType($filePath);
-
+        if ($documentation) {
+            $documentationDto->name = $documentation->getName();
+            $documentationDto->filename = $fileName;
+            $documentationDto->source = $this->getSource($filePath);
+            $documentationDto->mimeType = $this->getMimeType($filePath);
+        }
 
         return $documentationDto;
     }

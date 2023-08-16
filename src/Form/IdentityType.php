@@ -40,7 +40,7 @@ class IdentityType extends AbstractType
             $form = $event->getForm();
             $type = $identity->getType();
             $kinship = 1 < $type;
-            $disabled = ($options['season_licence']->isFinal && Identity::TYPE_MEMBER === $type) ? 'disabled' : '';
+            $disabled = ($options['is_final'] && Identity::TYPE_MEMBER === $type) ? 'disabled' : '';
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
 
 
@@ -163,7 +163,7 @@ class IdentityType extends AbstractType
                         ;
                 }
 
-                if (Licence::CATEGORY_ADULT === $options['category'] && $options['season_licence']->isFinal) {
+                if (Licence::CATEGORY_ADULT === $options['category'] && $options['is_final']) {
                     $form
                         ->add('profession', TextType::class, [
                             'label' => 'Profession',
@@ -287,7 +287,7 @@ class IdentityType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Identity::class,
             'category' => Licence::CATEGORY_ADULT,
-            'season_licence' => null,
+            'is_final' => false,
             'is_kinship' => false,
         ]);
     }

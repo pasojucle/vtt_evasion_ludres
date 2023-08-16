@@ -6,25 +6,25 @@ namespace App\Dto;
 
 class ContentDto
 {
-    public ?int $id;
+    public ?int $id = null;
 
-    public ?string $title;
+    public ?string $title = null;
 
-    public ?string $route;
+    public ?string $route = null;
 
-    public ?string $content;
+    public ?string $content = null;
 
-    public ?bool $isFlash;
+    public ?bool $isFlash = false;
 
-    public ?string $fileName;
+    public ?string $fileName = null;
 
-    public ?string $fileTag;
+    public ?string $fileTag = null;
 
-    public ?float $fileRatio;
+    public ?float $fileRatio = null;
 
-    public ?string $buttonLabel;
+    public ?string $buttonLabel = null;
 
-    public ?string $url;
+    public ?string $url = null;
 
-    public ?string $contentStyleMd;
+    public ?string $contentStyleMd = null;
 }

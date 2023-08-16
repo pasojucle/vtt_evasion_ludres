@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BoardRole;
 use App\Form\Admin\BoardRoleType;
 use App\Repository\BoardRoleRepository;
@@ -26,16 +27,15 @@ class BoardRoleController extends AbstractController
     #[Route('s', name: '_list', methods: ['GET'], defaults:['type' => 1])]
     public function adminBoardRoleList(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request
     ): Response {
         $query = $this->boardRoleRepository->findBoardRoleQuery();
         $boardRoles = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $paginatorPresenter->present($boardRoles);
 
         return $this->render('board_role/admin/list.html.twig', [
             'boardRoles' => $boardRoles,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $paginatorDtoTransformer->fromEntity($boardRoles),
         ]);
     }
 

@@ -13,10 +13,13 @@ class IndemnityDtoTransformer
     public function fromEntity(Indemnity $indemnity): IndemnityDto
     {
         $indemnityDto = new IndemnityDto();
-        $indemnityDto->level = $indemnity->getLevel();
-        $indemnityDto->bikeRideType = $indemnity->getBikeRideType();
-        $amount = new Currency($indemnity->getAmount());
-        $indemnityDto->amount = $amount->toString();
+        if ($indemnity) {
+            $indemnityDto->id = $indemnity->getId();
+            $indemnityDto->level = $indemnity->getLevel();
+            $indemnityDto->bikeRideType = $indemnity->getBikeRideType();
+            $amount = new Currency($indemnity->getAmount());
+            $indemnityDto->amount = $amount->toString();
+        }
 
         return $indemnityDto;
     }

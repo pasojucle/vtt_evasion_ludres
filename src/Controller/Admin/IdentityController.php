@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\IdentitiesType;
 use App\Repository\IdentityRepository;
 use App\UseCase\Identity\EditIdentity;
-use App\ViewModel\UserPresenter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +20,7 @@ class IdentityController extends AbstractController
     public function adminEdit(
         Request $request,
         IdentityRepository $identityRepository,
-        UserPresenter $presenter,
+        UserDtoTransformer $userDtoTransformer,
         EditIdentity $editIdentity,
         User $user,
         bool $isKinship
@@ -34,7 +34,7 @@ class IdentityController extends AbstractController
         }
         $form = $this->createForm(IdentitiesType::class, ['identities' => $identities], [
             'category' => $licence->getCategory(),
-            'season_licence' => $licence,
+            'is_final' => $licence->isFinal(),
             'is_kinship' => $isKinship,
         ]);
         $form->handleRequest($request);
@@ -46,10 +46,9 @@ class IdentityController extends AbstractController
                 'user' => $user->getId(),
             ]);
         }
-        $presenter->present($user);
 
         return $this->render('identity/edit.html.twig', [
-            'user' => $presenter->viewModel(),
+            'user' => $userDtoTransformer->fromEntity($user),
             'form' => $form->createView(),
         ]);
     }

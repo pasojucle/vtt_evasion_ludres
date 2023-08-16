@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Indemnity;
 
+use App\Dto\DtoTransformer\IndemnityDtoTransformer;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\IndemnityRepository;
 use App\Repository\LevelRepository;
@@ -15,15 +16,14 @@ class GetIndemnities
         private LevelRepository $levelRepository,
         private IndemnityRepository $indemnityRepository,
         private BikeRideTypeRepository $bikeRideTypeRepository,
-        private IndemnitiesPresenter $indemnitiesPresenter
+        private IndemnityDtoTransformer $indemnityDtoTransformer
     ) {
     }
 
     public function execute(): array
     {
-        $this->indemnitiesPresenter->present($this->indemnityRepository->findOrderByBikeRideType());
         $frameLevels = $this->levelRepository->findAllTypeFramer();
-        $indemnities = $this->indemnitiesPresenter->viewModel()->indemnities;
+        $indemnities = $this->indemnityDtoTransformer->fromEntities($this->indemnityRepository->findOrderByBikeRideType());
         $bikeRidesTypes = $this->bikeRideTypeRepository->findCompensables();
 
         $values = [];

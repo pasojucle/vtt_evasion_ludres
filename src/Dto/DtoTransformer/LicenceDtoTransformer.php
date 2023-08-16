@@ -155,7 +155,6 @@ class LicenceDtoTransformer
     {
         if (array_key_exists('Licence', $changes)) {
             $properties = array_keys($changes['Licence']->getValue());
-            dump($properties);
             foreach ($properties as $property) {
                 if ('coverage' === $property) {
                     $property = 'coverageStr';

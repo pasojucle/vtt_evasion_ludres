@@ -10,11 +10,11 @@ class DocumentationDto
 {
     public ?Documentation $entity;
 
-    public ?string $name;
+    public ?string $name = null;
 
-    public ?string $filename;
+    public ?string $filename = null;
 
-    public ?string $source;
+    public ?string $source = null;
 
-    public ?string $mimeType;
+    public ?string $mimeType = null;
 }

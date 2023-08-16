@@ -21,24 +21,24 @@ class ContentDtoTransformer
 
     public function fromEntity(?Content $content): ContentDto
     {
-        $backgroundDto = new ContentDto();
+        $contentDto = new ContentDto();
         if ($content) {
-            $backgroundDto->id = $content->getId();
-            $backgroundDto->title = $content->getTitle();
-            $backgroundDto->route = $content->getRoute();
-            $backgroundDto->isFlash = $content->IsFlash();
-            $backgroundDto->content = $content->getContent();
-            $backgroundDto->fileName = $this->getPath($content->getFileName());
-            $backgroundDto->fileTag = $this->getFileTag($backgroundDto->fileName);
-            $backgroundDto->fileRatio = $this->getFileRatio($backgroundDto->fileName, $backgroundDto->fileTag);
+            $contentDto->id = $content->getId();
+            $contentDto->title = $content->getTitle();
+            $contentDto->route = $content->getRoute();
+            $contentDto->isFlash = $content->IsFlash();
+            $contentDto->content = $content->getContent();
+            $contentDto->fileName = $this->getPath($content->getFileName());
+            $contentDto->fileTag = $this->getFileTag($contentDto->fileName);
+            $contentDto->fileRatio = $this->getFileRatio($contentDto->fileName, $contentDto->fileTag);
 
-            $backgroundDto->buttonLabel = $content->getButtonLabel() ?? 'Voir';
-            $backgroundDto->url = $content->getUrl();
+            $contentDto->buttonLabel = $content->getButtonLabel() ?? 'Voir';
+            $contentDto->url = $content->getUrl();
 
-            $backgroundDto->contentStyleMd = $this->getContentStyleMd(null !== $backgroundDto->fileName, null !== $backgroundDto->url);
+            $contentDto->contentStyleMd = $this->getContentStyleMd(null !== $contentDto->fileName, null !== $contentDto->url);
         }
 
-        return $backgroundDto;
+        return $contentDto;
     }
 
         

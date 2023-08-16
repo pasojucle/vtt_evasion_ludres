@@ -25,7 +25,7 @@
                         {% for bikeRideTypeId, bikeRideType in level.bikeRideTypes %}
                             <div class="col-md-3 col-xs-3">
                                 {% if bikeRideType.indemnity is not null %}
-                                    <a class="btn btn-light btn-pencil" href="{{ path('admin_indemnity_edit', {'indemnity' : bikeRideType.indemnity.entity.id}) }}" 
+                                    <a class="btn btn-light btn-pencil" href="{{ path('admin_indemnity_edit', {'indemnity' : bikeRideType.indemnity.id}) }}" 
                                         title="Modifier" data-toggle="modal" data-type="primary">
                                         {{ bikeRideType.indemnity.amount }}
                                     </a>

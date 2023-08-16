@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\DocumentationDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Documentation;
 use App\Form\Admin\DocumentationType;
 use App\Repository\DocumentationRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Service\UploadService;
-use App\ViewModel\Documentation\DocumentationPresenter;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -26,23 +26,22 @@ class DocumentationController extends AbstractController
         private EntityManagerInterface $entityManager,
         private DocumentationRepository $documentationRepository,
         private OrderByService $orderByService,
-        private DocumentationPresenter $documentationPresenter
+        private DocumentationDtoTransformer $documentationDtoTransformer
     ) {
     }
 
     #[Route('list', name: 'list', methods: ['GET'])]
     public function adminList(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request,
     ): Response {
         $query = $this->documentationRepository->findDocumentationQuery();
         $documentations = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $paginatorPresenter->present($documentations);
 
         return $this->render('documentation/admin/list.html.twig', [
             'documentations' => $documentations,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $paginatorDtoTransformer->fromEntity($documentations),
         ]);
     }
 
@@ -71,9 +70,8 @@ class DocumentationController extends AbstractController
             return $this->redirectToRoute('admin_documentation_list');
         }
 
-        $this->documentationPresenter->present($documentation);
         return $this->render('documentation/admin/edit.html.twig', [
-            'documentation' => $this->documentationPresenter->viewModel(),
+            'documentation' => $this->documentationDtoTransformer->fromEntity($documentation),
             'form' => $form->createView(),
         ]);
     }

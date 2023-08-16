@@ -26,7 +26,7 @@
                 {% for user in users %}
                     {% set licence = user.lastLicence %}  
                     <li class="list-dropdown"> 
-                        <a href="{{ path('admin_user', {'user': user.entity.id})}}"
+                        <a href="{{ path('admin_user', {'user': user.id})}}"
                             {% if user.level.colors is not null %}style="background-color: {{ user.level.colors.background }}"{% endif %}>
                             <div class="row">
                                 <div class="col-md-4 col-xs-12">{{ user.member.fullName }}</div>
@@ -39,7 +39,7 @@
                                     {{ user.level.title }}
                                 </div>
                                 <div class="col-md-1 col-xs-2">
-                                    {% if user.isBoardMember() %}<i class="fa-solid fa-crown"></i>{% endif %}
+                                    {% if user.isBoardMember %}<i class="fa-solid fa-crown"></i>{% endif %}
                                 </div>
                             </div>
                         </a> 

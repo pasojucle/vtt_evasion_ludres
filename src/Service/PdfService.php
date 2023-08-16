@@ -131,7 +131,6 @@ class PdfService
         $pdf = new Fpdi();
         // iterate through the files
         foreach ($files as $file) {
-            dump($file);
             $pageCount = $pdf->setSourceFile($file['filename']);
             // iterate through all pages
             for ($pageNo = 1; $pageNo <= $pageCount; ++$pageNo) {

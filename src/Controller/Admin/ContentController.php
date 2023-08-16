@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\ContentDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Content;
 use App\Form\Admin\ContentType;
 use App\Form\Admin\HomeBackgroundsType;
@@ -11,8 +13,6 @@ use App\Repository\ContentRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Service\UploadService;
-use App\ViewModel\Content\ContentPresenter;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -36,14 +36,15 @@ class ContentController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private OrderByService $orderByService,
-        private ContentRepository $contentRepository
+        private ContentRepository $contentRepository,
+        private PaginatorDtoTransformer $paginatorDtoTransformer,
     ) {
     }
 
     #[Route('/page/accueil/contenus/{tab}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'tab' => self::HOME_TAB_FLASH])]
     public function listHome(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+    
         Request $request,
         ?string $route,
         int $tab
@@ -59,12 +60,11 @@ class ContentController extends AbstractController
 
         $query = $this->contentRepository->findContentQuery($route, $isFlash);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $paginatorPresenter->present($contents, ['route' => $route, 'tab' => $tab, ], );
 
         return $this->render('content/admin/home_contents.html.twig', [
             'contents' => $contents,
             'form' => $form->createView(),
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $this->paginatorDtoTransformer->fromEntity($contents, ['route' => $route, 'tab' => $tab]),
             'current_route' => $route,
             'is_flash' => $isFlash,
             'tabs' => self::HOME_TABS,
@@ -75,18 +75,16 @@ class ContentController extends AbstractController
     #[Route('/contenus', name: 'admin_contents', methods: ['GET'], defaults:['route' => null, 'isFlash' => false])]
     public function list(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
         Request $request,
         ?string $route,
         bool $isFlash
     ): Response {
         $query = $this->contentRepository->findContentQuery($route, $isFlash);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $paginatorPresenter->present($contents, ['route' => $route, 'isFlash' => $isFlash], );
 
         return $this->render('content/admin/list.html.twig', [
             'contents' => $contents,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $this->paginatorDtoTransformer->fromEntity($contents, ['route' => $route, 'isFlash' => $isFlash]),
             'current_route' => $route,
             'is_flash' => $isFlash,
         ]);
@@ -96,17 +94,10 @@ class ContentController extends AbstractController
     #[Route('/contenu/{content}', name: 'admin_content_edit', methods: ['GET', 'POST'])]
     public function adminContentEdit(
         Request $request,
-        ContentPresenter $contentPresenter,
+        ContentDtoTransformer $contentDtoTransformer,
         UploadService $uploadService,
         ?Content $content
     ): Response {
-        if (null === $content?->getParent() && 'admin_home_content_edit' === $request->attributes->get('_route')) {
-            $parent = $this->contentRepository->findOneByRoute('home');
-            $content = new Content();
-            $content->setRoute('home')
-                ->setParent($parent);
-        }
-
         $form = $this->createForm(ContentType::class, $content);
 
         $form->handleRequest($request);
@@ -139,10 +130,8 @@ class ContentController extends AbstractController
             return $this->redirectToRoute('admin_contents');
         }
 
-        $contentPresenter->present($content);
-
         return $this->render('content/admin/edit.html.twig', [
-            'content' => $contentPresenter->viewModel(),
+            'content' => $contentDtoTransformer->fromEntity($content),
             'form' => $form->createView(),
         ]);
     }

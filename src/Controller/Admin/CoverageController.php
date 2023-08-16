@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\UseCase\Coverage\GetCoveragesFiltered;
 use App\UseCase\Coverage\ValidateCoverage;
-use App\ViewModel\UserPresenter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,11 +34,11 @@ class CoverageController extends AbstractController
     public function adminRegistartionValidate(
         Request $request,
         ValidateCoverage $validateCoverage,
-        UserPresenter $userPresenter,
+        UserDtoTransformer $userDtoTransformer,
         Licence $licence
     ): Response {
-        $userPresenter->present($licence->getUser());
-        $fullName = $userPresenter->viewModel()->member->fullName;
+        $userDto = $userDtoTransformer->fromEntity($licence->getUser());
+        $fullName = $userDto->member->fullName;
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl(
                 'admin_coverage_validate',

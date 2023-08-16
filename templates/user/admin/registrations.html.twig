@@ -25,7 +25,7 @@
                 {% for user in users %}
                     <li class="col-list col-1md-1sx-btn">
                         <div class="list-dropdown">
-                            <a href="{{ path('admin_registration_user', {'user': user.entity.id})}}"
+                            <a href="{{ path('admin_registration_user', {'user': user.id})}}"
                                 {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
                                 <div class="row">
                                     <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
@@ -39,8 +39,8 @@
                             {% include('user/admin/dropdown.html.twig') %}
                         </div>
                         {% if user.seasonLicence.toValidate %}
-                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.entity.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
-                            <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.entity.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
+                            <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
                         {% endif %}
                     </li>
                 {% endfor %}

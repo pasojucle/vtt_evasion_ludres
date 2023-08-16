@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\Admin\HealthType;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ class HealthController extends AbstractController
     #[Route('/admin/sante/edit/{user}', name: 'admin_health_edit', methods: ['GET', 'POST'])]
     public function adminEdit(
         Request $request,
-        UserPresenter $presenter,
+        UserDtoTransformer $userDtoTransformer,
         EntityManagerInterface $entityManager,
         User $user
     ): Response {
@@ -34,10 +34,9 @@ class HealthController extends AbstractController
                 'user' => $user->getId(),
             ]);
         }
-        $presenter->present($user);
 
         return $this->render('health/admin/edit.html.twig', [
-            'user' => $presenter->viewModel(),
+            'user' => $userDtoTransformer->fromEntity($user),
             'form' => $form->createView(),
         ]);
     }

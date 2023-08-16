@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Form\Admin\UserFilterType;
 use App\Repository\UserRepository;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
-use App\ViewModel\Paginator\PaginatorPresenter;
-use App\ViewModel\UsersPresenter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -31,9 +31,9 @@ abstract class GetUsersFiltered
         public SeasonService $seasonService,
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $urlGenerator,
-        private UsersPresenter $usersPresenter,
+        private UserDtoTransformer $userDtoTransformer,
         public UserRepository $userRepository,
-        private PaginatorPresenter $paginatorPresenter
+        private PaginatorDtoTransformer $paginatorDtoTransformer
     ) {
     }
 
@@ -63,14 +63,13 @@ abstract class GetUsersFiltered
 
         $users = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $this->usersPresenter->present($users);
-        $this->paginatorPresenter->present($users, ['filtered' => (int) $filtered]);
+        $paginator = $this->paginatorDtoTransformer->fromEntity($users, ['filtered' => (int) $filtered]);
 
         return [
-            'users' => $this->usersPresenter->viewModel()->users,
-            'paginator' => $this->paginatorPresenter->viewModel(),
+            'users' => $this->userDtoTransformer->fromEntities($users),
+            'paginator' => $paginator,
             'form' => $form->createView(),
-            'count' => $this->paginatorPresenter->viewModel()->total,
+            'count' => $paginator->total,
         ];
     }
 
@@ -101,8 +100,7 @@ abstract class GetUsersFiltered
         $users = $query->getQuery()->getResult();
         $emails = [];
         if (!empty($users)) {
-            $this->usersPresenter->present($users);
-            foreach ($this->usersPresenter->viewModel()->users as $user) {
+            foreach ($this->userDtoTransformer->fromEntities($users) as $user) {
                 $emails[] = $user->mainEmail;
             }
         }
@@ -164,13 +162,10 @@ abstract class GetUsersFiltered
         $row = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
-        if (!empty($users)) {
-            $this->usersPresenter->present($users);
-            foreach ($this->usersPresenter->viewModel()->users as $user) {
-                $isTesting = ($user->seasonLicence->isFinal) ? 0 : 1;
-                $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->level?->title, $user->mainEmail, $user->member->birthDate, $user->lastLicence->season, $isTesting];
-                $content[] = implode(',', $row);
-            }
+        foreach ($this->userDtoTransformer->fromEntities($users) as $user) {
+            $isTesting = ($user->lastLicence?->isFinal) ? 0 : 1;
+            $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->level?->title, $user->mainEmail, $user->member->birthDate, $user->lastLicence->season, $isTesting];
+            $content[] = implode(',', $row);
         }
 
         return implode(PHP_EOL, $content);
