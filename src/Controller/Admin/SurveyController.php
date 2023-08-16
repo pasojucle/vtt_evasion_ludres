@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
 use App\Form\Admin\SurveyType;
@@ -15,8 +17,6 @@ use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
 use App\UseCase\Survey\GetSurveyResults;
 use App\UseCase\Survey\SetSurvey;
-use App\ViewModel\Paginator\PaginatorPresenter;
-use App\ViewModel\SurveyResponsesPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -30,20 +30,25 @@ use Symfony\Component\Routing\Annotation\Route;
 class SurveyController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private SurveyResponseDtoTransformer $surveyResponseDtoTransformer,
     ) {
     }
 
     #[Route('s', name: 'admin_surveys', methods: ['GET'])]
-    public function list(Request $request, PaginatorService $paginator, PaginatorPresenter $paginatorPresenter, SurveyRepository $surveyRepository): Response
+    public function list(
+        Request $request, 
+        PaginatorService $paginator, 
+        PaginatorDtoTransformer $paginatorDtoTransformer, 
+        SurveyRepository $surveyRepository
+    ): Response
     {
         $query = $surveyRepository->findAllDESCQuery();
         $surveys = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $paginatorPresenter->present($surveys);
 
         return $this->render('survey/admin/list.html.twig', [
             'surveys' => $surveys,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $paginatorDtoTransformer->fromEntities($surveys),
         ]);
     }
 
@@ -75,7 +80,6 @@ class SurveyController extends AbstractController
     public function show(
         GetSurveyResults $getSurveyResults,
         Request $request,
-        SurveyResponsesPresenter $surveyResponsesPresenter,
         SurveyIssueRepository $surveyIssueRepository,
         Survey $survey
     ): Response {
@@ -93,11 +97,9 @@ class SurveyController extends AbstractController
         }
         $session->set('admin_survey_filter', $filter);
         $responses = $getSurveyResults->execute($filter);
-        $surveyResponsesPresenter->present($responses);
-
         return $this->render('survey/admin/show.html.twig', [
             'survey' => $survey,
-            'responses' => $surveyResponsesPresenter->viewModel()->surveyResponses,
+            'responses' => $this->surveyResponseDtoTransformer->fromEntities($responses),
             'form' => $form->createView(),
         ]);
     }
@@ -106,16 +108,15 @@ class SurveyController extends AbstractController
     #[Route('/emails', name: 'admin_survey_email_to_clipboard', methods: ['GET'])]
     public function adminEmailSurvey(
         GetSurveyResults $getSurveyResults,
-        SurveyResponsesPresenter $surveyResponsesPresenter,
         Request $request
     ): JsonResponse {
         $session = $request->getSession();
         $filter = $session->get('admin_survey_filter');
         $responses = $getSurveyResults->execute($filter);
-        $surveyResponsesPresenter->present($responses);
+        $surveyResponsesDto = $this->surveyResponseDtoTransformer->fromEntities($responses);
 
         $emails = [];
-        foreach ($surveyResponsesPresenter->viewModel()->surveyResponses as $response) {
+        foreach ($surveyResponsesDto as $response) {
             $emails[] = $response->user->mainEmail;
         }
 

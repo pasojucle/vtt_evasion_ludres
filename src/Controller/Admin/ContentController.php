@@ -64,7 +64,7 @@ class ContentController extends AbstractController
         return $this->render('content/admin/home_contents.html.twig', [
             'contents' => $contents,
             'form' => $form->createView(),
-            'paginator' => $this->paginatorDtoTransformer->fromEntity($contents, ['route' => $route, 'tab' => $tab]),
+            'paginator' => $this->paginatorDtoTransformer->fromEntities($contents, ['route' => $route, 'tab' => $tab]),
             'current_route' => $route,
             'is_flash' => $isFlash,
             'tabs' => self::HOME_TABS,
@@ -84,7 +84,7 @@ class ContentController extends AbstractController
 
         return $this->render('content/admin/list.html.twig', [
             'contents' => $contents,
-            'paginator' => $this->paginatorDtoTransformer->fromEntity($contents, ['route' => $route, 'isFlash' => $isFlash]),
+            'paginator' => $this->paginatorDtoTransformer->fromEntities($contents, ['route' => $route, 'isFlash' => $isFlash]),
             'current_route' => $route,
             'is_flash' => $isFlash,
         ]);

@@ -35,7 +35,7 @@ class BoardRoleController extends AbstractController
 
         return $this->render('board_role/admin/list.html.twig', [
             'boardRoles' => $boardRoles,
-            'paginator' => $paginatorDtoTransformer->fromEntity($boardRoles),
+            'paginator' => $paginatorDtoTransformer->fromEntities($boardRoles),
         ]);
     }
 

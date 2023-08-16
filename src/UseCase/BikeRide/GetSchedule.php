@@ -71,7 +71,7 @@ class GetSchedule
         if (null === $filters['limit']) {
             $query = $this->bikeRideRepository->findAllQuery($filters);
             $bikeRides = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-            $parameters['paginator'] = $this->paginatorDtoTransformer->fromEntity($bikeRides, $filters);
+            $parameters['paginator'] = $this->paginatorDtoTransformer->fromEntities($bikeRides, $filters);
         } else {
             $bikeRides = $this->bikeRideRepository->findAllFiltered($filters);
             $parameters['paginator'] = null;

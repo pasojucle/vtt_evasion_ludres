@@ -41,7 +41,7 @@ class DocumentationController extends AbstractController
 
         return $this->render('documentation/admin/list.html.twig', [
             'documentations' => $documentations,
-            'paginator' => $paginatorDtoTransformer->fromEntity($documentations),
+            'paginator' => $paginatorDtoTransformer->fromEntities($documentations),
         ]);
     }
 

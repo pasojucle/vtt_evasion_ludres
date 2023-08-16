@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\LogErrorDtoTransformer;
 use App\Entity\LogError;
 use App\Repository\LogErrorRepository;
 use App\Service\PaginatorService;
 use App\UseCase\LogError\GetLogErrors;
-use App\ViewModel\LogErrorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,13 +35,12 @@ class LogErrorController extends AbstractController
 
     #[Route('/admin/log/error/show/{error}', name: 'admin_log_error', methods: ['GET'])]
     public function show(
-        LogErrorPresenter $presenter,
+        LogErrorDtoTransformer $logErrorDtoTransformer,
         LogError $error
     ): Response {
-        $presenter->present($error);
 
         return $this->render('log_error/admin/show.html.twig', [
-            'error' => $presenter->viewModel(),
+            'error' => $logErrorDtoTransformer->fromEntity($error),
         ]);
     }
 

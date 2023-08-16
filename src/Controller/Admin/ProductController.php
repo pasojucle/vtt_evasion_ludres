@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\ProductDtoTransformer;
 use App\Entity\Product;
 use App\Form\Admin\ProductType;
 use App\Repository\ProductRepository;
 use App\Service\PaginatorService;
 use App\Service\Product\ProductEditService;
-use App\ViewModel\Paginator\PaginatorPresenter;
-use App\ViewModel\ProductPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -20,27 +20,27 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private ProductDtoTransformer $productDtoTransformer
+    )
     {
-        $this->entityManager = $entityManager;
+
     }
 
     #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]
     public function adminList(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         ProductRepository $productRepository,
         Request $request
     ): Response {
         $query = $productRepository->findAllQuery();
         $products = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $paginatorPresenter->present($products);
 
         return $this->render('product/admin/list.html.twig', [
             'products' => $products,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $paginatorDtoTransformer->fromEntities($products),
         ]);
     }
 
@@ -48,7 +48,6 @@ class ProductController extends AbstractController
     public function adminEdit(
         ProductEditService $productEditService,
         Request $request,
-        ProductPresenter $presenter,
         ?Product $product
     ): Response {
         $form = $this->createForm(ProductType::class, $product);
@@ -60,10 +59,9 @@ class ProductController extends AbstractController
                 return $this->redirectToRoute('admin_products');
             }
         }
-        $presenter->present($product);
 
         return $this->render('product/admin/edit.html.twig', [
-            'product' => $presenter->viewModel(),
+            'product' => $this->productDtoTransformer->fromEntity($product),
             'form' => $form->createView(),
         ]);
     }
@@ -71,7 +69,6 @@ class ProductController extends AbstractController
     #[Route('/admin/supprimer/produit/{product}', name: 'admin_product_delete', methods: ['GET', 'POST'])]
     public function adminProduitDelete(
         Request $request,
-        ProductPresenter $presenter,
         Product $product
     ): Response {
         $form = $this->createForm(FormType::class, null, [
@@ -92,9 +89,8 @@ class ProductController extends AbstractController
             return $this->redirectToRoute('admin_products');
         }
 
-        $presenter->present($product);
         return $this->render('product/admin/delete.modal.html.twig', [
-            'product' => $presenter->viewModel(),
+            'product' => $this->productDtoTransformer->fromEntity($product),
             'form' => $form->createView(),
         ]);
     }

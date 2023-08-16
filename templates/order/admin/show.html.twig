@@ -14,7 +14,7 @@
         </div>
         <div class="wrapper-body">
             {% set member = order.user.member %}
-            <a class="btn-list  block background-ligth" href="{{ path('admin_user', {'user': order.user.entity.id }) }}">
+            <a class="btn-list  block background-ligth" href="{{ path('admin_user', {'user': order.user.id }) }}">
                 <div class="row">
                     <div class="col-md-3 col-xs-6 no-padding"><b>Nom :</b></div>
                     <div class="col-md-9 col-xs-6 no-padding">{{ member.fullName }}</div>
@@ -27,7 +27,7 @@
         </div>
         <div class="wrapper-body">
             <ul>
-                {% for line in order.orderLines.lines %}
+                {% for line in order.orderLines %}
                     <li class="row row-list row-align-top block background-ligth">
                         <div class="col-md-2 col-xs-3">
                             <a href="{{ path('product_show', {'product': line.product.id}) }}">

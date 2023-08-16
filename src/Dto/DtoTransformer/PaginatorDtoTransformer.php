@@ -21,7 +21,7 @@ class PaginatorDtoTransformer
     ) {
     }
 
-    public function fromEntity(Paginator $paginator, ?array $filters = [], ?string $targetRoute = null): PaginatorDto
+    public function fromEntities(Paginator $paginator, ?array $filters = [], ?string $targetRoute = null): PaginatorDto
     {
         $paginatorDto = new PaginatorDto();
 

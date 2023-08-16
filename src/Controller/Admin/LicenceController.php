@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\Form\Admin\LicenceValidateType;
 use App\UseCase\Licence\ValidateLicence;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -24,11 +24,11 @@ class LicenceController extends AbstractController
     #[Route('/admin/inscription/delete/{licence}', name: 'admin_delete_licence', methods: ['GET', 'POST'])]
     public function adminDeleteLicence(
         Request $request,
-        UserPresenter $userPresenter,
+        UserDtoTransformer $userDtoTransformer,
         Licence $licence
     ): Response {
-        $userPresenter->present($licence->getUser());
-        $fullName = $userPresenter->viewModel()->member->fullName;
+        $userDto = $userDtoTransformer->fromEntity($licence->getUser());
+        $fullName = $userDto->member->fullName;
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl(
                 'admin_delete_licence',

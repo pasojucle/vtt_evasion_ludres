@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Link;
 use App\Form\LinkType;
 use App\Repository\LinkRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -31,17 +31,16 @@ class LinkController extends AbstractController
     #[Route('/admin/liens/{position}', name: 'admin_links', methods: ['GET', 'POST'], defaults:['position' => 1])]
     public function adminList(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request,
         int $position
     ): Response {
         $query = $this->linkRepository->findLinkQuery($position);
         $links = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $paginatorPresenter->present($links, ['position' => (int) $position]);
         return $this->render('link/admin/list.html.twig', [
             'links' => $links,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $paginatorDtoTransformer->fromEntities($links, ['position' => (int) $position]),
             'current_position' => $position,
         ]);
     }

@@ -40,7 +40,7 @@ class BackgroundController extends AbstractController
 
         return $this->render('background/admin/list.html.twig', [
             'backgrounds' => $this->backgroundDtoTransformer->fromEntities($backgrounds),
-            'paginator' => $paginatorDtoTransformer->fromEntity($backgrounds),
+            'paginator' => $paginatorDtoTransformer->fromEntities($backgrounds),
         ]);
     }
 

@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\Admin\ToolType;
 use App\Form\Admin\UserSearchType;
-use App\Form\ToolImportType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
 use App\Service\ParameterService;
 use App\Service\UserService;
-use App\ViewModel\UserPresenter;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
@@ -85,7 +82,7 @@ class ToolController extends AbstractController
     public function adminRegistrationError(
         Request $request,
         MailerService $mailerService,
-        UserPresenter $presenter,
+        UserDtoTransformer $userDtoTransformer,
         ParameterService $parameterService
     ): Response {
         $form = $this->createForm(ToolType::class);
@@ -94,14 +91,13 @@ class ToolController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $licence = $data['user']->getLastLicence();
-            $presenter->present($data['user']);
-            $user = $presenter->viewModel();
+            $user = $userDtoTransformer->fromEntity($data['user']);
             /** @var SubmitButton $submit */
             $submit = $form->get('submit');
             $content = ($submit->isClicked())
                 ? utf8_encode($data['content'])
                 : $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
-            $content = str_replace('{{ licenceNumber }}', $user->getLicenceNumber(), $content);
+            $content = str_replace('{{ licenceNumber }}', $user->licenceNumber, $content);
             $form = $this->createForm(ToolType::class, [
                 'user' => $data['user'],
                 'content' => $content,

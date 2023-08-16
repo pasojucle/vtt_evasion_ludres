@@ -63,7 +63,7 @@ abstract class GetUsersFiltered
 
         $users = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $paginator = $this->paginatorDtoTransformer->fromEntity($users, ['filtered' => (int) $filtered]);
+        $paginator = $this->paginatorDtoTransformer->fromEntities($users, ['filtered' => (int) $filtered]);
 
         return [
             'users' => $this->userDtoTransformer->fromEntities($users),
