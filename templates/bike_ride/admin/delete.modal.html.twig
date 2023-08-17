@@ -1,5 +1,5 @@
 {% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_bike_ride_delete', {'bikeRide' : bike_ride.entity.id}) %}
+{% set button_href = path('admin_bike_ride_delete', {'bikeRide' : bike_ride.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
 {% block modal_title %}Supprimer une sortie {{ bike_ride.title }}{% endblock %}
 {% block body %}

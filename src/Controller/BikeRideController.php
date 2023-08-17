@@ -7,11 +7,13 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\ContentRepository;
 use App\UseCase\BikeRide\GetSchedule;
-use App\ViewModel\UserPresenter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\UseCase\User\GetBikeRides;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BikeRideController extends AbstractController
 {
@@ -39,16 +41,17 @@ class BikeRideController extends AbstractController
 
     #[Route('/mon-programme', name: 'user_bike_rides', methods: ['GET'])]
     public function userBikeRides(
-        UserPresenter $presenter,
+        UserDtoTransformer $userDtoTransformer,
+        GetBikeRides $getBikeRides,
         ContentRepository $contentRepository
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var ?User $user */
         $user = $this->getUser();
-        $presenter->present($user);
 
         return $this->render('bike_ride/user_list.html.twig', [
-            'user' => $presenter->viewModel(),
+            'user' => $userDtoTransformer->fromEntity($user),
+            'bikeRides' => $getBikeRides->execute($user),
             'backgrounds' => $contentRepository->findOneByRoute('user_account')?->getBackgrounds(),
         ]);
     }

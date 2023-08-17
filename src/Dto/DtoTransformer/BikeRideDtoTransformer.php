@@ -41,33 +41,37 @@ class BikeRideDtoTransformer
         $this->today = (new DateTimeImmutable())->setTime(0, 0, 0);
     }
 
-    public function fromEntity(BikeRide $bikeRide): BikeRideDto
+    public function fromEntity(?BikeRide $bikeRide): BikeRideDto
     {
         /** @var User $user */
         $user = $this->security->getUser();
 
         $bikeRideDto = new BikeRideDto();
-        $bikeRideDto->id = $bikeRide->getId();
-        $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
-        $bikeRideDto->title = $bikeRide->getTitle();
-        $bikeRideDto->type = $bikeRide->getBikeRideType()->getName();
-        $bikeRideDto->content = $bikeRide->getContent();
-        $bikeRideDto->startAt = $bikeRide->getStartAt();
-        $bikeRideDto->endAt = $bikeRide->getEndAt();
-        $bikeRideDto->closingDuration = $bikeRide->getClosingDuration();
-        $bikeRideDto->displayDuration = $bikeRide->getDisplayDuration();
+        if ($bikeRide) {
+            $bikeRideDto->id = $bikeRide->getId();
+            $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
+            $bikeRideDto->title = $bikeRide->getTitle();
+            $bikeRideDto->type = $bikeRide->getBikeRideType()->getName();
+            $bikeRideDto->content = $bikeRide->getContent();
+            $bikeRideDto->startAt = $bikeRide->getStartAt();
+            $bikeRideDto->endAt = $bikeRide->getEndAt();
+            $bikeRideDto->closingDuration = $bikeRide->getClosingDuration();
+            $bikeRideDto->displayDuration = $bikeRide->getDisplayDuration();
+            $bikeRideDto->minAge = $bikeRide->getMinAge();
 
-        $this->displayAt = $bikeRideDto->startAt->setTime(0, 0, 0);
-        $this->closingAt = $bikeRideDto->startAt->setTime(23, 59, 59);
-        $bikeRideDto->displayClass = $this->getDisplayClass($bikeRideDto->displayDuration);
-        $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
-        $bikeRideDto->isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
-        $bikeRideDto->isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
-        $bikeRideDto->btnLabel = $this->getBtnLabel($bikeRideDto);
-        $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
-        $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
+            $this->displayAt = $bikeRideDto->startAt->setTime(0, 0, 0);
+            $this->closingAt = $bikeRideDto->startAt->setTime(23, 59, 59);
+            $bikeRideDto->displayClass = $this->getDisplayClass($bikeRideDto->displayDuration);
+            $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
+            $bikeRideDto->isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
+            $bikeRideDto->isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
+            $bikeRideDto->btnLabel = $this->getBtnLabel($bikeRideDto);
+            $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
+            $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
 
-        $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
+            $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
+        }
+
 
         return $bikeRideDto;
     }
@@ -81,7 +85,6 @@ class BikeRideDtoTransformer
 
         return $bikeRides;
     }
-
 
     public function isOver(): bool
     {

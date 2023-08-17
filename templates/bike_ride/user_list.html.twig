@@ -18,7 +18,7 @@
                 </div>
                 <div class="block-body">
                     <ul>
-                        {% for bikeRide in user.getBikeRides() %}
+                        {% for bikeRide in bikeRides %}
                             <li>
                                 <div class="row background-ligth list-dropdown mb-20">
                                     <div class="col-md-9 col-xs-11"  data-toggle="bike-ride-content">
@@ -60,7 +60,7 @@
                                 </div>
                             </li>
                         {% endfor %}
-                        {% if user.bikeRides is empty %}
+                        {% if bikeRides is empty %}
                             <p>Vous n'êtes inscrit à aucune rando</p>
                             <br>
                             <a href="{{ path('schedule', {'period': 'prochainement'}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>

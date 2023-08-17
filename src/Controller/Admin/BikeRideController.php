@@ -74,29 +74,24 @@ class BikeRideController extends AbstractController
         ?BikeRide $bikeRide
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        if (null === $bikeRide) {
-            $bikeRide = new BikeRide();
-            $bikeRide->setBikeRideType($bikeRideTypeRepository->findDefault());
-        }
-
         $filters = $request->getSession()->get('admin_bike_rides_filters');
         $form = $this->createForm(BikeRideType::class, $bikeRide);
 
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $editBikeRide->execute($form, $request);
+            $bikeRide = $editBikeRide->execute($form, $request);
 
             $this->addFlash('success', 'La sortie à bien été enregistrée');
 
-            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
+            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide?->getStartAt());
 
             return $this->redirectToRoute('admin_bike_rides', $filters);
         }
 
         return $this->render('bike_ride/admin/edit.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $this->bikeRideDtoTransformer->fromEntities($bikeRide),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }

@@ -25,11 +25,11 @@
                             {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
                                 <div class="bike-ride-date-btn">
                                     <br>
-                                    <a href="{{ path('session_add', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
+                                    <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
                                 </div>
                             {% endif %}
                         
-                        <div class="badge-members">{{ bikeRide.getMembers() }}</div>
+                        <div class="badge-members">{{ bikeRide.members }}</div>
                     </div>
                     <div class="bike-ride-detail {{ bikeRide.displayClass }}">
                         <h3>{{ bikeRide.title }}</h3>
@@ -50,7 +50,7 @@
                     </div>
                     {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
                         <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
-                            <a href="{{ path('session_add', {'bikeRide': bikeRide.entity.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
+                            <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
                         </div>
                     {% endif %}
                 {% endfor %}

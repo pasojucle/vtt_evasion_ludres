@@ -62,7 +62,7 @@ class GetFramersFiltered
         $sessions = $this->sessionRepository->findFramersByBikeRide($filters['bikeRideId']);
 
         $sessionsByUser = [];
-        foreach ($this->sessionDtoTransformer->fromEntities($sessions)->sessions as $session) {
+        foreach ($this->sessionDtoTransformer->fromEntities($sessions) as $session) {
             $sessionsByUser[$session->user->id] = $session;
         }
 

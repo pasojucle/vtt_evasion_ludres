@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\BikeRide;
 use App\Entity\BoardRole;
 use App\Entity\Identity;
 use App\Entity\Level;
@@ -574,5 +575,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('boardRole', $boardRole)
             ->getQuery()
             ->execute();
+    }
+
+
+
+    private function getByBikeRide(BikeRide $bikeRide): array
+    {
+        return $this->createQueryBuilder('u')
+            ->join('u.sessions', 's')
+            ->join('s.cluster', 'c')
+            ->andWhere(
+                (new Expr)->eq('c.bikeRide', 'bikeRide')
+            )
+            ->setParameter('bikeRide', $bikeRide)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 }

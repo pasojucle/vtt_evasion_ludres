@@ -13,7 +13,7 @@ class BikeRideDto
 
     public ?string $type;
 
-    public ?string $title;
+    public ?string $title = null;
 
     public ?string $content;
 
@@ -41,7 +41,7 @@ class BikeRideDto
 
     public ?SurveyDto $survey;
 
-    public ?string $filename;
+    public ?string $filename = null;
 
     public string $members = '';
 }

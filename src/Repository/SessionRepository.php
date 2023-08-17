@@ -80,6 +80,20 @@ class SessionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByBikeRideId(int $bikeRideId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.cluster', 'c')
+            ->leftJoin('c.bikeRide', 'b')
+            ->andWhere(
+                (new Expr())->eq('b.id', ':bikeRideId'),
+            )
+            ->setParameter('bikeRideId', $bikeRideId)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 
     public function findFramersByBikeRide(int $bikeRideId): array
     {

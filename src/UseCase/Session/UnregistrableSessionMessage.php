@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Session;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\UserDto;
 use App\Entity\BikeRide;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -39,7 +40,7 @@ class UnregistrableSessionMessage
             return 'Inscription impossible';
         }
 
-        if (!$this->checkSeasonLicence($user)) {
+        if (!$this->checkSeasonLicence($userDto)) {
             return $this->replaceKeywordsService->replace($userDto, $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'));
         }
 
@@ -54,7 +55,7 @@ class UnregistrableSessionMessage
         return null;
     }
 
-    private function checkSeasonLicence(User $user): bool
+    private function checkSeasonLicence(UserDto $user): bool
     {
         $requirementSeasonLicenceAtParam = $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_AT');
         $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
@@ -67,8 +68,8 @@ class UnregistrableSessionMessage
 
         $requirementSeasonLicenceAt = new DateTime(implode('-', array_reverse($requirementSeasonLicenceAtParam)));
         if ($requirementSeasonLicenceAt <= new DateTime()) {
-            return (null !== $$user->seasonLicence)
-                ? Licence::STATUS_WAITING_VALIDATE <= $$user->seasonLicence->getStatus()
+            return ($user->lastLicence->isSeasonLicence)
+                ? Licence::STATUS_WAITING_VALIDATE <= $user->lastLicence->status
                 : false;
         }
         return true;

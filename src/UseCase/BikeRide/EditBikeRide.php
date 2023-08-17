@@ -24,7 +24,7 @@ class EditBikeRide
     ) {
     }
 
-    public function execute(FormInterface $form, Request $request): void
+    public function execute(FormInterface $form, Request $request): BikeRide
     {
         $bikeRide = $form->getData();
 
@@ -43,6 +43,8 @@ class EditBikeRide
 
         $this->entityManager->persist($bikeRide);
         $this->entityManager->flush();
+
+        return $bikeRide;
     }
 
     private function setLevelsAndLevelTypes(BikeRide $bikeRide): void

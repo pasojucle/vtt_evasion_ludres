@@ -44,42 +44,31 @@ class SessionDtoTransformer
             $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $sessionDto->bikeRide->bikeRideType, $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
-            $sessionDto->bikeRideMemeberList = $this->getBikeRideMemberList($sessionDto->bikeRide);
+            // $sessionDto->bikeRideMemeberList = $this->getBikeRideMemberList($sessionDto->bikeRide);
         }
 
         return $sessionDto;
     }
 
 
-    public function fromEntities(Paginator|Collection|array $sessionEntities): SessionsDto
+    public function fromEntities(Paginator|Collection|array $sessionEntities): array
     {
-        $sessionsDto = new SessionsDto();
-        list($sessions, $sessionsByCluster, $bikeRides) = $this->analize($sessionEntities);
-        $sessionsDto->sessions = $sessions;
-        $sessionsDto->bikeRideMembers = $this->getBikeRideMembers($bikeRides, $sessionsByCluster);
+        foreach ($sessionEntities as $sessionEntity) {
+            $sessions[] = $this->fromEntity($sessionEntity);
+        }
 
-        return $sessionsDto;
+        return $sessions;
     }
 
 
-    // public function fromUserSession(Collection $sessions): array
+    // public function fromEntities(Paginator|Collection|array $sessionEntities): SessionsDto
     // {
-    //     $bikeRides = [];
-    //     $today = new DateTimeImmutable();
+    //     $sessionsDto = new SessionsDto();
+    //     list($sessions, $sessionsByCluster, $bikeRides) = $this->analize($sessionEntities);
+    //     $sessionsDto->sessions = $sessions;
+    //     $sessionsDto->bikeRideMembers = $this->getBikeRideMembers($bikeRides, $sessionsByCluster);
 
-    //     $sessions = $this->fromEntities($sessions);
-    //     foreach ($sessions->sessions as $session) {
-    //         if ($today <= $session->bikeRide->startAt->setTime(14, 0, 0)) {
-    //             $bikeRides[] = [
-    //                 'bikeRide' => $session->bikeRide,
-    //                 'availability' => $session->availability,
-    //                 'sessionId' => $session->entity->getId(),
-    //                 'memberList' => $session->bikeRideMemberList,
-    //             ];
-    //         }
-    //     }
-
-    //     return $bikeRides;
+    //     return $sessionsDto;
     // }
 
     private function getAvailability(?int $availability): array
@@ -115,15 +104,15 @@ class SessionDtoTransformer
         return null;
     }
 
-    public function getBikeRideMemberList(BikeRideDto $bikeRide): ?array
-    {
-        if ($bikeRide->bikeRideType->isShowMemberList) {
-            $sessions = $this->sessionRepository->findByBikeRide($bikeRide->entity);
-            return $this->fromEntities($sessions)->bikeRideMembers;
-        }
+    // public function getBikeRideMemberList(BikeRideDto $bikeRide): ?array
+    // {
+    //     if ($bikeRide->bikeRideType->isShowMemberList) {
+    //         $sessions = $this->sessionRepository->findByBikeRideId($bikeRide->id);
+    //         return $this->fromEntities($sessions)->bikeRideMembers;
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 
     public function analize(Collection|array $sessionEntities): array
     {
@@ -132,7 +121,7 @@ class SessionDtoTransformer
         $bikeRides = [];
         foreach ($sessionEntities as $sessionEntity) {
             $sessionDto = $this->fromEntity($sessionEntity);
-            $sessions[] = $this->fromEntity($sessionEntity);
+            $sessions[] = $sessionDto;
             $cluster = $sessionEntity->getCluster();
             $sessionsByCluster[$cluster->getId()][] = $sessionDto;
             $bikeRide = $cluster->getBikeRide();

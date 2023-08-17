@@ -10,7 +10,6 @@ use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
-use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
@@ -23,8 +22,8 @@ class UserDtoTransformer
         private HealthDtoTransformer $healthDtoTransformer,
         private LevelDtoTransformer $levelDtoTransformer,
         private LicenceDtoTransformer $licenceDtoTransformer,
-        private FFCTLicenceDtoTransformer $fFCTLicenceDtoTransformer,
-        private RoleHierarchyInterface $roleHierarchy
+        private FFCTLicenceDtoTransformer $FFCTLicenceDtoTransformer,
+        private RoleHierarchyInterface $roleHierarchy,
     ) {
     }
 
@@ -48,7 +47,7 @@ class UserDtoTransformer
         $userDto->boardRole = $user->getBoardRole()?->getName();
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
         $userDto->isBoardMember = null !== $user->getBoardRole();
-        $userDto->ffctLicence = $this->fFCTLicenceDtoTransformer->fromEntity($userDto);
+        $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals(), $changes);
         $userDto->accessControl = $this->getAccessControl($user->getRoles());
 
@@ -115,19 +114,6 @@ class UserDtoTransformer
         return 1 === $licencesTotal && $lastLicence->isSeasonLicence && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
     }
 
-    // private function getSeasonLicence(User $user, bool $isNewMember): ?LicenceDto
-    // {
-    //     $season = $this->services->currentSeason;
-
-    //     foreach ($user->getLicences() as $licence) {
-    //         if ($season === $licence->getSeason()) {
-    //             return LicenceDto::fromLicence($licence, $isNewMember, $this->services);
-    //         }
-    //     }
-
-    //     return null;
-    // }
-
     private function getLastLicence(User $user, ?array $changes): LicenceDto
     {
         $licence = $user->getLastLicence();
@@ -135,7 +121,7 @@ class UserDtoTransformer
         return $this->licenceDtoTransformer->fromEntity($licence, $changes);
     }
 
-    public function getAccessControl(array $roles): ?string
+    private function getAccessControl(array $roles): ?string
     {
         $reachableRoles = $this->roleHierarchy->getReachableRoleNames($roles);
 
@@ -145,15 +131,5 @@ class UserDtoTransformer
             in_array('ROLE_FRAME', $reachableRoles) => 'Accès à l\'admin pour les sorties',
             default => null,
         };
-    }
-
-
-    public function getFFCTLicence(string $licenceNumber): string
-    {
-        if (1 === preg_match('#^\d+$#', $licenceNumber)) {
-            return sprintf('Licence n° %s', $licenceNumber);
-        }
-
-        return '';
     }
 }

@@ -37,6 +37,12 @@ class AddContentSubscriber implements EventSubscriberInterface
     {
         $bikeRide = $event->getData();
 
+        if (null === $bikeRide) {
+            $bikeRide = new BikeRide();
+            $bikeRide->setBikeRideType($this->bikeRideTypeRepository->findDefault());
+        }
+
+
         $this->setRestriction($bikeRide);
         $this->setLevelFilter($bikeRide);
         $event->setData($bikeRide);
