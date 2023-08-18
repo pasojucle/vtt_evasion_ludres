@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ChangeUserInfosType;
 use App\Repository\ContentRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ class UserController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserPresenter $userPresenter
+        private UserDtoTransformer $userDtoTransformer
     ) {
     }
 
@@ -38,10 +38,8 @@ class UserController extends AbstractController
             $this->redirectToRoute('login');
         }
 
-        $this->userPresenter->present($user);
-
         return $this->render('user/account.html.twig', [
-            'user' => $this->userPresenter->viewModel(),
+            'user' => $this->userDtoTransformer->fromEntity($user),
         ]);
     }
 
@@ -88,7 +86,6 @@ class UserController extends AbstractController
     public function changeInfos(
         Request $request,
         IdentityService $identityService,
-        UserPresenter $userPresenter,
         MailerService $mailerService,
         ContentRepository $contentRepository
     ): Response {
@@ -103,8 +100,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $userPresenter->present($user);
-            $data['user'] = $userPresenter->viewModel();
+            $data['user'] = $this->userDtoTransformer->fromEntity($user);
             $data['subject'] = 'Demande de modification d\'informations personnelles';
             if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_CHANGE_USER_INFOS')) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');

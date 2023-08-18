@@ -113,7 +113,7 @@ class BikeRideTypeType extends AbstractType
                 ],
             ])
         ;
-        $formModifier = function (FormInterface $form, int $registration) {
+        $formModifier = function (FormInterface $form, ?int $registration) {
             if (BikeRideType::REGISTRATION_CLUSTERS === $registration) {
                 $form->add('clusters', CollectionType::class, [
                     'label' => 'Groupes',
@@ -142,7 +142,7 @@ class BikeRideTypeType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            $formModifier($form, $data->getRegistration());
+            $formModifier($form, $data?->getRegistration());
         });
 
         $builder->get('registration')->addEventListener(

@@ -6,7 +6,6 @@ namespace App\Security;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
-use App\ViewModel\UserPresenter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

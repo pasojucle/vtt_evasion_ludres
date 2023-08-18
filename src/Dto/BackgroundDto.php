@@ -8,7 +8,7 @@ class BackgroundDto
 {
     public ?int $id = null;
     
-    public ?string $filename;
+    public ?string $filename = null;
 
-    public ?string $path;
+    public ?string $path = null;
 }

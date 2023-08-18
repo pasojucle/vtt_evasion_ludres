@@ -59,23 +59,23 @@
                                 </div>
                                 <b></b>
                             </li>
-                            {% if user.seasonLicence.entity is not null and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
+                            {% if user.seasonLicence is not null and user.seasonLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon dossier d'inscription</b></div>
                                         <div class="col-md-7">
-                                            <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                            <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.id})}}"><i class="fas fa-download"></i> Télécharger</a>
                                         </div>
                                     </div>
                                     <b></b>
                                 </li>
                             {% endif %}
-                            {% if user.seasonLicence.entity is not null and user.seasonLicence.getCurrentSeasonForm %}
+                            {% if user.seasonLicence is not null and user.seasonLicence.currentSeasonForm %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon bulletin d'assurance {{ season_service.currentSeason }}</b></div>
                                         <div class="col-md-7">
-                                            <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.entity.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                            <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.id})}}"><i class="fas fa-download"></i> Télécharger</a>
                                         </div>
                                     </div>
                                 </li>

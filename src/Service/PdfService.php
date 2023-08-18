@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\UserType;
-use App\ViewModel\UserPresenter;
 use DateTime;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -20,7 +20,7 @@ class PdfService
     public function __construct(
         private StringService $ftringService,
         private KernelInterface $kernel,
-        private UserPresenter $userPresenter,
+        private UserDtoTransformer $userDtoTransformer,
         private ParameterBagInterface $parameterBag
     ) {
     }
@@ -55,7 +55,7 @@ class PdfService
 
     public function addData(Fpdi &$pdf, User $user)
     {
-        $this->userPresenter->present($user);
+        $userDto = $this->userDtoTransformer->fromEntity($user);
 
         $coverage = [
             Licence::COVERAGE_MINI_GEAR => 50.5,
@@ -67,22 +67,22 @@ class PdfService
 
         $fields = [
             [
-                'value' => $this->userPresenter->viewModel()->getFullName(),
+                'value' => $userDto->ffctLicence->fullName,
                 'x' => 35,
                 'y' => 208,
             ],
             [
-                'value' => $this->userPresenter->viewModel()->getBirthDate(),
+                'value' => $userDto->ffctLicence->birthDate,
                 'x' => 165,
                 'y' => 208,
             ],
             [
-                'value' => $this->userPresenter->viewModel()->getFullNameChildren(),
+                'value' => $userDto->ffctLicence->fullNameChildren,
                 'x' => 60,
                 'y' => 213,
             ],
             [
-                'value' => $this->userPresenter->viewModel()->getBirthDateChildren(),
+                'value' => $userDto->ffctLicence->birthDateChildren,
                 'x' => 165,
                 'y' => 213,
             ],
@@ -93,7 +93,7 @@ class PdfService
             ],
             [
                 'value' => 'X',
-                'x' => $coverage[$this->userPresenter->viewModel()->getCoverage()],
+                'x' => $coverage[$userDto->seasonLicence->coverage],
                 'y' => 247.5,
             ],
             [
@@ -107,7 +107,7 @@ class PdfService
                 'y' => 262,
             ],
             [
-                'value' => $this->userPresenter->viewModel()->seasonLicence->createdAt ?? $today->format('d/m/Y'),
+                'value' => $userDto->seasonLicence->createdAt ?? $today->format('d/m/Y'),
                 'x' => 75,
                 'y' => 262,
             ],

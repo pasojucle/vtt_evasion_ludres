@@ -11,7 +11,6 @@ use App\Form\Admin\BackgroundType;
 use App\Repository\BackgroundRepository;
 use App\Service\PaginatorService;
 use App\UseCase\Background\EditBackground;
-use App\ViewModel\Background\BackgroundPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -45,7 +44,7 @@ class BackgroundController extends AbstractController
     }
 
     #[Route('/image_de_fond/{background}', name: 'admin_background_edit', defaults:['background' => null], methods: ['GET', 'post'])]
-    public function adminEdit(Request $request, BackgroundPresenter $presenter, EditBackground $editBackground, ?Background $background): Response
+    public function adminEdit(Request $request, EditBackground $editBackground, ?Background $background): Response
     {
         $currentFilename = $background?->getFilename();
         $form = $this->createForm(BackgroundType::class, $background);

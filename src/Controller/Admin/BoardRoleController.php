@@ -9,7 +9,6 @@ use App\Repository\BoardRoleRepository;
 use App\Repository\UserRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;

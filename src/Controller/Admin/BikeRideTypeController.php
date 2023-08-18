@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRideType;
 use App\Form\Admin\BikeRideTypeType;
 use App\Repository\BikeRideTypeRepository;
 use App\Service\PaginatorService;
-use App\ViewModel\Paginator\PaginatorPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,16 +26,15 @@ class BikeRideTypeController extends AbstractController
     #[Route('/admin/types-rando', name: 'admin_bike_ride_types', methods: ['GET'])]
     public function adminList(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request
     ): Response {
         $query = $this->bikeRideTypeRepository->findBikeRideTypeQuery();
         $bikeRideTypes = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $paginatorPresenter->present($bikeRideTypes);
 
         return $this->render('bike_ride_type/admin/list.html.twig', [
             'bikeRideTypes' => $bikeRideTypes,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'paginator' => $paginatorDtoTransformer->fromEntities($bikeRideTypes),
         ]);
     }
 
