@@ -6,8 +6,6 @@ namespace App\UseCase\User;
 
 use DateTime;
 use App\Entity\User;
-use App\Dto\BikeRideDto;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Repository\SessionRepository;
 
@@ -34,25 +32,10 @@ class GetBikeRides
                     'bikeRide' => $session->bikeRide,
                     'availability' => $session->availability,
                     'sessionId' => $session->id,
-                    // 'memberList' => $session->getBikeRideMemberList($session->bikeRide),
                 ];
             }
         }
 
         return $bikeRides;
-    }
-
-    public function getBikeRideMemberList(BikeRideDto $bikeRide): ?array
-    {
-        if ($bikeRide->bikeRideType->isShowMemberList) {
-            $sessions = $this->sessionRepository->findByBikeRideId($bikeRide->id);
-            foreach($sessions as $session) {
-
-            }
-
-            return $this->sessionDtoTransformer->fromEntities($sessions)->bikeRideMembers;
-        }
-
-        return null;
     }
 }

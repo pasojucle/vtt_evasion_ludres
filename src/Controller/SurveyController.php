@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\SurveyDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
@@ -11,8 +13,7 @@ use App\Entity\User;
 use App\Form\SurveyResponsesType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyRepository;
-use App\ViewModel\Survey\SurveyPresenter;
-use App\ViewModel\UserPresenter;
+use App\UseCase\Survey\GetResponsesByUser;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -111,27 +112,24 @@ class SurveyController extends AbstractController
     public function surveys(
         SurveyRepository $surveyRepository,
         RespondentRepository $respondentRepository,
-        UserPresenter $userPresenter,
-        SurveyPresenter $surveyPresenter,
+        GetResponsesByUser $getResponsesByUser,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         /** @var ?User $user */
         $user = $this->getUser();
-        $userPresenter->present($user);
 
         $userSurveys = $respondentRepository->findActiveSurveysByUser($user);
         $respondents = [];
-        if (!empty($userSurveys)) {
-            foreach ($userSurveys as $userSurvey) {
-                $survey = $userSurvey->getSurvey();
-                $surveyPresenter->present($survey);
-                $respondents[$survey->getId()] = [
-                    'createdAt' => $userSurvey->getCreatedAt(),
-                    'responses' => $surveyPresenter->viewModel()->getResponsesByUser($userPresenter->viewModel())->surveyResponses,
-                ];
-            }
+
+        foreach ($userSurveys as $userSurvey) {
+            $survey = $userSurvey->getSurvey();
+            $respondents[$survey->getId()] = [
+                'createdAt' => $userSurvey->getCreatedAt(),
+                'responses' => $getResponsesByUser->execute($survey, $user),
+            ];
         }
+
 
         return $this->render('survey/list.html.twig', [
             'surveys' => $surveyRepository->findActive($user),

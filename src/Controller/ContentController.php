@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ContentDtoTransformer;
+use App\Dto\DtoTransformer\DocumentationDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Link;
 use App\Entity\User;
 use App\Form\ContactType;
@@ -14,10 +18,6 @@ use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
-use App\ViewModel\BikeRide\BikeRidesPresenter;
-use App\ViewModel\Content\ContentsPresenter;
-use App\ViewModel\Documentation\DocumentationsPresenter;
-use App\ViewModel\UserPresenter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ContentController extends AbstractController
 {
     public function __construct(
-        private ContentRepository $contentRepository
+        private ContentRepository $contentRepository,
     ) {
     }
 
@@ -35,8 +35,8 @@ class ContentController extends AbstractController
         LinkRepository $linkRepository,
         ContentRepository $contentRepository,
         BikeRideRepository $bikeRideRepository,
-        ContentsPresenter $contentsPresenter,
-        BikeRidesPresenter $bikeRidesPresenter
+        ContentDtoTransformer $contentDtoTransformer,
+        BikeRideDtoTransformer $bikeRideDtoTransformer
     ): Response {
         $homeContents = $contentRepository->findHomeContents();
         $linksBikeRide = $linkRepository->findByPosition(Link::POSITION_HOME_BIKE_RIDE);
@@ -44,15 +44,12 @@ class ContentController extends AbstractController
         $bikeRides = $bikeRideRepository->findEnableView();
         $homeContent = $homeContents[0]->getParent();
 
-        $contentsPresenter->present($homeContents);
-        $bikeRidesPresenter->present($bikeRides);
-
         return $this->render('content/home.html.twig', [
             'backgrounds' => $homeContent->getBackgrounds(),
             'links_bike_ride' => $linksBikeRide,
             'links_footer' => $linksFooter,
-            'bikeRides' => $bikeRidesPresenter->viewModel()->bikeRides,
-            'home_contents' => $contentsPresenter->viewModel()->homeContents,
+            'bikeRides' => $bikeRideDtoTransformer->fromEntities($bikeRides),
+            'home_contents' => $contentDtoTransformer->fromEntities($homeContents)->homeContents,
         ]);
     }
 
@@ -105,13 +102,12 @@ class ContentController extends AbstractController
     #[Route('/ecole_vtt/documentation', name: 'school_documentation', methods: ['GET'])]
     public function schoolDocumentation(
         DocumentationRepository $documentationRepository,
-        DocumentationsPresenter $documentationsPresenter,
+        DocumentationDtoTransformer $documentationDtoTransformer,
     ): Response {
-        $documentationsPresenter->present($documentationRepository->findAllAsc());
 
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_documentation'),
-            'documentations' => $documentationsPresenter->viewModel()->documentations,
+            'documentations' => $documentationDtoTransformer->fromEntities($documentationRepository->findAllAsc()),
             'background_color' => 'red',
         ]);
     }
@@ -121,7 +117,7 @@ class ContentController extends AbstractController
         Request $request,
         IdentityService $identityService,
         MailerService $mailerService,
-        UserPresenter $userPresenter
+        UserDtoTransformer $userDtoTransformer
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -137,8 +133,7 @@ class ContentController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             if ($user) {
-                $userPresenter->present($user);
-                $data['user'] = $userPresenter->viewModel();
+                $data['user'] = $userDtoTransformer->fromEntity($user);
             }
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
             if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_FORM_CONTACT')) {

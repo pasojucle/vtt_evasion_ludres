@@ -33,7 +33,7 @@ class IdentityService
     public function getMainContact(User $user)
     {
         $licence = $user->getLastLicence();
-        return (Licence::CATEGORY_MINOR === $licence->getCategory())
+        return (Licence::CATEGORY_MINOR === $licence?->getCategory())
         ? $user->getKinshipIdentity()
         : $user->getMemberIdentity();
     }

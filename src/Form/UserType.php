@@ -88,7 +88,7 @@ class UserType extends AbstractType
                     'entry_options' => [
                         'label' => false,
                         'category' => $options['category'],
-                        'season_licence' => $options['season_licence'],
+                        // 'season_licence' => $options['season_licence'],
                         'is_kinship' => false,
                     ],
                 ])
@@ -111,7 +111,7 @@ class UserType extends AbstractType
                     'entry_options' => [
                         'label' => false,
                         'category' => $options['category'],
-                        'season_licence' => $options['season_licence'],
+                        // 'season_licence' => $options['season_licence'],
                         'is_kinship' => true,
                     ],
                 ])

@@ -11,7 +11,7 @@
         <div class="wrapper-body">
             <ul>
             {% set orderLine = form.children.orderLines.children %}
-                {% for key, line in order.orderLines.lines %}
+                {% for key, line in order.orderLines %}
                     <li class="row row-list row-align-top block background-ligth">
                         <div class="col-md-2 col-xs-3">
                             <a href="{{ path('product_show', {'product': line.product.id}) }}">

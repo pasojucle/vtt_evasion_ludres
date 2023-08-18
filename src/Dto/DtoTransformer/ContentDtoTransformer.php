@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\ContentDto;
+use App\Dto\ContentsDto;
 use App\Entity\Content;
 use App\Service\ProjectDirService;
 use Doctrine\Common\Collections\Collection;
@@ -42,14 +43,17 @@ class ContentDtoTransformer
     }
 
         
-    public function fromEntities(Paginator|Collection|array $contentEntities): array
+    public function fromEntities(Paginator|Collection|array $contentEntities): ContentsDto
     {
-        $contents = [];
+        $contentsDto = new ContentsDto();
         foreach ($contentEntities as $contentEntity) {
-            $contents[] = $this->fromEntity($contentEntity);
+            $content = $this->fromEntity($contentEntity);
+            $contentsDto->contents[] = $content;
+            $type = ($content->isFlash) ? 'flashes' : 'contents';
+            $contentsDto->homeContents[$type][] = $content;
         }
 
-        return $contents;
+        return $contentsDto;
     }
 
     public function FromHomeContents(Paginator|Collection|array $contentEntities): array

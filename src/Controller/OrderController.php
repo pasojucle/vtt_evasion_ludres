@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\OrderDtoTransformer;
 use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Form\OrderType;
@@ -13,8 +14,6 @@ use App\Service\Order\OrderValidateService;
 use App\Service\PaginatorService;
 use App\Service\ParameterService;
 use App\Service\PdfService;
-use App\ViewModel\OrderPresenter;
-use App\ViewModel\OrdersPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -28,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
     public function __construct(
-        private OrderPresenter $presenter,
+        private OrderDtoTransformer $orderDtoTransformer,
         private OrderHeaderRepository $orderHeaderRepository,
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
@@ -65,10 +64,8 @@ class OrderController extends AbstractController
             }
         }
 
-        $this->presenter->present($orderHeader, $form);
-
         return $this->render('order/edit.html.twig', [
-            'order' => $this->presenter->viewModel(),
+            'order' => $this->orderDtoTransformer->fromEntity($orderHeader, $form),
             'form' => $form->createView(),
         ]);
     }
@@ -79,10 +76,8 @@ class OrderController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $this->presenter->present($orderHeader);
-
         return $this->render('order/show.html.twig', [
-            'order' => $this->presenter->viewModel(),
+            'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
             'message' => $this->parameterService->getParameterByName('ORDER_ACKNOWLEDGEMENT_MESSAGE'),
         ]);
     }
@@ -93,9 +88,8 @@ class OrderController extends AbstractController
         OrderHeader $orderHeader,
         ParameterBagInterface $parameterBag
     ): Response {
-        $this->presenter->present($orderHeader);
         $orderAcknowledgement = $this->renderView('order/acknowledgement.html.twig', [
-            'order' => $this->presenter->viewModel(),
+            'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
             'message' => $this->parameterService->getParameterByName('ORDER_ACKNOWLEDGEMENT_MESSAGE'),
         ]);
         $pdfFilepath = $pdfService->makePdf($orderAcknowledgement, 'order_acknowledgement_temp', $parameterBag->get('tmp_directory_path'));
@@ -117,7 +111,6 @@ class OrderController extends AbstractController
     #[Route('/commande/supprimer/{orderHeader}', name: 'order_delete', methods: ['GET', 'POST'])]
     public function orderDelete(
         Request $request,
-        OrderPresenter $presenter,
         OrderHeader $orderHeader
     ): Response {
         $form = $this->createForm(FormType::class, null, [
@@ -138,17 +131,14 @@ class OrderController extends AbstractController
             return $this->redirect($this->requestStack->getSession()->get('order_return'));
         }
 
-        $presenter->present($orderHeader);
-
         return $this->render('order/delete.modal.html.twig', [
-            'order_header' => $presenter->viewModel(),
+            'order_header' => $this->orderDtoTransformer->fromEntity($orderHeader),
             'form' => $form->createView(),
         ]);
     }
 
     #[Route('/mes-commandes', name: 'user_orders', methods: ['GET'])]
     public function userOrders(
-        OrdersPresenter $presenter,
         PaginatorService $paginator,
         Request $request
     ): Response {
@@ -157,12 +147,11 @@ class OrderController extends AbstractController
         $user = $this->getUser();
         $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);
         $orders = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $presenter->present($orders);
 
         $this->requestStack->getSession()->set('order_return', $this->generateUrl('user_orders'));
 
         return $this->render('order/list.html.twig', [
-            'orders' => $presenter->viewModel()->orders,
+            'orders' => $this->orderDtoTransformer->fromEntities($orders),
         ]);
     }
 }

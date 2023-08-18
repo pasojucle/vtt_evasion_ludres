@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\UseCase\User\GetBikeRides;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 

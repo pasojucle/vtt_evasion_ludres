@@ -119,7 +119,7 @@ class MenuService
             ],
             [
                 'label' => 'Sondages',
-                'route' => 'user_orders',
+                'route' => 'user_surveys',
             ],
         ];
 

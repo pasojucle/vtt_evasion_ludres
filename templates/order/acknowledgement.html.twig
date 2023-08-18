@@ -17,7 +17,7 @@
                     <th class="align-right">Quantité</th>
                     <th class="align-right">Prix</th>
                 </tr>
-                {% for key, line in order.orderLines.lines %}
+                {% for key, line in order.orderLines %}
                     <tr>
                         <td class="align-top"><img src="{{ line.product.pathNameForPdf }}" style="width: 70px;"></td>
                         <td class="align-top">

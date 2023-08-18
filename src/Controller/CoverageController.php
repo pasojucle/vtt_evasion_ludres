@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
+use App\Repository\RegistrationChangeRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\PdfService;
-use App\ViewModel\RegistrationStepPresenter;
-use App\ViewModel\UserPresenter;
+use App\Service\SeasonService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,17 +23,19 @@ class CoverageController extends AbstractController
     #[Route('current/season/{user}', name: '_current_season_edit', methods: ['GET'])]
     public function currentSeasonEdit(
         RegistrationStepRepository $registrationStepRepository,
-        RegistrationStepPresenter $registrationStepPresenter,
+        RegistrationChangeRepository $registrationChangeRepository,
+        SeasonService $seasonService,
+        RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         PdfService $pdfService,
-        UserPresenter $userPresenter,
+        UserDtoTransformer $userDtoTransformer,
         User $user
     ) {
-        $userPresenter->present($user);
+        $changes = $registrationChangeRepository->findBySeason($user, $seasonService->getCurrentSeason());
+        $userDto = $userDtoTransformer->fromEntity($user, $changes);
 
         $coverageStep = $registrationStepRepository->findCoverageStep();
 
-        $registrationStepPresenter->present($coverageStep, $userPresenter->viewModel(), 1, RegistrationStep::RENDER_FILE);
-        $step = $registrationStepPresenter->viewModel();
+        $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $userDto, 1, RegistrationStep::RENDER_FILE);
         $files = [];
         if (null !== $step->filename) {
             $filename = './files/' . $step->filename;

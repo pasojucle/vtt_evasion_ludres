@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
@@ -15,7 +16,6 @@ use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
 use App\UseCase\Session\GetFormSession;
 use App\UseCase\Session\UnregistrableSessionMessage;
-use App\ViewModel\BikeRide\BikeRidePresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -69,7 +69,7 @@ class SessionController extends AbstractController
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
     public function sessionAvailabilityEdit(
         Request $request,
-        BikeRidePresenter $bikeRidePresenter,
+        BikeRideDtoTransformer $bikeRideDtoTransformer,
         ConfirmationSession $confirmationSession,
         Session $session
     ) {
@@ -90,10 +90,9 @@ class SessionController extends AbstractController
             return $this->redirectToRoute('user_bike_rides');
         }
 
-        $bikeRidePresenter->present($bikeRide);
         return $this->render('session/edit.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRidePresenter->viewModel(),
+            'bikeRide' => $bikeRideDtoTransformer->fromEntity($bikeRide),
             'sessions' => $sessions,
         ]);
     }

@@ -20,7 +20,7 @@
             {% set class_ul ='sortable' %}
                 <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un contenu"><i class="fas fa-plus"></i> Ajouter un contenu</a>
                 <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
-                    {% for content in contents %}     
+                    {% for content in contents %} 
                         <li class="ui-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" data-id="{{ content.id }}">
                             {% set title = content.title %}
                             {% if content.title is null %}

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\ProductDtoTransformer;
 use App\Entity\Product;
 use App\Form\OrderLineAddType;
 use App\Repository\ProductRepository;
 use App\Service\Order\OrderAddService;
 use App\Service\PaginatorService;
-use App\ViewModel\Paginator\PaginatorPresenter;
-use App\ViewModel\ProductPresenter;
-use App\ViewModel\ProductsPresenter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,29 +18,32 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
+    public function __construct(
+        Private ProductDtoTransformer $productDtoTransformer,
+    )
+    {
+        
+    }
+
     #[Route('/boutique', name: 'products', methods: ['GET'])]
     public function list(
         PaginatorService $paginator,
-        PaginatorPresenter $paginatorPresenter,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         ProductRepository $productRepository,
-        ProductsPresenter $presenter,
         Request $request
     ): Response {
         $query = $productRepository->findAllQuery();
         $products = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $presenter->present($products);
-        $paginatorPresenter->present($products);
 
         return $this->render('product/list.html.twig', [
-            'products' => $presenter->viewModel()->products,
-            'paginator' => $paginatorPresenter->viewModel(),
+            'products' => $this->productDtoTransformer->fromEntities($products),
+            'paginator' => $paginatorDtoTransformer->fromEntities($products),
         ]);
     }
 
     #[Route('/boutique/produit/{product}', name: 'product_show', methods: ['GET', 'POST'])]
     public function show(
         OrderAddService $orderAddService,
-        ProductPresenter $presenter,
         Request $request,
         Product $product
     ): Response {
@@ -54,10 +56,9 @@ class ProductController extends AbstractController
                 return $this->redirectToRoute('order_edit');
             }
         }
-        $presenter->present($product);
 
         return $this->render('product/show.html.twig', [
-            'product' => $presenter->viewModel(),
+            'product' => $this->productDtoTransformer->fromEntity($product),
             'form' => $form->createView(),
         ]);
     }
