@@ -38,7 +38,6 @@ class LogErrorController extends AbstractController
         LogErrorDtoTransformer $logErrorDtoTransformer,
         LogError $error
     ): Response {
-
         return $this->render('log_error/admin/show.html.twig', [
             'error' => $logErrorDtoTransformer->fromEntity($error),
         ]);

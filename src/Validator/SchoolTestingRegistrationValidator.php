@@ -19,8 +19,7 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
         private ParameterService $parameterService,
         private UserDtoTransformer $userDtoTransformer,
         private LicenceService $licenceService
-    )
-    {
+    ) {
     }
     
     public function validate($value, Constraint $constraint): void

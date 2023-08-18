@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use DateTime;
-use App\Entity\User;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
+use App\Entity\User;
 use App\Repository\SessionRepository;
+use DateTime;
 
 class GetBikeRides
 {
     public function __construct(
         private SessionDtoTransformer $sessionDtoTransformer,
         private SessionRepository $sessionRepository
-    )
-    {
-        
+    ) {
     }
 
 

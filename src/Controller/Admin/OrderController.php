@@ -66,7 +66,6 @@ class OrderController extends AbstractController
 
     #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['GET'])]
     public function adminOrderValidate(
-        
         Request $request,
         OrderHeader $orderHeader,
         int $status

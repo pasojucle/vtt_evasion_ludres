@@ -23,9 +23,7 @@ class ProductController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ProductDtoTransformer $productDtoTransformer
-    )
-    {
-
+    ) {
     }
 
     #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]

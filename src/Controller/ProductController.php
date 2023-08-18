@@ -19,10 +19,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     public function __construct(
-        Private ProductDtoTransformer $productDtoTransformer,
-    )
-    {
-        
+        private ProductDtoTransformer $productDtoTransformer,
+    ) {
     }
 
     #[Route('/boutique', name: 'products', methods: ['GET'])]

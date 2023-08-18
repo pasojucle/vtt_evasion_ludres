@@ -104,7 +104,6 @@ class ContentController extends AbstractController
         DocumentationRepository $documentationRepository,
         DocumentationDtoTransformer $documentationDtoTransformer,
     ): Response {
-
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_documentation'),
             'documentations' => $documentationDtoTransformer->fromEntities($documentationRepository->findAllAsc()),

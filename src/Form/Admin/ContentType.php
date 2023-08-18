@@ -27,9 +27,7 @@ class ContentType extends AbstractType
     public function __construct(
         private RequestStack $requestStack,
         private ContentRepository $contentRepository,
-    )
-    {
-        
+    ) {
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

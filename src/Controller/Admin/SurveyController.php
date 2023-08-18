@@ -37,12 +37,11 @@ class SurveyController extends AbstractController
 
     #[Route('s', name: 'admin_surveys', methods: ['GET'])]
     public function list(
-        Request $request, 
-        PaginatorService $paginator, 
-        PaginatorDtoTransformer $paginatorDtoTransformer, 
+        Request $request,
+        PaginatorService $paginator,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
         SurveyRepository $surveyRepository
-    ): Response
-    {
+    ): Response {
         $query = $surveyRepository->findAllDESCQuery();
         $surveys = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 

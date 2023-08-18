@@ -42,6 +42,6 @@ class BackgroundDtoTransformer
 
     private function getPath(?string $fileName): ?string
     {
-        return ($fileName) ? $this->projectDirService->dir('','backgrounds', $fileName) : null;
+        return ($fileName) ? $this->projectDirService->dir('', 'backgrounds', $fileName) : null;
     }
 }

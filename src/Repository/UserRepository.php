@@ -585,7 +585,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->join('u.sessions', 's')
             ->join('s.cluster', 'c')
             ->andWhere(
-                (new Expr)->eq('c.bikeRide', 'bikeRide')
+                (new Expr())->eq('c.bikeRide', 'bikeRide')
             )
             ->setParameter('bikeRide', $bikeRide)
             ->getQuery()

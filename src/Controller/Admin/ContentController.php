@@ -44,7 +44,6 @@ class ContentController extends AbstractController
     #[Route('/page/accueil/contenus/{tab}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'tab' => self::HOME_TAB_FLASH])]
     public function listHome(
         PaginatorService $paginator,
-    
         Request $request,
         ?string $route,
         int $tab

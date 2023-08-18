@@ -9,5 +9,4 @@ class ContentsDto
     public array $contents = [];
 
     public array $homeContents = [];
-
 }
