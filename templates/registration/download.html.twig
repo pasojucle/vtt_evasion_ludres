@@ -18,7 +18,7 @@
             <div class="block background-ligth">
                 <div class="block-body">
                     {% set status = (licence.status == constant('APP\\Entity\\Licence::STATUS_VALID')) ? 'validée' : 'téléchargée' %}
-                    <p class="alert-warning">Votre inscription pour la saison {{ season_service.currentSeason }} a été {{ status }}.<br>Vous ne pouvez plus la modifier en ligne.</p>
+                    <p class="alert-warning">Votre inscription pour la saison {{ app.session.get('currentSeason') }} a été {{ status }}.<br>Vous ne pouvez plus la modifier en ligne.</p>
                     <p>Pour toutes modifications, contactez une personne de l'encadrement de club.</p>
 
                     <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_entity.id }) }}">Télécharger le dossier d'inscription</a>

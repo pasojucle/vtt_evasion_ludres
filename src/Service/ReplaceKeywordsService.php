@@ -7,12 +7,14 @@ namespace App\Service;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
 use DateTime;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReplaceKeywordsService
 {
     public function __construct(
         private TranslatorInterface $translator,
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -132,7 +134,7 @@ class ReplaceKeywordsService
             $licence->amount['value']?->toString(),
             '<br>',
             (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->approvals['rightToTheImage']->toString) : 'autorise',
-            '$this->seasonService->getCurrentSeason()',
+            $this->requestStack->getSession()->get('currentSeason'),
         ];
     }
 }

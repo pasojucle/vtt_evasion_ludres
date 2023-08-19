@@ -80,7 +80,7 @@ class RegistrationController extends AbstractController
 
         $progress = $this->getProgress->execute($step);
         $user = $progress['user'];
-        if (Licence::STATUS_IN_PROCESSING < $user->seasonLicence->status && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
+        if (Licence::STATUS_IN_PROCESSING < $user->seasonLicence?->status && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
             return $this->redirectToRoute('registration_download', [
                 'user' => $user->id,
             ]);

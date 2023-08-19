@@ -5,7 +5,7 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Gestion des assurances {{ season_service.currentSeason }} - <span class="badge badge-info">{{ paginator.total }}</span></h1>
+            <h1>Gestion des assurances {{ app.session.get('currentSeason') }} - <span class="badge badge-info">{{ paginator.total }}</span></h1>
             {% if is_granted('ROLE_REGISTER') %}
                 <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>

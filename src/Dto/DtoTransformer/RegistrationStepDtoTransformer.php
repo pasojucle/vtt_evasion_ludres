@@ -68,7 +68,7 @@ class RegistrationStepDtoTransformer
                 ],
                 'current' => $registrationStep,
                 'is_kinship' => UserType::FORM_KINSHIP === $registrationStep->getForm(),
-                'category' => $seasonLicence->category,
+                'category' => $seasonLicence?->category,
                 'season_licence' => $seasonLicence,
             ]);
         }

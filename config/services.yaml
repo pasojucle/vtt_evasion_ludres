@@ -65,6 +65,11 @@ services:
           - { name: kernel.event_listener, event: kernel.request }
        arguments: ['%maintenance%']
 
+    App\EventListeners\CurrentSeasonListener:
+       tags:
+          - { name: kernel.event_listener, event: kernel.request }
+
+
     # App\EventListeners\ExceptionListener:
     #     tags:
     #         - { name: kernel.event_listener, event: kernel.exception }

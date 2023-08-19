@@ -89,7 +89,7 @@ class UserType extends AbstractType
                         'label' => false,
                         'category' => $options['category'],
                         'is_kinship' => false,
-                        'is_final' => $options['season_licence']->isFinal,
+                        'is_final' => $options['season_licence']?->isFinal,
                     ],
                 ])
                 ->add('licences', CollectionType::class, [

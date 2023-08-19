@@ -33,7 +33,7 @@
                                     </div>
                                 </li>
                             {% endif %}
-                            {% if user.seasonLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+                            {% if user.lastLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Contact principal</b></div>
@@ -73,7 +73,7 @@
                             {% if user.seasonLicence is not null and user.seasonLicence.currentSeasonForm %}
                                 <li>
                                     <div class="row padding-top-5">
-                                        <div class="col-md-5"><b>Mon bulletin d'assurance {{ season_service.currentSeason }}</b></div>
+                                        <div class="col-md-5"><b>Mon bulletin d'assurance {{ app.session.get('currentSeason') }}</b></div>
                                         <div class="col-md-7">
                                             <a class="btn btn-primary btn-xs" href="{{ path('coverage_current_season_edit', {'user': user.id})}}"><i class="fas fa-download"></i> Télécharger</a>
                                         </div>

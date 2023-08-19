@@ -1,7 +1,7 @@
 {% extends 'base_modal.html.twig' %}
 {% set button_href = path('admin_coverage_validate', {'licence' : licence.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Valider l'assurance {{ season_service.currentSeason }} de {{ fullname }}{% endblock %}
+{% block modal_title %}Valider l'assurance {{ app.session.get('currentSeason') }} de {{ fullname }}{% endblock %}
 {% block body %}
 
 {% endblock %}

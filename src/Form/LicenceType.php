@@ -21,7 +21,7 @@ class LicenceType extends AbstractType
             $licence = $event->getData();
             $form = $event->getForm();
             
-            if ($licence->getId() === $options['season_licence']->id) {
+            if ($licence->getId() === $options['season_licence']?->id) {
                 $choicesCoverage = array_flip(Licence::COVERAGES);
                 if (Licence::CATEGORY_MINOR === $options['category']) {
                     array_shift($choicesCoverage);

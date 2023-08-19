@@ -70,7 +70,7 @@ class ShowModalWindow
             $modalWindows = array_merge($modalWindows, [$orderHeaderToValidate]);
         }
 
-        if (Licence::STATUS_IN_PROCESSING === $userDto->seasonLicence->status) {
+        if (Licence::STATUS_IN_PROCESSING === $userDto->seasonLicence?->status) {
             $modalWindows = array_merge($modalWindows, [$userDto->seasonLicence]);
         }
         return $modalWindows;
