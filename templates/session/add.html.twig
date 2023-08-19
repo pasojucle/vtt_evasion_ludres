@@ -57,7 +57,7 @@
 
                         </div>
                     {% endif %}
-                    {% if form.availability is defined %}
+                    {% if form.session.availability is defined %}
                         {% include('session/registered_list_by_type.html.twig') %}
                     {% endif %}
                     {% if bikeRide.bikeRideType.isShowMemberList %}

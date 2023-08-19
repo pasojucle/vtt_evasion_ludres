@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
 use App\Dto\SessionDto;
-use App\Dto\SessionsDto;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
 use App\Repository\SessionRepository;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -114,50 +111,22 @@ class SessionDtoTransformer
     //     return null;
     // }
 
-    public function analize(Collection|array $sessionEntities): array
-    {
-        $sessions = [];
-        $sessionsByCluster = [];
-        $bikeRides = [];
-        foreach ($sessionEntities as $sessionEntity) {
-            $sessionDto = $this->fromEntity($sessionEntity);
-            $sessions[] = $sessionDto;
-            $cluster = $sessionEntity->getCluster();
-            $sessionsByCluster[$cluster->getId()][] = $sessionDto;
-            $bikeRide = $cluster->getBikeRide();
-            $bikeRides[$bikeRide->getId()] = $bikeRide;
-        }
+    // public function analize(Collection|array $sessionEntities): array
+    // {
+    //     $sessions = [];
+    //     $sessionsByCluster = [];
+    //     $bikeRides = [];
+    //     foreach ($sessionEntities as $sessionEntity) {
+    //         $sessionDto = $this->fromEntity($sessionEntity);
+    //         $sessions[] = $sessionDto;
+    //         $cluster = $sessionEntity->getCluster();
+    //         $sessionsByCluster[$cluster->getId()][] = $sessionDto;
+    //         $bikeRide = $cluster->getBikeRide();
+    //         $bikeRides[$bikeRide->getId()] = $bikeRide;
+    //     }
 
-        return [$sessions, $sessionsByCluster, $bikeRides];
-    }
+    //     return [$sessions, $sessionsByCluster, $bikeRides];
+    // }
 
-    public function getBikeRideMembers(array $bikeRides, array $sessionsByCluster): array
-    {
-        $maxCount = 0;
-        $clusters = [];
-        $header = [];
-        $rows = [];
-        
-        foreach ($bikeRides as $bikeRide) {
-            foreach ($bikeRide->getClusters() as $cluster) {
-                $header[] = $cluster->getTitle();
-                $clusters[] = $cluster->getId();
-            }
-        }
-        
-        foreach ($sessionsByCluster as $sessions) {
-            if ($maxCount < count($sessions)) {
-                $maxCount = count($sessions);
-            }
-        }
-        foreach ($clusters as $cluster) {
-            for ($i = 0; $i < $maxCount; ++$i) {
-                $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))
-                    ? $sessionsByCluster[$cluster][$i]->user->member->fullName
-                    : '';
-                $rows[$i][] = $session;
-            }
-        }
-        return ['header' => $header, 'rows' => $rows];
-    }
+    
 }

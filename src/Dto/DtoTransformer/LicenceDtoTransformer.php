@@ -16,6 +16,8 @@ use App\Service\SeasonService;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use ReflectionClass;
+use ReflectionProperty;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
@@ -56,6 +58,7 @@ class LicenceDtoTransformer
                     $status = Licence::STATUS_WAITING_RENEW;
                 }
             }
+
             $licenceDto->id = $licence->getId();
             $licenceDto->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
             $licenceDto->season = $this->getSeason($licence->getSeason());

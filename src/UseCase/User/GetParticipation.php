@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\SessionDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\Admin\ParticipationFilterType;
 use App\Repository\BikeRideTypeRepository;
@@ -11,9 +14,6 @@ use App\Repository\SessionRepository;
 use App\Service\IndemnityService;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
-use App\ViewModel\Paginator\PaginatorPresenter;
-use App\ViewModel\Session\SessionsPresenter;
-use App\ViewModel\UserPresenter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,10 +25,10 @@ class GetParticipation
 
     public function __construct(
         private PaginatorService $paginator,
-        private PaginatorPresenter $paginatorPresenter,
+        private PaginatorDtoTransformer $paginatorDtoTransformer,
         private FormFactoryInterface $formFactory,
-        private UserPresenter $userPresenter,
-        private SessionsPresenter $sessionsPresenter,
+        private UserDtoTransformer $userDtoTransformer,
+        private SessionDtoTransformer $sessionDtoTransformer,
         private SessionRepository $sessionRepository,
         private SeasonService $seasonService,
         private IndemnityService $indemnityService,
@@ -55,17 +55,14 @@ class GetParticipation
 
         $sessions = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $this->userPresenter->present($user);
-        $this->sessionsPresenter->present($sessions);
         $season = ($filters['season']) ? (int) str_replace('SEASON_', '', $filters['season']) : null;
-        $this->paginatorPresenter->present($sessions, ['filtered' => (int) $filtered, 'user' => $user->getId()]);
 
         return [
-            'user' => $this->userPresenter->viewModel(),
-            'sessions' => $this->sessionsPresenter->viewModel()->sessions,
+            'user' => $this->userDtoTransformer->fromEntity($user),
+            'sessions' => $this->sessionDtoTransformer->fromEntities($sessions),
             'total_indemnities' => $this->indemnityService->getUserIndemnities($user, $season),
             'form' => $form->createView(),
-            'paginator' => $this->paginatorPresenter->viewModel(),
+            'paginator' => $this->paginatorDtoTransformer->fromEntities($sessions, ['filtered' => (int) $filtered, 'user' => $user->getId()]),
             'referer' => $session->get('admin_user_redirect'),
         ];
     }

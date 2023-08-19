@@ -8,7 +8,6 @@ use App\Dto\DtoTransformer\IndemnityDtoTransformer;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\IndemnityRepository;
 use App\Repository\LevelRepository;
-use App\ViewModel\Indemnity\IndemnitiesPresenter;
 
 class GetIndemnities
 {

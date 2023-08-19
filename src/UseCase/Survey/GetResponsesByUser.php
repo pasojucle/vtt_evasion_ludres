@@ -19,7 +19,6 @@ class GetResponsesByUser
     public function execute(Survey $survey, User $user): array
     {
         $responses = $this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey);
-        dump($responses);
 
         return $this->surveyResponseDtoTransformer->fromEntities($responses);
     }

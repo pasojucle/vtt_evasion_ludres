@@ -4,29 +4,20 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+
 use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Repository\OrderLineRepository;
 use App\Repository\SurveyResponseRepository;
-use App\ViewModel\UserPresenter;
-use App\ViewModel\UserViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UserService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserPresenter $userPresenter,
         private SurveyResponseRepository $surveyResponseRepository,
         private OrderLineRepository $orderLineRepository
     ) {
-    }
-
-    public function convertToUser(User $user): UserViewModel
-    {
-        $this->userPresenter->present($user);
-
-        return $this->userPresenter->viewModel();
     }
 
     public function deleteUser(User $user): void

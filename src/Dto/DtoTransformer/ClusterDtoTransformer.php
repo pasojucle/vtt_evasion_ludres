@@ -19,7 +19,8 @@ class ClusterDtoTransformer
 {
     public function __construct(
         private SessionDtoTransformer $sessionDtoTransformer,
-        private ClusterService $clusterService
+        private ClusterService $clusterService,
+        private UserDtoTransformer $userDtoTransformer,
     ) {
     }
 
@@ -58,7 +59,7 @@ class ClusterDtoTransformer
         $sessions = [];
         foreach ($sessionEntities as $session) {
             $sessions[] = [
-                'user' => $session->getUser(),
+                'user' => $this->userDtoTransformer->fromEntity($session->getUser()),
                 'availability' => $session->getAvailability(),
                 'isPresent' => $session->isPresent(),
             ];

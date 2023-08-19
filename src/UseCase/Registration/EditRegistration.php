@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -15,7 +16,6 @@ use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\StringService;
 use App\Service\UploadService;
-use App\ViewModel\UserPresenter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ class EditRegistration
         private EntityManagerInterface $entityManager,
         private UploadService $uploadService,
         private UserRepository $userRepository,
-        private UserPresenter $userPresenter,
+        private UserDtoTransformer $userDtoTransformer,
         private UserPasswordHasherInterface $passwordHasher,
         private UrlGeneratorInterface $urlGenerator,
         private IdentityService $identityService,
@@ -102,17 +102,16 @@ class EditRegistration
 
     private function sendMailToUser(User $user): void
     {
-        $this->userPresenter->present($user);
-        $user = $this->userPresenter->viewModel();
-        $email = $user->mainEmail;
+        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $email = $userDto->mainEmail;
         $this->mailerService->sendMailToMember([
-            'name' => $user->member->name,
-            'firstName' => $user->member->firstName,
+            'name' => $userDto->member->name,
+            'firstName' => $userDto->member->firstName,
             'email' => $email,
             'subject' => 'Création de compte sur le site VTT Evasion Ludres',
-            'licenceNumber' => $user->licenceNumber,
+            'licenceNumber' => $userDto->licenceNumber,
             'registration' => $this->urlGenerator->generate('registration_file', [
-                'user' => $user->entity->getId(),
+                'user' => $userDto->id,
             ]),
         ], 'EMAIL_REGISTRATION');
     }

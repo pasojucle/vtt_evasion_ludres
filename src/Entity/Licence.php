@@ -83,7 +83,7 @@ class Licence
 
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
-    private int $id;
+    private ?int $id = null;
 
     #[Column(type: 'integer', nullable: true)]
     private ?int $type = null;

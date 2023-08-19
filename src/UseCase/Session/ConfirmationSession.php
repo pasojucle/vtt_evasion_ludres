@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRideType;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
 use App\Service\MailerService;
-use App\ViewModel\BikeRide\BikeRidePresenter;
-use App\ViewModel\UserPresenter;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -18,18 +18,17 @@ class ConfirmationSession
 {
     public function __construct(
         private MailerService $mailerService,
-        private UserPresenter $userPresenter,
-        private BikeRidePresenter $bikeRidePresenter,
+        private UserDtoTransformer $userDtoTransformer,
+        private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private TranslatorInterface $translator
     ) {
     }
 
     public function execute(Session $session): void
     {
-        $this->userPresenter->present($session->getUser());
-        $this->bikeRidePresenter->present($session->getCluster()->getBikeRide());
-        $user = $this->userPresenter->viewModel();
-        $bikeRide = $this->bikeRidePresenter->viewModel();
+
+        $user = $this->userDtoTransformer->fromEntity($session->getUser());
+        $bikeRide = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
 
         $content = (Licence::CATEGORY_MINOR === $user->seasonLicence->category)
             ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_MINOR'

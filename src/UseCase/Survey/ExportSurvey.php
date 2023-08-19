@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\Survey;
 
+use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
+use App\Dto\SurveyResponseDto;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Repository\SurveyResponseRepository;
-use App\ViewModel\SurveyResponsePresenter;
 use DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -17,7 +18,7 @@ class ExportSurvey
     public function __construct(
         private TranslatorInterface $translator,
         private SurveyResponseRepository $surveyResponseRepository,
-        private SurveyResponsePresenter $surveyResponsePresenter
+        private SurveyResponseDtoTransformer $surveyResponseDtoTransformer
     ) {
     }
 
@@ -63,8 +64,7 @@ class ExportSurvey
             $row = [];
 
             foreach ($data['responses'] as $key => $surveyResponse) {
-                $this->surveyResponsePresenter->present($surveyResponse);
-                $surveyResponse = $this->surveyResponsePresenter->viewModel();
+                $surveyResponse = $this->surveyResponseDtoTransformer->fromEntity($surveyResponse);
                 if (0 === $key) {
                     $row[] = $surveyResponse->user?->member->fullName ?? $uuid;
                 }

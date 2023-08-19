@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
 use App\Service\StringService;
-use App\ViewModel\UserPresenter;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +20,7 @@ class ExportBikeRide
     public function __construct(
         private SessionRepository $sessionRepository,
         private StringService $stringService,
-        private UserPresenter $userPresenter
+        private UserDtoTransformer $userDtoTransformer
     ) {
     }
 
@@ -49,12 +49,11 @@ class ExportBikeRide
         if (!empty($sessions)) {
             foreach ($sessions as $session) {
                 if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
-                    $this->userPresenter->present($session->getUser());
 
-                    $user = $this->userPresenter->viewModel();
+                    $user = $this->userDtoTransformer->fromEntity($session->getUser());
                     $present = ($session->isPresent()) ? 'oui' : 'non';
                     $row = [
-                        $user->getLicenceNumber(),
+                        $user->licenceNumber,
                         $user->member->name, $user->member->firstName,
                         $user->member->birthDate,
                         $user->level->title,

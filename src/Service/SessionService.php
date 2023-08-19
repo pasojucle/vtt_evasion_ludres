@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\DtoTransformer\SessionDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\User;
 use App\Repository\SessionRepository;
-use App\ViewModel\Session\SessionPresenter;
-use App\ViewModel\Session\SessionsPresenter;
-use App\ViewModel\UserPresenter;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
@@ -23,12 +22,12 @@ class SessionService
 
     public function __construct(
         private SessionRepository $sessionRepository,
-        private UserPresenter $userPresenter,
+        private UserDtoTransformer $userDtoTransformer,
         private MailerService $mailerService,
         private ParameterService $parameterService,
         private ClusterService $clusterService,
-        private SessionPresenter $sessionPresenter,
-        private SessionsPresenter $sessionsPresenter
+        private SessionDtoTransformer $sessionDtoTransformer,
+
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }
@@ -48,9 +47,7 @@ class SessionService
                 $members[$levelId]['title'] = $levelTitle;
             } else {
                 if ($user !== $session->getUser()) {
-                    $this->userPresenter->present($session->getUser());
-                    $this->sessionPresenter->present($session);
-                    $framers[] = $this->sessionPresenter->viewModel();
+                    $framers[] = $this->sessionDtoTransformer->fromEntity($session);
                 }
             }
         }
@@ -58,15 +55,49 @@ class SessionService
         return ['framers' => $framers, 'members' => $members];
     }
 
-
-
-    public function getSessions(BikeRide $bikeRide): array
+    public function getBikeRideMembers(BikeRide $bikeRide): array
     {
-        $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
-        $this->sessionsPresenter->present($sessions);
-        return $this->sessionsPresenter->viewModel()->bikeRideMembers();
-    }
+        $sessionEntities = $this->sessionRepository->findByBikeRide($bikeRide);
 
+        $sessionsByCluster = [];
+        $bikeRides = [];
+        foreach ($sessionEntities as $sessionEntity) {
+            $sessionDto = $this->sessionDtoTransformer->fromEntity($sessionEntity);
+            $sessions[] = $sessionDto;
+            $cluster = $sessionEntity->getCluster();
+            $sessionsByCluster[$cluster->getId()][] = $sessionDto;
+            $bikeRide = $cluster->getBikeRide();
+            $bikeRides[$bikeRide->getId()] = $bikeRide;
+        }
+
+        $maxCount = 0;
+        $clusters = [];
+        $header = [];
+        $rows = [];
+
+        foreach ($bikeRides as $bikeRide) {
+            foreach ($bikeRide->getClusters() as $cluster) {
+                $header[] = $cluster->getTitle();
+                $clusters[] = $cluster->getId();
+            }
+        }
+        
+        foreach ($sessionsByCluster as $sessions) {
+            if ($maxCount < count($sessions)) {
+                $maxCount = count($sessions);
+            }
+        }
+        foreach ($clusters as $cluster) {
+            for ($i = 0; $i < $maxCount; ++$i) {
+                $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))
+                    ? $sessionsByCluster[$cluster][$i]->user->member->fullName
+                    : '';
+                $rows[$i][] = $session;
+            }
+        }
+        return ['header' => $header, 'rows' => $rows];
+    }
+    
     public function getCluster(BikeRide $bikeRide, User $user, Collection $clusters): ?Cluster
     {
         $userCluster = null;
@@ -123,13 +154,13 @@ class SessionService
 
     public function checkEndTesting(User $user): void
     {
-        $this->userPresenter->present($user);
+        $userDto = $this->userDtoTransformer->fromEntity($user);
 
-        if ($this->userPresenter->viewModel()->isEndTesting()) {
+        if ($userDto->isEndTesting) {
             $this->mailerService->sendMailToMember([
-                'name' => $this->userPresenter->viewModel()->member->name,
-                'firstName' => $this->userPresenter->viewModel()->member->firstName,
-                'email' => $this->userPresenter->viewModel()->mainEmail,
+                'name' => $userDto->member->name,
+                'firstName' => $userDto->member->firstName,
+                'email' => $userDto->mainEmail,
                 'subject' => 'Fin de la période d\'essai',
                 'testing_end' => true,
             ], 'EMAIL_END_TESTING');

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\Cluster;
 
+use App\Dto\ClusterDto;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\Cluster;
 use App\Entity\RegistrationStep;
 use App\Service\PdfService;
 use App\Service\StringService;
-use App\ViewModel\ClusterPresenter;
-use App\ViewModel\ClusterViewModel;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -19,12 +19,12 @@ use Twig\Environment;
 class ExportCluster
 {
     private array $files = [];
-    private ClusterViewModel $cluster;
+    private ClusterDto $cluster;
     private string $dirName;
 
     public function __construct(
         private StringService $stringService,
-        private ClusterPresenter $presenter,
+        private ClusterDtoTransformer $clusterDtoTransformer,
         private PdfService $pdfService,
         private Environment $twig,
         private ParameterBagInterface $parameterBag,
@@ -33,8 +33,7 @@ class ExportCluster
 
     public function execute(Cluster $cluster): Response
     {
-        $this->presenter->present($cluster);
-        $this->cluster = $this->presenter->viewModel();
+        $this->cluster = $this->clusterDtoTransformer->fromEntity($cluster);
 
         $this->dirName = $this->parameterBag->get('tmp_directory_path') . $this->stringService->clean($this->cluster->title);
         if (!is_dir($this->dirName)) {
@@ -53,7 +52,7 @@ class ExportCluster
                     'user' => $session['user'],
                     'media' => RegistrationStep::RENDER_FILE,
                 ]);
-                $tmp = $session['user']->entity->getId() . '_tmp';
+                $tmp = $session['user']->id . '_tmp';
                 $pdfFilepath = $this->pdfService->makePdf($render, $tmp, $this->dirName, 'B6');
                 $this->files[] = [
                     'filename' => $pdfFilepath,

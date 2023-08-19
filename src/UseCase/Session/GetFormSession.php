@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
+use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\SurveyResponse;
@@ -13,7 +14,6 @@ use App\Repository\SessionRepository;
 use App\Service\SessionService;
 use App\UseCase\BikeRide\CreateClusters;
 use App\UseCase\BikeRide\IsWritableAvailability;
-use App\ViewModel\UserPresenter;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -29,8 +29,8 @@ class GetFormSession
         private SessionRepository $sessionRepository,
         private FormFactoryInterface $formFactory,
         private SessionService $sessionService,
-        private UserPresenter $userPresenter,
-        private IsWritableAvailability $isWritableAvailability
+        private IsWritableAvailability $isWritableAvailability,
+        private SessionDtoTransformer $sessionDtoTransformer,
     ) {
     }
 
@@ -38,15 +38,12 @@ class GetFormSession
     {
         $clusters = $this->getBikeRideClusters($bikeRide);
         $userSession = $this->getUserSession($bikeRide, $user, $clusters);
-
-        $this->userPresenter->present($user);
-        $sessions = (null !== $userSession->getAvailability())
+        $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $userSession->getUser());
+        $sessions = ($isWritableAvailability)
             ? $this->sessionService->getSessionsBytype($bikeRide)
-            : $this->sessionService->getSessions($bikeRide);
+            : $this->sessionService->getBikeRideMembers($bikeRide);
 
-        $isEndTesting = $this->userPresenter->viewModel()->isEndTesting();
-
-        $form = $this->getForm($userSession, $bikeRide, $clusters, $isEndTesting);
+        $form = $this->getForm($userSession, $bikeRide, $clusters, $isWritableAvailability);
 
         $this->setParams($form, $bikeRide, $sessions);
 
@@ -101,14 +98,14 @@ class GetFormSession
         return $userSession;
     }
 
-    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isEndTesting): FormInterface
+    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability): FormInterface
     {
         return $this->formFactory->create(SessionType::class, [
             'session' => $userSession,
             'responses' => ['surveyResponses' => $this->getSurveyResponse($bikeRide)],
         ], [
             'clusters' => $clusters,
-            'is_writable_availability' => $this->isWritableAvailability->execute($bikeRide, $userSession->getUser()),
+            'is_writable_availability' => $isWritableAvailability,
         ]);
     }
 
@@ -120,4 +117,6 @@ class GetFormSession
             'sessions' => $sessions,
         ];
     }
+
+    
 }
