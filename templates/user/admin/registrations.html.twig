@@ -29,7 +29,7 @@
                                 {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
                                 <div class="row">
                                     <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
-                                    {% if user.seasonLicence is not empty and user.seasonLicence.isFinal is same as(false) %}
+                                    {% if user.lastLicence.isFinal is same as(false) %}
                                         <div class="col-md-5 col-xs-12">
                                             {{ user.testingBikeRides }}/3 séances d'essai
                                         </div>
@@ -38,9 +38,9 @@
                             </a>
                             {% include('user/admin/dropdown.html.twig') %}
                         </div>
-                        {% if user.seasonLicence.toValidate %}
-                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.seasonLicence.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
-                            <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.seasonLicence.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                        {% if user.lastLicence.toValidate %}
+                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.lastLicence.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
+                            <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.lastLicence.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
                         {% endif %}
                     </li>
                 {% endfor %}

@@ -6,7 +6,7 @@
     {% endif %}
 {% endfor %}
 
-{% if user.seasonLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+{% if user.lastLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
     <ul class="block background-ligth">
         <li class="row">
             <span class="col-md-4 col-sx-6"><b>Email principal</b></span><span class="col-md-8 col-sx-6">{{ user.mainEmail }}</span>

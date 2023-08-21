@@ -39,7 +39,7 @@ class UserDtoTransformer
         $userDto->secondKinship = (array_key_exists(Identity::TYPE_SECOND_CONTACT, $identitiesByType)) ? $identitiesByType[Identity::TYPE_SECOND_CONTACT] : null;
         
         $userDto->lastLicence = $this->getLastLicence($user, $changes);
-        $userDto->seasonLicence = ($userDto->lastLicence->isSeasonLicence) ? $userDto->lastLicence : null;
+        // $userDto->seasonLicence = ($userDto->lastLicence->isSeasonLicence) ? $userDto->lastLicence : null;
 
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());

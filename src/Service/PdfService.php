@@ -93,7 +93,7 @@ class PdfService
             ],
             [
                 'value' => 'X',
-                'x' => $coverage[$userDto->seasonLicence->coverage],
+                'x' => $coverage[$userDto->lastLicence->coverage],
                 'y' => 247.5,
             ],
             [
@@ -107,7 +107,7 @@ class PdfService
                 'y' => 262,
             ],
             [
-                'value' => $userDto->seasonLicence->createdAt ?? $today->format('d/m/Y'),
+                'value' => $userDto->lastLicence->createdAt ?? $today->format('d/m/Y'),
                 'x' => 75,
                 'y' => 262,
             ],
