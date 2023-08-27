@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -104,6 +105,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(mappedBy: 'user', targetEntity: RegistrationChange::class)]
     private Collection $registrationChanges;
 
+    #[OneToMany(mappedBy: 'user', targetEntity: SecondHand::class)]
+    #[OrderBy(['createdAt' => 'DESC'])]
+    private Collection $secondHands;
+
     public function __construct()
     {
         $this->identities = new ArrayCollection();
@@ -116,6 +121,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->surveys = new ArrayCollection();
         $this->bikeRides = new ArrayCollection();
         $this->registrationChanges = new ArrayCollection();
+        $this->secondHands = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -642,6 +648,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($registrationChange->getUser() === $this) {
                 $registrationChange->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SecondHand>
+     */
+    public function getSecondHands(): Collection
+    {
+        return $this->secondHands;
+    }
+
+    public function addSecondHand(SecondHand $secondHand): static
+    {
+        if (!$this->secondHands->contains($secondHand)) {
+            $this->secondHands->add($secondHand);
+            $secondHand->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSecondHand(SecondHand $secondHand): static
+    {
+        if ($this->secondHands->removeElement($secondHand)) {
+            // set the owning side to null (unless already changed)
+            if ($secondHand->getUser() === $this) {
+                $secondHand->setUser(null);
             }
         }
 

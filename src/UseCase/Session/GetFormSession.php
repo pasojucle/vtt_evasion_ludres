@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\SurveyResponse;
@@ -30,7 +29,6 @@ class GetFormSession
         private FormFactoryInterface $formFactory,
         private SessionService $sessionService,
         private IsWritableAvailability $isWritableAvailability,
-        private SessionDtoTransformer $sessionDtoTransformer,
     ) {
     }
 
@@ -117,6 +115,4 @@ class GetFormSession
             'sessions' => $sessions,
         ];
     }
-
-    
 }

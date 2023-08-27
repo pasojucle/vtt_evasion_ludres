@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Boutique{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width background-ligth">
+        <div class="wrapper-title">
+            <h1>Occasions</h1>
+        </div>
+        {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+        <div class="wrapper-body col-4">
+            {% for secondHand in second_hands %}
+                <div class="card card-product">
+                    <a href="{{ path('second_hand_show', {'secondHand': secondHand.id}) }}">
+                        <div class="card-img" style="background-image:url({{ secondHand.pathName }}"></div>
+                        <div class="card-body">
+                            {{ secondHand.name }}
+                            <p>{{ secondHand.price }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+    </div>
+{% endblock %}

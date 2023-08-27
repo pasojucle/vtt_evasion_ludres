@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mes annonces'} %}
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width">
+
+        <div class="wrapper-body">
+            <div class="block background-white">
+                <div class="block-body">
+                    <a href="{{ path('second_hand_edit')}}" class="btn btn-primary mb-20">Déposer une annonce</a>
+                    <ul>
+                        {% for second_hand in second_hands %}
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-4 col-xs-12">
+                                        <b>{{ second_hand.name }}</b>
+                                    </div>
+                                    <div class="col-md-4 col-xs-12">
+                                        <b>{{ second_hand.validToString }}</b>
+                                    </div>
+                                    <div class="col-md-3 col-xs-4 row">
+                                        <a href="{{ path('second_hand_edit',{'secondHand': second_hand.id}) }}" class="btn btn-primary" title="VModifier l'annonce">Modifier</a>
+                                        <a href="{{ path('second_hand_delete',{'secondHand': second_hand.id}) }}" class="btn btn-danger btn-ico" data-toggle="modal" data-type="danger" title="Annuler">
+                                            <i class="fas fa-times-circle"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if second_hands is empty %}
+                        <p>Vous n'avez aucune annonce</p>
+                    {% endif %}
+                </div>  
+            </div>
+        </div>
+    </div>
+{% endblock %}

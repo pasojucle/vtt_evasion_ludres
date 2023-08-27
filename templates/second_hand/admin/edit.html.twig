@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier une annonce{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Modifier une annonce</h1>
+            <span class="tools">
+                <a href="{{ path('admin_second_hand_list', {'valid': second_hand.valid|parseInt}) }}" class="btn btn-ico" title="Retour à la liste des annonces">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
+        </div>
+        <div class="wrapper-body">
+            {% include 'second_hand/form.html.twig' %}
+        </div>
+    </div>
+{% endblock %}

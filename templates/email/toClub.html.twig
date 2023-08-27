@@ -16,6 +16,9 @@
     {% if data.order is defined %}
         <a href="{{ data.order }}">Lien vers la commande</a>
     {% endif %}
+    {% if data.secondHand is defined %}
+        <a href="{{ data.secondHand }}">Lien vers l'annonce</a>
+    {% endif %}
     <br>
     {% if data.user is defined %}
         <hr>

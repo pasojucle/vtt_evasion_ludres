@@ -84,7 +84,7 @@ class BikeRideController extends AbstractController
 
             $this->addFlash('success', 'La sortie à bien été enregistrée');
 
-            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide?->getStartAt());
+            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
 
             return $this->redirectToRoute('admin_bike_rides', $filters);
         }

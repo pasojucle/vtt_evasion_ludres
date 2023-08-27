@@ -25,7 +25,7 @@ final class Version20230611162140 extends AbstractMigration
 // INNER JOIN cluster AS c1 ON s1.cluster_id = c1.id
 // INNER JOIN cluster AS c2 ON s2.cluster_id = c2.id and c2.bike_ride_id = c1.bike_ride_id
 // where s1.id <> s2.id'
-        $this->addSql('CREATE UNIQUE INDEX session_unique_idx ON session (user_id, cluster_id)');
+        // $this->addSql('CREATE UNIQUE INDEX session_unique_idx ON session (user_id, cluster_id)');
     }
 
     public function down(Schema $schema): void

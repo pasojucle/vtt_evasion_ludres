@@ -10,7 +10,7 @@ use App\Model\Currency;
 
 class IndemnityDtoTransformer
 {
-    public function fromEntity(Indemnity $indemnity): IndemnityDto
+    public function fromEntity(?Indemnity $indemnity): IndemnityDto
     {
         $indemnityDto = new IndemnityDto();
         if ($indemnity) {

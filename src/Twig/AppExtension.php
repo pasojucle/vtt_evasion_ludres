@@ -18,6 +18,7 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('imgPath', [$this, 'imgPath']),
             new TwigFilter('formatDateLong', [$this, 'formatDateLong']),
+            new TwigFilter('parseInt', [$this, 'parseInt']),
         ];
     }
 
@@ -38,5 +39,10 @@ class AppExtension extends AbstractExtension
         $formatter->setPattern('EEEE d/M/yy');
 
         return ucfirst($formatter->format($date));
+    }
+
+    public function parseInt(string|bool $value): int
+    {
+        return (int) $value;
     }
 }

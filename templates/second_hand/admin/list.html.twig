@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des annonces{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Gestion des annonces</h1>
+        </div>
+        <nav  class="nav-tab">
+            {% for type, label in constant('App\\Dto\\DtoTransformer\\SecondHandDtoTransformer::TYPES') %}
+                <a href="{{ path('admin_second_hand_list', {'valid': type} )}}"{% if type == valid %} class="active"{% endif %}>{{ label|trans}}</a>
+            {% endfor %}
+        </nav>
+        <div class="wrapper-body">
+            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+            <ul>
+                {% for second_hand in second_hands %}
+                    <li class="list-dropdown">
+                        <a href="{{ path('admin_second_hand_show', {'secondHand': second_hand.id})}}">
+                            <div class="row">
+                                <div class="col-md-2">{{ second_hand.createdAt }}</div>
+                                <div class="col-md-5">{{ second_hand.name }}</div>
+                                <div class="col-md-5">{{ second_hand.user.member.fullName }}</div>
+                            </div>
+                        </a>
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" data-toggle="dropdown-166"></button>
+                            <div class="dropdown-menu" data-target="dropdown-166">
+                                <ul class="dropdown-body">
+                                    <li><a class="dropdown-item" href="{{ path('admin_second_hand_edit', {'secondHand': second_hand.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a></li>    
+                                    <li><a class="dropdown-item" href="{{ path('admin_second_hand_delete', {'secondHand': second_hand.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times" aria-hidden="true"></i> Supprimer</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+        </div>
+    </div>
+{% endblock %}
+
+        

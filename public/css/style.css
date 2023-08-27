@@ -407,15 +407,7 @@ button[type="submit"] {
     column-count: 2;
     column-gap: 5%;
 }
-.product-detail .price {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 25px auto;
-    color: var(--primary-color-darker);
-}
-.product-detail .throughed-price {
-    font-size: 18px;
-}
+
 
 @media screen and (max-width: 800px) {
     .wrapper-medium-width, .wrapper-small-width {
@@ -479,5 +471,9 @@ button[type="submit"] {
 @media screen and (max-width: 414px) {
     .wrapper-img {
         height: 230px;
+    }
+    .wrapper-full-background h1, .wrapper-medium-width h1, .wrapper-full-width h1 {
+        font-size: 48px;
+        margin-bottom: 48px;
     }
 }

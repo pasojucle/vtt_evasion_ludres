@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ second_hand.name }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width background-ligth">
+        <div class="wrapper-title">
+            <h1>Occasions</h1>
+        </div>
+        {% include 'second_hand/content.html.twig' %}
+    </div>
+{% endblock %}

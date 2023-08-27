@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{# {% set button_href = path('second_hand_delete', {'secondHand' : second_hand.id}) %} #}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Supprimer une annonce{% endblock %}
+{% block body %}
+    <p>Etes vous certain de supprimer l'annonce' {{ second_hand.name}} ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Supprimer' %}
+    {{ parent() }}
+{% endblock %}

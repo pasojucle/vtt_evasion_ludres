@@ -15,14 +15,20 @@ class MenuService
     private array $footer;
 
     public function __construct(
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
+    }
+
+    public function getMenus(): array
+    {
+        $fullName = $this->requestStack->getSession()->get('user_fullName');
         $this->menus = [
             [
                 'label' => 'Le club',
                 'route' => 'club',
                 'pattern' => '/club/',
                 'subMenus' => [],
+                'display' => true,
             ],
             [
                 'label' => 'L\'école VTT',
@@ -55,12 +61,14 @@ class MenuService
                         'pattern' => '/school_documentation/',
                     ],
                 ],
+                'display' => true,
             ],
             [
                 'label' => 'Programme du club',
                 'route' => 'schedule',
                 'pattern' => '/schedule/',
                 'subMenus' => [],
+                'display' => true,
             ],
             [
                 'label' => 'Inscription',
@@ -83,27 +91,42 @@ class MenuService
                         'pattern' => '/registration_tuto/',
                     ],
                 ],
+                'display' => true,
             ],
             [
                 'label' => 'Boutique',
                 'route' => 'products',
                 'pattern' => '/product/',
                 'subMenus' => [],
+                'display' => true,
+            ],
+            [
+                'label' => 'Occasions',
+                'route' => 'second_hand_list',
+                'pattern' => '/second_hand/',
+                'subMenus' => [],
+                'display' => null !== $fullName,
             ],
             [
                 'label' => 'Liens',
                 'route' => 'links',
                 'pattern' => '/links/',
                 'subMenus' => [],
+                'display' => true,
             ],
             [
                 'label' => 'Contacts',
                 'route' => 'contact',
                 'pattern' => '/contact/',
                 'subMenus' => [],
+                'display' => true,
             ],
         ];
-        
+        return $this->menus;
+    }
+
+    public function getUser(): array
+    {
         $this->user = [
             [
                 'label' => 'Mon programme perso',
@@ -118,11 +141,25 @@ class MenuService
                 'route' => 'user_orders',
             ],
             [
-                'label' => 'Sondages',
+                'label' => 'Mes sondages',
                 'route' => 'user_surveys',
+            ],
+            [
+                'label' => 'Mes annonces',
+                'route' => 'second_hand_user_list',
             ],
         ];
 
+        $fullName = $this->requestStack->getSession()->get('user_fullName');
+
+        return [
+            'fullName' => $fullName,
+            'menus' => ($fullName) ? $this->user : [],
+        ];
+    }
+
+    public function getFooter(): array
+    {
         $this->footer = [
             [
                 'label' => 'Réglement intérieur',
@@ -137,25 +174,6 @@ class MenuService
                 'subMenus' => [],
             ],
         ];
-    }
-
-    public function getMenus(): array
-    {
-        return $this->menus;
-    }
-
-    public function getUser(): array
-    {
-        $fullName = $this->requestStack->getSession()->get('user_fullName');
-
-        return [
-            'fullName' => $fullName,
-            'menus' => ($fullName) ? $this->user : [],
-        ];
-    }
-
-    public function getFooter(): array
-    {
         return $this->footer;
     }
 

@@ -15,11 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 class ValidateLicence
 {
     public function __construct(
-        private EntityManagerInterface $entityManager, 
-        private MailerService $mailerService, 
+        private EntityManagerInterface $entityManager,
+        private MailerService $mailerService,
         private UserDtoTransformer $userDtoTransformer
-    )
-    {
+    ) {
     }
 
     public function execute(Request $request, Licence $licence)

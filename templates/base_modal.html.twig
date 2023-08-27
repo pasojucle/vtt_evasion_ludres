@@ -3,7 +3,7 @@
         <div class="modal-content">
             {% block form %}{% endblock %}
             {% if form is defined %}
-                {{ form_start(form, {'action': button_href})}}
+                {{ form_start(form, {'action': (button_href is defined) ?  button_href : form.vars.action})}}
             {% endif %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

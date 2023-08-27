@@ -13,6 +13,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig\Error\RuntimeError;
 
 class GetError
@@ -47,7 +48,9 @@ class GetError
             $logError->setStatusCode($statusCode);
 
             if (403 === $statusCode) {
-                $logError->setRoute($exception->getPrevious()?->subject->attributes->get('_route'))
+                /** @var AccessDeniedException  $previousExceptions */
+                $previousExceptions = $exception->getPrevious();
+                $logError->setRoute($previousExceptions->getSubject()->attributes->get('_route'))
                     ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.')
                 ;
             }

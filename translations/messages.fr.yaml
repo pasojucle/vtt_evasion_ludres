@@ -127,6 +127,7 @@ content:
     links: Liens
     default: Fonds par défaut (login, formulaires ...)
     user_change_infos: Page demande de modifications d'infos personnelles
+    second_hand: Annonces de matériel d'ocasion
   type:
     flash: Message flash
     content: Contenu
@@ -154,3 +155,7 @@ survey:
     check: oui/non
     choice: oui/non/ne se prononce pas
     string: Réponse libre
+
+second_hand:
+  valided: Validées
+  un_valided: Non Validées

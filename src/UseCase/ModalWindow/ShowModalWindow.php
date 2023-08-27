@@ -71,7 +71,7 @@ class ShowModalWindow
         }
 
         if (Licence::STATUS_IN_PROCESSING === $userDto->lastLicence?->status) {
-            $modalWindows = array_merge($modalWindows, [$userDto->lastLicence]);
+            $modalWindows = array_merge($modalWindows, [$user->getLastLicence()]);
         }
         return $modalWindows;
     }

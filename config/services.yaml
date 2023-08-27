@@ -21,9 +21,14 @@ parameters:
         project: '%kernel.project_dir%'
         public: 'public'
         upload: 'uploads'
+        uploads_directory_path: 'public/uploads'
         files: 'files'
         products: 'uploads/products'
+        products_directory_path: 'public/uploads/products'
+        second_hands: 'uploads/second_hands'
+        second_hands_directory_path: 'public/uploads/second_hands'
         backgrounds: 'images/background'
+        backgrounds_directory_path: 'public/images/background'
         data: 'data'
         tmp: 'data/tmp'
         cmd: 'data/cmd'
@@ -80,4 +85,9 @@ services:
                 name: 'doctrine.orm.entity_listener'
                 event: 'postUpdate'
         arguments: ['@App\Service\SeasonService']
-            
+
+    # App\EventListener\CurrencyListener:
+    #     tags: 
+    #         - { name: 'doctrine.orm.entity_listener',  event: 'prePersist' }
+    #         - { name: 'doctrine.orm.entity_listener',  event: 'postUpdate' }
+    #         - { name: 'doctrine.orm.entity_listener',  event: 'postLoad' }

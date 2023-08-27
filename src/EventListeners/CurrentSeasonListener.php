@@ -2,7 +2,6 @@
 
 namespace App\EventListeners;
 
-
 use App\Service\SeasonService;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\RequestEvent;

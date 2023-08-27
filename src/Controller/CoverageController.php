@@ -35,7 +35,7 @@ class CoverageController extends AbstractController
 
         $coverageStep = $registrationStepRepository->findCoverageStep();
 
-        $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $userDto, 1, RegistrationStep::RENDER_FILE);
+        $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $user, $userDto, 1, RegistrationStep::RENDER_FILE);
         $files = [];
         if (null !== $step->filename) {
             $filename = './files/' . $step->filename;

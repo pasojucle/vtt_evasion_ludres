@@ -46,6 +46,7 @@ class Content
         'default' => 'content.route.default',
         'links' => 'content.route.links',
         'user_change_infos' => 'content.route.user_change_infos',
+        'second_hand' => 'content.route.second_hand'
     ];
 
     #[Column(type: 'integer')]

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ second_hand.name }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Annonces d'occasion</h1>
+            <span class="tools">
+                <a href="{{ path('admin_second_hand_list', {'valid': second_hand.valid|parseInt}) }}" class="btn btn-ico" title="Retour à la liste des annonces">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
+        </div>
+        {% include 'second_hand/content.html.twig' %}
+        <div class="wrapper-footer">
+            {% if not second_hand.valid %}
+                <a class="btn btn-success" href="{{ path('admin_second_hand_validate', {'secondHand': second_hand.id})}}" title="Valider"><i class="fas fa-check"></i> Valider</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -98,6 +98,12 @@ class MenuAdminService
                 'pattern' => '/popup/',
                 'role' => 'ROLE_ADMIN',
             ],
+            [
+                'label' => 'Annonces d\'occasion',
+                'route' => 'admin_second_hand_list',
+                'pattern' => '/second_hand/',
+                'role' => 'ROLE_ADMIN',
+            ],
         ]);
     }
 
@@ -174,6 +180,12 @@ class MenuAdminService
                 'label' => 'Etapes des inscriptions',
                 'route' => 'admin_registration_steps',
                 'pattern' => '/registration_step/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
+                'label' => 'Catégories d\'occadion',
+                'route' => 'admin_category_list',
+                'pattern' => '/categorie/',
                 'role' => 'ROLE_ADMIN',
             ],
         ]);

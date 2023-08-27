@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% set title = (second_hand.id is null) ? 'Ajouter une annonce' : 'Modifier une annonce' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': title} %}
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width">
+        <div class="wrapper-title">
+            <h1>{{title}}</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="block background-clear">
+                <div class="mb-20">{{ content.content | raw}}</div>
+                {% include 'second_hand/form.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

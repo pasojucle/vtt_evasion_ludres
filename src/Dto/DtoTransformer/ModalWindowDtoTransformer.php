@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\LicenceDto;
 use App\Dto\ModalWindowDto;
+use App\Entity\Licence;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
@@ -63,10 +64,10 @@ class ModalWindowDtoTransformer
         return $modalWindowDto;
     }
 
-    public function fromLicence(LicenceDto $licence): ModalWindowDto
+    public function fromLicence(Licence $licence): ModalWindowDto
     {
         $modalWindowDto = new ModalWindowDto();
-        $modalWindowDto->index = $this->modalWindowService->getIndex($licence->entity);
+        $modalWindowDto->index = $this->modalWindowService->getIndex($licence);
         $modalWindowDto->title = 'Dossier d\'inscription en cours';
         $modalWindowDto->content = $this->modalWindowRegistrationInProgress;
         $modalWindowDto->url = $this->router->generate('user_registration_form', ['step' => 1]);
@@ -89,7 +90,7 @@ class ModalWindowDtoTransformer
             if ($modalWindowEntity instanceof OrderHeader) {
                 $modalWindows[] = $this->fromOrderHeader($modalWindowEntity);
             }
-            if ($modalWindowEntity instanceof LicenceDto) {
+            if ($modalWindowEntity instanceof Licence) {
                 $modalWindows[] = $this->fromLicence($modalWindowEntity);
             }
         }

@@ -10,20 +10,14 @@ use App\Entity\Session;
 use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
-use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class SessionDtoTransformer
 {
-    // private array $sessions;
-    // private array $sessionsByCluster;
-    // private array $bikeRides;
-
     public function __construct(
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private IndemnityRepository $indemnityRepository,
-        private SessionRepository $sessionRepository,
         private UserDtoTransformer $userDtoTransformer
     ) {
     }
@@ -41,32 +35,20 @@ class SessionDtoTransformer
             $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $sessionDto->bikeRide->bikeRideType, $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
-            // $sessionDto->bikeRideMemeberList = $this->getBikeRideMemberList($sessionDto->bikeRide);
         }
 
         return $sessionDto;
     }
 
-
     public function fromEntities(Paginator|Collection|array $sessionEntities): array
     {
+        $sessions = [];
         foreach ($sessionEntities as $sessionEntity) {
             $sessions[] = $this->fromEntity($sessionEntity);
         }
 
         return $sessions;
     }
-
-
-    // public function fromEntities(Paginator|Collection|array $sessionEntities): SessionsDto
-    // {
-    //     $sessionsDto = new SessionsDto();
-    //     list($sessions, $sessionsByCluster, $bikeRides) = $this->analize($sessionEntities);
-    //     $sessionsDto->sessions = $sessions;
-    //     $sessionsDto->bikeRideMembers = $this->getBikeRideMembers($bikeRides, $sessionsByCluster);
-
-    //     return $sessionsDto;
-    // }
 
     private function getAvailability(?int $availability): array
     {
@@ -100,33 +82,4 @@ class SessionDtoTransformer
 
         return null;
     }
-
-    // public function getBikeRideMemberList(BikeRideDto $bikeRide): ?array
-    // {
-    //     if ($bikeRide->bikeRideType->isShowMemberList) {
-    //         $sessions = $this->sessionRepository->findByBikeRideId($bikeRide->id);
-    //         return $this->fromEntities($sessions)->bikeRideMembers;
-    //     }
-
-    //     return null;
-    // }
-
-    // public function analize(Collection|array $sessionEntities): array
-    // {
-    //     $sessions = [];
-    //     $sessionsByCluster = [];
-    //     $bikeRides = [];
-    //     foreach ($sessionEntities as $sessionEntity) {
-    //         $sessionDto = $this->fromEntity($sessionEntity);
-    //         $sessions[] = $sessionDto;
-    //         $cluster = $sessionEntity->getCluster();
-    //         $sessionsByCluster[$cluster->getId()][] = $sessionDto;
-    //         $bikeRide = $cluster->getBikeRide();
-    //         $bikeRides[$bikeRide->getId()] = $bikeRide;
-    //     }
-
-    //     return [$sessions, $sessionsByCluster, $bikeRides];
-    // }
-
-    
 }

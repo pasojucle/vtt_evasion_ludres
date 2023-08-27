@@ -27,7 +27,6 @@ class SessionService
         private ParameterService $parameterService,
         private ClusterService $clusterService,
         private SessionDtoTransformer $sessionDtoTransformer,
-
     ) {
         $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
     }

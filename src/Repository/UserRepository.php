@@ -576,20 +576,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->execute();
     }
-
-
-
-    private function getByBikeRide(BikeRide $bikeRide): array
-    {
-        return $this->createQueryBuilder('u')
-            ->join('u.sessions', 's')
-            ->join('s.cluster', 'c')
-            ->andWhere(
-                (new Expr())->eq('c.bikeRide', 'bikeRide')
-            )
-            ->setParameter('bikeRide', $bikeRide)
-            ->getQuery()
-            ->getResult()
-            ;
-    }
 }

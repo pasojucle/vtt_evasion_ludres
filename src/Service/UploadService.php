@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class UploadService
 {
-    private ParameterBagInterface $params;
-
-    private SluggerInterface $slugger;
-
-    public function __construct(ParameterBagInterface $params, SluggerInterface $slugger)
-    {
-        $this->params = $params;
-        $this->slugger = $slugger;
+    public function __construct(
+        private ProjectDirService $projectDirService,
+        private SluggerInterface $slugger,
+    ) {
     }
 
     public function uploadFile(?UploadedFile $pictureFile, ?string $dir = 'uploads_directory_path'): ?string
@@ -27,13 +22,16 @@ class UploadService
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slug($originalFilename);
             $newFilename = $safeFilename . '-' . uniqid() . '.' . $pictureFile->guessExtension();
-            if (!is_dir($this->params->get($dir))) {
-                mkdir($this->params->get($dir));
+            $directory = $this->projectDirService->path($dir);
+            
+            if (!is_dir($directory)) {
+                dump($directory);
+                mkdir($directory);
             }
 
             try {
                 $pictureFile->move(
-                    $this->params->get($dir),
+                    $directory,
                     $newFilename
                 );
             } catch (FileException $e) {
