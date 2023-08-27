@@ -582,9 +582,6 @@ main:not(.admin) {
 }
 
 .form-group > textarea {
-    height: 100px;
-}
-.form-group > textarea.second-hand {
     height: 200px;
 }
 .form-group > input.widget-inline {

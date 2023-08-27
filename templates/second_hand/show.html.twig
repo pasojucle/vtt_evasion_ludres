@@ -7,6 +7,30 @@
         <div class="wrapper-title">
             <h1>Occasions</h1>
         </div>
-        {% include 'second_hand/content.html.twig' %}
+        <div class="wrapper-body">
+    <div class="row row-align-top">
+        <div class="col-md-5 col-xs-12"> 
+            <img class="second-hand" src="{{ second_hand.pathName }}" alt="{{ second_hand.filename }}">  
+        </div>
+        <div class="col-md-1 "></div>
+        <div class="col-md-6 col-xs-12">
+            <h2>{{ second_hand.name }}</h2>
+            <br>
+            <div class="detail">
+                <p>{{ second_hand.createdAt }}</p>
+            </div>
+            <div class="detail">
+                <h3>Descriptif</h3>
+                <p>{{ second_hand.content|raw}}<p>
+                <p class="price">{{ second_hand.price }}</p>
+            </div>
+            <div class="detail">
+                <h3>Categorie</h3>
+                <p>{{ second_hand.category }}<p>
+            </div>
+            <a class="btn btn-primary" href="{{path('second_hand_message', {'secondHand': second_hand.id})}}">Contacter le vendeur</a>
+        </div>         
+    </div>
+</div>
     </div>
 {% endblock %}

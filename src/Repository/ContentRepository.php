@@ -64,7 +64,7 @@ class ContentRepository extends ServiceEntityRepository
             ->getQuery()->getResult();
     }
 
-    public function findNexOrderByRoute(string $route, bool $isFlash): int
+    public function findNexOrderByRoute(string $route, bool $isFlash = false): int
     {
         $nexOrder = 0;
         $maxOrder = $this->createQueryBuilder('c')

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Session;
 use App\Repository\ParameterRepository;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -58,6 +57,9 @@ class MailerService
         }
         if (array_key_exists('content', $data)) {
             $content = $data['content'];
+        }
+        if (array_key_exists('message', $data)) {
+            $content = $data['message'];
         }
 
         try {

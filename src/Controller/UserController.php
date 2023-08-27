@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
-use App\Form\ChangeUserInfosType;
+use App\Form\EmailMessageType;
 use App\Repository\ContentRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
@@ -85,22 +85,22 @@ class UserController extends AbstractController
     #[Route('mon_compte/demande/modification', name: 'user_change_infos', methods: ['GET', 'POST'])]
     public function changeInfos(
         Request $request,
-        IdentityService $identityService,
         MailerService $mailerService,
         ContentRepository $contentRepository
     ): Response {
 
         /** @var ?User $user */
         $user = $this->getUser();
-        $mainContact = $identityService->getMainContact($user);
-        $data = ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()];
-
-        $form = $this->createForm(ChangeUserInfosType::class, $data);
+        $form = $this->createForm(EmailMessageType::class);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $data['user'] = $this->userDtoTransformer->fromEntity($user);
+            $userDto = $this->userDtoTransformer->fromEntity($user);
+            $data['user'] = $userDto;
+            $data['name'] = $userDto->member->name;
+            $data['firstName'] = $userDto->member->firstName;
+            $data['email'] = $userDto->mainEmail;
             $data['subject'] = 'Demande de modification d\'informations personnelles';
             if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_CHANGE_USER_INFOS')) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
