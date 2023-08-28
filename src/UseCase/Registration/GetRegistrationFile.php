@@ -129,7 +129,7 @@ class GetRegistrationFile
                 'user' => $userDto,
                 'user_entity' => $this->user,
                 'registration_document_steps' => $this->registrationDocumentSteps,
-                'licence' => $userDto->seasonLicence,
+                'licence' => $userDto->lastLicence,
                 'media' => RegistrationStep::RENDER_FILE,
             ]);
             $pdfFilepath = $this->pdfService->makePdf($registration, 'registration_temp');
