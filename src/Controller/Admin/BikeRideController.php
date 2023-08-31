@@ -146,7 +146,7 @@ class BikeRideController extends AbstractController
         $response = [];
         foreach ($this->bikeRideDtoTransformer->fromEntities($bikeRides) as $bikeRide) {
             $response[] = [
-                'id' => $bikeRide->entity->getId(),
+                'id' => $bikeRide->id,
                 'text' => $bikeRide->period . ' - ' . $bikeRide->title,
             ];
         }

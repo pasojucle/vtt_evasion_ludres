@@ -7,7 +7,9 @@
         <div class="wrapper-title">
             <h1>Occasions</h1>
         </div>
+        {% if second_hands is not empty %}
         {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+
         <div class="wrapper-body col-4">
             {% for secondHand in second_hands %}
                 <div class="card card-product">
@@ -19,8 +21,18 @@
                         </div>
                     </a>
                 </div>
-            {% endfor %}
+            {% endfor %}   
         </div>
         {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+        {% else %}
+            <div class="wrapper-body align-center">
+                <div class="large"><i class="fa-regular fa-circle-xmark"></i></div>     
+                <h2>Aucune annonces en ligne</h2>
+            </div>
+            <div class="wrapper-footer align-center">
+                <a href="{{ path('second_hand_edit')}}" class="btn btn-primary mb-20"><i class="fa-solid fa-plus"></i> Déposer votre première annonce</a>
+            </div>
+
+        {% endif %}
     </div>
 {% endblock %}

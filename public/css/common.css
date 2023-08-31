@@ -1428,6 +1428,10 @@ img.second-hand {
     margin: 10px 0 25px 0;
 }
 
+.large i {
+    font-size: 48px;
+}
+
 @media screen and (min-width: 800px) {
     .block.block-flash.background-color .block-title::after {
         box-sizing: border-box;
