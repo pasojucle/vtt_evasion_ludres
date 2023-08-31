@@ -22,7 +22,7 @@ final class Version20230728170951 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE registration_change (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, entity VARCHAR(100) NOT NULL, entity_id INT NOT NULL, value LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\', season INT NOT NULL, INDEX IDX_EE093ECAA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE registration_change ADD CONSTRAINT FK_EE093ECAA76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
-        $this->addSql('INSERT INTO `identity` (`id`, `user_id`, `name`, `first_name`, `type`) VALUES (\'1\', \'Boulangé\', \'Patrick\', \'1\')');
+        $this->addSql('INSERT INTO `identity` (`user_id`, `name`, `first_name`, `type`) VALUES (\'1\', \'Boulangé\', \'Patrick\', \'1\')');
     }
 
     public function down(Schema $schema): void

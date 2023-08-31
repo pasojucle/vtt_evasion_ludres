@@ -19,7 +19,7 @@ class IdentityDto
 
     public ?string $birthPlace;
 
-    public ?Identity $entity;
+    public ?int $id = null;
 
     public ?AddressDto $address;
 

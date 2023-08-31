@@ -82,8 +82,9 @@ class RegistrationChangeRepository extends ServiceEntityRepository
             ->getResult();
 
         $changes = [];
+        /** @var RegistrationChange $change */
         foreach ($qb as $change) {
-            $changes[$change->getEntity()] = $change;
+            $changes[$change->getEntity()][$change->getEntityId()] = $change;
         }
         return $changes;
     }

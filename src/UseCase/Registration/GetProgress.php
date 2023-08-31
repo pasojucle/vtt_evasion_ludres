@@ -190,6 +190,7 @@ class GetProgress
         if (!$this->user->getLicences()->isEmpty()) {
             $this->seasonLicence->setFinal(true)
                 ->setType(Licence::TYPE_HIKE)
+                ->setCoverage($this->user->getLastLicence()?->getCoverage())
             ;
         } else {
             $this->seasonLicence->setFinal(false)

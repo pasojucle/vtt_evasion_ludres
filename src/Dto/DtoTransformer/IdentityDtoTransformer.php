@@ -27,8 +27,9 @@ class IdentityDtoTransformer
     public function fromEntity(Identity $identity, ?array $changes = null): IdentityDto
     {
         $identityDto = new IdentityDto();
+
         $bithDate = $identity->getBirthDate();
-        $identityDto->entity = $identity;
+        $identityDto->id = $identity->getId();
         $identityDto->name = $identity->getName();
         $identityDto->firstName = $identity->getFirstName();
         $identityDto->fullName = $identity->getName() . ' ' . $identity->getFirstName();
@@ -54,6 +55,7 @@ class IdentityDtoTransformer
     public function fromEntities(Collection $identityEntities, ?array $changes = null): array
     {
         $identities = [];
+        /** @var Identity $identity */
         foreach ($identityEntities as $identity) {
             $identities[$identity->getType()] = $this->fromEntity($identity, $changes);
         }
@@ -116,16 +118,17 @@ class IdentityDtoTransformer
 
     private function formatChanges(array $changes, IdentityDto &$identityDto): void
     {
-        if (array_key_exists('Identity', $changes)) {
-            $properties = array_keys($changes['Identity']->getValue());
+        if (array_key_exists('Identity', $changes) && array_key_exists($identityDto->id, $changes['Identity'])) {
+            $properties = array_keys($changes['Identity'][$identityDto->id]->getValue());
+            
             foreach ($properties as $property) {
                 if ('mobile' === $property) {
                     $property = 'phone';
                 }
                 if (1 === preg_match('#name|firstName#', $property)) {
-                    $properties[] = 'fullName';
+                    $identityDto->fullName = sprintf('<b>%s</b>', $identityDto->$property);
                 }
-
+                
                 $identityDto->$property = sprintf('<b>%s</b>', $identityDto->$property);
             }
         }

@@ -25,7 +25,6 @@ class UploadService
             $directory = $this->projectDirService->path($dir);
             
             if (!is_dir($directory)) {
-                dump($directory);
                 mkdir($directory);
             }
 

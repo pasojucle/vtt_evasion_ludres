@@ -23,7 +23,7 @@ class Approval
     private int $type;
 
     #[Column(type: 'boolean', nullable: true)]
-    private ?bool $value = null;
+    private bool $value = false;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'approvals')]
     #[JoinColumn(nullable:true)]
@@ -46,7 +46,7 @@ class Approval
         return $this;
     }
 
-    public function getValue(): ?bool
+    public function getValue(): bool
     {
         return $this->value;
     }

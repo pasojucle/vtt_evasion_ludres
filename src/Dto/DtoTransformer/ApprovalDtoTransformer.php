@@ -12,7 +12,7 @@ use function Symfony\Component\String\u;
 
 class ApprovalDtoTransformer
 {
-    public function fromEntity(Approval $approval, ?array $changes = null): ApprovalDto
+    public function fromEntity(Approval $approval): ApprovalDto
     {
         $approvalDto = new ApprovalDto();
         $approvalDto->name = u(str_replace('approval.', '', User::APPROVALS[$approval->getType()]))->camel()->toString();
@@ -20,19 +20,14 @@ class ApprovalDtoTransformer
         $approvalDto->toString = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
         $approvalDto->toHtml = $this->toHtml($approval->getType(), $approval->getValue());
 
-
-        if ($changes) {
-            $this->formatChanges($changes, $approvalDto);
-        }
-
         return $approvalDto;
     }
 
-    public function fromEntities(Collection|array $approvalEntities, ?array $changes = null): array
+    public function fromEntities(Collection|array $approvalEntities): array
     {
         $approvals = [];
         foreach ($approvalEntities as $approvalEntity) {
-            $approval = $this->fromEntity($approvalEntity, $changes);
+            $approval = $this->fromEntity($approvalEntity);
             $approvals[$approval->name] = $approval;
         }
 
@@ -62,13 +57,5 @@ class ApprovalDtoTransformer
             ],
             default => []
         };
-    }
-
-    private function formatChanges(array $changes, ApprovalDto &$approvalDto): void
-    {
-        if (array_key_exists('Approval', $changes)) {
-            $approvalDto->toString = sprintf('<b>%s</b>', $approvalDto->toString);
-            $approvalDto->toHtml['message'] = sprintf('<b>%s</b>', $approvalDto->toHtml['message']);
-        }
     }
 }

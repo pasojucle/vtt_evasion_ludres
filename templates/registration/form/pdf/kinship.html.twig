@@ -7,7 +7,7 @@
     </tr>
     <tr>
     <td><b>Non et prénom :</b></td>
-       <td>{{ user.kinship.fullName|raw }} ({{ user.kinship.type | trans  }})</td>
+       <td>{{ user.kinship.fullName|raw }} ({{ user.kinship.type|trans  }})</td>
        <td>{{ user.secondKinship.fullName|raw}} ({{ user.secondKinship.type|trans}})</td>
        
     </tr>
@@ -18,7 +18,7 @@
     </tr>
     <tr>
         <td><b>Adresse :</b></td>
-        <td>{{ user.kinship.address.street |raw}}</td>
+        <td>{{ user.kinship.address.street|raw}}</td>
         <td>{{ user.secondKinship.address.street|raw }}</td>
     </tr>
     <tr>

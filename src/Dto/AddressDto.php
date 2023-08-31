@@ -14,7 +14,7 @@ class AddressDto
 
     public ?string $town;
 
-    public ?Address $entity;
+    public ?int $id = null;
 
     public function toString(): string
     {

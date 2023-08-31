@@ -19,7 +19,7 @@ class Address
 {
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
-    private int $id;
+    private ?int $id = null;
 
     #[Column(type: 'string', length: 255)]
     private string $street = '';

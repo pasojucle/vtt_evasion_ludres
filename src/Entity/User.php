@@ -35,7 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
-    private int $id;
+    private ?int $id = null;
 
     #[Column(type: 'string', length: 25, unique: true)]
     private string $licenceNumber = '';

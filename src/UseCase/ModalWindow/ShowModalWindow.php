@@ -12,8 +12,10 @@ use App\Entity\User;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
+use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 
 class ShowModalWindow
 {
@@ -24,7 +26,8 @@ class ShowModalWindow
         private SurveyRepository $surveyRepository,
         private OrderHeaderRepository $orderHeaderRepository,
         private ModalWindowDtoTransformer $modalWindowDtoTransformer,
-        private UserDtoTransformer $userDtoTransformer
+        private UserDtoTransformer $userDtoTransformer,
+        private RouterInterface $router,
     ) {
     }
 
@@ -70,7 +73,19 @@ class ShowModalWindow
             $modalWindows = array_merge($modalWindows, [$orderHeaderToValidate]);
         }
 
-        if (Licence::STATUS_IN_PROCESSING === $userDto->lastLicence?->status) {
+        $search = [
+            $this->requestStack->getCurrentRequest()->getScheme(),
+            '://',
+            $this->requestStack->getCurrentRequest()->headers->get('host'),
+        ];
+        $referer = str_replace($search, '', $this->requestStack->getCurrentRequest()->headers->get('referer'));
+        try {
+            $route = $this->router->match($referer);
+        } catch (Exception) {
+            $route = null;
+        }
+
+        if (Licence::STATUS_IN_PROCESSING === $userDto->lastLicence?->status && !str_contains($route['_route'], 'registration_form')) {
             $modalWindows = array_merge($modalWindows, [$user->getLastLicence()]);
         }
         return $modalWindows;

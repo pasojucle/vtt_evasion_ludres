@@ -9,6 +9,7 @@ use App\Entity\RegistrationChange;
 use App\Entity\User;
 use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use ReflectionClass;
@@ -26,14 +27,11 @@ class RegistrationChangeListener
         $entity = $event->getObject();
         $reflexionClass = new ReflectionClass($entity);
         $className = $reflexionClass->getShortName();
-        if (1 === preg_match('#Address|Approval|Health|Identity|Licence#', $className)) {
+        if (1 === preg_match('#Address|Health|Identity|Licence#', $className)) {
+            /** @var EntityManager $objectManager*/
             $objectManager = $event->getObjectManager();
             $unitOfWork = $objectManager->getUnitOfWork();
             $changeSet = $unitOfWork->getEntityChangeSet($entity);
-            if ($entity instanceof Approval) {
-                $approval = u(str_replace('approval.', '', User::APPROVALS[$entity->getType()]))->camel();
-                $changeSet = [$approval->toString() => $changeSet['value']];
-            }
 
             $user = ($reflexionClass->hasMethod('getUser'))
                  ? $entity->getUser()
@@ -41,24 +39,26 @@ class RegistrationChangeListener
 
             $season = $this->seasonService->getCurrentSeason();
             $className = $reflexionClass->getShortName();
+            if (1 < $user->getLicences()->count()) {
+                $registrationChange = $objectManager->getRepository(RegistrationChange::class)->findOneByEntity($user, $className, $entity->getId(), $season);
+                if (null === $registrationChange) {
+                    $registrationChange = new RegistrationChange();
+                    $objectManager->persist($registrationChange);
+                }
 
-            $registrationChange = $objectManager->getRepository(RegistrationChange::class)->findOneByEntity($user, $className, $entity->getId(), $season);
-            if (null === $registrationChange) {
-                $registrationChange = new RegistrationChange();
-                $objectManager->persist($registrationChange);
+
+                $changes = $registrationChange->getValue();
+                $changes = array_merge($changes, $changeSet);
+                
+                $registrationChange->setUser($user)
+                    ->setSeason($season)
+                    ->setEntity($reflexionClass->getShortName())
+                    ->setEntityId($entity->getId())
+                    ->setValue($changes)
+                    ;
+                
+                $objectManager->flush();
             }
-
-            $changes = $registrationChange->getValue();
-            $changes = array_merge($changes, $changeSet);
-            
-            $registrationChange->setUser($user)
-                ->setSeason($season)
-                ->setEntity($reflexionClass->getShortName())
-                ->setEntityId($entity->getId())
-                ->setValue($changes)
-                ;
-            
-            $objectManager->flush();
         }
     }
 }

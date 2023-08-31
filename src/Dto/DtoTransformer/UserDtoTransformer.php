@@ -48,7 +48,7 @@ class UserDtoTransformer
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
         $userDto->isBoardMember = null !== $user->getBoardRole();
         $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
-        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals(), $changes);
+        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
         $userDto->accessControl = $this->getAccessControl($user->getRoles());
 
         $sessionsTotal = $user->getSessions()->count();

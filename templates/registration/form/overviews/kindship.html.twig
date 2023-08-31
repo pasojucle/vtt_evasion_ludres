@@ -1,29 +1,29 @@
 <h3>Responsable de l'enfant</h3>
 <ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.fullName }} ({{ user.kinship.type | trans  }})</span>
+        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.fullName|raw }} ({{ user.kinship.type | trans  }})</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.address.street }}, {{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</span>
+        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.address.street|raw }}, {{ user.kinship.address.postalCode|raw }} {{ user.kinship.address.town|raw }}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.email }}</span>
+        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.kinship.email|raw }}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ user.kinship.phone}}</span>
+        <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ user.kinship.phone|raw }}</span>
     </li>
 </ul>
 <h3>Second contact</h3>
 <ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.fullName}} ({{ user.secondKinship.type|trans}})</span>
+        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.fullName|raw }} ({{ user.secondKinship.type|trans}})</span>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.address.street }}, {{ user.secondKinship.address.postalCode }} {{ user.secondKinship.address.town }}</span>
+        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.address.street|raw }}, {{ user.secondKinship.address.postalCode|raw }} {{ user.secondKinship.address.town|raw }}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.email }}</span>
+        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.email|raw }}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.phone}}</span>
+        <span class="col-md-4 col-sx-6"><b>Téléphone : </b></span><span class="col-md-8 col-sx-6">{{ user.secondKinship.phone|raw }}</span>
     </li>
 </ul>

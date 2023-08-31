@@ -39,7 +39,7 @@ class Identity
 
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
-    private int $id;
+    private ?int $id = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $name = null;

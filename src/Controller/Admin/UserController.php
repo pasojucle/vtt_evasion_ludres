@@ -132,7 +132,7 @@ class UserController extends AbstractController
                 $user->removeRole('ROLE_FRAME');
                 $user->addRole('ROLE_USER');
             }
-            dump($user);
+ 
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_user', [

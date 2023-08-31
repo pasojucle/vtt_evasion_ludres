@@ -13,7 +13,7 @@ class AddressDtoTransformer
     {
         $addressDto = new AddressDto();
         if ($address) {
-            $addressDto->entity = $address;
+            $addressDto->id = $address->getId();
             $addressDto->street = $address->getStreet();
             $addressDto->postalCode = $address->getPostalCode();
             $addressDto->town = $address->getCommune()?->getName() ?? $address->getTown();
@@ -29,8 +29,8 @@ class AddressDtoTransformer
 
     private function formatChanges(array $changes, AddressDto &$addressDto): void
     {
-        if (array_key_exists('Address', $changes)) {
-            $properties = array_keys($changes['Address']->getValue());
+        if (array_key_exists('Address', $changes) && array_key_exists($addressDto->id, $changes['Address'])) {
+            $properties = array_keys($changes['Address'][$addressDto->id]->getValue());
             foreach ($properties as $property) {
                 $addressDto->$property = sprintf('<b>%s</b>', $addressDto->$property);
             }

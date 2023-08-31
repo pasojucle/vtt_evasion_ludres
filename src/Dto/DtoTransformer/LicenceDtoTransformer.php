@@ -156,8 +156,8 @@ class LicenceDtoTransformer
 
     private function formatChanges(array $changes, LicenceDto &$licenceDto): void
     {
-        if (array_key_exists('Licence', $changes)) {
-            $properties = array_keys($changes['Licence']->getValue());
+        if (array_key_exists('Licence', $changes) && array_key_exists($licenceDto->id, $changes['Licence'])) {
+            $properties = array_keys($changes['Licence'][$licenceDto->id]->getValue());
             foreach ($properties as $property) {
                 if ('coverage' === $property) {
                     $property = 'coverageStr';
