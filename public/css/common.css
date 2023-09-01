@@ -126,6 +126,10 @@ body > script {display: none !important;}
     --white-color: #fff;
     --gap:25px;
 }
+.testing {
+    --primary-color: #d237f8;
+    --primary-color-darker: #df1be6;
+}
 .alert-danger-color,
 .alert-danger {
     color: var(--danger-color);
@@ -493,7 +497,7 @@ nav > ul > li > div.nav-bar-title > a.btn-logger {
 }
 .flashes {
     position: absolute;
-    top: 50px;
+    top: 10px;
     right: 10%;
     max-width: 100%;
     color: var(--white-color);
@@ -1264,13 +1268,12 @@ h3 + ul.block.background-ligth {
     overflow: hidden;
 }
 .alert-mode {
-    background-color: var(--danger-color);
+    background-color: var(--primary-color);
     color: var(--white-color);
     height: 40px;
     width: 100%;
     text-align: center;
     line-height: 40px;
-    position: fixed;
     top: 0;
     z-index: 999;
 }

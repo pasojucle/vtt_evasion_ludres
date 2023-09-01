@@ -27,7 +27,7 @@
             <link rel="stylesheet" type="text/css" href="/css/dropdown.css?v=1">
         {% endblock %}
     </head>
-    <body>
+    <body {% if parameter_service.getParameterByName('TEST_MODE') %}class="testing"{% endif %}>
         <link rel="apple-touch-icon" href="/logos/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="57x57" href="/logos/apple-touch-icon-57x57.png" />
         <link rel="apple-touch-icon" sizes="72x72" href="/logos/apple-touch-icon-72x72.png" />
@@ -41,27 +41,28 @@
         {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
             <div class="alert-mode">Mode Maintenance</div>
         {% endif %}
-        {% if parameter_service.getParameterByName('TEST_MODE') %}
-            <div class="alert-mode">Site de test</div>
-        {% endif %}
+
         {% if not isAdmin %}
             {% include 'common/header.html.twig' %}
         {% endif %}
-        <div class="flashes">
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="flash-{{ label }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        </div>
         <main{% if isAdmin %} class="admin"{% endif %}>
             {% if isAdmin %}
                 <div class="header">
                     <h1>Administration du site</h1>
                 </div>
                 {% include 'common/admin_nav.html.twig' %}
+            {% endif %}
+            <div class="flashes">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="flash-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% if parameter_service.getParameterByName('TEST_MODE') %}
+                <div class="alert-mode">Site de test</div>
             {% endif %}
             {% block body %}{% endblock %}
             {% if not isAdmin %}
