@@ -7,7 +7,10 @@ namespace App\Form\Admin;
 use App\Entity\BikeRide;
 use App\Entity\Survey;
 use App\Entity\User;
+use App\Form\Admin\EventListener\Survey\AddRestrictionSubscriber;
 use App\Form\Transformer\BikeRideTransformer;
+use App\Repository\UserRepository;
+use App\Service\LevelService;
 use App\Validator\CKEditorBlank;
 use Doctrine\Common\Collections\Collection;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -31,6 +34,12 @@ class SurveyType extends AbstractType
     public const DISPLAY_BIKE_RIDE = 1;
     public const DISPLAY_MEMBER_LIST = 2;
 
+    public function __construct(
+        private LevelService $levelService,
+        private UserRepository $userRepository,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -43,7 +52,9 @@ class SurveyType extends AbstractType
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'minimum_config',
-                // 'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
                 'constraints' => [
                     new CKEditorBlank(),
                 ],
@@ -74,7 +85,7 @@ class SurveyType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('displayCriteria', ChoiceType::class, [
+            ->add('restriction', ChoiceType::class, [
                 'expanded' => true,
                 'multiple' => false,
                 'choices' => [
@@ -84,7 +95,7 @@ class SurveyType extends AbstractType
                 ],
                 'choice_attr' => function () {
                     return [
-                        'data-modifier' => 'surveyDisplay',
+                        'data-modifier' => 'surveyRestriction',
                         'class' => 'form-modifier',
                      ];
                 },
@@ -98,9 +109,7 @@ class SurveyType extends AbstractType
             ])
         ;
 
-        $formModifier = function (FormInterface $form, array $options, ?int $displayCriteria, ?BikeRide $bikeRide, ?Collection $members) {
-            $disabled = (null !== $displayCriteria);
-
+        $formModifier = function (FormInterface $form, array $options) {
             $form
                 ->add('surveyIssues', CollectionType::class, [
                     'label' => false,
@@ -124,68 +133,24 @@ class SurveyType extends AbstractType
                     'required' => false,
                     'disabled' => $options['display_disabled'],
                 ])
-                ->add('bikeRide', Select2EntityType::class, [
-                    'multiple' => false,
-                    'remote_route' => 'admin_bike_ride_choices',
-                    'class' => BikeRide::class,
-                    'primary_key' => 'id',
-                    'transformer' => BikeRideTransformer::class,
-                    'minimum_input_length' => 0,
-                    'page_limit' => 10,
-                    'allow_clear' => true,
-                    'delay' => 250,
-                    'cache' => true,
-                    'cache_timeout' => 60000,
-                    // if 'cache' is true
-                    'language' => 'fr',
-                    'placeholder' => 'Sélectionnez une sortie',
-                    'width' => '100%',
-                    'label' => false,
-                    'required' => false,
-                    // 'disabled' => (!$options['display_disabled']) ? self::DISPLAY_BIKE_RIDE !== $displayCriteria : $disabled,
-                    'data' => (self::DISPLAY_BIKE_RIDE === $displayCriteria) ? $bikeRide : null,
-                ])
-                ->add('members', Select2EntityType::class, [
-                    'multiple' => true,
-                    'remote_route' => 'admin_member_choices',
-                    'class' => User::class,
-                    'primary_key' => 'id',
-                    'text_property' => 'fullName',
-                    'minimum_input_length' => 0,
-                    'page_limit' => 10,
-                    'allow_clear' => true,
-                    'delay' => 250,
-                    'cache' => true,
-                    'cache_timeout' => 60000,
-                    // if 'cache' is true
-                    'language' => 'fr',
-                    'placeholder' => 'Sélectionnez les adhérents',
-                    'width' => '100%',
-                    'label' => false,
-                    'required' => false,
-                    // 'disabled' => (!$options['display_disabled']) ? self::DISPLAY_MEMBER_LIST !== $displayCriteria : $disabled,
-                    'remote_params' => [
-                        'filters' => json_encode($options['filters']),
-                    ],
-                    'data' => (self::DISPLAY_MEMBER_LIST === $displayCriteria) ? $members : null,
-                ])
+                
                 ;
         };
+
+        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository));
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $formModifier) {
             $form = $event->getForm();
             $data = $event->getData();
 
-            $formModifier($form, $options, $data->getDisplayCriteria(), $data->getBikeRide(), $data->getMembers());
+            $formModifier($form, $options);
         });
 
-        $builder->get('displayCriteria')->addEventListener(
+        $builder->get('restriction')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($options, $formModifier) {
-                $displayCriteria = $event->getForm()->getData();
-                $survey = $event->getForm()->getParent()->getData();
-                $formModifier($event->getForm()->getParent(), $options, $displayCriteria, $survey->getBikeRide(), $survey->getMembers());
-            }
+            $formModifier($event->getForm()->getParent(), $options);
+        }
         );
     }
 

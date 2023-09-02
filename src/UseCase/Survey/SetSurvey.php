@@ -18,10 +18,10 @@ class SetSurvey
     {
         $survey = $form->getData();
 
-        if (SurveyType::DISPLAY_BIKE_RIDE !== $survey->getDisplayCriteria()) {
+        if (SurveyType::DISPLAY_BIKE_RIDE !== $survey->getRestriction()) {
             $survey->setBikeRide(null);
         }
-        if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getDisplayCriteria()) {
+        if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getRestriction()) {
             $survey->removeMembers();
         }
 

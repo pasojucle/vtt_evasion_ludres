@@ -1,0 +1,163 @@
+<?php
+
+namespace App\Form\Admin\EventListener\Survey;
+
+use App\Entity\BikeRide;
+use App\Entity\Survey;
+use App\Entity\User;
+use App\Form\Admin\BikeRideType;
+use App\Form\Admin\SurveyType;
+use App\Form\Transformer\BikeRideTransformer;
+use App\Repository\UserRepository;
+use App\Service\LevelService;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+
+class AddRestrictionSubscriber implements EventSubscriberInterface
+{
+    public function __construct(private LevelService $levelService, private UserRepository $userRepository)
+    {
+    }
+    public static function getSubscribedEvents(): array
+    {
+        // Tells the dispatcher that you want to listen on the form.pre_set_data
+        // event and that the preSetData method should be called.
+        return [
+            FormEvents::PRE_SET_DATA => 'preSetData',
+            FormEvents::PRE_SUBMIT => 'preSubmit',
+        ];
+    }
+
+    public function preSetData(FormEvent $event): void
+    {
+        $survey = $event->getData();
+
+
+        $this->modifier($event->getForm(), $survey->getRestriction());
+    }
+
+    public function preSubmit(FormEvent $event): void
+    {
+        $survey = $event->getForm()->getData();
+
+        $data = $event->getData();
+        
+        $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
+
+        if (array_key_exists('levels', $data)) {
+            $filters = [
+                'fullName' => null,
+                'user' => null,
+                'levels' => $data['levels']
+            ];
+            $this->addMembersByLevels($data, $filters);
+        }
+
+        $this->cleanData($restriction, $data, $survey);
+
+        $event->setData($data);
+        $event->getForm()->setData($survey);
+
+        $this->modifier($event->getForm(), $restriction);
+    }
+
+    private function modifier(FormInterface $form, ?int $restriction): void
+    {
+        $options = $form->getConfig()->getOptions();
+
+        $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
+        $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction;
+
+        $form
+        ->add('bikeRide', Select2EntityType::class, [
+            'multiple' => false,
+            'remote_route' => 'admin_bike_ride_choices',
+            'class' => BikeRide::class,
+            'primary_key' => 'id',
+            'transformer' => BikeRideTransformer::class,
+            'minimum_input_length' => 0,
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
+            'cache' => true,
+            'cache_timeout' => 60000,
+             'language' => 'fr',
+            'placeholder' => 'Sélectionnez une sortie',
+            'width' => '100%',
+            'label' => false,
+            'required' => !$disabledBikeRide,
+            'disabled' => $disabledBikeRide,
+        ])
+        ->add('members', Select2EntityType::class, [
+            'multiple' => true,
+            'remote_route' => 'admin_member_choices',
+            'class' => User::class,
+            'primary_key' => 'id',
+            'text_property' => 'fullName',
+            'minimum_input_length' => 0,
+            'page_limit' => 10,
+            'allow_clear' => true,
+            'delay' => 250,
+            'cache' => true,
+            'cache_timeout' => 60000,
+            'language' => 'fr',
+            'placeholder' => 'Sélectionnez les adhérents',
+            'width' => '100%',
+            'label' => false,
+            'remote_params' => [
+                'filters' => json_encode($options['filters']),
+            ],
+            'required' => !$disabledMembers,
+            'disabled' => $disabledMembers,
+        ])
+            ->add('levels', ChoiceType::class, [
+                'label' => false,
+                'multiple' => true,
+                'choices' => $this->levelService->getLevelChoices(),
+                'attr' => [
+                    'data-modifier' => 'surveyRestriction',
+                    'class' => 'customSelect2 form-modifier',
+                    'data-width' => '100%',
+                    'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
+                    'data-maximum-selection-length' => 4,
+                    'data-language' => 'fr',
+                    'data-allow-clear' => true,
+                ],
+                'required' => false,
+                'mapped' => false,
+                'disabled' => $disabledMembers,
+            ])
+            ;
+    }
+
+    private function addMembersByLevels(array &$data, array $filters): void
+    {
+        $members = $this->userRepository->findMemberQuery($filters)->getQuery()->getResult();
+        if (!array_key_exists('members', $data)) {
+            $data['members'] = [];
+        }
+
+        foreach ($members as $member) {
+            if (!in_array($member->getId(), $data['members'])) {
+                $data['members'][] = $member->getId();
+            }
+        }
+    }
+
+    private function cleanData(?int $restriction, array &$data, Survey $survey): void
+    {
+        if (SurveyType::DISPLAY_MEMBER_LIST !== $restriction) {
+            $data['members'] = [];
+            $survey->clearMembers();
+        }
+        if (SurveyType::DISPLAY_BIKE_RIDE !== $restriction) {
+            $data['bikeRide'] = [];
+            $survey->setBikeRide(null);
+        }
+    }
+}

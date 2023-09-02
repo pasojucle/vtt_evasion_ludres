@@ -18,7 +18,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
-class AddRestriptionSubscriber implements EventSubscriberInterface
+class AddRestrictionSubscriber implements EventSubscriberInterface
 {
     public function __construct(private LevelService $levelService, private UserRepository $userRepository)
     {

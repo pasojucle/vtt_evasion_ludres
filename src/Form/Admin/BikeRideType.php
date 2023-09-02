@@ -7,7 +7,7 @@ namespace App\Form\Admin;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType as EntityBikeRideType;
 use App\Form\Admin\EventListener\BikeRide\AddContentSubscriber;
-use App\Form\Admin\EventListener\BikeRide\AddRestriptionSubscriber;
+use App\Form\Admin\EventListener\BikeRide\AddRestrictionSubscriber;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
@@ -113,7 +113,7 @@ class BikeRideType extends AbstractType
 
         $builder->addEventSubscriber(new AddContentSubscriber($this->bikeRideTypeRepository));
 
-        $builder->addEventSubscriber(new AddRestriptionSubscriber($this->levelService, $this->userRepository));
+        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

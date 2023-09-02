@@ -115,7 +115,6 @@ class GetFormSession
     private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions): void
     {
         $customChecks = null;
-        dump($form);
 
         $this->params = [
             'form' => $form->createView(),

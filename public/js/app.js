@@ -172,7 +172,6 @@ function formModifier(event) {
     const target = event.target.dataset.modifier
     const data = new FormData(form, event.submitter);
     for(let entry of data) {
-        console.log(entry)
         if (entry[0].endsWith('[_token]')) {
             data.set(entry[0], '');
         }

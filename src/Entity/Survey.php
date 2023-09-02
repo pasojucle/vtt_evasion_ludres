@@ -56,7 +56,7 @@ class Survey
     #[ManyToMany(targetEntity: User::class, inversedBy: 'surveys')]
     private Collection $members;
 
-    private ?int $displayCriteria = SurveyType::DISPLAY_ALL_MEMBERS;
+    private ?int $restriction = SurveyType::DISPLAY_ALL_MEMBERS;
 
     public function __construct()
     {
@@ -252,15 +252,22 @@ class Survey
         return $this;
     }
 
-    public function setDisplayCriteria(?int $displayCriteria): self
+    public function clearMembers(): self
     {
-        $this->displayCriteria = $displayCriteria;
+        $this->members->clear();
 
         return $this;
     }
 
-    public function getDisplayCriteria(): ?int
+    public function setRestriction(?int $restriction): self
     {
-        return $this->displayCriteria;
+        $this->restriction = $restriction;
+
+        return $this;
+    }
+
+    public function getRestriction(): ?int
+    {
+        return $this->restriction;
     }
 }
