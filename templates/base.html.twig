@@ -54,20 +54,22 @@
                 </div>
                 {% include 'common/admin_nav.html.twig' %}
             {% endif %}
-            <div class="flashes">
-                {% for label, messages in app.flashes %}
-                    {% for message in messages %}
-                        <div class="flash-{{ label }}">
-                            {{ message }}
-                        </div>
+            <div class="notification">
+                <div class="flashes">
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="flash-{{ label }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
+                </div>
+                {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
+                    <div class="alert-mode">Mode Maintenance</div>
+                {% elseif parameter_service.getParameterByName('TEST_MODE') %}
+                    <div class="alert-mode">Site de test</div>
+                {% endif %}
             </div>
-            {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
-                <div class="alert-mode">Mode Maintenance</div>
-            {% elseif parameter_service.getParameterByName('TEST_MODE') %}
-                <div class="alert-mode">Site de test</div>
-            {% endif %}
             {% block body %}{% endblock %}
             {% if not isAdmin %}
                 {% include 'common/footer.html.twig' %}
