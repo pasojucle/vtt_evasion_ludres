@@ -42,9 +42,7 @@
         <link rel="apple-touch-icon" sizes="152x152" href="/logos/apple-touch-icon-152x152.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/logos/apple-touch-icon-180x180.png" />
         {% block background %}{% endblock %}
-        {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
-            <div class="alert-mode">Mode Maintenance</div>
-        {% endif %}
+
 
         {% if not isAdmin %}
             {% include 'common/header.html.twig' %}
@@ -65,7 +63,9 @@
                     {% endfor %}
                 {% endfor %}
             </div>
-            {% if parameter_service.getParameterByName('TEST_MODE') %}
+            {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
+                <div class="alert-mode">Mode Maintenance</div>
+            {% elseif parameter_service.getParameterByName('TEST_MODE') %}
                 <div class="alert-mode">Site de test</div>
             {% endif %}
             {% block body %}{% endblock %}
