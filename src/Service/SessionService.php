@@ -86,10 +86,11 @@ class SessionService
                 $maxCount = count($sessions);
             }
         }
+        dump($sessionsByCluster);
         foreach ($clusters as $cluster) {
             for ($i = 0; $i < $maxCount; ++$i) {
                 $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))
-                    ? $sessionsByCluster[$cluster][$i]->user->member->fullName
+                    ? sprintf('%s <span class="badge badge-info small">%s</span>', $sessionsByCluster[$cluster][$i]->user->member->fullName, $sessionsByCluster[$cluster][$i]->bikeKind)
                     : '';
                 $rows[$i][] = $session;
             }

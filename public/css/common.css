@@ -767,6 +767,10 @@ input[type="file"] {
     padding: 3px;
     border-radius: 15px;
 }
+.badge.small {
+    font-size: 10px;
+    font-weight: 300;
+}
 .badge-members:not(:empty) {
     margin-top: 15px;
     font-size: 10px;

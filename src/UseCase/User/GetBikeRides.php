@@ -37,6 +37,17 @@ class GetBikeRides
             }
         }
 
+        usort($bikeRides, function ($a, $b) {
+            $a = $a['bikeRide']->startAt;
+            $b = $b['bikeRide']->startAt;
+
+            if ($a === $b) {
+                return 0;
+            }
+
+            return ($a < $b) ? -1 : 1;
+        });
+
         return $bikeRides;
     }
 }

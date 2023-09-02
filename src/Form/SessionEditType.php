@@ -47,6 +47,17 @@ class SessionEditType extends AbstractType
                         ->add('cluster', HiddenClusterType::class);
                 }
             }
+            
+            if (true === $options['display_bike_kind']) {
+                $form
+                    ->add('bikeKind', ChoiceType::class, [
+                        'label' => 'Type de vélo',
+                        'choices' => array_flip(Session::BIKEKINDS),
+                        'expanded' => true,
+                        'multiple' => false,
+                        'block_prefix' => 'customcheck',
+                    ]);
+            }
         });
 
         $builder
@@ -59,6 +70,7 @@ class SessionEditType extends AbstractType
             'data_class' => Session::class,
             'clusters' => [],
             'is_writable_availability' => false,
+            'display_bike_kind' => false,
         ]);
     }
 }

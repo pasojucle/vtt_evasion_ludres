@@ -59,6 +59,9 @@ class BikeRideType
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $closingDuration = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $displayBikeKind = false;
+
 
     public function __construct()
     {
@@ -235,6 +238,18 @@ class BikeRideType
     public function setClosingDuration(int $closingDuration): self
     {
         $this->closingDuration = $closingDuration;
+
+        return $this;
+    }
+
+    public function isDisplayBikeKind(): bool
+    {
+        return $this->displayBikeKind;
+    }
+
+    public function setDisplayBikeKind(bool $displayBikeKind): static
+    {
+        $this->displayBikeKind = $displayBikeKind;
 
         return $this;
     }

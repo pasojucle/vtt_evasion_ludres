@@ -21,7 +21,7 @@
                         {% for bikeRide in bikeRides %}
                             <li>
                                 <div class="row background-ligth list-dropdown mb-20">
-                                    <div class="col-md-9 col-xs-11"  data-toggle="bike-ride-content">
+                                    <div class="col-md-10 col-xs-11"  data-toggle="bike-ride-content">
                                         <h2>{{ bikeRide.bikeRide.period }}</h2>
                                         <b>{{ bikeRide.bikeRide.title }}</b>
                                         {% if bikeRide.availability is not empty %}
@@ -50,7 +50,7 @@
                                             </div>
                                         {% endif %}
                                     </div>
-                                    <div class="col-md-3 col-xs-12">
+                                    <div class="col-md-2 col-xs-12">
                                         {% if bikeRide.availability is empty %}
                                             <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-xs btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
                                         {% else %}

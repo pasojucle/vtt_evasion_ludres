@@ -45,6 +45,9 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    {% if form.session.bikeKind is defined %}
+                        {{ form_widget(form.session.bikeKind) }}
+                    {% endif %}
                     {% if form.responses is defined and bikeRide.survey %}
                         <div class="separator"></div>
                         {{ bikeRide.survey.content|raw }}

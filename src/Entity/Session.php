@@ -29,6 +29,18 @@ class Session
         self::AVAILABILITY_UNAVAILABLE => 'session.availability.unavailable',
     ];
 
+    public const BIKEKIND_VTT = 1;
+    public const BIKEKIND_VTTAE = 2;
+    public const BIKEKIND_ROADBIKE = 3;
+    public const BIKEKIND_GRAVEL = 4;
+
+    public const BIKEKINDS = [
+        self::BIKEKIND_VTT => 'session.bike_kind.vtt',
+        self::BIKEKIND_VTTAE => 'session.bike_kind.vttae',
+        self::BIKEKIND_ROADBIKE => 'session.bike_kind.roadbike',
+        self::BIKEKIND_GRAVEL => 'session.bike_kind.gravel',
+    ];
+
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
@@ -46,6 +58,9 @@ class Session
 
     #[Column(type: 'integer', nullable: true)]
     private ?int $availability = null;
+
+    #[Column(nullable: true)]
+    private ?int $bikeKind = null;
 
     public function getId(): ?int
     {
@@ -96,6 +111,18 @@ class Session
     public function setAvailability(?int $availability): self
     {
         $this->availability = $availability;
+
+        return $this;
+    }
+
+    public function getBikeKind(): ?int
+    {
+        return $this->bikeKind;
+    }
+
+    public function setBikeKind(?int $bikeKind): static
+    {
+        $this->bikeKind = $bikeKind;
 
         return $this;
     }

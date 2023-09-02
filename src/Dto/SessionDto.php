@@ -25,4 +25,6 @@ class SessionDto
     public ?string $cluster = null;
 
     public ?array $bikeRideMemeberList = null;
+
+    public ?string $bikeKind = null;
 }

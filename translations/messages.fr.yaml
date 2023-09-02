@@ -87,6 +87,12 @@ session:
     presence: précence
     absence: absence
     availability: précence, si besoin
+  bike_kind:
+    vtt: VTT
+    vttae: VTTAE
+    roadbike: Vélo de route
+    gravel: Gravel
+
 
 role:
    ROLE_FRAME: Encadrant

@@ -34,6 +34,7 @@ class SessionType extends AbstractType
                 'label' => false,
                 'clusters' => $options['clusters'],
                 'is_writable_availability' => $options['is_writable_availability'],
+                'display_bike_kind' => $options['display_bike_kind'],
             ])
 
             ->add('submit', SubmitType::class, [
@@ -50,6 +51,7 @@ class SessionType extends AbstractType
         $resolver->setDefaults([
             'clusters' => [],
             'is_writable_availability' => false,
+            'display_bike_kind' => false,
         ]);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Session;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Session;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
@@ -98,19 +99,27 @@ class GetFormSession
 
     private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability): FormInterface
     {
+        /** @var BikeRideType $bikeRideType */
+        $bikeRideType = $bikeRide->getBikeRideType();
+
         return $this->formFactory->create(SessionType::class, [
             'session' => $userSession,
             'responses' => ['surveyResponses' => $this->getSurveyResponse($bikeRide)],
         ], [
             'clusters' => $clusters,
             'is_writable_availability' => $isWritableAvailability,
+            'display_bike_kind' => $bikeRideType->isDisplayBikeKind(),
         ]);
     }
 
     private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions): void
     {
+        $customChecks = null;
+        dump($form);
+
         $this->params = [
             'form' => $form->createView(),
+            'custom_checks' => $customChecks,
             'bikeRide' => $bikeRide,
             'sessions' => $sessions,
         ];

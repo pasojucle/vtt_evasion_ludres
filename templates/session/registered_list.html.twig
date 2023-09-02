@@ -13,7 +13,7 @@
                 {% for row in sessions.rows %}
                     <li class="row row-list">
                     {% for session in row %}
-                        <div class="col-md-4">{{ session }}</div>
+                        <div class="col-md-4">{{ session|raw }}</div>
                         {% endfor %}
                     </li>
                 {% endfor %}

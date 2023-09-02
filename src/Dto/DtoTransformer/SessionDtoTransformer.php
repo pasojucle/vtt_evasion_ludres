@@ -12,13 +12,15 @@ use App\Model\Currency;
 use App\Repository\IndemnityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SessionDtoTransformer
 {
     public function __construct(
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private IndemnityRepository $indemnityRepository,
-        private UserDtoTransformer $userDtoTransformer
+        private UserDtoTransformer $userDtoTransformer,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -35,6 +37,7 @@ class SessionDtoTransformer
             $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $sessionDto->bikeRide->bikeRideType, $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
+            $sessionDto->bikeKind = ($session->getBikeKind()) ? $this->translator->trans(Session::BIKEKINDS[$session->getBikeKind()]) : null;
         }
 
         return $sessionDto;

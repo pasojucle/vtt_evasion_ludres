@@ -95,6 +95,18 @@ class BikeRideTypeType extends AbstractType
                     'data-switch-off' => 'ne pas afficher la liste des participants à l\'inscrition',
                 ],
             ])
+            ->add('displayBikeKind', CheckboxType::class, [
+                'label_html' => true,
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Afficher le type de vélo à l\'inscrition',
+                    'data-switch-off' => 'ne pas afficher le type de vélo à l\'inscrition',
+                ],
+            ])
             ->add('closingDuration', IntegerType::class, [
                 'label' => 'Fin d\'inscription (nbr de jours avant)',
                 'required' => false,
