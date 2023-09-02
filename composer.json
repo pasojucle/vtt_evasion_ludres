@@ -18,7 +18,6 @@
         "friendsofsymfony/jsrouting-bundle": "^3.0",
         "helios-ag/fm-elfinder-bundle": "^12.1",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "sensio/framework-extra-bundle": "^6.2",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.3",
         "symfony/apache-pack": "^1.0",
