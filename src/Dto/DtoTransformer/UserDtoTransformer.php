@@ -32,7 +32,7 @@ class UserDtoTransformer
         $identitiesByType = $this->identityDtoTransformer->fromEntities($user->getIdentities(), $changes);
 
         $userDto = new UserDto();
-        dump($user);
+
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
         $userDto->member = (array_key_exists(Identity::TYPE_MEMBER, $identitiesByType)) ? $identitiesByType[Identity::TYPE_MEMBER] : null;
@@ -72,7 +72,7 @@ class UserDtoTransformer
     public function getMainEmail(array $identitiesByType, int $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(Identity::TYPE_KINSHIP,$identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
+            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
             return $identity?->email;
         }
 

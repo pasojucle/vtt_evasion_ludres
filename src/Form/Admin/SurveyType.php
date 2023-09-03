@@ -149,8 +149,8 @@ class SurveyType extends AbstractType
         $builder->get('restriction')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($options, $formModifier) {
-            $formModifier($event->getForm()->getParent(), $options);
-        }
+                $formModifier($event->getForm()->getParent(), $options);
+            }
         );
     }
 

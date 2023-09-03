@@ -86,7 +86,7 @@ class SessionService
                 $maxCount = count($sessions);
             }
         }
-        dump($sessionsByCluster);
+
         foreach ($clusters as $cluster) {
             for ($i = 0; $i < $maxCount; ++$i) {
                 $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))

@@ -38,7 +38,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $survey = $event->getData();
 
 
-        $this->modifier($event->getForm(), $survey->getRestriction());
+        $this->modifier($event->getForm(), $survey->getRestriction(), $survey->getLevelFilter());
     }
 
     public function preSubmit(FormEvent $event): void
@@ -46,30 +46,24 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $survey = $event->getForm()->getData();
 
         $data = $event->getData();
-        
         $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
+        $levelFilter = (array_key_exists('levelFilter', $data) && !empty($data['levelFilter'])) ? $data['levelFilter'] : null;
 
-        if (array_key_exists('levels', $data)) {
-            $filters = [
-                'fullName' => null,
-                'user' => null,
-                'levels' => $data['levels']
-            ];
-            $this->addMembersByLevels($data, $filters);
+        $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : null;
+        if (array_key_exists('levelFilter', $data) || $levels) {
+            $this->addOrRemoveMembers($data, $levels, $survey);
         }
 
         $this->cleanData($restriction, $data, $survey);
-
         $event->setData($data);
         $event->getForm()->setData($survey);
 
-        $this->modifier($event->getForm(), $restriction);
+        $this->modifier($event->getForm(), $restriction, $levelFilter);
     }
 
-    private function modifier(FormInterface $form, ?int $restriction): void
+    private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter): void
     {
         $options = $form->getConfig()->getOptions();
-
         $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
         $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction;
 
@@ -115,7 +109,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             'required' => !$disabledMembers,
             'disabled' => $disabledMembers,
         ])
-            ->add('levels', ChoiceType::class, [
+            ->add('levelFilter', ChoiceType::class, [
                 'label' => false,
                 'multiple' => true,
                 'choices' => $this->levelService->getLevelChoices(),
@@ -127,37 +121,88 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                     'data-maximum-selection-length' => 4,
                     'data-language' => 'fr',
                     'data-allow-clear' => true,
+                    'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
+                    'data-add-to-fetch' => 'levels',
                 ],
                 'required' => false,
-                'mapped' => false,
                 'disabled' => $disabledMembers,
             ])
             ;
     }
 
-    private function addMembersByLevels(array &$data, array $filters): void
+    private function addOrRemoveMembers(array &$data, ?array $levels, Survey $survey): void
     {
-        $members = $this->userRepository->findMemberQuery($filters)->getQuery()->getResult();
+        $levelFilter = (array_key_exists('levelFilter', $data)) ? $data['levelFilter'] : null;
+        if (!$levelFilter && $levels) {
+            $this->clearMembers($data, $survey);
+            return;
+        }
+
+        $levelsToRemove = [];
+        $levelsToAdd = ($levelFilter) ? $levelFilter : [];
+        
+        $levelsToRemove = ($levels) ? $levels : [];
+        if ($levelFilter && $levels) {
+            $levelsToAdd = array_diff($levelFilter, $levels);
+            $levelsToRemove = array_diff($levels, $levelFilter);
+        }
+        
+        $membersToAdd = $this->getMembers($levelsToAdd);
+        $membresToRemove = $this->getMembers($levelsToRemove);
         if (!array_key_exists('members', $data)) {
             $data['members'] = [];
         }
 
-        foreach ($members as $member) {
+        foreach ($membersToAdd as $member) {
             if (!in_array($member->getId(), $data['members'])) {
                 $data['members'][] = $member->getId();
             }
         }
+
+        foreach ($membresToRemove as $member) {
+            $key = array_search($member->getId(), $data['members']);
+            if ($key) {
+                unset($data['members'][$key]);
+                $survey->removeMember($member);
+            }
+        }
+    }
+
+    private function getMembers(array $levels): array
+    {
+        if (!empty($levels)) {
+            $filters = [
+                'fullName' => null,
+                'user' => null,
+                'levels' => $levels
+            ];
+            return $this->userRepository->findMemberQuery($filters)->getQuery()->getResult();
+        }
+        return [];
     }
 
     private function cleanData(?int $restriction, array &$data, Survey $survey): void
     {
         if (SurveyType::DISPLAY_MEMBER_LIST !== $restriction) {
-            $data['members'] = [];
-            $survey->clearMembers();
+            $this->clearMembers($data, $survey);
         }
         if (SurveyType::DISPLAY_BIKE_RIDE !== $restriction) {
             $data['bikeRide'] = [];
             $survey->setBikeRide(null);
         }
+        if (array_key_exists('members', $data)) {
+            foreach ($data['members'] as $member) {
+                if (empty($member)) {
+                    unset($member);
+                }
+            }
+        }
+    }
+
+    private function clearMembers(array &$data, Survey $survey): void
+    {
+        $data['members'] = [];
+        $survey->clearMembers();
+        $survey->setLevelFilter([]);
     }
 }

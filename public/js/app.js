@@ -169,7 +169,8 @@ function updateLinkOrder(item) {
 function formModifier(event) {
     event.preventDefault();
     const form = event.target.closest('form');
-    const target = event.target.dataset.modifier
+    const target = event.target.dataset.modifier;
+    const addToFetch = event.target.dataset.addToFetch;
     const data = new FormData(form, event.submitter);
     for(let entry of data) {
         if (entry[0].endsWith('[_token]')) {
@@ -178,6 +179,9 @@ function formModifier(event) {
     }
     if (event.target.type === 'button') {
         data.append(event.target.name, 1)
+    }
+    if (addToFetch !== undefined) {
+        data.append(`${form.name}[${addToFetch}]`, event.target.dataset[addToFetch]);
     }
 
     const url = form.getAttribute('action') ? form.getAttribute('action') : window.location.href;
@@ -188,15 +192,17 @@ function formModifier(event) {
     .then((response) => response.text())
     .then((text)=> {
         const htmlElement = document.createRange().createContextualFragment(text);
-        document.getElementById(target).replaceWith(
-            htmlElement.getElementById(target)
-        );
+        const targetEl = document.getElementById(target);
+        targetEl.replaceWith(htmlElement.getElementById(target));
         $('.select2entity').select2entity();
         $('.customSelect2').select2();
         $('.js-datepicker').datepicker({
             format: 'yyyy-mm-dd hh:ii',
         });
         initAddItemLink();
+        targetEl.querySelectorAll('.form-modifier').forEach((element) => {
+            element.addEventListener('change', formModifier);
+        });
     });
 }
 

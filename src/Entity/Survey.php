@@ -58,6 +58,9 @@ class Survey
 
     private ?int $restriction = SurveyType::DISPLAY_ALL_MEMBERS;
 
+    #[Column(type: 'json', options:['default' => '[]'])]
+    private array $levelFilter = [];
+
     public function __construct()
     {
         $this->surveyIssues = new ArrayCollection();
@@ -269,5 +272,17 @@ class Survey
     public function getRestriction(): ?int
     {
         return $this->restriction;
+    }
+
+    public function getLevelFilter(): array
+    {
+        return $this->levelFilter;
+    }
+
+    public function setLevelFilter(array $levelFilter): static
+    {
+        $this->levelFilter = $levelFilter;
+
+        return $this;
     }
 }
