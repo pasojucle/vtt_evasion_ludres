@@ -10,6 +10,7 @@ use App\Form\Admin\SurveyType;
 use App\Form\Transformer\BikeRideTransformer;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
+use App\Service\SeasonService;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -174,7 +175,8 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $filters = [
                 'fullName' => null,
                 'user' => null,
-                'levels' => $levels
+                'levels' => $levels,
+                'season' => SeasonService::MIN_SEASON_TO_TAKE_PART,
             ];
             return $this->userRepository->findMemberQuery($filters)->getQuery()->getResult();
         }
