@@ -52,14 +52,14 @@ class GetRegistrationFile
         $this->user = $user;
         $healthQuestions = null;
         $season = $this->seasonService->getCurrentSeason();
-        $seasonLicence = $user->getSeasonLicence($season);
-        $category = $seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $seasonLicence->isFinal(), RegistrationStep::RENDER_FILE);
+        $lastLicence = $user->getLastLicence();
+        $category = $lastLicence->getCategory();
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->isFinal(), RegistrationStep::RENDER_FILE);
 
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();
         if ($this->security->getUser() === $user) {
             $today = new DateTime();
-            $seasonLicence->setCreatedAt($today);
+            $lastLicence->setCreatedAt($today);
             $healthQuestions = $this->requestStack->getSession()->get('health_questions');
         }
         if (!$healthQuestions) {

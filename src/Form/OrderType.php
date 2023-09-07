@@ -27,7 +27,7 @@ class OrderType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
-            if (!$data->getOrderLines()->isEmpty()) {
+            if (!$data?->getOrderLines()?->isEmpty()) {
                 $form
                     ->add('save', SubmitType::class, [
                         'label' => '<i class="fas fa-check"></i> Valider la commande',
