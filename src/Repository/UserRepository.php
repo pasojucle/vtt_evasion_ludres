@@ -58,6 +58,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQuery();
         $isFinalLicence = true;
         if (!empty($filters)) {
+            if (array_key_exists('is_final_licence', $filters)) {
+                $isFinalLicence = $filters['is_final_licence'];
+            }
             if (null !== $filters['fullName']) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
             }
@@ -249,7 +252,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb
             ->andWhere(
-                $qb->expr()->gt('li.status', ':status'),
+                $qb->expr()->gte('li.status', ':status'),
                 $qb->expr()->eq('li.final', ':finalMember'),
             )
             ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)

@@ -84,7 +84,7 @@ class SessionController extends AbstractController
         $clusters = $bikeRide->getClusters();
         $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
         $form = $this->createForm(SessionType::class, ['season' => 'SEASON_' . $seasonService->getCurrentSeason()], [
-            'filters' => ['bikeRide' => $bikeRide->getId()],
+            'filters' => ['bikeRide' => $bikeRide->getId(), 'is_final_licence' => false,],
             'bikeRide' => $bikeRide,
         ]);
         $form->handleRequest($request);
