@@ -99,6 +99,10 @@ class LevelRepository extends ServiceEntityRepository
     public function findAll(): array
     {
         return $this->createQueryBuilder('l')
+            ->andWhere(
+                (new Expr())->eq('l.isDeleted', ':isDeleted'),
+            )
+            ->setParameter('isDeleted', false)
             ->addOrderBy('l.type', 'ASC')
             ->addOrderBy('l.orderBy', 'ASC')
             ->getQuery()

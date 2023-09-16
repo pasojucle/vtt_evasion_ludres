@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\BoardRole;
+use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Entity\User;
+use App\Entity\BoardRole;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 class UserBoardRoleType extends AbstractType
@@ -34,6 +35,10 @@ class UserBoardRoleType extends AbstractType
                 'class' => Level::class,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('l')
+                        ->andWhere(
+                            (new Expr())->eq('l.isDeleted', ':isDeleted'),
+                        )
+                        ->setParameter('isDeleted', false)
                         ->addOrderBy('l.type', 'ASC')
                         ->addOrderBy('l.orderBy', 'ASC')
                     ;
