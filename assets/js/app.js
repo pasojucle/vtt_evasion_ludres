@@ -1,11 +1,3 @@
-import('./js-datepicker.js');
-import('./reveal.js');
-import('./input-file.js');
-import('./constraints.js');
-import('./switch.js');
-import('./dropdown.js');
-import('./clipboard.js');
-
 document.addEventListener("DOMContentLoaded", (event) => {
     if ($('ul.StepProgress').length > 0) {
         const stepProgressMargingTop = parseInt($('ul.StepProgress').css('margin-top').replace('px', ''));
@@ -216,7 +208,9 @@ function clusterComplete(event) {
         url : route,
         success: function(html) {
             $('#sessions_container').replaceWith($(html).find('#sessions_container'));
-            $('a#cluster_export_'+parameters['cluster'])[0].click();
+            if (0 < $('a#cluster_export_'+parameters['cluster']).length) {
+                $('a#cluster_export_'+parameters['cluster'])[0].click();
+            }
         }
       });
 }

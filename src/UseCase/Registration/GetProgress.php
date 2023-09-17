@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Address;
-use App\Entity\Approval;
-use App\Entity\Health;
-use App\Entity\Identity;
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
+use App\Entity\Health;
 use App\Form\UserType;
-use App\Repository\LevelRepository;
-use App\Repository\RegistrationChangeRepository;
-use App\Repository\RegistrationStepRepository;
-use App\Repository\UserRepository;
+use App\Entity\Address;
+use App\Entity\Licence;
+use App\Entity\Approval;
+use App\Entity\Identity;
 use App\Service\HealthService;
-use App\Service\LicenceService;
 use App\Service\SeasonService;
+use App\Service\LicenceService;
+use App\Entity\RegistrationStep;
+use App\Repository\UserRepository;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Repository\RegistrationStepRepository;
+use App\Repository\RegistrationChangeRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 
 class GetProgress
 {
@@ -100,8 +100,8 @@ class GetProgress
 
     public function setUser()
     {
-        $sesssion = $this->requestStack->getSession();
-        $userId = ($sesssion->has('registration_user_id')) ? $sesssion->get('registration_user_id') : null;
+        $session = $this->requestStack->getSession();
+        $userId = ($session->has('registration_user_id')) ? $session->get('registration_user_id') : null;
         $user = (null !== $userId) ? $this->userRepository->find($userId) : null;
 
         /** @var User $userConnected */
@@ -112,6 +112,8 @@ class GetProgress
 
         if (null === $this->user) {
             $this->createUser();
+        } else {
+            $session->set('registration_user_id', $this->user->getId());
         }
 
         $this->seasonLicence = $this->user->getSeasonLicence($this->season);

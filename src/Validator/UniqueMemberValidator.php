@@ -25,14 +25,16 @@ class UniqueMemberValidator extends ConstraintValidator
         }
 
         $sesssion = $this->requestStack->getSession();
+        dump($sesssion);
         $userId = ($sesssion->has('registration_user_id')) ? $sesssion->get('registration_user_id') : null;
 
         if (null === $value || '' === $value || null !== $userId) {
             return;
         }
-
+dump($value, $this->context->getObject()?->getParent()?->getData());
         if (is_string($value)) {
             $identity = $this->context->getObject()?->getParent()?->getData();
+            dump($identity);
             if (!$identity || 'firstName' !== $this->context->getObject()?->getName()) {
                 return;
             }
@@ -40,7 +42,7 @@ class UniqueMemberValidator extends ConstraintValidator
         }
 
         $uniqueMember = $this->identityRepository->findByNameAndFirstName($value['name'], $value['firstName']);
-
+        dump($uniqueMember);
         if (!empty($uniqueMember)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ name }}', $value['name'])

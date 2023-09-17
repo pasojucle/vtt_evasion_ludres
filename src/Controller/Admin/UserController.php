@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
-use App\Form\Admin\UserBoardRoleType;
 use App\Form\Admin\UserType;
-use App\Repository\UserRepository;
 use App\Service\MailerService;
+use App\Repository\UserRepository;
+use App\Form\Admin\UserBoardRoleType;
+use App\UseCase\User\GetParticipation;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
-use App\UseCase\User\GetParticipation;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -150,7 +151,7 @@ class UserController extends AbstractController
     public function adminSendLicence(
         MailerService $mailerService,
         User $user
-    ): Response {
+    ): RedirectResponse {
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
         $mailerService->sendMailToMember([

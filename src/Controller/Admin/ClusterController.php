@@ -37,7 +37,7 @@ class ClusterController extends AbstractController
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
             'clusters' => $this->clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
             'bike_rides_filters' => [],
-            'permission' => 4,
+            'permission' => 7,
         ]);
     }
 

@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Licence;
-use App\Entity\User;
-use App\Form\UserType;
 use DateTime;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use App\Entity\User;
+use App\Form\UserType;
+use App\Entity\Licence;
 use setasign\Fpdi\Fpdi;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 class PdfService
 {
     public function __construct(
         private StringService $ftringService,
-        private KernelInterface $kernel,
+        private ProjectDirService $projectDir,
         private UserDtoTransformer $userDtoTransformer,
         private ParameterBagInterface $parameterBag
     ) {
@@ -31,10 +30,8 @@ class PdfService
             $directory = $this->parameterBag->get('tmp_directory_path') . 'licences';
         }
 
-        $options = new Options();
-        $options->setIsHtml5ParserEnabled(true);
-        $dompdf = new Dompdf($options);
-        $dompdf->getOptions()->setChroot($this->kernel->getProjectDir() . '/public');
+        $dompdf = new Dompdf();
+        $dompdf->getOptions()->setChroot($this->projectDir->path('public'));
         $dompdf->loadHtml($html);
         $dompdf->setPaper($paper, 'portrait');
         $dompdf->render();

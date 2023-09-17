@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\ContentRepository;
-use App\Repository\MembershipFeeRepository;
-use App\Service\ParameterService;
+use App\Entity\Licence;
 use App\Service\SeasonService;
-use App\UseCase\Registration\EditRegistration;
+use App\Entity\RegistrationStep;
+use App\Service\ParameterService;
+use App\Repository\ContentRepository;
 use App\UseCase\Registration\GetProgress;
-use App\UseCase\Registration\GetRegistrationFile;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\UseCase\Registration\EditRegistration;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Registration\GetRegistrationFile;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RegistrationController extends AbstractController
 {
@@ -70,11 +70,12 @@ class RegistrationController extends AbstractController
         EditRegistration $editRegistration,
         int $step
     ): Response {
+        $session = $this->requestStack->getSession();
         if ('registration_form' === $request->attributes->get('_route') && null !== $this->getUser()) {
             return $this->redirectToRoute('user_registration_form', ['step' => $step]);
         }
 
-        if ((int) $this->requestStack->getSession()->get('registrationMaxStep') < $step) {
+        if ((int) $session->get('registrationMaxStep') < $step) {
             $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
 
@@ -93,7 +94,7 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', $message);
         }
         $maxStep = $step;
-        $this->requestStack->getSession()->set('registrationMaxStep', $maxStep);
+        $session->set('registrationMaxStep', $maxStep);
 
         if (null !== $form) {
             $form->handleRequest($request);
