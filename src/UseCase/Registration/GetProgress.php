@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Entity\User;
-use App\Entity\Health;
-use App\Form\UserType;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Address;
-use App\Entity\Licence;
 use App\Entity\Approval;
+use App\Entity\Health;
 use App\Entity\Identity;
-use App\Service\HealthService;
-use App\Service\SeasonService;
-use App\Service\LicenceService;
+use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use App\Repository\UserRepository;
+use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\LevelRepository;
+use App\Repository\RegistrationChangeRepository;
+use App\Repository\RegistrationStepRepository;
+use App\Repository\UserRepository;
+use App\Service\HealthService;
+use App\Service\LicenceService;
+use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Repository\RegistrationStepRepository;
-use App\Repository\RegistrationChangeRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 
 class GetProgress
 {

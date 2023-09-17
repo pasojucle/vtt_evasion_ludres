@@ -150,12 +150,12 @@ class BikeRideDtoTransformer
 
         return '';
     }
-     private function display(bool $private, ?User $user):bool
-     {
+    private function display(bool $private, ?User $user): bool
+    {
         if ($this->isOver()) {
             return true;
         }
 
         return !($private && !$user);
-     }
+    }
 }

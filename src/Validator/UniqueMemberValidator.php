@@ -31,7 +31,7 @@ class UniqueMemberValidator extends ConstraintValidator
         if (null === $value || '' === $value || null !== $userId) {
             return;
         }
-dump($value, $this->context->getObject()?->getParent()?->getData());
+        dump($value, $this->context->getObject()?->getParent()?->getData());
         if (is_string($value)) {
             $identity = $this->context->getObject()?->getParent()?->getData();
             dump($identity);
