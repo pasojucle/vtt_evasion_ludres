@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType as EntityBikeRideType;
-use App\Form\Admin\EventListener\BikeRide\AddContentSubscriber;
-use App\Form\Admin\EventListener\BikeRide\AddRestrictionSubscriber;
-use App\Repository\BikeRideTypeRepository;
-use App\Repository\UserRepository;
 use App\Service\LevelService;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use App\Repository\BikeRideTypeRepository;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\File;
+use App\Entity\BikeRideType as EntityBikeRideType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use App\Form\Admin\EventListener\BikeRide\AddContentSubscriber;
+use App\Form\Admin\EventListener\BikeRide\AddRestrictionSubscriber;
 
 class BikeRideType extends AbstractType
 {
@@ -107,6 +108,17 @@ class BikeRideType extends AbstractType
                 ],
                 'row_attr' => [
                     'class' => 'form-group-inline',
+                ],
+            ])
+            ->add('private', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-off' => 'Publication publique',
+                    'data-switch-on' => 'Publication privée',
                 ],
             ])
         ;

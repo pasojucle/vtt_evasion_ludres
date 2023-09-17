@@ -44,4 +44,6 @@ class BikeRideDto
     public ?string $filename = null;
 
     public string $members = '';
+
+    public bool $display = false;
 }

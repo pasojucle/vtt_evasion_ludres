@@ -70,8 +70,8 @@ class BikeRideDtoTransformer
             $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
 
             $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
+            $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user);
         }
-
 
         return $bikeRideDto;
     }
@@ -131,7 +131,7 @@ class BikeRideDtoTransformer
         return ($filename) ? $this->projectDirService->dir('upload', $filename) : null;
     }
 
-    public function getMembers(DateTimeImmutable $startAt, BikeRideTypeDto $bikeRideType, Collection $clusters): string
+    private function getMembers(DateTimeImmutable $startAt, BikeRideTypeDto $bikeRideType, Collection $clusters): string
     {
         $members = 0;
         if ($startAt < $this->today && $bikeRideType->isRegistrable) {
@@ -150,4 +150,12 @@ class BikeRideDtoTransformer
 
         return '';
     }
+     private function display(bool $private, ?User $user):bool
+     {
+        if ($this->isOver()) {
+            return true;
+        }
+
+        return !($private && !$user);
+     }
 }

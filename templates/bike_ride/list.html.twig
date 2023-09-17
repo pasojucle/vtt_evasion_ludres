@@ -19,39 +19,41 @@
             {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
             <div class="bike-rides  reveal">
                 {% for bikeRide in bikeRides %}
-                    <div class="bike-ride-date {{ bikeRide.displayClass }}">
-                        <div>
-                            {{ bikeRide.period }}</div>
-                            {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
-                                <div class="bike-ride-date-btn">
-                                    <br>
-                                    <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
-                                </div>
-                            {% endif %}
-                        
-                        <div class="badge-members">{{ bikeRide.members }}</div>
-                    </div>
-                    <div class="bike-ride-detail {{ bikeRide.displayClass }}">
-                        <h3>{{ bikeRide.title }}</h3>
-                        {% if bikeRide.minAge is not null %}
-                            <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
-                        {% endif %}
-                        {% if bikeRide.filename is not null %}
-                            <div class="row">
-                                <div class="col-md-7 col-xs-12">{{ bikeRide.content | raw}}</div>
-                                <div class="col-md-1"></div>
-                                <div class="col-md-4 col-xs-12">
-                                    <img src="{{ bikeRide.filename }}">
-                                </div>
-                            </div>
-                        {% else %}
-                            <p>{{ bikeRide.content | raw}}</p>
-                        {% endif %}
-                    </div>
-                    {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
-                        <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
-                            <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
+                    {% if bikeRide.display %}
+                        <div class="bike-ride-date {{ bikeRide.displayClass }}">
+                            <div>
+                                {{ bikeRide.period }}</div>
+                                {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
+                                    <div class="bike-ride-date-btn">
+                                        <br>
+                                        <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
+                                    </div>
+                                {% endif %}
+                            
+                            <div class="badge-members">{{ bikeRide.members }}</div>
                         </div>
+                        <div class="bike-ride-detail {{ bikeRide.displayClass }}">
+                            <h3>{{ bikeRide.title }}</h3>
+                            {% if bikeRide.minAge is not null %}
+                                <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
+                            {% endif %}
+                            {% if bikeRide.filename is not null %}
+                                <div class="row">
+                                    <div class="col-md-7 col-xs-12">{{ bikeRide.content | raw}}</div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-4 col-xs-12">
+                                        <img src="{{ bikeRide.filename }}">
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p>{{ bikeRide.content | raw}}</p>
+                            {% endif %}
+                        </div>
+                        {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
+                            <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
+                                <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>

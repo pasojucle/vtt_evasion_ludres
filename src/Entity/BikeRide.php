@@ -85,7 +85,7 @@ class BikeRide
     #[OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
     private ?Survey $survey = null;
 
-    #[Column(type: 'boolean', options: ['default' => 0])]
+    #[Column(type: 'boolean', options: ['default' => false])]
     private bool $deleted = false;
 
     #[ManyToMany(targetEntity: User::class, inversedBy: 'bikeRides')]
@@ -99,6 +99,9 @@ class BikeRide
 
     private ?int $restriction = null;
     private array $levelFilter = [];
+
+    #[Column(type: 'boolean', options: ['default' => false])]
+    private bool $private = false;
 
     public function __construct()
     {
@@ -379,6 +382,18 @@ class BikeRide
     public function setLevelFilter(array $levelFilter): self
     {
         $this->levelFilter = $levelFilter;
+
+        return $this;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private;
+    }
+
+    public function setPrivate(bool $private): static
+    {
+        $this->private = $private;
 
         return $this;
     }

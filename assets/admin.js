@@ -22,7 +22,7 @@ import './js/constraints';
 import './js/input-file';
 import './js/modal';
 import './js/media_position';
-
+import './js/switch';
 import './js/dropdown.js';
 import './js/js-datepicker.js';
 import './js/constraints.js';
