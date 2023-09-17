@@ -1,0 +1,12 @@
+{
+  "entrypoints": {
+    "pdf": {
+      "js": [
+        "/build/pdf_build/runtime.js"
+      ],
+      "css": [
+        "/build/pdf_build/pdf.css"
+      ]
+    }
+  }
+}
