@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Form\UserType;
 use DateTime;
 use Dompdf\Dompdf;
-use Dompdf\Options;
 use setasign\Fpdi\Fpdi;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
