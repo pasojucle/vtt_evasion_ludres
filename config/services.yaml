@@ -23,6 +23,7 @@ parameters:
         upload: 'uploads'
         uploads_directory_path: 'public/uploads'
         files: 'files'
+        files_directory_path: 'public/files'
         products: 'uploads/products'
         products_directory_path: 'public/uploads/products'
         second_hands: 'uploads/second_hands'
