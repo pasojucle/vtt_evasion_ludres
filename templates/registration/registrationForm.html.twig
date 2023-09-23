@@ -2,10 +2,7 @@
 
 {% block title %}Inscription{% endblock %}
 
-{% block stylesheets %}
-    {{ parent()}}
-    <link rel="stylesheet" type="text/css" href="/css/verticalStepProgress.css">
-{% endblock %}
+
 {% block body %}
     {% if steps is not empty %}
         {% set route = app.request.attributes.get('_route') %}
