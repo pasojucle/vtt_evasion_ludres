@@ -1537,11 +1537,6 @@ img.second-hand {
     .header {
         display: none;
     }
-    main {
-        display: block;
-        max-width: 100%;
-        overflow: hidden;
-    }
     main > .wrapper {
         margin-top: 50px;
         padding: unset;
