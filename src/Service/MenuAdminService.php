@@ -215,7 +215,7 @@ class MenuAdminService
         ]);
     }
 
-    private function getMenusGranted(array $menus): array
+    public function getMenusGranted(array $menus): array
     {
         $menusGranted = [];
         foreach ($menus as $menu) {

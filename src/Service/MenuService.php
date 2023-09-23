@@ -16,19 +16,19 @@ class MenuService
 
     public function __construct(
         private RequestStack $requestStack,
+        private MenuAdminService $menuAdminService
     ) {
     }
 
     public function getMenus(): array
     {
-        $fullName = $this->requestStack->getSession()->get('user_fullName');
-        $this->menus = [
+        return $this->menuAdminService->getMenusGranted([
             [
                 'label' => 'Le club',
                 'route' => 'club',
                 'pattern' => '/club/',
                 'subMenus' => [],
-                'display' => true,
+                'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'L\'école VTT',
@@ -61,14 +61,14 @@ class MenuService
                         'pattern' => '/school_documentation/',
                     ],
                 ],
-                'display' => true,
+                'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Programme du club',
                 'route' => 'schedule',
                 'pattern' => '/schedule/',
                 'subMenus' => [],
-                'display' => true,
+                'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Inscription',
@@ -91,37 +91,37 @@ class MenuService
                         'pattern' => '/registration_tuto/',
                     ],
                 ],
-                'display' => true,
+                'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Boutique',
                 'route' => 'products',
                 'pattern' => '/product/',
                 'subMenus' => [],
-                'display' => true,
+                'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Occasions',
                 'route' => 'second_hand_list',
                 'pattern' => '/second_hand/',
                 'subMenus' => [],
-                'display' => null !== $fullName,
+                'role' => 'ROLE_USER',
             ],
             [
                 'label' => 'Liens',
                 'route' => 'links',
                 'pattern' => '/links/',
                 'subMenus' => [],
-                'display' => true,
+                'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Contacts',
                 'route' => 'contact',
                 'pattern' => '/contact/',
                 'subMenus' => [],
-                'display' => true,
+                'role' => 'PUBLIC_ACCESS',
             ],
-        ];
+        ]);
         return $this->menus;
     }
 
