@@ -8,7 +8,6 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use App\Entity\SecondHand;
 use App\Form\SecondHandType;
-use App\Repository\ContentRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\PaginatorService;
 use App\Service\UploadService;
@@ -59,7 +58,6 @@ class SecondHandController extends AbstractController
     public function edit(
         Request $request,
         ?SecondHand $secondHand,
-        ContentRepository $contentRepository,
         UploadService $uploadService,
     ): Response {
         $form = $this->createForm(SecondHandType::class, $secondHand, [
@@ -96,17 +94,19 @@ class SecondHandController extends AbstractController
         SecondHand $secondHand
     ): Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_second_hand_delete',
-                ['secondHand' => $secondHand->getId(), ]
-            ),
+            'action' => $this->generateUrl('admin_second_hand_delete', [
+                'secondHand' => $secondHand->getId(),
+            ]),
         ]);
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $this->secondHandRepository->remove($secondHand);
+            $valid = $secondHand->isValid();
+            $this->secondHandRepository->remove($secondHand, true);
 
-            return $this->redirect('admin_second_hand_list');
+            return $this->redirectToRoute('admin_second_hand_list', [
+                'valid' => $valid,
+            ]);
         }
 
         return $this->render('second_hand/delete.modal.html.twig', [
