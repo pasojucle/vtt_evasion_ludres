@@ -40,7 +40,7 @@ class IdentityType extends AbstractType
             $form = $event->getForm();
             $type = $identity->getType();
             $kinship = 1 < $type;
-            $disabled = ($options['is_final'] && Identity::TYPE_MEMBER === $type) ? 'disabled' : '';
+            $disabled = ($identity->getId()) ? 'disabled' : '';
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
 
 
