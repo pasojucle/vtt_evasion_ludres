@@ -76,6 +76,22 @@ class CommuneRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @return Commune[] Returns an array of Commune objects
+     */
+    public function findByPostalCode(string $postalCode): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where(
+                (new Expr())->eq('c.postalCode', ':postalCode')
+            )
+            ->setParameter('postalCode', $postalCode)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findCount(): int
     {
         return $this->createQueryBuilder('c')

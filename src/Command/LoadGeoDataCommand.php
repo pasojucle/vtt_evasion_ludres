@@ -24,6 +24,8 @@ class LoadGeoDataCommand extends Command
     private array $departmentsToReload = [];
     private array $departments;
     private array $departmentIds;
+    private array $departmentEntities = [];
+    private array $communeEntities = [];
     private ProgressBar $progressBar;
     private OutputInterface $output;
     private SymfonyStyle $ssio;
@@ -50,8 +52,8 @@ class LoadGeoDataCommand extends Command
         $this->output = $output;
         $this->ssio = new SymfonyStyle($input, $this->output);
 
-        $this->communeRepository->deleteAll();
-        $this->departmentRepository->deleteAll();
+        $this->getDepartmentEntities();
+        $this->getCommuneEntities();
         $this->setDepartments($this->departmentIds);
         $this->setCommunes($this->departmentIds);
         
@@ -60,23 +62,35 @@ class LoadGeoDataCommand extends Command
         return Command::SUCCESS;
     }
 
+    private function getDepartmentEntities(): void
+    {
+        foreach ($this->departmentRepository->findAll() as $departmentEntity) {
+            $this->departmentEntities[$departmentEntity->getId()] = $departmentEntity;
+        }
+    }
+
+    private function getCommuneEntities(): void
+    {
+        foreach ($this->communeRepository->findAll() as $communeEntity) {
+            $this->communeEntities[$communeEntity->getId()] = $communeEntity;
+        }
+    }
+
     private function setDepartments(array $departmentIds)
     {
         $this->progressBar = new ProgressBar($this->output, count($this->departmentIds));
         $this->output->writeln('Chargement des departements');
         $this->progressBar->start();
-        while (!empty($departmentIds)) {
-            $this->departmentsToReload = [];
-            foreach ($departmentIds as $departmentId) {
-                $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
-                if (!$this->addDepartment($departmentId)) {
-                    $this->departmentsToReload[] = $departmentId;
-                } else {
-                    $this->progressBar->advance();
-                }
+        $this->departmentsToReload = [];
+        foreach ($departmentIds as $departmentId) {
+            $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
+            if (!$this->addDepartment($departmentId)) {
+                $this->departmentsToReload[] = $departmentId;
+            } else {
+                $this->progressBar->advance();
             }
-            $departmentIds = $this->departmentsToReload;
         }
+        $departmentIds = $this->departmentsToReload;
 
         $this->entityManager->flush();
         $this->progressBar->finish();
@@ -88,9 +102,13 @@ class LoadGeoDataCommand extends Command
         $data = $this->geoService->getDepartmentByCode($departmentId);
 
         if ($data) {
-            $department = new Department();
-            $department->setId($data['code'])
-                ->setName($data['nom']);
+            if (!array_key_exists($data['code'], $this->departmentEntities)) {
+                $department = new Department();
+                $department->setId($data['code']);
+            } else {
+                $department = $this->departmentEntities[$data['code']];
+            }
+            $department->setName($data['nom']);
             $this->entityManager->persist($department);
             $this->departments[$data['code']] = $department;
             
@@ -104,18 +122,18 @@ class LoadGeoDataCommand extends Command
         $this->progressBar = new ProgressBar($this->output, count($this->departmentIds));
         $this->output->writeln('Chargement des communess');
         $this->progressBar->start();
-        while (!empty($departmentIds)) {
-            $this->departmentsToReload = [];
-            foreach ($departmentIds as $departmentId) {
-                $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
-                if (!$this->addCommunesByDepartment($departmentId)) {
-                    $this->departmentsToReload[] = $departmentId;
-                } else {
-                    $this->progressBar->advance();
-                }
+
+        $this->departmentsToReload = [];
+        foreach ($departmentIds as $departmentId) {
+            $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
+            if (!$this->addCommunesByDepartment($departmentId)) {
+                $this->departmentsToReload[] = $departmentId;
+            } else {
+                $this->progressBar->advance();
             }
-            $departmentIds = $this->departmentsToReload;
         }
+        $departmentIds = $this->departmentsToReload;
+
         $this->progressBar->finish();
     }
 
@@ -134,17 +152,23 @@ class LoadGeoDataCommand extends Command
 
     private function addCommunes(array $dataCommunes): void
     {
-        if (!empty($dataCommunes)) {
-            foreach ($dataCommunes as $data) {
-                if (!empty($data['code'])) {
+        foreach ($dataCommunes as $data) {
+            if (!empty($data['code'])) {
+                if (!array_key_exists($data['code'], $this->communeEntities)) {
                     $commune = new Commune();
-                    $commune->setId($data['code'])
-                        ->setName($data['nom'])
-                        ->setDepartment($this->departments[$data['codeDepartement']]);
-                    $this->entityManager->persist($commune);
+                    $commune->setId($data['code']);
+                } else {
+                    $commune = $this->communeEntities[$data['code']];
                 }
+                
+                $commune
+                    ->setName($data['nom'])
+                    ->setDepartment($this->departments[$data['codeDepartement']])
+                    ->setPostalCode(array_shift($data['codesPostaux']));
+                $this->entityManager->persist($commune);
             }
         }
+
         $this->entityManager->flush();
     }
 }

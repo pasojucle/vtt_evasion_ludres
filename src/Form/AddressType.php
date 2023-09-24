@@ -10,7 +10,6 @@ use App\Repository\CommuneRepository;
 use App\Service\GeoService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -108,14 +107,10 @@ class AddressType extends AbstractType
 
     private function communes(?string $postalCode): array
     {
-        $communes = (!empty($postalCode)) ? $this->geoService->getCommunesByPostalCode($postalCode) : [];
-        $choices = [];
-        if (!empty($communes)) {
-            $communeCodes = array_column($communes, 'code');
-            
-            return $this->communeRepository->findByCodes($communeCodes);
+        if (empty($postalCode)) {
+            return [];
         }
 
-        return array_flip($choices);
+        return $this->communeRepository->findByPostalCode($postalCode);
     }
 }

@@ -27,6 +27,9 @@ class Commune
     #[ORM\OneToMany(mappedBy: 'birthCommune', targetEntity: Identity::class)]
     private Collection $identities;
 
+    #[ORM\Column(length: 10)]
+    private ?string $postalCode = null;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -145,5 +148,17 @@ class Commune
         $property = new ReflectionProperty(self::class, 'id');
         $property->setAccessible(true);
         return $property->isInitialized($this);
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+
+    public function setPostalCode(string $postalCode): static
+    {
+        $this->postalCode = $postalCode;
+
+        return $this;
     }
 }
