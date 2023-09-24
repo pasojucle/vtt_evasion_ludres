@@ -81,16 +81,19 @@ class LoadGeoDataCommand extends Command
         $this->progressBar = new ProgressBar($this->output, count($this->departmentIds));
         $this->output->writeln('Chargement des departements');
         $this->progressBar->start();
-        $this->departmentsToReload = [];
-        foreach ($departmentIds as $departmentId) {
-            $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
-            if (!$this->addDepartment($departmentId)) {
-                $this->departmentsToReload[] = $departmentId;
-            } else {
-                $this->progressBar->advance();
+        while (!empty($departmentIds)) {
+            $departmentsToReload = [];
+            foreach ($departmentIds as $departmentId) {
+                $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
+                if (!$this->addDepartment($departmentId)) {
+                    $departmentsToReload[] = $departmentId;
+                } else {
+                    $this->progressBar->advance();
+                }
             }
+            $departmentIds = $departmentsToReload;
+            $this->output->writeln(sprintf('Departements à rechercher : %s', implode(', ', $departmentIds)));
         }
-        $departmentIds = $this->departmentsToReload;
 
         $this->entityManager->flush();
         $this->progressBar->finish();
@@ -120,19 +123,23 @@ class LoadGeoDataCommand extends Command
     private function setCommunes(array $departmentIds)
     {
         $this->progressBar = new ProgressBar($this->output, count($this->departmentIds));
-        $this->output->writeln('Chargement des communess');
+        $this->output->writeln('Chargement des communes');
         $this->progressBar->start();
 
-        $this->departmentsToReload = [];
-        foreach ($departmentIds as $departmentId) {
-            $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
-            if (!$this->addCommunesByDepartment($departmentId)) {
-                $this->departmentsToReload[] = $departmentId;
-            } else {
-                $this->progressBar->advance();
+        while (!empty($departmentIds)) {
+            $departmentsToReload = [];
+            foreach ($departmentIds as $departmentId) {
+                $departmentId = (strlen((string) $departmentId) === 1) ? '0' . $departmentId : $departmentId;
+                if (!$this->addCommunesByDepartment($departmentId)) {
+                    $departmentsToReload[] = $departmentId;
+                } else {
+                    $this->progressBar->advance();
+                }
             }
+            $departmentIds = $departmentsToReload;
+            $this->output->writeln(sprintf('Communes à rechercher : %s', implode(', ', $departmentIds)));
         }
-        $departmentIds = $this->departmentsToReload;
+        
 
         $this->progressBar->finish();
     }
