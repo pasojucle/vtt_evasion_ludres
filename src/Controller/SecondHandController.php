@@ -159,9 +159,10 @@ class SecondHandController extends AbstractController
         
         if ($mailerService->sendMailToMember($data)) {
             $this->addFlash('success', 'Votre message a bien été envoyé');
+        } else {
+            $this->addFlash('danger', 'Une erreure est survenue');
         }
-        
-        $this->addFlash('danger', 'Une erreure est survenue');
+
         return $this->redirectToRoute('second_hand_show', ['secondHand' => $secondHand->getId()]);
     }
 }
