@@ -36,11 +36,12 @@ class SecondHandDtoTransformer
             $secondHandDto->user = $this->userDtoTransformer->fromEntity($secondHand->getUser());
             $secondHandDto->price = (new Currency($secondHand->getPrice()))->toString();
             $secondHandDto->category = $secondHand->getCategory()->getName();
-            $secondHandDto->pathName = $this->projectDirService->dir('', 'second_hands', $secondHandDto->filename);
             $secondHandDto->createdAt = $secondHand->getCreatedAt()->format('d-m-y');
             $secondHandDto->valid = $secondHand->isValid();
-            $secondHandDto->validToString = $this->isValidToString($secondHand->isValid());
+            $secondHandDto->disabled = $secondHand->isDisabled();
+            $secondHandDto->status = $this->getStatus($secondHand);
         }
+        $secondHandDto->pathName = $this->getPath($secondHand?->getFilename());
 
         return $secondHandDto;
     }
@@ -69,8 +70,20 @@ class SecondHandDtoTransformer
         return $secondHands;
     }
 
-    private function isValidToString(bool $isValid): string
+    private function GetStatus(SecondHand $secondHand): string
     {
-        return ($isValid) ? 'Validé' : 'Non Validé';
+        if ($secondHand->isDisabled()) {
+            return 'Désactivée';
+        }
+        return ($secondHand->isValid()) ? 'Validée' : 'Non Validée';
+    }
+
+    private function getPath(?string $filename): string
+    {
+        if (!empty($filename)) {
+            return $this->projectDirService->dir('', 'second_hands', $filename);
+        }
+
+        return $this->projectDirService->dir('','camera.jpg');
     }
 }

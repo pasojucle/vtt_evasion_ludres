@@ -20,8 +20,9 @@
                         <a href="{{ path('admin_second_hand_show', {'secondHand': second_hand.id})}}">
                             <div class="row">
                                 <div class="col-md-2">{{ second_hand.createdAt }}</div>
-                                <div class="col-md-5">{{ second_hand.name }}</div>
-                                <div class="col-md-5">{{ second_hand.user.member.fullName }}</div>
+                                <div class="col-md-4">{{ second_hand.name }}</div>
+                                <div class="col-md-4">{{ second_hand.user.member.fullName }}</div>
+                                <div class="col-md-2">{{ second_hand.status }}</div>
                             </div>
                         </a>
                         <div class="dropdown">

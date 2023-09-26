@@ -56,7 +56,7 @@ final class Version20230823164322 extends AbstractMigration
             'name' => 'SECOND_HAND_CONTACT',
             'label' => 'Message de prise de contact à une annonce d\'occasion',
             'type' => 1,
-            'value' => '<p>Bonjour</p>\r\n<p>L\'article de votre annonce {{ nom_annonce }} m’intéresse</p>\r\n<p>Pouvez-vous me contacter par téléphone au {{ telephone }} ou par mail à l\'adresse {{ email }}\r\n{{ prenom_nom }}',
+            'value' => '<p>L\'article de votre annonce {{ nom_annonce }} m’intéresse</p><p>Pouvez-vous me contacter par téléphone au {{ telephone }} ou par mail à l\'adresse {{ email }}</p><p>{{ prenom_nom }}</p>',
             'group' => 2,
         ];
         $this->addSql('INSERT INTO `parameter` (`name`, `label`, `type`, `value`, `parameter_group_id`) VALUES (:name, :label, :type, :value, :group)', $parameter);

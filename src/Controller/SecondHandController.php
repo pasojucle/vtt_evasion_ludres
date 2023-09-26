@@ -9,7 +9,6 @@ use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\SecondHand;
 use App\Entity\User;
-use App\Form\EmailMessageType;
 use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
 use App\Repository\ParameterRepository;
@@ -39,7 +38,7 @@ class SecondHandController extends AbstractController
         PaginatorDtoTransformer $paginatorDtoTransformer,
         Request $request,
     ): Response {
-        $query = $this->secondHandRepository->findSecondHandQuery();
+        $query = $this->secondHandRepository->findSecondHandEnabled();
         $secondHands = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('second_hand/list.html.twig', [
             'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
@@ -111,15 +110,25 @@ class SecondHandController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $this->secondHandRepository->remove($secondHand);
+            $this->secondHandRepository->remove($secondHand, true);
 
-            return $this->redirect('second_hand_user_list');
+            return $this->redirectToRoute('second_hand_user_list');
         }
 
-        return $this->render('second_hand/admin/delete.modal.html.twig', [
+        return $this->render('second_hand/delete.modal.html.twig', [
             'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/enabled/{secondHand}', name: 'enabled', methods: ['GET'])]
+    public function enabled(
+        SecondHand $secondHand
+    ): Response {
+        $secondHand->setDisabled(false);
+        $this->secondHandRepository->save($secondHand, true);
+
+        return $this->redirectToRoute('second_hand_user_list');
     }
 
     #[Route('/contact/{secondHand}', name: 'message', methods: ['GET', 'POST'])]
@@ -136,31 +145,23 @@ class SecondHandController extends AbstractController
         $buyer = $this->getUser();
         $buyerDto = $userDtoTransformer->fromEntity($buyer);
         $content = $parameterRepository->findOneByName('second_hand_contact');
-        $search = ['{{ nom_annonce }}', '{{ telephone }}', '{{ email }}', '{{ prenom_nom }}', '<p>', '</p>', '<br />'];
-        $replace = [$secondHand->getName(), $buyerDto->member->phone, $buyerDto->mainEmail, $buyerDto->member->fullName, '', '', PHP_EOL];
-
-        $form = $this->createForm(EmailMessageType::class, ['message' => str_replace($search, $replace, html_entity_decode($content->getValue()))]);
-        $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $seller = $secondHand->getUser();
-            $sellerDto = $userDtoTransformer->fromEntity($seller);
-            $data['name'] = $sellerDto->member->name;
-            $data['firstName'] = $sellerDto->member->firstName;
-            $data['email'] = $sellerDto->mainEmail;
-            $data['subject'] = sprintf('Votre annonce %s', $secondHand->GetName());
-            if ($mailerService->sendMailToMember($data)) {
-                $this->addFlash('success', 'Votre message a bien été envoyé');
-
-                return $this->redirectToRoute('second_hand_show', ['secondHand' => $secondHand->getId()]);
-            }
-            $this->addFlash('danger', 'Une erreure est survenue');
+        $search = ['{{ nom_annonce }}', '{{ telephone }}', '{{ email }}', '{{ prenom_nom }}'];
+        $replace = [$secondHand->getName(), $buyerDto->member->phone, $buyerDto->mainEmail, $buyerDto->member->fullName];
+        $seller = $secondHand->getUser();
+        $sellerDto = $userDtoTransformer->fromEntity($seller);
+        $data = [
+            'name' => $sellerDto->member->name,
+            'firstName' => $sellerDto->member->firstName,
+            'email' => $sellerDto->mainEmail,
+            'subject' => sprintf('Votre annonce %s', $secondHand->GetName()),
+            'message' => str_replace($search, $replace, $content->getValue()),
+        ]; 
+        
+        if ($mailerService->sendMailToMember($data)) {
+            $this->addFlash('success', 'Votre message a bien été envoyé');
         }
-
-        return $this->render('user/change_infos.html.twig', [
-            'content' => $contentRepository->findOneByRoute('second_hand_contact'),
-            'form' => $form->createView(),
-        ]);
+        
+        $this->addFlash('danger', 'Une erreure est survenue');
+        return $this->redirectToRoute('second_hand_show', ['secondHand' => $secondHand->getId()]);
     }
 }

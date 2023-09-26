@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SecondHand;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -46,19 +47,55 @@ class SecondHandRepository extends ServiceEntityRepository
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->eq('s.deleted', ':deleted'));
         $andX->add((new Expr())->eq('s.valid', ':valid'));
+        
         $parameters = [
             'deleted' => false,
             'valid' => true,
         ];
 
         if (null !== $valid) {
-            $andX->add((new Expr())->eq('s.valid', ':valid'));
             $parameters['valid'] = $valid;
+
         }
         return $this->createQueryBuilder('s')
            ->andWhere($andX)
            ->setParameters($parameters)
            ->orderBy('s.createdAt', 'DESC')
        ;
+    }
+
+    public function findSecondHandEnabled(): QueryBuilder
+    {
+        return $this->createQueryBuilder('s')
+           ->andWhere(
+            (new Expr())->eq('s.deleted', ':deleted'),
+            (new Expr())->eq('s.valid', ':valid'),
+            (new Expr())->eq('s.disabled', ':disabled')
+           )
+           ->setParameters([
+                'deleted' => false,
+                'valid' => true,
+                'disabled' => false,
+            ])
+           ->orderBy('s.createdAt', 'DESC')
+       ;
+    }
+
+    public function findOutOfPeriod(DateTimeImmutable $deadline): array
+    {
+        return $this->createQueryBuilder('sh')
+            ->andWhere(
+                (new Expr)->lt('sh.createdAt', ':deadline'),
+                (new Expr)->eq('sh.disabled', ':disabled'),
+                (new Expr)->eq('sh.deleted', ':deleted'),
+
+            )
+            ->setParameters([
+                'deadline'=> $deadline,
+                'disabled' => false,
+                'deleted' => false,
+            ])
+            ->getQuery()
+            ->getResult();
     }
 }

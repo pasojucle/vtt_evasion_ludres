@@ -33,9 +33,9 @@
             '{{ licenceNumber }}': data.licenceNumber ,
         }
     %}
-        <div>{{ content|replace(replaces) | raw}}</div>
+        <div>{{ content|replace(replaces)|raw}}</div>
     {% else %}
-        <div>{{ content | raw}}</div>
+        <div>{{ content|raw}}</div>
     {% endif %}
 {% endif %}
 

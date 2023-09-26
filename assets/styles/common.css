@@ -903,6 +903,9 @@ span.select2-selection.select2-selection--single {
     position: relative;
     min-height: 45px;
 }
+.row.flex-column {
+    flex-direction: column;
+}
 ul > li.list {
     position: relative;
     padding: 10px 0;
@@ -1412,9 +1415,11 @@ h3 + ul.block.background-ligth {
 }
 
 img.second-hand {
-    width: 100%;
+    max-width: 100%;
 }
-
+.second-hand input[type="file"] {
+    width: 0;
+}
 .product-detail .price,
 .detail .price {
     font-size: 24px;

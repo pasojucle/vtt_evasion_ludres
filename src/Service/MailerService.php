@@ -54,6 +54,9 @@ class MailerService
             if (array_key_exists('sessionAvailability', $data) && null !== $data['sessionAvailability']) {
                 $content = str_replace('{{ disponibilite }}', $data['sessionAvailability'], $content);
             }
+            if (array_key_exists('secondHandName', $data) && null !== $data['secondHandName']) {
+                $content = str_replace(['{{ nom_annonce }}', '{{ url }}', '{{ durree }}'], [$data['secondHandName'], $data['url'], $data['duration']], $content);
+            }
         }
         if (array_key_exists('content', $data)) {
             $content = $data['content'];

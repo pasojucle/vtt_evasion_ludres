@@ -7,7 +7,6 @@ namespace App\Form;
 use App\Entity\Address;
 use App\Entity\Commune;
 use App\Repository\CommuneRepository;
-use App\Service\GeoService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,7 +19,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
 class AddressType extends AbstractType
 {
-    public function __construct(private GeoService $geoService, private CommuneRepository $communeRepository)
+    public function __construct(private CommuneRepository $communeRepository)
     {
     }
 

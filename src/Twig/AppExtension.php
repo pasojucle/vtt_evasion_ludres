@@ -19,6 +19,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('imgPath', [$this, 'imgPath']),
             new TwigFilter('formatDateLong', [$this, 'formatDateLong']),
             new TwigFilter('parseInt', [$this, 'parseInt']),
+            new TwigFilter('base64Encode', [$this, 'base64Encode']),
         ];
     }
 
@@ -44,5 +45,10 @@ class AppExtension extends AbstractExtension
     public function parseInt(string|bool $value): int
     {
         return (int) $value;
+    }
+
+    public function base64Encode(string $value): string
+    {
+        return base64_encode($value);
     }
 }

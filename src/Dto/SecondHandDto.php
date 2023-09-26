@@ -28,5 +28,7 @@ class SecondHandDto
 
     public bool $valid = false;
 
-    public string $validToString = '';
+    public bool $disabled = false;
+
+    public string $status= '';
 }

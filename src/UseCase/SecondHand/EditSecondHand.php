@@ -43,6 +43,7 @@ class EditSecondHand
         $secondHand->setUser($user)
             ->setCreatedAt(new DateTimeImmutable())
             ->setDeleted(false)
+            ->setDisabled(false)
             ->setValid(false)
         ;
     }

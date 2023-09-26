@@ -8,8 +8,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MenuService
 {
-    private array $menus;
-
     private array $user = [];
 
     private array $footer;
@@ -122,7 +120,6 @@ class MenuService
                 'role' => 'PUBLIC_ACCESS',
             ],
         ]);
-        return $this->menus;
     }
 
     public function getUser(): array

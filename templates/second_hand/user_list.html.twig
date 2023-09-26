@@ -21,13 +21,17 @@
                                         <b>{{ second_hand.name }}</b>
                                     </div>
                                     <div class="col-md-4 col-xs-12">
-                                        <b>{{ second_hand.validToString }}</b>
+                                        <b>{{ second_hand.status }}</b>
                                     </div>
                                     <div class="col-md-3 col-xs-4 row">
-                                        <a href="{{ path('second_hand_edit',{'secondHand': second_hand.id}) }}" class="btn btn-primary" title="VModifier l'annonce">Modifier</a>
-                                        <a href="{{ path('second_hand_delete',{'secondHand': second_hand.id}) }}" class="btn btn-danger btn-ico" data-toggle="modal" data-type="danger" title="Annuler">
-                                            <i class="fas fa-times-circle"></i>
-                                        </a>
+                                        {% if second_hand.disabled %}
+                                            <a href="{{ path('second_hand_enabled',{'secondHand': second_hand.id}) }}" class="btn btn-primary" title="Activer">Activer</a>
+                                        {% else %}
+                                            <a href="{{ path('second_hand_edit',{'secondHand': second_hand.id}) }}" class="btn btn-primary" title="Modifier l'annonce">Modifier</a>
+                                            <a href="{{ path('second_hand_delete',{'secondHand': second_hand.id}) }}" class="btn btn-danger btn-ico" data-toggle="modal" data-type="danger" title="Annuler">
+                                                <i class="fas fa-times-circle"></i>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </li>

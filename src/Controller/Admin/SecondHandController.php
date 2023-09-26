@@ -79,7 +79,7 @@ class SecondHandController extends AbstractController
             }
     
             $this->secondHandRepository->save($secondHand, true);
-            return $this->redirectToRoute('second_hand_user_list');
+            return $this->redirectToRoute('admin_second_hand_list');
         }
 
         return $this->render('second_hand/admin/edit.html.twig', [

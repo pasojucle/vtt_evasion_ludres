@@ -6,7 +6,6 @@ use App\Repository\SecondHandRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
 
 #[ORM\Entity(repositoryClass: SecondHandRepository::class)]
 class SecondHand
@@ -44,6 +43,9 @@ class SecondHand
 
     #[ORM\Column]
     private bool $deleted = false;
+
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
+    private bool $disabled = false;
 
     public function getId(): ?int
     {
@@ -154,6 +156,18 @@ class SecondHand
     public function setDeleted(bool $deleted): static
     {
         $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    public function isDisabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    public function setDisabled(bool $disabled): static
+    {
+        $this->disabled = $disabled;
 
         return $this;
     }

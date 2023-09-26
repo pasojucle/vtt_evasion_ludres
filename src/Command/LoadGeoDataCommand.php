@@ -21,7 +21,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class LoadGeoDataCommand extends Command
 {
-    private array $departmentsToReload = [];
     private array $departments;
     private array $departmentIds;
     private array $departmentEntities = [];
@@ -92,7 +91,6 @@ class LoadGeoDataCommand extends Command
                 }
             }
             $departmentIds = $departmentsToReload;
-            $this->output->writeln(sprintf('Departements à rechercher : %s', implode(', ', $departmentIds)));
         }
 
         $this->entityManager->flush();
@@ -137,7 +135,6 @@ class LoadGeoDataCommand extends Command
                 }
             }
             $departmentIds = $departmentsToReload;
-            $this->output->writeln(sprintf('Communes à rechercher : %s', implode(', ', $departmentIds)));
         }
         
 

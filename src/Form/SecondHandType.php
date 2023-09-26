@@ -13,8 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
@@ -22,32 +20,6 @@ class SecondHandType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $secondHand = $event->getData();
-            $form = $event->getForm();
-            $form
-            ->add('filename', FileType::class, [
-                'label' => 'Télecharger une photo ',
-                'mapped' => false,
-                'required' => null === $secondHand?->getFilename(),
-                'block_prefix' => 'custom_file',
-                'attr' => [
-                    'accept' => '.bmp,.jpeg,.jpg,.png, .pdf',
-                ],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2048k',
-                        'mimeTypes' => [
-                            'image/bmp',
-                            'image/jpeg',
-                            'image/png',
-                            'application/pdf',
-                        ],
-                        'mimeTypesMessage' => 'Format image bmp, jpeg, png ou pdf autorisé',
-                    ]),
-                ],
-            ]);
-        });
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Titre',
@@ -64,7 +36,29 @@ class SecondHandType extends AbstractType
                     'class' => 'second-hand',
                 ],
             ])
-            
+            ->add('filename', FileType::class, [
+                'label' => 'Télecharger une photo ',
+                'mapped' => false,
+                'required' => false,
+                'block_prefix' => 'custom_file',
+                'attr' => [
+                    'accept' => '.bmp,.jpeg,.jpg,.png',
+                ],
+                'row_attr' => [
+                    'class' => 'second-hand',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2048k',
+                        'mimeTypes' => [
+                            'image/bmp',
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Format image bmp, jpeg, png ou pdf autorisé',
+                    ]),
+                ],
+            ])
             ->add('category', EntityType::class, [
                 'label' => 'Categorie',
                 'class' => Category::class,
