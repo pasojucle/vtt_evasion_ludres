@@ -22,13 +22,6 @@ class IsRegistrable
         if (!$users->isEmpty() && !$users->contains($user)) {
             return false;
         }
-
-        $levels = $bikeRide->getLevels();
-        $levelTypes = $bikeRide->getLevelTypes();
-        if (!$levels->isEmpty() && !$levels->contains($user->getLevel()) && !empty($levelTypes) && !in_array($user->getLevel()->getType(), $levelTypes)) {
-            return false;
-        }
-
     
         if ($bikeRide->getMinAge()) {
             $interval = new DateInterval('P' . $bikeRide->getMinAge() . 'Y');

@@ -155,7 +155,7 @@ class SecondHandController extends AbstractController
             'email' => $sellerDto->mainEmail,
             'subject' => sprintf('Votre annonce %s', $secondHand->GetName()),
             'message' => str_replace($search, $replace, $content->getValue()),
-        ]; 
+        ];
         
         if ($mailerService->sendMailToMember($data)) {
             $this->addFlash('success', 'Votre message a bien été envoyé');

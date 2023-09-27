@@ -4,23 +4,19 @@ namespace App\Command;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\SecondHand;
-use App\Service\ParameterService;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
+use App\Service\ParameterService;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpParser\Node\Expr\Print_;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Router;
-use Symfony\Component\Routing\RouterInterface;
 
 #[AsCommand(
     name: 'second-hands:out-of-period',
@@ -38,8 +34,7 @@ class OutOfPeriodSecondHandsCommand extends Command
         private MailerService $mailerService,
         private UserDtoTransformer $userDtoTransformer,
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -49,7 +44,7 @@ class OutOfPeriodSecondHandsCommand extends Command
         $this->ssio = new SymfonyStyle($input, $this->output);
 
         $duration = $this->parameterService->getParameterByName('SECOND_HAND_DURATION');
-        $deadline = (new DateTimeImmutable())->setTime(0,0,0)->sub(new DateInterval(sprintf('P%sD', $duration)));
+        $deadline = (new DateTimeImmutable())->setTime(0, 0, 0)->sub(new DateInterval(sprintf('P%sD', $duration)));
         $secondHands = $this->secondHandRepository->findOutOfPeriod($deadline);
         $this->progressBar = new ProgressBar($this->output, count($secondHands));
         $this->progressBar->start();

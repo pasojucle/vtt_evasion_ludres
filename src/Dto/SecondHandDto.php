@@ -30,5 +30,5 @@ class SecondHandDto
 
     public bool $disabled = false;
 
-    public string $status= '';
+    public string $status = '';
 }

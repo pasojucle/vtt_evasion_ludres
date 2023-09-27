@@ -10,7 +10,6 @@ use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormEvent;
@@ -38,7 +37,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     {
         $bikeRide = $event->getData();
 
-        $this->modifier($event->getForm(), $bikeRide, $bikeRide->getRestriction());
+        $this->modifier($event->getForm(), $bikeRide, $bikeRide->getRestriction(), $bikeRide->getLevelFilter());
     }
 
     public function preSubmit(FormEvent $event): void
@@ -46,29 +45,28 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $bikeRide = $event->getForm()->getData();
 
         $data = $event->getData();
-
-        if (array_key_exists('addFramers', $data) && (bool) $data['addFramers']) {
-            $this->addFramers($data);
-        }
         
         $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
+
+        $levelFilter = (array_key_exists('levelFilter', $data) && !empty($data['levelFilter'])) ? $data['levelFilter'] : null;
+
+        $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : null;
+        if (array_key_exists('levelFilter', $data) || $levels) {
+            $this->addOrRemoveUsers($data, $levels, $bikeRide);
+        }
 
         $this->cleanData($restriction, $data, $bikeRide);
 
         $event->setData($data);
         $event->getForm()->setData($bikeRide);
 
-        $this->modifier($event->getForm(), $bikeRide, $restriction);
+        $this->modifier($event->getForm(), $bikeRide, $restriction, $levelFilter);
     }
 
-    private function modifier(
-        FormInterface $form,
-        $bikeRide,
-        ?int $restriction
-    ): void {
+    private function modifier(FormInterface $form, BikeRide $bikeRide, ?int $restriction, ?array $levelFilter): void
+    {
         $disabled = BikeRideKind::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
-        $disabledLevelFilter = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_LEVELS !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MIN_AGE !== $restriction;
         $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;
 
@@ -78,13 +76,6 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         }
 
         $form
-            ->add('addFramers', ButtonType::class, [
-                'label' => 'Ajouter les encadrants',
-                'attr' => [
-                    'class' => $addFramersClass,
-                    'data-modifier' => 'bike_ride_Restriction',
-                ],
-            ])
             ->add('users', Select2EntityType::class, [
                 'multiple' => true,
                 'remote_route' => 'admin_member_choices',
@@ -112,15 +103,18 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 'multiple' => true,
                 'choices' => $this->levelService->getLevelChoices(),
                 'attr' => [
-                    'class' => 'customSelect2',
+                    'data-modifier' => 'bikeRideRestriction',
+                    'class' => 'customSelect2 form-modifier',
                     'data-width' => '100%',
-                    'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
+                    'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
                     'data-maximum-selection-length' => 4,
                     'data-language' => 'fr',
                     'data-allow-clear' => true,
+                    'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
+                    'data-add-to-fetch' => 'levels',
                 ],
-                'required' => !$disabledLevelFilter,
-                'disabled' => $disabledLevelFilter,
+                'required' => false,
+                'disabled' => $disabledUsers,
             ])
             ->add('minAge', IntegerType::class, [
                 'label' => false,
@@ -140,28 +134,73 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $data['users'] = [];
             $bikeRide->clearUsers();
         }
-        if (BikeRideType::RESTRICTION_TO_LEVELS !== $restriction) {
-            $data['levelFilter'] = [];
-            $bikeRide->clearLevels();
-            $bikeRide->setLevelTypes([]);
-        }
         if (BikeRideType::RESTRICTION_TO_MIN_AGE !== $restriction) {
             $data['minAge'] = '';
         }
+        if (array_key_exists('users', $data)) {
+            foreach ($data['users'] as $user) {
+                if (empty($user)) {
+                    unset($user);
+                }
+            }
+        }
     }
 
-    private function addFramers(array &$data): void
+    private function addOrRemoveUsers(array &$data, ?array $levels, BikeRide $bikeRide): void
     {
-        $framerObjects = $this->userRepository->findFramers([])->getQuery()->getResult();
+        $levelFilter = (array_key_exists('levelFilter', $data)) ? $data['levelFilter'] : null;
+        if (!$levelFilter && $levels) {
+            $this->clearUsers($data, $bikeRide);
+            return;
+        }
 
+        $levelsToAdd = ($levelFilter) ? $levelFilter : [];
+        
+        $levelsToRemove = ($levels) ? $levels : [];
+        if ($levelFilter && $levels) {
+            $levelsToAdd = array_diff($levelFilter, $levels);
+            $levelsToRemove = array_diff($levels, $levelFilter);
+        }
+        
+        $userToAdd = $this->getUsers($levelsToAdd);
+        $usersToRemove = $this->getUsers($levelsToRemove);
         if (!array_key_exists('users', $data)) {
             $data['users'] = [];
         }
 
-        foreach ($framerObjects as $framer) {
-            if (!in_array($framer->getId(), $data['users'])) {
-                $data['users'][] = $framer->getId();
+        foreach ($userToAdd as $user) {
+            if (!in_array($user->getId(), $data['users'])) {
+                $data['users'][] = $user->getId();
             }
         }
+
+        foreach ($usersToRemove as $users) {
+            $key = array_search($users->getId(), $data['users']);
+            if ($key) {
+                unset($data['users'][$key]);
+                $bikeRide->removeUser($users);
+            }
+        }
+    }
+
+    private function getUsers(array $levels): array
+    {
+        if (!empty($levels)) {
+            $filters = [
+                'fullName' => null,
+                'user' => null,
+                'levels' => $levels,
+                'season' => SeasonService::MIN_SEASON_TO_TAKE_PART,
+            ];
+            return $this->userRepository->findMemberQuery($filters)->getQuery()->getResult();
+        }
+        return [];
+    }
+
+    private function clearUsers(array &$data, BikeRide $bikeRide): void
+    {
+        $data['users'] = [];
+        $bikeRide->clearUsers();
+        $bikeRide->setLevelFilter([]);
     }
 }

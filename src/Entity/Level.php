@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
-use phpDocumentor\Reflection\Types\Nullable;
 
 #[Entity(repositoryClass: LevelRepository::class)]
 class Level

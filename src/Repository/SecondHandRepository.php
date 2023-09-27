@@ -55,7 +55,6 @@ class SecondHandRepository extends ServiceEntityRepository
 
         if (null !== $valid) {
             $parameters['valid'] = $valid;
-
         }
         return $this->createQueryBuilder('s')
            ->andWhere($andX)
@@ -68,9 +67,9 @@ class SecondHandRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('s')
            ->andWhere(
-            (new Expr())->eq('s.deleted', ':deleted'),
-            (new Expr())->eq('s.valid', ':valid'),
-            (new Expr())->eq('s.disabled', ':disabled')
+               (new Expr())->eq('s.deleted', ':deleted'),
+               (new Expr())->eq('s.valid', ':valid'),
+               (new Expr())->eq('s.disabled', ':disabled')
            )
            ->setParameters([
                 'deleted' => false,
@@ -85,13 +84,12 @@ class SecondHandRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('sh')
             ->andWhere(
-                (new Expr)->lt('sh.createdAt', ':deadline'),
-                (new Expr)->eq('sh.disabled', ':disabled'),
-                (new Expr)->eq('sh.deleted', ':deleted'),
-
+                (new Expr())->lt('sh.createdAt', ':deadline'),
+                (new Expr())->eq('sh.disabled', ':disabled'),
+                (new Expr())->eq('sh.deleted', ':deleted'),
             )
             ->setParameters([
-                'deadline'=> $deadline,
+                'deadline' => $deadline,
                 'disabled' => false,
                 'deleted' => false,
             ])

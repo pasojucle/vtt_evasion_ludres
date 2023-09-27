@@ -91,13 +91,9 @@ class BikeRide
     #[ManyToMany(targetEntity: User::class, inversedBy: 'bikeRides')]
     private Collection $users;
 
-    #[ManyToMany(targetEntity: Level::class)]
-    private Collection $levels;
-
-    #[Column(type: 'json')]
-    private array $levelTypes = [];
-
     private ?int $restriction = null;
+
+    #[Column(type: 'json', options:['default' => '[]'])]
     private array $levelFilter = [];
 
     #[Column(type: 'boolean', options: ['default' => false])]
@@ -108,7 +104,6 @@ class BikeRide
         $this->clusters = new ArrayCollection();
         $this->startAt = new DateTimeImmutable();
         $this->users = new ArrayCollection();
-        $this->levels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -319,37 +314,6 @@ class BikeRide
         return $this;
     }
 
-    /**
-     * @return Collection<int, Level>
-     */
-    public function getLevels(): Collection
-    {
-        return $this->levels;
-    }
-
-    public function addLevel(Level $level): self
-    {
-        if (!$this->levels->contains($level)) {
-            $this->levels->add($level);
-        }
-
-        return $this;
-    }
-
-    public function removeLevel(Level $level): self
-    {
-        $this->levels->removeElement($level);
-
-        return $this;
-    }
-
-    public function clearLevels(): self
-    {
-        $this->levels->clear();
-
-        return $this;
-    }
-
     public function setRestriction(?int $restriction): self
     {
         $this->restriction = $restriction;
@@ -360,18 +324,6 @@ class BikeRide
     public function getRestriction(): ?int
     {
         return $this->restriction;
-    }
-
-    public function getLevelTypes(): array
-    {
-        return $this->levelTypes;
-    }
-
-    public function setLevelTypes(?array $levelTypes): self
-    {
-        $this->levelTypes = $levelTypes;
-
-        return $this;
     }
 
     public function getLevelFilter(): array

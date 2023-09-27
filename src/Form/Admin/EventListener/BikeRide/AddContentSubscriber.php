@@ -5,7 +5,6 @@ namespace App\Form\Admin\EventListener\BikeRide;
 use App\Entity\BikeRide;
 
 use App\Entity\BikeRideType as BikeRideKind;
-use App\Entity\Level;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideTypeRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
@@ -44,7 +43,6 @@ class AddContentSubscriber implements EventSubscriberInterface
 
 
         $this->setRestriction($bikeRide);
-        $this->setLevelFilter($bikeRide);
         $event->setData($bikeRide);
 
         $this->modifier($event->getForm(), $bikeRide->getBikeRideType());
@@ -121,12 +119,11 @@ class AddContentSubscriber implements EventSubscriberInterface
                     'choices' => [
                         'Accessible à tous les membres' => BikeRideType::NO_RESTRICTION,
                         'Limiter à des participants' => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
-                        'Limiter à un groupe de niveau' => BikeRideType::RESTRICTION_TO_LEVELS,
                         'Imposer un âge minimum' => BikeRideType::RESTRICTION_TO_MIN_AGE,
                     ],
                     'choice_attr' => function () {
                         return [
-                            'data-modifier' => 'bike_ride_Restriction',
+                            'data-modifier' => 'bikeRideRestriction',
                             'class' => 'form-modifier',
                          ];
                     },
@@ -143,30 +140,11 @@ class AddContentSubscriber implements EventSubscriberInterface
     private function setRestriction(BikeRide &$bikeRide): void
     {
         $restriction = match (true) {
-            !$bikeRide->getUsers()->isEmpty() => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
-            !$bikeRide->getLevels()->isEmpty() || !empty($bikeRide->getLevelTypes()) => BikeRideType::RESTRICTION_TO_LEVELS,
+            !$bikeRide->getUsers()->isEmpty() || !empty($bikeRide->getLevelFilter()) => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
             null !== $bikeRide->getMinAge() => BikeRideType::RESTRICTION_TO_MIN_AGE,
             default => BikeRideType::NO_RESTRICTION,
         };
 
         $bikeRide->setRestriction($restriction);
-    }
-
-    private function setLevelFilter(BikeRide &$bikeRide): void
-    {
-        $levelFilter = [];
-        foreach ($bikeRide->getLevels() as $level) {
-            $levelFilter[] = $level->getId();
-        }
-        foreach ($bikeRide->getLevelTypes() as $levelType) {
-            $levelTypeFilter = match ($levelType) {
-                Level::TYPE_SCHOOL_MEMBER => Level::TYPE_ALL_MEMBER,
-                Level::TYPE_FRAME => Level::TYPE_ALL_FRAME,
-                default => $levelType
-            };
-            $levelFilter[] = $levelTypeFilter;
-        }
-
-        $bikeRide->setLevelFilter($levelFilter);
     }
 }

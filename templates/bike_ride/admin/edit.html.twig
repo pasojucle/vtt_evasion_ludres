@@ -35,23 +35,20 @@
                 {{ form_row(form.displayDuration) }}
                 {{ form_row(form.closingDuration) }}
             </div>
-            <div id="bike_ride_Restriction">
-
-            {% for restriction in form.restriction %}
-                <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
+            <div id="bikeRideRestriction">
+                {% for restriction in form.restriction %}
+                    <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_MEMBER_LIST') %}
                         <div class="row row-align-top">
-                            <div class="form-group radio-group col-md-9">{{ form_widget(form.users) }}</div>
-                            <div class="col-md-3">{{ form_row(form.addFramers) }}</div>
+                            <div class="form-group radio-group col-md-8">{{ form_row(form.users) }}</div>
+                            <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
                         </div>
-                    {% endif %}
-                    {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_LEVELS') %}
-                        <div class="form-group radio-group">{{ form_widget(form.levelFilter) }}</div>
                     {% endif %}
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_MIN_AGE') %}
                         <div class="form-group radio-group">{{ form_widget(form.minAge) }}</div>
                     {% endif %}
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
         <div class="wrapper-footer">
             {{ form_row(form.save) }}

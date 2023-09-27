@@ -47,6 +47,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $survey = $event->getForm()->getData();
 
         $data = $event->getData();
+
         $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
         $levelFilter = (array_key_exists('levelFilter', $data) && !empty($data['levelFilter'])) ? $data['levelFilter'] : null;
 
@@ -69,47 +70,47 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction;
 
         $form
-        ->add('bikeRide', Select2EntityType::class, [
-            'multiple' => false,
-            'remote_route' => 'admin_bike_ride_choices',
-            'class' => BikeRide::class,
-            'primary_key' => 'id',
-            'transformer' => BikeRideTransformer::class,
-            'minimum_input_length' => 0,
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'cache' => true,
-            'cache_timeout' => 60000,
-             'language' => 'fr',
-            'placeholder' => 'Sélectionnez une sortie',
-            'width' => '100%',
-            'label' => false,
-            'required' => !$disabledBikeRide,
-            'disabled' => $disabledBikeRide,
-        ])
-        ->add('members', Select2EntityType::class, [
-            'multiple' => true,
-            'remote_route' => 'admin_member_choices',
-            'class' => User::class,
-            'primary_key' => 'id',
-            'text_property' => 'fullName',
-            'minimum_input_length' => 0,
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'cache' => true,
-            'cache_timeout' => 60000,
-            'language' => 'fr',
-            'placeholder' => 'Sélectionnez les adhérents',
-            'width' => '100%',
-            'label' => false,
-            'remote_params' => [
-                'filters' => json_encode($options['filters']),
-            ],
-            'required' => !$disabledMembers,
-            'disabled' => $disabledMembers,
-        ])
+            ->add('bikeRide', Select2EntityType::class, [
+                'multiple' => false,
+                'remote_route' => 'admin_bike_ride_choices',
+                'class' => BikeRide::class,
+                'primary_key' => 'id',
+                'transformer' => BikeRideTransformer::class,
+                'minimum_input_length' => 0,
+                'page_limit' => 10,
+                'allow_clear' => true,
+                'delay' => 250,
+                'cache' => true,
+                'cache_timeout' => 60000,
+                'language' => 'fr',
+                'placeholder' => 'Sélectionnez une sortie',
+                'width' => '100%',
+                'label' => false,
+                'required' => !$disabledBikeRide,
+                'disabled' => $disabledBikeRide,
+            ])
+            ->add('members', Select2EntityType::class, [
+                'multiple' => true,
+                'remote_route' => 'admin_member_choices',
+                'class' => User::class,
+                'primary_key' => 'id',
+                'text_property' => 'fullName',
+                'minimum_input_length' => 0,
+                'page_limit' => 10,
+                'allow_clear' => true,
+                'delay' => 250,
+                'cache' => true,
+                'cache_timeout' => 60000,
+                'language' => 'fr',
+                'placeholder' => 'Sélectionnez les adhérents',
+                'width' => '100%',
+                'label' => false,
+                'remote_params' => [
+                    'filters' => json_encode($options['filters']),
+                ],
+                'required' => !$disabledMembers,
+                'disabled' => $disabledMembers,
+            ])
             ->add('levelFilter', ChoiceType::class, [
                 'label' => false,
                 'multiple' => true,
@@ -139,7 +140,6 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $levelsToRemove = [];
         $levelsToAdd = ($levelFilter) ? $levelFilter : [];
         
         $levelsToRemove = ($levels) ? $levels : [];

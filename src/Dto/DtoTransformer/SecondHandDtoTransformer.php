@@ -84,6 +84,6 @@ class SecondHandDtoTransformer
             return $this->projectDirService->dir('', 'second_hands', $filename);
         }
 
-        return $this->projectDirService->dir('','camera.jpg');
+        return $this->projectDirService->dir('', 'camera.jpg');
     }
 }
