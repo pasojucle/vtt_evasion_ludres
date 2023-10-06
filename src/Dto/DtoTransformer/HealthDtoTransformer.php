@@ -46,6 +46,10 @@ class HealthDtoTransformer
         if ($health->hasAtLeastOnePositveResponse()) {
             $message .= 'Vous avez répondu "oui" au moins à une réponse du questionnaire de santé. <br>';
         }
+        
+        if (!$health->hasAtLeastOnePositveResponse() && new DateTime() <= $medicalCertificateEndAt ) {
+            $message .= 'J\'atteste avoir répondu "NON" à toutes les questions du questionnaire de santé et ne pas fournir de nouveau certificat médical pour ma réinscription. <br>';
+        }
 
         if ($health->hasAtLeastOnePositveResponse() || null === $medicalCertificateEndAt || $medicalCertificateEndAt < new DateTime()) {
             $message .= 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
