@@ -467,6 +467,12 @@ button[type="submit"] {
     .bike-rides-container, .links-container {
         margin-top: 25px;
     }
+    .bike-rides, .filters, .wrapper-home {
+        display: block;
+    }
+    .bike-rides .bike-ride-date:not(:first-child) {
+        margin-top: 25px;
+    }
 }
 @media screen and (max-width: 414px) {
     .wrapper-img {

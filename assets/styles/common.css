@@ -1640,12 +1640,6 @@ img.second-hand {
     .row.padding-10 .col-xs-12{
         padding: 10px 10px;
     } 
-    .bike-rides, .filters, .wrapper-home {
-        display: block;
-    }
-    .bike-rides .bike-ride-date:not(:first-child) {
-        margin-top: 25px;
-    }
     .btn {
         padding: 8px;
     }
