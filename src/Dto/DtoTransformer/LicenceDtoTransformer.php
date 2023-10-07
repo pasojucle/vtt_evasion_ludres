@@ -49,16 +49,7 @@ class LicenceDtoTransformer
 
         if ($licence) {
             $currentSeason = $this->seasonService->getCurrentSeason();
-            $status = $licence->getStatus();
-            if ($licence->getSeason() !== $currentSeason) {
-                if ($this->seasonsStatus[Licence::STATUS_NONE] >= $licence->getSeason()) {
-                    $status = Licence::STATUS_NONE;
-                }
-                if ($this->seasonsStatus[Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
-                    $status = Licence::STATUS_WAITING_RENEW;
-                }
-            }
-
+            
             $licenceDto->id = $licence->getId();
             $licenceDto->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
             $licenceDto->season = $this->getSeason($licence->getSeason());
@@ -68,9 +59,9 @@ class LicenceDtoTransformer
             $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]) : null;
             $licenceDto->hasFamilyMember = $licence->getAdditionalFamilyMember();
             $licenceDto->category = $licence->getCategory();
-            $licenceDto->statusClass = self:: STATUS_CLASS[$status];
-            $licenceDto->status = $status;
-            $licenceDto->statusStr = Licence::STATUS[$status];
+            $licenceDto->status = $this->getStatus($licence, $currentSeason);
+            $licenceDto->statusClass = self:: STATUS_CLASS[$licenceDto->status];
+            $licenceDto->statusStr = Licence::STATUS[$licenceDto->status];
             $licenceDto->type = (!empty($licence->getType())) ? $this->translator->trans(Licence::TYPES[$licence->getType()]) : null;
             $licenceDto->lock = $licence->getSeason() !== $currentSeason;
             $licenceDto->currentSeasonForm = $this->getCurrentSeasonForm($licence, $currentSeason);
@@ -207,8 +198,22 @@ class LicenceDtoTransformer
         ];
     }
 
-    public function isNewMember(User $user): bool
+    private function isNewMember(User $user): bool
     {
         return 2 > $user->getLicences()->count();
+    }
+
+    private function getStatus(Licence $licence, int $currentSeason): int
+    {
+        $status = $licence->getStatus();
+        if ($licence->getSeason() !== $currentSeason) {
+            if ($this->seasonsStatus[Licence::STATUS_NONE] >= $licence->getSeason()) {
+                $status = Licence::STATUS_NONE;
+            }
+            if ($this->seasonsStatus[Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
+                $status = Licence::STATUS_WAITING_RENEW;
+            }
+        }
+        return $status;
     }
 }

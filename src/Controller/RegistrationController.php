@@ -15,6 +15,7 @@ use App\Service\SeasonService;
 use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetProgress;
 use App\UseCase\Registration\GetRegistrationFile;
+use App\UseCase\Registration\GetStatusWarning;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
@@ -126,13 +127,14 @@ class RegistrationController extends AbstractController
 
     #[Route('/inscription/telechargement/{user}', name: 'registration_download', methods: ['GET'])]
     public function registrationDownload(
+        GetStatusWarning $getStatusWarning,
         User $user
     ): Response {
-        $season = $this->seasonService->getCurrentSeason();
+
 
         return $this->render('registration/download.html.twig', [
-            'user_entity' => $user,
-            'licence' => $user->getSeasonLicence($season),
+            'user_id' => $user->getId(),
+            'warning' => $getStatusWarning->execute($user),
         ]);
     }
 
