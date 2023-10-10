@@ -3,25 +3,25 @@
     "app": {
       "js": [
         "/build/main_build/runtime.ec2b70cf.js",
-        "/build/main_build/259.afda99dd.js",
+        "/build/main_build/259.1a96abac.js",
         "/build/main_build/45.6e7a01ae.js",
         "/build/main_build/595.83512930.js",
         "/build/main_build/app.c0d164fd.js"
       ],
       "css": [
-        "/build/main_build/595.4032b350.css",
+        "/build/main_build/595.34c62dbe.css",
         "/build/main_build/app.f741ee5c.css"
       ]
     },
     "admin": {
       "js": [
         "/build/main_build/runtime.ec2b70cf.js",
-        "/build/main_build/259.afda99dd.js",
+        "/build/main_build/259.1a96abac.js",
         "/build/main_build/595.83512930.js",
-        "/build/main_build/admin.dc942ee3.js"
+        "/build/main_build/admin.390c6f08.js"
       ],
       "css": [
-        "/build/main_build/595.4032b350.css",
+        "/build/main_build/595.34c62dbe.css",
         "/build/main_build/admin.4931b9ef.css"
       ]
     }

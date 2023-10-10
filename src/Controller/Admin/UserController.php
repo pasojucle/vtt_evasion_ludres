@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
-use App\Form\Admin\UserBoardRoleType;
 use App\Form\Admin\UserType;
-use App\Repository\UserRepository;
 use App\Service\MailerService;
+use App\Repository\UserRepository;
+use App\Form\Admin\UserBoardRoleType;
+use App\UseCase\User\GetParticipation;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
-use App\UseCase\User\GetParticipation;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_')]
 class UserController extends AbstractController
@@ -31,6 +32,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherents/{filtered}', name: 'users', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[IsGranted('USER_LIST')]
     public function adminUsers(
         GetMembersFiltered $getMembersFiltered,
         Request $request,
@@ -43,6 +45,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function adminUsersExport(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -51,6 +54,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function adminEmailUsers(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -58,10 +62,11 @@ class UserController extends AbstractController
         return new JsonResponse($getMembersFiltered->emailsToClipboard($request));
     }
 
-    #[Route('/adherent/{user}', name: 'user', methods: ['GET'])]
-    #[Route('/inscription/adherent/{user}', name: 'registration_user', methods: ['GET'])]
-    #[Route('/adherent/calendrier/{user}', name: 'bike_rides_user', methods: ['GET'])]
-    #[Route('/adherent/assyrance/{user}', name: 'coverage_user', methods: ['GET'])]
+    #[Route('/adherent/{user}', name: 'user', requirements:['user' => '\d+'], methods: ['GET'])]
+    #[Route('/inscription/adherent/{user}', name: 'registration_user', requirements:['user' => '\d+'], methods: ['GET'])]
+    #[Route('/adherent/calendrier/{user}', name: 'bike_rides_user', requirements:['user' => '\d+'], methods: ['GET'])]
+    #[Route('/adherent/assurance/{user}', name: 'coverage_user', requirements:['user' => '\d+'], methods: ['GET'])]
+    #[IsGranted('USER_VIEW', 'user')]
     public function adminUser(
         User $user,
         Request $request
@@ -75,6 +80,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], defaults:['filtered' => false])]
+    #[IsGranted('USER_VIEW', 'user')]
     public function adminUserParticipation(
         GetParticipation $getParticipation,
         Request $request,
@@ -87,7 +93,8 @@ class UserController extends AbstractController
         );
     }
 
-    #[Route('/adherent/edit/{user}', name: 'user_edit', methods: ['GET', 'POST'])]
+    #[Route('/adherent/edit/{user}', name: 'user_edit', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminUserEdit(
         Request $request,
         User $user
@@ -115,7 +122,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/adherent/role/{user}', name: 'user_board_role', methods: ['GET', 'POST'])]
+    #[Route('/adherent/role/{user}', name: 'user_board_role', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminUserRole(
         Request $request,
         User $user
@@ -125,15 +133,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            $data = $request->request->all('user_board_role');
 
-            if (array_key_exists('isFramer', $data) && $data['isFramer']) {
-                $user->addRole('ROLE_FRAME');
-            } else {
-                $user->removeRole('ROLE_FRAME');
-                $user->addRole('ROLE_USER');
-            }
- 
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_user', [
@@ -148,6 +148,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/send/numberlicence/{user}', name: 'send_number_licence', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminSendLicence(
         MailerService $mailerService,
         User $user
@@ -169,7 +170,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/adhérent/choices', name: 'member_choices', methods: ['GET'])]
+    #[Route('/adherent/choices', name: 'member_choices', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function memberChoices(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -183,6 +185,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/encadrant/choices', name: 'framer_choices', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function framerChoices(
         GetFramersFiltered $getFramersFiltered,
         Request $request
@@ -195,7 +198,9 @@ class UserController extends AbstractController
         return new JsonResponse($getFramersFiltered->choices($filters, $query));
     }
 
+    
     #[Route('/all/user/choices', name: 'all_user_choices', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function allUserChoices(
         Request $request,
         UserRepository $userRepository,

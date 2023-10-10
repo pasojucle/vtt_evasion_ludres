@@ -166,3 +166,12 @@ survey:
 second_hand:
   valided: Validées
   un_valided: Non Validées
+
+permission: 
+  bike_ride: Programme et groupe 
+  user: Fiche adhérent et inscription
+  product: Boutique et commande
+  survey: Sondage
+  modal_window: Pop'up
+  second_hand: Occasion
+  permission: Permission

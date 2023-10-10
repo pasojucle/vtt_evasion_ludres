@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BackgroundDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Background;
+use App\Service\PaginatorService;
 use App\Form\Admin\BackgroundType;
 use App\Repository\BackgroundRepository;
-use App\Service\PaginatorService;
-use App\UseCase\Background\EditBackground;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\UseCase\Background\EditBackground;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\BackgroundDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class BackgroundController extends AbstractController
@@ -29,6 +30,7 @@ class BackgroundController extends AbstractController
     }
 
     #[Route('/images_de_fond', name: 'admin_background_list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -44,6 +46,7 @@ class BackgroundController extends AbstractController
     }
 
     #[Route('/image_de_fond/{background}', name: 'admin_background_edit', defaults:['background' => null], methods: ['GET', 'post'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminEdit(Request $request, EditBackground $editBackground, ?Background $background): Response
     {
         $currentFilename = $background?->getFilename();
@@ -63,6 +66,7 @@ class BackgroundController extends AbstractController
     }
 
     #[Route('/admin/supprimer/image_de_fond/{background}', name: 'admin_background_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminBackgroundDelete(
         Request $request,
         Background $background

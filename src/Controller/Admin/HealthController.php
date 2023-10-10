@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\Admin\HealthType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HealthController extends AbstractController
 {
     #[Route('/admin/sante/edit/{user}', name: 'admin_health_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminEdit(
         Request $request,
         UserDtoTransformer $userDtoTransformer,

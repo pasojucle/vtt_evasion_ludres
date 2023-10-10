@@ -2,21 +2,22 @@
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BoardRole;
-use App\Form\Admin\BoardRoleType;
-use App\Repository\BoardRoleRepository;
-use App\Repository\UserRepository;
 use App\Service\OrderByService;
+use App\Form\Admin\BoardRoleType;
 use App\Service\PaginatorService;
+use App\Repository\UserRepository;
+use App\Repository\BoardRoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/bureau/role', name: 'admin_board_role')]
+#[Route('/admin/param/bureau/role', name: 'admin_board_role')]
 class BoardRoleController extends AbstractController
 {
     public function __construct(private BoardRoleRepository $boardRoleRepository, private EntityManagerInterface $entityManager, private OrderByService $orderByService)
@@ -24,6 +25,7 @@ class BoardRoleController extends AbstractController
     }
 
     #[Route('s', name: '_list', methods: ['GET'], defaults:['type' => 1])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -39,6 +41,7 @@ class BoardRoleController extends AbstractController
     }
 
     #[Route('/{boardRole}', name: '_edit', methods: ['GET', 'POST'], defaults:['boardRole' => null])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleEdit(
         Request $request,
         ?BoardRole $boardRole
@@ -66,6 +69,7 @@ class BoardRoleController extends AbstractController
     }
 
     #[Route('/supprimer/{boardRole}', name: '_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleDelete(
         Request $request,
         UserRepository $userRepository,
@@ -99,6 +103,7 @@ class BoardRoleController extends AbstractController
     }
 
     #[Route('/ordonner/{boardRole}', name: '_order', methods: ['POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminBoardRoleOrder(
         Request $request,
         BoardRole $boardRole

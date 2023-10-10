@@ -1,3 +1,4 @@
+{% if session is defined or is_granted('ROLE_ADMIN') %}
 <div class="dropdown">
   <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ user.id }}"></button>
   <div class="dropdown-menu" data-target="dropdown-{{ user.id }}">
@@ -10,12 +11,14 @@
         {% if user.approvals.goingHomeAlone is defined %}
           <li class="info ">{{ user.approvals.goingHomeAlone.toHtml.class.icon|raw }} {{ user.approvals.goingHomeAlone.toHtml.message }}</li>
         {% endif %}
-        {% if clusters is not empty and not cluster.isComplete and (session.availability is empty or session.availability.value == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
-          <li><a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" class="dropdown-item" title="Changer de groupe">
+        {% if bikeRide.isEditable and clusters is not empty and not cluster.isComplete and (session.availability is empty or session.availability.value == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+          <li>
+            <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" class="dropdown-item" title="Changer de groupe">
               <i class="fa-solid fa-rotate"></i> Changer de groupe
-          </a></li>
+            </a>
+          </li>
         {% endif %}
-        {% if is_granted('ROLE_ADMIN') and not cluster.isComplete %}
+        {% if bikeRide.isEditable and not cluster.isComplete %}
             <li><a class="dropdown-item" href="{{ path('admin_session_delete', {'session' : session.id}) }}" title="Supprimer"><i class="fas fa-times"></i> Supprimer de la sortie</a></li>
         {% endif %}
       {% endif %}
@@ -32,3 +35,4 @@
     </ul>
   </div>
 </div>
+{% endif %}

@@ -27,7 +27,7 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/mon-compte', name: 'user_account', methods: ['GET'])]
+    #[Route('/mon-compte/profil', name: 'user_account', methods: ['GET'])]
     public function userAccount(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -43,7 +43,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/mot_de_passe/modifier', name: 'change_password', methods: ['GET', 'POST'])]
+    #[Route('/mon-compte/mot-de-passe', name: 'change_password', methods: ['GET', 'POST'])]
     public function changePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher
@@ -51,10 +51,6 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $user = $this->getUser();
-
-        if (null === $user) {
-            return $this->redirectToRoute('home');
-        }
 
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
@@ -82,13 +78,14 @@ class UserController extends AbstractController
     }
 
 
-    #[Route('mon_compte/demande/modification', name: 'user_change_infos', methods: ['GET', 'POST'])]
+    #[Route('/mon-compte/demande/modification', name: 'user_change_infos', methods: ['GET', 'POST'])]
     public function changeInfos(
         Request $request,
         MailerService $mailerService,
         ContentRepository $contentRepository
     ): Response {
 
+        $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var ?User $user */
         $user = $this->getUser();
         $form = $this->createForm(EmailMessageType::class);

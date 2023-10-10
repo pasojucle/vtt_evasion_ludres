@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Licence;
 use App\Entity\User;
+use App\Entity\Licence;
 use App\Form\Admin\ToolType;
-use App\Form\Admin\UserSearchType;
-use App\Repository\UserRepository;
+use App\Service\UserService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
-use App\Service\UserService;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\ClickableInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\Form\Admin\UserSearchType;
+use App\Repository\UserRepository;
 use Symfony\Component\Form\FormError;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ToolController extends AbstractController
 {
@@ -32,6 +33,7 @@ class ToolController extends AbstractController
     }
 
     #[Route('/admin/tool/delete/user', name: 'admin_tool_delete_user', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminDeleteUser(): Response
     {
         $form = $this->createForm(UserSearchType::class, null, [
@@ -44,6 +46,7 @@ class ToolController extends AbstractController
     }
 
     #[Route('/admin/tool/confirm/delete/user/{user}', name: 'admin_tool_confirm_delete_user', defaults: ['user' => null], methods: ['GET', 'POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminConfirmDeleteUser(
         Request $request,
         UserService $userService,
@@ -79,6 +82,7 @@ class ToolController extends AbstractController
     }
 
     #[Route('/admin/registration/error', name: 'admin_registration_error', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationError(
         Request $request,
         MailerService $mailerService,
@@ -128,6 +132,7 @@ class ToolController extends AbstractController
     }
     
     #[Route('/admin/outil/export_email', name: 'admin_export_email', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminExportEmail(
         UserRepository $userRepository
     ): Response {

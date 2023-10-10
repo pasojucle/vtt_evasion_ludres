@@ -1,6 +1,6 @@
 <li id="session-{{ session.id }}" class="col-list col-list-1btn">
     <div class="list-dropdown">
-        <a href="{{ path('admin_bike_rides_user', {'user': user.id})}}"{% if permission < 7 %} class="disabled"{% endif %}
+        <a href="{{ path('admin_bike_rides_user', {'user': user.id})}}"{% if not bikeRide.isEditable %} class="disabled"{% endif %}
             {% if user.level.colors is not null  and bikeRide.bikeRideType.useLevels %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
             <div class="row">
                 <div class="col-md-9 col-xs-10">
@@ -37,10 +37,10 @@
     {% if not cluster.isComplete %}
         {% if not session.userIsOnSite %}
             <a href="{{ path('admin_session_present', {'session': session.id}) }}" 
-            class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} admin-session-present{% if permission < 7 %} disabled{% endif %}" title="Absent">
+            class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Absent">
             <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-check{% endif %}"></i></a>
         {% else %}
-            <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success admin-session-present{% if permission < 7 %} disabled{% endif %}" title="Présent"><i class="fas fa-check-circle"></i></a>
+            <a href="{{ path('admin_session_present', {'session': session.id}) }}" class="btn btn-success admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Présent"><i class="fas fa-check-circle"></i></a>
         {% endif %}
     {% else %}
         {% if session.userIsOnSite %}

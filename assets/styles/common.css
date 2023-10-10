@@ -1217,7 +1217,7 @@ nav.nav-tab::before {
     font-size: 700;
     text-decoration: underline;
 }
-.background-ligth h1, .background-ligth h2, .background-clear h2 {
+.background-ligth h1, .background-ligth h2, .background-clear h2, .wrapper-full-width.background-ligth h1 {
     color: var(--background-color);
 }
 .background-ligth {

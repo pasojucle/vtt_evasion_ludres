@@ -33,7 +33,7 @@ class ResetPasswordController extends AbstractController
     ) {
     }
 
-    #[Route('mot_de_passe', name: 'app_forgot_password_request', methods: ['GET', 'POST'])]
+    #[Route('mot-de-passe/oublie', name: 'app_forgot_password_request', methods: ['GET', 'POST'])]
     public function request(Request $request, MailerInterface $mailer): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);

@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\DtoTransformer\ProductDtoTransformer;
 use App\Entity\Product;
 use App\Form\Admin\ProductType;
-use App\Repository\ProductRepository;
 use App\Service\PaginatorService;
-use App\Service\Product\ProductEditService;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\Service\Product\ProductEditService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\ProductDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductController extends AbstractController
 {
@@ -27,6 +28,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/admin/produits', name: 'admin_products', methods: ['GET'])]
+    #[IsGranted('PRODUCT_LIST')]
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -43,6 +45,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/admin/produit/{product}', name: 'admin_product', methods: ['GET', 'POST'], defaults:['product' => null])]
+    #[IsGranted('PRODUCT_EDIT', 'product')]
     public function adminEdit(
         ProductEditService $productEditService,
         Request $request,
@@ -65,6 +68,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/admin/supprimer/produit/{product}', name: 'admin_product_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('PRODUCT_EDIT', 'product')]
     public function adminProduitDelete(
         Request $request,
         Product $product

@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\SurveyDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Respondent;
-use App\Entity\Survey;
-use App\Entity\SurveyResponse;
-use App\Entity\User;
-use App\Form\SurveyResponsesType;
-use App\Repository\RespondentRepository;
-use App\Repository\SurveyRepository;
-use App\UseCase\Survey\GetResponsesByUser;
 use DateTime;
+use App\Entity\User;
+use App\Entity\Survey;
+use App\Entity\Respondent;
+use App\Entity\SurveyResponse;
+use App\Form\SurveyResponsesType;
+use App\Repository\SurveyRepository;
+use App\Repository\RespondentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\UseCase\Survey\GetResponsesByUser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SurveyController extends AbstractController
 {
@@ -28,11 +27,10 @@ class SurveyController extends AbstractController
     ) {
     }
 
-    #[Route('sondage/{survey}', name: 'survey', methods: ['GET', 'POST'])]
+    #[Route('/mon-compte/sondage/{survey}', name: 'survey', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function show(Request $request, RespondentRepository $respondentRepository, Survey $survey): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        
         $form = $message = $respondent = null;
         /** @var User $user */
         $user = $this->getUser();
@@ -108,14 +106,14 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/mes_sondages', name: 'user_surveys', methods: ['GET'])]
+
+    #[Route('/mon-compte/sondages', name: 'user_surveys', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function surveys(
         SurveyRepository $surveyRepository,
         RespondentRepository $respondentRepository,
         GetResponsesByUser $getResponsesByUser,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         /** @var ?User $user */
         $user = $this->getUser();
 

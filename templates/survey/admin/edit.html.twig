@@ -22,9 +22,7 @@
                 {{ form_row(form.startAt) }}
                 {{ form_row(form.endAt) }}
             </div>
-            <div class="form-group switch-group">
-                {{ form_row(form.isAnonymous) }}
-            </div>
+            {{ form_row(form.isAnonymous) }}
             <div id="surveyRestriction">
                 {% for restriction in form.restriction %}
                 <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>

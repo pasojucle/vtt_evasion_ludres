@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Entity\Survey;
-use App\Form\Admin\SurveyFilterType;
 use App\Form\Admin\SurveyType;
-use App\Repository\SurveyIssueRepository;
-use App\Repository\SurveyRepository;
 use App\Service\PaginatorService;
-use App\UseCase\Survey\ExportSurvey;
-use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
-use App\UseCase\Survey\GetSurveyResults;
 use App\UseCase\Survey\SetSurvey;
+use App\Form\Admin\SurveyFilterType;
+use App\Repository\SurveyRepository;
+use App\UseCase\Survey\ExportSurvey;
+use App\UseCase\Survey\GetSurveyResults;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\SurveyIssueRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Survey\GetAnonymousSurveyResults;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/sondage')]
 class SurveyController extends AbstractController
@@ -36,6 +37,7 @@ class SurveyController extends AbstractController
     }
 
     #[Route('s', name: 'admin_surveys', methods: ['GET'])]
+    #[IsGranted('SURVEY_LIST')]
     public function list(
         Request $request,
         PaginatorService $paginator,
@@ -51,9 +53,8 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/edite/{survey}', name: 'admin_survey_edit', methods: ['GET', 'POST'], defaults:[
-        'survey' => null,
-    ])]
+    #[Route('/edite/{survey}', name: 'admin_survey_edit', methods: ['GET', 'POST'], defaults:['survey' => null])]
+    #[IsGranted('SURVEY_EDIT', 'survey')]
     public function edit(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, ?Survey $survey): Response
     {
         $getSurvey->execute($survey);
@@ -76,6 +77,7 @@ class SurveyController extends AbstractController
     }
 
     #[Route('/{survey}', name: 'admin_survey', methods: ['GET', 'POST'], requirements: ['survey' => '\d+'])]
+    #[IsGranted('SURVEY_EDIT', 'survey')]
     public function show(
         GetSurveyResults $getSurveyResults,
         Request $request,
@@ -105,6 +107,7 @@ class SurveyController extends AbstractController
 
 
     #[Route('/emails', name: 'admin_survey_email_to_clipboard', methods: ['GET'])]
+    #[IsGranted('SURVEY_LIST')]
     public function adminEmailSurvey(
         GetSurveyResults $getSurveyResults,
         Request $request
@@ -122,9 +125,8 @@ class SurveyController extends AbstractController
         return new JsonResponse(implode(',', $emails));
     }
 
-    #[Route('/anonyme/{survey}/{tab}', name: 'admin_anonymous_survey', methods: ['GET'], defaults: [
-        'tab' => 0,
-    ])]
+    #[Route('/anonyme/{survey}/{tab}', name: 'admin_anonymous_survey', methods: ['GET'], defaults: ['tab' => 0])]
+    #[IsGranted('SURVEY_VIEW', 'survey')]
     public function showAnonymous(GetAnonymousSurveyResults $getAnonymousSurveyResults, Survey $survey, int $tab): Response
     {
         return $this->render('survey/admin/show_anonymous.html.twig', [
@@ -136,6 +138,7 @@ class SurveyController extends AbstractController
     }
 
     #[Route('export/{survey}', name: 'admin_survey_export', methods: ['GET'])]
+    #[IsGranted('SURVEY_VIEW', 'survey')]
     public function export(ExportSurvey $export, Survey $survey): Response
     {
         $content = $export->execute($survey);
@@ -152,6 +155,7 @@ class SurveyController extends AbstractController
     }
 
     #[Route('disable/{survey}', name: 'admin_survey_disable', methods: ['GET', 'POST'])]
+    #[IsGranted('SURVEY_EDIT', 'survey')]
     public function delete(Request $request, Survey $survey): Response
     {
         $form = $this->createForm(FormType::class, null, [
@@ -179,6 +183,7 @@ class SurveyController extends AbstractController
     }
 
     #[Route('/survey/issue/list/select2', name: 'survey_issue_list_select2', methods: ['GET'])]
+    #[IsGranted('SURVEY_LIST')]
     public function userListSelect2(
         SurveyIssueRepository $surveyIssueRepository,
         Request $request

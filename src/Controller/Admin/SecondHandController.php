@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\DtoTransformer\SecondHandDtoTransformer;
+use DateTimeImmutable;
 use App\Entity\SecondHand;
 use App\Form\SecondHandType;
-use App\Repository\SecondHandRepository;
-use App\Service\PaginatorService;
 use App\Service\UploadService;
-use DateTimeImmutable;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\Service\PaginatorService;
+use App\Repository\SecondHandRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\SecondHandDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('admin/occasion', name: 'admin_second_hand_')]
 class SecondHandController extends AbstractController
@@ -28,6 +29,7 @@ class SecondHandController extends AbstractController
     }
 
     #[Route('/list/{valid}', name: 'list', defaults: ['valid' => SecondHandDtoTransformer::UN_VALIDED], methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_LIST')]
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -45,6 +47,7 @@ class SecondHandController extends AbstractController
 
 
     #[Route('/detail/{secondHand}', name: 'show', methods: ['GET'])]
+    #[IsGranted('SECOND_HAND_VIEW', 'secondHand')]
     public function show(SecondHand $secondHand): Response
     {
         return $this->render('second_hand/admin/show.html.twig', [
@@ -55,6 +58,7 @@ class SecondHandController extends AbstractController
 
 
     #[Route('/edit/{secondHand}', name: 'edit', defaults: ['secondHand' => null], methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function edit(
         Request $request,
         ?SecondHand $secondHand,
@@ -89,6 +93,7 @@ class SecondHandController extends AbstractController
     }
 
     #[Route('/delete/{secondHand}', name: 'delete', methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function delete(
         Request $request,
         SecondHand $secondHand
@@ -116,6 +121,7 @@ class SecondHandController extends AbstractController
     }
     
     #[Route('/valider/{secondHand}', name: 'validate', methods: ['GET'])]
+    #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function validate(
         SecondHand $secondHand
     ): Response {

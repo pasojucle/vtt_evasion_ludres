@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\MembershipFeeAmount;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Form\Admin\MembershipFeeAmountType;
 use App\Repository\MembershipFeeRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/admin/param/tarif', name: 'admin_membership_fee')]
 class MembershipFeeController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
@@ -22,7 +24,8 @@ class MembershipFeeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/admin/tarifs', name: 'admin_membership_fee', methods: ['GET'])]
+    #[Route('/admin/tarifs', name: '', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         MembershipFeeRepository $membershipFeeRepository
     ): Response {
@@ -31,7 +34,8 @@ class MembershipFeeController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/membership/fee/edit/{amount}', name: 'admin_membership_fee_edit', methods: ['GET', 'POST'])]
+    #[Route('/edit/{amount}', name: '_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminEdit(
         Request $request,
         MembershipFeeAmount $amount

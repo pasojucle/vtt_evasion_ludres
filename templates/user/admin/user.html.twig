@@ -20,7 +20,7 @@
             <div class="block background-ligth">
                 <div class="block-title">
                     <h2>Adhérent</h2>
-                    {% if is_granted('ROLE_REGISTER') %}
+                    {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
                             <a href="{{ path('admin_identity_edit', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
@@ -61,7 +61,7 @@
                 <div class="block background-ligth">
                     <div class="block-title">
                         <h2>Parents</h2>
-                        {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                        {% if is_granted('USER_EDIT', user) and (user.secondKinship is not empty or user.secondKinship is not empty) %}
                             <div class="tools">
                             <a href="{{ path('admin_identity_edit', {'user': user.id, 'isKinship': 1}) }}"
                                     class="btn" title="Modifier">
@@ -90,7 +90,7 @@
             <div class="block background-ligth">
                 <div class="block-title">
                     <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
-                    {% if is_granted('ROLE_REGISTER') %}
+                    {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
                         <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
@@ -102,13 +102,13 @@
                 <div class="block-body">
                     <ul>
                         {% if user.level.type is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Niveau : </b></div><div class="col-md-8 col-xs-6">{{ user.level.title }}</div></div></li>
+                            <li><div class="row"><div class="col-md-3 col-xs-6"><b>Niveau : </b></div><div class="col-md-9 col-xs-6">{{ user.level.title }}</div></div></li>
                         {% endif %}
                         {% if user.boardRole is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Fonction : </b></div><div class="col-md-8 col-xs-6">{{ user.boardRole }}</div></div></li>
+                            <li><div class="row"><div class="col-md-3 col-xs-6"><b>Fonction : </b></div><div class="col-md-9 col-xs-6">{{ user.boardRole }}</div></div></li>
                         {% endif %}
-                        {% if user.accessControl is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Droits : </b></div><div class="col-md-8 col-xs-6">{{ user.accessControl }}</div></div></li>
+                        {% if user.permissions is not null %}
+                            <li><div class="row"><div class="col-md-3 col-xs-6"><b>Droits : </b></div><div class="col-md-9 col-xs-6">{{ user.permissions|raw }}</div></div></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -116,7 +116,7 @@
             <div class="block background-ligth">
                 <div class="block-title">
                     <h2>Licence</h2>
-                    {% if is_granted('ROLE_REGISTER') %}
+                    {% if is_granted('USER_EDIT', user)%}
                         <div class="tools">
                         <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
                                 class="btn" title="Modifier">
@@ -150,7 +150,8 @@
                 <div class="block background-ligth">
                 <div class="block-title">
                     <h2>Informations sanitaires</h2>
-                    {% if is_granted('ROLE_REGISTER') and (user.secondKinship is not empty or user.secondKinship is not empty) %}
+                    {% dump(is_granted('USER_EDIT', user))%}
+                    {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
                         <a href="{{ path('admin_health_edit', {'user': user.id}) }}"
                                 class="btn" title="Modifier">

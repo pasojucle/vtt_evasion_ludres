@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\BikeRideType;
-use App\Entity\Indemnity;
 use App\Entity\Level;
+use App\Entity\Indemnity;
+use App\Entity\BikeRideType;
 use App\Form\Admin\IndemnityType;
-use App\UseCase\Indemnity\GetIndemnities;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\UseCase\Indemnity\GetIndemnities;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/indemnite', name: 'admin_indemnity')]
+#[Route('/admin/param/indemnite', name: 'admin_indemnity')]
 class IndemnityController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $entityManager)
@@ -23,6 +24,7 @@ class IndemnityController extends AbstractController
     }
 
     #[Route('s}', name: '_list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         GetIndemnities $getIndemnities
     ): Response {
@@ -32,6 +34,7 @@ class IndemnityController extends AbstractController
     }
 
     #[Route('/edit/{indemnity}', name: '_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminEdit(
         Request $request,
         Indemnity $indemnity
@@ -59,6 +62,7 @@ class IndemnityController extends AbstractController
     }
 
     #[Route('/add/{level}/{bikeRideType}', name: '_add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminAdd(
         Request $request,
         Level $level,

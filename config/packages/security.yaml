@@ -51,27 +51,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin/groupe, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin/seance, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin/calendrier, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin/sortie, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin/adherent, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin/rando, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin/group, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin/inscription, roles: ROLE_REGISTER, requires_channel: https }
-        - { path: ^/admin/identite, roles: ROLE_REGISTER, requires_channel: https }
-        - { path: ^/admin/send, roles: ROLE_REGISTER, requires_channel: https }
-        - { path: ^/admin/sante, roles: ROLE_REGISTER, requires_channel: https }
-        - { path: ^/admin/assurance, roles: ROLE_REGISTER, requires_channel: https }
-        - { path: ^/admin/adhérent/choices, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/admin, roles: ROLE_FRAME, requires_channel: https }
-        - { path: ^/sondage, roles: ROLE_USER, requires_channel: https }
-        - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
-        - { path: ^/mes-commandes, roles: ROLE_USER, requires_channel: https }
-        - { path: ^/ma-commande, roles: ROLE_USER, requires_channel: https }
-        - { path: ^/mon-panier, roles: ROLE_USER, requires_channel: https }
-        - { path: ^/mon-programme, roles: ROLE_USER, requires_channel: https }
-        - { path: '^/js', roles: PUBLIC_ACCESS, requires_channel: https }
+        - { path: ^/admin/param, roles: ROLE_ADMIN, requires_channel: https }
+        - { path: ^/admin/tool, roles: ROLE_ADMIN, requires_channel: https }
+        - { path: ^/admin, roles: ROLE_USER, requires_channel: https }
+        - { path: ^/mon-compte/, roles: ROLE_USER, requires_channel: https }
+        - { path: ^/login, roles: PUBLIC_ACCESS, requires_channel: https }
         - { path: '^/', roles: PUBLIC_ACCESS, requires_channel: https }
 
 when@test:

@@ -4,27 +4,33 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\BoardRole;
+use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
-use App\Entity\User;
-use Doctrine\ORM\EntityRepository;
+use App\Entity\BoardRole;
 use Doctrine\ORM\Query\Expr;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class UserBoardRoleType extends AbstractType
 {
-    public function __construct(private Security $security, private RoleHierarchyInterface $roleHierarchy)
+    public function __construct(
+        private Security $security, 
+        private AccessDecisionManagerInterface $accessDecisionManager
+    )
     {
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -83,24 +89,17 @@ class UserBoardRoleType extends AbstractType
             ])
         ;
 
-        $formModifier = function (FormInterface $form, ?Level $level, User $user) {
-            if ($this->security->isGranted('ROLE_ADMIN') && Level::TYPE_FRAME === $level?->getType()) {
-                $reachableRoles = $this->roleHierarchy->getReachableRoleNames($user->getRoles());
-
+        $formModifier = function (FormInterface $form, User $user) {
+            $token = new UsernamePasswordToken($user, 'none', $user->getRoles());
+            $isGrantedAdmin = $this->accessDecisionManager->decide($token, ['ROLE_ADMIN']);
+            if (!$isGrantedAdmin && $this->security->isGranted('PERMISSION_EDIT', $user)) {
                 $form
-                    ->add('isFramer', CheckboxType::class, [
-                        'block_prefix' => 'switch',
-                        'required' => false,
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                        'attr' => [
-                            'data-switch-on' => 'Donner les accès admin pour les sorties',
-                            'data-switch-off' => 'Aucun accès admin',
-                        ],
-                        'data' => in_array('ROLE_FRAME', $reachableRoles),
-                        'disabled' => in_array('ROLE_ADMIN', $reachableRoles),
-                        'mapped' => false,
+                    ->add('permissions', CollectionType::class, [
+                        'entry_type' => CheckboxType::class,
+                        'entry_options' => [
+                            'block_prefix' => 'switch_permission',
+                            'required' => false,
+                        ]
                     ])
                 ;
             }
@@ -110,16 +109,15 @@ class UserBoardRoleType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            $formModifier($form, $data->getLevel(), $data);
+            $formModifier($form, $data);
         });
 
 
         $builder->get('level')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
-                $level = $event->getForm()->getData();
                 $user = $event->getForm()->getParent()->getData();
-                $formModifier($event->getForm()->getParent(), $level, $user);
+                $formModifier($event->getForm()->getParent(), $user);
             }
         );
     }

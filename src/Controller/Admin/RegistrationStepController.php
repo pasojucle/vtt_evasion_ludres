@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\RegistrationStep;
-use App\Entity\RegistrationStepGroup;
-use App\Form\RegistrationStepType;
-use App\Repository\RegistrationStepGroupRepository;
-use App\Repository\RegistrationStepRepository;
 use App\Service\OrderByService;
-use App\UseCase\Registration\GetRegistrationByTypes;
-use App\UseCase\RegistrationStep\EditRegistrationStep;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\RegistrationStep;
+use App\Form\RegistrationStepType;
+use App\Entity\RegistrationStepGroup;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\RegistrationStepRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\RegistrationStepGroupRepository;
+use App\UseCase\Registration\GetRegistrationByTypes;
+use App\UseCase\RegistrationStep\EditRegistrationStep;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/admin/param', name: 'admin_registration_step', methods: ['GET'])]
 class RegistrationStepController extends AbstractController
 {
     public function __construct(
@@ -26,7 +28,8 @@ class RegistrationStepController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/param_inscription', name: 'admin_registration_steps', methods: ['GET'])]
+    #[Route('/inscription', name: 's', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationSteps(
         GetRegistrationByTypes $registrationByTypes
     ): Response {
@@ -39,7 +42,8 @@ class RegistrationStepController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/registrationStepGroup/ordonner/{group}', name: 'admin_registration_step_group_order', methods: ['GET', 'POST'], options:['expose' => true])]
+    #[Route('/Group/ordonner/{group}', name: '_group_order', methods: ['GET', 'POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminregistrationStepGroupOrder(
         Request $request,
         RegistrationStepGroup $group
@@ -52,7 +56,8 @@ class RegistrationStepController extends AbstractController
         return $this->redirectToRoute('admin_registration_steps');
     }
 
-    #[Route('/admin/registrationStep/ordonner/{step}', name: 'admin_registration_step_order', methods: ['GET', 'POST'], options:['expose' => true])]
+    #[Route('/ordonner/{step}', name: '_order', methods: ['GET', 'POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminregistrationStepOrder(
         Request $request,
         RegistrationStep $step
@@ -66,7 +71,8 @@ class RegistrationStepController extends AbstractController
         return $this->redirectToRoute('admin_registration_steps');
     }
 
-    #[Route('/admin/param_inscription/{step}', name: 'admin_registration_step', methods: ['GET', 'POST'])]
+    #[Route('/{step}', name: '', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationStep(
         Request $request,
         EditRegistrationStep $editRegistrationStep,

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRideType;
-use App\Form\Admin\BikeRideTypeType;
-use App\Repository\BikeRideTypeRepository;
 use App\Service\PaginatorService;
+use App\Form\Admin\BikeRideTypeType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\BikeRideTypeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/admin/param', name: 'admin_', methods: ['GET'])]
 class BikeRideTypeController extends AbstractController
 {
     public function __construct(
@@ -23,7 +25,8 @@ class BikeRideTypeController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/types-rando', name: 'admin_bike_ride_types', methods: ['GET'])]
+    #[Route('/types-rando', name: 'bike_ride_types', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -38,7 +41,8 @@ class BikeRideTypeController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/type-rando/{bikeRideType}', name: 'admin_bike_ride_type_edit', methods: ['GET', 'POST'], defaults:['bikeRideType' => null])]
+    #[Route('/type-rando/{bikeRideType}', name: 'bike_ride_type_edit', methods: ['GET', 'POST'], defaults:['bikeRideType' => null])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminEdit(
         Request $request,
         ?BikeRideType $bikeRideType

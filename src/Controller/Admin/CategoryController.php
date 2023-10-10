@@ -7,13 +7,15 @@ namespace App\Controller\Admin;
 use App\Entity\Category;
 use App\Form\Admin\CategoryType;
 use App\Repository\CategoryRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/categorie', name: 'admin_category_')]
+#[Route('/admin/param/categorie', name: 'admin_category_')]
+#[IsGranted('ROLE_ADMIN')]
 class CategoryController extends AbstractController
 {
     public function __construct(
@@ -51,7 +53,8 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/supprimer/category/{category}', name: 'delete', methods: ['GET', 'POST'])]
+    #[Route('supprimer/{category}', name: 'delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
         Category $category

@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\ContentDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Content;
+use App\Service\UploadService;
 use App\Form\Admin\ContentType;
-use App\Form\Admin\HomeBackgroundsType;
-use App\Repository\ContentRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Service\UploadService;
+use App\Repository\ContentRepository;
+use App\Form\Admin\HomeBackgroundsType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\ContentDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin')]
+#[Route('/admin/param')]
 class ContentController extends AbstractController
 {
     public const HOME_TAB_FLASH = 0;
@@ -42,6 +43,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/page/accueil/contenus/{tab}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'tab' => self::HOME_TAB_FLASH])]
+    #[IsGranted('ROLE_ADMIN')]
     public function listHome(
         PaginatorService $paginator,
         Request $request,
@@ -72,6 +74,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/contenus', name: 'admin_contents', methods: ['GET'], defaults:['route' => null, 'isFlash' => false])]
+    #[IsGranted('ROLE_ADMIN')]
     public function list(
         PaginatorService $paginator,
         Request $request,
@@ -91,6 +94,7 @@ class ContentController extends AbstractController
 
     #[Route('/page/accueil/contenu/{content}', name: 'admin_home_content_edit', methods: ['GET', 'POST'], defaults:['content' => null])]
     #[Route('/contenu/{content}', name: 'admin_content_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminContentEdit(
         Request $request,
         ContentDtoTransformer $contentDtoTransformer,
@@ -136,6 +140,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/supprimer/contenu/{content}', name: 'admin_content_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminContentDelete(
         Request $request,
         Content $content
@@ -171,6 +176,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/ordonner/contenu/{content}', name: 'admin_content_order', methods: ['POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminContentOrder(
         Request $request,
         Content $content

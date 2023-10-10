@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
-use App\Repository\LevelRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/admin/param/niveau', name: 'admin_level')]
 class LevelController extends AbstractController
 {
     public function __construct(
@@ -26,7 +28,8 @@ class LevelController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/niveaux/{type}', name: 'admin_levels', methods: ['GET'], defaults:['type' => 1])]
+    #[Route('x/{type}', name: 's', methods: ['GET'], defaults:['type' => 1])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -42,7 +45,8 @@ class LevelController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/niveau/{level}', name: 'admin_level_edit', methods: ['GET', 'POST'], defaults:['level' => null])]
+    #[Route('/{level}', name: '_edit', methods: ['GET', 'POST'], defaults:['level' => null])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminLevelEdit(
         Request $request,
         ?Level $level
@@ -71,7 +75,8 @@ class LevelController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/supprimer/niveau/{level}', name: 'admin_level_delete', methods: ['GET', 'POST'])]
+    #[Route('/supprimer/{level}', name: '_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminLevelDelete(
         Request $request,
         Level $level
@@ -105,7 +110,8 @@ class LevelController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/ordonner/niveau/{level}', name: 'admin_level_order', methods: ['POST'], options:['expose' => true])]
+    #[Route('/ordonner/{level}', name: '_order', methods: ['POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminLevelOrder(
         Request $request,
         Level $level

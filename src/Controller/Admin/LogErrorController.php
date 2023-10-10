@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\LogErrorDtoTransformer;
 use App\Entity\LogError;
-use App\Repository\LogErrorRepository;
 use App\Service\PaginatorService;
+use App\Repository\LogErrorRepository;
 use App\UseCase\LogError\GetLogErrors;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\LogErrorDtoTransformer;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LogErrorController extends AbstractController
 {
@@ -24,6 +25,7 @@ class LogErrorController extends AbstractController
     }
 
     #[Route('/admin/log/errors/{statusCode}', name: 'admin_log_errors', methods: ['GET'], defaults:['statusCode' => 500])]
+    #[IsGranted('ROLE_ADMIN')]
     public function list(
         Request $request,
         int $statusCode
@@ -34,6 +36,7 @@ class LogErrorController extends AbstractController
     }
 
     #[Route('/admin/log/error/show/{error}', name: 'admin_log_error', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function show(
         LogErrorDtoTransformer $logErrorDtoTransformer,
         LogError $error
@@ -44,6 +47,7 @@ class LogErrorController extends AbstractController
     }
 
     #[Route('/admin/log/error/delete/{error}/{total}', name: 'admin_log_error_delete', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(
         EntityManagerInterface $entityManager,
         Request $request,
@@ -67,6 +71,7 @@ class LogErrorController extends AbstractController
     }
 
     #[Route('/admin/log/errors/delete/{statusCode}', name: 'admin_log_errors_delete', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAll(
         Request $request,
         int $statusCode

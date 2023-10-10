@@ -28,3 +28,4 @@ import './js/js-datepicker.js';
 import './js/constraints.js';
 import './js/input-file.js';
 import './js/select2/i18n/fr.js';
+import './js/clipboard.js';

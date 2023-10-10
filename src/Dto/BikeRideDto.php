@@ -46,4 +46,6 @@ class BikeRideDto
     public string $members = '';
 
     public bool $display = false;
+
+    public bool $isEditable = false;
 }

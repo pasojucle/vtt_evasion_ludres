@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
+use App\UseCase\User\GetBikeRides;
 use App\Repository\ContentRepository;
 use App\UseCase\BikeRide\GetSchedule;
-use App\UseCase\User\GetBikeRides;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BikeRideController extends AbstractController
 {
@@ -38,13 +39,13 @@ class BikeRideController extends AbstractController
         return $this->render('bike_ride/list.html.twig', $response['parameters']);
     }
 
-    #[Route('/mon-programme', name: 'user_bike_rides', methods: ['GET'])]
+    #[Route('/mon-compte/programme', name: 'user_bike_rides', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function userBikeRides(
         UserDtoTransformer $userDtoTransformer,
         GetBikeRides $getBikeRides,
         ContentRepository $contentRepository
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var ?User $user */
         $user = $this->getUser();
 

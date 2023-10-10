@@ -33,6 +33,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::APPROVAL_GOING_HOME_ALONE => 'approval.going_home_alone',
     ];
 
+    public const PERMISSION_BIKE_RIDE = 'BIKE_RIDE';
+    public const PERMISSION_USER = 'USER';
+    public const PERMISSION_PRODUCT = 'PRODUCT';
+    public const PERMISSION_SURVEY = 'SURVEY';
+    public const PERMISSION_MODAL_WINDOW = 'MODAL_WINDOW';
+    public const PERMISSION_SECOND_HAND = 'SECOND_HAND';
+    public const PERMISSION_PERMISSION = 'PERMISSION';
+    public const PERMISSIONS = [
+        self::PERMISSION_BIKE_RIDE => 'permission.bike_ride',
+        self::PERMISSION_USER => 'permission.user',
+        self::PERMISSION_PRODUCT => 'permission.product',
+        self::PERMISSION_SURVEY => 'permission.survey',
+        self::PERMISSION_MODAL_WINDOW => 'permission.modal_window',
+        self::PERMISSION_SECOND_HAND => 'permission.second_hand',
+    ];
+
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
@@ -108,6 +124,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(mappedBy: 'user', targetEntity: SecondHand::class)]
     #[OrderBy(['createdAt' => 'DESC'])]
     private Collection $secondHands;
+
+    #[Column(type: 'json', nullable: true)]
+    private ?array $permissions = null;
 
     public function __construct()
     {
@@ -680,6 +699,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $secondHand->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPermissions(): array
+    {
+        $permissions = [
+            self::PERMISSION_BIKE_RIDE => false,
+            self::PERMISSION_USER => false,
+            self::PERMISSION_PRODUCT => false,
+            self::PERMISSION_SURVEY => false,
+            self::PERMISSION_MODAL_WINDOW => false,
+            self::PERMISSION_SECOND_HAND => false,
+        ];
+        return ($this->permissions) ? array_merge($permissions, $this->permissions) : $permissions;
+    }
+
+    public function hasPermissions(string|array $names): bool
+    {
+        if (null === $this->permissions) {
+            return false;
+        }
+        if (is_string($names)) {
+            $names = [$names];
+        }
+        foreach($names as $name) {
+            if (array_key_exists($name, $this->permissions) && true === $this->permissions[$name]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function setPermissions(?array $permissions): static
+    {
+        $this->permissions = $permissions;
 
         return $this;
     }

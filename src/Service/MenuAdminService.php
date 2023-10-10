@@ -21,7 +21,7 @@ class MenuAdminService
                 'route' => null,
                 'pattern' => null,
                 'subMenus' => $this->getManagementMenus(),
-                'role' => 'ROLE_FRAME',
+                'role' => ['BIKE_RIDE_LIST', 'USER_LIST', 'SURVEY_LIST', 'SECOND_HAND_LIST', 'MODAL_WINDOW_LIST', 'PRODUCT_LIST'],
             ],
             [
                 'label' => 'Paramètrage',
@@ -54,55 +54,55 @@ class MenuAdminService
                 'label' => 'Programme',
                 'route' => 'admin_bike_rides',
                 'pattern' => '/^admin_bike_ride/',
-                'role' => 'ROLE_REGISTER',
+                'role' => 'BIKE_RIDE_LIST',
             ],
             [
                 'label' => 'Adhérents',
                 'route' => 'admin_users',
                 'pattern' => '/^admin_user/',
-                'role' => 'ROLE_REGISTER',
+                'role' => 'USER_NAV',
             ],
             [
                 'label' => 'Inscriptions',
                 'route' => 'admin_registrations',
                 'pattern' => '/^admin_registration/',
-                'role' => 'ROLE_REGISTER',
+                'role' => 'USER_NAV',
             ],
             [
                 'label' => 'Assurances ' . $this->seasonService->getCurrentSeason(),
                 'route' => 'admin_coverage_list',
                 'pattern' => '/^admin_coverage/',
-                'role' => 'ROLE_REGISTER',
+                'role' => 'USER_NAV',
             ],
             [
                 'label' => 'Boutique',
                 'route' => 'admin_products',
                 'pattern' => '/product/',
-                'role' => 'ROLE_ADMIN',
+                'role' => 'PRODUCT_NAV',
             ],
             [
                 'label' => 'Commandes',
                 'route' => 'admin_orders',
                 'pattern' => '/order/',
-                'role' => 'ROLE_ADMIN',
+                'role' => 'PRODUCT_LIST',
             ],
             [
                 'label' => 'Sondages',
                 'route' => 'admin_surveys',
                 'pattern' => '/survey/',
-                'role' => 'ROLE_ADMIN',
+                'role' => 'SURVEY_LIST',
             ],
             [
                 'label' => 'Pop up',
                 'route' => 'admin_modal_window_list',
                 'pattern' => '/popup/',
-                'role' => 'ROLE_ADMIN',
+                'role' => 'MODAL_WINDOW_LIST',
             ],
             [
                 'label' => 'Annonces d\'occasion',
                 'route' => 'admin_second_hand_list',
                 'pattern' => '/second_hand/',
-                'role' => 'ROLE_ADMIN',
+                'role' => 'SECOND_HAND_LIST',
             ],
         ]);
     }
@@ -219,11 +219,25 @@ class MenuAdminService
     {
         $menusGranted = [];
         foreach ($menus as $menu) {
-            if ($this->security->isGranted($menu['role'])) {
+            if ($this->isGranted($menu['role'])) {
                 $menusGranted[] = $menu;
             }
         }
 
         return $menusGranted;
+    }
+
+    private function isGranted(string| array $role): bool 
+    {
+        if (!is_array($role)) {
+            return $this->security->isGranted($role);
+        }
+
+        foreach($role as $item) {
+            if ($this->security->isGranted($item)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

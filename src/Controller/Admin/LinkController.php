@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Link;
 use App\Form\LinkType;
-use App\Repository\LinkRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\Repository\LinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
+#[Route('/admin/param/lien', name: 'admin_link')]
 class LinkController extends AbstractController
 {
     public function __construct(
@@ -28,7 +30,8 @@ class LinkController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/liens/{position}', name: 'admin_links', methods: ['GET', 'POST'], defaults:['position' => 1])]
+    #[Route('s/{position}', name: 's', methods: ['GET', 'POST'], defaults:['position' => 1])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -45,7 +48,8 @@ class LinkController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/lien/{link}', name: 'admin_link_edit', methods: ['GET', 'POST'], defaults:['link' => null])]
+    #[Route('/{link}', name: '_edit', methods: ['GET', 'POST'], defaults:['link' => null])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminLinkEdit(
         Request $request,
         SluggerInterface $slugger,
@@ -96,7 +100,8 @@ class LinkController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/supprimer/lien/{link}', name: 'admin_link_delete', methods: ['GET', 'POST'])]
+    #[Route('supprimer/{link}', name: '_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminLinkDelete(
         Request $request,
         Link $link
@@ -130,7 +135,8 @@ class LinkController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/ordonner/lien/{link}', name: 'admin_link_order', methods: ['POST'], options:['expose' => true])]
+    #[Route('/ordonner/{link}', name: '_order', methods: ['POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminLinkOrder(
         Request $request,
         Link $link

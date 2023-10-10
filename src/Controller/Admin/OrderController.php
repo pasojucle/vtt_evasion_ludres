@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\OrderDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\OrderHeader;
-use App\Form\Admin\OrderFilterType;
-use App\Repository\OrderHeaderRepository;
 use App\Service\ExportService;
 use App\Service\PaginatorService;
+use App\Form\Admin\OrderFilterType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Repository\OrderHeaderRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Dto\DtoTransformer\OrderDtoTransformer;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OrderController extends AbstractController
 {
@@ -30,6 +31,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/admin/commandes/{filtered}', name: 'admin_orders', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[IsGranted('PRODUCT_LIST')]
     public function adminOrders(
         PaginatorService $paginator,
         Request $request,
@@ -65,6 +67,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['GET'])]
+    #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function adminOrderValidate(
         Request $request,
         OrderHeader $orderHeader,
@@ -84,6 +87,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/admin/commande/{orderHeader}', name: 'admin_order', methods: ['GET'])]
+    #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function admin_order(
         Request $request,
         ?OrderHeader $orderHeader
@@ -99,6 +103,7 @@ class OrderController extends AbstractController
 
 
     #[Route('/admin/export/commande', name: 'admin_order_headers_export', methods: ['GET'])]
+    #[IsGranted('PRODUCT_LIST')]
     public function adminOrderHeadersExport(
         ExportService $exportService,
         Request $request,

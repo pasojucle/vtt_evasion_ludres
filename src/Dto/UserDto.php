@@ -38,7 +38,7 @@ class UserDto
 
     public ?FFCTLicenceDto $ffctLicence = null;
 
-    public ?string $accessControl = null;
+    public ?string $permissions = null;
 
     public bool $isEndTesting = false;
 

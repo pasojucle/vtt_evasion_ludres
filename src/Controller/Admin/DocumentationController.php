@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\DocumentationDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Documentation;
-use App\Form\Admin\DocumentationType;
-use App\Repository\DocumentationRepository;
+use App\Service\UploadService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Service\UploadService;
+use App\Form\Admin\DocumentationType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\Repository\DocumentationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\DocumentationDtoTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/admin/documentation/', name: 'admin_documentation_')]
+#[Route('/admin/param/documentation/', name: 'admin_documentation_')]
 class DocumentationController extends AbstractController
 {
     public function __construct(
@@ -31,6 +32,7 @@ class DocumentationController extends AbstractController
     }
 
     #[Route('list', name: 'list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -46,6 +48,7 @@ class DocumentationController extends AbstractController
     }
 
     #[Route('editer/{documentation}', name: 'edit', methods: ['GET', 'POST'], defaults:['documentation' => null])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminDocumentationEdit(
         Request $request,
         UploadService $uploadService,
@@ -77,6 +80,7 @@ class DocumentationController extends AbstractController
     }
 
     #[Route('supprimer/{documentation}', name: 'delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminDocumentationDelete(
         Request $request,
         Documentation $documentation
@@ -108,6 +112,7 @@ class DocumentationController extends AbstractController
     }
 
     #[Route('ordonner/{documentation}', name: 'order', methods: ['POST'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminDocumentationOrder(
         Request $request,
         Documentation $documentation

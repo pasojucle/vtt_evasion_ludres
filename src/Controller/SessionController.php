@@ -39,6 +39,7 @@ class SessionController extends AbstractController
         UnregistrableSessionMessage $unregistrableSessionMessage,
         BikeRide $bikeRide
     ): Response {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var User $user */
         $user = $this->getUser();
 
@@ -67,6 +68,7 @@ class SessionController extends AbstractController
     }
 
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
+    
     public function sessionAvailabilityEdit(
         Request $request,
         BikeRideDtoTransformer $bikeRideDtoTransformer,

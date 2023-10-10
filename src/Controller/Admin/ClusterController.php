@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
-use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\BikeRide;
 use App\Form\Admin\ClusterType;
 use App\UseCase\Cluster\ExportCluster;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ClusterController extends AbstractController
 {
@@ -24,7 +25,9 @@ class ClusterController extends AbstractController
         private ClusterDtoTransformer $clusterDtoTransformer,
     ) {
     }
+
     #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function adminClusterComplete(
         Cluster $cluster
     ): Response {
@@ -42,6 +45,7 @@ class ClusterController extends AbstractController
     }
 
     #[Route('/admin/groupe/ajoute/{bikeRide}', name: 'admin_cluster_add', methods: ['GET', 'POST'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminClusterAdd(
         Request $request,
         BikeRide $bikeRide
@@ -64,6 +68,7 @@ class ClusterController extends AbstractController
     }
 
     #[Route('/admin/groupe/edit/{bikeRide}/{cluster}', name: 'admin_cluster_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminClusterEdit(
         Request $request,
         BikeRide $bikeRide,
@@ -84,6 +89,7 @@ class ClusterController extends AbstractController
     }
 
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function adminClusterExport(
         ExportCluster $exportCluster,
         Cluster $cluster
@@ -92,6 +98,7 @@ class ClusterController extends AbstractController
     }
 
     #[Route('/admin/groupe/supprime/{cluster}', name: 'admin_cluster_delete', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function adminClusterDelete(
         Cluster $cluster
     ): Response {

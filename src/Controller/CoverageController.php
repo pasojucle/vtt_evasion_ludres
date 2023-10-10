@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
-use App\Repository\RegistrationChangeRepository;
-use App\Repository\RegistrationStepRepository;
 use App\Service\PdfService;
 use App\Service\SeasonService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Entity\RegistrationStep;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Repository\RegistrationStepRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\RegistrationChangeRepository;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/coverage', name: 'coverage')]
 class CoverageController extends AbstractController
 {
-    #[Route('current/season/{user}', name: '_current_season_edit', methods: ['GET'])]
+    #[Route('/current/season/{user}', name: '_current_season_edit', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function currentSeasonEdit(
         RegistrationStepRepository $registrationStepRepository,
         RegistrationChangeRepository $registrationChangeRepository,

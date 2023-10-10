@@ -4,24 +4,25 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\ContentRepository;
-use App\Repository\MembershipFeeRepository;
-use App\Service\ParameterService;
+use App\Entity\Licence;
 use App\Service\SeasonService;
-use App\UseCase\Registration\EditRegistration;
+use App\Entity\RegistrationStep;
+use App\Service\ParameterService;
+use App\Repository\ContentRepository;
 use App\UseCase\Registration\GetProgress;
-use App\UseCase\Registration\GetRegistrationFile;
-use App\UseCase\Registration\GetStatusWarning;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\UseCase\Registration\EditRegistration;
+use App\UseCase\Registration\GetStatusWarning;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Registration\GetRegistrationFile;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RegistrationController extends AbstractController
 {
@@ -126,6 +127,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/inscription/telechargement/{user}', name: 'registration_download', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function registrationDownload(
         GetStatusWarning $getStatusWarning,
         User $user
@@ -138,7 +140,9 @@ class RegistrationController extends AbstractController
         ]);
     }
 
+    
     #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function registrationFile(
         GetRegistrationFile $getRegistrationFile,
         User $user

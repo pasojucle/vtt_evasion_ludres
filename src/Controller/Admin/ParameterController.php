@@ -6,16 +6,18 @@ namespace App\Controller\Admin;
 
 use App\Entity\ParameterGroup;
 use App\Form\ParameterGroupType;
-use App\Repository\ParameterGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\ParameterGroupRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ParameterController extends AbstractController
 {
     #[Route('/admin/parameters/{parameterGroup}', name: 'admin_groups_parameter', methods: ['GET', 'POST'], defaults:['parameterGroup' => null])]
+    #[IsGranted('ROLE_ADMIN')]
     public function list(
         ParameterGroupRepository $parameterGroupRepository,
         Request $request,

@@ -6,13 +6,14 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Form\Admin\CertificateType;
-use App\UseCase\Certificate\GetAccompanyingAdultCertificate;
-use App\UseCase\Certificate\GetRegistrationCertificate;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Certificate\GetRegistrationCertificate;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\UseCase\Certificate\GetAccompanyingAdultCertificate;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[Route('/admin', name: 'admin_')]
 class CertificateController extends AbstractController
@@ -23,6 +24,7 @@ class CertificateController extends AbstractController
     }
 
     #[Route('/admin/adherent/certificate/{user}', name: 'user_certificate', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationCertificate(
         Request $request,
         GetRegistrationCertificate $getRegistrationCertificate,
@@ -50,6 +52,7 @@ class CertificateController extends AbstractController
     }
 
     #[Route('/admin/accompaganteur/certificate/{user}', name: 'user_accompanying_certificate', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminAccompanyingCertificate(
         Request $request,
         GetAccompanyingAdultCertificate $getAccompanyingAdultCertificate,

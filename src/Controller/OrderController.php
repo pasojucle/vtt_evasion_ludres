@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\OrderDtoTransformer;
-use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Form\OrderType;
+use App\Entity\OrderHeader;
+use App\Service\PdfService;
+use App\Service\PaginatorService;
+use App\Service\ParameterService;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
 use App\Service\Order\OrderValidateService;
-use App\Service\PaginatorService;
-use App\Service\ParameterService;
-use App\Service\PdfService;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use App\Dto\DtoTransformer\OrderDtoTransformer;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class OrderController extends AbstractController
 {
@@ -35,18 +36,15 @@ class OrderController extends AbstractController
     ) {
     }
 
-    #[Route('/mon-panier', name: 'order_edit', methods: ['GET', 'POST'])]
+    #[Route('/mon-compte/panier', name: 'order_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function orderEdit(
         OrderLinesSetService $orderLinesSetService,
         OrderValidateService $orderValidateService,
         Request $request
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var ?User $user */
         $user = $this->getUser();
-        if (null === $user) {
-            return $this->redirectToRoute('home');
-        }
         $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($user);
         if ($request->isXmlHttpRequest()) {
             $orderLinesSetService->execute($request);
@@ -70,7 +68,8 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/ma-commande/{orderHeader}', name: 'order', methods: ['GET'])]
+    #[Route('/mon-compte/commande/{orderHeader}', name: 'order', methods: ['GET'])]
+    #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function order(
         ?OrderHeader $orderHeader
     ): Response {
@@ -83,6 +82,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/confirmation-commande/{orderHeader}', name: 'order_acknowledgement', methods: ['GET'])]
+    #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function orderAcknowledgement(
         PdfService $pdfService,
         OrderHeader $orderHeader,
@@ -109,6 +109,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/commande/supprimer/{orderHeader}', name: 'order_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function orderDelete(
         Request $request,
         OrderHeader $orderHeader
@@ -137,12 +138,12 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/mes-commandes', name: 'user_orders', methods: ['GET'])]
+    #[Route('/mon-compte/commandes', name: 'user_orders', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function userOrders(
         PaginatorService $paginator,
         Request $request
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var User $user */
         $user = $this->getUser();
         $query = $this->orderHeaderRepository->findOrdersByUserQuery($user);

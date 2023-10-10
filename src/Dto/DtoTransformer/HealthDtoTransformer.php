@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\HealthDto;
+use App\Dto\LicenceDto;
 use App\Entity\Health;
 use App\Entity\Licence;
 use App\Service\ParameterService;
@@ -19,20 +20,20 @@ class HealthDtoTransformer
     ) {
     }
 
-    public function fromEntity(?Health $health): HealthDto
+    public function fromEntity(?Health $health, LicenceDto $lastLicence): HealthDto
     {
         $healthDto = new HealthDto();
         if ($health) {
             $medicalCertificateDate = $health->getMedicalCertificateDate();
             $healthDto->medicalCertificateDate = ($medicalCertificateDate) ? $medicalCertificateDate->format('d/m/Y') : null;
             $healthDto->content = $health->getContent();
-            $healthDto->isMedicalCertificateRequired = $this->isMedicalCertificateRequired($health, $medicalCertificateDate);
+            $healthDto->isMedicalCertificateRequired = $this->isMedicalCertificateRequired($health, $medicalCertificateDate, $lastLicence);
         }
 
         return $healthDto;
     }
 
-    public function isMedicalCertificateRequired(Health $health, null|DateTime|DateTimeImmutable $medicalCertificateDate): string
+    public function isMedicalCertificateRequired(Health $health, null|DateTime|DateTimeImmutable $medicalCertificateDate, LicenceDto $lastLicence): string
     {
         $message = '';
         $medicalCertificateEndAt = null;
@@ -46,12 +47,12 @@ class HealthDtoTransformer
         if ($health->hasAtLeastOnePositveResponse()) {
             $message .= 'Vous avez répondu "oui" au moins à une réponse du questionnaire de santé. <br>';
         }
-        
+
         if (!$health->hasAtLeastOnePositveResponse() && new DateTime() <= $medicalCertificateEndAt ) {
             $message .= 'J\'atteste avoir répondu "NON" à toutes les questions du questionnaire de santé et ne pas fournir de nouveau certificat médical pour ma réinscription. <br>';
         }
 
-        if ($health->hasAtLeastOnePositveResponse() || null === $medicalCertificateEndAt || $medicalCertificateEndAt < new DateTime()) {
+        if ($lastLicence->isFinal && ($health->hasAtLeastOnePositveResponse() || null === $medicalCertificateEndAt || $medicalCertificateEndAt < new DateTime())) {
             $message .= 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
         }
 

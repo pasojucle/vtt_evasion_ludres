@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\LicenceDto;
 use App\Dto\UserDto;
-use App\Entity\Identity;
-use App\Entity\Level;
-use App\Entity\Licence;
 use App\Entity\User;
+use App\Entity\Level;
+use App\Dto\LicenceDto;
+use App\Entity\Licence;
+use App\Entity\Identity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class UserDtoTransformer
 {
@@ -23,7 +25,8 @@ class UserDtoTransformer
         private LevelDtoTransformer $levelDtoTransformer,
         private LicenceDtoTransformer $licenceDtoTransformer,
         private FFCTLicenceDtoTransformer $FFCTLicenceDtoTransformer,
-        private RoleHierarchyInterface $roleHierarchy,
+        private AccessDecisionManagerInterface $accessDecisionManager,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -41,7 +44,7 @@ class UserDtoTransformer
         
         $userDto->lastLicence = $this->getLastLicence($user, $changes);
 
-        $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
+        $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth(), $userDto->lastLicence);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
         $userDto->boardRole = $user->getBoardRole()?->getName();
@@ -49,7 +52,7 @@ class UserDtoTransformer
         $userDto->isBoardMember = null !== $user->getBoardRole();
         $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
-        $userDto->accessControl = $this->getAccessControl($user->getRoles());
+        $userDto->permissions = $this->getPermissions($user);
 
         $sessionsTotal = $user->getSessions()->count();
         $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $sessionsTotal);
@@ -78,8 +81,6 @@ class UserDtoTransformer
 
         return '';
     }
-
-
 
     public function isMember(?Level $level): bool
     {
@@ -121,15 +122,20 @@ class UserDtoTransformer
         return $this->licenceDtoTransformer->fromEntity($licence, $changes);
     }
 
-    private function getAccessControl(array $roles): ?string
+    private function getPermissions(User $user): ?string
     {
-        $reachableRoles = $this->roleHierarchy->getReachableRoleNames($roles);
+        $token = new UsernamePasswordToken($user, 'none', $user->getRoles());
+                            
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return 'Accès total au menu admin';
+        }
+        $permissions = [];
+        foreach($user->getPermissions() as $name => $value) {
+            if ($value) {
+               $permissions[] = sprintf('Accès à l\'admin pour gérer %s', $this->translator->trans(sprintf('permission.%s', strtolower($name))));
+            }
+        }
 
-        return match (true) {
-            in_array('ROLE_ADMIN', $reachableRoles) => 'Accès total au menu admin',
-            in_array('ROLE_REGISTER', $reachableRoles) => 'Accès à l\'admin pour gérere les inscriptions',
-            in_array('ROLE_FRAME', $reachableRoles) => 'Accès à l\'admin pour les sorties',
-            default => null,
-        };
+        return (!empty($permissions)) ? implode('<br>', $permissions) : null;
     }
 }

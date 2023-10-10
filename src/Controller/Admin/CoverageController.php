@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
-use App\UseCase\Coverage\GetCoveragesFiltered;
 use App\UseCase\Coverage\ValidateCoverage;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\UseCase\Coverage\GetCoveragesFiltered;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/assurance', name: 'admin_coverage')]
 class CoverageController extends AbstractController
 {
     #[Route('s/{filtered}', name: '_list', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[IsGranted('USER_LIST')]
     public function list(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request,
@@ -31,6 +33,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('validate/{licence}', name: '_validate', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'licence')]
     public function adminRegistartionValidate(
         Request $request,
         ValidateCoverage $validateCoverage,
@@ -66,7 +69,8 @@ class CoverageController extends AbstractController
         ]);
     }
 
-    #[Route('/export/assurances', name: 's_export', methods: ['GET'])]
+    #[Route('/export', name: 's_export', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function adminCoveragesExport(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
@@ -74,7 +78,8 @@ class CoverageController extends AbstractController
         return $getCoveragesFiltered->export($request);
     }
 
-    #[Route('/emails/assurances', name: 's_email_to_clipboard', methods: ['GET'])]
+    #[Route('/emails', name: 's_email_to_clipboard', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function adminEmailCoverages(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
@@ -82,7 +87,8 @@ class CoverageController extends AbstractController
         return new JsonResponse($getCoveragesFiltered->emailsToClipboard($request));
     }
 
-    #[Route('/assurance/choices', name: '_choices', methods: ['GET'])]
+    #[Route('/choices', name: '_choices', methods: ['GET'])]
+    #[IsGranted('USER_LIST')]
     public function memberChoices(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request

@@ -20,13 +20,14 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use App\UseCase\SecondHand\DisabledOutOfPeriod;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
-#[Route('occasion', name: 'second_hand_')]
+#[Route(name: 'second_hand_')]
 class SecondHandController extends AbstractController
 {
     public function __construct(
@@ -35,7 +36,8 @@ class SecondHandController extends AbstractController
     ) {
     }
 
-    #[Route('/list', name: 'list', methods: ['GET', 'POST'])]
+    #[Route('/occasion/list', name: 'list', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -50,7 +52,8 @@ class SecondHandController extends AbstractController
     }
 
 
-    #[Route('/detail/{secondHand}', name: 'show', methods: ['GET'])]
+    #[Route('/occasion/detail/{secondHand}', name: 'show', methods: ['GET'])]
+    #[IsGranted('SECOND_HAND_VIEW', 'secondHand')]
     public function show(SecondHand $secondHand): Response
     {
         return $this->render('second_hand/show.html.twig', [
@@ -60,7 +63,8 @@ class SecondHandController extends AbstractController
 
 
 
-    #[Route('/mes_occasions', name: 'user_list', methods: ['GET', 'POST'])]
+    #[Route('/mon-compte/occasions', name: 'user_list', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function userList(?SecondHand $secondHand): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -74,10 +78,36 @@ class SecondHandController extends AbstractController
 
 
 
-    #[Route('/edit/{secondHand}', name: 'edit', defaults: ['secondHand' => null], methods: ['GET', 'POST'])]
+    #[Route('/mon-compte/occasion', name: 'add', methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_ADD')]
+    public function add(
+        Request $request,
+        ContentRepository $contentRepository,
+        EditSecondHand $editSecondHand
+    ): Response {
+        $secondHand = null;
+        $form = $this->createForm(SecondHandType::class, null, [
+            'action' => $this->generateUrl('second_hand_add')
+        ]);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $secondHand = $form->getData();
+            $editSecondHand->execute($form, $request);
+            return $this->redirectToRoute('second_hand_user_list');
+        }
+
+        return $this->render('second_hand/edit.html.twig', [
+            'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
+            'form' => $form->createView(),
+            'content' => $contentRepository->findOneByRoute('second_hand'),
+        ]);
+    }
+
+    #[Route('/mon-compte/occasion/{secondHand}', name: 'edit', requirements:['secondHand' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function edit(
         Request $request,
-        ?SecondHand $secondHand,
+        SecondHand $secondHand,
         ContentRepository $contentRepository,
         EditSecondHand $editSecondHand
     ): Response {
@@ -99,7 +129,8 @@ class SecondHandController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{secondHand}', name: 'delete', methods: ['GET', 'POST'])]
+    #[Route('/occasion/delete/{secondHand}', name: 'delete', methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function delete(
         Request $request,
         SecondHand $secondHand
@@ -124,7 +155,8 @@ class SecondHandController extends AbstractController
         ]);
     }
 
-    #[Route('/enabled/{secondHand}', name: 'enabled', methods: ['GET'])]
+    #[Route('/occasion/enabled/{secondHand}', name: 'enabled', methods: ['GET'])]
+    #[IsGranted('SECOND_HAND_EDIT', 'secondHand')]
     public function enabled(
         SecondHand $secondHand
     ): Response {
@@ -134,12 +166,11 @@ class SecondHandController extends AbstractController
         return $this->redirectToRoute('second_hand_user_list');
     }
 
-    #[Route('/contact/{secondHand}', name: 'message', methods: ['GET', 'POST'])]
+    #[Route('/occasion/contact/{secondHand}', name: 'message', methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_VIEW', 'secondHand')]
     public function contact(
         MailerService $mailerService,
-        Request $request,
         UserDtoTransformer $userDtoTransformer,
-        ContentRepository $contentRepository,
         ParameterRepository $parameterRepository,
         SecondHand $secondHand
     ): Response {
@@ -169,7 +200,7 @@ class SecondHandController extends AbstractController
         return $this->redirectToRoute('second_hand_show', ['secondHand' => $secondHand->getId()]);
     }
 
-    #[Route('/disable/out/of/period', name: 'disable_out_of_period', methods: ['GET'])]
+    #[Route('/occasion/disable/out/of/period', name: 'disable_out_of_period', methods: ['GET'])]
     public function disableOutOfPeriod(DisabledOutOfPeriod $disabledOutOfPeriod): Response {
         try {
             $secondHands = $disabledOutOfPeriod->execute();

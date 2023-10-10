@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\IdentitiesType;
 use App\Repository\IdentityRepository;
 use App\UseCase\Identity\EditIdentity;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class IdentityController extends AbstractController
 {
     #[Route('/admin/identite/edit/{user}/{isKinship}', name: 'admin_identity_edit', methods: ['GET', 'POST'], defaults:['isKinship' => 0])]
+    #[IsGranted('USER_EDIT', 'user')]
     public function adminEdit(
         Request $request,
         IdentityRepository $identityRepository,

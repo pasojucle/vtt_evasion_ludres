@@ -8,7 +8,7 @@
         <span class="tools">
             <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
         </span>
-        {% if is_granted('ROLE_FRAME') %}
+        {% if bikeRide.isEditable %}
             <div class="dropdown">
                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                 <div class="dropdown-menu" data-target="dropdown-tools">
@@ -44,24 +44,25 @@
             {% if cluster.sessions | length > 0 %}
                 <ul>
                     {% for session in cluster.availableSessions %}             
-                        {% include 'session/admin/list.html.twig' with {'user': session.user, 'permission': permission} %}
+                        {% include 'session/admin/list.html.twig' with {'user': session.user} %}
                     {% endfor %}
                 </ul>
                 {% if clusters is not empty and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
                     <div>
+                        {% set permission = is_granted('BIKE_RIDE_EDIT', cluster) %}
                         {% if not cluster.isComplete %}
-                            <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if permission < 7 %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" target="_blank">
+                            <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if permission %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" target="_blank">
                                 <i class="fas fa-check"></i> Valider le groupe
                             </a>
                         {% else %}
                             <div class="row row-list">
                                 <div class="col-md-9 col-xs-8">
-                                    <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete{% if permission < 7 %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}">
+                                    <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete{% if permission %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}">
                                         <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
                                     </a>
                                 </div>
                                 <div class="col-md-3 col-xs-4">
-                                    <a id="cluster_export_{{ cluster.id }}" href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success{% if permission < 7 %} disabled{% endif %}">
+                                    <a id="cluster_export_{{ cluster.id }}" href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success{% if permission %} disabled{% endif %}">
                                         <i class="fas fa-file-pdf"></i> Exporter
                                     </a>
                                 </div>

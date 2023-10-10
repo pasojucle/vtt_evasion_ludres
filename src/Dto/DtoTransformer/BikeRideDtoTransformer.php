@@ -9,16 +9,15 @@ use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRide;
 use App\Entity\User;
 use App\Service\ProjectDirService;
-
 use App\Twig\AppExtension;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use DateInterval;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class BikeRideDtoTransformer
 {
@@ -36,7 +35,7 @@ class BikeRideDtoTransformer
         private IsRegistrable $isRegistrable,
         private ProjectDirService $projectDirService,
         private BikeRideTypeDtoTransformer $bikeRideTypeDtoTransformer,
-        private SurveyDtoTransformer $surveyDtoTransformer
+        private SurveyDtoTransformer $surveyDtoTransformer,
     ) {
         $this->today = (new DateTimeImmutable())->setTime(0, 0, 0);
     }
@@ -71,6 +70,7 @@ class BikeRideDtoTransformer
 
             $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
             $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user);
+            $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
         }
 
         return $bikeRideDto;
