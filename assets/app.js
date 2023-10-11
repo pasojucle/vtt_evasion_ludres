@@ -24,3 +24,4 @@ import './js/modal';
 import './js/reveal.js';
 import './js/select2/i18n/fr.js';
 import './js/js-datepicker.js';
+import './js/form.js'

@@ -86,7 +86,7 @@ class SecondHandController extends AbstractController
         EditSecondHand $editSecondHand
     ): Response {
         $secondHand = null;
-        $form = $this->createForm(SecondHandType::class, null, [
+        $form = $this->createForm(SecondHandType::class, new SecondHand(), [
             'action' => $this->generateUrl('second_hand_add')
         ]);
         $form->handleRequest($request);

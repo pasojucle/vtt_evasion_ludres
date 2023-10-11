@@ -16,10 +16,10 @@ class SecondHand
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $name = '';
+    private string $name = '';
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $content = '';
+    private string $content = '';
 
     #[ORM\Column(length: 255)]
     private string $filename = '';

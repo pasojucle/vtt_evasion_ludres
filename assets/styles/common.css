@@ -543,10 +543,20 @@ main:not(.admin) {
     padding: 5px;
 }
 .form-group > input:disabled,
+.form-group > select:disabled,
+.form-group > textarea:disabled,
 .form-group-inline > input:disabled,
 .select2-container--default.select2-container--disabled .select2-selection--multiple,
 .select2-container--default.select2-container--disabled .select2-selection--single {
-    background: #dfbbaa;
+    background: var(--gray-color);
+    color: var(--backgroud-color);
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+button[type=submit].btn.btn-primary:disabled {
+    background: var(--gray-color);
+    border: 1px solid var(--gray-color);
     opacity: 0.7;
 }
 .background-ligth .form-group > textarea {
@@ -634,7 +644,6 @@ main:not(.admin) {
     opacity: .4;
 }
 .inputGroup {
-    background-color: var(--white-color);
     display: inline-block;
     width: calc(33% - 2px);
     margin: 10px 0;
@@ -651,6 +660,7 @@ main:not(.admin) {
     transition: color 200ms ease-in;
     overflow: hidden;
     border: 2px solid var(--light-color-darker);
+    background-color: var(--white-color);
 }
 .inputGroup.long {
     width: 100%;
@@ -659,7 +669,7 @@ main:not(.admin) {
     width: 70%;
 }
 .inputGroup label:before {
-    width: 12px;
+    width: 20px;
     height: 10px;
     border-radius: 50%;
     content: '';

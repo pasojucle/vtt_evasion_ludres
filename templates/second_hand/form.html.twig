@@ -1,17 +1,26 @@
 {{ form_start(form) }}
-    <div class="form-group-inline">
-        {{ form_row(form.name) }}
-        {{ form_row(form.category) }}
-        {{ form_row(form.content) }}
-        {{ form_row(form.price) }}
+    <div class="form-group">
+        <div class="inputGroup long check">
+            {{ form_widget(form.isAgree)}}
+            {{ form_label(form.isAgree)}}
+        </div>
     </div>
-    <div class="form-group-inline">
-        <div class="row flex-column">
-            <img class="second-hand" src="{{ second_hand.pathName }}" alt="{{ second_hand.filename }}"> 
-            {{ form_row(form.filename) }}
-        </div>       
+    <div id="secondHandContainer">
+        <div class="form-group-inline">
+            {{ form_row(form.name) }}
+            {{ form_row(form.category) }}
+            {{ form_row(form.content) }}
+            {{ form_row(form.price) }}
+        </div>
+        <div class="form-group-inline">
+            <div class="row flex-column">
+                <img class="second-hand" src="{{ second_hand.pathName }}" alt="{{ second_hand.filename }}"> 
+                {{ form_row(form.filename) }}
+            </div>       
+        </div>
+        <div class="wrapper-footer">
+            {{ form_widget(form.save) }}
+        </div>
     </div>
-    <div class="wrapper-footer">
-        {{ form_widget(form.save) }}
-    </div>
+    
 {{ form_end(form) }}
