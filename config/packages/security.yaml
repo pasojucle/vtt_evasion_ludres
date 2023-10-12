@@ -10,10 +10,8 @@ security:
                 class: App\Entity\User
                 property: licenceNumber
     role_hierarchy:
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_REGISTER, ROLE_ADMIN]
-        ROLE_ADMIN: [ROLE_USER, ROLE_FRAME, ROLE_REGISTER, ROLE_ALLOWED_TO_SWITCH]
-        ROLE_REGISTER : [ROLE_USER, ROLE_FRAME]
-        ROLE_FRAME: [ROLE_USER]
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN]
+        ROLE_ADMIN: [ROLE_USER, ROLE_ALLOWED_TO_SWITCH]
         ROLE_USER:
 
     access_decision_manager:
