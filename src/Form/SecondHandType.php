@@ -31,7 +31,7 @@ class SecondHandType extends AbstractType
     {
         $builder
             ->add('isAgree', CheckboxType::class, [
-                'label' => 'J\'accèpte les conditions d\'utilisation',
+                'label' => 'J\'accepte les conditions d\'utilisation',
                 'attr' => [
                     'class' => 'form-group check-toggle',
                 ],
