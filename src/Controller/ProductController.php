@@ -25,7 +25,6 @@ class ProductController extends AbstractController
     }
 
     #[Route('/boutique', name: 'products', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -42,7 +41,6 @@ class ProductController extends AbstractController
     }
 
     #[Route('/boutique/produit/{product}', name: 'product_show', methods: ['GET', 'POST'])]
-    #[IsGranted('PRODUCT_VIEW', 'product')]
     public function show(
         OrderAddService $orderAddService,
         Request $request,
