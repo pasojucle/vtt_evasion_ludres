@@ -27,7 +27,7 @@ final class Version20230823164322 extends AbstractMigration
         $contents = [
             [
                 'route' => 'second_hand', 
-                'content' => '<p>Déposer ici votre annonce pour proposer à la vente du matériel d\'occasion à destination des membres du club. Elle sera en ligne seulement après validation par le modérateur.</p><p>Les personnes intéressées vous contacterons via un formulaire depuis le site.</p>',
+                'content' => '<p>D&eacute;poser ici votre annonce pour proposer &agrave; la vente du mat&eacute;riel d&#39;occasion &agrave; destination des membres du club. Elle sera en ligne seulement apr&egrave;s validation par le mod&eacute;rateur.</p><p>Les personnes int&eacute;ress&eacute;es vous contacteront via un formulaire depuis le site.</p><p><span class="marker">Le club VTT Evasion Ludres et ses dirigeants d&eacute;clinent toutes responsabilit&eacute;s quant aux ventes ou &eacute;changes faits par l&#39;interm&eacute;diaire du site Internet du club. Seuls vendeurs et acheteurs sont responsables de leurs ventes et achats respectifs.</span></p>',
                 'isActive' => 1,
                 'isFlash' => 0,
                 'backgroundOnly' => 0,
