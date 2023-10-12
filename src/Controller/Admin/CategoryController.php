@@ -7,12 +7,12 @@ namespace App\Controller\Admin;
 use App\Entity\Category;
 use App\Form\Admin\CategoryType;
 use App\Repository\CategoryRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/param/categorie', name: 'admin_category_')]
 #[IsGranted('ROLE_ADMIN')]
@@ -70,7 +70,8 @@ class CategoryController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $this->categoryRepository->remove($category, true);
+            $category->setDeleted(true);
+            $this->categoryRepository->save($category, true);
 
             return $this->redirectToRoute('admin_category_list');
         }
