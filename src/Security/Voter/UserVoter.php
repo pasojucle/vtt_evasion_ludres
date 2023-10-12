@@ -3,13 +3,13 @@
 namespace App\Security\Voter;
 
 use App\Dto\UserDto;
-use App\Entity\User;
 use App\Entity\Health;
-use App\Entity\Licence;
 use App\Entity\Identity;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\Licence;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class UserVoter extends Voter
 {
@@ -20,9 +20,7 @@ class UserVoter extends Voter
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
-    )
-    {
-        
+    ) {
     }
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -31,7 +29,7 @@ class UserVoter extends Voter
             return true;
         }
 
-        return in_array($attribute, [self::EDIT, self::VIEW]) 
+        return in_array($attribute, [self::EDIT, self::VIEW])
         && ($subject instanceof User || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health || !$subject);
     }
 
@@ -43,7 +41,7 @@ class UserVoter extends Voter
             return false;
         }
 
-        return match($attribute) {
+        return match ($attribute) {
             self::EDIT => $this->canEdit($token, $user, $subject),
             self::VIEW => $this->canView($token, $user, $subject),
             self::LIST => $this->canList($token, $user, $subject),
@@ -69,9 +67,9 @@ class UserVoter extends Voter
         return $this->isOwner($subject, $user);
     }
 
-    private function canView(TokenInterface $token, User $user, null|User|UserDto $subject ): bool
+    private function canView(TokenInterface $token, User $user, null|User|UserDto $subject): bool
     {
-        if (!$subject || !$this->accessDecisionManager->decide($token, ['ROLE_USER']) ) {
+        if (!$subject) {
             return false;
         }
 

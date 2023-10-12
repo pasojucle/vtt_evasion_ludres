@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\ContentDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Content;
-use App\Service\UploadService;
 use App\Form\Admin\ContentType;
+use App\Form\Admin\HomeBackgroundsType;
+use App\Repository\ContentRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Repository\ContentRepository;
-use App\Form\Admin\HomeBackgroundsType;
+use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\ContentDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/param')]
 class ContentController extends AbstractController

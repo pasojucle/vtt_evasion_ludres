@@ -2,13 +2,13 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
-use App\Entity\Product;
-use App\Entity\OrderLine;
 use App\Entity\OrderHeader;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\OrderLine;
+use App\Entity\Product;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ProductVoter extends Voter
 {
@@ -18,9 +18,7 @@ class ProductVoter extends Voter
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
-    )
-    {
-        
+    ) {
     }
     
     protected function supports(string $attribute, mixed $subject): bool
@@ -36,7 +34,7 @@ class ProductVoter extends Voter
             return false;
         }
 
-        return match($attribute) {
+        return match ($attribute) {
             self::EDIT => $this->canEdit($token, $user, $subject),
             self::VIEW => $this->canView($token, $user, $subject),
             self::LIST => $this->canList($token, $user, $subject),
@@ -54,7 +52,7 @@ class ProductVoter extends Voter
             return true;
         }
 
-        if($user->hasPermissions(User::PERMISSION_PRODUCT)) {
+        if ($user->hasPermissions(User::PERMISSION_PRODUCT)) {
             return true;
         }
         

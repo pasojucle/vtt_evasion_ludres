@@ -3,9 +3,9 @@
 namespace App\Security\Voter;
 
 use App\Entity\User;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class PermissionVoter extends Voter
 {
@@ -14,9 +14,7 @@ class PermissionVoter extends Voter
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
-    )
-    {
-        
+    ) {
     }
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -32,8 +30,8 @@ class PermissionVoter extends Voter
             return false;
         }
 
-        return match($attribute) {
-            self::EDIT => $this->canEdit($token, $user, $subject),
+        return match ($attribute) {
+            self::EDIT => $this->canEdit($token, $user),
             self::VIEW => $this->canView($token, $user, $subject),
             default => false
         };
@@ -50,7 +48,7 @@ class PermissionVoter extends Voter
 
     private function canView(TokenInterface $token, User $user, ?User $subject): bool
     {
-        if ($this->canEdit($token, $user, $subject)) {
+        if ($this->canEdit($token, $user)) {
             return true;
         }
 

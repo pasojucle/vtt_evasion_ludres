@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use DateTime;
-use App\Entity\User;
-use App\Entity\Survey;
 use App\Entity\Respondent;
+use App\Entity\Survey;
 use App\Entity\SurveyResponse;
+use App\Entity\User;
 use App\Form\SurveyResponsesType;
-use App\Repository\SurveyRepository;
 use App\Repository\RespondentRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\SurveyRepository;
 use App\UseCase\Survey\GetResponsesByUser;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SurveyController extends AbstractController
 {

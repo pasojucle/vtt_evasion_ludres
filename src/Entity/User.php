@@ -724,7 +724,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (is_string($names)) {
             $names = [$names];
         }
-        foreach($names as $name) {
+        foreach ($names as $name) {
             if (array_key_exists($name, $this->permissions) && true === $this->permissions[$name]) {
                 return true;
             }

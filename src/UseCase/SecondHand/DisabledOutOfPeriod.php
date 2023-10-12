@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\UseCase\SecondHand;
 
-use DateInterval;
-use DateTimeImmutable;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\SecondHand;
+use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
 use App\Service\ParameterService;
-use App\Repository\SecondHandRepository;
+use DateInterval;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 
 class DisabledOutOfPeriod
 {
@@ -25,7 +24,6 @@ class DisabledOutOfPeriod
         private UserDtoTransformer $userDtoTransformer,
         private UrlGeneratorInterface $urlGenerator,
     ) {
-        
     }
 
     public function execute(): array

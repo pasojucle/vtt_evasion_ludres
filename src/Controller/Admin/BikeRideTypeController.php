@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRideType;
-use App\Service\PaginatorService;
 use App\Form\Admin\BikeRideTypeType;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\BikeRideTypeRepository;
+use App\Service\PaginatorService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/param', name: 'admin_', methods: ['GET'])]
 class BikeRideTypeController extends AbstractController

@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Entity\Survey;
-use App\Form\Admin\SurveyType;
-use App\Service\PaginatorService;
-use App\UseCase\Survey\GetSurvey;
-use App\UseCase\Survey\SetSurvey;
 use App\Form\Admin\SurveyFilterType;
-use App\Repository\SurveyRepository;
-use App\UseCase\Survey\ExportSurvey;
-use App\UseCase\Survey\GetSurveyResults;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Form\Admin\SurveyType;
 use App\Repository\SurveyIssueRepository;
+use App\Repository\SurveyRepository;
+use App\Service\PaginatorService;
+use App\UseCase\Survey\ExportSurvey;
+use App\UseCase\Survey\GetAnonymousSurveyResults;
+use App\UseCase\Survey\GetSurvey;
+use App\UseCase\Survey\GetSurveyResults;
+use App\UseCase\Survey\SetSurvey;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\UseCase\Survey\GetAnonymousSurveyResults;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/sondage')]
 class SurveyController extends AbstractController

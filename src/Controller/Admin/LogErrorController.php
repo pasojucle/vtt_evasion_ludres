@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\LogErrorDtoTransformer;
 use App\Entity\LogError;
-use App\Service\PaginatorService;
 use App\Repository\LogErrorRepository;
+use App\Service\PaginatorService;
 use App\UseCase\LogError\GetLogErrors;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\LogErrorDtoTransformer;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LogErrorController extends AbstractController
 {

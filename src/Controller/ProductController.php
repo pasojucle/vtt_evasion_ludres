@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\ProductDtoTransformer;
 use App\Entity\Product;
 use App\Form\OrderLineAddType;
-use App\Service\PaginatorService;
 use App\Repository\ProductRepository;
 use App\Service\Order\OrderAddService;
+use App\Service\PaginatorService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\ProductDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductController extends AbstractController
 {

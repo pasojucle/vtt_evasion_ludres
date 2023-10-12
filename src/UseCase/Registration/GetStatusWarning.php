@@ -12,8 +12,7 @@ class GetStatusWarning
 {
     public function __construct(
         private UserDtoTransformer $userDtoTransformer
-    )
-    {
+    ) {
     }
 
     public function execute(User $user): string
@@ -21,7 +20,7 @@ class GetStatusWarning
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $lastLicence = $userDto->lastLicence;
         if ($lastLicence->isSeasonLicence) {
-            $licenceStatus = ( in_array($lastLicence->status, [Licence::STATUS_TESTING, Licence::STATUS_VALID])) ? 'validée' : 'téléchargée';
+            $licenceStatus = (in_array($lastLicence->status, [Licence::STATUS_TESTING, Licence::STATUS_VALID])) ? 'validée' : 'téléchargée';
             if ($lastLicence->isFinal) {
                 return sprintf('Votre inscription pour la saison %s a été %s.<br>Vous ne pouvez plus la modifier en ligne.</p>', $lastLicence->season, $licenceStatus);
             }

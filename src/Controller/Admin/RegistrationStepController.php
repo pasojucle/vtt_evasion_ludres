@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Service\OrderByService;
 use App\Entity\RegistrationStep;
-use App\Form\RegistrationStepType;
 use App\Entity\RegistrationStepGroup;
-use Symfony\Component\HttpFoundation\Request;
-use App\Repository\RegistrationStepRepository;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Form\RegistrationStepType;
 use App\Repository\RegistrationStepGroupRepository;
+use App\Repository\RegistrationStepRepository;
+use App\Service\OrderByService;
 use App\UseCase\Registration\GetRegistrationByTypes;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param', name: 'admin_registration_step', methods: ['GET'])]
 class RegistrationStepController extends AbstractController

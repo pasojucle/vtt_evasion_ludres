@@ -6,13 +6,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\ModalWindow;
 use App\Form\Admin\ModalWindowType;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ModalWindowRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/popup', name: 'admin_modal_window_')]
 class ModalWindowController extends AbstractController

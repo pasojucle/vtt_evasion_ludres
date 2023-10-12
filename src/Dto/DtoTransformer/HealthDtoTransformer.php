@@ -48,7 +48,7 @@ class HealthDtoTransformer
             $message .= 'Vous avez répondu "oui" au moins à une réponse du questionnaire de santé. <br>';
         }
 
-        if (!$health->hasAtLeastOnePositveResponse() && new DateTime() <= $medicalCertificateEndAt ) {
+        if (!$health->hasAtLeastOnePositveResponse() && new DateTime() <= $medicalCertificateEndAt) {
             $message .= 'J\'atteste avoir répondu "NON" à toutes les questions du questionnaire de santé et ne pas fournir de nouveau certificat médical pour ma réinscription. <br>';
         }
 

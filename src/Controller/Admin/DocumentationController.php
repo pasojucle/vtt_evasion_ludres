@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\DocumentationDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Documentation;
-use App\Service\UploadService;
+use App\Form\Admin\DocumentationType;
+use App\Repository\DocumentationRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
-use App\Form\Admin\DocumentationType;
+use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\DocumentationRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\DtoTransformer\DocumentationDtoTransformer;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/param/documentation/', name: 'admin_documentation_')]
 class DocumentationController extends AbstractController

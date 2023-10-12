@@ -227,13 +227,13 @@ class MenuAdminService
         return $menusGranted;
     }
 
-    private function isGranted(string| array $role): bool 
+    private function isGranted(string| array $role): bool
     {
         if (!is_array($role)) {
             return $this->security->isGranted($role);
         }
 
-        foreach($role as $item) {
+        foreach ($role as $item) {
             if ($this->security->isGranted($item)) {
                 return true;
             }

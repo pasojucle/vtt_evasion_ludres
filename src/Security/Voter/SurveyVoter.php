@@ -2,14 +2,14 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
-use App\Entity\Survey;
 use App\Entity\Respondent;
+use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SurveyVoter extends Voter
 {
@@ -19,9 +19,7 @@ class SurveyVoter extends Voter
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
-    )
-    {
-        
+    ) {
     }
     
     protected function supports(string $attribute, mixed $subject): bool
@@ -37,7 +35,7 @@ class SurveyVoter extends Voter
             return false;
         }
 
-        return match($attribute) {
+        return match ($attribute) {
             self::EDIT => $this->canEdit($token, $user, $subject),
             self::VIEW => $this->canView($token, $user, $subject),
             self::LIST => $this->canList($token, $user, $subject),
@@ -55,7 +53,7 @@ class SurveyVoter extends Voter
             return true;
         }
 
-        if($user->hasPermissions(User::PERMISSION_SURVEY)) {
+        if ($user->hasPermissions(User::PERMISSION_SURVEY)) {
             return true;
         }
         return $this->isOwner($subject, $user);
@@ -63,7 +61,7 @@ class SurveyVoter extends Voter
 
     private function canView(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject): bool
     {
-        if (!$subject || !$this->accessDecisionManager->decide($token, ['ROLE_USER']) ) {
+        if (!$subject || !$this->accessDecisionManager->decide($token, ['ROLE_USER'])) {
             return false;
         }
         

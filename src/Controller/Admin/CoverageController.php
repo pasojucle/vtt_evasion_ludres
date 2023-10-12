@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Licence;
-use App\UseCase\Coverage\ValidateCoverage;
-use Symfony\Component\HttpFoundation\Request;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Licence;
 use App\UseCase\Coverage\GetCoveragesFiltered;
+use App\UseCase\Coverage\ValidateCoverage;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/assurance', name: 'admin_coverage')]
 class CoverageController extends AbstractController

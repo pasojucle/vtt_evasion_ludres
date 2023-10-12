@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
+use App\Entity\User;
 use App\Form\Admin\ToolType;
-use App\Service\UserService;
-use App\Service\MailerService;
-use App\Service\ParameterService;
 use App\Form\Admin\UserSearchType;
 use App\Repository\UserRepository;
-use Symfony\Component\Form\FormError;
+use App\Service\MailerService;
+use App\Service\ParameterService;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\HttpFoundation\Request;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ToolController extends AbstractController
 {

@@ -84,7 +84,6 @@ class UserController extends AbstractController
         MailerService $mailerService,
         ContentRepository $contentRepository
     ): Response {
-
         $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var ?User $user */
         $user = $this->getUser();

@@ -2,11 +2,11 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\ModalWindow;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ModalWindowVoter extends Voter
 {
@@ -16,9 +16,7 @@ class ModalWindowVoter extends Voter
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
-    )
-    {
-        
+    ) {
     }
     
     protected function supports(string $attribute, mixed $subject): bool
@@ -34,7 +32,7 @@ class ModalWindowVoter extends Voter
             return false;
         }
 
-        return match($attribute) {
+        return match ($attribute) {
             self::EDIT => $this->canEdit($token, $user, $subject),
             self::VIEW => $this->canView($token, $user, $subject),
             self::LIST => $this->canList($token, $user, $subject),

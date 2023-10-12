@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Level;
-use App\Entity\Indemnity;
 use App\Entity\BikeRideType;
+use App\Entity\Indemnity;
+use App\Entity\Level;
 use App\Form\Admin\IndemnityType;
-use Doctrine\ORM\EntityManagerInterface;
 use App\UseCase\Indemnity\GetIndemnities;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/param/indemnite', name: 'admin_indemnity')]
 class IndemnityController extends AbstractController

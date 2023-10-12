@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\UserDto;
-use App\Entity\User;
-use App\Entity\Level;
 use App\Dto\LicenceDto;
-use App\Entity\Licence;
+use App\Dto\UserDto;
 use App\Entity\Identity;
+use App\Entity\Level;
+use App\Entity\Licence;
+use App\Entity\User;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserDtoTransformer
 {
@@ -130,9 +130,9 @@ class UserDtoTransformer
             return 'Accès total au menu admin';
         }
         $permissions = [];
-        foreach($user->getPermissions() as $name => $value) {
+        foreach ($user->getPermissions() as $name => $value) {
             if ($value) {
-               $permissions[] = sprintf('Accès à l\'admin pour gérer %s', $this->translator->trans(sprintf('permission.%s', strtolower($name))));
+                $permissions[] = sprintf('Accès à l\'admin pour gérer %s', $this->translator->trans(sprintf('permission.%s', strtolower($name))));
             }
         }
 

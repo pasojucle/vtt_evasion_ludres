@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\OrderDtoTransformer;
+use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Form\OrderType;
-use App\Entity\OrderHeader;
-use App\Service\PdfService;
-use App\Service\PaginatorService;
-use App\Service\ParameterService;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
 use App\Service\Order\OrderLinesSetService;
 use App\Service\Order\OrderValidateService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Dto\DtoTransformer\OrderDtoTransformer;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Service\PaginatorService;
+use App\Service\ParameterService;
+use App\Service\PdfService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class OrderController extends AbstractController
 {

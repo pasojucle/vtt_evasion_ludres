@@ -2,14 +2,14 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Session;
+use App\Entity\User;
 use App\Repository\SessionRepository;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class BikeRideVoter extends Voter
 {
@@ -20,9 +20,7 @@ class BikeRideVoter extends Voter
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
         private SessionRepository $sessionRepository,
-    )
-    {
-        
+    ) {
     }
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -30,7 +28,7 @@ class BikeRideVoter extends Voter
         if (self::LIST === $attribute && !$subject) {
             return true;
         }
-        return in_array($attribute, [self::EDIT, self::VIEW]) 
+        return in_array($attribute, [self::EDIT, self::VIEW])
         && ($subject instanceof BikeRide || $subject instanceof Cluster || $subject instanceof Session || !$subject);
     }
 
@@ -42,7 +40,7 @@ class BikeRideVoter extends Voter
             return false;
         }
 
-        return match($attribute) {
+        return match ($attribute) {
             self::EDIT => $this->canEdit($token, $user, $subject),
             self::VIEW => $this->canView($token, $user, $subject),
             self::LIST => $this->canList($token, $user, $subject),
@@ -117,7 +115,7 @@ class BikeRideVoter extends Voter
         $bikeRide = ($subject instanceof BikeRide) ? $subject : $subject->getBikeRide();
         $session = $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide);
         if ($session) {
-          return $session->getUser() === $user;  
+            return $session->getUser() === $user;
         }
 
         return false;

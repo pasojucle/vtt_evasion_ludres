@@ -2,11 +2,11 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\SecondHand;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SecondHandVoter extends Voter
 {
@@ -17,9 +17,7 @@ class SecondHandVoter extends Voter
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
-    )
-    {
-        
+    ) {
     }
     
     protected function supports(string $attribute, mixed $subject): bool
@@ -38,7 +36,7 @@ class SecondHandVoter extends Voter
             return false;
         }
         
-        return match($attribute) {
+        return match ($attribute) {
             self::ADD => $this->canAdd($token, $user, $subject),
             self::EDIT => $this->canEdit($token, $user, $subject),
             self::VIEW => $this->canView($token, $user, $subject),
@@ -57,7 +55,7 @@ class SecondHandVoter extends Voter
             return true;
         }
 
-        if($user->hasPermissions(User::PERMISSION_SECOND_HAND)) {
+        if ($user->hasPermissions(User::PERMISSION_SECOND_HAND)) {
             return true;
         }
         return $this->isOwner($subject, $user);

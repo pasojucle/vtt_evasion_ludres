@@ -2,20 +2,20 @@
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BoardRole;
-use App\Service\OrderByService;
 use App\Form\Admin\BoardRoleType;
-use App\Service\PaginatorService;
-use App\Repository\UserRepository;
 use App\Repository\BoardRoleRepository;
+use App\Repository\UserRepository;
+use App\Service\OrderByService;
+use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/param/bureau/role', name: 'admin_board_role')]
 class BoardRoleController extends AbstractController
