@@ -138,7 +138,6 @@ class RegistrationController extends AbstractController
 
     
     #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
-    #[IsGranted('USER_EDIT', 'user')]
     public function registrationFile(
         GetRegistrationFile $getRegistrationFile,
         User $user
