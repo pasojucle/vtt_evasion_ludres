@@ -14,4 +14,6 @@ class PostalCode extends Constraint
     public $message = 'Le code postal doit comporter 5 chiffres.';
 
     public $unknown = 'Ce code postal est invalide.';
+
+    public $emptyCommune = 'Sélectionner une ville';
 }

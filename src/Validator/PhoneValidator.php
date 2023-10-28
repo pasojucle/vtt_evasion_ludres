@@ -20,7 +20,7 @@ class PhoneValidator extends ConstraintValidator
             return;
         }
 
-        if (!preg_match('#^\d{10}$#', $value)) {
+        if (!preg_match('#^\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2}$#', $value)) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation()
             ;

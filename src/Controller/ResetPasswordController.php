@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,10 +34,10 @@ class ResetPasswordController extends AbstractController
     ) {
     }
 
-    #[Route('mot-de-passe/oublie', name: 'app_forgot_password_request', methods: ['GET', 'POST'])]
+    #[Route('/mot-de-passe/oublie', name: 'app_forgot_password_request', methods: ['GET', 'POST'])]
     public function request(Request $request, MailerInterface $mailer): Response
     {
-        $form = $this->createForm(ResetPasswordRequestFormType::class);
+        $form = $this->createForm(ResetPasswordRequestFormType::class, ['licenceNumber' => $request->getSession()->get(Security::LAST_USERNAME)]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

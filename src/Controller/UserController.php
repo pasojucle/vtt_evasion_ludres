@@ -5,19 +5,24 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Identity;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\EmailMessageType;
 use App\Repository\ContentRepository;
-use App\Service\IdentityService;
+use App\Repository\IdentityRepository;
 use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
+use FontLib\Table\Type\name;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserController extends AbstractController
 {
@@ -28,15 +33,13 @@ class UserController extends AbstractController
     }
 
     #[Route('/mon-compte/profil', name: 'user_account', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function userAccount(): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         /** @var ?User $user */
         $user = $this->getUser();
-        if (null === $user) {
-            $this->redirectToRoute('login');
-        }
+
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
         return $this->render('user/account.html.twig', [
             'user' => $this->userDtoTransformer->fromEntity($user),
@@ -44,13 +47,13 @@ class UserController extends AbstractController
     }
 
     #[Route('/mon-compte/mot-de-passe', name: 'change_password', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function changePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $user = $this->getUser();
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
@@ -79,14 +82,15 @@ class UserController extends AbstractController
 
 
     #[Route('/mon-compte/demande/modification', name: 'user_change_infos', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function changeInfos(
         Request $request,
         MailerService $mailerService,
         ContentRepository $contentRepository
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_USER');
         /** @var ?User $user */
         $user = $this->getUser();
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
         $form = $this->createForm(EmailMessageType::class);
         $form->handleRequest($request);
 
@@ -108,6 +112,31 @@ class UserController extends AbstractController
 
         return $this->render('user/change_infos.html.twig', [
             'content' => $contentRepository->findOneByRoute('user_change_infos'),
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+    #[Route('/unique/member/{name}/{firstName}', name: 'unique_member', methods: ['POST', 'GET'], options:['expose' => true])]
+    public function uniqueMember(Request $request, IdentityRepository $identityRepository, string $name, string $firstName): Response
+    {
+        $name = trim(urldecode($name));
+        $firstName = trim(urldecode($firstName));
+        /** @var Identity $identity */
+        $identity = $identityRepository->findOneByNameAndFirstName($name, $firstName);
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params')),
+        ]);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $request->getSession()->set(Security::LAST_USERNAME, $identity->getUser()->getLicenceNumber());
+            return $this->redirectToRoute('user_account');
+        }
+        
+        return $this->render('user/unique_member.modal.html.twig', [
+            'name' => $name,
+            'first_name' => $firstName,
             'form' => $form->createView(),
         ]);
     }

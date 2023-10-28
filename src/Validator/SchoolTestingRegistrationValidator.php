@@ -30,6 +30,9 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
 
         $identity = $this->context->getObject()?->getParent()->getData();
         $user = $identity->getUser();
+        if (!$identity->getBirthDate()) {
+            return;
+        }
         $category = $this->licenceService->getCategoryByBirthDate($identity->getBirthDate());
   
         if ('schoolTestingRegistration' !== $this->context->getObject()?->getName() || Licence::CATEGORY_MINOR !== $category) {

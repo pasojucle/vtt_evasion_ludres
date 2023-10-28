@@ -45,14 +45,13 @@ class IdentityType extends AbstractType
             $disabled = $this->haspreviousLicence($identity->getUser()) && !$identity->getKinship();
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
 
-
             $addressClass = (Identity::TYPE_MEMBER !== $type) ? ' identity-address' : '';
             $addressRequired = 'required';
             if (!$identity->hasAddress()) {
                 $addressRequired = '';
             }
 
-            if ((!$options['is_kinship'] && !$kinship) || ($options['is_kinship'] && $kinship)) {
+            if ($options['is_kinship'] === $kinship) {
                 $form
                     ->add('name', TextType::class, [
                         'label' => 'Nom',
@@ -85,6 +84,7 @@ class IdentityType extends AbstractType
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                                 'data-multiple-fields' => 1,
+                                'data-error-route' => 'unique_member',
                                 'autocomplete' => 'off',
                             ]
                             : ['data-constraint' => '', 'autocomplete' => 'off', ],
@@ -101,6 +101,7 @@ class IdentityType extends AbstractType
                         'attr' => [
                             'data-constraint' => 'app-Phone',
                             'autocomplete' => 'off',
+                            'class' => 'phone-number',
                         ],
                     ])
                     ->add('email', EmailType::class, [
@@ -139,6 +140,7 @@ class IdentityType extends AbstractType
                             'attr' => [
                                 'data-constraint' => 'app-Phone',
                                 'autocomplete' => 'off',
+                                'class' => 'phone-number',
                             ],
                         ])
                         ->add('birthDate', DateTimeType::class, [
@@ -188,6 +190,7 @@ class IdentityType extends AbstractType
                             'attr' => [
                                 'data-constraint' => 'app-Phone',
                                 'autocomplete' => 'off',
+                                'class' => 'phone-number',
                             ],
                         ])
                     ;
@@ -205,6 +208,7 @@ class IdentityType extends AbstractType
                             'mapped' => false,
                             'attr' => [
                                 'class' => 'identity-other-address',
+                                'data-modifier' => sprintf('address-container-%s', $form->getName())
                             ],
                             'data' => ($identity->hasAddress()) ? true : false,
                         ])

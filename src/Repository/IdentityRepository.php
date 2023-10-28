@@ -24,19 +24,23 @@ class IdentityRepository extends ServiceEntityRepository
         parent::__construct($registry, Identity::class);
     }
 
-    public function findByNameAndFirstName(string $name, string $firstName)
+    public function findOneByNameAndFirstName(string $name, string $firstName): ?Identity
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere(
-                (new Expr())->like('LOWER(i.name)', ':name'),
-                (new Expr())->like('LOWER(i.firstName)', ':firstName'),
-                (new Expr())->isNull('i.kinship')
-            )
-            ->setParameter('name', strtolower($name))
-            ->setParameter('firstName', strtolower($firstName))
-            ->getQuery()
-            ->getResult()
-        ;
+        try {
+            return $this->createQueryBuilder('i')
+                ->andWhere(
+                    (new Expr())->like('LOWER(i.name)', ':name'),
+                    (new Expr())->like('LOWER(i.firstName)', ':firstName'),
+                    (new Expr())->isNull('i.kinship')
+                )
+                ->setParameter('name', strtolower($name))
+                ->setParameter('firstName', strtolower($firstName))
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 
     public function findMemberByUser(User $user): ?Identity

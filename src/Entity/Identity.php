@@ -53,10 +53,10 @@ class Identity
     #[Column(type: 'string', length: 100, nullable: true)]
     private ?string $birthplace = null;
 
-    #[Column(type: 'string', length: 10, nullable: true)]
+    #[Column(type: 'string', length: 14, nullable: true)]
     private ?string $phone = null;
 
-    #[Column(type: 'string', length: 10, nullable: true)]
+    #[Column(type: 'string', length: 14, nullable: true)]
     private ?string $mobile = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]
@@ -86,7 +86,7 @@ class Identity
     #[ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
     private ?Commune $birthCommune = null;
 
-    #[Column(length: 10, nullable: true)]
+    #[Column(type: 'string', length: 14, nullable: true)]
     private ?string $emergencyPhone = null;
 
     public function getId(): ?int

@@ -1,10 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll('.check-toggle').forEach(element => {
-        element.addEventListener('change', handleCheckChange);
-        formToggle(element);
-    })
-});
-
 const handleCheckChange = (event) => {
     formToggle(event.target);
 }
@@ -22,3 +15,5 @@ const formToggle = (target) => {
     })
 }
 
+
+export {handleCheckChange, formToggle}

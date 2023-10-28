@@ -150,7 +150,6 @@
                 <div class="block background-ligth">
                 <div class="block-title">
                     <h2>Informations sanitaires</h2>
-                    {% dump(is_granted('USER_EDIT', user))%}
                     {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
                         <a href="{{ path('admin_health_edit', {'user': user.id}) }}"

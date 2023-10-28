@@ -18,14 +18,13 @@ import './styles/radio.css';
 
 import './js/app.js';
 import './js/js-datepicker';
-import './js/constraints';
+import './js/form.js';
 import './js/input-file';
 import './js/modal';
 import './js/media_position';
 import './js/switch';
 import './js/dropdown.js';
 import './js/js-datepicker.js';
-import './js/constraints.js';
 import './js/input-file.js';
 import './js/select2/i18n/fr.js';
 import './js/clipboard.js';

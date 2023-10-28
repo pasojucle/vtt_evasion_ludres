@@ -1,0 +1,10 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Compte existant{% endblock %}
+{% block body %}
+    <div class="alert alert-danger">Le compte  {{ first_name }} {{ name }} exite déjà</div>
+{% endblock %}
+{% block footer %}
+    {% set button_text = '<i class="fas fa-sign-in-alt"></i> Se connecter' %}
+    {{ parent() }}
+{% endblock %}

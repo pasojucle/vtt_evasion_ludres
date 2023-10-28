@@ -1,3 +1,8 @@
+
+import {handleCheckChange, formToggle} from './form.js';
+import {Form} from './formValidator.js';
+var formValidator;
+
 document.addEventListener("DOMContentLoaded", (event) => {
     if ($('ul.StepProgress').length > 0) {
         const stepProgressMargingTop = parseInt($('ul.StepProgress').css('margin-top').replace('px', ''));
@@ -24,7 +29,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     if ($('.sortable').length > 0) {
         buildSortable();
     }
-    $(document).on('change', '.identity-other-address', updateIdentity);
 
     $(document).on('change', '.filters .customSelect2, .filters select, .filters .btn', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
@@ -66,34 +70,52 @@ document.addEventListener("DOMContentLoaded", (event) => {
     if (document.querySelector('select#bike_ride_bikeRideType')){
         document.querySelector('select#bike_ride_bikeRideType').addEventListener('change', handleChangeBikeRideType)
     }
+
+    document.querySelectorAll('.check-toggle').forEach(element => {
+        element.addEventListener('change', handleCheckChange);
+        formToggle(element);
+    })
+    const form = document.querySelector('form');
+    if (form) {
+        formValidator = new Form(form);
+    }
+
+    document.querySelectorAll('.identity-other-address').forEach((element) => {
+        element.addEventListener('change', updateIdentity);
+    })
 });
 
 function confirmDeleteUser(e) {
-            e.preventDefault();
-        let form = $(this).closest('form');
-        console.log(form.attr('action'));
-        let user = form.find('#user_search_user').val();
-        let route = Routing.generate('admin_tool_confirm_delete_user', {'user': user});
-        let anchor = $('<a class="modal-trigger" href="'+route+'" data-toggle="modal" data-type="danger"></a>');
-        form.append(anchor);
-        console.log('anchor', anchor);
-        anchor.click();
+    e.preventDefault();
+    let form = $(this).closest('form');
+    let user = form.find('#user_search_user').val();
+    let route = Routing.generate('admin_tool_confirm_delete_user', {'user': user});
+    let anchor = $('<a class="modal-trigger" href="'+route+'" data-toggle="modal" data-type="danger"></a>');
+    form.append(anchor);
+    console.log('anchor', anchor);
+    anchor.click();
 }
 
-
-function updateIdentity(event) {
-    let required = $(this).is(':checked');
-    const container = $(this).parents('div.address-container');
-    container.find('.address-group').toggleClass('hidden');
-    if (required) {
-        container.find('.identity-address').find('input').attr('required', 'required');
+const updateIdentity = (event)  => {
+    const container = document.getElementById(event.target.dataset.modifier);
+    console.log('container', event.target.dataset.modifier, container)
+    container.querySelectorAll('.address-group').forEach((element) => {
+        element.classList.toggle('hidden');
+    });
+    const elements = container.querySelectorAll('.address-group input, .address-group select');
+    if (event.target.checked) {
+        elements.forEach((element) => {
+            console.log('element', element)
+            element.required = true;
+        });
     } else {
-        container.find('.identity-address').find('input').removeAttr('required');
-        container.find('.identity-address').find('input').val('');
+        elements.forEach((element) => {
+            element.required = false;
+            element.value = '';
+        })
     }
+    formValidator.validate();
 }
-
-
 
 function submitFom() {
     $(this).closest('form').submit()
@@ -185,6 +207,7 @@ function formModifier(event) {
     .then((text)=> {
         const htmlElement = document.createRange().createContextualFragment(text);
         const targetEl = document.getElementById(target);
+        console.log('htmlElement', htmlElement.getElementById(target));
         targetEl.replaceWith(htmlElement.getElementById(target));
         $('.select2entity').select2entity();
         $('.customSelect2').select2();

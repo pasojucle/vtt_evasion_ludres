@@ -145,7 +145,7 @@ body > script {display: none !important;}
 }
 .alert-danger::before, 
 .success:not(.form-group, .form-group-inline)::before {
-    content: '\f057';
+    content: '\f071';
     color: var(--danger-color);
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
@@ -558,6 +558,7 @@ button[type=submit].btn.btn-primary:disabled {
     background: var(--gray-color);
     border: 1px solid var(--gray-color);
     opacity: 0.7;
+    cursor: not-allowed;
 }
 .background-ligth .form-group > textarea {
     background: var(--white-color);

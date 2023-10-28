@@ -31,6 +31,7 @@ class UniqueMemberValidator extends ConstraintValidator
         if (null === $value || '' === $value || null !== $userId) {
             return;
         }
+
         if (is_string($value)) {
             $identity = $this->context->getObject()?->getParent()?->getData();
             if (!$identity || 'firstName' !== $this->context->getObject()?->getName()) {
@@ -39,9 +40,9 @@ class UniqueMemberValidator extends ConstraintValidator
             $value = ['name' => $identity->getName(), 'firstName' => $identity->getFirstName()];
         }
 
-        $uniqueMember = $this->identityRepository->findByNameAndFirstName($value['name'], $value['firstName']);
+        $uniqueMember = $this->identityRepository->findOneByNameAndFirstName(trim($value['name']), trim($value['firstName']));
 
-        if (!empty($uniqueMember)) {
+        if ($uniqueMember) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ name }}', $value['name'])
                 ->setParameter('{{ firstName }}', $value['firstName'])

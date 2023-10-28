@@ -22,7 +22,7 @@ class PasswordValidator extends ConstraintValidator
             ;
         }
 
-        if (is_array($value) && $value['first'] !== $value['second']) {
+        if (is_array($value) && array_key_exists('first', $value) && array_key_exists('second', $value) && $value['first'] !== $value['second']) {
             $this->context->buildViolation($constraint->messageRepeat)
                 ->addViolation()
             ;

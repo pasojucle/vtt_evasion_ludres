@@ -21,32 +21,41 @@ class Validate
 
     public function execute(Request $request): array
     {
-        $current = $request->request->get('current');
-        $value = ($request->request->all('values')) ? $request->request->all('values') : $request->request->get('value');
-        $value = $this->getValue($value, $current);
-        $constraintClass = $request->request->get('constraint');
-        $required = !empty($request->request->get('required'));
+        $fields = $request->request->all('validator');
+        $constraintsValidator = [];
+        foreach ($fields as $id => $field) {
+            $value = $field['value'];
+            $value = $this->getValue($value, $id);
 
-        $constraints = $this->getConstraints($constraintClass, $required, $value);
+            $constraintClass = $field['constraint'];
+            $required = array_key_exists('required', $field) ? (bool)$field['required'] : false;
+            $filled = array_key_exists('filled', $field) ? (bool)$field['filled'] : false;
 
-        $violations = $this->validator->ValidateToArray($value, $constraints);
-        $render = $this->twig->render('validator/errors.html.twig', [
-            'violations' => $violations,
-        ]);
+            $constraints = $this->getConstraints($constraintClass, $required, $value, $filled);
 
-        $status = $this->getStatus($violations, empty($value));
+            $violations = $this->validator->ValidateToArray($value, $constraints);
+            $render = $this->twig->render('validator/errors.html.twig', [
+                'violations' => $violations,
+            ]);
 
-        return [
-            'status' => $status,
-            'html' => $render,
-            'multiple' => is_array($value),
-        ];
+            $status = $this->getStatus($violations, $value);
+
+            $constraintsValidator[] = [
+                'constraint' => $constraintClass,
+                'id' => $id,
+                'status' => $status,
+                'html' => $render,
+                'multiple' => is_array($value),
+            ];
+        }
+
+        return  ['constraintsValidator' => $constraintsValidator];
     }
 
-    private function getConstraints(?string $constraintClass, bool $required, array|string &$value): array
+    private function getConstraints(?string $constraintClass, bool $required, array|string|null &$value, bool $filled): array
     {
         $constraints = [];
-        if (!empty($constraintClass)) {
+        if ($filled && !empty($constraintClass)) {
             list($namespace, $constraintClass) = explode('-', $constraintClass);
             $constraintClass = ('symfony' === $namespace)
                 ? 'Symfony\Component\Validator\Constraints\\' . $constraintClass
@@ -54,43 +63,46 @@ class Validate
             $constraint = new $constraintClass();
             $constraints[] = $constraint;
             if ($constraint instanceof BirthDate) {
-                $value = DateTime::createFromFormat('d/m/Y', $value);
+                $birthDateObject = DateTime::createFromFormat('d/m/Y', $value);
+                if ($birthDateObject) {
+                    $value = $birthDateObject;
+                }
             }
         }
-        if ($required) {
+        if ($filled && true === $required) {
             $constraints[] = new NotBlank();
         }
 
         return $constraints;
     }
 
-    private function getStatus(array $violations, bool $isEmptyValue): ?string
+    private function getStatus(array $violations, array|string|null|DateTime $value): string
     {
-        if (!empty($violations)) {
-            $status = 'ALERT_WARNING';
-        } elseif (!$isEmptyValue) {
-            $status = 'SUCCESS';
-        } else {
-            $status = null;
-        }
-
-        return $status;
+        return match (true) {
+            !empty($violations) => 'ALERT_WARNING',
+            !empty($value) => 'SUCCESS',
+            default => 'NOT_REQUIRED'
+        };
     }
 
-    private function getValue(array|string $value, string $current): array|string
+    private function getValue(array|string $value, string $id): array|string|null
     {
         if (is_string($value)) {
             return $value;
         }
         $values = [];
-        foreach ($value as $name => $val) {
-            if ($name === $current && empty($val)) {
+        $idToArray = explode('_', $id);
+        $name = array_pop($idToArray);
+
+        foreach ($value as $index => $val) {
+            if ($name === $index && empty($val)) {
                 return $val;
             }
-            if ($name === $current || !empty($val)) {
-                $values[$name] = $val;
+            if ($name === $index || !empty($val)) {
+                $values[$index] = $val;
             }
         }
+
         if (1 < count($values)) {
             return $values;
         }

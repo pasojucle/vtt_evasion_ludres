@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use ReflectionClass;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidatorService
@@ -19,8 +21,15 @@ class ValidatorService
 
         $violations = [];
 
+        /** @var ConstraintViolation $violation */
         foreach ($violationsList as $violation) {
-            $violations[] = $violation->getMessage();
+            $constraint = new ReflectionClass($violation->getConstraint());
+            preg_match('#^symfony|app#i', $constraint->getNamespaceName(), $nameSpace);
+
+            $violations[] = [
+                'message' => $violation->getMessage(),
+                'contraint' => sprintf('%s-%s', strtolower($nameSpace[0]), $constraint->getShortName()),
+            ];
         }
 
         return $violations;

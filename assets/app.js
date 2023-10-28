@@ -18,7 +18,6 @@ import './styles/carrousel.css';
 import './styles/verticalStepProgress.css';
 import './js/app.js';
 import './js/carrousel';
-import './js/constraints';
 import './js/input-file';
 import './js/modal';
 import './js/reveal.js';
