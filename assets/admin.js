@@ -15,6 +15,8 @@ import './styles/dropdown.css';
 
 import './styles/switch-button.css';
 import './styles/radio.css';
+import './styles/component/checkbox.scss';
+import './styles/health.scss';
 
 import './js/app.js';
 import './js/js-datepicker';

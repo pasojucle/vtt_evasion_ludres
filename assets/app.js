@@ -12,6 +12,8 @@ import './styles/paginator.css';
 import './styles/common.css';
 import './styles/modal.css';
 import './styles/dropdown.css';
+import './styles/component/checkbox.scss';
+import './styles/health.scss';
 
 import './styles/reveal.css';
 import './styles/carrousel.css';

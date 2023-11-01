@@ -60,9 +60,8 @@ class EditRegistration
                 $this->identityService->setAddress($user);
             }
         }
-        
-        $user->getHealth()->setAtLeastOnePositveResponse();
-        $session->set('health_questions', $user->getHealth()->getHealthQuestions());
+
+        $session->set(sprintf('health_sworn_certifications_%s', $user->getLicenceNumber()), $user->getHealth()->getSwornCertifications());
 
         $this->UploadFile($request, $user);
 

@@ -130,7 +130,7 @@ class UserType extends AbstractType
                 ])
             ;
         }
-        if (in_array($options['current']->getForm(), [self::FORM_LICENCE_COVERAGE, self::FORM_LICENCE_TYPE], true)) {
+        if (in_array($options['current']->getForm(), [self::FORM_LICENCE_COVERAGE, self::FORM_LICENCE_TYPE, self::FORM_OVERVIEW], true)) {
             $builder
                 ->add('licences', CollectionType::class, [
                     'label' => false,

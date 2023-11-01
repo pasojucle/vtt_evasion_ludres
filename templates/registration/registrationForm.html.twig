@@ -30,10 +30,9 @@
                     {% if current is not empty and current.form is null %}
                         <div class="container">{{ current.content | raw}}</div>
                     {% endif %}
-                    {% if current.filename is not null %}
+                    {% if current.pdfFilename is not null %}
                         <div class="container">
-                            <!--<object width="100%" height="1470" type="application/pdf" data="/files/{{current.filename}}#toolbar=0&navpanes=0&scrollbar=0"> -->
-                            <object width="100%" height="500" type="application/pdf" data="/files/{{current.filename}}">
+                            <object width="100%" height="500" type="application/pdf" data="{{current.pdfRelativePath}}">
                             <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
                             </object>
                         </div>

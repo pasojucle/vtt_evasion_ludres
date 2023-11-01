@@ -132,9 +132,7 @@ class SurveyType extends AbstractType
                     ],
                     'required' => false,
                     'disabled' => $options['display_disabled'],
-                ])
-                
-                ;
+                ]);
         };
 
         $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository));

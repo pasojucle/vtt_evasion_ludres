@@ -4,38 +4,25 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\HealthQuestion;
-use App\Entity\Licence;
-use App\Repository\RegistrationStepRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\User;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class HealthService
 {
-    public function __construct(private RegistrationStepRepository $registrationStepRepository)
+    public function __construct(private RequestStack $requestStack)
     {
     }
-    public function getHealthQuestionsCount(int $category): int
+    
+    public function getHealthSwornCertifications(User &$user)
     {
-        $healthQuestionsCount = 0;
-        $registrationSteps = $this->registrationStepRepository->findByGroupAndCategory(7, $category);
-        foreach ($registrationSteps as $registrationStep) {
-            preg_match_all('#{{ question_\d+ }}#', $registrationStep->getContent(), $matches, PREG_SET_ORDER);
-            $healthQuestionsCount += count($matches);
+        $swornCertifications = $this->requestStack->getSession()->get(sprintf('health__sworn_certifications_%s', $user->getLicenceNumber()));
+        if (empty($swornCertifications)) {
+            $swornCertifications = [];
+            foreach (range(0, 2) as $number) {
+                $swornCertifications[sprintf('check_up_%d',$number)] = false;
+            }
         }
 
-        return $healthQuestionsCount;
-    }
-
-    public function createHealthQuestions(int $formQuestionCount): ArrayCollection
-    {
-        /** @var ArrayCollection<int, HealthQuestion> $healthQuestions */
-        $healthQuestions = new ArrayCollection();
-        foreach (range(0, $formQuestionCount - 1) as $number) {
-            $healthQuestion = new HealthQuestion();
-            $healthQuestion->setField($number);
-            $healthQuestions[] = $healthQuestion;
-        }
-
-        return $healthQuestions;
+        $user->getHealth()->setSwornCertifications($swornCertifications);
     }
 }

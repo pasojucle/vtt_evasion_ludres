@@ -12,16 +12,29 @@
         </div>
         <div class="wrapper-body">
             {{ form_start(form) }}
-            <div class="form-group">{{ form_row(form.title) }}</div>
-            <div class="form-group">{{ form_row(form.category) }}</div>
-            <h2>Affichage</h2>
-            <div class="form-group">
-                {{ form_row(form.finalRender) }}
-                {{ form_row(form.testingRender) }}
+            <div class="row row-align-top">
+                <div class="col-md-6">
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.category) }}
+                    <h2>Affichage</h2>
+                    {{ form_row(form.finalRender) }}
+                    {{ form_row(form.testingRender) }}
+                    {{ form_row(form.personal) }}
+                    {{ form_row(form.form) }}
+                    {{ registrationStep.pdfFilename }}
+                    {{ form_row(form.pdfFile) }}
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        
+                            <div class="form-group"  data-ratio="1.41">
+                            <object class="sizing" width="100%" height="350" type="application/pdf" data="{{ registrationStep.pdfRelativePath }}">
+                                <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
+                            </object>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">{{ form_row(form.form) }}</div>
-            {{ form_row(form.pdfFile) }}
-            {{ registrationStep.filename }}
             <div class="form-group">{{ form_row(form.content) }}</div>
             {{ form_row(form.save) }}
             {{ form_end(form) }}

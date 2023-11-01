@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
-use App\Form\RegistrationStepType;
+use App\Form\Admin\RegistrationStepType;
 use App\Repository\RegistrationStepGroupRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\OrderByService;
@@ -24,7 +25,8 @@ class RegistrationStepController extends AbstractController
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
         private RegistrationStepGroupRepository $registrationStepGroupRepository,
-        private OrderByService $orderByService
+        private OrderByService $orderByService,
+        private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
     ) {
     }
 
@@ -86,7 +88,7 @@ class RegistrationStepController extends AbstractController
         }
 
         return $this->render('registration/admin/registrationStep.html.twig', [
-            'registrationStep' => $step,
+            'registrationStep' => $this->registrationStepDtoTransformer->fromEntity($step) ,
             'form' => $form->createView(),
         ]);
     }

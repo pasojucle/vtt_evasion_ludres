@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Noto sans';
+    src: url('../font/NotoSans-Regular.ttf') format('ttf');
+  }
+
 /*bases*/
 html,
 body,
@@ -520,7 +525,7 @@ nav > ul > li > div.nav-bar-title > a.btn-logger {
 body {
     background-color: var(--light-color);
     color: var(--background-color);
-    font-family: Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif;
+    font-family: Noto sans,Lucida Sans Unicode,Lucida Sans,Geneva,sans-serif;
     font-size: 16px;
     user-select: none;
 }
@@ -562,38 +567,6 @@ button[type=submit].btn.btn-primary:disabled {
 }
 .background-ligth .form-group > textarea {
     background: var(--white-color);
-}
-.form-group > input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -ms-appearance: none;
-    width: 30px;
-    border-radius: 4px;
-    height: 30px;
-    background: #fff;
-    border: 1px solid #ccc;
-    vertical-align: middle;
-}
-.form-group > input[type="checkbox"]:checked {
-    background-color: var(--primary-color);
-    position: relative;
-}
-.form-group > input[type="checkbox"]:checked::before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: '\f00c';
-    display: block;
-    color: var(--white-color);
-    font-size: 15px;
-    position: absolute;
-    text-align: center;
-    width: 100%;
-    top: 0;
-    left: 0;
-}
-.form-group > input[type="checkbox"] + label {
-    vertical-align: middle;
-    line-height: 30px;
 }
 
 .form-group > textarea {

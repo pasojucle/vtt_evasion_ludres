@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\DiseaseKind;
 use App\Entity\Health;
 use App\Validator\Phone;
+use App\Entity\DiseaseKind;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class HealthType extends AbstractType
 {
@@ -36,9 +37,12 @@ class HealthType extends AbstractType
 
         if (null !== $options['current'] && UserType::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
             $builder
-                ->add('healthQuestions', CollectionType::class, [
+                ->add('swornCertifications', CollectionType::class, [
                     'label' => false,
-                    'entry_type' => HealthQuestionType::class,
+                    'entry_type' => CheckboxType::class,
+                    'entry_options' => [
+                        'label' => 'EN COCHANT CETTE CASE, J’ATTESTE SUR L’HONNEUR :',
+                    ],
                 ])
             ;
         }

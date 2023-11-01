@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.member.fullName }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-2">
+            <img src="'./logo/ffvelo-logo-square-150x150.png" alt="ffvelo">
+        </div>
+        <div class="col-md-8">
+            <div class="border-radus">QUESTIONNAIRE SANTÉ <img src="./logo/health.png" alt=.health""></div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <div>
+        <p>La pratique régulière du cyclotourisme est bonne pour la santé. Cependant, Chacun doit adapter sa pratique en fonction de ses pathologies et de ses aptitudes et limitation personnelles.</p>
+        <p>Ce questionnaire se substitue à l’obligation d’un certificat et a des objectifs d’éducation et de prévention. En cas de doute, l’avis de votre médecin traitant ou médecin spécialiste est indispensable</p>
+        <p>En cochant les différentes cases de ce module, vous vous engagez à avoir bien lu, bien compris et pris les dispositions nécessaires au regard des recommandations données.</p>
+    </div>
+    <div class="bloc-ffvelo">
+        <div class="border-radus-left ffvelo-dark-blue background">
+            SI RÉPONSE POSITIVE À UNE DES QUESTIONS SUIVANTES, IL EST INDISPENSABLE DE ONSULTER UN MÉDECIN AVANT REPRISE DE L’ENTRAÎNEMENT OU CYCLOSPORTIVE.
+        </div>
+        <div class="border-radus-rigth ffvelo-blue">
+        <div class="title">
+            <div class="round">1</div>
+            <h2>LES SYMPTÔMES - AU COURS DES 12 DERNIERS MOIS</h2>
+        </div>
+        <ul class="content">
+            <li>> Avez-vous ressenti une douleur dans la poitrine à l’effort ?</li>
+            <li>
+                > Avez-vous ressenti des palpitations ? Les palpitations sont une perception inhabituelle des battements<br>
+                cardiaques irréguliers et/ou rapides de durée brève ou plus ou moins prolongée.
+            </li>
+            <li>> Avez-vous déjà ressenti un malaise durant un effort ?</li>
+            <li>> Avez-vous déjà eu une perte de connaissance brutale - au repos ou à l’effort?</li>
+            <li>> Avez-vous déjà ressenti un essoufflement inhabituel à l’effort ?</li>
+        </ul>
+        <div class="footer">
+            <p>{{ form_widget(form.check_up_1)}}EN COCHANT CETTE CASE, J’ATTESTE SUR L’HONNEUR :<br>
+            avoir bien pris note de ces questions et comprends que certains symptômes peuvent être des signes de pathologie cardiaque à risque pour ma santé, et représenter potentiellement un risque vital. Je m’engage à stopper l’activité sportive intensive et à consulter d’urgence en cas d’apparition de ces symptômes.</p>
+        </div>
+    </div>
+
+    <div class="bloc-ffvelo">
+        <div class="border-radus-left ffvelo-blue background">
+            SI RÉPONSE POSITIVE À UNE DES QUESTIONS SUIVANTES, IL EST NÉCESSAIRE D’AVOIR PRIS AVIS AUPRÈS D’UN MÉDECIN SUR UNE CONTRE-INDICATION OU SUR UN BILAN PRÉALABLE À LA PRATIQUE INTENSIVE.
+        </div>
+        <div class="border-radus-rigth ffvelo-blue">
+        <div class="title">
+            <div class="round">2</div>
+            <h2>LES FACTEURS DE RISQUES CARDIOLOGIQUES</h2>
+        </div>
+        <ul class="content">
+            <li>> Avez-vous repris une activité physique intensive sans réaliser un bilan médical après 45 ans (femme) ou 35 ans (homme) pour évaluer votre risque cardiovasculaire ?</li>
+            <li>> Avez-vous au moins deux de ces facteurs de risque cardiovasculaire ? (> 5Oans, tabagisme, diabète, cholestérol, hypertension artérielle)</li>
+            <li>> Êtes-vous suivi pour une pathologie chronique ? Toute pathologie peut présenter un risque soit par nature, soit par les effets secondaires de ses traitements</li>
+            <li>> Poursuivez-vous la pratique de cyclosportive et/ou l’activité physique intensive après 60 ans ?</li>
+            <li>> Un membre de votre famille (parents, frère, sœur, enfants) est-il décédé subitement d’une cause cardiaque ou inexpliquée ?</li>
+            <li>> Un membre de votre famille (parents, frère, sœur, enfants) a-t-il présenté une maladie cardiaque avant 35 ans ?</li>
+            <li>> Vous n’avez jamais réalisé d’électrocardiogramme (ECG) ? Nous recommandons de réaliser au moins un ECG dans la vie.</li>
+        </ul>
+        <div class="footer">
+            <p>{{ form_widget(form.check_up_2)}}<br>
+            comprendre que certains antécédents familiaux, les facteurs de risques cardiovasculaires, et certaines pathologies chroniques peuvent entraîner un risque lors de la pratique du sport et doivent faire prendre avis auprès d’un médecin pour une pratique sécurisée. De même, je comprends qu’un bilan médical à certains âges de la vie est nécessaire pour faire le point sur ma pratique et ses risques.</p>
+        </div>
+    </div>
+
+    <div class="bloc-ffvelo">
+        <div class="border-radus-left ffvelo-ligth-blue background">
+            SI RÉPONSE POSITIVE À UNE DES QUESTIONS SUIVANTES, IL EST RECOMMANDÉ DE PRENDRE CONSEIL AUPRÈS D’UN MÉDECIN SUR UNE CONTRE-INDICATION TEMPORAIRE ÉVENTUELLE
+        </div>
+        <div class="border-radus-rigth ffvelo-ligth-blue">
+        <div class="title">
+            <div class="round">3</div>
+            <h2>LES PROBLÉMATIQUES LIÉES AU SPORT - AU COURS DES 12 DERNIERS MOIS</h2>
+        </div>
+        <ul class="content">
+            <li>> Avez-vous expérimenté une baisse inexpliquée de performance ?</li>
+            <li>> Avez-vous arrêté le sport plus de 30 jours pour raisons de santé ?</li>
+            <li>> Avez-vous débuté un traitement médical de longue durée (hors contraception et désensibilisation aux allergies) ?</li>
+            <li>> Avez-vous été anorexique? Ou pensez-vous ou vous a-t-on déjà dit que vous aviez des problèmes avec la nourriture ?</li>
+            <li>> Pour les féminines : vos règles ont-elles disparu depuis plus de trois mois ?</li>
+            <li>> Avez-vous eu un traumatisme crânien ?</li>
+            <li>> Pensez-vous avoir besoin d’un avis médical pour poursuivre votre pratique sportive ?</li>
+        </ul>
+        <div class="footer">
+            <p>{{ form_widget(form.check_up_3)}}EN COCHANT CETTE CASE, J’ATTESTE SUR L’HONNEUR :<br>
+            avoir pris note de ces questions et comprends que certaines situations ou symptômes peuvent entraîner un risque pour ma santé et/ou pour mes performances.</p>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

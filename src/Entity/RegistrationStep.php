@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\RegistrationStepRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -23,11 +24,14 @@ class RegistrationStep
 
     public const RENDER_FILE_AND_VIEW = 3;
 
+    public const RENDER_FILE_AND_LINK= 3;
+
     public const RENDERS = [
         self::RENDER_NONE => 'registration_step.render.none',
         self::RENDER_VIEW => 'registration_step.render.view',
         self::RENDER_FILE => 'registration_step.render.file',
         self::RENDER_FILE_AND_VIEW => 'registration_step.render.file_and_view',
+        self::RENDER_FILE_AND_LINK => 'registration_step.render.file_and_link',
     ];
 
     #[Column(type: 'integer')]
@@ -65,6 +69,9 @@ class RegistrationStep
     #[Column(type: 'integer')]
     private int $finalRender;
 
+    #[Column(type:Types::BOOLEAN, options:['default' => false])]
+    private bool $personal = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,7 +82,7 @@ class RegistrationStep
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
@@ -87,7 +94,7 @@ class RegistrationStep
         return $this->filename;
     }
 
-    public function setFilename(?string $filename): self
+    public function setFilename(?string $filename): static
     {
         $this->filename = $filename;
 
@@ -99,7 +106,7 @@ class RegistrationStep
         return $this->form;
     }
 
-    public function setForm(?int $form): self
+    public function setForm(?int $form): static
     {
         $this->form = $form;
 
@@ -111,7 +118,7 @@ class RegistrationStep
         return $this->orderBy;
     }
 
-    public function setOrderBy(int $orderBy): self
+    public function setOrderBy(int $orderBy): static
     {
         $this->orderBy = $orderBy;
 
@@ -123,7 +130,7 @@ class RegistrationStep
         return $this->content;
     }
 
-    public function setContent(?string $content): self
+    public function setContent(?string $content): static
     {
         $this->content = $content;
 
@@ -135,7 +142,7 @@ class RegistrationStep
         return $this->class;
     }
 
-    public function setClass(?string $class): self
+    public function setClass(?string $class): static
     {
         $this->class = $class;
 
@@ -147,7 +154,7 @@ class RegistrationStep
         return $this->file;
     }
 
-    public function setFile(UploadedFile $file): self
+    public function setFile(UploadedFile $file): static
     {
         $this->file = $file;
 
@@ -159,7 +166,7 @@ class RegistrationStep
         return $this->category;
     }
 
-    public function setCategory(?int $category): self
+    public function setCategory(?int $category): static
     {
         $this->category = $category;
 
@@ -171,7 +178,7 @@ class RegistrationStep
         return $this->testingRender;
     }
 
-    public function setTestingRender(int $testingRender): self
+    public function setTestingRender(int $testingRender): static
     {
         $this->testingRender = $testingRender;
 
@@ -183,7 +190,7 @@ class RegistrationStep
         return $this->registrationStepGroup;
     }
 
-    public function setRegistrationStepGroup(?RegistrationStepGroup $registrationStepGroup): self
+    public function setRegistrationStepGroup(?RegistrationStepGroup $registrationStepGroup): static
     {
         $this->registrationStepGroup = $registrationStepGroup;
 
@@ -195,9 +202,21 @@ class RegistrationStep
         return $this->finalRender;
     }
 
-    public function setFinalRender(int $finalRender): self
+    public function setFinalRender(int $finalRender): static
     {
         $this->finalRender = $finalRender;
+
+        return $this;
+    }
+
+    public function isPersonal(): bool
+    {
+        return $this->personal;
+    }
+
+    public function setPersonal(bool $personal): static
+    {
+        $this->personal = $personal;
 
         return $this;
     }

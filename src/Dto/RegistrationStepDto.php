@@ -21,7 +21,11 @@ class RegistrationStepDto
 
     public ?string $overviewTemplate;
 
-    public ?string $filename;
+    public ?string $pdfFilename;
+
+    public ?string $pdfRelativePath;
+
+    public ?string $pdfPath;
 
     public ?string $title;
 

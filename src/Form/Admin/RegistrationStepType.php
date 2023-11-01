@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Admin;
 
+use App\Form\UserType;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class RegistrationStepType extends AbstractType
 {
@@ -32,7 +34,7 @@ class RegistrationStepType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre',
                 'row_attr' => [
-                    'class' => 'form-group-inline',
+                    'class' => 'form-group',
                 ],
             ])
             ->add('category', ChoiceType::class, [
@@ -41,21 +43,21 @@ class RegistrationStepType extends AbstractType
                 'choices' => array_flip(Licence::CATEGORIES),
                 'required' => false,
                 'row_attr' => [
-                    'class' => 'form-group-inline',
+                    'class' => 'form-group',
                 ],
             ])
             ->add('finalRender', ChoiceType::class, [
                 'label' => 'Licence final',
                 'choices' => array_flip(RegistrationStep::RENDERS),
                 'row_attr' => [
-                    'class' => 'form-group-inline',
+                    'class' => 'form-group',
                 ],
             ])
             ->add('testingRender', ChoiceType::class, [
                 'label' => '3 séances d\'essai',
                 'choices' => array_flip(RegistrationStep::RENDERS),
                 'row_attr' => [
-                    'class' => 'form-group-inline',
+                    'class' => 'form-group',
                 ],
             ])
             ->add('pdfFile', FileType::class, [
@@ -85,12 +87,20 @@ class RegistrationStepType extends AbstractType
                 },
                 'required' => false,
                 'row_attr' => [
-                    'class' => 'form-group-inline',
+                    'class' => 'form-group',
                 ],
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'full_config',
+                'required' => false,
+            ])
+            ->add('personal', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'attr' => [
+                    'data-switch-off' => 'À joindre au dossier d\'inscription',
+                    'data-switch-on' => 'À concerver par l\'adhérent',
+                ],
                 'required' => false,
             ])
             ->add('save', SubmitType::class, [

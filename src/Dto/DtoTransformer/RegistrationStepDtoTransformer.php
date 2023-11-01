@@ -9,6 +9,7 @@ use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Service\ProjectDirService;
 use App\Service\ReplaceKeywordsService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -22,15 +23,16 @@ class RegistrationStepDtoTransformer
         public UrlGeneratorInterface $router,
         private FormFactoryInterface $formFactory,
         private ReplaceKeywordsService $replaceKeywordsService,
+        private ProjectDirService $projectDir
     ) {
     }
 
     public function fromEntity(
         RegistrationStep $registrationStep,
-        ?User $user,
-        UserDto $userDto,
-        int $step,
-        int $render,
+        ?User $user = null,
+        ?UserDto $userDto = null,
+        ?int $step = null,
+        ?int $render = null,
         ?string $class = null
     ): RegistrationStepDto {
         $registrationStepDto = new RegistrationStepDto();
@@ -38,15 +40,17 @@ class RegistrationStepDtoTransformer
         $registrationStepDto->class = $class;
         $registrationStepDto->title = $registrationStep->getTitle();
         $registrationStepDto->form = $registrationStep->getForm();
-        $registrationStepDto->filename = $registrationStep->getFilename();
+        $filename = $registrationStep->getFilename();
+        $registrationStepDto->pdfFilename = $filename;
+        $registrationStepDto->pdfRelativePath = ($registrationStep->getFilename()) ? $this->projectDir->dir('','files', $filename) : null;
+        $registrationStepDto->pdfPath = ($registrationStep->getFilename()) ? $this->projectDir->path('files_directory_path', $filename) : null;
+
         if (null !== $step) {
             $registrationStepDto->formObject = $this->getForm($registrationStep, $user, $userDto, $step);
             $registrationStepDto->template = $this->getTemplate($registrationStep);
+            $registrationStepDto->content = $this->getContent($userDto, $render, $registrationStep->getContent());
+            $registrationStepDto->overviewTemplate = $this->getOverviewTemplate($registrationStep->getForm());
         }
-
-        $registrationStepDto->content = $this->getContent($userDto, $render, $registrationStep->getContent());
-
-        $registrationStepDto->overviewTemplate = $this->getOverviewTemplate($registrationStep->getForm());
 
         return $registrationStepDto;
     }

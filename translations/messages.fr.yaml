@@ -45,6 +45,7 @@ registration_step:
     view: A l'écran seul
     file: Au téléchargement seul
     file_and_view: A l'affichage et téléchargement
+    file_and_link: En lien et téléchargement
 
 approval: 
   right_to_the_image: Droit à l'image

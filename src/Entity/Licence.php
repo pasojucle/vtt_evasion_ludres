@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\LicenceRepository;
 use DateTimeInterface;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
+use App\Repository\LicenceRepository;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repositoryClass: LicenceRepository::class)]
 class Licence
@@ -126,6 +129,14 @@ class Licence
 
     #[Column(type: 'boolean', options:['default' => false])]
     private $isVae = false;
+
+    #[OneToMany(mappedBy: 'licence', targetEntity: SwornCertification::class)]
+    private Collection $swornCertifications;
+
+    public function __construct()
+    {
+        $this->swornCertifications = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -296,6 +307,36 @@ class Licence
     public function setIsVae(bool $isVae): self
     {
         $this->isVae = $isVae;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SwornCertification>
+     */
+    public function getSwornCertifications(): Collection
+    {
+        return $this->swornCertifications;
+    }
+
+    public function addSwornCertification(SwornCertification $swornCertification): static
+    {
+        if (!$this->swornCertifications->contains($swornCertification)) {
+            $this->swornCertifications->add($swornCertification);
+            $swornCertification->setLicence($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSwornCertification(SwornCertification $swornCertification): static
+    {
+        if ($this->swornCertifications->removeElement($swornCertification)) {
+            // set the owning side to null (unless already changed)
+            if ($swornCertification->getLicence() === $this) {
+                $swornCertification->setLicence(null);
+            }
+        }
 
         return $this;
     }

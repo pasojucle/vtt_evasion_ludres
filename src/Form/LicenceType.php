@@ -8,6 +8,7 @@ use App\Entity\Licence;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -26,21 +27,35 @@ class LicenceType extends AbstractType
                 if (Licence::CATEGORY_MINOR === $options['category']) {
                     array_shift($choicesCoverage);
                 }
-                if (Licence::CATEGORY_ADULT === $options['category'] && $licence->isFinal() && UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
+                if (Licence::CATEGORY_ADULT === $options['category'] && $licence->isFinal()) {
+                    if (UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
+                        $form
+                            ->add('type', ChoiceType::class, [
+                                'label' => 'Sélectionnez un type de licence avec les 3 boutons Balade, Rando et Sportive',
+                                'choices' => array_flip(Licence::TYPES),
+                                'expanded' => true,
+                                'multiple' => false,
+                                'block_prefix' => 'customcheck',
+                            ])
+                            ->add('isVae', CheckboxType::class, [
+                                'label' => 'VTT à assistance électrique',
+                                'required' => false,
+                            ])
+                        ;
+                    }
+
+
+                }
+
+                if (UserType::FORM_OVERVIEW === $options['current']->getForm()) {
                     $form
-                        ->add('type', ChoiceType::class, [
-                            'label' => 'Sélectionnez un type de licence avec les 3 boutons Balade, Rando et Sportive',
-                            'choices' => array_flip(Licence::TYPES),
-                            'expanded' => true,
-                            'multiple' => false,
-                            'block_prefix' => 'customcheck',
-                        ])
-                        ->add('isVae', CheckboxType::class, [
-                            'label' => 'VTT à assistance électrique',
-                            'required' => false,
+                        ->add('swornCertifications', CollectionType::class, [
+                            'label' => false,
+                            'entry_type' => SwornCertificationType::class,
                         ])
                     ;
                 }
+
                 if (UserType::FORM_LICENCE_COVERAGE === $options['current']->getForm()) {
                     $form
                         ->add('coverage', ChoiceType::class, [

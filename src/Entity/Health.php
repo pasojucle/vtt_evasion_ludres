@@ -7,8 +7,6 @@ namespace App\Entity;
 use App\Entity\User;
 use App\Repository\HealthRepository;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -26,21 +24,13 @@ class Health
     #[Column(type: 'date', nullable: true)]
     private ?DateTimeInterface $medicalCertificateDate = null;
 
-    #[Column(type:'boolean', options: ['default' => false])]
-    private bool $atLeastOnePositveResponse = false;
-
     #[OneToOne(targetEntity: User::class, mappedBy: 'health')]
     private ?User $user;
-
-    private Collection $healthQuestions;
 
     #[Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    public function __construct()
-    {
-        $this->healthQuestions = new ArrayCollection();
-    }
+    private array $swornCertifications = [];
 
     public function getId(): ?int
     {
@@ -59,33 +49,14 @@ class Health
         return $this;
     }
 
-    public function hasAtLeastOnePositveResponse(): ?bool
+    public function getSwornCertifications(): array
     {
-        return $this->atLeastOnePositveResponse;
+        return $this->swornCertifications;
     }
 
-    public function setAtLeastOnePositveResponse(): self
+    public function setSwornCertifications(array $swornCertifications): static
     {
-        $atLeastOnePositveResponse = false;
-
-        foreach ($this->healthQuestions as $question) {
-            if (true === $question->getValue()) {
-                $atLeastOnePositveResponse = true;
-            }
-        }
-
-        $this->atLeastOnePositveResponse = $atLeastOnePositveResponse;
-        return $this;
-    }
-
-    public function getHealthQuestions(): Collection
-    {
-        return $this->healthQuestions;
-    }
-
-    public function setHealthQuestions(ArrayCollection $healthQuestions): self
-    {
-        $this->healthQuestions = $healthQuestions;
+        $this->swornCertifications = $swornCertifications;
 
         return $this;
     }

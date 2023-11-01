@@ -25,7 +25,6 @@ use Twig\Environment;
 
 class GetRegistrationFile
 {
-    private User $user;
     private array $registrationDocumentSteps = [];
     private array $files = [];
     private array $allmembershipFee;
@@ -49,8 +48,7 @@ class GetRegistrationFile
 
     public function execute(User $user): string
     {
-        $this->user = $user;
-        $healthQuestions = null;
+        $swornCertifications = null;
         $season = $this->seasonService->getCurrentSeason();
         $lastLicence = $user->getLastLicence();
         $category = $lastLicence->getCategory();
@@ -60,23 +58,18 @@ class GetRegistrationFile
         if ($this->security->getUser() === $user) {
             $today = new DateTime();
             $lastLicence->setCreatedAt($today);
-            $healthQuestions = $this->requestStack->getSession()->get('health_questions');
         }
-        if (!$healthQuestions) {
-            $formQuestionCount = $this->healthService->getHealthQuestionsCount($this->licenceService->getCategory($user));
-            $healthQuestions = $this->healthService->createHealthQuestions($formQuestionCount);
-        }
+        $this->healthService->getHealthSwornCertifications($user);
 
-        $user->getHealth()->setHealthQuestions($healthQuestions);
+
         $changes = $this->registrationChangeRepository->findBySeason($user, $season);
         $userDto = $this->userDtoTransformer->fromEntity($user, $changes);
 
         foreach ($steps as $step) {
             $step = $this->registrationStepDtoTransformer->fromEntity($step, $user, $userDto, 1, RegistrationStep::RENDER_FILE);
-            if (null !== $step->filename) {
-                $filename = './files/' . $step->filename;
+            if (null !== $step->pdfFilename) {
                 $this->files[] = [
-                    'filename' => $filename,
+                    'filename' => $step->pdfPath,
                     'form' => $step->form,
                 ];
             }
@@ -88,7 +81,7 @@ class GetRegistrationFile
         }
     
 
-        $this->addRegistrationDocument($userDto);
+        $this->addRegistrationDocument($user, $userDto);
 
         $filename = $this->pdfService->joinPdf($this->files, $user);
 
@@ -122,12 +115,12 @@ class GetRegistrationFile
         }
     }
 
-    private function addRegistrationDocument(UserDto $userDto)
+    private function addRegistrationDocument(User $userEntity, UserDto $userDto)
     {
         if (!empty($this->registrationDocumentSteps)) {
             $registration = $this->twig->render('registration/registrationPdf.html.twig', [
                 'user' => $userDto,
-                'user_entity' => $this->user,
+                'user_entity' => $userEntity,
                 'registration_document_steps' => $this->registrationDocumentSteps,
                 'licence' => $userDto->lastLicence,
                 'media' => RegistrationStep::RENDER_FILE,
