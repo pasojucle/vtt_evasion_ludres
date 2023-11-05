@@ -182,12 +182,6 @@ class MenuAdminService
                 'pattern' => '/registration_step/',
                 'role' => 'ROLE_ADMIN',
             ],
-            [
-                'label' => 'Catégories d\'occadion',
-                'route' => 'admin_category_list',
-                'pattern' => '/categorie/',
-                'role' => 'ROLE_ADMIN',
-            ],
         ]);
     }
 

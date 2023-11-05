@@ -1,8 +1,8 @@
 {% extends 'base_modal.html.twig' %}
 {% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Modifier une catégorie{% endblock %}
+{% block modal_title %}Modifier un paramètre{% endblock %}
 {% block body %}
-    {{ form_row(form.name)}}
+    {{ form_row(form.value)}}
 {% endblock %}
 {% block footer %}
     {% set button_text = 'Modifier' %}

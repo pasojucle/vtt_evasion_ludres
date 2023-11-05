@@ -38,4 +38,16 @@ class ParameterRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+    public function findByParameterGroupName(string $name): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.parameterGroup', 'pg')
+            ->andWhere(
+                (new Expr())->eq('pg.name', ':name')
+            )
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
+    }
 }

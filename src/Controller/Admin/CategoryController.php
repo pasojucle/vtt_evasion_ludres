@@ -36,7 +36,9 @@ class CategoryController extends AbstractController
         Request $request,
         ?Category $category
     ): Response {
-        $form = $this->createForm(CategoryType::class, $category);
+        $form = $this->createForm(CategoryType::class, $category, [
+            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), )
+        ]);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {

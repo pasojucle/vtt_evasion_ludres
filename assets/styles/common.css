@@ -995,11 +995,11 @@ ul > li.list {
     display: flex;
     align-items: center;
 }
-li.border-bottom {
+li.list-dropdown.border-bottom {
     position: relative;
 }
 
-li.border-bottom::after {
+li.list-dropdown.border-bottom::after {
     position: absolute;
     content: '';
     background-color: var(--light-color);

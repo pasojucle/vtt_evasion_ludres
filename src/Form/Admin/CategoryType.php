@@ -22,12 +22,6 @@ class CategoryType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
-            ])
         ;
     }
 

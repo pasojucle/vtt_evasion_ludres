@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SecondHandDtoTransformer;
 use App\Entity\SecondHand;
 use App\Form\SecondHandType;
+use App\Repository\ParameterRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\PaginatorService;
 use App\Service\UploadService;
@@ -25,6 +26,7 @@ class SecondHandController extends AbstractController
     public function __construct(
         private SecondHandDtoTransformer $secondHandDtoTransformer,
         private SecondHandRepository $secondHandRepository,
+        private ParameterRepository $parameterRepository,
     ) {
     }
 
@@ -42,6 +44,7 @@ class SecondHandController extends AbstractController
             'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands, ['type' => (int)$valid]),
             'valid' => $valid,
+            'parameters' => $this->parameterRepository->findByParameterGroupName('SECOND_HAND')
         ]);
     }
 
@@ -86,7 +89,7 @@ class SecondHandController extends AbstractController
             return $this->redirectToRoute('admin_second_hand_list');
         }
 
-        return $this->render('second_hand/admin/edit.html.twig', [
+        return $this->render('second_hand/admin/edit.modal.html.twig', [
             'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
             'form' => $form->createView(),
         ]);
