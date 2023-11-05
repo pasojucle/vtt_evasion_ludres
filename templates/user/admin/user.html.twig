@@ -135,10 +135,6 @@
                         {% if licence.isFinal is same as(false) %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6">{{ user.testingBikeRides }} sortie(s)</div></div></li>
                         {% endif %}
-
-                        {% if licence.type is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Type : </b></div><div class="col-md-8 col-xs-6">{{ licence.type|trans }}</div></div></li>
-                        {% endif %}
                         {% if licence.coverage is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
                         {% endif %}

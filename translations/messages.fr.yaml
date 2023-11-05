@@ -63,6 +63,7 @@ form:
   licence_type: Type de licence
   member: Informations de l'adhérent
   kinship: Informations des parents
+  overview: Validation
 
 bike_ride:
   period:

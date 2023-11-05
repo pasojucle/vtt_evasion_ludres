@@ -9,8 +9,8 @@ use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\Cluster;
 use App\Entity\RegistrationStep;
 use App\Service\PdfService;
+use App\Service\ProjectDirService;
 use App\Service\StringService;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +27,7 @@ class ExportCluster
         private ClusterDtoTransformer $clusterDtoTransformer,
         private PdfService $pdfService,
         private Environment $twig,
-        private ParameterBagInterface $parameterBag,
+        private ProjectDirService $projectDir,
     ) {
     }
 
@@ -35,7 +35,8 @@ class ExportCluster
     {
         $this->cluster = $this->clusterDtoTransformer->fromEntity($cluster);
 
-        $this->dirName = $this->parameterBag->get('tmp_directory_path') . $this->stringService->clean($this->cluster->title);
+        $this->dirName = $this->projectDir->path('tmp', $this->stringService->clean($this->cluster->title));
+        dump($this->dirName);
         if (!is_dir($this->dirName)) {
             mkdir($this->dirName);
         }
@@ -65,7 +66,7 @@ class ExportCluster
     {
         $fileName = $this->cluster->title . '_' . $this->cluster->entity->getBikeRide()->getStartAt()->format('Ymd');
         $fileName = $this->stringService->clean($fileName) . '.pdf';
-        $pathName = $this->pdfService->joinPdf($this->files, null, $this->parameterBag->get('tmp_directory_path') . $this->stringService->clean($this->cluster->title) . '.pdf');
+        $pathName = $this->pdfService->joinPdf($this->files, null, null, $this->projectDir->path('tmp', $fileName));
         $fileContent = file_get_contents($pathName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(

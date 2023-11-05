@@ -15,7 +15,6 @@ use App\Entity\RegistrationStep;
 use App\Entity\SwornCertification;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Model\CheckboxItem;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationChangeRepository;
 use App\Repository\RegistrationStepRepository;
@@ -69,7 +68,6 @@ class GetProgress
         $progress['current'] = null;
         $progress['steps'] = null;
         $userDto = $this->userDtoTransformer->fromEntity($this->user, $changes);
-        $currentEntity = null;
         foreach ($steps as $key => $registrationStep) {
             $index = $key + 1;
             $class = null;
@@ -79,7 +77,6 @@ class GetProgress
             } elseif ($key === $stepIndex0) {
                 $class = 'current';
                 $progress['currentIndex'] = $index;
-                $currentEntity = $registrationStep;
             } else {
                 if (null === $progress['nextIndex']) {
                     $progress['nextIndex'] = $index;
@@ -87,10 +84,8 @@ class GetProgress
             }
 
             $progress['steps'][$index] = $this->registrationStepDtoTransformer->fromEntity($registrationStep, $this->user, $userDto, $step, registrationStep::RENDER_VIEW, $class);
-            // $progress['steps'][$index] = ['title' => $registrationStep->getTitle(), 'class' => $class];
         }
         $progress['current'] = $progress['steps'][$progress['currentIndex']];
-        // $progress['current'] = $this->registrationStepDtoTransformer->fromEntity($currentEntity, $this->user, $userDto, $step, registrationStep::RENDER_VIEW, $class);
         $progress['user'] = $userDto;
         $progress['seasonLicence'] = $this->seasonLicence;
         $progress['season'] = $this->season;
@@ -190,12 +185,10 @@ class GetProgress
         $this->seasonLicence->setSeason($this->season);
         if (!$this->user->getLicences()->isEmpty()) {
             $this->seasonLicence->setFinal(true)
-                ->setType(Licence::TYPE_HIKE)
                 ->setCoverage($this->user->getLastLicence()?->getCoverage())
             ;
         } else {
             $this->seasonLicence->setFinal(false)
-                ->setType(Licence::TYPE_HIKE)
                 ->setCoverage(Licence::COVERAGE_MINI_GEAR)
             ;
         }
@@ -204,24 +197,35 @@ class GetProgress
             $this->seasonLicence->setCategory($category);
         }
 
-        $labels = (Licence::CATEGORY_ADULT === $this->seasonLicence->getCategory()) ? 
+        $this->addSwornCertifications();
+
+        $this->entityManager->persist($this->seasonLicence);
+        $this->user->addLicence($this->seasonLicence);
+    }
+
+    public function addSwornCertifications(): void
+    {
+        $labels = [];
+        $labels[] = 'J\'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site www.vttevasionludres.fr';
+
+        if ($this->seasonLicence->isFinal()) {
+            $labels = (Licence::CATEGORY_ADULT === $this->seasonLicence->getCategory()) ?
             [
                 'J\'ai bien pris note de ces questions et comprends que certaines situations ou symptômes peuvent entraîner un risque pour ma santé et/ou pour mes performances.',
                 'J\'atteste sur l\'honneur avoir déjà pris, ou prendre les dispositions nécessaires selon les recommandations données en cas de réponse positive à l\'une des questions des différents questionnaires.',
             ] :
             [
-                'Je fournis un certificat médical de moins de 6 mois (cyclotourisme).<b>Ou<b>J\'atteste sur l\'honneur avoir renseigné le questionnaire de santé (QS-JEUNES) qui m\'a été remis par mon club.',
+                'Je fournis un certificat médical de moins de 6 mois (cyclotourisme).<b>Ou</b> J\'atteste sur l\'honneur avoir renseigné le questionnaire de santé qui m\'a été remis par mon club.',
                 'J\'atteste sur l\'honneur avoir répondu par la négative à toutes les rubriques du questionnaire de santé et je reconnais expressément que les réponses apportées relèvent de ma responsabilité exclusive.',
             ];
-        foreach($labels as $label) {
-            $swornCertification = New SwornCertification();
+        }
+
+        foreach ($labels as $label) {
+            $swornCertification = new SwornCertification();
             $swornCertification->setLabel($label);
             $this->entityManager->persist($swornCertification);
             $this->seasonLicence->addSwornCertification($swornCertification);
         }
-
-        $this->entityManager->persist($this->seasonLicence);
-        $this->user->addLicence($this->seasonLicence);
     }
 
     private function createHealth(): void
@@ -271,19 +275,15 @@ class GetProgress
         $this->entityManager->persist($aproval);
     }
 
-
-
     private function setAwaitingLevel(): void
     {
         $awaitingEvaluationlevel = $this->levelRepository->findAwaitingEvaluation();
-        $this->seasonLicence->setType(Licence::TYPE_HIKE);
         $this->user->setLevel($awaitingEvaluationlevel);
     }
 
     private function setAdultLevel(): void
     {
         $unframedAdultlevel = $this->levelRepository->findUnframedAdult();
-        $this->seasonLicence->setType(Licence::TYPE_HIKE);
         $this->user->setLevel($unframedAdultlevel);
     }
 

@@ -14,12 +14,13 @@ use App\Service\OrderByService;
 use App\UseCase\Registration\GetRegistrationByTypes;
 use App\UseCase\RegistrationStep\EditRegistrationStep;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/param', name: 'admin_registration_step', methods: ['GET'])]
+#[Route('/admin/param/inscription', name: 'admin_registration_step', methods: ['GET'])]
 class RegistrationStepController extends AbstractController
 {
     public function __construct(
@@ -30,7 +31,7 @@ class RegistrationStepController extends AbstractController
     ) {
     }
 
-    #[Route('/inscription', name: 's', methods: ['GET'])]
+    #[Route('/list', name: '_list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationSteps(
         GetRegistrationByTypes $registrationByTypes
@@ -55,40 +56,67 @@ class RegistrationStepController extends AbstractController
 
         $this->orderByService->setNewOrders($group, $regitrationStepGroups, $newOrder);
 
-        return $this->redirectToRoute('admin_registration_steps');
+        return $this->redirectToRoute('admin_registration_step_list');
     }
 
-    #[Route('/ordonner/{step}', name: '_order', methods: ['GET', 'POST'], options:['expose' => true])]
+    #[Route('/ordonner/{registrationStep}', name: '_order', methods: ['GET', 'POST'], options:['expose' => true])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminregistrationStepOrder(
         Request $request,
-        RegistrationStep $step
+        RegistrationStep $registrationStep
     ): Response {
         $newOrder = $request->request->get('newOrder');
         if (null !== $newOrder) {
-            $regitrationSteps = $this->registrationStepRepository->findByGroup($step->getRegistrationStepGroup());
-            $this->orderByService->setNewOrders($step, $regitrationSteps, (int) $newOrder);
+            $regitrationSteps = $this->registrationStepRepository->findByGroup($registrationStep->getRegistrationStepGroup());
+            $this->orderByService->setNewOrders($registrationStep, $regitrationSteps, (int) $newOrder);
         }
 
-        return $this->redirectToRoute('admin_registration_steps');
+        return $this->redirectToRoute('admin_registration_step_list');
     }
 
-    #[Route('/{step}', name: '', methods: ['GET', 'POST'])]
+    #[Route('/{registrationStep}', name: '_edit', defaults:['registrationStep' => null], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminRegistrationStep(
         Request $request,
         EditRegistrationStep $editRegistrationStep,
-        RegistrationStep $step
+        ?RegistrationStep $registrationStep
     ): Response {
-        $form = $this->createForm(RegistrationStepType::class, $step);
+        $form = $this->createForm(RegistrationStepType::class, $registrationStep);
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $editRegistrationStep->execute($request, $form);
+            return $this->redirectToRoute('admin_registration_step_list');
         }
 
         return $this->render('registration/admin/registrationStep.html.twig', [
-            'registrationStep' => $this->registrationStepDtoTransformer->fromEntity($step) ,
+            'registrationStep' => $this->registrationStepDtoTransformer->fromEntity($registrationStep),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/supprimer/{registrationStep}', name: '_delete', methods: ['GET', 'POST'])]
+    public function adminRegistrationStepDelete(
+        Request $request,
+        RegistrationStep $registrationStep
+    ): Response {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params')),
+        ]);
+        $group = $registrationStep->getRegistrationStepGroup();
+
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $this->registrationStepRepository->remove($registrationStep, true);
+
+            $registrationSteps = $this->registrationStepRepository->findByGroup($group);
+            $this->orderByService->ResetOrders($registrationSteps);
+
+            return $this->redirectToRoute('admin_registration_step_list');
+        }
+
+        return $this->render('registration/admin/delete.modal.html.twig', [
+            'registrationStep' => $registrationStep,
             'form' => $form->createView(),
         ]);
     }

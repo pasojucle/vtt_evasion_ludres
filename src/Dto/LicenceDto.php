@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Entity\Licence;
-use App\Model\Currency;
 
 class LicenceDto
 {
@@ -33,8 +32,6 @@ class LicenceDto
 
     public ?string $statusStr;
 
-    public ?string $type;
-
     public ?bool $lock;
 
     public bool $currentSeasonForm = false;
@@ -48,4 +45,6 @@ class LicenceDto
     public array $amount = [];
 
     public string $registrationTitle = '';
+
+    public string $swornCertifications = '';
 }

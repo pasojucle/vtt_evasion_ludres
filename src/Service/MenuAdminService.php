@@ -178,7 +178,7 @@ class MenuAdminService
             ],
             [
                 'label' => 'Etapes des inscriptions',
-                'route' => 'admin_registration_steps',
+                'route' => 'admin_registration_step_list',
                 'pattern' => '/registration_step/',
                 'role' => 'ROLE_ADMIN',
             ],

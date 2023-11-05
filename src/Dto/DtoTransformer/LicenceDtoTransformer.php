@@ -6,18 +6,18 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\LicenceDto;
 use App\Entity\Licence;
+use App\Entity\SwornCertification;
 use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\MembershipFeeAmountRepository;
 use App\Repository\RegistrationChangeRepository;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
+use App\Service\ProjectDirService;
 use App\Service\SeasonService;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use ReflectionClass;
-use ReflectionProperty;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
@@ -39,6 +39,7 @@ class LicenceDtoTransformer
         private ParameterService $parameterService,
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
         private IndemnityService $indemnityService,
+        private ProjectDirService $projectDir,
     ) {
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
     }
@@ -62,7 +63,6 @@ class LicenceDtoTransformer
             $licenceDto->status = $this->getStatus($licence, $currentSeason);
             $licenceDto->statusClass = self:: STATUS_CLASS[$licenceDto->status];
             $licenceDto->statusStr = Licence::STATUS[$licenceDto->status];
-            $licenceDto->type = (!empty($licence->getType())) ? $this->translator->trans(Licence::TYPES[$licence->getType()]) : null;
             $licenceDto->lock = $licence->getSeason() !== $currentSeason;
             $licenceDto->currentSeasonForm = $this->getCurrentSeasonForm($licence, $currentSeason);
             $licenceDto->isVae = $this->isVae($licence->isVae());
@@ -70,6 +70,7 @@ class LicenceDtoTransformer
             $licenceDto->isSeasonLicence = $licence->getSeason() === $currentSeason;
             $licenceDto->amount = $this->getAmount($licence);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
+            $licenceDto->swornCertifications = $this->getSwornCertifications($licence);
 
             if ($changes) {
                 $this->formatChanges($changes, $licenceDto);
@@ -215,5 +216,16 @@ class LicenceDtoTransformer
             }
         }
         return $status;
+    }
+
+    private function getSwornCertifications(Licence $licence): string
+    {
+        $swornCertifications = '';
+        /** @var SwornCertification  $swornCertification */
+        foreach ($licence->getSwornCertifications() as $swornCertification) {
+            $checkImg = base64_encode(file_get_contents($this->projectDir->path('logos', 'check-square-regular.png')));
+            $swornCertifications .= sprintf('<p><img src="data:image/png;base64, %s"/> %s</p>', $checkImg, $swornCertification->getLabel());
+        }
+        return $swornCertifications;
     }
 }

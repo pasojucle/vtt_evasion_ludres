@@ -39,7 +39,7 @@ class HealthDtoTransformer
         $medicalCertificateEndAt = null;
 
         if ($medicalCertificateDate) {
-            $medicalCertificateEndAt = $this->getMedicalCertificateEndAt($health->getUser()->getLastLicence()->getType(), clone $medicalCertificateDate);
+            $medicalCertificateEndAt = $this->getMedicalCertificateEndAt(clone $medicalCertificateDate);
             $message .= 'Date du dernier certificat médical : ' . $medicalCertificateDate->format('d/m/Y')
                     . sprintf(' (Valable jusqu\'au %s) <br>', $medicalCertificateEndAt->format('d/m/Y'));
         }
@@ -51,11 +51,9 @@ class HealthDtoTransformer
         return $message;
     }
 
-    private function getMedicalCertificateEndAt(int $licenceType, DateTime $medicalCertificateAt): DateTime
+    private function getMedicalCertificateEndAt(DateTime $medicalCertificateAt): DateTime
     {
-        $duration = (Licence::TYPE_SPORT === $licenceType)
-            ? $this->parameterService->getParameterByName('SPORT_MEDICAL_CERTIFICATE_DURATION')
-            : $this->parameterService->getParameterByName('HIKE_MEDICAL_CERTIFICATE_DURATION');
+        $duration = $this->parameterService->getParameterByName('HIKE_MEDICAL_CERTIFICATE_DURATION');
 
         $endAt = $medicalCertificateAt->add(new DateInterval(sprintf('P%sY', $duration)));
 

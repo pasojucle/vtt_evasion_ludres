@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Licence;
 use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Repository\OrderLineRepository;
 use App\Repository\SurveyResponseRepository;
+use App\Repository\SwornCertificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UserService
@@ -15,7 +17,8 @@ class UserService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private SurveyResponseRepository $surveyResponseRepository,
-        private OrderLineRepository $orderLineRepository
+        private OrderLineRepository $orderLineRepository,
+        private SwornCertificationRepository $swornCertificationRepository,
     ) {
     }
 
@@ -33,6 +36,9 @@ class UserService
                     foreach ($data['entity']->{$method}() as $entity) {
                         if ($entity instanceof OrderHeader) {
                             $this->orderLineRepository->deleteByOrderHeader($entity);
+                        }
+                        if ($entity instanceof Licence) {
+                            $this->swornCertificationRepository->deleteByLicence($entity);
                         }
                         $this->entityManager->remove($entity);
                     }

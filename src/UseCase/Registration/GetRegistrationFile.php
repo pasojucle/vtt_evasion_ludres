@@ -15,13 +15,13 @@ use App\Repository\MembershipFeeRepository;
 use App\Repository\RegistrationChangeRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\HealthService;
-use App\Service\LicenceService;
 use App\Service\PdfService;
+use App\Service\ProjectDirService;
 use App\Service\SeasonService;
 use DateTime;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
+use ZipArchive;
 
 class GetRegistrationFile
 {
@@ -36,19 +36,17 @@ class GetRegistrationFile
         private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         private Environment $twig,
         private Security $security,
-        private LicenceService $licenceService,
         private HealthService $healthService,
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
         private ContentRepository $contentRepository,
-        private RequestStack $requestStack,
         private RegistrationChangeRepository $registrationChangeRepository,
+        private ProjectDirService $projectDir,
     ) {
     }
 
-    public function execute(User $user): string
+    public function execute(User $user): ?string
     {
-        $swornCertifications = null;
         $season = $this->seasonService->getCurrentSeason();
         $lastLicence = $user->getLastLicence();
         $category = $lastLicence->getCategory();
@@ -68,7 +66,7 @@ class GetRegistrationFile
         foreach ($steps as $step) {
             $step = $this->registrationStepDtoTransformer->fromEntity($step, $user, $userDto, 1, RegistrationStep::RENDER_FILE);
             if (null !== $step->pdfFilename) {
-                $this->files[] = [
+                $this->files[$step->outputFilename][] = [
                     'filename' => $step->pdfPath,
                     'form' => $step->form,
                 ];
@@ -80,12 +78,19 @@ class GetRegistrationFile
             }
         }
     
-
         $this->addRegistrationDocument($user, $userDto);
 
-        $filename = $this->pdfService->joinPdf($this->files, $user);
-
-        return file_get_contents($filename);
+        $zip = new ZipArchive();
+        $zipName = $this->projectDir->path('tmp', 'inscription_vtt_evasion_ludres.zip');
+        if ($zip->open($zipName, ZipArchive::CREATE) === true) {
+            foreach (RegistrationStepDto::OUTPUT_FILENAMES as $key => $outputFilename) {
+                $fileTmp = $this->projectDir->path('tmp', $outputFilename);
+                $zip->addFile($this->pdfService->joinPdf($this->files[$key], $user, $key, $fileTmp), $outputFilename);
+            }
+            $zip->close();
+            return $zipName;
+        }
+        return null;
     }
 
     private function addRegistrationStep(RegistrationStepDto $step, UserDto $userDto)
@@ -108,7 +113,7 @@ class GetRegistrationFile
 
         if (null !== $html) {
             $pdfFilepath = $this->pdfService->makePdf($html, $step->title);
-            $this->files[] = [
+            $this->files[$step->outputFilename][] = [
                 'filename' => $pdfFilepath,
                 'form' => $step->form,
             ];
@@ -126,7 +131,8 @@ class GetRegistrationFile
                 'media' => RegistrationStep::RENDER_FILE,
             ]);
             $pdfFilepath = $this->pdfService->makePdf($registration, 'registration_temp');
-            array_unshift($this->files, [
+
+            array_unshift($this->files[RegistrationStepDto::OUTPUT_FILENAME_CLUB], [
                 'filename' => $pdfFilepath,
                 'form' => null,
             ]);

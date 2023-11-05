@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Licence;
 use App\Entity\SwornCertification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,5 +21,18 @@ class SwornCertificationRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SwornCertification::class);
+    }
+
+    public function deleteByLicence(Licence $licence): void
+    {
+        $this->createQueryBuilder('sc')
+        ->delete()
+        ->andWhere(
+            (new Expr())->eq('sc.licence', ':licence')
+        )
+        ->setParameter('licence', $licence)
+        ->getQuery()
+        ->getResult()
+    ;
     }
 }

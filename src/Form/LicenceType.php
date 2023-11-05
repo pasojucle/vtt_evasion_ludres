@@ -30,21 +30,12 @@ class LicenceType extends AbstractType
                 if (Licence::CATEGORY_ADULT === $options['category'] && $licence->isFinal()) {
                     if (UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
                         $form
-                            ->add('type', ChoiceType::class, [
-                                'label' => 'Sélectionnez un type de licence avec les 3 boutons Balade, Rando et Sportive',
-                                'choices' => array_flip(Licence::TYPES),
-                                'expanded' => true,
-                                'multiple' => false,
-                                'block_prefix' => 'customcheck',
-                            ])
                             ->add('isVae', CheckboxType::class, [
                                 'label' => 'VTT à assistance électrique',
                                 'required' => false,
                             ])
                         ;
                     }
-
-
                 }
 
                 if (UserType::FORM_OVERVIEW === $options['current']->getForm()) {

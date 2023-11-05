@@ -46,6 +46,7 @@ class Validate
                 'status' => $status,
                 'html' => $render,
                 'multiple' => is_array($value),
+                'filled' => $filled,
             ];
         }
 
@@ -55,7 +56,7 @@ class Validate
     private function getConstraints(?string $constraintClass, bool $required, array|string|null &$value, bool $filled): array
     {
         $constraints = [];
-        if ($filled && !empty($constraintClass)) {
+        if (!empty($constraintClass)) {
             list($namespace, $constraintClass) = explode('-', $constraintClass);
             $constraintClass = ('symfony' === $namespace)
                 ? 'Symfony\Component\Validator\Constraints\\' . $constraintClass
@@ -69,7 +70,7 @@ class Validate
                 }
             }
         }
-        if ($filled && true === $required) {
+        if (true === $required) {
             $constraints[] = new NotBlank();
         }
 

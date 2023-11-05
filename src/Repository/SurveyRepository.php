@@ -32,22 +32,6 @@ class SurveyRepository extends ServiceEntityRepository
         ;
     }
 
-    // /**
-    //  * @return Survey[] Returns an array of Survey objects
-    //  */
-    // public function findActiveQuery(): QueryBuilder
-    // {
-    //     return $this->createQueryBuilder('s')
-    //         ->andWhere(
-    //             (new Expr())->eq('s.disabled', 0),
-    //             (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
-    //             (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
-    //             (new Expr())->isNull('s.bikeRide'),
-    //         )
-    //         ->orderBy('s.id', 'ASC')
-    //     ;
-    // }
-
     public function findActive(User $member): array
     {
         return $this->createQueryBuilder('s')

@@ -24,7 +24,7 @@ class RegistrationStep
 
     public const RENDER_FILE_AND_VIEW = 3;
 
-    public const RENDER_FILE_AND_LINK= 3;
+    public const RENDER_FILE_AND_LINK = 4;
 
     public const RENDERS = [
         self::RENDER_NONE => 'registration_step.render.none',
@@ -47,8 +47,8 @@ class RegistrationStep
     #[Column(type: 'integer', nullable: true)]
     private ?int $form;
 
-    #[Column(type: 'integer')]
-    private int $orderBy;
+    #[Column(type: 'integer', nullable: true)]
+    private ?int $orderBy = null;
 
     #[Column(type: 'text', nullable: true)]
     private ?string $content;

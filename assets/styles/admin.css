@@ -45,7 +45,7 @@ nav > .nav-group > .block-body > ul > li::after {
     margin: unset;
 }
 nav > .nav-group > .block-body > ul > li > a {
-    padding: 15px;
+    padding: 12px;
     display: block;
     color: var(--background-color);
     background-color: var(--white-color);
@@ -70,7 +70,7 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     overflow: hidden;
 }
 .nav-group .block-body.down, .down[data-target] {
-    max-height: 650px;
+    max-height: 750px;
     transition: max-height 0.25s ease-in;
 }
 
@@ -125,6 +125,9 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
 }
 .registrations .labels .col-md-6, .registrations .labels .col-md-3  {
     padding: 0 5px;
+}
+.position-relative {
+    position: relative;
 }
 
 @media screen and (max-width: 800px) {

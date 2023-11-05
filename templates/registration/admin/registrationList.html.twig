@@ -7,13 +7,21 @@
     <div class="wrapper registrations">
         <div class="wrapper-title">
             <h1>Etapes des inscriptions</h1>
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                <div class="dropdown-menu" data-target="dropdown-tools">
+                    <ul class="dropdown-body">
+                        <li><a href="{{ path('admin_registration_step_edit')}}" class="dropdown-item"><i class="fa-solid fa-plus"></i> Ajouter une étape</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="wrapper-body">
             <div class="row labels">
                 <div class="col-md-1 col-xs-1"></div>
                 <div class="col-md-11 col-xs-11">
                     <div class="row">
-                        <div class="col-md-5 col-xs-5"></div>
+                        <div class="col-md-6 col-xs-6"></div>
                         <div class="col-md-6 col-xs-6">
                             <div class="row">
                                 {% for category in labels.categories %}
@@ -44,14 +52,13 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="col-md-1 col-xs-1"></div>
                     </div>
                 </div>
             </div>
             <ul class="sortable" data-route="admin_registration_step_group_order" data-parameter="group" data-target="goups">
                 {% for group in registrationStepGroups %}
                     {% set  is_last_item = loop.last %}
-                    <li class="row ui-state-default {% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
+                    <li class="row ui-state-default border-bottom{% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
                         data-id="{{ group.id }}">
                         <div class="col-md-1 col-xs-1 sortable-cursor">
                             {{ group.orderBy + 1 }}
@@ -60,7 +67,20 @@
                             <ul class="sortable" data-route="admin_registration_step_order" data-parameter="step" data-target="goup-{{ group.id }}">
                             {% for step in group.registrationSteps %}
                                 <li class=" row ui-state-default" data-id="{{ step.id }}">
-                                    <div class="col-md-5 col-xs-5 no-padding-vertical {% if group.registrationSteps|length > 1 %}sortable-cursor{% endif %}">{{ step.title }}</div>
+                                    <div class="col-md-6 col-xs-6 no-padding-vertical position-relative {% if group.registrationSteps|length > 1 %}sortable-cursor{% endif %}">
+                                        <div class="list-dropdown flex-align-center">
+                                            {{ step.title }}
+                                            <div class="dropdown">
+                                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                                                <div class="dropdown-menu" data-target="dropdown-tools">
+                                                    <ul class="dropdown-body">
+                                                        <li><a href="{{ path('admin_registration_step_edit', {'registrationStep': step.id})}}" class="dropdown-item"><i class="fas fa-pencil-alt"></i> Modifier</a></li>
+                                                        <li><a class="dropdown-item"  data-toggle="modal" data-type="danger" href="{{ path('admin_registration_step_delete', {'registrationStep' : step.id}) }}"> Supprimer</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6 col-xs-6 no-padding-vertical">
                                         <div class="row">
                                             {% for category in registrationByTypes %}
@@ -84,12 +104,6 @@
                                                 </div>                     
                                             {% endfor %}
                                         </div>
-                                    </div>
-                                    <div class="col-md-1 col-xs-1">
-                                        <a class="btn btn-primary btn-ico" title="Modifier"
-                                            href="{{ path('admin_registration_step', {'step' : step.id}) }}">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
                                     </div>
                                 </li>
                             {% endfor %}

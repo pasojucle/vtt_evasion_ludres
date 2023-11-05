@@ -64,7 +64,7 @@ class UpdateCommand extends Command
 
             $commands = [
                 ['cmd' => 'doctrine:migration:migrate -n', 'onlyOne' => false],
-                ['cmd' => 'geo:load:data', 'onlyOne' => false],
+                ['cmd' => 'geo:load:data', 'onlyOne' => true],
                 ['cmd' => 'geo:convert:birthplace', 'onlyOne' => true],
                 ['cmd' => 'geo:convert:town', 'onlyOne' => true],
             ];

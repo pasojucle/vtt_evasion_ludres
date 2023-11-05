@@ -28,7 +28,7 @@ class RegistrationStepDtoTransformer
     }
 
     public function fromEntity(
-        RegistrationStep $registrationStep,
+        ?RegistrationStep $registrationStep,
         ?User $user = null,
         ?UserDto $userDto = null,
         ?int $step = null,
@@ -36,14 +36,17 @@ class RegistrationStepDtoTransformer
         ?string $class = null
     ): RegistrationStepDto {
         $registrationStepDto = new RegistrationStepDto();
-        $registrationStepDto->registrationDocumentForms = $this->getRegistrationDocumentForms();
-        $registrationStepDto->class = $class;
-        $registrationStepDto->title = $registrationStep->getTitle();
-        $registrationStepDto->form = $registrationStep->getForm();
-        $filename = $registrationStep->getFilename();
-        $registrationStepDto->pdfFilename = $filename;
-        $registrationStepDto->pdfRelativePath = ($registrationStep->getFilename()) ? $this->projectDir->dir('','files', $filename) : null;
-        $registrationStepDto->pdfPath = ($registrationStep->getFilename()) ? $this->projectDir->path('files_directory_path', $filename) : null;
+        if ($registrationStep) {
+            $registrationStepDto->registrationDocumentForms = $this->getRegistrationDocumentForms();
+            $registrationStepDto->class = $class;
+            $registrationStepDto->title = $registrationStep->getTitle();
+            $registrationStepDto->form = $registrationStep->getForm();
+            $registrationStepDto->outputFilename = ($registrationStep->isPersonal()) ? RegistrationStepDto::OUTPUT_FILENAME_PERSONAL : RegistrationStepDto::OUTPUT_FILENAME_CLUB;
+            $filename = $registrationStep->getFilename();
+            $registrationStepDto->pdfFilename = $filename;
+            $registrationStepDto->pdfRelativePath = ($registrationStep->getFilename()) ? $this->projectDir->dir('', 'files', $filename) : null;
+            $registrationStepDto->pdfPath = ($registrationStep->getFilename()) ? $this->projectDir->path('files_directory_path', $filename) : null;
+        }
 
         if (null !== $step) {
             $registrationStepDto->formObject = $this->getForm($registrationStep, $user, $userDto, $step);

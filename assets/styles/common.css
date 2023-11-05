@@ -991,6 +991,22 @@ ul > li.list {
     background-color: var(--white-color);
     min-height: 45px;
 }
+.list-dropdown.flex-align-center {
+    display: flex;
+    align-items: center;
+}
+li.border-bottom {
+    position: relative;
+}
+
+li.border-bottom::after {
+    position: absolute;
+    content: '';
+    background-color: var(--light-color);
+    height: 2px;
+    width: 100%;
+    bottom: 0;
+}
 
 .list-dropdown > a {
     background-color: var(--light-color);

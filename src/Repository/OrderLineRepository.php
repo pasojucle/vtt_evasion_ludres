@@ -23,7 +23,6 @@ class OrderLineRepository extends ServiceEntityRepository
         parent::__construct($registry, OrderLine::class);
     }
 
-
     public function deleteByOrderHeader(OrderHeader $orderHeader): void
     {
         $this->createQueryBuilder('ol')

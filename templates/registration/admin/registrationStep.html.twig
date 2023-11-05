@@ -5,9 +5,9 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>{{ registrationStep.title }}</h1>
+            <h1>{% if registrationStep.title is not empty %}{{ registrationStep.title }}{% else %}Nouvelle étape d'inscription{% endif %}</h1>
             <span class="tools">
-                <a href="{{ path('admin_registration_steps') }}" class="btn btn-ico" title="Retour au étapes des inscription"><i class="fas fa-chevron-left"></i></a>
+                <a href="{{ path('admin_registration_step_list') }}" class="btn btn-ico" title="Retour au étapes des inscription"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
         <div class="wrapper-body">
@@ -15,23 +15,25 @@
             <div class="row row-align-top">
                 <div class="col-md-6">
                     {{ form_row(form.title) }}
+                    {{ form_row(form.registrationStepGroup) }}
                     {{ form_row(form.category) }}
                     <h2>Affichage</h2>
                     {{ form_row(form.finalRender) }}
                     {{ form_row(form.testingRender) }}
                     {{ form_row(form.personal) }}
                     {{ form_row(form.form) }}
-                    {{ registrationStep.pdfFilename }}
-                    {{ form_row(form.pdfFile) }}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
                     <div class="form-group">
                         
-                            <div class="form-group"  data-ratio="1.41">
-                            <object class="sizing" width="100%" height="350" type="application/pdf" data="{{ registrationStep.pdfRelativePath }}">
+                        <div class="form-group"  data-ratio="1.41">
+                            <object class="sizing" width="100%" type="application/pdf" data="{{ registrationStep.pdfRelativePath }}">
                                 <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
                             </object>
                         </div>
+                                           {{ registrationStep.pdfFilename }}
+                    {{ form_row(form.pdfFile) }}
                     </div>
                 </div>
             </div>

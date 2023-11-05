@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Form\UserType;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use Symfony\Component\Form\AbstractType;
+use App\Entity\RegistrationStepGroup;
+use App\Form\UserType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationStepType extends AbstractType
 {
@@ -33,6 +35,14 @@ class RegistrationStepType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
+            ])
+            ->add('registrationStepGroup', EntityType::class, [
+                'label' => 'Groupe',
+                'class' => RegistrationStepGroup::class,
+                'choice_label' => 'title',
                 'row_attr' => [
                     'class' => 'form-group',
                 ],
@@ -85,7 +95,6 @@ class RegistrationStepType extends AbstractType
                 'choice_label' => function ($choice, $key, $value) {
                     return $this->translator->trans($key);
                 },
-                'required' => false,
                 'row_attr' => [
                     'class' => 'form-group',
                 ],
@@ -99,7 +108,7 @@ class RegistrationStepType extends AbstractType
                 'block_prefix' => 'switch',
                 'attr' => [
                     'data-switch-off' => 'À joindre au dossier d\'inscription',
-                    'data-switch-on' => 'À concerver par l\'adhérent',
+                    'data-switch-on' => 'À conserver par l\'adhérent',
                 ],
                 'required' => false,
             ])

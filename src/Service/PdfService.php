@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\RegistrationStepDto;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\UserType;
 use DateTime;
 use Dompdf\Dompdf;
 use setasign\Fpdi\Fpdi;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class PdfService
 {
@@ -19,14 +19,13 @@ class PdfService
         private StringService $ftringService,
         private ProjectDirService $projectDir,
         private UserDtoTransformer $userDtoTransformer,
-        private ParameterBagInterface $parameterBag
     ) {
     }
 
     public function makePdf(string $html, string $filename, ?string $directory = null, string $paper = 'A4')
     {
         if (null === $directory) {
-            $directory = $this->parameterBag->get('tmp_directory_path') . 'licences';
+            $directory = $this->projectDir->path('tmp', 'licences');
         }
 
         $dompdf = new Dompdf();
@@ -36,8 +35,8 @@ class PdfService
         $dompdf->render();
         $output = $dompdf->output();
 
-        if (!is_dir($this->parameterBag->get('data_directory_path'))) {
-            mkdir($this->parameterBag->get('data_directory_path'));
+        if (!is_dir($this->projectDir->path('data'))) {
+            mkdir($this->projectDir->path('data'));
         }
         if (!is_dir($directory)) {
             mkdir($directory);
@@ -118,16 +117,15 @@ class PdfService
         return $pdf;
     }
 
-    public function joinPdf(array $files, ?User $user = null, ?string $filename = null): string
+    public function joinPdf(array $files, ?User $user = null, ?int $key = null, ?string $filename = null): string
     {
         if (null === $filename) {
-            $filename = $this->parameterBag->get('tmp_directory_path') . 'pdf_temp.pdf';
+            $filename = $this->projectDir->path('tmp', 'pdf_temp.pdf');
         }
         // initiate FPDI
         $pdf = new Fpdi();
         // iterate through the files
         foreach ($files as $file) {
-            dump($file);
             $pageCount = $pdf->setSourceFile($file['filename']);
             // iterate through all pages
             for ($pageNo = 1; $pageNo <= $pageCount; ++$pageNo) {
@@ -141,7 +139,7 @@ class PdfService
 
                 // use the imported page
                 $pdf->useTemplate($templateId);
-                if (null !== $user && 3 === $pageNo && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
+                if (null !== $user && RegistrationStepDto::OUTPUT_FILENAME_CLUB === $key && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
                     $this->addData($pdf, $user);
                 }
             }

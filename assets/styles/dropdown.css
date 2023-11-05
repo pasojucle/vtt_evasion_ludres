@@ -59,7 +59,7 @@ button.dropdown-toggle:hover, button.dropdown-toggle.active {
 }
 
 .dropdown-menu > ul > li {
-    line-height: 45px;
+    line-height: 41px;
 }
 
 .dropdown-menu > ul > li.info {

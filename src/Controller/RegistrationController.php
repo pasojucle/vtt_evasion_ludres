@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
@@ -136,22 +137,46 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    
     #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
     public function registrationFile(
         GetRegistrationFile $getRegistrationFile,
         User $user
     ): Response {
-        $fileContent = $getRegistrationFile->execute($user);
+        $zipName = $getRegistrationFile->execute($user);
+        $fileContent = file_get_contents($zipName);
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            'inscription_vtt_evasion_ludres.pdf'
+            basename($zipName)
         );
 
         $response->headers->set('Content-Disposition', $disposition);
-        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Type', 'application/zip');
 
         return $response;
+    }
+ 
+    #[Route('/inscription/notice/{registrationStep}', name: 'registration_notice', methods: ['GET'])]
+    public function registrationNotice(
+        RegistrationStepDtoTransformer $registrationStepDtoTransformer,
+        RegistrationStep $registrationStep
+    ): Response {
+        if ($registrationStep->getFilename()) {
+            $registrationStepDto = $registrationStepDtoTransformer->fromEntity($registrationStep);
+            if ($registrationStepDto->pdfPath && file_exists($registrationStepDto->pdfPath)) {
+                $fileContent = file_get_contents($registrationStepDto->pdfPath);
+                $response = new Response($fileContent);
+                $disposition = HeaderUtils::makeDisposition(
+                    HeaderUtils::DISPOSITION_INLINE,
+                    'inscription_vtt_evasion_ludres.pdf'
+                );
+
+                $response->headers->set('Content-Disposition', $disposition);
+                $response->headers->set('Content-Type', 'application/pdf');
+
+                return $response;
+            }
+        }
+        return new Response(null, Response::HTTP_NOT_FOUND);
     }
 }

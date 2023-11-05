@@ -4,32 +4,20 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\LicenceRepository;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
-use App\Repository\LicenceRepository;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repositoryClass: LicenceRepository::class)]
 class Licence
 {
-    public const TYPE_RIDE = 1;
-
-    public const TYPE_HIKE = 2;
-
-    public const TYPE_SPORT = 3;
-
-    public const TYPES = [
-        self::TYPE_RIDE => 'licence.type.ride',
-        self::TYPE_HIKE => 'licence.type.hike',
-        self::TYPE_SPORT => 'licence.type.sport',
-    ];
-
     public const COVERAGE_MINI_GEAR = 1;
 
     public const COVERAGE_SMALL_GEAR = 2;
@@ -89,9 +77,6 @@ class Licence
     private ?int $id = null;
 
     #[Column(type: 'integer', nullable: true)]
-    private ?int $type = null;
-
-    #[Column(type: 'integer', nullable: true)]
     private ?int $coverage = null;
 
     #[Column(type: 'boolean')]
@@ -141,18 +126,6 @@ class Licence
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
-
-    public function setType(int $type): self
-    {
-        $this->type = $type;
-
-        return $this;
     }
 
     public function getCoverage(): ?int

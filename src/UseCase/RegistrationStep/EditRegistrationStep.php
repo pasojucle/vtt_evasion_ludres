@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\RegistrationStep;
 
+use App\Repository\RegistrationStepRepository;
 use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
@@ -13,7 +14,8 @@ class EditRegistrationStep
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UploadService $uploadService
+        private UploadService $uploadService,
+        private RegistrationStepRepository $registrationStepRepository,
     ) {
     }
 
@@ -26,7 +28,13 @@ class EditRegistrationStep
             if (null !== $newFilename) {
                 $step->setFilename($newFilename);
             }
+            dump($step);
+            if (null === $step->getOrderBy()) {
+                $order = $this->registrationStepRepository->findNexOrderByGroup($step->getRegistrationStepGroup());
+                $step->setOrderBy($order);
+            }
         }
+        $this->entityManager->persist($step);
         $this->entityManager->flush();
     }
 }

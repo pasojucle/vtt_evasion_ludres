@@ -9,7 +9,6 @@ export class Form {
         this.element = form;
         this.submit = document.querySelector('button[type="submit"]');
         this.addFields(form);
-        console.log('fields', this.fields);
         this.validate();
     }
     addFields(form) {
@@ -36,7 +35,6 @@ export class Form {
         this.formData.append(`validator[${field.id}][filled]`, Number(filled));
         if(field.multipleFields) {
             const items = this.getFieldsByContraint(field)
-            console.log('items', items)
             items.forEach((item) => {
                 this.formData.append(`validator[${field.id}][value][${item.baseName.shortName}]`, item.getValue());
             });
@@ -51,10 +49,9 @@ export class Form {
         })
         .then((response) => response.json())
         .then((json)=> {
-            console.log('json', json);
             json.constraintsValidator.forEach((validator) => {
                 let field = this.fields.find((field) => field.id === validator.id);
-                if (field) {
+                if (field && validator.filled) {
                     field.setMessageError(validator.html);
                 }
                 field = this.fields.find((field) => field.id === validator.id);

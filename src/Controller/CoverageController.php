@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\RegistrationStepDto;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Repository\RegistrationChangeRepository;
@@ -39,15 +40,15 @@ class CoverageController extends AbstractController
 
         $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $user, $userDto, 1, RegistrationStep::RENDER_FILE);
         $files = [];
-        if (null !== $step->filename) {
-            $filename = './files/' . $step->filename;
+        if (null !== $step->pdfFilename) {
+            $filename = $step->pdfPath;
             $files[] = [
                 'filename' => $filename,
                 'form' => $step->form,
             ];
         }
 
-        $filename = $pdfService->joinPdf($files, $user);
+        $filename = $pdfService->joinPdf($files, $user, RegistrationStepDto::OUTPUT_FILENAME_CLUB);
 
         $fileContent = file_get_contents($filename);
 

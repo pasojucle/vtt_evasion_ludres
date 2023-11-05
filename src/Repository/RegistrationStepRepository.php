@@ -24,6 +24,15 @@ class RegistrationStepRepository extends ServiceEntityRepository
         parent::__construct($registry, RegistrationStep::class);
     }
 
+    public function remove(RegistrationStep $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
     /**
      * @return RegistrationStep[] Returns an array of RegistrationStep objects
      */
@@ -41,7 +50,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
         }
         $andX->add($orX);
         $render = (RegistrationStep::RENDER_FILE === $render)
-            ? [RegistrationStep::RENDER_FILE, RegistrationStep::RENDER_FILE_AND_VIEW]
+            ? [RegistrationStep::RENDER_FILE, RegistrationStep::RENDER_FILE_AND_VIEW, RegistrationStep::RENDER_FILE_AND_LINK]
             : [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE_AND_VIEW];
         if (!$final) {
             $andX->add($qb->expr()->in('r.testingRender', ':render'));
@@ -78,9 +87,16 @@ class RegistrationStepRepository extends ServiceEntityRepository
             return $this->createQueryBuilder('r')
                 ->join('r.registrationStepGroup', 'rg')
                 ->andWhere(
-                    (new Expr())->eq('LOWER(rg.title)', ':name')
+                    (new Expr())->eq('LOWER(rg.title)', ':name'),
+                    (new Expr())->eq('r.personal', ':personal'),
+                    (new Expr())->eq('r.testingRender', ':render'),
+                    (new Expr())->eq('r.finalRender', ':render')
                 )
-                ->setParameter('name', strtolower('Assurance'))
+                ->setParameters([
+                    'name' => strtolower('Assurance'),
+                    'personal' => false,
+                    'render' => RegistrationStep::RENDER_FILE
+                ])
                 ->getQuery()
                 ->getOneOrNullResult()
                 ;
@@ -103,5 +119,26 @@ class RegistrationStepRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findNexOrderByGroup(RegistrationStepGroup $group): int
+    {
+        $nexOrder = 0;
+        $maxOrder = $this->createQueryBuilder('rs')
+            ->select('MAX(rs.orderBy)')
+            ->andWhere(
+                (new Expr())->eq('rs.registrationStepGroup', ':group')
+            )
+            ->setParameter('group', $group)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (null !== $maxOrder) {
+            $maxOrder = (int) $maxOrder;
+            $nexOrder = $maxOrder + 1;
+        }
+
+        return $nexOrder;
     }
 }

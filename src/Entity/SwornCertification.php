@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
+use App\Repository\SwornCertificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\SwornCertificationRepository;
 
 #[ORM\Entity(repositoryClass: SwornCertificationRepository::class)]
 class SwornCertification
