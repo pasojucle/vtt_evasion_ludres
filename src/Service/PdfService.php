@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
 use App\Entity\Licence;
+use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
 use DateTime;
@@ -48,7 +49,7 @@ class PdfService
         return $pdfFilepath;
     }
 
-    public function addData(Fpdi &$pdf, User $user)
+    private function writeCoverage(Fpdi &$pdf, User $user): void
     {
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
@@ -107,15 +108,42 @@ class PdfService
                 'y' => 262,
             ],
         ];
+        $this->writeFields($pdf, $fields);
+    }
 
+
+    private function writeHealthQuestion(Fpdi &$pdf): void
+    {
+        $fields = [
+            [
+                'value' => 'X',
+                'x' => 52.3,
+                'y' => 113.9,
+            ],
+            [
+                'value' => 'X',
+                'x' => 52.3,
+                'y' => 197.7,
+            ],
+            [
+                'value' => 'X',
+                'x' => 52.3,
+                'y' => 271.3,
+            ],
+        ];
+        $this->writeFields($pdf, $fields);
+    }
+
+    private function writeFields(Fpdi &$pdf, array $fields): void
+    {
         $pdf->SetFont('Helvetica');
         foreach ($fields as $field) {
+            $pdf->SetAutoPageBreak(10);
             $pdf->SetXY($field['x'], $field['y']);
             $pdf->Write(8, iconv('UTF-8', 'ISO-8859-1', $field['value'] ?? ''));
         }
-
-        return $pdf;
     }
+
 
     public function joinPdf(array $files, ?User $user = null, ?int $key = null, ?string $filename = null): string
     {
@@ -140,7 +168,10 @@ class PdfService
                 // use the imported page
                 $pdf->useTemplate($templateId);
                 if (null !== $user && RegistrationStepDto::OUTPUT_FILENAME_CLUB === $key && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
-                    $this->addData($pdf, $user);
+                    $this->writeCoverage($pdf, $user);
+                }
+                if (RegistrationStepDto::OUTPUT_FILENAME_PERSONAL === $key && UserType::FORM_HEALTH_QUESTION === $file['form'] && RegistrationStep::RENDER_FILE === $file['final_render']) {
+                    $this->writeHealthQuestion($pdf);
                 }
             }
         }

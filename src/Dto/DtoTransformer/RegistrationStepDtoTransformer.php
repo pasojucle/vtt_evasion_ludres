@@ -46,6 +46,7 @@ class RegistrationStepDtoTransformer
             $registrationStepDto->pdfFilename = $filename;
             $registrationStepDto->pdfRelativePath = ($registrationStep->getFilename()) ? $this->projectDir->dir('', 'files', $filename) : null;
             $registrationStepDto->pdfPath = ($registrationStep->getFilename()) ? $this->projectDir->path('files_directory_path', $filename) : null;
+            $registrationStepDto->finalRender = $registrationStep->getFinalRender();
         }
 
         if (null !== $step) {

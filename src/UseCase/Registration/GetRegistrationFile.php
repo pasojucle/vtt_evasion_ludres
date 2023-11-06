@@ -69,6 +69,7 @@ class GetRegistrationFile
                 $this->files[$step->outputFilename][] = [
                     'filename' => $step->pdfPath,
                     'form' => $step->form,
+                    'final_render' => $step->finalRender,
                 ];
             }
             if (array_key_exists($step->form, $step->registrationDocumentForms)) {
@@ -80,8 +81,11 @@ class GetRegistrationFile
     
         $this->addRegistrationDocument($user, $userDto);
 
-        $zip = new ZipArchive();
         $zipName = $this->projectDir->path('tmp', 'inscription_vtt_evasion_ludres.zip');
+        if (file_exists($zipName)) {
+            unlink($zipName);
+        }
+        $zip = new ZipArchive();
         if ($zip->open($zipName, ZipArchive::CREATE) === true) {
             foreach (RegistrationStepDto::OUTPUT_FILENAMES as $key => $outputFilename) {
                 $fileTmp = $this->projectDir->path('tmp', $outputFilename);
