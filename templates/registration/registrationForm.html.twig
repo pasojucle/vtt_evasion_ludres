@@ -42,12 +42,21 @@
                     {% endif %}
                 </div>
                 <div class="block-footer">
-                    <p>* champs obligatoires </p><br>
+                    {% if has_required_fields %}
+                        <p>* champs obligatoires </p><br>
+                    {% endif %}
                     {% if prev is not null and current.form != constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
                         <a class="btn btn-primary float-left" href="{{ path(route, {'step': prev }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
                     {% endif %}
+                    {% if current.form ==  constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
+                        <div class="align-center">
+                            <a href="{{ path('schedule', {'period': 'prochainement'}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
+                        </div>
+                    {% endif %}
                     {% if next is not null %}
-                        {% if form is not null and current.form not in [constant('App\\Form\\UserType::FORM_REGISTRATION_FILE'), constant('App\\Form\\UserType::FORM_MEMBERSHIP_FEE')] %}
+                        {% if form is null or current.form ==  constant('App\\Form\\UserType::FORM_MEMBERSHIP_FEE') %}
+                            <a class="btn btn-primary float-right" href="{{ path(route, {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
+                        {% else %}
                             {% set btn_class = 'btn btn-primary float-right' %}
                             {% set btn_label = '<i class="fas fa-chevron-circle-right"></i> Enregistrer' %}
                             {% if current.form == constant('App\\Form\\UserType::FORM_OVERVIEW') %}
@@ -55,8 +64,6 @@
                                 {% set btn_label = 'Je certifie l\'exactitude des renseignements fournis<br>et VALIDE MON INSCRIPTION' %}
                             {% endif %}
                             <button class="{{ btn_class }}" type="submit">{{ btn_label|raw }}</button>
-                        {% else %}
-                            <a class="btn btn-primary float-right" href="{{ path(route, {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
                         {% endif %}
                     {% endif %}
                 </div>

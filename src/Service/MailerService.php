@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\UserDto;
+use App\Entity\RegistrationStep;
 use App\Repository\ParameterRepository;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\File;
 
 class MailerService
 {
     public function __construct(
         private MailerInterface $mailer,
-        private ParameterRepository $parameterRepository
+        private ReplaceKeywordsService $replaceKeywords,
     ) {
     }
 
@@ -39,34 +43,15 @@ class MailerService
         }
     }
 
-    public function sendMailToMember(array $data, ?string $paramName = null): array
+    public function sendMailToMember(array|UserDto $user, string $subject, string $content, string $attachement = null): array
     {
-        $parameter = null;
-        $content = null;
-        if (null !== $paramName) {
-            $parameter = $this->parameterRepository->findOneByName($paramName);
-        }
-        if (null !== $parameter) {
-            $content = $parameter->getValue();
-            if (array_key_exists('bikeRideTitleAndPeriod', $data)) {
-                $content = str_replace('{{ bikeRideTitleAndPeriod }}', $data['bikeRideTitleAndPeriod'], $content);
-            }
-            if (array_key_exists('sessionAvailability', $data) && null !== $data['sessionAvailability']) {
-                $content = str_replace('{{ disponibilite }}', $data['sessionAvailability'], $content);
-            }
-            if (array_key_exists('secondHandName', $data) && null !== $data['secondHandName']) {
-                $content = str_replace(['{{ nom_annonce }}', '{{ url }}', '{{ durree }}'], [$data['secondHandName'], $data['url'], $data['duration']], $content);
-            }
-        }
-        if (array_key_exists('content', $data)) {
-            $content = $data['content'];
-        }
-        if (array_key_exists('message', $data)) {
-            $content = $data['message'];
+        list($userEmail, $fullName) = $this->getUserData($user);
+        if ($user instanceof UserDto) {
+            $content = $this->replaceKeywords->replace($user, $content, RegistrationStep::RENDER_FILE);
         }
 
         try {
-            $email = new Address($data['email']);
+            $email = new Address($userEmail);
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -75,14 +60,19 @@ class MailerService
         }
 
         $email = (new TemplatedEmail())
-            ->to(new Address($data['email']))
-            ->subject($data['subject'])
+            ->to($email)
+            ->subject($subject)
             ->htmlTemplate('email/toMember.html.twig')
             ->context([
-                'data' => $data,
+                'subject' => $subject,
+                'fullName' => $fullName,
                 'content' => $content,
             ])
         ;
+        if ($attachement) {
+            $email
+                ->addPart(new DataPart(new File($attachement)));
+        }
 
         try {
             $this->mailer->send($email);
@@ -96,5 +86,13 @@ class MailerService
                 'message' => 'Problème d\'envoi de mail',
             ];
         }
+    }
+
+    private function getUserData(array|UserDto $user): array
+    {
+        if ($user instanceof UserDto) {
+            return [$user->mainEmail, $user->member->fullName];
+        }
+        return [$user['email'], sprintf('%s %s', $user['name'], $user['firstName'])];
     }
 }

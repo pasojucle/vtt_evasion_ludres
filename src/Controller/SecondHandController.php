@@ -15,9 +15,9 @@ use App\Repository\ParameterRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
 use App\Service\PaginatorService;
+use App\Service\ParameterService;
 use App\UseCase\SecondHand\DisabledOutOfPeriod;
 use App\UseCase\SecondHand\EditSecondHand;
-use DateTimeImmutable;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -171,27 +171,20 @@ class SecondHandController extends AbstractController
     public function contact(
         MailerService $mailerService,
         UserDtoTransformer $userDtoTransformer,
-        ParameterRepository $parameterRepository,
+        ParameterService $parameterService,
         SecondHand $secondHand
     ): Response {
         
         /** @var ?User $buyer */
         $buyer = $this->getUser();
         $buyerDto = $userDtoTransformer->fromEntity($buyer);
-        $content = $parameterRepository->findOneByName('second_hand_contact');
         $search = ['{{ nom_annonce }}', '{{ telephone }}', '{{ email }}', '{{ prenom_nom }}'];
         $replace = [$secondHand->getName(), $buyerDto->member->phone, $buyerDto->mainEmail, $buyerDto->member->fullName];
         $seller = $secondHand->getUser();
         $sellerDto = $userDtoTransformer->fromEntity($seller);
-        $data = [
-            'name' => $sellerDto->member->name,
-            'firstName' => $sellerDto->member->firstName,
-            'email' => $sellerDto->mainEmail,
-            'subject' => sprintf('Votre annonce %s', $secondHand->GetName()),
-            'message' => str_replace($search, $replace, $content->getValue()),
-        ];
+        $subject = sprintf('Votre annonce %s', $secondHand->GetName());
         
-        if ($mailerService->sendMailToMember($data)) {
+        if ($mailerService->sendMailToMember($sellerDto, $subject, str_replace($search, $replace, $parameterService->getParameterByName('second_hand_contact')))) {
             $this->addFlash('success', 'Votre message a bien été envoyé');
         } else {
             $this->addFlash('danger', 'Une erreure est survenue');

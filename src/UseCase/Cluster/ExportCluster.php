@@ -36,7 +36,7 @@ class ExportCluster
         $this->cluster = $this->clusterDtoTransformer->fromEntity($cluster);
 
         $this->dirName = $this->projectDir->path('tmp', $this->stringService->clean($this->cluster->title));
-        dump($this->dirName);
+
         if (!is_dir($this->dirName)) {
             mkdir($this->dirName);
         }

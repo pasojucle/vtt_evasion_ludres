@@ -44,9 +44,9 @@ class HealthDtoTransformer
                     . sprintf(' (Valable jusqu\'au %s) <br>', $medicalCertificateEndAt->format('d/m/Y'));
         }
 
-        if ($lastLicence->isFinal && null === $medicalCertificateEndAt || $medicalCertificateEndAt < new DateTime()) {
-            $message .= 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
-        }
+        // if ($lastLicence->isFinal && null === $medicalCertificateEndAt || $medicalCertificateEndAt < new DateTime()) {
+        //     $message .= 'Vous devez joindre un certificat médical daté DE MOINS DE 12 MOIS de non contre-indication à la pratique du VTT';
+        // }
 
         return $message;
     }

@@ -157,13 +157,8 @@ class SessionService
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
         if ($userDto->isEndTesting) {
-            $this->mailerService->sendMailToMember([
-                'name' => $userDto->member->name,
-                'firstName' => $userDto->member->firstName,
-                'email' => $userDto->mainEmail,
-                'subject' => 'Fin de la période d\'essai',
-                'testing_end' => true,
-            ], 'EMAIL_END_TESTING');
+            $subject = 'Fin de la période d\'essai';
+            $this->mailerService->sendMailToMember($userDto, $subject, $this->parameterService->getParameterByName('EMAIL_END_TESTING'));
         }
     }
 

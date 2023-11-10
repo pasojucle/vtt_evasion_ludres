@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Service\MailerService;
+use App\Service\ParameterService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,8 @@ class ValidateLicence
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MailerService $mailerService,
-        private UserDtoTransformer $userDtoTransformer
+        private UserDtoTransformer $userDtoTransformer,
+        private ParameterService $parameterService,
     ) {
     }
 
@@ -64,13 +66,9 @@ class ValidateLicence
     {
         $userDto = $this->userDtoTransformer->fromEntity($user);
         if ($licenceNumber !== $userDto->licenceNumber) {
-            $this->mailerService->sendMailToMember([
-                'subject' => 'Votre numero de licence',
-                'email' => $userDto->mainEmail,
-                'name' => $userDto->member->name,
-                'firstName' => $userDto->member->firstName,
-                'licenceNumber' => $userDto->licenceNumber,
-            ], 'EMAIL_LICENCE_VALIDATE');
+            $userDto = $this->userDtoTransformer->fromEntity($user);
+            $subject = 'Votre numero de licence';
+            $this->mailerService->sendMailToMember($userDto, $subject, $this->parameterService->getParameterByName('EMAIL_LICENCE_VALIDATE'));
         }
     }
 }

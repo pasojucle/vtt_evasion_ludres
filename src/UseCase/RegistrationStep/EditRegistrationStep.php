@@ -28,7 +28,7 @@ class EditRegistrationStep
             if (null !== $newFilename) {
                 $step->setFilename($newFilename);
             }
-            dump($step);
+
             if (null === $step->getOrderBy()) {
                 $order = $this->registrationStepRepository->findNexOrderByGroup($step->getRegistrationStepGroup());
                 $step->setOrderBy($order);

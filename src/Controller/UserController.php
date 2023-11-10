@@ -12,8 +12,8 @@ use App\Form\EmailMessageType;
 use App\Repository\ContentRepository;
 use App\Repository\IdentityRepository;
 use App\Service\MailerService;
+use App\Service\ParameterService;
 use Doctrine\ORM\EntityManagerInterface;
-use FontLib\Table\Type\name;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -86,7 +86,8 @@ class UserController extends AbstractController
     public function changeInfos(
         Request $request,
         MailerService $mailerService,
-        ContentRepository $contentRepository
+        ContentRepository $contentRepository,
+        ParameterService $parameterService,
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -97,12 +98,9 @@ class UserController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $userDto = $this->userDtoTransformer->fromEntity($user);
-            $data['user'] = $userDto;
-            $data['name'] = $userDto->member->name;
-            $data['firstName'] = $userDto->member->firstName;
-            $data['email'] = $userDto->mainEmail;
-            $data['subject'] = 'Demande de modification d\'informations personnelles';
-            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_CHANGE_USER_INFOS')) {
+            $subject = 'Demande de modification d\'informations personnelles';
+
+            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userDto, $subject, $parameterService->getParameterByName('EMAIL_CHANGE_USER_INFOS'))) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 
                 return $this->redirectToRoute('user_change_infos');

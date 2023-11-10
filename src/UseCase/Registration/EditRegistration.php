@@ -9,6 +9,7 @@ use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use App\Service\CommuneService;
 use App\Service\IdentityService;
@@ -16,6 +17,7 @@ use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\StringService;
 use App\Service\UploadService;
+use App\UseCase\Registration\GetRegistrationFile;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +37,9 @@ class EditRegistration
         private MailerService $mailerService,
         private LicenceService $licenceService,
         private StringService $stringService,
-        private CommuneService $communeService
+        private CommuneService $communeService,
+        private GetRegistrationFile $getRegistrationFile,
+        private ParameterRepository $parameterRepository,
     ) {
     }
 
@@ -71,11 +75,10 @@ class EditRegistration
             if (UserType::FORM_OVERVIEW === $progress['current']->form) {
                 $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
                 $this->sendMailToClub($user);
-                if (false === $user->isLoginSend()) {
-                    $this->sendMailToUser($user);
-                    $user->setLoginSend(true);
-                }
+                $this->sendMailToUser($user, $user->isLoginSend());
+                $user->setLoginSend(true);
             }
+
             $this->entityManager->flush();
 
             $session->set('registration_user_id', $user->getId());
@@ -99,20 +102,15 @@ class EditRegistration
         return $identity;
     }
 
-    private function sendMailToUser(User $user): void
+    private function sendMailToUser(User $user, bool $isLoginSend): void
     {
         $userDto = $this->userDtoTransformer->fromEntity($user);
-        $email = $userDto->mainEmail;
-        $this->mailerService->sendMailToMember([
-            'name' => $userDto->member->name,
-            'firstName' => $userDto->member->firstName,
-            'email' => $email,
-            'subject' => 'Création de compte sur le site VTT Evasion Ludres',
-            'licenceNumber' => $userDto->licenceNumber,
-            'registration' => $this->urlGenerator->generate('registration_file', [
-                'user' => $userDto->id,
-            ]),
-        ], 'EMAIL_REGISTRATION');
+
+        $parameter = $this->parameterRepository->findOneByName((!$isLoginSend) ? 'EMAIL_ACCOUNT_CREATED' : 'EMAIL_REGISTRATION');
+        $subject = 'Votre inscription sur le site VTT Evasion Ludres';
+        $attachement = $this->getRegistrationFile->execute($user);
+
+        $this->mailerService->sendMailToMember($userDto, $subject, $parameter->getValue(), $attachement);
     }
 
     private function UploadFile(Request $request, User $user): void

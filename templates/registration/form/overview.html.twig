@@ -15,7 +15,6 @@
 {% endif %}
 <br>
 {% for licence in form.licences %}
-    {% dump(form.licences) %}
     {% if licence.swornCertifications is defined %}
         {% for swornCertification in licence.swornCertifications %}
         <div class="form-group">

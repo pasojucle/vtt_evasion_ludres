@@ -18,6 +18,7 @@ use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
+use App\Service\ParameterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -116,7 +117,8 @@ class ContentController extends AbstractController
         Request $request,
         IdentityService $identityService,
         MailerService $mailerService,
-        UserDtoTransformer $userDtoTransformer
+        UserDtoTransformer $userDtoTransformer,
+        ParameterService $parameterService,
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -131,11 +133,13 @@ class ContentController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            if ($user) {
-                $data['user'] = $userDtoTransformer->fromEntity($user);
-            }
+     
+            $userData = ($user)
+                ? $userDtoTransformer->fromEntity($user)
+                : $data;
+
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
-            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($data, 'EMAIL_FORM_CONTACT')) {
+            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userData, $data['subject'], $parameterService->getParameterByName('EMAIL_FORM_CONTACT'))) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 
                 return $this->redirectToRoute('contact');

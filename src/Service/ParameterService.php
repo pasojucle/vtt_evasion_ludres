@@ -19,12 +19,11 @@ class ParameterService
     {
         $parameter = $this->parameterRepository->findOneByName($name);
 
-        $value = null;
         if ($parameter) {
-            $value = $parameter->getValue();
+            return $parameter->getValue();
         }
 
-        return $value;
+        return null;
     }
 
     public function getSchoolTestingRegistration(UserDto $user): array

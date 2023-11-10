@@ -1,43 +1,11 @@
 {% extends 'base_email.html.twig' %}
 
 {% block body %}
-<p><b>{{ data.subject }}</b></p>
+<p><b>{{ subject }}</b></p>
 <br>
-<p>Bonjour {{ data.name }} {{ data.firstName }},</p>
-{% if data.sendLogin is defined %}
-    <p>La rentrée du club se fait avec l'arrivée d'un nouveau site internet.</p>
-    <p>Vous y retrouverez toutes les infos sur le club, et notamment le programme des sorties organisées par le club,
-    qui sera mis à jour régulièrement.</p>
-    <p>Désormais,</p>
-    <ul>
-        <li>L'inscription aux sorties et aux séances de l'école VTT se fera directement par le site :
-            <a href="https://vttevasionludres.fr/programme">https://vttevasionludres.fr onglet "Programme"</a>
-        </li>
-        <li>L'inscription au club se fera directement sur le site : 
-            <a href="https://vttevasionludres.fr/inscription/info">https://vttevasionludres.fr onglet "Inscription</a>
-        </li>
+<p>Bonjour {{ fullName }},</p>
 
-    </ul>
-    <p>
-        <b>Voici vos identifiants pour vous connecter : </b><br>
-        <b>Login : </b>{{ data.licenceNumber }}<br>
-        <b>Mot de passe : </b>{{ data.password }}<br>
-    </p>
-    <p>A la première connexion, nous vous invitons à modifier votre mot de passe.</p>
-{% endif %}
-
-{% if content is defined and content is not null %}
-    {% if data.licenceNumber is defined %}
-    {% set replaces =
-        {
-            '{{ licenceNumber }}': data.licenceNumber ,
-        }
-    %}
-        <div>{{ content|replace(replaces)|raw}}</div>
-    {% else %}
-        <div>{{ content|raw}}</div>
-    {% endif %}
-{% endif %}
+<div>{{ content|raw}}</div>
 
 <p>Cordialement</p>
 <p>L'équipe du VTT Évasion Ludres</p>

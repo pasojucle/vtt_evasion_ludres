@@ -8,8 +8,10 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use App\Form\Admin\UserBoardRoleType;
 use App\Form\Admin\UserType;
+use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
+use App\Service\ParameterService;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetParticipation;
@@ -151,17 +153,12 @@ class UserController extends AbstractController
     #[IsGranted('USER_EDIT', 'user')]
     public function adminSendLicence(
         MailerService $mailerService,
+        ParameterService $parameterService,
         User $user
     ): RedirectResponse {
         $userDto = $this->userDtoTransformer->fromEntity($user);
-
-        $mailerService->sendMailToMember([
-            'subject' => 'Votre numero de licence',
-            'email' => $userDto->mainEmail,
-            'name' => $userDto->member->name,
-            'firstName' => $userDto->member->firstName,
-            'licenceNumber' => $userDto->licenceNumber,
-        ], 'EMAIL_LICENCE_VALIDATE');
+        $subject = 'Votre numero de licence';
+        $mailerService->sendMailToMember($userDto, $subject, $parameterService->getParameterByName('EMAIL_LICENCE_VALIDATE'));
 
         $this->addFlash('success', 'Le messsage à été envoyé avec succès');
 

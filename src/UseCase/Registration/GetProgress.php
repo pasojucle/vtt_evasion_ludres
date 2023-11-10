@@ -6,6 +6,7 @@ namespace App\UseCase\Registration;
 
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\RegistrationStepDto;
 use App\Entity\Address;
 use App\Entity\Approval;
 use App\Entity\Health;
@@ -90,6 +91,7 @@ class GetProgress
         $progress['seasonLicence'] = $this->seasonLicence;
         $progress['season'] = $this->season;
         $progress['step'] = $step;
+        $progress['hasRequiredFields'] = $this->hasRequiredFields($progress['current']);
 
         if (UserType::FORM_REGISTRATION_FILE === $progress['current']->form) {
             $this->requestStack->getSession()->remove('registration_user_id');
@@ -206,7 +208,6 @@ class GetProgress
     public function addSwornCertifications(): void
     {
         $labels = [];
-        $labels[] = 'J\'accepte le règlement de la Fédération Française de Cyclotourisme ainsi que celui du VTT Evasion Ludres consultable sur le site www.vttevasionludres.fr';
 
         if ($this->seasonLicence->isFinal()) {
             $labels = (Licence::CATEGORY_ADULT === $this->seasonLicence->getCategory()) ?
@@ -215,11 +216,12 @@ class GetProgress
                 'J\'atteste sur l\'honneur avoir déjà pris, ou prendre les dispositions nécessaires selon les recommandations données en cas de réponse positive à l\'une des questions des différents questionnaires.',
             ] :
             [
-                'Je fournis un certificat médical de moins de 6 mois (cyclotourisme).<b>Ou</b> J\'atteste sur l\'honneur avoir renseigné le questionnaire de santé qui m\'a été remis par mon club.',
+                'Je fournis un certificat médical de moins de 6 mois (cyclotourisme) <b>OU</b> J\'atteste sur l\'honneur avoir renseigné le questionnaire de santé qui m\'a été remis par mon club.',
                 'J\'atteste sur l\'honneur avoir répondu par la négative à toutes les rubriques du questionnaire de santé et je reconnais expressément que les réponses apportées relèvent de ma responsabilité exclusive.',
             ];
         }
-
+        $labels[] = 'Je m\'engage à respecter scrupuleusement le Code de la route, les statuts et règlements de la Fédération française de cyclotourisme, ainsi que les statuts et les règlements du VTT Evasion Ludres consultable sur le site www.vttevasionludres.fr';
+        
         foreach ($labels as $label) {
             $swornCertification = new SwornCertification();
             $swornCertification->setLabel($label);
@@ -317,5 +319,20 @@ class GetProgress
     private function getChanges(User $user): array
     {
         return $this->registrationChangeRepository->findBySeason($user, $this->season);
+    }
+
+    private function hasRequiredFields(RegistrationStepDto $registrationStep): bool
+    {
+        $hasRequiredFields = false;
+        if ($registrationStep->formObject) {
+            foreach ($registrationStep->formObject->all() as $form) {
+                $reqired = $form->getConfig()->getRequired();
+                if ($reqired) {
+                    $hasRequiredFields = true;
+                }
+            }
+        }
+
+        return $hasRequiredFields;
     }
 }

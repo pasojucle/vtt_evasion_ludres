@@ -101,21 +101,14 @@ class ToolController extends AbstractController
             $content = ($submit->isClicked())
                 ? utf8_encode($data['content'])
                 : $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
-            $content = str_replace('{{ licenceNumber }}', $user->licenceNumber, $content);
             $form = $this->createForm(ToolType::class, [
                 'user' => $data['user'],
                 'content' => $content,
             ]);
             if ($submit instanceof ClickableInterface && $submit->isClicked()) {
-                $result = $mailerService->sendMailToMember([
-                    'name' => $user->member->name,
-                    'firstName' => $user->member->firstName,
-                    'email' => $user->mainEmail,
-                    'subject' => 'Votre inscription au club de Vtt Évasion Ludres',
-                    'licenceNumber' => $user->licenceNumber,
-                    'registration_error' => true,
-                    'content' => $content,
-                ]);
+                $subject = 'Votre inscription au club de Vtt Évasion Ludres';
+
+                $result = $mailerService->sendMailToMember($user, $subject, $content);
                 if ($result['success']) {
                     $licence->setStatus(Licence::STATUS_IN_PROCESSING);
                     $this->entityManager->persist($licence);

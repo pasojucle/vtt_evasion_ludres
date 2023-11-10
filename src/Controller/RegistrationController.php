@@ -122,6 +122,7 @@ class RegistrationController extends AbstractController
             'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
             'user' => $progress['user'],
             'media' => RegistrationStep::RENDER_VIEW,
+            'has_required_fields' => $progress['hasRequiredFields'],
         ]);
     }
 

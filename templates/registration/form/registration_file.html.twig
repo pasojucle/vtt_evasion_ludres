@@ -1,8 +1,7 @@
-<div class="container">{{ current.content | raw}}</div>
-
+<div class="block background-primary background-color">{{ current.content | raw}}</div>
+<br>
 <p>{{ user.lastLicence.amount['str']|raw }}</p>
 <br>
 <p>{{ user.health.isMedicalCertificateRequired|raw }}</p>
 <br>
 
-<a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user.id }) }}">Télécharger le dossier</a>

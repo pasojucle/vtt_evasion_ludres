@@ -100,6 +100,7 @@ class ReplaceKeywordsService
             '<p>&nbsp;</p>',
             '{{ autorisation_droit_image }}',
             '{{ saison_actuelle }}',
+            '{{ email_principal }}',
         ];
     }
 
@@ -135,6 +136,7 @@ class ReplaceKeywordsService
             '<br>',
             (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->approvals['rightToTheImage']->toString) : 'autorise',
             $this->requestStack->getSession()->get('currentSeason'),
+            $user->mainEmail,
         ];
     }
 }

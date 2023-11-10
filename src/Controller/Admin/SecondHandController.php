@@ -89,7 +89,7 @@ class SecondHandController extends AbstractController
             return $this->redirectToRoute('admin_second_hand_list');
         }
 
-        return $this->render('second_hand/admin/edit.modal.html.twig', [
+        return $this->render('second_hand/admin/edit.html.twig', [
             'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
             'form' => $form->createView(),
         ]);

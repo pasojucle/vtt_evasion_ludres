@@ -87,17 +87,19 @@ class Field {
         this.addEventListener();
     }
     addEventListener() {
-        if (this.shortName === 'birthDate') {
+        if (this.baseName.shortName === 'birthDate') {
             $(document).on('change', '[data-constraint="app-BirthDate"]', (event) => {
+                console.log('birthDate')
                 this.handleChange(event);
             });
-        } else if (this.shortName === 'birthCommune') {
+        } else if (this.baseName.shortName === 'birthCommune') {
             $(document).on('change', '.select2entity', (event) => {
                 this.handleChange(event);
             })
         } else {
             this.getFieldEl().addEventListener('blur', this.handleChange)
         }
+        this.getFieldEl().addEventListener('focus', this.handleChange)
         if (this.isPhoneNumber) {
             this.formatPhoneNumber(this.getFieldEl());
             this.getFieldEl().addEventListener('keydown', (event) => {this.formatPhoneNumber(event.target)})
