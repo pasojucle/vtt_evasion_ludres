@@ -6,7 +6,7 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion des inscriptions - <span class="badge badge-info">{{ paginator.total }}</span></h1>
-            {% if is_granted('ROLE_REGISTER') %}
+            {% if is_granted('USER_LIST') %}
                 <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                     <div class="dropdown-menu" data-target="dropdown-tools">
