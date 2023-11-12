@@ -6,24 +6,30 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion des types de randos</h1>
-            <span class="tools">
-                {# <a href="{{ path('admin_bikeRideType_edit') }}" class="btn btn-secondary btn-ico" title="Ajouter un niveau"><i class="fas fa-plus"></i></a> #}
-            </span>
+            <div class="tool-group">
+                <a href="{{ path('admin_bike_rides') }}" class="btn btn-ico" title="Retour à la liste des randos"><i class="fas fa-chevron-left"></i></a>
+            </div>
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_bike_ride_type_edit') }}" class="btn btn-primary" title="Ajouter un type de sortie"><i class="fas fa-plus"></i> Ajouter un type de sortie</a>
             {% include 'common/pagination.html.twig' with {'margin': 'both'} %} 
-            <ul>
+            <ul class="list-group">
                 {% for bikeRideType in bikeRideTypes %}     
-                    <li class="col-list col-list-1btn">
-                        <div class="list-item">{{ bikeRideType.name }}</div>
-                        <div>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a class="btn btn-primary btn-ico" href="{{ path('admin_bike_ride_type_edit', {'bikeRideType': bikeRideType.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                {# {% if not bikeRideType.isProtected %}
+                    <li class="list-group-item">
+                        <div>{{ bikeRideType.name }}</div>
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                            <div class="dropdown-menu" data-target="dropdown-tools">
+                                <ul class="dropdown-body">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('admin_bike_ride_type_edit', {'bikeRideType': bikeRideType.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i>Modifier</a>
+                                    </li>
+                                    <li>
+                             {# {% if not bikeRideType.isProtected %}
                                     <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_bikeRideType_delete', {'bikeRideType': bikeRideType.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                                {% endif %} #}
-                            {% endif %}
+                                {% endif %} #}                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </li>
                 {% endfor %}

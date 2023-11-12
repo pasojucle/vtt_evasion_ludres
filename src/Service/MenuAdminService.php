@@ -135,39 +135,15 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
-                'label' => 'Niveaux',
-                'route' => 'admin_levels',
-                'pattern' => '/level/',
-                'role' => 'ROLE_ADMIN',
-            ],
-            [
                 'label' => 'Documentation',
                 'route' => 'admin_documentation_list',
                 'pattern' => '/documentation/',
                 'role' => 'ROLE_ADMIN',
             ],
             [
-                'label' => 'Roles du bureau et comité',
-                'route' => 'admin_board_role_list',
-                'pattern' => '/board_role/',
-                'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Types de rando',
-                'route' => 'admin_bike_ride_types',
-                'pattern' => '/bike_ride_type/',
-                'role' => 'ROLE_ADMIN',
-            ],
-            [
                 'label' => 'Tarifs',
                 'route' => 'admin_membership_fee',
                 'pattern' => '/membership/',
-                'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Indemnités',
-                'route' => 'admin_indemnity_list',
-                'pattern' => '/indemnity/',
                 'role' => 'ROLE_ADMIN',
             ],
             [

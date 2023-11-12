@@ -5,23 +5,23 @@
 <div class="wrapper">
     <div class="wrapper-title">
         <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
-        <span class="tools">
+        <div class="tool-group">
             <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-        </span>
-        {% if bikeRide.isEditable %}
-            <div class="dropdown">
-                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                <div class="dropdown-menu" data-target="dropdown-tools">
-                    <ul class="dropdown-body">
-                        {% if bikeRide.bikeRideType.isNeedFramers %}
-                            <li><a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.id})}}"  class="dropdown-item" title="Voir l'encadrement"><i class="fa-solid fa-user-tie"></i> Voir l'encadrement</a></li>
-                        {% endif %}
-                        <li><a href="{{ path('admin_session_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un participant"><i class="fa-solid fa-user"></i> Ajouter un participant</a></li>
-                        <li><a href="{{ path('admin_cluster_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un goupe"><i class="fa-solid fa-users"></i> Ajouter un groupe</a></li>
-                    </ul>
+            {% if bikeRide.isEditable %}
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                    <div class="dropdown-menu" data-target="dropdown-tools">
+                        <ul class="dropdown-body">
+                            {% if bikeRide.bikeRideType.isNeedFramers %}
+                                <li><a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.id})}}"  class="dropdown-item" title="Voir l'encadrement"><i class="fa-solid fa-user-tie"></i> Voir l'encadrement</a></li>
+                            {% endif %}
+                            <li><a href="{{ path('admin_session_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un participant"><i class="fa-solid fa-user"></i> Ajouter un participant</a></li>
+                            <li><a href="{{ path('admin_cluster_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un goupe"><i class="fa-solid fa-users"></i> Ajouter un groupe</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
     <div id="sessions_container" class="wrapper-body">
         {% for cluster in clusters %}

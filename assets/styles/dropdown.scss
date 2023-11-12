@@ -1,0 +1,123 @@
+.tool-group {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    z-index: 99;
+    .dropdown {
+        position: relative;
+    }
+}
+.dropdown {
+    position: absolute;
+    width: 40px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    z-index: 99;
+    button.dropdown-toggle {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        &::after {
+            content: '\f142';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+        }
+        &.active::after {
+            content: '\f00d';
+        }
+        &:hover, &.dropdown-toggle.active {
+            background-color: var(--gray-200); 
+        }
+    }
+    &.sliders button.dropdown-toggle {
+        &::after {
+            content: '\f1de';
+        }
+        &.active::after {
+            content: '\f00d';
+        }
+    }
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 40px;
+        background-color: var(--gray-200);
+        border: 2px solid var(--white-color);
+        width: max-content;
+        max-width: 400px;
+        &.active {
+            display: block;
+            z-index: 99999;
+            &.active-top {
+                top: 0;
+            }
+            &.active-bottom {
+                bottom: 0;
+            }
+        }
+
+        & > ul > li {
+            line-height: 41px;
+
+            &.info {
+                color: var(--gray-color);
+                font-weight: 300;
+            }
+            &:not(:last-child)::after {
+                content: '';
+                display: block;
+                width: 100%;
+                height: 2px;
+                background-color: var(--white-color);
+            }
+            a {
+                display: block;
+                color: var(--background-color);
+                padding: 0 10px;
+                &:hover {
+                    background-color: var(--gray-400);
+                }
+            }
+        }
+    }
+    .dropdown-title {
+        padding: 10px;
+        text-align: center;
+        font-weight: 700;
+        background-color: var(--gray-400);
+        font-size: 15px;
+        position: relative;
+        &::after {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--white-color);
+        }
+    }
+}
+
+
+@media screen and (max-width: 414px) {
+    .dropdown {
+        .dropdown-menu.active {
+            width: calc(100vw - 82px);
+        }
+        &:last-child .dropdown-menu.active {
+            width: calc(100vw - 42px);
+        }
+    }
+     
+    .col-list.col-list-1btn .dropdown .dropdown-menu.active {
+        width: calc(100vw - 120px);
+    }
+}

@@ -44,10 +44,15 @@ class SecondHandController extends AbstractController
             'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands, ['type' => (int)$valid]),
             'valid' => $valid,
-            'parameters' => $this->parameterRepository->findByParameterGroupName('SECOND_HAND')
+            'settings' => [
+                'parameters' => $this->parameterRepository->findByParameterGroupName('SECOND_HAND'),
+                'redirect' => 'admin_second_hand_list',
+                'routes' => [
+                    ['name' => 'admin_category_list', 'label' => 'Catégories d\'occasions'],
+                ]
+            ]
         ]);
     }
-
 
     #[Route('/detail/{secondHand}', name: 'show', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_VIEW', 'secondHand')]

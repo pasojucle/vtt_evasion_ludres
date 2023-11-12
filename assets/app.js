@@ -11,7 +11,7 @@ import './styles/app.css';
 import './styles/paginator.css';
 import './styles/common.css';
 import './styles/modal.css';
-import './styles/dropdown.css';
+import './styles/dropdown.scss';
 import './styles/component/checkbox.scss';
 import './styles/health.scss';
 

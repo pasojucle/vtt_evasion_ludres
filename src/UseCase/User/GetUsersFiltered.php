@@ -28,11 +28,11 @@ abstract class GetUsersFiltered
 
     public function __construct(
         private PaginatorService $paginator,
-        public SeasonService $seasonService,
+        protected SeasonService $seasonService,
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $urlGenerator,
         private UserDtoTransformer $userDtoTransformer,
-        public UserRepository $userRepository,
+        protected UserRepository $userRepository,
         private PaginatorDtoTransformer $paginatorDtoTransformer
     ) {
     }

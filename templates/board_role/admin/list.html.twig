@@ -6,20 +6,34 @@
  <div class="wrapper">
         <div class="wrapper-title">
             <h1>Roles du bureau et comité</h1>
+            <div class="tool-group">
+                <a href="{{ path('admin_users', {'filtered': 1}) }}"
+                    class="btn btn-ico" title="Retour à la liste des adhérents">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </div>
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_board_role_edit') }}" class="btn btn-primary" title="Ajouter un role"><i class="fas fa-plus"></i> Ajouter un role</a>
             {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
-            <ul class="sortable" data-route="admin_board_role_order" data-parameter="boardRole">
+            <ul class="list-group sortable" data-route="admin_board_role_order" data-parameter="boardRole">
                 {% for boardRole in boardRoles %}     
-                    <li class="ui-state-default col-list col-list-2btn" data-id="{{ boardRole.id }}">
-
-                            <div class="list-item">{{ boardRole.name }}</div>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a class="btn btn-primary btn-ico" href="{{ path('admin_board_role_edit', {'boardRole': boardRole.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_board_role_delete', {'boardRole': boardRole.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
-                            {% endif %}
-
+                    <li class="list-group-item ui-state-default col-list col-list-2btn" data-id="{{ boardRole.id }}">
+                        <div>{{ boardRole.name }}</div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                            <div class="dropdown-menu" data-target="dropdown-tools">
+                                <ul class="dropdown-body">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('admin_board_role_edit', {'boardRole': boardRole.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item modal-trigger" href="{{ path('admin_board_role_delete', {'boardRole': boardRole.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

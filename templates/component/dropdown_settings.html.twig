@@ -1,0 +1,19 @@
+
+{% if settings is defined and is_granted('ROLE_ADMIN') %}
+    <div class="dropdown sliders">
+        <button class="dropdown-toggle" type="button" data-toggle="dropdown-settings"></button>
+        <div class="dropdown-menu" data-target="dropdown-settings">
+            <div class="dropdown-title"><i class="fas fa-sliders-h"></i> Paramètrages</div>
+            <ul class="dropdown-body">
+                {% for route in settings.routes %}
+                    <li><a href="{{ path(route.name) }}" class="dropdown-item" title="{{ route.label }}">{{ route.label }}</a></li>
+                {% endfor %}
+                {% for parameter in settings.parameters %}
+                    <li>
+                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name, 'redirect' : settings.redirect })}}" title="Modifier" data-toggle="modal" data-type="primary">{{ parameter.label }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endif %}

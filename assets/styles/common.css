@@ -127,6 +127,8 @@ body > script {display: none !important;}
     --light-color-darker: #d7d7d7;
     --clear-color: rgba(192,192,192,.80);
     --nav-height: 49px;
+    --gray-400: #bbbbbb;
+    --gray-200: #dddddd;
     --gray-color: rgb(100,100,100);
     --white-color: #fff;
     --gap:25px;
@@ -276,13 +278,13 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
-.medical-plus, .home {
+/* .medical-plus, .home {
     width: 30px;
     height: 30px;
 }
 .medical-plus:not(:first-child), .home:not(:first-child) {
     margin-left: 10px;
-}
+} */
 .medical-plus::before {
     content: '\2b';
     font-family: "Font Awesome 6 Free";
@@ -1557,7 +1559,7 @@ img.second-hand {
         width: 100vw;
         height: 100vh;
         background-color: var(--light-color);
-        z-index: 3;
+        z-index: 999;
     }
     nav:not(.paginator, nav.nav-tab).nav-active {
         left: 0;

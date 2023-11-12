@@ -6,22 +6,7 @@
  <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion des annonces</h1>
-            {% if is_granted('ROLE_ADMIN') %}
-                <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                    <div class="dropdown-menu" data-target="dropdown-tools">
-                        <div class="dropdown-title"><i class="fas fa-sliders-h"></i> Paramètrages</div>
-                        <ul class="dropdown-body">
-                            <li><a href="{{ path('admin_category_list') }}" class="dropdown-item" title="Catégories d'occasions"> Catégories d'occasions</a></li>
-                            {% for parameter in parameters %}
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name, 'redirect' : 'admin_second_hand_list'})}}" title="Modifier" data-toggle="modal" data-type="primary">{{ parameter.label }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            {% endif %}
+            {% include 'component/dropdown_settings.html.twig' %}
         </div>
         <nav  class="nav-tab">
             {% for type, label in constant('App\\Dto\\DtoTransformer\\SecondHandDtoTransformer::TYPES') %}

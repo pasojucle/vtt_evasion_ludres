@@ -11,12 +11,13 @@ import './styles/admin.css';
 import './styles/paginator.css';
 import './styles/common.css';
 import './styles/modal.css';
-import './styles/dropdown.css';
+import './styles/dropdown.scss';
 
 import './styles/switch-button.css';
 import './styles/radio.css';
 import './styles/component/checkbox.scss';
 import './styles/health.scss';
+import './styles/list-group.scss';
 
 import './js/app.js';
 import './js/js-datepicker';

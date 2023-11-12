@@ -6,15 +6,15 @@
  <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion des categories</h1>
-            <span class="tools">
-            <a href="{{ path('admin_second_hand_list')}}" class="btn btn-ico" title="Retour à la liste des annonces"><i class="fas fa-chevron-left" aria-hidden="true"></i></a>
-        </span>
+            <div class="tool-group">
+                <a href="{{ path('admin_second_hand_list')}}" class="btn btn-ico" title="Retour à la liste des annonces"><i class="fas fa-chevron-left"></i></a>
+            </div>
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_category_edit') }}" class="btn btn-primary mb-20" title="Ajouter une catégorie"><i class="fas fa-plus"></i> Ajouter une catégorie</a>
-            <ul>
+            <ul class="list-group">
                 {% for category in categories %}
-                    <li class="list-dropdown flex-align-center border-bottom">
+                    <li class="list-group-item">
                         <div>{{ category.name }}</div>
                         <div class="dropdown">
                             <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>

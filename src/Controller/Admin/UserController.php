@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Parameter;
 use App\Entity\User;
 use App\Form\Admin\UserBoardRoleType;
 use App\Form\Admin\UserType;
-use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
 use App\Service\ParameterService;
@@ -40,10 +40,18 @@ class UserController extends AbstractController
         Request $request,
         bool $filtered
     ): Response {
-        return $this->render(
-            'user/admin/users.html.twig',
-            $getMembersFiltered->list($request, $filtered)
-        );
+        $params = $getMembersFiltered->list($request, $filtered);
+
+        $params['settings'] = [
+            'parameters' => $this->entityManager->getRepository(Parameter::class)->findByParameterGroupName('USER'),
+            'redirect' => 'admin_users',
+            'routes' => [
+                ['name' => 'admin_levels', 'label' => 'Niveaux'],
+                ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
+            ]
+        ];
+
+        return $this->render('user/admin/users.html.twig', $params);
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]

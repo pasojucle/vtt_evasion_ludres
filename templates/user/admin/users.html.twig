@@ -6,17 +6,20 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion des adhérents - <span class="badge badge-info">{{ paginator.total }}</span></h1>
-            {% if is_granted('USER_LIST') %}
-                <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                    <div class="dropdown-menu" data-target="dropdown-tools">
-                        <ul class="dropdown-body">
-                            <li><a href="{{ path('admin_members_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></li>
-                            <li><a href="{{ path('admin_members_export') }}" class="dropdown-item" title="Export la sélection"><i class="fas fa-file-csv"></i> Export la sélection</a></li>
-                        </ul>
+            <div class="tool-group">
+                {% include 'component/dropdown_settings.html.twig' %}
+                {% if is_granted('USER_LIST') %}
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                        <div class="dropdown-menu" data-target="dropdown-tools">
+                            <ul class="dropdown-body">
+                                <li><a href="{{ path('admin_members_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></li>
+                                <li><a href="{{ path('admin_members_export') }}" class="dropdown-item" title="Export la sélection"><i class="fas fa-file-csv"></i> Export la sélection</a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
         {% include('user/admin/filters.html.twig') %}
 

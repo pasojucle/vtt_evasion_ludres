@@ -9,6 +9,7 @@ export class Form {
         this.element = form;
         this.submit = document.querySelector('button[type="submit"]');
         this.addFields(form);
+        
         this.validate();
     }
     addFields(form) {
@@ -19,15 +20,17 @@ export class Form {
         })
     }
     validate = async() => {
-        this.formData = new FormData();
-        const lastFieldFilled = this.fields.findLastIndex((field) => !field.isEmpty());
-        this.fields.forEach((field, index) => {
-            this.addData(field, index <= lastFieldFilled);
-        });
-        
-        await this.fetchData().then(() => {
-            this.disabledSubmit();
-        });
+        if (0 <this.fields.length) {
+            this.formData = new FormData();
+            const lastFieldFilled = this.fields.findLastIndex((field) => !field.isEmpty());
+            this.fields.forEach((field, index) => {
+                this.addData(field, index <= lastFieldFilled);
+            });
+            
+            await this.fetchData().then(() => {
+                this.disabledSubmit();
+            });
+        }
     }
     addData = (field, filled) => {
         this.formData.append(`validator[${field.id}][constraint]`, field.constraint);

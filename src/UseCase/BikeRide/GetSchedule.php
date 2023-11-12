@@ -10,6 +10,7 @@ use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
 use App\Repository\BikeRideRepository;
 use App\Repository\ContentRepository;
+use App\Repository\ParameterRepository;
 use App\Service\PaginatorService;
 use App\UseCase\BikeRide\GetFilters;
 use DateTimeImmutable;
@@ -26,6 +27,7 @@ class GetSchedule
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private BikeRideRepository $bikeRideRepository,
         private ContentRepository $contentRepository,
+        private ParameterRepository $parameterRepository,
         private GetFilters $getFilters,
         private RequestStack $requestStack,
         private FormFactoryInterface $formFactory
@@ -78,6 +80,14 @@ class GetSchedule
             'bikeRides' => $this->bikeRideDtoTransformer->fromEntities($bikeRides),
             'backgrounds' => $this->contentRepository->findOneByRoute('schedule')?->getBackgrounds(),
             'current_filters' => $filters,
+            'settings' => [
+                'parameters' => $this->parameterRepository->findByParameterGroupName('BIKE_RIDE'),
+                'redirect' => 'admin_bike_rides',
+                'routes' => [
+                    ['name' => 'admin_bike_ride_types', 'label' => 'Types de rando'],
+                    ['name' => 'admin_indemnity_list', 'label' => 'Indemnités'],
+                ],
+            ]
         ];
 
         return [
