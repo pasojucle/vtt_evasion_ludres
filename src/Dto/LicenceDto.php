@@ -46,5 +46,5 @@ class LicenceDto
 
     public string $registrationTitle = '';
 
-    public string $swornCertifications = '';
+    public string $licenceSwornCertifications = '';
 }

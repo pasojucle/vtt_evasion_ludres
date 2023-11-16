@@ -17,11 +17,12 @@ class SwornCertification
     #[ORM\Column(type: Types::TEXT)]
     private ?string $label = null;
 
-    #[ORM\Column]
-    private bool $value = false;
+    #[ORM\Column(type:Types::BOOLEAN, options:['default' => false])]
+    private bool $school = false;
 
-    #[ORM\ManyToOne(inversedBy: 'swornCertifications')]
-    private ?Licence $licence = null;
+    #[ORM\Column(type:Types::BOOLEAN, options:['default' => false])]
+    private bool $adult = false;
+
 
     public function getId(): ?int
     {
@@ -40,27 +41,29 @@ class SwornCertification
         return $this;
     }
 
-    public function isValue(): bool
+    public function isSchool(): ?bool
     {
-        return $this->value;
+        return $this->school;
     }
 
-    public function setValue(bool $value): static
+    public function setSchool(bool $school): static
     {
-        $this->value = $value;
+        $this->school = $school;
 
         return $this;
     }
 
-    public function getLicence(): ?Licence
+    public function isAdult(): ?bool
     {
-        return $this->licence;
+        return $this->adult;
     }
 
-    public function setLicence(?Licence $licence): static
+    public function setAdult(bool $adult): static
     {
-        $this->licence = $licence;
+        $this->adult = $adult;
 
         return $this;
     }
+
+    
 }

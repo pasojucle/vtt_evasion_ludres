@@ -108,9 +108,9 @@ class EditRegistration
 
         $parameter = $this->parameterRepository->findOneByName((!$isLoginSend) ? 'EMAIL_ACCOUNT_CREATED' : 'EMAIL_REGISTRATION');
         $subject = 'Votre inscription sur le site VTT Evasion Ludres';
-        $attachement = $this->getRegistrationFile->execute($user);
+        $attachements = $this->getRegistrationFile->execute($user);
 
-        $this->mailerService->sendMailToMember($userDto, $subject, $parameter->getValue(), $attachement);
+        $this->mailerService->sendMailToMember($userDto, $subject, $parameter->getValue(), $attachements);
     }
 
     private function UploadFile(Request $request, User $user): void

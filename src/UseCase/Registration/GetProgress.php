@@ -12,6 +12,7 @@ use App\Entity\Approval;
 use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
+use App\Entity\LicenceSwornCertification;
 use App\Entity\RegistrationStep;
 use App\Entity\SwornCertification;
 use App\Entity\User;
@@ -55,10 +56,9 @@ class GetProgress
     {
         $this->setUser();
         $this->updateStatus();
-
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
-        
+
         $stepIndex0 = $step - 1;
         $changes = (UserType::FORM_OVERVIEW === $steps[$stepIndex0]->getForm()) ? $this->getChanges($this->user) : null;
 
@@ -122,6 +122,8 @@ class GetProgress
         if (null === $this->seasonLicence) {
             $this->createNewLicence();
         }
+
+        $this->addSwornCertifications();
 
         if (null === $this->user->getHealth()) {
             $this->createHealth();
@@ -199,36 +201,73 @@ class GetProgress
             $this->seasonLicence->setCategory($category);
         }
 
-        $this->addSwornCertifications();
-
         $this->entityManager->persist($this->seasonLicence);
         $this->user->addLicence($this->seasonLicence);
     }
 
-    public function addSwornCertifications(): void
+    private function addSwornCertifications(): void
     {
-        $labels = [];
-
+        $existingLicenceSwornCertifications = $this->getExistingLicenceSwornCertifications();
         if ($this->seasonLicence->isFinal()) {
-            $labels = (Licence::CATEGORY_ADULT === $this->seasonLicence->getCategory()) ?
-            [
-                'J\'ai bien pris note de ces questions et comprends que certaines situations ou symptômes peuvent entraîner un risque pour ma santé et/ou pour mes performances.',
-                'J\'atteste sur l\'honneur avoir déjà pris, ou prendre les dispositions nécessaires selon les recommandations données en cas de réponse positive à l\'une des questions des différents questionnaires.',
-            ] :
-            [
-                'Je fournis un certificat médical de moins de 6 mois (cyclotourisme) <b>OU</b> J\'atteste sur l\'honneur avoir renseigné le questionnaire de santé qui m\'a été remis par mon club.',
-                'J\'atteste sur l\'honneur avoir répondu par la négative à toutes les rubriques du questionnaire de santé et je reconnais expressément que les réponses apportées relèvent de ma responsabilité exclusive.',
-            ];
-        }
-        $labels[] = 'Je m\'engage à respecter scrupuleusement le Code de la route, les statuts et règlements de la Fédération française de cyclotourisme, ainsi que les statuts et les règlements du VTT Evasion Ludres consultable sur le site www.vttevasionludres.fr';
-        
-        foreach ($labels as $label) {
-            $swornCertification = new SwornCertification();
-            $swornCertification->setLabel($label);
-            $this->entityManager->persist($swornCertification);
-            $this->seasonLicence->addSwornCertification($swornCertification);
+            match($this->seasonLicence->getCategory()) {
+                Licence::CATEGORY_ADULT => $this->addAdultSwornCertifications($existingLicenceSwornCertifications),
+                Licence::CATEGORY_MINOR => $this->addSchoolSwornCertifications($existingLicenceSwornCertifications),
+                default => null
+            };
+        } else {
+            $this->addCommonSwornCertifications($existingLicenceSwornCertifications);
         }
     }
+
+    private function getExistingLicenceSwornCertifications(): array
+    {
+        $existingLicenceSwornCertifications = [];
+        foreach ($this->seasonLicence->getLicenceSwornCertifications() as $licenceSwornCertification) {
+            $existingLicenceSwornCertifications[] = $licenceSwornCertification->getSwornCertification()->getId();
+        }
+        return $existingLicenceSwornCertifications;
+    }
+
+    private function addAdultSwornCertifications(array $existingLicenceSwornCertifications): void
+    {
+        foreach ($this->seasonLicence->getLicenceSwornCertifications() as $licenceSwornCertification) {
+            if (!$licenceSwornCertification->getSwornCertification()->isAdult()) {
+                $this->seasonLicence->removeLicenceSwornCertification($licenceSwornCertification);
+            }
+        }
+        $swornCertifications = $this->entityManager->getRepository(SwornCertification::class)->findAdultSwornCertifications($existingLicenceSwornCertifications);
+        $this->addAllSwornCertifications($swornCertifications);
+    }
+
+    private function addSchoolSwornCertifications(array $existingLicenceSwornCertifications): void
+    {
+
+        foreach ($this->seasonLicence->getLicenceSwornCertifications() as $licenceSwornCertification) {
+            if (!$licenceSwornCertification->getSwornCertification()->isSchool()) {
+                $this->seasonLicence->removeLicenceSwornCertification($licenceSwornCertification);
+            }
+        }
+        $swornCertifications = $this->entityManager->getRepository(SwornCertification::class)->findSchoolSwornCertifications($existingLicenceSwornCertifications);
+        $this->addAllSwornCertifications($swornCertifications);
+    }
+
+    private function addCommonSwornCertifications(array $existingLicenceSwornCertifications): void
+    {
+        $swornCertifications = $this->entityManager->getRepository(SwornCertification::class)->findCommonSwornCertifications($existingLicenceSwornCertifications);
+        $this->addAllSwornCertifications($swornCertifications);
+    }
+
+    private function addAllSwornCertifications(array $swornCertifications): void
+    {
+        foreach ($swornCertifications as $swornCertification) {
+            $licenceSwornCertification = new LicenceSwornCertification();
+            $licenceSwornCertification->setLicence($this->seasonLicence)
+                ->setSwornCertification($swornCertification);
+            $this->entityManager->persist($licenceSwornCertification);
+            $this->seasonLicence->addLicenceSwornCertification($licenceSwornCertification);
+        }
+    }
+
 
     private function createHealth(): void
     {

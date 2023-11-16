@@ -30,8 +30,11 @@ class BikeRideController extends AbstractController
         ?int $month,
         ?int $day
     ): Response {
+       $referer = $request->headers->get('referer');
+        if ($referer && str_contains($referer, 'inscription') && !$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
         $response = $this->getSchedule->execute($request, $period, $year, $month, $day);
-
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);
         }

@@ -15,11 +15,11 @@
 {% endif %}
 <br>
 {% for licence in form.licences %}
-    {% if licence.swornCertifications is defined %}
-        {% for swornCertification in licence.swornCertifications %}
+    {% if licence.licenceSwornCertifications is defined %}
+        {% for licenceSwornCertification in licence.licenceSwornCertifications %}
         <div class="form-group">
-            {{ form_widget(swornCertification.value) }}
-            {{ form_label(swornCertification.value) }}
+            {{ form_widget(licenceSwornCertification.value) }}
+            {{ form_label(licenceSwornCertification.value) }}
         </div>
         {% endfor %}
     {% endif %}

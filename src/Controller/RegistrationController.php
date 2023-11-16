@@ -4,25 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
+use ZipArchive;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\ContentRepository;
-use App\Repository\MembershipFeeRepository;
+use App\Entity\Licence;
+use App\Dto\RegistrationStepDto;
+use App\Entity\RegistrationStep;
 use App\Service\ParameterService;
-use App\UseCase\Registration\EditRegistration;
+use App\Repository\ContentRepository;
 use App\UseCase\Registration\GetProgress;
-use App\UseCase\Registration\GetRegistrationFile;
-use App\UseCase\Registration\GetStatusWarning;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Repository\MembershipFeeRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\UseCase\Registration\EditRegistration;
+use App\UseCase\Registration\GetStatusWarning;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Registration\GetRegistrationFile;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use App\Service\ProjectDirService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RegistrationController extends AbstractController
 {
@@ -141,10 +144,25 @@ class RegistrationController extends AbstractController
     #[Route('/inscription/file/{user}', name: 'registration_file', methods: ['GET'])]
     public function registrationFile(
         GetRegistrationFile $getRegistrationFile,
+        ProjectDirService $projectDir,
         User $user
     ): Response {
-        $zipName = $getRegistrationFile->execute($user);
+        $registrationFiles = $getRegistrationFile->execute($user);
+        $zipName = $projectDir->path('tmp', 'inscription_vtt_evasion_ludres.zip');
+        if (file_exists($zipName)) {
+            unlink($zipName);
+        }
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipName, ZipArchive::CREATE) === true) {
+            foreach ($registrationFiles as $registrationFile) {
+                $zip->addFile($registrationFile, basename($registrationFile));
+            }
+            $zip->close();
+        }
+
         $fileContent = file_get_contents($zipName);
+
         $response = new Response($fileContent);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

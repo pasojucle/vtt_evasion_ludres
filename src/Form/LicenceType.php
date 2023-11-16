@@ -40,7 +40,7 @@ class LicenceType extends AbstractType
 
                 if (UserType::FORM_OVERVIEW === $options['current']->getForm()) {
                     $form
-                        ->add('swornCertifications', CollectionType::class, [
+                        ->add('licenceSwornCertifications', CollectionType::class, [
                             'label' => false,
                             'entry_type' => SwornCertificationType::class,
                         ])

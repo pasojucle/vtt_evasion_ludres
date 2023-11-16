@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\LicenceRepository;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\ManyToMany;
+use App\Repository\LicenceRepository;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Entity(repositoryClass: LicenceRepository::class)]
 class Licence
@@ -115,12 +116,12 @@ class Licence
     #[Column(type: 'boolean', options:['default' => false])]
     private $isVae = false;
 
-    #[OneToMany(mappedBy: 'licence', targetEntity: SwornCertification::class)]
-    private Collection $swornCertifications;
+    #[OneToMany(mappedBy: 'licence', targetEntity: LicenceSwornCertification::class)]
+    private Collection $licenceSwornCertifications;
 
     public function __construct()
     {
-        $this->swornCertifications = new ArrayCollection();
+        $this->licenceSwornCertifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -285,29 +286,29 @@ class Licence
     }
 
     /**
-     * @return Collection<int, SwornCertification>
+     * @return Collection<int, LicenceSwornCertification>
      */
-    public function getSwornCertifications(): Collection
+    public function getLicenceSwornCertifications(): Collection
     {
-        return $this->swornCertifications;
+        return $this->licenceSwornCertifications;
     }
 
-    public function addSwornCertification(SwornCertification $swornCertification): static
+    public function addLicenceSwornCertification(LicenceSwornCertification $licenceSwornCertification): static
     {
-        if (!$this->swornCertifications->contains($swornCertification)) {
-            $this->swornCertifications->add($swornCertification);
-            $swornCertification->setLicence($this);
+        if (!$this->licenceSwornCertifications->contains($licenceSwornCertification)) {
+            $this->licenceSwornCertifications->add($licenceSwornCertification);
+            $licenceSwornCertification->setLicence($this);
         }
 
         return $this;
     }
 
-    public function removeSwornCertification(SwornCertification $swornCertification): static
+    public function removeLicenceSwornCertification(LicenceSwornCertification $licenceSwornCertification): static
     {
-        if ($this->swornCertifications->removeElement($swornCertification)) {
+        if ($this->licenceSwornCertifications->removeElement($licenceSwornCertification)) {
             // set the owning side to null (unless already changed)
-            if ($swornCertification->getLicence() === $this) {
-                $swornCertification->setLicence(null);
+            if ($licenceSwornCertification->getLicence() === $this) {
+                $licenceSwornCertification->setLicence(null);
             }
         }
 

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\SwornCertification;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
+use App\Entity\LicenceSwornCertification;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class SwornCertificationType extends AbstractType
 {
@@ -22,7 +23,7 @@ class SwornCertificationType extends AbstractType
 
             $form
                 ->add('value', CheckboxType::class, [
-                    'label' => $swornCertification->getLabel(),
+                    'label' => $swornCertification->getSwornCertification()->getLabel(),
                     'label_html' => true,
                 ])
             ;
@@ -33,7 +34,7 @@ class SwornCertificationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => SwornCertification::class,
+            'data_class' => LicenceSwornCertification::class,
         ]);
     }
 }

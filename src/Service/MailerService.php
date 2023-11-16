@@ -43,7 +43,7 @@ class MailerService
         }
     }
 
-    public function sendMailToMember(array|UserDto $user, string $subject, string $content, string $attachement = null): array
+    public function sendMailToMember(array|UserDto $user, string $subject, string $content, ?array $attachements = null): array
     {
         list($userEmail, $fullName) = $this->getUserData($user);
         if ($user instanceof UserDto) {
@@ -69,9 +69,10 @@ class MailerService
                 'content' => $content,
             ])
         ;
-        if ($attachement) {
-            $email
-                ->addPart(new DataPart(new File($attachement)));
+        if ($attachements) {
+            foreach($attachements as $attachement) {
+                $email->addPart(new DataPart(new File($attachement)));
+            }
         }
 
         try {

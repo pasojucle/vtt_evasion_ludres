@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use DateTime;
+use App\Entity\User;
+use DateTimeImmutable;
 use App\Dto\LicenceDto;
 use App\Entity\Licence;
-use App\Entity\SwornCertification;
-use App\Entity\User;
 use App\Model\Currency;
-use App\Repository\MembershipFeeAmountRepository;
-use App\Repository\RegistrationChangeRepository;
+use App\Service\SeasonService;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
+use App\Entity\SwornCertification;
 use App\Service\ProjectDirService;
-use App\Service\SeasonService;
-use DateTime;
-use DateTimeImmutable;
+use App\Entity\LicenceSwornCertification;
 use Doctrine\Common\Collections\Collection;
+use App\Repository\RegistrationChangeRepository;
+use App\Repository\MembershipFeeAmountRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
@@ -70,7 +71,7 @@ class LicenceDtoTransformer
             $licenceDto->isSeasonLicence = $licence->getSeason() === $currentSeason;
             $licenceDto->amount = $this->getAmount($licence);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
-            $licenceDto->swornCertifications = $this->getSwornCertifications($licence);
+            $licenceDto->licenceSwornCertifications = $this->getLicenceSwornCertifications($licence);
 
             if ($changes) {
                 $this->formatChanges($changes, $licenceDto);
@@ -218,14 +219,14 @@ class LicenceDtoTransformer
         return $status;
     }
 
-    private function getSwornCertifications(Licence $licence): string
+    private function getLicenceSwornCertifications(Licence $licence): string
     {
-        $swornCertifications = '';
-        /** @var SwornCertification  $swornCertification */
-        foreach ($licence->getSwornCertifications() as $swornCertification) {
+        $licenceSwornCertifications = '';
+        /** @var LicenceSwornCertification  $licenceSwornCertification */
+        foreach ($licence->getLicenceSwornCertifications() as $licenceSwornCertification) {
             $checkImg = base64_encode(file_get_contents($this->projectDir->path('logos', 'check-square-regular.png')));
-            $swornCertifications .= sprintf('<p><img src="data:image/png;base64, %s"/> %s</p>', $checkImg, $swornCertification->getLabel());
+            $licenceSwornCertifications .= sprintf('<p><img src="data:image/png;base64, %s"/> %s</p>', $checkImg, $licenceSwornCertification->getSwornCertification()->getLabel());
         }
-        return $swornCertifications;
+        return $licenceSwornCertifications;
     }
 }

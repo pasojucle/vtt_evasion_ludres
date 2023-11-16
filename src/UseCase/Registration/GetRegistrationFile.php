@@ -45,7 +45,7 @@ class GetRegistrationFile
     ) {
     }
 
-    public function execute(User $user): ?string
+    public function execute(User $user): array
     {
         $season = $this->seasonService->getCurrentSeason();
         $lastLicence = $user->getLastLicence();
@@ -81,20 +81,13 @@ class GetRegistrationFile
     
         $this->addRegistrationDocument($user, $userDto);
 
-        $zipName = $this->projectDir->path('tmp', 'inscription_vtt_evasion_ludres.zip');
-        if (file_exists($zipName)) {
-            unlink($zipName);
-        }
-        $zip = new ZipArchive();
-        if ($zip->open($zipName, ZipArchive::CREATE) === true) {
+        $registrationFiles = [];
             foreach (RegistrationStepDto::OUTPUT_FILENAMES as $key => $outputFilename) {
                 $fileTmp = $this->projectDir->path('tmp', $outputFilename);
-                $zip->addFile($this->pdfService->joinPdf($this->files[$key], $user, $key, $fileTmp), $outputFilename);
+                $registrationFiles[] = $this->pdfService->joinPdf($this->files[$key], $user, $key, $fileTmp);
             }
-            $zip->close();
-            return $zipName;
-        }
-        return null;
+        
+        return $registrationFiles;
     }
 
     private function addRegistrationStep(RegistrationStepDto $step, UserDto $userDto)

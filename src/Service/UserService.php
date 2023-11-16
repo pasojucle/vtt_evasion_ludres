@@ -9,7 +9,6 @@ use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Repository\OrderLineRepository;
 use App\Repository\SurveyResponseRepository;
-use App\Repository\SwornCertificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UserService
@@ -18,7 +17,6 @@ class UserService
         private EntityManagerInterface $entityManager,
         private SurveyResponseRepository $surveyResponseRepository,
         private OrderLineRepository $orderLineRepository,
-        private SwornCertificationRepository $swornCertificationRepository,
     ) {
     }
 
@@ -38,7 +36,9 @@ class UserService
                             $this->orderLineRepository->deleteByOrderHeader($entity);
                         }
                         if ($entity instanceof Licence) {
-                            $this->swornCertificationRepository->deleteByLicence($entity);
+                            foreach($entity->getLicenceSwornCertifications() as $swornCertification) {
+                                $entity->removeLicenceSwornCertification($swornCertification);
+                            }
                         }
                         $this->entityManager->remove($entity);
                     }
