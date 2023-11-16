@@ -15,7 +15,11 @@
             {% block footer %}
                 <div class="modal-footer">
                     {% set button_close = (button_close is defined) ? button_close : 'Annuler' %}
-                    <button type="button" class="btn btn-default close" data-dismiss="modal">{{ button_close }}</button>
+                    {% if cancel_route is defined %} 
+                        <a href="{{ cancel_route}}" class="btn btn-default close" >{{ button_close }}</a>
+                    {% else %}
+                        <button type="button" class="btn btn-default close" data-dismiss="modal">{{ button_close }}</button>
+                    {% endif %}
                     {% if button_text is defined or button_href is defined %}
                         <button 
                         {% if button_href is defined %} href="{{ button_href }}"{% endif %}

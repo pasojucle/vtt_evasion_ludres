@@ -173,8 +173,7 @@ class Field {
         } else if (status === 'ALERT_WARNING') {
             fieldEl.parentElement.classList.add('alert-warning');
             fieldEl.parentElement.classList.remove('success');
-            
-            if (this.errorRoute) {
+            if (!this.isEmpty() && this.errorRoute) {
                this.callErrorRoute();
             }
         } else {

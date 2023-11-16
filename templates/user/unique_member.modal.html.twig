@@ -6,5 +6,6 @@
 {% endblock %}
 {% block footer %}
     {% set button_text = '<i class="fas fa-sign-in-alt"></i> Se connecter' %}
+    {% set cancel_route = path('registration_form') %}
     {{ parent() }}
 {% endblock %}
