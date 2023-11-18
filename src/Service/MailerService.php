@@ -70,7 +70,7 @@ class MailerService
             ])
         ;
         if ($attachements) {
-            foreach($attachements as $attachement) {
+            foreach ($attachements as $attachement) {
                 $email->addPart(new DataPart(new File($attachement)));
             }
         }

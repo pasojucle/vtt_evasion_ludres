@@ -78,7 +78,7 @@ class MenuAdminService
                 'label' => 'Boutique',
                 'route' => 'admin_products',
                 'pattern' => '/product/',
-                'role' => 'PRODUCT_NAV',
+                'role' => 'PRODUCT_LIST',
             ],
             [
                 'label' => 'Commandes',

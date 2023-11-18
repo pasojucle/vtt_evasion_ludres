@@ -25,7 +25,7 @@ final class Version20231106195220 extends AbstractMigration
             [
                 'name' => 'EMAIL_REGISTRATION',
                 'newName' => 'EMAIL_ACCOUNT_CREATED',
-                'value' => '<p>Vous venez de vous inscrire au club pour 3 s&eacute;ances d&#39;essai gratuites depuis notre site.</p><p>Ci-joint, votre dossier d&#39;inscription.</p><p>Imprimer le fichier "Docs_à_redonner_au_club.pdf" et signer le <b>coupon assurance</b> et le <b>bulletin d&#39;inscription</b>. Transmettre les documents au club.</p><p>Concerver le document "Informations.pdf".</p><p><strong>Voici votre indentifiant pour vous connecter : </strong>{{ numero_licence }}<br />Vous seul(e) connaissez le mot de passe</p><p><strong>Pour valider votre inscription, vous devez obligatoirement</strong>vous CONNECTER sur notre site ET VOUS INSCRIRE&nbsp;&agrave; une sortie ou &agrave; une s&eacute;ance de l&#39;&eacute;cole VTT en cliquant sur ce lien&nbsp;<a href="https://vttevasionludres.fr/programme">https://vttevasionludres.fr onglet &quot;Programme&quot;</a></p>',
+                'value' => '<p>Vous venez de vous inscrire au club pour 3 s&eacute;ances d&#39;essai gratuites depuis notre site.</p><p>Ci-joint, votre dossier d&#39;inscription.</p><p>Imprimer le fichier "Docs_à_redonner_au_club.pdf" et signer le <b>coupon assurance</b> et le <b>bulletin d&#39;inscription</b>. Transmettre les documents au club.</p><p>Concerver le document "Informations.pdf".</p><p><strong>Voici votre indentifiant pour vous connecter : </strong>{{ numero_licence }}<br />Vous seul(e) connaissez le mot de passe</p><p><strong>Pour valider votre inscription, vous devez obligatoirement</strong> vous CONNECTER sur notre site ET VOUS INSCRIRE&nbsp;&agrave; une sortie ou &agrave; une s&eacute;ance de l&#39;&eacute;cole VTT en cliquant sur ce lien&nbsp;<a href="https://vttevasionludres.fr/programme">https://vttevasionludres.fr onglet &quot;Programme&quot;</a></p>',
             ],
             [
                 'name' => 'EMAIL_LICENCE_VALIDATE',
@@ -35,7 +35,7 @@ final class Version20231106195220 extends AbstractMigration
             [
                 'name' => 'EMAIL_REGISTRATION_ERROR',
                 'newName' => 'EMAIL_REGISTRATION_ERROR',
-                'value' => '<p>Faisant suite aux probl&egrave;mes que vous avez rencontr&eacute; lors de votre inscription, nous vous invitons &agrave; suivre <a href="http://vttevasionludres.fr/mon-compte/inscription/1">ce lien</a>&nbsp;pour acc&eacute;der &agrave; votre dossier.</p><p>Apr&egrave;s avoir compl&eacute;t&eacute; toutes les informations manquantes, vous pourrez t&eacute;l&eacute;charger le dossier &agrave; nous remettre sign&eacute;.</p><p><strong>Voici votre identifiant pour vous connecter : </strong>{{ numero_licence }}</p><p>Vous seul.e connaissez le mot de passe</p>',
+                'value' => '<p>Faisant suite aux probl&egrave;mes que vous avez rencontr&eacute; lors de votre inscription, nous vous invitons &agrave; suivre <a href="http://vttevasionludres.fr/mon-compte/inscription/1">ce lien</a>&nbsp;pour acc&eacute;der &agrave; votre dossier.</p><p>Apr&egrave;s avoir compl&eacute;t&eacute; toutes les informations manquantes, vous pourrez t&eacute;l&eacute;charger le dossier &agrave; nous remettre sign&eacute;.</p><p><strong>Voici votre identifiant pour vous connecter : </strong>{{ numero_licence }}</p><p>Vous seul(e) connaissez le mot de passe</p>',
             ],
         ];
         foreach($parameters as $parameter) {

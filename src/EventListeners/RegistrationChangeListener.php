@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\EventListeners;
 
-use App\Entity\User;
-use ReflectionClass;
-use App\Entity\Health;
 use App\Entity\Address;
-use App\Entity\Licence;
 use App\Entity\Approval;
+use App\Entity\Health;
 use App\Entity\Identity;
-use Doctrine\ORM\Events;
-use App\Service\SeasonService;
-use Doctrine\ORM\EntityManager;
+use App\Entity\Licence;
 use App\Entity\RegistrationChange;
-use function Symfony\Component\String\u;
-use Doctrine\ORM\Event\PostUpdateEventArgs;
+use App\Entity\User;
+use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Events;
+use ReflectionClass;
+use function Symfony\Component\String\u;
 
 #[AsDoctrineListener(event: Events::postUpdate)]
 class RegistrationChangeListener
@@ -32,7 +32,7 @@ class RegistrationChangeListener
         $reflexionClass = new ReflectionClass($entity);
         $className = $reflexionClass->getShortName();
         // if (1 === preg_match('#Address|Health|Identity|Licence#', $className)) {
-        if ($entity instanceof Address || $entity instanceof Health ||$entity instanceof Identity ||$entity instanceof Licence) {
+        if ($entity instanceof Address || $entity instanceof Health || $entity instanceof Identity || $entity instanceof Licence) {
             /** @var EntityManager $objectManager*/
             $objectManager = $event->getObjectManager();
             $unitOfWork = $objectManager->getUnitOfWork();

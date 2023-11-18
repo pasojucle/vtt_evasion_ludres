@@ -30,7 +30,6 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Contracts\EventDispatcher\Event;
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class IdentitySubscriber implements EventSubscriberInterface

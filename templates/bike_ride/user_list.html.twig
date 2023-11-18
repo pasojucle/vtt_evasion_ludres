@@ -62,8 +62,11 @@
                         {% endfor %}
                         {% if bikeRides is empty %}
                             <p>Vous n'êtes inscrit à aucune rando</p>
+                            {% if not user.lastLicence.isFinal and user.testingBikeRides < 1 %}
+                                <p>Pour valider votre inscription, vous devez obligatoirement vous inscrire à une sortie ou à une séance de l'école VTT</p>
+                            {% endif %}
                             <br>
-                            <a href="{{ path('schedule', {'period': 'prochainement'}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
+                            <a href="{{ path('schedule', {'period':'prochainement'}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
                         {% endif %}
                     </ul> 
                 </div>  

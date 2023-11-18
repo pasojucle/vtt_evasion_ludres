@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
+use App\Security\SelfAuthentication;
 use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\LicenceService;
@@ -40,17 +41,21 @@ class EditRegistration
         private CommuneService $communeService,
         private GetRegistrationFile $getRegistrationFile,
         private ParameterRepository $parameterRepository,
+        private SelfAuthentication $selfAuthentication,
     ) {
     }
 
-    public function execute(Request $request, FormInterface $form, array $progress): void
+    public function execute(Request $request, FormInterface $form, array $progress): string
     {
         $season = $progress['season'];
         $user = $form->getData();
         $session = $request->getSession();
+        $selfAuthenticating = false;
+        $route = 'user_registration_form';
 
         if (null !== $form->get('plainPassword') && $form->get('plainPassword')->getData()) {
-            $identity = $this->registerNewUser($user, $form);
+            $this->registerNewUser($user, $form);
+            $selfAuthenticating = true;
         }
 
         if ($user->getMemberIdentity()->getBirthCommune()) {
@@ -71,18 +76,25 @@ class EditRegistration
 
         $category = $user->getSeasonLicence($season)->getCategory();
 
-        if ($form->isValid()) {
-            if (UserType::FORM_OVERVIEW === $progress['current']->form) {
-                $user->getSeasonLicence($season)->setStatus(Licence::STATUS_WAITING_VALIDATE);
-                $this->sendMailToClub($user);
-                $this->sendMailToUser($user, $user->isLoginSend());
-                $user->setLoginSend(true);
+        if (UserType::FORM_OVERVIEW === $progress['current']->form) {
+            $seasonLicence = $user->getSeasonLicence($season);
+            $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE);
+            $this->sendMailToClub($user);
+            $this->sendMailToUser($user, $user->isLoginSend());
+            $user->setLoginSend(true);
+            if (!$seasonLicence->isFinal()) {
+                $route = 'registration_form';
             }
-
-            $this->entityManager->flush();
-
-            $session->set('registration_user_id', $user->getId());
         }
+
+        $this->entityManager->flush();
+
+        $session->set('registration_user_id', $user->getId());
+        if ($selfAuthenticating) {
+            $this->selfAuthentication->authenticate($user);
+        }
+
+        return $route;
     }
 
     private function registerNewUser(User $user, FormInterface $form): Identity

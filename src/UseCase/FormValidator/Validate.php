@@ -6,6 +6,7 @@ namespace App\UseCase\FormValidator;
 
 use App\Service\ValidatorService;
 use App\Validator\BirthDate;
+use App\Validator\NotEmpty;
 use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -70,7 +71,7 @@ class Validate
                 }
             }
         }
-        if (true === $required) {
+        if (true === $required && !in_array(new NotEmpty(), $constraints)) {
             $constraints[] = new NotBlank();
         }
 

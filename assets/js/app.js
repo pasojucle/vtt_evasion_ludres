@@ -207,7 +207,6 @@ function formModifier(event) {
     .then((text)=> {
         const htmlElement = document.createRange().createContextualFragment(text);
         const targetEl = document.getElementById(target);
-        console.log('htmlElement', htmlElement.getElementById(target));
         targetEl.replaceWith(htmlElement.getElementById(target));
         $('.select2entity').select2entity();
         $('.customSelect2').select2();

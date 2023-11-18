@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\LicenceSwornCertification;
 use App\Entity\SwornCertification;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use App\Entity\LicenceSwornCertification;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class SwornCertificationType extends AbstractType
 {

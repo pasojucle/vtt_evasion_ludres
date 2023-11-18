@@ -82,7 +82,7 @@ class Field {
         this.id = field.id;
         this.name = field.name;
         this.baseName = getBaseName(field.name)
-        this.constraint = field.dataset.constraint;
+        this.constraint = this.getConstraint(field.dataset.constraint);
         this.multipleFields = field.dataset.multipleFields;
         this.isPhoneNumber = field.classList.contains('phone-number');
         this.errorRoute = field.dataset.errorRoute;
@@ -100,8 +100,10 @@ class Field {
                 this.handleChange(event);
             })
         } else {
-            this.getFieldEl().addEventListener('blur', this.handleChange)
+            this.getFieldEl().addEventListener('keyup', this.handleChange);
+            this.getFieldEl().addEventListener('blur', this.handleChange);
         }
+        
         this.getFieldEl().addEventListener('focus', this.handleChange)
         if (this.isPhoneNumber) {
             this.formatPhoneNumber(this.getFieldEl());
@@ -121,6 +123,12 @@ class Field {
             let input = target.value.replace(/\s/g, '').match(/.{1,2}/g);
             target.value = input.join(' ');
         }
+    }
+    getConstraint = (constraint) => {
+        if (constraint !== undefined) {
+            return constraint
+        }
+        return '';
     }
     getFieldEl = () => {
         return document.getElementById(this.id)

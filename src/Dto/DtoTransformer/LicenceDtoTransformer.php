@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use DateTime;
-use App\Entity\User;
-use DateTimeImmutable;
 use App\Dto\LicenceDto;
 use App\Entity\Licence;
+use App\Entity\LicenceSwornCertification;
+use App\Entity\SwornCertification;
+use App\Entity\User;
 use App\Model\Currency;
-use App\Service\SeasonService;
+use App\Repository\MembershipFeeAmountRepository;
+use App\Repository\RegistrationChangeRepository;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
-use App\Entity\SwornCertification;
 use App\Service\ProjectDirService;
-use App\Entity\LicenceSwornCertification;
+use App\Service\SeasonService;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use App\Repository\RegistrationChangeRepository;
-use App\Repository\MembershipFeeAmountRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer

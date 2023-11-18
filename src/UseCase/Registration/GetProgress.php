@@ -20,7 +20,6 @@ use App\Form\UserType;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationChangeRepository;
 use App\Repository\RegistrationStepRepository;
-use App\Repository\UserRepository;
 use App\Service\HealthService;
 use App\Service\LicenceService;
 use App\Service\SeasonService;
@@ -41,7 +40,6 @@ class GetProgress
         private LevelRepository $levelRepository,
         private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         private UserDtoTransformer $userDtoTransformer,
-        private UserRepository $userRepository,
         private Security $security,
         private EntityManagerInterface $entityManager,
         private HealthService $healthService,
@@ -100,22 +98,14 @@ class GetProgress
         return $progress;
     }
 
-    public function setUser()
+    public function setUser(): void
     {
-        $session = $this->requestStack->getSession();
-        $userId = ($session->has('registration_user_id')) ? $session->get('registration_user_id') : null;
-        $user = (null !== $userId) ? $this->userRepository->find($userId) : null;
-
-        /** @var User $userConnected */
-        $userConnected = $this->security->getUser();
-        $this->user = ('user_registration_form' === $this->requestStack->getCurrentRequest()->get('_route'))
-            ? $userConnected
-            : $user;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $this->user = $user;
 
         if (null === $this->user) {
             $this->createUser();
-        } else {
-            $session->set('registration_user_id', $this->user->getId());
         }
 
         $this->seasonLicence = $this->user->getSeasonLicence($this->season);
@@ -209,7 +199,7 @@ class GetProgress
     {
         $existingLicenceSwornCertifications = $this->getExistingLicenceSwornCertifications();
         if ($this->seasonLicence->isFinal()) {
-            match($this->seasonLicence->getCategory()) {
+            match ($this->seasonLicence->getCategory()) {
                 Licence::CATEGORY_ADULT => $this->addAdultSwornCertifications($existingLicenceSwornCertifications),
                 Licence::CATEGORY_MINOR => $this->addSchoolSwornCertifications($existingLicenceSwornCertifications),
                 default => null
@@ -241,7 +231,6 @@ class GetProgress
 
     private function addSchoolSwornCertifications(array $existingLicenceSwornCertifications): void
     {
-
         foreach ($this->seasonLicence->getLicenceSwornCertifications() as $licenceSwornCertification) {
             if (!$licenceSwornCertification->getSwornCertification()->isSchool()) {
                 $this->seasonLicence->removeLicenceSwornCertification($licenceSwornCertification);

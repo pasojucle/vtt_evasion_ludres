@@ -90,7 +90,7 @@ class IdentityDtoTransformer
 
     private function getPicture(?string $picture): string
     {
-        return (null !== $picture) ? $this->projectDirService->dir('upload', $picture) : '/images/default-user-picture.jpg';
+        return (null !== $picture) ? $this->projectDirService->dir('', 'upload', $picture) : '/images/default-user-picture.jpg';
     }
 
     private function getPhoneAnchor(?string $phone): string

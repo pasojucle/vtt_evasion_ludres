@@ -47,7 +47,7 @@ class IdentityType extends AbstractType
 
             $addressClass = (Identity::TYPE_MEMBER !== $type) ? ' identity-address' : '';
             $addressRequired = 'required';
-            if (!$identity->hasAddress()) {
+            if (Identity::TYPE_MEMBER !== $type && !$identity->hasAddress()) {
                 $addressRequired = '';
             }
 
@@ -227,7 +227,7 @@ class IdentityType extends AbstractType
                 } else {
                     $form
                         ->add('birthCommune', Select2EntityType::class, [
-                            'label' => 'Lieu de naissance<br><small>(Pour l\'étranger, saisissez la ville et le pays)</small>',
+                            'label' => 'Lieu et <b>département</b> de naissance<br><small>(Pour l\'étranger, saisissez la ville et le pays)</small>',
                             'label_html' => true,
                             'class' => Commune::class,
                             'multiple' => false,

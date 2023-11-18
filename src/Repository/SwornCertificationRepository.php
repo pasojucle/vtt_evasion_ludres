@@ -71,7 +71,7 @@ class SwornCertificationRepository extends ServiceEntityRepository
         ;
     }
 
-    private function addExistingLicenceSwornCertificationCriteria(Andx &$andX, array &$parameters, array $existingLicenceSwornCertifications):void
+    private function addExistingLicenceSwornCertificationCriteria(Andx &$andX, array &$parameters, array $existingLicenceSwornCertifications): void
     {
         if (!empty($existingLicenceSwornCertifications)) {
             $andX->add((new Expr())->notIn('sc.id', ':existingLicenceSwornCertifications'));

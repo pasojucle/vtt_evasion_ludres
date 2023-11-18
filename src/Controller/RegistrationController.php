@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use ZipArchive;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use App\Entity\Licence;
+use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Entity\Licence;
-use App\Dto\RegistrationStepDto;
-use App\Entity\RegistrationStep;
-use App\Service\ParameterService;
 use App\Repository\ContentRepository;
-use App\UseCase\Registration\GetProgress;
 use App\Repository\MembershipFeeRepository;
-use Symfony\Component\HttpFoundation\Request;
+use App\Security\SelfAuthentication;
+use App\Service\ParameterService;
+use App\Service\ProjectDirService;
 use App\UseCase\Registration\EditRegistration;
+use App\UseCase\Registration\GetProgress;
+use App\UseCase\Registration\GetRegistrationFile;
 use App\UseCase\Registration\GetStatusWarning;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\UseCase\Registration\GetRegistrationFile;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Service\ProjectDirService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use ZipArchive;
 
 class RegistrationController extends AbstractController
 {
@@ -72,18 +72,24 @@ class RegistrationController extends AbstractController
         MembershipFeeRepository $membershipFeeRepository,
         ParameterService $parameterService,
         EditRegistration $editRegistration,
+        SelfAuthentication $selfAuthentication,
         int $step
     ): Response {
         $session = $this->requestStack->getSession();
-        if ('registration_form' === $request->attributes->get('_route') && null !== $this->getUser()) {
-            return $this->redirectToRoute('user_registration_form', ['step' => $step]);
-        }
-
+        
         if ((int) $session->get('registrationMaxStep') < $step) {
             $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
-
         $progress = $this->getProgress->execute($step);
+
+        if (null !== $this->getUser() && $progress['nextIndex'] && 'registration_form' === $request->attributes->get('_route')) {
+            return $this->redirectToRoute('user_registration_form', ['step' => $step]);
+        };
+
+        if (!$progress['nextIndex'] && 'registration_form' === $request->attributes->get('_route') && null !== $this->getUser()) {
+            $selfAuthentication->logout();
+        }
+
         $user = $progress['user'];
         if (Licence::STATUS_IN_PROCESSING < $user->lastLicence->status && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
             return $this->redirectToRoute('registration_download', [
@@ -105,9 +111,9 @@ class RegistrationController extends AbstractController
         }
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $editRegistration->execute($request, $form, $progress);
+            $route = $editRegistration->execute($request, $form, $progress);
             
-            return $this->redirectToRoute($request->attributes->get('_route'), [
+            return $this->redirectToRoute($route, [
                 'step' => $progress['nextIndex'],
             ]);
         }

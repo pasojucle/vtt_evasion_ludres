@@ -64,6 +64,4 @@ class SwornCertification
 
         return $this;
     }
-
-    
 }

@@ -82,10 +82,10 @@ class GetRegistrationFile
         $this->addRegistrationDocument($user, $userDto);
 
         $registrationFiles = [];
-            foreach (RegistrationStepDto::OUTPUT_FILENAMES as $key => $outputFilename) {
-                $fileTmp = $this->projectDir->path('tmp', $outputFilename);
-                $registrationFiles[] = $this->pdfService->joinPdf($this->files[$key], $user, $key, $fileTmp);
-            }
+        foreach (RegistrationStepDto::OUTPUT_FILENAMES as $key => $outputFilename) {
+            $fileTmp = $this->projectDir->path('tmp', $outputFilename);
+            $registrationFiles[] = $this->pdfService->joinPdf($this->files[$key], $user, $key, $fileTmp);
+        }
         
         return $registrationFiles;
     }
