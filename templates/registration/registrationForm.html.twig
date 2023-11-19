@@ -61,7 +61,7 @@
                             {% set btn_label = '<i class="fas fa-chevron-circle-right"></i> Enregistrer' %}
                             {% if current.form == constant('App\\Form\\UserType::FORM_OVERVIEW') %}
                                 {% set btn_class = 'btn btn-primary btn-xl float-right' %}
-                                {% set btn_label = 'Je certifie l\'exactitude des renseignements fournis<br>et VALIDE MON INSCRIPTION' %}
+                                {% set btn_label = '<i class="fas fa-check-circle"></i> Je certifie l\'exactitude des renseignements fournis<br>et VALIDE MON INSCRIPTION' %}
                             {% endif %}
                             <button class="{{ btn_class }}" type="submit">{{ btn_label|raw }}</button>
                         {% endif %}

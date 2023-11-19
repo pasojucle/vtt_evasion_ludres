@@ -1700,3 +1700,10 @@ img.second-hand {
         background-size: contain;
     }
 }
+
+@media screen and (max-width: 414px) {
+    .btn.btn-xl.float-right {
+        float: unset;
+        margin-top: 20px;
+    }
+}

@@ -71,6 +71,7 @@
                 font-weight: 600;
                 position: relative;
                 margin: 5px 10px 5px 5px;
+                flex-shrink: 0;
                 &::before {
                     content: '';
                     position: absolute;
@@ -119,4 +120,21 @@
     }
 }
 
-
+@media screen and (max-width: 800px) {
+    .ffvelo-healt {
+        .border-radus {
+            &.border-left {
+                border-radius: 15px 15px 0 0;
+            }
+            &.border-right {
+                border-radius: 0 0 15px 15px;
+            }
+        }
+        .ffvelo-header {
+            align-items:start;
+        }
+        .bloc-ffvelo {
+            display: block;
+        }
+    }
+}

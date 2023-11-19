@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
-use App\Repository\ParameterRepository;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -20,6 +19,7 @@ class MailerService
     public function __construct(
         private MailerInterface $mailer,
         private ReplaceKeywordsService $replaceKeywords,
+        private ParameterService $parameterService,
     ) {
     }
 
@@ -46,6 +46,10 @@ class MailerService
     public function sendMailToMember(array|UserDto $user, string $subject, string $content, ?array $attachements = null): array
     {
         list($userEmail, $fullName) = $this->getUserData($user);
+        if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
+            $userEmail = 'contact@vttevasionludres.fr';
+        }
+
         if ($user instanceof UserDto) {
             $content = $this->replaceKeywords->replace($user, $content, RegistrationStep::RENDER_FILE);
         }
