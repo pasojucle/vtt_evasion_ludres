@@ -1,18 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Etapes des inscriptions{% endblock %}
 
 
 {% block body %}
     <div class="wrapper registrations">
         <div class="wrapper-title">
             <h1>Etapes des inscriptions</h1>
-            <div class="dropdown">
-                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                <div class="dropdown-menu" data-target="dropdown-tools">
-                    <ul class="dropdown-body">
-                        <li><a href="{{ path('admin_registration_step_edit')}}" class="dropdown-item"><i class="fa-solid fa-plus"></i> Ajouter une étape</a></li>
-                    </ul>
+            <div class="tool-group">
+                <a href="{{ path('admin_registrations') }}" class="btn btn-ico" title="Retour à la liste des inscriptions"><i class="fas fa-chevron-left"></i></a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                    <div class="dropdown-menu" data-target="dropdown-tools">
+                        <ul class="dropdown-body">
+                            <li><a href="{{ path('admin_registration_step_edit')}}" class="dropdown-item"><i class="fa-solid fa-plus"></i> Ajouter une étape</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

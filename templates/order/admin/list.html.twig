@@ -6,7 +6,9 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion des commandes - <span class="badge badge-info">{{ paginator.total }}</span></h1>
-            <div class="dropdown">
+            <div class="tool-group">
+                {% include 'component/dropdown_settings.html.twig' %}
+                <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                     <div class="dropdown-menu" data-target="dropdown-tools">
                         <ul class="dropdown-body">
@@ -14,7 +16,9 @@
                         </ul>
                     </div>
                 </div>
+            </div>
         </div>
+
         <div class="wrapper-body">
             {% if form is defined %}
             {{ form_start(form) }}

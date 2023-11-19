@@ -50,7 +50,7 @@ class UserVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|User|UserDto $subject): bool
+    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
     {
         if (!$this->accessDecisionManager->decide($token, ['ROLE_USER'])) {
             return false;
@@ -67,7 +67,7 @@ class UserVoter extends Voter
         return $this->isOwner($subject, $user);
     }
 
-    private function canView(TokenInterface $token, User $user, null|User|UserDto $subject): bool
+    private function canView(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
     {
         if (!$subject) {
             return false;
@@ -80,7 +80,7 @@ class UserVoter extends Voter
         return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions([User::PERMISSION_USER, User::PERMISSION_BIKE_RIDE]);
     }
 
-    private function canList(TokenInterface $token, User $user, null|User|UserDto $subject): bool
+    private function canList(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
     {
         if ($this->canEdit($token, $user, $subject)) {
             return true;
@@ -89,7 +89,7 @@ class UserVoter extends Voter
         return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions([User::PERMISSION_USER, User::PERMISSION_BIKE_RIDE]);
     }
 
-    private function canNav(TokenInterface $token, User $user, null|User|UserDto $subject): bool
+    private function canNav(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
     {
         if ($this->canEdit($token, $user, $subject)) {
             return true;
@@ -99,7 +99,7 @@ class UserVoter extends Voter
     }
 
 
-    private function isOwner(null|User|UserDto $subject, User $user): bool
+    private function isOwner(null|User|UserDto|Licence $subject, User $user): bool
     {
         if (!$subject) {
             return false;

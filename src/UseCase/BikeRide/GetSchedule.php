@@ -87,7 +87,7 @@ class GetSchedule
                     ['name' => 'admin_bike_ride_types', 'label' => 'Types de rando'],
                     ['name' => 'admin_indemnity_list', 'label' => 'Indemnités'],
                 ],
-            ]
+            ],
         ];
 
         return [

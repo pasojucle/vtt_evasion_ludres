@@ -24,7 +24,7 @@ class MenuAdminService
                 'role' => ['BIKE_RIDE_LIST', 'USER_LIST', 'SURVEY_LIST', 'SECOND_HAND_LIST', 'MODAL_WINDOW_LIST', 'PRODUCT_LIST'],
             ],
             [
-                'label' => 'Paramètrage',
+                'label' => 'Contenus',
                 'route' => null,
                 'pattern' => null,
                 'subMenus' => $this->getSettingMenu(),
@@ -150,12 +150,6 @@ class MenuAdminService
                 'label' => 'Paramètres',
                 'route' => 'admin_groups_parameter',
                 'pattern' => '/parameter/',
-                'role' => 'ROLE_ADMIN',
-            ],
-            [
-                'label' => 'Etapes des inscriptions',
-                'route' => 'admin_registration_step_list',
-                'pattern' => '/registration_step/',
                 'role' => 'ROLE_ADMIN',
             ],
         ]);

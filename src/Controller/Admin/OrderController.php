@@ -9,6 +9,7 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderFilterType;
 use App\Repository\OrderHeaderRepository;
+use App\Repository\ParameterRepository;
 use App\Service\ExportService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,7 +34,7 @@ class OrderController extends AbstractController
     #[Route('/admin/commandes/{filtered}', name: 'admin_orders', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
     #[IsGranted('PRODUCT_LIST')]
     public function adminOrders(
-        PaginatorService $paginator,
+        ParameterRepository $parameterRepository,
         Request $request,
         bool $filtered
     ): Response {
@@ -63,6 +64,11 @@ class OrderController extends AbstractController
             'form' => $form->createView(),
             'orders' => $this->orderDtoTransformer->fromEntities($orders),
             'paginator' => $this->paginatorDtoTransformer->fromEntities($orders, array_merge($filters, ['filtered' => (int) $filtered])),
+            'settings' => [
+                'parameters' => $parameterRepository->findByParameterGroupName('ORDER'),
+                'redirect' => 'admin_registrations',
+                'routes' => [],
+            ],
         ]);
     }
 

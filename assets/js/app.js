@@ -1,6 +1,7 @@
 
-import {handleCheckChange, formToggle} from './form.js';
-import {Form} from './formValidator.js';
+import { handleCheckChange, formToggle } from './form.js';
+import { Form } from './formValidator.js';
+import { addDeleteLink, initAddItemLink } from './entityCollection.js'
 var formValidator;
 
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -47,14 +48,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
         $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
     }
+    
     initAddItemLink();
-    const collectionItems = document.querySelectorAll('.collection_container .form-group-collection:not(.not-deleted)');
-    collectionItems.forEach((item) => {
-        if ($(item).find('input:disabled').length < 1) {
-            addTagFormDeleteLink(item);
-        } 
-    })
-
+    addDeleteLink();
 
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
 
@@ -349,49 +345,12 @@ function addUp(e) {
     $(this).closest('div.block').find('i').addClass('fa-caret-square-up').removeClass('fa-caret-square-down');
 }
 
-const addFormToCollection = (e) => {
-    const collectionHolder = document.querySelector('#' + e.currentTarget.dataset.collectionHolderClass);
-    const container = collectionHolder.closest('.collection_container');
-    const html = container
-      .dataset
-      .prototype
-      .replace(
-        /__name__/g,
-        container.dataset.index
-      );
-
-    const item = document.createRange().createContextualFragment(html)
-  
-    collectionHolder.appendChild(item);
-  
-    container.dataset.index++;
-    addTagFormDeleteLink(collectionHolder.lastChild);
-  };
-
-  const addTagFormDeleteLink = (itemForm) => {
-    const removeFormButton = document.createElement('button');
-    removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger', 'col-md-1');
-    removeFormButton.innerHTML ='<i class="fas fa-times"></i>';
-    console.log('itemForm', itemForm)
-    console.log('itemForm', $(itemForm))
-    $(itemForm).append(removeFormButton);
-
-    removeFormButton.addEventListener('click', (e) => {
-        e.preventDefault()
-        itemForm.remove();
-    });
-}
-
 function resize(object) {
     const parent = object.parentNode;
     const computedStyle = getComputedStyle(parent);
     const width = parent.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
     object.width = width;
     object.height = parent.dataset.ratio * width;
-}
-
-const initAddItemLink = () => {
-    document.querySelectorAll('.add_item_link').forEach(btn => btn.addEventListener("click", addFormToCollection));
 }
 
 const handleChangeBikeRideType = () => {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Repository\ParameterRepository;
 use App\UseCase\Registration\GetRegistrationsFiltered;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,13 +20,20 @@ class RegistrationController extends AbstractController
     #[IsGranted('USER_LIST')]
     public function adminRegistrations(
         GetRegistrationsFiltered $getRegistrationsFiltered,
+        ParameterRepository $parameterRepository,
         Request $request,
         bool $filtered
     ): Response {
-        return $this->render(
-            'user/admin/registrations.html.twig',
-            $getRegistrationsFiltered->list($request, $filtered)
-        );
+        $params = $getRegistrationsFiltered->list($request, $filtered);
+
+        $params['settings'] = [
+            'parameters' => $parameterRepository->findByParameterGroupName('REGISTRATION'),
+            'redirect' => 'admin_registrations',
+            'routes' => [
+                ['name' => 'admin_registration_step_list', 'label' => 'Étapes des inscriptions'],
+            ],
+        ];
+        return $this->render('user/admin/registrations.html.twig', $params);
     }
 
     #[Route('/export/inscription', name: 's_export', methods: ['GET'])]

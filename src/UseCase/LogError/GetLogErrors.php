@@ -7,6 +7,7 @@ namespace App\UseCase\LogError;
 use App\Dto\DtoTransformer\LogErrorDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Repository\LogErrorRepository;
+use App\Repository\ParameterRepository;
 use App\Service\PaginatorService;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,7 +17,8 @@ class GetLogErrors
         private PaginatorService $paginator,
         private PaginatorDtoTransformer $paginatorDtoTransformer,
         private LogErrorDtoTransformer $logErrorDtoTransformer,
-        private LogErrorRepository $logErrorRepository
+        private LogErrorRepository $logErrorRepository,
+        private ParameterRepository $parameterRepository,
     ) {
     }
 
@@ -30,6 +32,11 @@ class GetLogErrors
             'tabs' => $this->logErrorDtoTransformer->tabs,
             'status_code' => $statusCode,
             'paginator' => $this->paginatorDtoTransformer->fromEntities($errors, ['statusCode' => $statusCode], 'admin_log_errors'),
+            'settings' => [
+                'parameters' => $this->parameterRepository->findByNames(['ERROR_USER_AGENT_IGNORE', 'ERROR_URL_IGNORE']),
+                'redirect' => 'admin_registrations',
+                'routes' => [],
+            ],
         ];
     }
 }

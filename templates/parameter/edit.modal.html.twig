@@ -2,7 +2,40 @@
 {% block form %}{% set form = form %}{% endblock %}
 {% block modal_title %}Modifier un paramètre{% endblock %}
 {% block body %}
-    {{ form_row(form.value)}}
+    {% if form.vars.value.type == constant('App\\Entity\\parameter::TYPE_BOOL') %}
+    <li>
+    <div class="switch-group">
+        {{ form_row(form.value) }}
+    </div>
+    </li>
+    {% elseif form.vars.value.type == constant('App\\Entity\\parameter::TYPE_ARRAY') %}
+    <li>
+        <b>{{ form_label(form) }}</b>
+        <div class="row row-align-top">
+            <div class="col-md-8">
+                <div class="collection_container"
+                data-index="{{ form|length > 0 ? form|last.vars.value|length + 1 : 0 }}" 
+                data-prototype="{{ form_row(form.children.value.vars.prototype)|e('html_attr') }}">
+                        {{ form_widget(form) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.vars.id }}">
+                <i class="fas fa-plus-circle"></i> Ajouter une valeur
+                </button>
+            </div>
+        </div>
+    </li>
+    {% elseif form.vars.value.type == constant('App\\Entity\\parameter::TYPE_MONTH_AND_DAY') %}
+    <li>
+        {{ form_row(form) }}
+    </li>
+    {% else %}
+    <li>
+        <b>{{ form_label(form.value) }}</b>
+        <div>{{ form_widget(form.value) }}</div>
+    </li>
+    {% endif %}
 {% endblock %}
 {% block footer %}
     {% set button_text = 'Modifier' %}

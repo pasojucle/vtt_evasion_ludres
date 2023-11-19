@@ -1,3 +1,5 @@
+import { addDeleteLink, initAddItemLink } from './entityCollection.js'
+
 $(function () {
     $('body').append('<div class="modal" tabindex="-1"></div>');
     $(document).on('click', 'a[data-toggle="modal"]', handleShowModal);
@@ -35,6 +37,8 @@ function showModal(route, modalType) {
                 $('.js-datepicker').datepicker({
                     format: 'yyyy-mm-dd hh:ii',
                 });
+                initAddItemLink();
+                addDeleteLink();
                 setTimeout(function () {
                     //$('.modal-dialog').transition({ top: 100px });
                     $('.modal-dialog').addClass('modal-open');

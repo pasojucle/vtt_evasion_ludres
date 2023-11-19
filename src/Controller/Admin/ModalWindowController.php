@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\ModalWindow;
 use App\Form\Admin\ModalWindowType;
 use App\Repository\ModalWindowRepository;
+use App\Repository\ParameterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,10 +24,15 @@ class ModalWindowController extends AbstractController
 
     #[Route('s', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function list(ModalWindowRepository $modalWindowRepository): Response
+    public function list(ModalWindowRepository $modalWindowRepository, ParameterRepository $parameterRepository): Response
     {
         return $this->render('modal_window/admin/list.html.twig', [
             'modal_window_list' => $modalWindowRepository->findAllDesc(),
+            'settings' => [
+                'parameters' => $parameterRepository->findByParameterGroupName('MODAL'),
+                'redirect' => 'admin_registrations',
+                'routes' => [],
+            ],
         ]);
     }
 

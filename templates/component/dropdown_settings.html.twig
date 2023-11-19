@@ -10,7 +10,7 @@
                 {% endfor %}
                 {% for parameter in settings.parameters %}
                     <li>
-                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name, 'redirect' : settings.redirect })}}" title="Modifier" data-toggle="modal" data-type="primary">{{ parameter.label }}</a>
+                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name, 'redirect' : settings.redirect })}}" title="{{ parameter.label }}" data-toggle="modal" data-type="primary">{{ parameter.label }}</a>
                     </li>
                 {% endfor %}
             </ul>

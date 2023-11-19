@@ -23,7 +23,7 @@ class ParameterRepository extends ServiceEntityRepository
         parent::__construct($registry, Parameter::class);
     }
 
-    public function findOneByName($name): ?Parameter
+    public function findOneByName(string $name): ?Parameter
     {
         try {
             return $this->createQueryBuilder('p')
@@ -37,6 +37,18 @@ class ParameterRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException $e) {
             return null;
         }
+    }
+
+    public function findByNames(array $names): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere(
+                (new Expr())->in('p.name', ':names')
+            )
+            ->setParameter('names', $names)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     public function findByParameterGroupName(string $name): array

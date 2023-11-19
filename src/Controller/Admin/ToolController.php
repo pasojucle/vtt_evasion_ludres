@@ -9,6 +9,7 @@ use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\Admin\ToolType;
 use App\Form\Admin\UserSearchType;
+use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
 use App\Service\ParameterService;
@@ -87,7 +88,8 @@ class ToolController extends AbstractController
         Request $request,
         MailerService $mailerService,
         UserDtoTransformer $userDtoTransformer,
-        ParameterService $parameterService
+        ParameterService $parameterService,
+        ParameterRepository $parameterRepository,
     ): Response {
         $form = $this->createForm(ToolType::class);
         $form->handleRequest($request);
@@ -121,6 +123,11 @@ class ToolController extends AbstractController
 
         return $this->render('tool/registration_error.html.twig', [
             'form' => $form->createView(),
+            'settings' => [
+                'parameters' => $parameterRepository->findByNames(['EMAIL_REGISTRATION_ERROR']),
+                'redirect' => 'admin_registrations',
+                'routes' => [],
+            ],
         ]);
     }
     

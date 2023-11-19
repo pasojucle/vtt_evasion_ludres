@@ -6,9 +6,9 @@
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>Gestion de la pop'up</h1>
-            <span class="tools">
-                
-            </span>
+            <div class="tool-group">
+                {% include 'component/dropdown_settings.html.twig' %}
+            </div>
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_modal_window_edit') }}" class="btn btn-primary" title="Ajouter une info"><i class="fas fa-plus"></i> Ajouter une info</a>
