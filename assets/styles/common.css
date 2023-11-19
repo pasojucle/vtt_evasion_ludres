@@ -1446,6 +1446,11 @@ img.second-hand {
     font-size: 48px;
 }
 
+iframe.youtube {
+    width: 100%;
+    height: calc(100vw * 0.25);
+}
+
 @media screen and (min-width: 800px) {
     .block.block-flash.background-color .block-title::after {
         box-sizing: border-box;
@@ -1705,5 +1710,8 @@ img.second-hand {
     .btn.btn-xl.float-right {
         float: unset;
         margin-top: 20px;
+    }
+    iframe.youtube {
+        height: auto;
     }
 }
