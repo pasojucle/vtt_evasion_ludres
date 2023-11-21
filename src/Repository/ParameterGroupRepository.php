@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\ParameterGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -45,5 +46,21 @@ class ParameterGroupRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findOneByName(string $name): ?ParameterGroup
+    {
+        try {
+            return $this->createQueryBuilder('pG')
+                ->andWhere(
+                    (new Expr())->eq('pG.name', ':name')
+                )
+                ->setParameter('name', $name)
+                ->getQuery()
+                ->getOneOrNullResult()
+        ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 }

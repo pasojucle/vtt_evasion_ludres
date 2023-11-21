@@ -28,7 +28,6 @@ class RegistrationController extends AbstractController
 
         $params['settings'] = [
             'parameters' => $parameterRepository->findByParameterGroupName('REGISTRATION'),
-            'redirect' => 'admin_registrations',
             'routes' => [
                 ['name' => 'admin_registration_step_list', 'label' => 'Étapes des inscriptions'],
             ],

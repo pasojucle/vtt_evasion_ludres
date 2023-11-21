@@ -44,7 +44,6 @@
                             <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
                         </div>
                     {% endif %}
-                    {% dump(restriction.vars.value)%}
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_MIN_AGE') %}
                         <div class="form-group radio-group">{{ form_row(form.minAge) }}</div>
                     {% endif %}
@@ -56,6 +55,4 @@
         </div>
     </div>
     {{ form_end(form) }}
-
-
 {% endblock %}

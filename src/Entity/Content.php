@@ -9,6 +9,7 @@ use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -102,6 +103,9 @@ class Content
 
     #[Column(type: 'boolean', options: ['default' => 0])]
     private bool $backgroundOnly = false;
+
+    #[Column(type: Types::JSON, nullable: true)]
+    private ?array $parameters = null;
 
     public function __construct()
     {
@@ -317,6 +321,18 @@ class Content
     public function setBackgroundOnly(bool $backgroundOnly): self
     {
         $this->backgroundOnly = $backgroundOnly;
+
+        return $this;
+    }
+
+    public function getParameters(): ?array
+    {
+        return $this->parameters;
+    }
+
+    public function setParameters(?array $parameters): static
+    {
+        $this->parameters = $parameters;
 
         return $this;
     }

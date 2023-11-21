@@ -44,7 +44,6 @@ class UserController extends AbstractController
 
         $params['settings'] = [
             'parameters' => $this->entityManager->getRepository(Parameter::class)->findByParameterGroupName('USER'),
-            'redirect' => 'admin_users',
             'routes' => [
                 ['name' => 'admin_levels', 'label' => 'Niveaux'],
                 ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],

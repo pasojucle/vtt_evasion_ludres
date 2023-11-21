@@ -82,7 +82,6 @@ class GetSchedule
             'current_filters' => $filters,
             'settings' => [
                 'parameters' => $this->parameterRepository->findByParameterGroupName('BIKE_RIDE'),
-                'redirect' => 'admin_bike_rides',
                 'routes' => [
                     ['name' => 'admin_bike_ride_types', 'label' => 'Types de rando'],
                     ['name' => 'admin_indemnity_list', 'label' => 'Indemnités'],

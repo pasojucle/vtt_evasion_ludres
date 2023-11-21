@@ -30,7 +30,6 @@ class ModalWindowController extends AbstractController
             'modal_window_list' => $modalWindowRepository->findAllDesc(),
             'settings' => [
                 'parameters' => $parameterRepository->findByParameterGroupName('MODAL'),
-                'redirect' => 'admin_registrations',
                 'routes' => [],
             ],
         ]);

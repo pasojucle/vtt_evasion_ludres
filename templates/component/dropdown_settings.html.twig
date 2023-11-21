@@ -1,5 +1,5 @@
 
-{% if settings is defined and is_granted('ROLE_ADMIN') %}
+{% if settings is defined and is_granted('ROLE_ADMIN') and (settings.routes is not empty or settings.parameters is not empty) %}
     <div class="dropdown sliders">
         <button class="dropdown-toggle" type="button" data-toggle="dropdown-settings"></button>
         <div class="dropdown-menu" data-target="dropdown-settings">
@@ -10,7 +10,7 @@
                 {% endfor %}
                 {% for parameter in settings.parameters %}
                     <li>
-                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name, 'redirect' : settings.redirect })}}" title="{{ parameter.label }}" data-toggle="modal" data-type="primary">{{ parameter.label }}</a>
+                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name })}}" title="{{ parameter.label }}" data-toggle="modal" data-type="primary">{{ parameter.label }}</a>
                     </li>
                 {% endfor %}
             </ul>

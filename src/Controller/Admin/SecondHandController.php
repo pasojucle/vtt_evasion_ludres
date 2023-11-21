@@ -46,7 +46,6 @@ class SecondHandController extends AbstractController
             'valid' => $valid,
             'settings' => [
                 'parameters' => $this->parameterRepository->findByParameterGroupName('SECOND_HAND'),
-                'redirect' => 'admin_second_hand_list',
                 'routes' => [
                     ['name' => 'admin_category_list', 'label' => 'Catégories d\'occasions'],
                 ]

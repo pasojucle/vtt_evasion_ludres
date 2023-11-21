@@ -66,7 +66,6 @@ class OrderController extends AbstractController
             'paginator' => $this->paginatorDtoTransformer->fromEntities($orders, array_merge($filters, ['filtered' => (int) $filtered])),
             'settings' => [
                 'parameters' => $parameterRepository->findByParameterGroupName('ORDER'),
-                'redirect' => 'admin_registrations',
                 'routes' => [],
             ],
         ]);

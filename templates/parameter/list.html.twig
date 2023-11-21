@@ -1,21 +1,12 @@
 {% extends 'base.html.twig' %}
-{% block title %}Parametres{% endblock %}
+{% block title %}Maintenance{% endblock %}
 
 {% block body %}
 {% set class_ul ='' %}
  <div class="wrapper">
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Parametres</h1>
-        </div>
-        <div>
-            <nav  class="nav-tab">
-                {% for group in parameter_groups %}
-                    <a href="{{ path('admin_groups_parameter', {'parameterGroup': group.id} )}}"
-                        {% if group.id == parameter_group.id %} class="active"{% endif %}>
-                    {{ group.label }}</a>
-                {% endfor %}
-            </nav>
+            <h1>Maintenance</h1>
         </div>
         {{ form_start(form) }}
         <div class="wrapper-body">

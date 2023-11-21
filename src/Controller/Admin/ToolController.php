@@ -125,7 +125,6 @@ class ToolController extends AbstractController
             'form' => $form->createView(),
             'settings' => [
                 'parameters' => $parameterRepository->findByNames(['EMAIL_REGISTRATION_ERROR']),
-                'redirect' => 'admin_registrations',
                 'routes' => [],
             ],
         ]);

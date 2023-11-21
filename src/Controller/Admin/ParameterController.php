@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ParameterController extends AbstractController
 {
-    #[Route('/admin/parameters/{parameterGroup}', name: 'admin_groups_parameter', methods: ['GET', 'POST'], defaults:['parameterGroup' => null])]
+    #[Route('/admin/maintenace', name: 'admin_service', methods: ['GET', 'POST'], defaults:['parameterGroup' => null])]
     #[IsGranted('ROLE_ADMIN')]
     public function list(
         ParameterGroupRepository $parameterGroupRepository,
@@ -26,11 +26,8 @@ class ParameterController extends AbstractController
         EntityManagerInterface $entityManager,
         ?ParameterGroup $parameterGroup
     ): Response {
-        $parameterGroups = $parameterGroupRepository->findParameterGroups();
+        $parameterGroup = $parameterGroupRepository->findoneByName('MAINTENANCE');
 
-        if (null === $parameterGroup) {
-            $parameterGroup = $parameterGroups[0];
-        }
         $form = $this->createForm(ParameterGroupType::class, $parameterGroup);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -41,30 +38,30 @@ class ParameterController extends AbstractController
 
         return $this->render('parameter/list.html.twig', [
             'parameter_group' => $parameterGroup,
-            'parameter_groups' => $parameterGroups,
             'form' => $form->createView(),
         ]);
     }
 
 
-    #[Route('/admin/parameter/{name}/{redirect}', name: 'admin_parameter_edit', methods: ['GET', 'POST'])]
+    #[Route('/admin/parameter/{name}', name: 'admin_parameter_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
         EntityManagerInterface $entityManager,
         ParameterRepository $parameterRepository,
-        string $name,
-        string $redirect
+        string $name
     ): Response {
+        $referer = $request->headers->get('referer');
         $parameter = $parameterRepository->findOneByName($name);
         if ($parameter) {
             $form = $this->createForm(ParameterType::class, $parameter, [
-                'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), )
+                'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+                'referer' => $referer,
             ]);
             $form->handleRequest($request);
             if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
                 $entityManager->flush();
-                return $this->redirectToRoute($redirect);
+                return $this->redirect($request->request->all('parameter')['referer']);
             }
 
             return $this->render('parameter/edit.modal.html.twig', [

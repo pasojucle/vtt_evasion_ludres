@@ -146,12 +146,6 @@ class MenuAdminService
                 'pattern' => '/membership/',
                 'role' => 'ROLE_ADMIN',
             ],
-            [
-                'label' => 'Paramètres',
-                'route' => 'admin_groups_parameter',
-                'pattern' => '/parameter/',
-                'role' => 'ROLE_ADMIN',
-            ],
         ]);
     }
 
@@ -168,6 +162,12 @@ class MenuAdminService
                 'label' => 'Journal des erreurs',
                 'route' => 'admin_log_errors',
                 'pattern' => '/admin_log_errors/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
+                'label' => 'Maintenance',
+                'route' => 'admin_service',
+                'pattern' => '/parameter/',
                 'role' => 'ROLE_ADMIN',
             ],
             [
