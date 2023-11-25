@@ -21,7 +21,7 @@ final class Version20231120173412 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
 
-        // $this->addSql('ALTER TABLE content ADD parameters JSON DEFAULT NULL COMMENT \'(DC2Type:json)\'');
+        $this->addSql('ALTER TABLE content ADD parameters JSON DEFAULT NULL COMMENT \'(DC2Type:json)\'');
         $this->addSql('UPDATE `parameter_group` SET `name`=\'CONTENT\',`role`=\'NONE\' WHERE `name`=\'MESSAGES\'');
 
         $contents = [

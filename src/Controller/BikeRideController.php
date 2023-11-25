@@ -22,6 +22,15 @@ class BikeRideController extends AbstractController
     ) {
     }
 
+
+    #[Route('/member/programme', name: 'member_schedule', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function memberList():Response
+    {
+        return $this->redirectToRoute('schedule');
+    }
+
+
     #[Route('/programme/{period}/{year}/{month}/{day}', name: 'schedule', methods: ['GET', 'POST'], defaults:['period' => null, 'year' => null, 'month' => null, 'day' => null])]
     public function list(
         Request $request,
