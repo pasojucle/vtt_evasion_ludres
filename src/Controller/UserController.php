@@ -128,7 +128,9 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $request->getSession()->set(Security::LAST_USERNAME, $identity->getUser()->getLicenceNumber());
+            if ($identity) {
+                $request->getSession()->set(Security::LAST_USERNAME, $identity->getUser()->getLicenceNumber());
+            }
             return $this->redirectToRoute('user_account');
         }
         
