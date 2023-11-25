@@ -54,7 +54,7 @@ class DocumentationDtoTransformer
 
     private function getMimeType(?string $filePath): ?string
     {
-        if (file_exists($filePath)) {
+        if ($filePath && file_exists($filePath)) {
             return mime_content_type($filePath);
         }
 
