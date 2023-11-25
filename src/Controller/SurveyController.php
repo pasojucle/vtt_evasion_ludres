@@ -27,6 +27,7 @@ class SurveyController extends AbstractController
     ) {
     }
 
+    #[Route('/sondage/{survey}', name: 'survey_old', methods: ['GET', 'POST'])]
     #[Route('/mon-compte/sondage/{survey}', name: 'survey', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function show(Request $request, RespondentRepository $respondentRepository, Survey $survey): Response
