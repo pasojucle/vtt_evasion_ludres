@@ -8,7 +8,6 @@ use App\Entity\BikeRide;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\User;
-use App\Service\SeasonService;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -25,7 +24,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SessionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private SeasonService $seasonService)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Session::class);
     }
@@ -124,15 +123,13 @@ class SessionRepository extends ServiceEntityRepository
             )
             ->setParameter('user', $user)
             ;
-        if (isset($filters['season'])) {
-            $season = (int) str_replace('SEASON_', '', $filters['season']);
-            $interval = $this->seasonService->getSeasonInterval($season);
+        if (isset($filters['startAt']) && isset($filters['endAt'])) {
             $qb
                 ->andWhere(
                     $qb->expr()->between('br.startAt', ':startAt', ':endAt')
                 )
-                ->setParameter('startAt', $interval['startAt'])
-                ->setParameter('endAt', $interval['endAt']);
+                ->setParameter('startAt', $filters['startAt'])
+                ->setParameter('endAt', $filters['endAt']);
         }
         if (isset($filters['bikeRideType'])) {
             $qb

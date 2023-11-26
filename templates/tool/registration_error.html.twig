@@ -18,11 +18,12 @@
                 <div class="form-group">
                     {{ form_row(form.content) }}
                 </div>
+                <b>Attention, l'envoi du mail, change le statut de l'inscription.</b>
+
             </div>
             <div class="wrapper-footer">
                 {{ form_row(form.submit, {'label': 'Envoyer'}) }}
             </div>
-            <b>Attention, l'envoi du mail, change le statut de l'inscription.</b>
         {{ form_errors(form) }}
         {{ form_end(form) }}
     </div>

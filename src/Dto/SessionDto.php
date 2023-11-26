@@ -18,6 +18,10 @@ class SessionDto
 
     public ?bool $userIsOnSite;
 
+    public string $userIsOnSiteToStr;
+
+    public string $userIsOnSiteToHtml;
+
     public ?Currency $indemnity;
 
     public ?string $indemnityStr;

@@ -88,7 +88,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], defaults:['filtered' => false])]
+    #[Route('/adherent/participation/{user}/{filtered}', name: 'user_participation', methods: ['GET', 'POST'], requirements: ['user' => '\d+'], defaults:['filtered' => false])]
     #[IsGranted('USER_VIEW', 'user')]
     public function adminUserParticipation(
         GetParticipation $getParticipation,
@@ -96,10 +96,17 @@ class UserController extends AbstractController
         User $user,
         bool $filtered
     ): Response {
-        return $this->render(
-            'user/admin/participation.html.twig',
-            $getParticipation->execute($request, $user, $filtered)
-        );
+        return $this->render('user/admin/participation.html.twig', $getParticipation->execute($request, $user, $filtered));
+    }
+
+    #[Route('/adherent/participation/export/{user}', name: 'user_participation_export', methods: ['GET', 'POST'], requirements: ['user' => '\d+'])]
+    #[IsGranted('USER_VIEW', 'user')]
+    public function adminUserParticipationExeport(
+        GetParticipation $getParticipation,
+        Request $request,
+        User $user,
+    ): Response {
+        return $getParticipation->export($request, $user);
     }
 
     #[Route('/adherent/edit/{user}', name: 'user_edit', requirements:['user' => '\d+'], methods: ['GET', 'POST'])]

@@ -902,6 +902,9 @@ ul > li.list {
 .row.row-align-top {
     align-items: unset;
 }
+.form-group.align-items-bottom .form-group-inline {
+    vertical-align: baseline;
+}
 .registration .row {
     line-height: unset;
 }

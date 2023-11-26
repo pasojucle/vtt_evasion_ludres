@@ -166,9 +166,10 @@ class LicenceDtoTransformer
 
     private function getAmount(Licence $licence): array
     {
+        $membershipFeeAmount = 0;
         $amount = null;
-        $amountStr = '';
-        $indemnities = null;
+        $amountToStr = '';
+        $indemnitiesToStr = null;
 
         if ($licence->isFinal()) {
             $isNewMember = $this->isNewMember($licence->getUser());
@@ -176,10 +177,12 @@ class LicenceDtoTransformer
                 ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), $isNewMember, $licence->getAdditionalFamilyMember())
                 : null;
             if (null !== $membershipFee) {
-                $amount = $membershipFee->getAmount();
+                $membershipFeeAmount = $membershipFee->getAmount();
             }
-            $indemnities = $this->indemnityService->getUserIndemnities($licence->getUser(), $licence->getSeason() - 1);
+            $lastSeason = $licence->getSeason() - 1;
+            $indemnities = $this->indemnityService->getUserIndemnities($licence->getUser(), $this->seasonService->getSeasonInterval($lastSeason));
 
+            $amount = $membershipFeeAmount;
             if (null !== $amount && null !== $indemnities) {
                 $amount -= $indemnities->getAmount();
             }
@@ -187,16 +190,18 @@ class LicenceDtoTransformer
             if (null !== $amount) {
                 $amount = new Currency($amount);
                 $coverageSrt = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
-                $amountStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount->toString()}";
+                $amountToStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount->toString()}";
+                $indemnitiesToStr = sprintf('Le montent des indemnités pour la saison %s est de %s', $lastSeason, $indemnities->toString());
             }
         } else {
-            $amountStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";
+            $amountToStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";
         }
 
         return [
             'value' => $amount,
-            'str' => $amountStr,
-            'indemnities' => $indemnities,
+            'str' => $amountToStr,
+            'indemnities' => $indemnitiesToStr,
+            'membershipFeeAmount' => new Currency($membershipFeeAmount),
         ];
     }
 

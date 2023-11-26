@@ -46,10 +46,15 @@ class SeasonService
 
         $interval = [
             'startAt' => $startAt->setTime(0, 0, 0, ),
-            'endAt' => $endAt->sub(new DateInterval('P1D'))->setTime(0, 0, 0, ),
+            'endAt' => $endAt->sub(new DateInterval('P1D'))->setTime(23, 59, 0, ),
         ];
 
         return $interval;
+    }
+
+    public function getCurrentSeasonInterval(): array
+    {
+        return $this->getSeasonInterval($this->getCurrentSeason());
     }
 
     public function getSeasons(): array

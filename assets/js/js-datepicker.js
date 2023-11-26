@@ -1,4 +1,3 @@
-
 jQuery(function($){
 	$.datepicker.regional['fr'] = {
 		closeText: 'Fermer',
@@ -29,13 +28,19 @@ jQuery(function($){
 
 $(document).ready(function(){
     $('.js-datepicker').each(function() {
-        $(this).datepicker({
-            format: 'dd/mm/YYYY',
-            maxDate: new Date($(this).data('max-date')),
-            minDate: new Date($(this).data('min-date')),
-            yearRange: $(this).data('year-range'),
-            changeMonth: true,
-            changeYear: true,
-        });
+		$(this).datepicker({
+			format: 'dd/mm/YYYY',
+			maxDate: new Date($(this).data('max-date')),
+			minDate: new Date($(this).data('min-date')),
+			yearRange: $(this).data('year-range'),
+			changeMonth: true,
+			changeYear: true,
+			beforeShow: function() {
+				setTimeout(function(){
+					$('.ui-datepicker').css('z-index', 99999999999999);
+				}, 0);
+			},
+		});
     })
 });
+

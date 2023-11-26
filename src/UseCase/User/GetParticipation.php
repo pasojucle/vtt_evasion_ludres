@@ -7,6 +7,7 @@ namespace App\UseCase\User;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\SessionDto;
 use App\Entity\User;
 use App\Form\Admin\ParticipationFilterType;
 use App\Repository\BikeRideTypeRepository;
@@ -14,9 +15,12 @@ use App\Repository\SessionRepository;
 use App\Service\IndemnityService;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
+use DateTime;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class GetParticipation
 {
@@ -55,12 +59,10 @@ class GetParticipation
 
         $sessions = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        $season = ($filters['season']) ? (int) str_replace('SEASON_', '', $filters['season']) : null;
-
         return [
             'user' => $this->userDtoTransformer->fromEntity($user),
             'sessions' => $this->sessionDtoTransformer->fromEntities($sessions),
-            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, $season),
+            'total_indemnities' => $this->indemnityService->getUserIndemnities($user, $filters),
             'form' => $form->createView(),
             'paginator' => $this->paginatorDtoTransformer->fromEntities($sessions, ['filtered' => (int) $filtered, 'user' => $user->getId()]),
             'referer' => $session->get('admin_user_redirect'),
@@ -81,9 +83,60 @@ class GetParticipation
             }
             return $filters;
         }
+        $period = $this->seasonService->getCurrentSeasonInterval();
         return  [
-            'season' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
+            'startAt' => $period['startAt'],
+            'endAt' => $period['endAt'],
             'bikeRideType' => null,
         ];
+    }
+
+    public function export(Request $request, User $user)
+    {
+        $session = $request->getSession();
+        $filters = $session->get($this->filterName);
+        $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
+        $sessions = $query->getQuery()->getResult();
+        $content = [];
+        $this->addExportHeader($content, $user, $filters);
+        $this->addExportContent($content, $sessions);
+
+        $response = new Response(implode(PHP_EOL, $content));
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            sprintf('export_participation_%s.csv', $user->getLicenceNumber())
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
+    }
+
+    private function addExportHeader(array &$content, User $user, array $filters): void
+    {
+        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $row = [$userDto->member->fullName, $userDto->licenceNumber];
+        $content[] = implode(',', $row);
+
+        if (isset($filters['startAt']) && isset($filters['endAt'])) {
+            $content[] = sprintf('Du %s au %s', $filters['startAt']->format('d/m/Y'), $filters['endAt']->format('d/m/Y'));
+        }
+
+        if (isset($filters['bikeRideType'])) {
+            $content[] = sprintf('Type de sortie : %s', $filters['bikeRideType']->getName());
+        }
+        $content[] = '';
+    }
+
+    private function addExportContent(array &$content, array $sessions): void
+    {
+        $row = ['Date', 'Sortie', 'Présence'];
+        $content[] = implode(',', $row);
+
+        /** @var SessionDto $session */
+        foreach ($this->sessionDtoTransformer->fromEntities($sessions) as $session) {
+            $row = [$session->bikeRide->period, $session->bikeRide->title, $session->userIsOnSiteToStr];
+            $content[] = implode(',', $row);
+        }
     }
 }

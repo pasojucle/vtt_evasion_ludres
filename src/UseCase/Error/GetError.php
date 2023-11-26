@@ -50,7 +50,7 @@ class GetError
             if (403 === $statusCode) {
                 /** @var AccessDeniedException  $previousExceptions */
                 $previousExceptions = $exception->getPrevious();
-                $route = (!$previousExceptions->getSubject() instanceof User) ? $previousExceptions->getSubject()?->attributes->get('_route') : null;
+                $route = (!$previousExceptions->getSubject() instanceof User) ? $previousExceptions->getSubject()?->attributes?->get('_route') : null;
                 $logError->setRoute($route)
                     ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.')
                 ;

@@ -16,7 +16,10 @@ class PeriodValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, Period::class);
         }
 
-        $startAt = $this->context->getObject()->getParent()->getData()->getStartAt();
+        $form = $this->context->getObject()->getParent()->getData();
+        $startAt = (is_array($form))
+            ? $form['startAt']
+            : $form->getStartAt();
 
         if (null === $value || '' === $value) {
             return;

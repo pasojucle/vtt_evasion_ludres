@@ -34,6 +34,8 @@ class SessionDtoTransformer
             $sessionDto->bikeRide = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
             $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
             $sessionDto->userIsOnSite = $session->isPresent();
+            $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
+            $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToHtml($session->isPresent());
             $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $sessionDto->bikeRide->bikeRideType, $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
@@ -84,5 +86,15 @@ class SessionDtoTransformer
         }
 
         return null;
+    }
+
+    private function getUserIsOnSiteToStr(bool $isPresent): string
+    {
+        return ($isPresent) ? 'Présent' : 'Absent';
+    }
+
+    private function getUserIsOnSiteToHtml(bool $isPresent): string
+    {
+        return ($isPresent) ? '<span class="success"></span> Présent' : '<span class="alert-danger"></span> Absent';
     }
 }

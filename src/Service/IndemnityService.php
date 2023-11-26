@@ -13,16 +13,13 @@ use Doctrine\ORM\QueryBuilder;
 
 class IndemnityService
 {
-    public function __construct(private IndemnityRepository $indemnityRepository, private SeasonService $seasonService, private SessionRepository $sessionRepository)
+    public function __construct(private IndemnityRepository $indemnityRepository, private SessionRepository $sessionRepository)
     {
     }
 
-    public function getUserIndemnities(User $user, ?int $season = null): Currency
+    public function getUserIndemnities(User $user, array $filters): Currency
     {
-        if (null === $season) {
-            $season = $this->seasonService->getCurrentSeason();
-        }
-        $query = $this->sessionRepository->findByUserAndFilters($user, ['season' => 'SEASON_' . $season]);
+        $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
         /** @var QueryBuilder $query */
         $sessions = $query->getQuery()->getResult();
 

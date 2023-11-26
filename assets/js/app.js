@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         buildSortable();
     }
 
-    $(document).on('change', '.filters .customSelect2, .filters select, .filters .btn', submitFom);
+    $(document).on('change', '.filters .customSelect2, .filters select, .filters .btn, .filters input', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
 
     $(document).on('change', '.form-modifier', formModifier);

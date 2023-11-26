@@ -48,11 +48,6 @@
                     {% if prev is not null and current.form != constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
                         <a class="btn btn-primary float-left" href="{{ path(route, {'step': prev }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
                     {% endif %}
-                    {% if current.form ==  constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
-                        <div class="align-center">
-                            <a href="{{ path('user_bike_rides') }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Mon programme perso</a>
-                        </div>
-                    {% endif %}
                     {% if next is not null %}
                         {% if form is null or current.form ==  constant('App\\Form\\UserType::FORM_MEMBERSHIP_FEE') %}
                             <a class="btn btn-primary float-right" href="{{ path(route, {'step': next }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
