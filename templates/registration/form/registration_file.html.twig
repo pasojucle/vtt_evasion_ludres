@@ -1,9 +1,5 @@
 <div class="block background-primary background-color">{{ current.content | raw}}</div>
 <br>
-{% if user.level.type == constant('App\\Entity\\Level::TYPE_FRAME') %}
-    <p>{{ user.lastLicence.amount.indemnities }}</p>
-    <p>Tarif de la licence : {{ user.lastLicence.amount.membershipFeeAmount.toString }}</p>
-{% endif %}
 <p>{{ user.lastLicence.amount.str|raw }}</p>
 <br>
 <p>{{ user.health.isMedicalCertificateRequired|raw }}</p>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\LicenceDto;
+use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\LicenceSwornCertification;
 use App\Entity\SwornCertification;
@@ -172,7 +173,9 @@ class LicenceDtoTransformer
         $indemnitiesToStr = null;
 
         if ($licence->isFinal()) {
-            $isNewMember = $this->isNewMember($licence->getUser());
+            /** @var User $user */
+            $user = $licence->getUser();
+            $isNewMember = $this->isNewMember($user);
             $membershipFee = (null !== $licence->getCoverage() && null !== $licence->getAdditionalFamilyMember())
                 ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), $isNewMember, $licence->getAdditionalFamilyMember())
                 : null;
@@ -187,11 +190,14 @@ class LicenceDtoTransformer
                 $amount -= $indemnities->getAmount();
             }
 
-            if (null !== $amount) {
+            if (0 < $amount) {
                 $amount = new Currency($amount);
-                $coverageSrt = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
-                $amountToStr = "Le montant de votre inscription pour la formule d'assurance {$coverageSrt} est de {$amount->toString()}";
-                $indemnitiesToStr = sprintf('Le montent des indemnités pour la saison %s est de %s', $lastSeason, $indemnities->toString());
+                $coveragesToString = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
+                if ($user->getLevel()->getType() === Level::TYPE_FRAME) {
+                    $amountToStr .= sprintf('Le montent des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
+                                . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
+                }
+                $amountToStr .= "Le montant de votre inscription pour la formule d'assurance {$coveragesToString} est de {$amount->toString()}";
             }
         } else {
             $amountToStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";
@@ -200,8 +206,6 @@ class LicenceDtoTransformer
         return [
             'value' => $amount,
             'str' => $amountToStr,
-            'indemnities' => $indemnitiesToStr,
-            'membershipFeeAmount' => new Currency($membershipFeeAmount),
         ];
     }
 
