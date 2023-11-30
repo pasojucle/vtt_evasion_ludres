@@ -11,7 +11,7 @@
         {% if user.approvals.goingHomeAlone is defined %}
           <li class="info ">{{ user.approvals.goingHomeAlone.toHtml.class.icon|raw }} {{ user.approvals.goingHomeAlone.toHtml.message }}</li>
         {% endif %}
-        {% if bikeRide.isEditable and clusters is not empty and not cluster.isComplete and (session.availability is empty or session.availability.value == constant('App\\entity\\Session::AVAILABILITY_REGISTERED') ) %}
+        {% if bikeRide.isEditable and clusters is not empty and not cluster.isComplete and (session.availability is empty or session.availability.value <= constant('App\\entity\\Session::AVAILABILITY_AVAILABLE') ) %}
           <li>
             <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" class="dropdown-item" title="Changer de groupe">
               <i class="fa-solid fa-rotate"></i> Changer de groupe

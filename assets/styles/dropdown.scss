@@ -69,6 +69,7 @@
             &.info {
                 color: var(--gray-color);
                 font-weight: 300;
+                padding: 0 10px;
             }
             &:not(:last-child)::after {
                 content: '';
