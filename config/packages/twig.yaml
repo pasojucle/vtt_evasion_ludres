@@ -15,7 +15,6 @@ twig:
     globals:
         menu_service: '@App\Service\MenuService'
         menu_admin_service: '@App\Service\MenuAdminService'
-        order_service: '@App\Service\Order\OrderGetService'
         parameter_service: '@App\Service\ParameterService'
         background_service: '@App\Service\BackgroundService'
 

@@ -64,6 +64,10 @@ class ShowModalWindow
     {
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
+        if (!$userDto->lastLicence->isActive) {
+            return [];
+        }
+
         $modalWindows = $this->modalWindowRepository->findByAge($userDto->member?->age);
         $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user);
         $modalWindows = array_merge($modalWindows, $surveys);

@@ -54,7 +54,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('USER_SHARE')]
     public function adminUsersExport(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -63,7 +63,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('USER_SHARE')]
     public function adminEmailUsers(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -182,7 +182,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/adherent/choices', name: 'member_choices', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('USER_SHARE')]
     public function memberChoices(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -196,7 +196,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/encadrant/choices', name: 'framer_choices', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('USER_SHARE')]
     public function framerChoices(
         GetFramersFiltered $getFramersFiltered,
         Request $request
@@ -211,7 +211,7 @@ class UserController extends AbstractController
 
     
     #[Route('/all/user/choices', name: 'all_user_choices', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('USER_SHARE')]
     public function allUserChoices(
         Request $request,
         UserRepository $userRepository,

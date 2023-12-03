@@ -36,8 +36,8 @@ class SecondHandController extends AbstractController
     ) {
     }
 
-    #[Route('/occasion/list', name: 'list', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[Route('/occasions', name: 'list', methods: ['GET', 'POST'])]
+    #[IsGranted('SECOND_HAND_LIST')]
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
@@ -64,7 +64,7 @@ class SecondHandController extends AbstractController
 
 
     #[Route('/mon-compte/occasions', name: 'user_list', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('SECOND_HAND_LIST')]
     public function userList(?SecondHand $secondHand): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');

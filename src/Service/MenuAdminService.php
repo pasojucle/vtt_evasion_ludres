@@ -60,19 +60,19 @@ class MenuAdminService
                 'label' => 'Adhérents',
                 'route' => 'admin_users',
                 'pattern' => '/^admin_user/',
-                'role' => 'USER_NAV',
+                'role' => 'USER_LIST',
             ],
             [
                 'label' => 'Inscriptions',
                 'route' => 'admin_registrations',
                 'pattern' => '/^admin_registration/',
-                'role' => 'USER_NAV',
+                'role' => 'USER_LIST',
             ],
             [
                 'label' => 'Assurances ' . $this->seasonService->getCurrentSeason(),
                 'route' => 'admin_coverage_list',
                 'pattern' => '/^admin_coverage/',
-                'role' => 'USER_NAV',
+                'role' => 'USER_LIST',
             ],
             [
                 'label' => 'Boutique',
@@ -138,7 +138,7 @@ class MenuAdminService
                 'label' => 'Documentation',
                 'route' => 'admin_documentation_list',
                 'pattern' => '/documentation/',
-                'role' => 'ROLE_ADMIN',
+                'role' => 'DOCUMENTATION_LIST',
             ],
             [
                 'label' => 'Tarifs',
@@ -173,7 +173,7 @@ class MenuAdminService
             [
                 'label' => 'Supprimer un adhérent',
                 'route' => 'admin_tool_delete_user',
-                'pattern' => '/produit/',
+                'pattern' => '/tool/',
                 'role' => 'ROLE_ADMIN',
             ],
         ]);

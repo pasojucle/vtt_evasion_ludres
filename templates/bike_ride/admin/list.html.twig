@@ -13,7 +13,7 @@
                 <div class="col-md-8 col-xs-12">{% include('bike_ride/admin/filter.html.twig') %}</div>
                 <div class="col-md-4 col-xs-12 align-right-md">
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('admin_bike_ride_edit') }}" class="btn btn-primary" title="Ajouter une sortie"><i class="fas fa-plus"></i> Ajouter une sortie</a>
+                        <a href="{{ path('admin_bike_ride_add') }}" class="btn btn-primary" title="Ajouter une sortie"><i class="fas fa-plus"></i> Ajouter une sortie</a>
                     {% endif %}
                 </div>
             </div>

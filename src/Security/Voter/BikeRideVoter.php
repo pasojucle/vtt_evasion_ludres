@@ -2,11 +2,13 @@
 
 namespace App\Security\Voter;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,22 +16,25 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class BikeRideVoter extends Voter
 {
     public const LIST = 'BIKE_RIDE_LIST';
+    public const ADD = 'BIKE_RIDE_ADD';
     public const EDIT = 'BIKE_RIDE_EDIT';
     public const VIEW = 'BIKE_RIDE_VIEW';
 
     public function __construct(
-        private AccessDecisionManagerInterface $accessDecisionManager,
-        private SessionRepository $sessionRepository,
+        private readonly AccessDecisionManagerInterface $accessDecisionManager,
+        private readonly SessionRepository $sessionRepository,
+        private readonly RequestStack $requestStack,
+        private readonly UserDtoTransformer $userDtoTransformer,
     ) {
     }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (self::LIST === $attribute && !$subject) {
+        if (in_array($attribute, [self::LIST, self::ADD]) && !$subject) {
             return true;
         }
         return in_array($attribute, [self::EDIT, self::VIEW])
-        && ($subject instanceof BikeRide || $subject instanceof Cluster || $subject instanceof Session || !$subject);
+        && ($subject instanceof BikeRide || $subject instanceof Cluster || $subject instanceof Session);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -40,56 +45,52 @@ class BikeRideVoter extends Voter
             return false;
         }
 
+        $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
+        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_BIKE_RIDE);
+
         return match ($attribute) {
-            self::EDIT => $this->canEdit($token, $user, $subject),
-            self::VIEW => $this->canView($token, $user, $subject),
-            self::LIST => $this->canList($token, $user, $subject),
+            self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::VIEW => $this->canView($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject): bool
+    private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if (!$this->accessDecisionManager->decide($token, ['ROLE_USER'])) {
-            return false;
-        }
-
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
 
-        if ($user->hasPermissions(User::PERMISSION_BIKE_RIDE) && $this->getSession($subject, $user)) {
+        if ($subject && $isUserWithPermission && $this->getSession($subject, $user)) {
             return true;
         };
 
-        return $this->isOwner($subject, $user);
+        return $this->isOwner($subject, $user) && $isActiveUser;
     }
 
-    private function canView(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject): bool
+    private function canView(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if (!$subject || !$this->accessDecisionManager->decide($token, ['ROLE_USER'])) {
-            return false;
-        }
-
-        if ($this->canEdit($token, $user, $subject)) {
+        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
         }
 
-        return $user->hasPermissions(User::PERMISSION_BIKE_RIDE);
+        return $isActiveUser;
     }
 
-    private function canList(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject): bool
+    private function canList(TokenInterface $token, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if ($this->canView($token, $user, $subject)) {
-            return true;
-        }
-
-
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
+        
+        if (1 === preg_match('#^admin#', $this->requestStack->getCurrentRequest()->attributes->get('_route'))) {
+            return $isUserWithPermission;
+        }
 
-        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions(User::PERMISSION_BIKE_RIDE);
+        return $isActiveUser;
     }
 
     private function getSession(BikeRide|Cluster|Session $subject, User $user): ?Session

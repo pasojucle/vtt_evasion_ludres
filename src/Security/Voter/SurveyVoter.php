@@ -2,11 +2,13 @@
 
 namespace App\Security\Voter;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,17 +16,24 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class SurveyVoter extends Voter
 {
     public const EDIT = 'SURVEY_EDIT';
+    public const ADD = 'SURVEY_ADD';
     public const VIEW = 'SURVEY_VIEW';
     public const LIST = 'SURVEY_LIST';
 
     public function __construct(
-        private AccessDecisionManagerInterface $accessDecisionManager,
+        private readonly AccessDecisionManagerInterface $accessDecisionManager,
+        private readonly RequestStack $requestStack,
+        private readonly UserDtoTransformer $userDtoTransformer,
     ) {
     }
     
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW, self::LIST]) && ($subject instanceof Survey || $subject instanceof SurveyIssue || $subject instanceof SurveyResponse || $subject instanceof Respondent || !$subject);
+        if (in_array($attribute, [self::LIST, self::ADD]) && !$subject) {
+            return true;
+        }
+
+        return in_array($attribute, [self::EDIT, self::VIEW]) && ($subject instanceof Survey || $subject instanceof SurveyIssue || $subject instanceof SurveyResponse || $subject instanceof Respondent);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -35,50 +44,48 @@ class SurveyVoter extends Voter
             return false;
         }
 
+        $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
+        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_SURVEY);
+
         return match ($attribute) {
-            self::EDIT => $this->canEdit($token, $user, $subject),
-            self::VIEW => $this->canView($token, $user, $subject),
-            self::LIST => $this->canList($token, $user, $subject),
+            self::EDIT , self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::VIEW => $this->canView($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject): bool
+    private function canEdit(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if (!$this->accessDecisionManager->decide($token, ['ROLE_USER'])) {
-            return false;
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
+            return true;
         }
 
+        return $this->isOwner($subject, $user) && $isActiveUser;
+    }
+
+    private function canView(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    {
+        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
+            return true;
+        }
+
+        return $isActiveUser;
+    }
+
+    private function canList(TokenInterface $token, bool $isActiveUser, bool $isUserWithPermission): bool
+    {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
-
-        if ($user->hasPermissions(User::PERMISSION_SURVEY)) {
-            return true;
-        }
-        return $this->isOwner($subject, $user);
-    }
-
-    private function canView(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject): bool
-    {
-        if (!$subject || !$this->accessDecisionManager->decide($token, ['ROLE_USER'])) {
-            return false;
-        }
         
-        if ($this->canEdit($token, $user, $subject)) {
-            return true;
+        if (1 === preg_match('#^admin#', $this->requestStack->getCurrentRequest()->attributes->get('_route'))) {
+            return $isUserWithPermission;
         }
 
-        return $user->hasPermissions(User::PERMISSION_SURVEY);
-    }
-
-    private function canList(TokenInterface $token, User $user, null|Survey|SurveyIssue|SurveyResponse|Respondent $subject): bool
-    {
-        if ($this->canEdit($token, $user, $subject)) {
-            return true;
-        }
-
-        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions(User::PERMISSION_SURVEY);
+        return $isActiveUser;
     }
 
     private function isOwner(null|Survey|SurveyIssue|SurveyResponse|Respondent $subject, User $user): bool

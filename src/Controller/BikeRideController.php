@@ -48,7 +48,7 @@ class BikeRideController extends AbstractController
     }
 
     #[Route('/mon-compte/programme', name: 'user_bike_rides', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('BIKE_RIDE_LIST')]
     public function userBikeRides(
         UserDtoTransformer $userDtoTransformer,
         GetBikeRides $getBikeRides,

@@ -14,7 +14,7 @@ class SetSurvey
     {
     }
 
-    public function execute(FormInterface $form): void
+    public function execute(FormInterface $form, bool $persit = false): void
     {
         $survey = $form->getData();
 
@@ -24,8 +24,10 @@ class SetSurvey
         if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getRestriction()) {
             $survey->removeMembers();
         }
-
-        $this->entityManager->persist($survey);
+        if ($persit) {
+            $this->entityManager->persist($survey);
+        }
+        
         $this->entityManager->flush();
     }
 }

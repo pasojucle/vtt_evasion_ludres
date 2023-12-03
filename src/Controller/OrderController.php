@@ -37,7 +37,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/mon-compte/panier', name: 'order_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('PRODUCT_LIST')]
     public function orderEdit(
         OrderLinesSetService $orderLinesSetService,
         OrderValidateService $orderValidateService,
@@ -139,7 +139,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/mon-compte/commandes', name: 'user_orders', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('PRODUCT_LIST')]
     public function userOrders(
         PaginatorService $paginator,
         Request $request

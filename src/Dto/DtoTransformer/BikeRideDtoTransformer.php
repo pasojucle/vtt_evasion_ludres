@@ -17,7 +17,6 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class BikeRideDtoTransformer
 {

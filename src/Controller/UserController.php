@@ -39,8 +39,6 @@ class UserController extends AbstractController
         /** @var ?User $user */
         $user = $this->getUser();
 
-        $this->denyAccessUnlessGranted('USER_EDIT', $user);
-
         return $this->render('user/account.html.twig', [
             'user' => $this->userDtoTransformer->fromEntity($user),
         ]);
@@ -53,7 +51,6 @@ class UserController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
     ): Response {
         $user = $this->getUser();
-        $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
@@ -91,7 +88,6 @@ class UserController extends AbstractController
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
-        $this->denyAccessUnlessGranted('USER_EDIT', $user);
         $form = $this->createForm(EmailMessageType::class);
         $form->handleRequest($request);
 

@@ -47,4 +47,6 @@ class LicenceDto
     public string $registrationTitle = '';
 
     public string $licenceSwornCertifications = '';
+
+    public bool $isActive = false;
 }

@@ -53,6 +53,30 @@ class SurveyController extends AbstractController
         ]);
     }
 
+    #[Route('/', name: 'admin_survey_add', methods: ['GET', 'POST'])]
+    #[IsGranted('SURVEY_ADD')]
+    public function add(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey): Response
+    {
+        $survey = null;
+        $getSurvey->execute($survey);
+
+        $form = $this->createForm(SurveyType::class, $survey, [
+            'display_disabled' => !$survey->getRespondents()->isEmpty(),
+        ]);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $setSurvey->execute($form, true);
+
+            return $this->redirectToRoute('admin_surveys');
+        }
+
+        return $this->render('survey/admin/edit.html.twig', [
+            'survey' => $survey,
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route('/edite/{survey}', name: 'admin_survey_edit', methods: ['GET', 'POST'], defaults:['survey' => null])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
     public function edit(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, ?Survey $survey): Response

@@ -9,9 +9,15 @@ use App\Entity\BikeRideType;
 use App\Entity\Level;
 use App\Entity\User;
 use DateTimeImmutable;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class IsWritableAvailability
 {
+    public function __construct(
+        private readonly Security $security
+    ) {
+    }
+    
     public function execute(BikeRide $bikeRide, ?User $user): bool
     {
         $bikeRideType = $bikeRide->getBikeRideType();
@@ -22,6 +28,6 @@ class IsWritableAvailability
 
         $today = new DateTimeImmutable();
        
-        return Level::TYPE_FRAME === $user?->getLevel()?->getType() && $bikeRideType->isNeedFramers() && $today->setTime(0, 0, 0) <= $bikeRide->getStartAt()->setTime(23, 59, 59);
+        return $this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) && Level::TYPE_FRAME === $user?->getLevel()?->getType() && $bikeRideType->isNeedFramers() && $today->setTime(0, 0, 0) <= $bikeRide->getStartAt()->setTime(23, 59, 59);
     }
 }

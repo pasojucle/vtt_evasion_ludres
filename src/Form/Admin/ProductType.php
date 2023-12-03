@@ -6,6 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Product;
 use App\Entity\Size;
+use App\Validator\NotEmptyFile;
 use Doctrine\ORM\EntityRepository;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -52,6 +53,7 @@ class ProductType extends AbstractType
                         ],
                         'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
                     ]),
+                    new NotEmptyFile(),
                 ],
             ])
             ->add('ref', TextType::class, [

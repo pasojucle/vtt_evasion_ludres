@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\Health;
 use App\Entity\Identity;
@@ -13,24 +14,25 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class UserVoter extends Voter
 {
-    public const NAV = 'USER_NAV';
+    public const SHARE = 'USER_SHARE';
     public const LIST = 'USER_LIST';
     public const EDIT = 'USER_EDIT';
     public const VIEW = 'USER_VIEW';
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
+        private readonly UserDtoTransformer $userDtoTransformer,
     ) {
     }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (in_array($attribute, [self::NAV, self::LIST]) && !$subject) {
+        if (in_array($attribute, [self::SHARE, self::LIST]) && !$subject) {
             return true;
         }
 
         return in_array($attribute, [self::EDIT, self::VIEW])
-        && ($subject instanceof User || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health || !$subject);
+        && ($subject instanceof User || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -40,64 +42,46 @@ class UserVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
+        $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
+        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
+        $isUserWithSharePermission = $isActiveUser && $user->hasPermissions([User::PERMISSION_USER, User::PERMISSION_BIKE_RIDE]);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_USER);
 
         return match ($attribute) {
-            self::EDIT => $this->canEdit($token, $user, $subject),
-            self::VIEW => $this->canView($token, $user, $subject),
-            self::LIST => $this->canList($token, $user, $subject),
-            self::NAV => $this->canNav($token, $user, $subject),
+            self::EDIT, self::VIEW => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::LIST => $this->canList($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::SHARE => $this->canShare($token, $user, $subject, $isActiveUser, $isUserWithPermission, $isUserWithSharePermission),
             default => false
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
+    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if (!$this->accessDecisionManager->decide($token, ['ROLE_USER'])) {
-            return false;
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
+            return true;
         }
 
+        return $this->isOwner($subject, $user) && $isActiveUser;
+    }
+
+    private function canList(TokenInterface $token, User $user, null|User|UserDto|Licence $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
-
-        if ($user->hasPermissions(User::PERMISSION_USER)) {
-            return true;
-        }
-
-        return $this->isOwner($subject, $user);
+        
+        return $isUserWithPermission;
     }
 
-    private function canView(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
+    private function canShare(TokenInterface $token, User $user, null|User|UserDto|Licence $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
     {
-        if (!$subject) {
-            return false;
-        }
-
-        if ($this->canEdit($token, $user, $subject)) {
+        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
         }
 
-        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions([User::PERMISSION_USER, User::PERMISSION_BIKE_RIDE]);
+        return $isUserWithSharePermission;
     }
-
-    private function canList(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
-    {
-        if ($this->canEdit($token, $user, $subject)) {
-            return true;
-        }
-
-        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions([User::PERMISSION_USER, User::PERMISSION_BIKE_RIDE]);
-    }
-
-    private function canNav(TokenInterface $token, User $user, null|User|UserDto|Licence $subject): bool
-    {
-        if ($this->canEdit($token, $user, $subject)) {
-            return true;
-        }
-
-        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions(User::PERMISSION_USER);
-    }
-
 
     private function isOwner(null|User|UserDto|Licence $subject, User $user): bool
     {

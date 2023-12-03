@@ -44,9 +44,32 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/produit/{product}', name: 'admin_product', methods: ['GET', 'POST'], defaults:['product' => null])]
+    #[Route('/admin/produit', name: 'admin_product_add', methods: ['GET', 'POST'])]
+    #[IsGranted('PRODUCT_ADD')]
+    public function add(
+        ProductEditService $productEditService,
+        Request $request,
+        ?Product $product
+    ): Response {
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $productEditService->execute($form, $request, true);
+            if ($form->isValid()) {
+                return $this->redirectToRoute('admin_products');
+            }
+        }
+
+        return $this->render('product/admin/edit.html.twig', [
+            'product' => $this->productDtoTransformer->fromEntity($product),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/produit/{product}', name: 'admin_product', methods: ['GET', 'POST'], requirements:['product' => '\d+'])]
     #[IsGranted('PRODUCT_EDIT', 'product')]
-    public function adminEdit(
+    public function edit(
         ProductEditService $productEditService,
         Request $request,
         ?Product $product

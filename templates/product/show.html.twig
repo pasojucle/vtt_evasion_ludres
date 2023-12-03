@@ -16,7 +16,7 @@
                 <p>{{ product.ref }}</p>
                 <br>
                 <p>{{ product.content|raw}}</p>
-                {% if is_granted('ROLE_USER') %}
+                {% if is_granted('PRODUCT_VIEW', product) %}
                     <p>
                         {% if product.discountPrice %}{{ product.discountTitle }}<br>{% endif %}
                         <span class="{{ product.priceClass }}">{{ product.price }}</span>

@@ -9,12 +9,18 @@ use App\Entity\BikeRideType;
 use App\Entity\User;
 use DateInterval;
 use DateTime;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class IsRegistrable
 {
+    public function __construct(
+        private readonly Security $security
+    ) {
+    }
+    
     public function execute(BikeRide $bikeRide, ?User $user): bool
     {
-        if (!$user || BikeRideType::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration()) {
+        if (!$user || !$this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) || BikeRideType::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration()) {
             return false;
         }
 

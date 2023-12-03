@@ -70,7 +70,7 @@
                                     <b></b>
                                 </li>
                             {% endif %}
-                            {% if  user.lastLicence.currentSeasonForm %}
+                            {% if user.lastLicence.isActive and user.lastLicence.currentSeasonForm %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon bulletin d'assurance {{ app.session.get('currentSeason') }}</b></div>
@@ -80,9 +80,13 @@
                                     </div>
                                 </li>
                             {% endif %}
+  
                         </ul>
                     </div>   
                     <div class="block-footer">
+                        {% if not user.lastLicence.isActive %}
+                            <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step' : 1}) }}">S'incrire pour la saison {{ app.session.get('currentSeason') }}</a>
+                        {% endif %}
                         <a class="btn btn-secondary btn-xs" href="{{ path('change_password') }}">Modifier mon mot de passe</a>
                         <a class="btn btn-secondary btn-xs" href="{{ path('user_change_infos') }}">Modifier une information</a>
                     </div> 

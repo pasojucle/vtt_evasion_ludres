@@ -23,19 +23,16 @@ class ProductEditService
         $this->entityManager = $entityManager;
     }
 
-    public function execute(Form &$form, Request $request)
+    public function execute(Form &$form, Request $request, bool $persist = false)
     {
         $product = $form->getData();
         $this->setFilename($request, $product);
 
-        if (null === $product->getFilename()) {
-            $form->addError(new FormError('Veuiller séléectionner une photo'));
-        }
-
-        if ($form->isValid()) {
+        if ($persist) {
             $this->entityManager->persist($product);
-            $this->entityManager->flush();
         }
+        
+        $this->entityManager->flush();
     }
 
     public function setFilename(Request $request, Product &$product): void

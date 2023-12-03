@@ -88,7 +88,7 @@ class CoverageController extends AbstractController
     }
 
     #[Route('/choices', name: '_choices', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('USER_SHARE')]
     public function memberChoices(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request

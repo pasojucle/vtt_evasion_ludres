@@ -15,7 +15,7 @@
                         <div class="card-img" style="background-image:url({{ product.pathName }}"></div>
                         <div class="card-body">
                             {{ product.name }}
-                            {% if is_granted('ROLE_USER') %}
+                            {% if is_granted('PRODUCT_VIEW', product) %}
                                 <p>
                                     <span class="{{ product.priceClass }}">{{ product.price }}</span>
                                     {% if product.discountPrice %} <span class="price">{{ product.discountPrice }}</span>{% endif %}

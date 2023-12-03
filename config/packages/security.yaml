@@ -52,7 +52,6 @@ security:
         - { path: ^/admin/param, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/admin/tool, roles: ROLE_ADMIN, requires_channel: https }
         - { path: ^/admin, roles: ROLE_USER, requires_channel: https }
-        - { path: ^/mon-compte/, roles: ROLE_USER, requires_channel: https }
         - { path: ^/geo, roles: PUBLIC_ACCESS, requires_channel: https }
         - { path: ^/login, roles: PUBLIC_ACCESS, requires_channel: https }
         - { path: '^/', roles: PUBLIC_ACCESS, requires_channel: https }

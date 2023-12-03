@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\OrderHeader;
+use App\Entity\User;
+use App\Service\Order\OrderGetService;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class MenuService
@@ -14,7 +18,9 @@ class MenuService
 
     public function __construct(
         private RequestStack $requestStack,
-        private MenuAdminService $menuAdminService
+        private MenuAdminService $menuAdminService,
+        private OrderGetService $orderGetService,
+        private Security $security
     ) {
     }
 
@@ -32,33 +38,7 @@ class MenuService
                 'label' => 'L\'école VTT',
                 'route' => null,
                 'pattern' => '/school/',
-                'subMenus' => [
-                    [
-                        'label' => 'Présentation',
-                        'route' => 'school_overview',
-                        'pattern' => '/school_overview/',
-                    ],
-                    [
-                        'label' => 'Les disciplines',
-                        'route' => 'school_practices',
-                        'pattern' => '/school_practices/',
-                    ],
-                    [
-                        'label' => 'Fonctionnement',
-                        'route' => 'school_operating',
-                        'pattern' => '/school_operating/',
-                    ],
-                    [
-                        'label' => 'Équipement',
-                        'route' => 'school_equipment',
-                        'pattern' => '/school_equipment/',
-                    ],
-                    [
-                        'label' => 'Documentation',
-                        'route' => 'school_documentation',
-                        'pattern' => '/school_documentation/',
-                    ],
-                ],
+                'subMenus' => $this->menuAdminService->getMenusGranted($this->getSchoolSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
@@ -72,23 +52,7 @@ class MenuService
                 'label' => 'Inscription',
                 'route' => null,
                 'pattern' => '/registration/',
-                'subMenus' => [
-                    [
-                        'label' => 'S\'inscrire',
-                        'route' => 'registration_detail',
-                        'pattern' => '/registration_detail/',
-                    ],
-                    [
-                        'label' => 'Les tarifs',
-                        'route' => 'registration_membership_fee',
-                        'pattern' => '/registration_membership_fee/',
-                    ],
-                    [
-                        'label' => 'Tuto',
-                        'route' => 'registration_tuto',
-                        'pattern' => '/registration_tuto/',
-                    ],
-                ],
+                'subMenus' => $this->menuAdminService->getMenusGranted($this->getRegistrationSubMenus()),
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
@@ -103,7 +67,7 @@ class MenuService
                 'route' => 'second_hand_list',
                 'pattern' => '/second_hand/',
                 'subMenus' => [],
-                'role' => 'ROLE_USER',
+                'role' => 'SECOND_HAND_LIST',
             ],
             [
                 'label' => 'Liens',
@@ -124,28 +88,33 @@ class MenuService
 
     public function getUser(): array
     {
-        $this->user = [
+        $this->user = $this->menuAdminService->getMenusGranted([
             [
                 'label' => 'Mon programme perso',
                 'route' => 'user_bike_rides',
+                'role' => 'BIKE_RIDE_LIST',
             ],
             [
                 'label' => 'Mes infos',
                 'route' => 'user_account',
+                'role' => 'ROLE_USER',
             ],
             [
                 'label' => 'Mes commandes',
                 'route' => 'user_orders',
+                'role' => 'PRODUCT_LIST',
             ],
             [
                 'label' => 'Mes sondages',
                 'route' => 'user_surveys',
+                'role' => 'SURVEY_LIST',
             ],
             [
                 'label' => 'Mes annonces',
                 'route' => 'second_hand_user_list',
+                'role' => 'SECOND_HAND_LIST',
             ],
-        ];
+        ]);
 
         $fullName = $this->requestStack->getSession()->get('user_fullName');
 
@@ -153,6 +122,81 @@ class MenuService
             'fullName' => $fullName,
             'menus' => ($fullName) ? $this->user : [],
         ];
+    }
+
+    public function getSchoolSubMenu(): array
+    {
+        return [
+            [
+                'label' => 'Présentation',
+                'route' => 'school_overview',
+                'pattern' => '/school_overview/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+            [
+                'label' => 'Les disciplines',
+                'route' => 'school_practices',
+                'pattern' => '/school_practices/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+            [
+                'label' => 'Fonctionnement',
+                'route' => 'school_operating',
+                'pattern' => '/school_operating/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+            [
+                'label' => 'Équipement',
+                'route' => 'school_equipment',
+                'pattern' => '/school_equipment/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+            [
+                'label' => 'Documentation',
+                'route' => 'school_documentation',
+                'pattern' => '/school_documentation/',
+                'role' => 'DOCUMENTATION_LIST',
+            ],
+        ];
+    }
+
+    public function getRegistrationSubMenus(): array
+    {
+        return [
+            [
+                'label' => 'S\'inscrire',
+                'route' => 'registration_detail',
+                'pattern' => '/registration_detail/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+            [
+                'label' => 'Les tarifs',
+                'route' => 'registration_membership_fee',
+                'pattern' => '/registration_membership_fee/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+            [
+                'label' => 'Tuto',
+                'route' => 'registration_tuto',
+                'pattern' => '/registration_tuto/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+        ];
+    }
+
+    public function displayCart(): bool
+    {
+        return $this->orderGetService->getOrderByUser() instanceof OrderHeader;
+    }
+
+    public function accessAdmin(): bool
+    {
+        if (!$this->security->isGranted('ROLE_USER')) {
+            return false;
+        }
+        /** @var User $user */
+        $user = $this->security->getUser();
+        return $user->hasAtLeastOnePermission() || $this->security->isGranted('ROLE_ADMIN');
     }
 
     public function getFooter(): array

@@ -228,11 +228,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaBySeason(QueryBuilder &$qb, int $season): void
     {
+        $maxSeasons = $this->_em->createQueryBuilder()
+            ->select('licence')
+            ->from(Licence::class, 'licence')
+            ->groupBy('licence.user')
+            ->andHaving(
+                $qb->expr()->eq($qb->expr()->max('licence.season'), ':season'),
+            );
+
         $qb
             ->setParameter('season', $season)
-            ->groupBy('u.id')
-            ->andHaving(
-                $qb->expr()->eq($qb->expr()->max('li.season'), ':season')
+            ->andWhere(
+                (new Expr())->in('li', $maxSeasons->getDQL())
             )
         ;
     }

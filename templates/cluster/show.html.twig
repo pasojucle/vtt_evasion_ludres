@@ -27,7 +27,7 @@
         {% for cluster in clusters %}
             <div class="cluster-title">
                 <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
-                    {% if is_granted('USER_LIST') %}
+                    {% if is_granted('USER_VIEW', bikeRide) %}
                     <div class="dropdown">
                         <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                         <div class="dropdown-menu" data-target="dropdown-tools">

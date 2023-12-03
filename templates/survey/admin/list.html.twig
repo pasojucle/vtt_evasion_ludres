@@ -11,7 +11,7 @@
         </span>
     </div>
     <div class="wrapper-body">
-        <a href="{{ path('admin_survey_edit') }}" class="btn btn-primary" title="Ajouter un survey"><i class="fas fa-plus"></i> Ajouter</a>
+        <a href="{{ path('admin_survey_add') }}" class="btn btn-primary" title="Ajouter un survey"><i class="fas fa-plus"></i> Ajouter</a>
         {% include 'common/pagination.html.twig' with {'margin': 'both'} %}
         <ul>
             {% for survey in surveys %}

@@ -20,7 +20,7 @@ class EditBikeRide
     ) {
     }
 
-    public function execute(FormInterface $form, Request $request): BikeRide
+    public function execute(FormInterface $form, Request $request, bool $persist = false): BikeRide
     {
         $bikeRide = $form->getData();
 
@@ -35,7 +35,10 @@ class EditBikeRide
             $bikeRide->setFileName($this->uploadService->uploadFile($file));
         }
 
-        $this->entityManager->persist($bikeRide);
+        if ($persist) {
+            $this->entityManager->persist($bikeRide);
+        }
+        
         $this->entityManager->flush();
 
         return $bikeRide;

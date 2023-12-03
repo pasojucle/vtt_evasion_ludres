@@ -29,7 +29,7 @@ class SurveyController extends AbstractController
 
     #[Route('/sondage/{survey}', name: 'survey_old', methods: ['GET', 'POST'])]
     #[Route('/mon-compte/sondage/{survey}', name: 'survey', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('SURVEY_VIEW', 'survey')]
     public function show(Request $request, RespondentRepository $respondentRepository, Survey $survey): Response
     {
         $form = $message = $respondent = null;
@@ -109,7 +109,7 @@ class SurveyController extends AbstractController
 
 
     #[Route('/mon-compte/sondages', name: 'user_surveys', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('SURVEY_LIST')]
     public function surveys(
         SurveyRepository $surveyRepository,
         RespondentRepository $respondentRepository,

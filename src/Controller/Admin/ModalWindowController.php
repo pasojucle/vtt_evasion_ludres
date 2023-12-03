@@ -23,7 +23,7 @@ class ModalWindowController extends AbstractController
     }
 
     #[Route('s', name: 'list', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('MODAL_WINDOW_LIST')]
     public function list(ModalWindowRepository $modalWindowRepository, ParameterRepository $parameterRepository): Response
     {
         return $this->render('modal_window/admin/list.html.twig', [
@@ -35,11 +35,12 @@ class ModalWindowController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{modalWindow}', name: 'edit', methods: ['GET', 'POST'], defaults:['modalWindow' => null])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, ?ModalWindow $modalWindow): Response
+    #[Route('/', name: 'add', methods: ['GET', 'POST'])]
+    #[IsGranted('MODAL_WINDOW_ADD')]
+    public function add(Request $request): Response
     {
-        $form = $this->createForm(ModalWindowType::class, $modalWindow);
+        $modalWindow = null;
+        $form = $this->createForm(ModalWindowType::class, null);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -56,8 +57,27 @@ class ModalWindowController extends AbstractController
         ]);
     }
 
+    #[Route('/edit/{modalWindow}', name: 'edit', methods: ['GET', 'POST'], requirements:['modalWindow' => '\d+'])]
+    #[IsGranted('MODAL_WINDOW_EDIT', 'modalWindow')]
+    public function edit(Request $request, ?ModalWindow $modalWindow): Response
+    {
+        $form = $this->createForm(ModalWindowType::class, $modalWindow);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_modal_window_list');
+        }
+
+        return $this->render('modal_window/admin/edit.html.twig', [
+            'modal_window' => $modalWindow,
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[Route('/toggle/{modalWindow}', name: 'toggle_disable', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted('MODAL_WINDOW_EDIT', 'modalWindow')]
     public function toggle(ModalWindow $modalWindow): Response
     {
         $modalWindow->setIsDisabled(!$modalWindow->isDisabled());

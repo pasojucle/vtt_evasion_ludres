@@ -24,16 +24,16 @@ class Product
     private int $id;
 
     #[Column(type: 'string', length: 255)]
-    private string $name;
+    private string $name = '';
 
     #[Column(type: 'text')]
-    private string $content;
+    private string $content = '';
 
     #[Column(type: 'string', length: 255)]
-    private string $filename;
+    private string $filename = '';
 
     #[Column(type: 'float', nullable: true)]
-    private ?float $price;
+    private ?float $price = null;
 
     #[OneToMany(targetEntity: OrderLine::class, mappedBy: 'product')]
     private Collection $orderLines;
@@ -47,16 +47,16 @@ class Product
     private Collection $sizes;
 
     #[Column(type: 'string', length: 25)]
-    private string $ref;
+    private string $ref = '';
 
     #[Column(type: 'float', nullable: true)]
-    private ?float $discountPrice;
+    private ?float $discountPrice = null;
 
     #[Column(type: 'string', length: 50, nullable: true)]
-    private ?string $discountTitle;
+    private ?string $discountTitle = null;
 
     #[Column(type: 'integer', nullable: true)]
-    private ?int $category;
+    private ?int $category = null;
 
     public function __construct()
     {

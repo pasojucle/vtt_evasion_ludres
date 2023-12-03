@@ -56,15 +56,43 @@ class BikeRideController extends AbstractController
         return $this->render('bike_ride/admin/list.html.twig', $response['parameters']);
     }
 
-    #[Route('/sortie/{bikeRide}', name: 'admin_bike_ride_edit', methods: ['GET', 'POST'], defaults:['bikeRide' => null])]
+    #[Route('/sortie', name: 'admin_bike_ride_add', methods: ['GET', 'POST'], defaults:['bikeRide' => null])]
+    #[IsGranted('BIKE_RIDE_ADD')]
+    public function adminAdd(
+        Request $request,
+        EditBikeRide $editBikeRide
+    ): Response {
+        $bikeRide = null;
+        $filters = $request->getSession()->get('admin_bike_rides_filters');
+        $form = $this->createForm(BikeRideType::class, $bikeRide);
+
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $bikeRide = $editBikeRide->execute($form, $request, true);
+
+            $this->addFlash('success', 'La sortie à bien été enregistrée');
+
+            $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
+
+            return $this->redirectToRoute('admin_bike_rides', $filters);
+        }
+
+        return $this->render('bike_ride/admin/edit.html.twig', [
+            'form' => $form->createView(),
+            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
+            'bike_rides_filters' => ($filters) ? $filters : [],
+        ]);
+    }
+
+
+    #[Route('/sortie/{bikeRide}', name: 'admin_bike_ride_edit', methods: ['GET', 'POST'], requirements:['bikeRide' => '\d+'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminEdit(
         Request $request,
         EditBikeRide $editBikeRide,
-        BikeRideTypeRepository $bikeRideTypeRepository,
         ?BikeRide $bikeRide
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $filters = $request->getSession()->get('admin_bike_rides_filters');
         $form = $this->createForm(BikeRideType::class, $bikeRide);
 

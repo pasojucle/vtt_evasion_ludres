@@ -3,27 +3,24 @@
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Dto\ProductDto;
-use App\Entity\OrderHeader;
-use App\Entity\OrderLine;
-use App\Entity\Product;
+use App\Entity\Documentation;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class ProductVoter extends Voter
+class DocumentationVoter extends Voter
 {
-    public const EDIT = 'PRODUCT_EDIT';
-    public const ADD = 'PRODUCT_ADD';
-    public const VIEW = 'PRODUCT_VIEW';
-    public const LIST = 'PRODUCT_LIST';
+    public const EDIT = 'DOCUMENTATION_EDIT';
+    public const ADD = 'DOCUMENTATION_ADD';
+    public const VIEW = 'DOCUMENTATION_VIEW';
+    public const LIST = 'DOCUMENTATION_LIST';
 
     public function __construct(
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
-        private readonly UserDtoTransformer $userDtoTransformer,
         private readonly RequestStack $requestStack,
+        private readonly UserDtoTransformer $userDtoTransformer,
     ) {
     }
     
@@ -32,7 +29,7 @@ class ProductVoter extends Voter
         if (in_array($attribute, [self::LIST, self::ADD]) && !$subject) {
             return true;
         }
-        return in_array($attribute, [self::EDIT, self::VIEW]) && ($subject instanceof Product || $subject instanceof ProductDto || $subject instanceof OrderHeader || $subject instanceof OrderLine || !$subject);
+        return in_array($attribute, [self::EDIT, self::VIEW]) && ($subject instanceof Documentation || !$subject);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -46,28 +43,27 @@ class ProductVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_PRODUCT);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_DOCUMENTATION);
 
         return match ($attribute) {
-            self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
-            self::VIEW => $this->canView($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::EDIT, self::ADD => $this->canEdit($token, $isUserWithPermission),
+            self::VIEW => $this->canView($token, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
     }
-
-    private function canEdit(TokenInterface $token, User $user, null|Product|ProductDto|OrderHeader|OrderLine $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, bool $isUserWithPermission): bool
     {
-        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
 
-        return $this->isOwner($subject, $user) && $isActiveUser;
+        return $isUserWithPermission;
     }
 
-    private function canView(TokenInterface $token, User $user, null|Product|ProductDto|OrderHeader|OrderLine $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canView(TokenInterface $token, bool $isActiveUser, bool $isUserWithPermission): bool
     {
-        if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
+        if ($this->canEdit($token, $isUserWithPermission)) {
             return true;
         }
 
@@ -85,16 +81,5 @@ class ProductVoter extends Voter
         }
 
         return $isActiveUser;
-    }
-
-    private function isOwner(Product|ProductDto|OrderHeader|OrderLine|null $subject, User $user): bool
-    {
-        if (!$subject || $subject instanceof Product || $subject instanceof ProductDto) {
-            return false;
-        }
-
-        $orderHeader = ($subject instanceof OrderHeader) ? $subject : $subject->getOrderHeader();
-
-        return $orderHeader->getUser() === $user;
     }
 }

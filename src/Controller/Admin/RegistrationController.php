@@ -54,7 +54,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/assurance/choices', name: '_choices', methods: ['GET'])]
-    #[IsGranted('USER_LIST')]
+    #[IsGranted('USER_SHARE')]
     public function memberChoices(
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
