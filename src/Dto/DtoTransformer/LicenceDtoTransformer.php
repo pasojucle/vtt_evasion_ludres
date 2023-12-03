@@ -8,7 +8,6 @@ use App\Dto\LicenceDto;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\LicenceSwornCertification;
-use App\Entity\SwornCertification;
 use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\MembershipFeeAmountRepository;
@@ -73,7 +72,7 @@ class LicenceDtoTransformer
             $licenceDto->amount = $this->getAmount($licence);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
             $licenceDto->licenceSwornCertifications = $this->getLicenceSwornCertifications($licence);
-
+            $licenceDto->isActive = $this->seasonService->getMinSeasonToTakePart() <= $licence->getSeason();
             if ($changes) {
                 $this->formatChanges($changes, $licenceDto);
             }
@@ -170,7 +169,6 @@ class LicenceDtoTransformer
         $membershipFeeAmount = 0;
         $amount = null;
         $amountToStr = '';
-        $indemnitiesToStr = null;
 
         if ($licence->isFinal()) {
             /** @var User $user */
@@ -185,13 +183,14 @@ class LicenceDtoTransformer
             $lastSeason = $licence->getSeason() - 1;
             $indemnities = $this->indemnityService->getUserIndemnities($licence->getUser(), $this->seasonService->getSeasonInterval($lastSeason));
 
-            $amount = $membershipFeeAmount;
-            if (null !== $amount && null !== $indemnities) {
-                $amount -= $indemnities->getAmount();
+            if ($membershipFeeAmount) {
+                $amount = $membershipFeeAmount;
             }
 
-            if (0 < $amount) {
+            if ($amount) {
                 $amount = new Currency($amount);
+                $amount->sub($indemnities);
+
                 $coveragesToString = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
                 if ($user->getLevel()->getType() === Level::TYPE_FRAME) {
                     $amountToStr .= sprintf('Le montent des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
