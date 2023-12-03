@@ -32,7 +32,10 @@ class AddressDtoTransformer
         if (array_key_exists('Address', $changes) && array_key_exists($addressDto->id, $changes['Address'])) {
             $properties = array_keys($changes['Address'][$addressDto->id]->getValue());
             foreach ($properties as $property) {
-                $addressDto->$property = sprintf('<b>%s</b>', $property);
+                if ('commune' === $property) {
+                    $property = 'town';
+                }
+                $addressDto->$property = sprintf('<b>%s</b>', $addressDto->$property);
             }
         }
     }
