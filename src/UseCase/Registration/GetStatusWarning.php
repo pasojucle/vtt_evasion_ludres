@@ -22,15 +22,15 @@ class GetStatusWarning
         if ($lastLicence->isSeasonLicence) {
             $licenceStatus = (in_array($lastLicence->status, [Licence::STATUS_TESTING, Licence::STATUS_VALID])) ? 'validée' : 'téléchargée';
             if ($lastLicence->isFinal) {
-                return sprintf('Votre inscription pour la saison %s a été %s.<br>Vous ne pouvez plus la modifier en ligne.</p>', $lastLicence->season, $licenceStatus);
+                return sprintf('Votre inscription pour la saison %s a été %s.<br>Vous ne pouvez plus la modifier en ligne.</p>', $lastLicence->shortSeason, $licenceStatus);
             }
 
             if ($user->getDoneSessions()->isEmpty() && Licence::CATEGORY_MINOR === $lastLicence->category) {
-                return sprintf('Votre inscription aux 3 séances d\'essai a été %s.<br>Pour s\'incrire à la saison %s, vous devez avoir participé au moins à une sortie du club. </p>', $licenceStatus, $lastLicence->season);
+                return sprintf('Votre inscription aux 3 séances d\'essai a été %s.<br>Pour s\'incrire à la saison %s, vous devez avoir participé au moins à une sortie du club. </p>', $licenceStatus, $lastLicence->shortSeason);
             }
 
             if ($user->getSessions()->isEmpty() && Licence::CATEGORY_ADULT === $lastLicence->category) {
-                return sprintf('Votre inscription aux 3 séances d\'essai a été %s.<br>Pour s\'incrire à la saison %s, vous devez être inscrit au moins à une sortie du club. </p>', $licenceStatus, $lastLicence->season);
+                return sprintf('Votre inscription aux 3 séances d\'essai a été %s.<br>Pour s\'incrire à la saison %s, vous devez être inscrit au moins à une sortie du club. </p>', $licenceStatus, $lastLicence->shortSeason);
             }
         }
 

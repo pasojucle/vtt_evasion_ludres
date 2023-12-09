@@ -164,7 +164,7 @@ abstract class GetUsersFiltered
 
         foreach ($this->userDtoTransformer->fromEntities($users) as $user) {
             $isTesting = ($user->lastLicence?->isFinal) ? 0 : 1;
-            $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->level?->title, $user->mainEmail, $user->member->birthDate, $user->lastLicence->season, $isTesting];
+            $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->level?->title, $user->mainEmail, $user->member->birthDate, $user->lastLicence->shortSeason, $isTesting];
             $content[] = implode(',', $row);
         }
 

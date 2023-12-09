@@ -17,9 +17,10 @@ class AdditionalFamilyMemberType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            /** @var Licence $licence */
             $licence = $event->getData();
             $form = $event->getForm();
-            if ($licence === $options['season_licence'] && !$options['is_kinship']) {
+            if ($licence->getSeason() === $options['season_licence']->season && !$options['is_kinship']) {
                 $form
                     ->add('additionalFamilyMember', CheckboxType::class, [
                         'label' => 'Un membre de ma famille est déjà inscrit au club',

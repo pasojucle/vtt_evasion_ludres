@@ -116,7 +116,7 @@ class ReplaceKeywordsService
             $address,
             $user->member->birthDate,
             $user->member->birthPlace,
-            $licence->season,
+            $licence->shortSeason,
             $licence->fullSeason,
             $user->licenceNumber,
             $licence->amount['str'],

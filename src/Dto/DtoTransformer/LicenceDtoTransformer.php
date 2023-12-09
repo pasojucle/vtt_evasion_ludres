@@ -54,7 +54,8 @@ class LicenceDtoTransformer
             
             $licenceDto->id = $licence->getId();
             $licenceDto->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
-            $licenceDto->season = $this->getSeason($licence->getSeason());
+            $licenceDto->season = $licence->getSeason();
+            $licenceDto->shortSeason = $this->getSeason($licence->getSeason());
             $licenceDto->fullSeason = $this->getFullSeason($licence->getSeason());
             $licenceDto->isFinal = $licence->isFinal();
             $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
@@ -73,6 +74,9 @@ class LicenceDtoTransformer
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
             $licenceDto->licenceSwornCertifications = $this->getLicenceSwornCertifications($licence);
             $licenceDto->isActive = $this->seasonService->getMinSeasonToTakePart() <= $licence->getSeason();
+            if ($licence->getAdditionalFamilyMember()) {
+                $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déja inscrit au club';
+            }
             if ($changes) {
                 $this->formatChanges($changes, $licenceDto);
             }
@@ -196,7 +200,10 @@ class LicenceDtoTransformer
                     $amountToStr .= sprintf('Le montent des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
                 }
-                $amountToStr .= "Le montant de votre inscription pour la formule d'assurance {$coveragesToString} est de {$amount->toString()}";
+                if ($licence->getAdditionalFamilyMember()) {
+                    $amountToStr .= "Un membre de votre famille est déja inscrit au club</br>";
+                }
+                $amountToStr .= "<b>Le montant de votre inscription pour la formule d'assurance {$coveragesToString} est de {$amount->toString()}</b>";
             }
         } else {
             $amountToStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";

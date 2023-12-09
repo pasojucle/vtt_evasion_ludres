@@ -12,8 +12,9 @@ class LicenceDto
 
     public ?string $createdAt;
 
-    public ?string $season;
+    public ?int $season;
 
+    public ?string $shortSeason;
     public ?string $fullSeason;
 
     public ?bool $isFinal = false;
@@ -49,4 +50,6 @@ class LicenceDto
     public string $licenceSwornCertifications = '';
 
     public bool $isActive = false;
+
+    public string $additionalFamilyMember = '';
 }
