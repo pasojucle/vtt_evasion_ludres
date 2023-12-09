@@ -25,7 +25,7 @@ class SecondHand
     private string $filename = '';
 
     #[ORM\Column(type: 'integer')]
-    private float $price = 0;
+    private int $price = 0;
 
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $valid = false;

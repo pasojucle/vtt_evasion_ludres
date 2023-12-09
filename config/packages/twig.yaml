@@ -8,7 +8,7 @@ twig:
         - 'form/custom_switch_permission.html.twig'
         - 'form/custom_file_row.html.twig'
         - 'form/custom_month_and_hour_row.html.twig'
-        - 'form/custom_thumbnail_row.html.twig'
+        - 'form/money_widget.html.twig'
         - '@TetranzSelect2Entity/Form/fields.html.twig'
         - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
 

@@ -541,13 +541,30 @@ main:not(.admin) {
 .form-group-collection {
     margin-bottom: 5px;
 }
-.form-group > input:not([type="radio"]), .form-group-inline > input, .form-group-inline > select, .form-group > textarea,  .form-group-inline > textarea, .form-group > select {
+.form-group > input:not([type="radio"]),
+.form-group-inline > input, 
+.form-group-inline > select, 
+.form-group > textarea,  
+.form-group-inline > textarea, 
+.form-group > select,
+.form-group > .input-group-money > input {
     width: 100%;
     height: 30px;
     line-height: 30px;
     border: none;
     background: var(--light-color);
     padding: 5px;
+}
+.form-group > .input-group-money {
+    display: flex;
+}
+.input-group-text {
+    width: 30px;
+    background-color: var(--primary-color);
+    text-align: center;
+    line-height: 30px;
+    color: var(--white-color);
+    font-weight: 700;
 }
 .form-group > input:disabled,
 .form-group > select:disabled,

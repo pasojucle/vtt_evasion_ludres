@@ -5,19 +5,15 @@ namespace App\Form;
 use App\Entity\Category;
 use App\Entity\SecondHand;
 use App\Repository\CategoryRepository;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
@@ -84,14 +80,14 @@ class SecondHandType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ->add('price', NumberType::class, [
+            ->add('price', MoneyType::class, [
                 'label' => 'Prix',
-                'scale' => 2,
+                'divisor' => 100,
                 'attr' => [
                     'min' => 0,
                 ],
                 'row_attr' => [
-                    'class' => 'form-group',
+                    'class' => 'form-group form-money',
                 ],
             ])
             ->add('save', SubmitType::class, [

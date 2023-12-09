@@ -13,6 +13,11 @@ class Currency
         $this->amount = $amount;
     }
 
+    public function __toString(): string
+    {
+        return number_format($this->amount / 100, 2) . ' €';
+    }
+
     public function toString(): string
     {
         return number_format($this->amount, 2) . ' €';

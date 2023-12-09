@@ -34,9 +34,9 @@ class SecondHandDtoTransformer
             $secondHandDto->content = $secondHand->getContent();
             $secondHandDto->filename = $secondHand->getFilename();
             $secondHandDto->user = $this->userDtoTransformer->fromEntity($secondHand->getUser());
-            $secondHandDto->price = (new Currency($secondHand->getPrice()))->toString();
+            $secondHandDto->price = (new Currency($secondHand->getPrice()))->__toString();
             $secondHandDto->category = $secondHand->getCategory()->getName();
-            $secondHandDto->createdAt = $secondHand->getCreatedAt()->format('d-m-y');
+            $secondHandDto->createdAt = $secondHand->getCreatedAt()->format('d/m/y');
             $secondHandDto->valid = $secondHand->isValid();
             $secondHandDto->disabled = $secondHand->isDisabled();
             $secondHandDto->status = $this->getStatus($secondHand);

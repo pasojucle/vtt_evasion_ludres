@@ -1,0 +1,6 @@
+{% block money_widget -%}
+    <div class="input-group-money">
+        {{- block('form_widget_simple') -}}
+        <span class="input-group-text">{{ money_pattern|form_encode_currency }}</span>
+    </div>
+{%- endblock money_widget %}
