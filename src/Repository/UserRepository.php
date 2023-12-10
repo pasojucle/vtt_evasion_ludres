@@ -244,6 +244,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
+    private function addCriteriaRegistrationBySeason(QueryBuilder &$qb, int $season): void
+    {
+        $maxSeasons = $this->_em->createQueryBuilder()
+            ->select('licence')
+            ->from(Licence::class, 'licence')
+            ->andWhere(
+                $qb->expr()->gte('licence.status', ':statusRegistration'),
+            )
+            ->groupBy('licence.user')
+            ->andHaving(
+                $qb->expr()->eq($qb->expr()->max('licence.season'), ':season'),
+            );
+
+        $qb
+            ->setParameter('season', $season)
+            ->setParameter('statusRegistration', Licence::STATUS_WAITING_VALIDATE)
+            ->andWhere(
+                (new Expr())->in('li', $maxSeasons->getDQL())
+            )
+        ;
+    }
+
     private function addCriteriaGteSeason(QueryBuilder &$qb): void
     {
         $qb
@@ -267,7 +289,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    private function addCriteriaNew(QueryBuilder &$qb): void
+    private function addCriteriaNew(QueryBuilder &$qb, int $season): void
     {
         $usersWhithOnlyOneLicence = $this->_em->createQueryBuilder()
             ->select('user')
@@ -276,6 +298,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->groupBy('user.id')
             ->andHaving(
                 $qb->expr()->eq($qb->expr()->count('userLicence.id'), 1),
+                $qb->expr()->eq($qb->expr()->max('userLicence.season'), ':season'),
             );
 
         $qb
@@ -286,6 +309,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
             ->setParameter('finalNew', true)
             ->setParameter('statusNew', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('season', $season)
             ->orderBy('i.name', 'ASC')
         ;
     }
@@ -477,15 +501,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 match ($filters['status']) {
                     Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaTestinInProgress($qb),
                     Licence::STATUS_TESTING_COMPLETE => $this->addCriteriaTestinComplete($qb),
-                    Licence::STATUS_NEW => $this->addCriteriaNew($qb),
+                    Licence::STATUS_NEW => $this->addCriteriaNew($qb, $currentSeason),
                     Licence::STATUS_RENEW => $this->addCriteriaRenew($qb),
                     Licence::STATUS_WAITING_RENEW => $this->addCriteriaWaitingRenew($qb, $currentSeason),
-                    default => $this->addCriteriaBySeason($qb, $currentSeason),
+                    default => $this->addCriteriaRegistrationBySeason($qb, $currentSeason),
                 };
             }
         }
         if (null === $filters['status']) {
-            $this->addCriteriaBySeason($qb, $currentSeason);
+            $this->addCriteriaRegistrationBySeason($qb, $currentSeason);
         }
 
         return $this->orderByASC($qb);
