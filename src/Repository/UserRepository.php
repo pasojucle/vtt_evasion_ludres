@@ -480,14 +480,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     Licence::STATUS_NEW => $this->addCriteriaNew($qb),
                     Licence::STATUS_RENEW => $this->addCriteriaRenew($qb),
                     Licence::STATUS_WAITING_RENEW => $this->addCriteriaWaitingRenew($qb, $currentSeason),
-                    default => null,
+                    default => $this->addCriteriaBySeason($qb, $currentSeason),
                 };
             }
         }
-        if (null === $filters['status'] || (array_key_exists('status', $filters) && $filters['status'] !== Licence::STATUS_WAITING_RENEW)) {
+        if (null === $filters['status']) {
             $this->addCriteriaBySeason($qb, $currentSeason);
         }
-        
 
         return $this->orderByASC($qb);
     }

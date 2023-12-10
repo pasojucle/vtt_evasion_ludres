@@ -12,13 +12,15 @@ use function Symfony\Component\String\u;
 
 class ApprovalDtoTransformer
 {
-    public function fromEntity(Approval $approval): ApprovalDto
+    public function fromEntity(?Approval $approval): ApprovalDto
     {
         $approvalDto = new ApprovalDto();
-        $approvalDto->name = u(str_replace('approval.', '', User::APPROVALS[$approval->getType()]))->camel()->toString();
-        $approvalDto->value = $approval->getValue();
-        $approvalDto->toString = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
-        $approvalDto->toHtml = $this->toHtml($approval->getType(), $approval->getValue());
+        if ($approval) {
+            $approvalDto->name = u(str_replace('approval.', '', User::APPROVALS[$approval->getType()]))->camel()->toString();
+            $approvalDto->value = $approval->getValue();
+            $approvalDto->toString = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
+            $approvalDto->toHtml = $this->toHtml($approval->getType(), $approval->getValue());
+        }
 
         return $approvalDto;
     }
@@ -34,7 +36,7 @@ class ApprovalDtoTransformer
         return $approvals;
     }
 
-    private function toHtml(int $type, bool $value): array
+    private function toHtml(int $type, ?bool $value): array
     {
         return match ($type) {
             User::APPROVAL_GOING_HOME_ALONE => ($value)

@@ -8,7 +8,7 @@ class ApprovalDto
 {
     public string $name = '';
 
-    public bool $value = false;
+    public ?bool $value = false;
 
     public string $toString = "";
 

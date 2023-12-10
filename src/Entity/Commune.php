@@ -27,7 +27,7 @@ class Commune
     #[ORM\OneToMany(mappedBy: 'birthCommune', targetEntity: Identity::class)]
     private Collection $identities;
 
-    #[ORM\Column(length: 10)]
+    #[ORM\Column(length: 10, nullable: true)]
     private ?string $postalCode = null;
 
     public function __construct()
