@@ -12,7 +12,7 @@ class LicenceDto
 
     public ?string $createdAt;
 
-    public ?int $season;
+    public ?int $season = null;
 
     public ?string $shortSeason;
     public ?string $fullSeason;
@@ -29,7 +29,7 @@ class LicenceDto
 
     public ?string $statusClass;
 
-    public ?int $status;
+    public ?int $status = Licence::STATUS_NEW;
 
     public ?string $statusStr;
 

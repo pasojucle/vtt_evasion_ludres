@@ -9,7 +9,7 @@
                 '{{ boutons_radio_assurance }}': boutons_radio_coverage,
             }
         %}
-        <div class="container">{{ current.content|replace(replaces) | raw}}</div>
+        <div class="container">{{ progress.current.content|replace(replaces) | raw}}</div>
         {% if licence.isVae is defined %}
             <div class="inputGroup long check">
                 {{ form_widget(licence.isVae) }}

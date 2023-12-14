@@ -46,7 +46,7 @@ final class Version20231106195220 extends AbstractMigration
         $parameter = [
             'name' => 'EMAIL_REGISTRATION',
             'label' => 'Message mail lors de l\'inscription',
-            'type' => Parameter::TYPE_TEXT,
+            'type' => Parameter::TYPE_HTML,
             'value' => '<p>Vous venez de vous inscrire au club pour la saisson {{ saison_actuelle }} depuis notre site.</p><p>Ci-joint, votre dossier d&#39;inscription.</p><p>Imprimer le fichier "Docs_à_redonner_au_club.pdf" et signer le <b>coupon assurance</b> et le <b>bulletin d&#39;inscription</b>. Transmettre les documents au club avec votre paiement et certificat médical si besoin (OBLIGATOIRE POUR TOUTE NOUVELLE INSCRIPTION).</p><p>Concerver le document "Informations.pdf".</p>',
             'group' => $this->connection->executeQuery('SELECT `id` FROM `parameter_group` WHERE `name` =\'MESSAGES\'')->fetchOne(),
         ];

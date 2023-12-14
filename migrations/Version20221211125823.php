@@ -33,7 +33,7 @@ final class Version20221211125823 extends AbstractMigration
                 'name' => 'REQUIREMENT_SEASON_LICENCE_MESSAGE',
                 'label' => 'Message si l\'inscription de la nouvelle saison est requise pour l\'inscription à sortie ',
                 'content' => '<span>Pour vous inscrire à une sortie, vous devez transmettre au club votre dossier d\'inscription pour la saison {{ saison_actuelle }}.</span>',
-                'type' => Parameter::TYPE_TEXT,
+                'type' => Parameter::TYPE_HTML,
                 'parameterGroup' => 2,
             ],
         ];

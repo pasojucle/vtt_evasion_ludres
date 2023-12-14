@@ -1,12 +1,12 @@
-<div class="block background-primary background-color">{{ current.content | raw}}</div>
+<div class="block background-primary background-color">{{ progress.current.content | raw}}</div>
 <br>
-{% for step in steps %}
+{% for step in progress.progressBar %}
     {% if step.overviewTemplate is not null %}
         {% include(step.overviewTemplate) %}
     {% endif %}
 {% endfor %}
-
-{% if user.lastLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
+{% dump(progress) %}
+{% if progress.user.lastLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
     <ul class="block background-ligth">
         <li class="row">
             <span class="col-md-4 col-sx-6"><b>Email principal</b></span><span class="col-md-8 col-sx-6">{{ user.mainEmail }}</span>

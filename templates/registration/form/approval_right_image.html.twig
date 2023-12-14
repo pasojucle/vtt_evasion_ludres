@@ -8,5 +8,5 @@
     {% set replaces = replaces | merge({'{{ bouton_retour_domicile }}': form_widget(approval[1])}) %}
 {% endif %}
 
-<div class="container">{{ current.content |replace(replaces) | raw}}</div>
+<div class="container">{{ progress.current.content |replace(replaces) | raw}}</div>
 {{ form_errors(form)}}

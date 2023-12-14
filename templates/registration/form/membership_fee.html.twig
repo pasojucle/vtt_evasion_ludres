@@ -1,6 +1,6 @@
 {% if media == constant('App\\Entity\\RegistrationStep::RENDER_FILE') %}
-    <h1>{{ current.title }}</h1>
+    <h1>{{ progress.current.title }}</h1>
 {% endif %}
 {% include('registration/membership_fee.html.twig') %}
 
-<div class="container">{{ current.content | raw}}</div>
+<div class="container">{{ progress.current.content | raw}}</div>

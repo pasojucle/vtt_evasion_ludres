@@ -99,7 +99,7 @@ class GetRegistrationFile
                 'user' => $userDto,
                 'all_membership_fee' => $this->allmembershipFee,
                 'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
-                'current' => $step,
+                'progress' => ['current' => $step],
                 'form' => $form->createView(),
                 'media' => RegistrationStep::RENDER_FILE,
                 'template' => $step->template,

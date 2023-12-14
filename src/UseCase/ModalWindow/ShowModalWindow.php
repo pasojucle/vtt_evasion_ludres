@@ -8,17 +8,21 @@ use App\Dto\DtoTransformer\ModalWindowDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\ModalWindowDto;
 use App\Entity\Licence;
+use App\Entity\ModalWindow;
 use App\Entity\User;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
+use App\Service\ParameterService;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class ShowModalWindow
 {
+    private SessionInterface $session;
     public function __construct(
         private RequestStack $requestStack,
         private Security $security,
@@ -28,16 +32,17 @@ class ShowModalWindow
         private ModalWindowDtoTransformer $modalWindowDtoTransformer,
         private UserDtoTransformer $userDtoTransformer,
         private RouterInterface $router,
+        private ParameterService $parameterService,
     ) {
     }
 
     public function execute(): ?ModalWindowDto
     {
-        $session = $this->requestStack->getCurrentRequest()->getSession();
-        $modalWindowShowOn = (null !== $session->get('modal_window_show_on'))
-            ? json_decode($session->get('modal_window_show_on'), true)
+        $this->session = $this->requestStack->getCurrentRequest()->getSession();
+        $modalWindowShowOn = (null !== $this->session->get('modal_window_show_on'))
+            ? json_decode($this->session->get('modal_window_show_on'), true)
             : [];
-            
+        dump($this->session->get('modal_window_show_on'));
         /** @var User $user */
         $user = $this->security->getUser();
 
@@ -51,7 +56,7 @@ class ShowModalWindow
             foreach ($modalWidowSDto as $modalWindow) {
                 if (!in_array($modalWindow->index, $modalWindowShowOn)) {
                     $modalWindowShowOn[] = $modalWindow->index;
-                    $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
+                    $this->session->set('modal_window_show_on', json_encode($modalWindowShowOn));
                     return $modalWindow;
                 }
             }
@@ -92,6 +97,21 @@ class ShowModalWindow
         if (Licence::STATUS_IN_PROCESSING === $userDto->lastLicence?->status && !str_contains($route['_route'], 'registration_form')) {
             $modalWindows = array_merge($modalWindows, [$user->getLastLicence()]);
         }
+
+        $season = $this->session->get('currentSeason');
+
+        dump($userDto->lastLicence->status);
+        if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && Licence::STATUS_WAITING_RENEW === $userDto->lastLicence->status) {
+            $modalWindows[] = [
+                'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
+                'title' => sprintf('Inscription à la saison %s', $season),
+                'content' => $this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
+                'route' => 'user_registration_form',
+                'routeParams' => ['step' => 1],
+                'labelBtn' => 'S\'incrire'
+            ];
+        }
+
         return $modalWindows;
     }
 }

@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Licence;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @method Licence|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,8 +20,30 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class LicenceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private RequestStack $request)
     {
         parent::__construct($registry, Licence::class);
+    }
+
+    public function findOneByUserAndLastSeason(User $user): ?Licence
+    {
+        try {
+            return $this->createQueryBuilder('li')
+                ->andWhere(
+                    (new Expr())->eq('li.user', ':user'),
+                    (new Expr())->eq('li.status', ':status'),
+                    (new Expr())->eq('li.season', ':lastSeason'),
+                )
+                ->setParameters([
+                    'user' => $user,
+                    'status' => Licence::STATUS_VALID,
+                    'lastSeason' => $this->request->getSession()->get('currentSeason') - 1
+                ])
+                ->getQuery()
+                ->getOneOrNullResult()
+                ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 }

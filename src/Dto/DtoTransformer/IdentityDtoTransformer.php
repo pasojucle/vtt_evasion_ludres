@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\AddressDto;
 use App\Dto\IdentityDto;
 use App\Entity\Identity;
-use App\Entity\User;
 use App\Repository\RegistrationChangeRepository;
 use App\Service\ProjectDirService;
 use App\Service\SeasonService;
@@ -124,6 +122,9 @@ class IdentityDtoTransformer
             foreach ($properties as $property) {
                 if ('mobile' === $property) {
                     $property = 'phone';
+                }
+                if ('birthCommune' === $property) {
+                    $property = 'birthPlace';
                 }
                 if (1 === preg_match('#name|firstName#', $property)) {
                     $identityDto->fullName = sprintf('<b>%s</b>', $identityDto->$property);

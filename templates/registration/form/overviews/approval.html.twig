@@ -2,11 +2,11 @@
 
 <ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Droit à l'image</b></span><span class="col-md-8 col-sx-6">{{ user.approvals.rightToTheImage.toHtml.class.icon|raw }} {{ user.approvals.rightToTheImage.toHtml.message|raw }}</span>
+        <span class="col-md-4 col-sx-6"><b>Droit à l'image</b></span><span class="col-md-8 col-sx-6">{{ progress.user.approvals.rightToTheImage.toHtml.class.icon|raw }} {{ progress.user.approvals.rightToTheImage.toHtml.message|raw }}</span>
     </li>
-    {% if user.approvals.goingHome is defined %}
+    {% if progress.user.approvals.goingHome is defined %}
         <li class="row">
-            <span class="col-md-4 col-sx-6"><b>Autorisation parentale</b></span><span class="col-md-8 col-sx-6">{{ user.approvals.goingHome.toHtml.class.icon|raw }} {{ user.approvals.goingHome.toHtml.message |raw }}</span>
+            <span class="col-md-4 col-sx-6"><b>Autorisation parentale</b></span><span class="col-md-8 col-sx-6">{{ progress.user.approvals.goingHome.toHtml.class.icon|raw }} {{ progress.user.approvals.goingHome.toHtml.message |raw }}</span>
         </li>
     {% endif %}
 </ul>

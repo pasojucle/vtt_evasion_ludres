@@ -22,12 +22,14 @@ class ModalWindowService
     ) {
     }
 
-    public function getIndex(Survey|OrderHeader|ModalWindow|Licence $entity)
+    public function getIndex(Survey|OrderHeader|ModalWindow|Licence|string $entity)
     {
         /** @var User $user */
         $user = $this->security->getUser();
         $id = (null !== $user) ? $user->getLicenceNumber() : 'PUBLIC_ACCESS';
-        return $id . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
+        return (is_string($entity))
+            ? $id . '-' . $entity
+            : $id . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
     }
 
     public function addToModalWindowShowOn(OrderHeader|Licence $entity): void

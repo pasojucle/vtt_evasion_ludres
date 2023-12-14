@@ -38,7 +38,6 @@ class RegistrationStepDtoTransformer
         $registrationStepDto = new RegistrationStepDto();
         if ($registrationStep) {
             $registrationStepDto->registrationDocumentForms = $this->getRegistrationDocumentForms();
-            $registrationStepDto->class = $class;
             $registrationStepDto->title = $registrationStep->getTitle();
             $registrationStepDto->form = $registrationStep->getForm();
             $registrationStepDto->outputFilename = ($registrationStep->isPersonal()) ? RegistrationStepDto::OUTPUT_FILENAME_PERSONAL : RegistrationStepDto::OUTPUT_FILENAME_CLUB;
@@ -54,6 +53,7 @@ class RegistrationStepDtoTransformer
             $registrationStepDto->template = $this->getTemplate($registrationStep);
             $registrationStepDto->content = $this->getContent($userDto, $render, $registrationStep->getContent());
             $registrationStepDto->overviewTemplate = $this->getOverviewTemplate($registrationStep->getForm());
+            $registrationStepDto->hasRequiredFields = $this->getHasRequiredFields($registrationStepDto);
         }
 
         return $registrationStepDto;
@@ -118,5 +118,20 @@ class RegistrationStepDtoTransformer
             UserType::FORM_LICENCE_COVERAGE => 'coverage',
             UserType::FORM_REGISTRATION_DOCUMENT => null,
         ];
+    }
+
+    public function getHasRequiredFields(RegistrationStepDto $registrationStep): bool
+    {
+        $hasRequiredFields = false;
+        if ($registrationStep->formObject) {
+            foreach ($registrationStep->formObject->all() as $form) {
+                $reqired = $form->getConfig()->getRequired();
+                if ($reqired) {
+                    $hasRequiredFields = true;
+                }
+            }
+        }
+
+        return $hasRequiredFields;
     }
 }

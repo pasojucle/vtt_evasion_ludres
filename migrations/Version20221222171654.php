@@ -35,7 +35,7 @@ final class Version20221222171654 extends AbstractMigration
             'name' => 'EMAIL_CHANGE_USER_INFOS',
             'label' => 'Message de confirmation de demande de modification d\'infos personnelles',
             'content' =>' <p>Nous avons bien pris en compte votre demande et allons faire les modifications dans les meilleurs d&eacute;lais.</p>',
-            'type' => Parameter::TYPE_TEXT,
+            'type' => Parameter::TYPE_HTML,
             'parameterGroup' => 2,
         ];
         

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Dto\RegistrationStepDto;
+use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
+use App\Dto\RegistrationProgressDto;
 use App\Entity\Address;
 use App\Entity\Approval;
 use App\Entity\Health;
@@ -18,7 +17,6 @@ use App\Entity\SwornCertification;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\LevelRepository;
-use App\Repository\RegistrationChangeRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\HealthService;
 use App\Service\LicenceService;
@@ -38,72 +36,38 @@ class GetProgress
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
         private LevelRepository $levelRepository,
-        private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
-        private UserDtoTransformer $userDtoTransformer,
+        private RegistrationProgressDtoTransformer $registrationProgressDtoTransformer,
         private Security $security,
         private EntityManagerInterface $entityManager,
         private HealthService $healthService,
         private LicenceService $licenceService,
         private RequestStack $requestStack,
-        private RegistrationChangeRepository $registrationChangeRepository,
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
 
-    public function execute(int $step): array
+    public function execute(int $step): RegistrationProgressDto
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $this->user = $user;
+
         $this->setUser();
         $this->updateStatus();
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
 
-        $stepIndex0 = $step - 1;
-        $changes = (UserType::FORM_OVERVIEW === $steps[$stepIndex0]->getForm()) ? $this->getChanges($this->user) : null;
-
-        $progress = [];
-        $progress['prevIndex'] = null;
-        $progress['nextIndex'] = null;
-        $progress['currentIndex'] = null;
-        $progress['current'] = null;
-        $progress['steps'] = null;
-        $userDto = $this->userDtoTransformer->fromEntity($this->user, $changes);
-        foreach ($steps as $key => $registrationStep) {
-            $index = $key + 1;
-            $class = null;
-            if ($key < $stepIndex0) {
-                $class = 'is-done';
-                $progress['prevIndex'] = $index;
-            } elseif ($key === $stepIndex0) {
-                $class = 'current';
-                $progress['currentIndex'] = $index;
-            } else {
-                if (null === $progress['nextIndex']) {
-                    $progress['nextIndex'] = $index;
-                }
-            }
-
-            $progress['steps'][$index] = $this->registrationStepDtoTransformer->fromEntity($registrationStep, $this->user, $userDto, $step, registrationStep::RENDER_VIEW, $class);
-        }
-        $progress['current'] = $progress['steps'][$progress['currentIndex']];
-        $progress['user'] = $userDto;
-        $progress['seasonLicence'] = $this->seasonLicence;
-        $progress['season'] = $this->season;
-        $progress['step'] = $step;
-        $progress['hasRequiredFields'] = $this->hasRequiredFields($progress['current']);
-
-        if (UserType::FORM_REGISTRATION_FILE === $progress['current']->form) {
+        $progress = $this->registrationProgressDtoTransformer->fromEntities($steps, $step, $this->user, $this->season);
+        
+        if (UserType::FORM_REGISTRATION_FILE === $progress->current->form) {
             $this->requestStack->getSession()->remove('registration_user_id');
         }
 
         return $progress;
     }
 
-    public function setUser(): void
+    private function setUser(): void
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $this->user = $user;
-
         if (null === $this->user) {
             $this->createUser();
         }
@@ -154,7 +118,7 @@ class GetProgress
         }
     }
 
-    public function updateStatus(): void
+    private function updateStatus(): void
     {
         $licence = $this->seasonLicence;
         if (false === $licence->isFinal() &&
@@ -178,9 +142,10 @@ class GetProgress
         $this->seasonLicence = new Licence();
         $this->seasonLicence->setSeason($this->season);
         if (!$this->user->getLicences()->isEmpty()) {
-            $this->seasonLicence->setFinal(true)
-                ->setCoverage($this->user->getLastLicence()?->getCoverage())
-            ;
+            $this->seasonLicence->setFinal(true);
+            if ($this->user->getLastLicence()->getCoverage()) {
+                $this->seasonLicence->setCoverage($this->user->getLastLicence()->getCoverage());
+            }
         } else {
             $this->seasonLicence->setFinal(false)
                 ->setCoverage(Licence::COVERAGE_MINI_GEAR)
@@ -342,25 +307,5 @@ class GetProgress
                 }
             }
         }
-    }
-
-    private function getChanges(User $user): array
-    {
-        return $this->registrationChangeRepository->findBySeason($user, $this->season);
-    }
-
-    private function hasRequiredFields(RegistrationStepDto $registrationStep): bool
-    {
-        $hasRequiredFields = false;
-        if ($registrationStep->formObject) {
-            foreach ($registrationStep->formObject->all() as $form) {
-                $reqired = $form->getConfig()->getRequired();
-                if ($reqired) {
-                    $hasRequiredFields = true;
-                }
-            }
-        }
-
-        return $hasRequiredFields;
     }
 }

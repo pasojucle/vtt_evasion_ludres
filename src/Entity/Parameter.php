@@ -11,11 +11,12 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Egulias\EmailValidator\Warning\TLD;
 
 #[Entity(repositoryClass: ParameterRepository::class)]
 class Parameter
 {
-    public const TYPE_TEXT = 1;
+    public const TYPE_HTML = 1;
 
     public const TYPE_INTEGER = 2;
 
@@ -24,6 +25,8 @@ class Parameter
     public const TYPE_ARRAY = 4;
 
     public const TYPE_MONTH_AND_DAY = 5;
+
+    public const TYPE_TEXT = 6;
 
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
@@ -36,7 +39,7 @@ class Parameter
     private string $label;
 
     #[Column(type: 'integer')]
-    private int $type = self::TYPE_TEXT;
+    private int $type = self::TYPE_HTML;
 
     #[Column(type: 'text')]
     private string $value;

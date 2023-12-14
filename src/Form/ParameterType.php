@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Parameter;
+use App\Service\ParameterService;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -18,6 +20,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ParameterType extends AbstractType
 {
+    public function __construct(private ParameterService $parameterService)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -25,7 +31,7 @@ class ParameterType extends AbstractType
             if (null !== $parameter) {
                 $type = $parameter->getType();
                 $value = $parameter->getValue();
-                $label = $parameter->getLabel();
+                $label = $this->parameterService->getReplaceKeywords($parameter->getLabel());
                 $form = $event->getForm();
                 $fieldOptions = [];
 
@@ -38,7 +44,7 @@ class ParameterType extends AbstractType
                             'required' => false,
                         ];
                         break;
-                    case Parameter::TYPE_TEXT:
+                    case Parameter::TYPE_HTML:
                         $classType = CKEditorType::class;
                         $fieldOptions = [
                             'config_name' => 'full_config',
@@ -68,6 +74,9 @@ class ParameterType extends AbstractType
                                 'label' => false,
                             ],
                         ];
+                        break;
+                    case Parameter::TYPE_TEXT:
+                        $classType = TextareaType::class;
                         break;
                     default:
                     $classType = TextType::class;

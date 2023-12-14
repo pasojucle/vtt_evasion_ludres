@@ -76,6 +76,18 @@ class ModalWindowDtoTransformer
         return $modalWindowDto;
     }
 
+    public function fromArray(array $data): ModalWindowDto
+    {
+        $modalWindowDto = new ModalWindowDto();
+        $modalWindowDto->index = $this->modalWindowService->getIndex($data['index']);
+        $modalWindowDto->title = $data['title'];
+        $modalWindowDto->content = $data['content'];
+        $modalWindowDto->url = $this->router->generate($data['route'], $data['routeParams']);
+        $modalWindowDto->labelButton = $data['labelBtn'];
+
+        return $modalWindowDto;
+    }
+
     public function fromEntities(array|Paginator|Collection $modalWindowEntities): array
     {
         $modalWindows = [];
@@ -92,6 +104,9 @@ class ModalWindowDtoTransformer
             }
             if ($modalWindowEntity instanceof Licence) {
                 $modalWindows[] = $this->fromLicence($modalWindowEntity);
+            }
+            if (is_array($modalWindowEntity)) {
+                $modalWindows[] = $this->fromArray($modalWindowEntity);
             }
         }
 

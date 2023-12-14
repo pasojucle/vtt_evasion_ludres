@@ -75,7 +75,7 @@ class LicenceDtoTransformer
             $licenceDto->licenceSwornCertifications = $this->getLicenceSwornCertifications($licence);
             $licenceDto->isActive = $this->seasonService->getMinSeasonToTakePart() <= $licence->getSeason();
             if ($licence->getAdditionalFamilyMember()) {
-                $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déja inscrit au club';
+                $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club';
             }
             if ($changes) {
                 $this->formatChanges($changes, $licenceDto);

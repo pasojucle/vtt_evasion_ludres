@@ -10,6 +10,7 @@ use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Repository\LicenceRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -27,6 +28,7 @@ class UserDtoTransformer
         private FFCTLicenceDtoTransformer $FFCTLicenceDtoTransformer,
         private AccessDecisionManagerInterface $accessDecisionManager,
         private TranslatorInterface $translator,
+        private LicenceRepository $licenceRepository,
     ) {
     }
 
@@ -41,9 +43,8 @@ class UserDtoTransformer
         $userDto->member = (array_key_exists(Identity::TYPE_MEMBER, $identitiesByType)) ? $identitiesByType[Identity::TYPE_MEMBER] : null;
         $userDto->kinship = (array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : null;
         $userDto->secondKinship = (array_key_exists(Identity::TYPE_SECOND_CONTACT, $identitiesByType)) ? $identitiesByType[Identity::TYPE_SECOND_CONTACT] : null;
-        
         $userDto->lastLicence = $this->getLastLicence($user, $changes);
-
+        $userDto->prevLicence = $this->getPrevLicence($user);
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth(), $userDto->lastLicence);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
@@ -120,6 +121,11 @@ class UserDtoTransformer
         $licence = $user->getLastLicence();
 
         return $this->licenceDtoTransformer->fromEntity($licence, $changes);
+    }
+
+    private function getPrevLicence(User $user): LicenceDto
+    {
+        return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($user));
     }
 
     private function getPermissions(User $user): ?string

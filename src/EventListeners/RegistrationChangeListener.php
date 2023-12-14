@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\EventListeners;
 
 use App\Entity\Address;
-use App\Entity\Approval;
 use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\RegistrationChange;
-use App\Entity\User;
 use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManager;

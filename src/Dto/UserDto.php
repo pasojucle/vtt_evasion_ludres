@@ -14,6 +14,8 @@ class UserDto
 
     public ?LicenceDto $lastLicence;
 
+    public ?LicenceDto $prevLicence = null;
+
     public ?LicenceDto $seasonLicence;
 
     public ?IdentityDto $member;

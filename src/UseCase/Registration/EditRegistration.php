@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Registration;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\RegistrationProgressDto;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -45,9 +46,9 @@ class EditRegistration
     ) {
     }
 
-    public function execute(Request $request, FormInterface $form, array $progress): string
+    public function execute(Request $request, FormInterface $form, RegistrationProgressDto $progress): string
     {
-        $season = $progress['season'];
+        $season = $progress->season;
         $user = $form->getData();
         $session = $request->getSession();
         $selfAuthenticating = false;
@@ -76,7 +77,7 @@ class EditRegistration
 
         $category = $user->getSeasonLicence($season)->getCategory();
 
-        if (UserType::FORM_OVERVIEW === $progress['current']->form) {
+        if (UserType::FORM_OVERVIEW === $progress->current->form) {
             $seasonLicence = $user->getSeasonLicence($season);
             $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE);
             $this->sendMailToClub($user);

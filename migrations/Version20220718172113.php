@@ -26,7 +26,7 @@ final class Version20220718172113 extends AbstractMigration
             'parameterGroupeId' => $parameterGroupeId,
             'name' => 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION',
             'label' => 'Envoie mail Suite à l\'inscription à une sortie',
-            'type' => Parameter::TYPE_TEXT,
+            'type' => Parameter::TYPE_HTML,
             'value' => '<p>Votre inscription à la sortie {{ bikeRideTitleAndPeriod }} a bien été prise en compte.</p><p>Nous vous rapellons que pour participer à une sortie, il est impératif d\'avoir un VTT en parfait état de fonctionnement, un casque, une paire de gants et une paire de lunettes.</p><p>En cas d\'équipement incomplet ou de VTT en mauvais état, l\'Encadrant pourra refuser, pour des raisons de sécurité, de prendre en charge un jeune dans son groupe. Les parents seront alors contactés afin de venir récupérer leur enfant.</p>',
         ];
         $this->addSql("INSERT INTO `parameter` (`name`, `label`, `type`, `value`, `parameter_group_id`) VALUES

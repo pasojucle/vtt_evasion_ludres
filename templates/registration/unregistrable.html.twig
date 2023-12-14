@@ -6,9 +6,6 @@
     {% include 'background/backgrounds.html.twig' with {'alt': 'Mon compte'} %}
 {% endblock %}
 
-{% block stylesheets %}
-    {{ parent()}}
-{% endblock %}
 {% block body %}
      <div class="wrapper wrapper-medium-width">
         <div class="wrapper-title">
@@ -18,7 +15,9 @@
             <div class="block background-ligth">
                 <div class="block-body">
                     <p class="alert-warning">{{ warning|raw }}</p>
-                    <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_id }) }}">Télécharger le dossier d'inscription</a>
+                    {% if user_id is defined %}
+                        <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_id }) }}">Télécharger le dossier d'inscription</a>
+                    {% endif %}
                 </div>
                  <div class="block-footer">
                     <a class="btn btn-secondary float-right" href="{{ path('user_change_infos') }}">Modifier une information</a>

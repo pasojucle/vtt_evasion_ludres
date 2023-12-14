@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Repository\ParameterRepository;
+use App\Service\ParameterService;
 use App\UseCase\Registration\GetRegistrationsFiltered;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,14 +21,14 @@ class RegistrationController extends AbstractController
     #[IsGranted('USER_LIST')]
     public function adminRegistrations(
         GetRegistrationsFiltered $getRegistrationsFiltered,
-        ParameterRepository $parameterRepository,
+        ParameterService $parameterService,
         Request $request,
         bool $filtered
     ): Response {
         $params = $getRegistrationsFiltered->list($request, $filtered);
 
         $params['settings'] = [
-            'parameters' => $parameterRepository->findByParameterGroupName('REGISTRATION'),
+            'parameters' => $parameterService->getParametesrByParameterGroupName('REGISTRATION'),
             'routes' => [
                 ['name' => 'admin_registration_step_list', 'label' => 'Étapes des inscriptions'],
             ],

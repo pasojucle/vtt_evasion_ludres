@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ModalWindowController extends AbstractController
 {
-    #[Route('/modal/window', name: 'modal_window_show', options:['expose' => true], methods: ['GET'])]
+    #[Route('/modal/window', name: 'modal_window_show', options: ['expose' => true],  methods: ['GET'])]
     public function show(ShowModalWindow $showModalWindow): Response
     {
         $modal = $showModalWindow->execute();

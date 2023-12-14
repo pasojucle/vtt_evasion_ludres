@@ -43,4 +43,6 @@ class RegistrationStepDto
     public int $outputFilename = self::OUTPUT_FILENAME_CLUB;
 
     public int $finalRender;
+
+    public bool $hasRequiredFields = false;
 }

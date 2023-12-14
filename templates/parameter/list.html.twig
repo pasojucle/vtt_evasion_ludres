@@ -12,7 +12,7 @@
         <div class="wrapper-body">
             <ul>
                 {% for parameter in form.children.parameters.children %}   
-                    {% if parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_TEXT') %}
+                    {% if parameter.vars.value.type == constant('App\\Entity\\parameter::TYPE_HTML') %}
                     <li data-toggle="param-body">
                         <a href="" class="btn btn-ico" data-action="toggle-down"><i class="fas fa-angle-up"></i></a>
                         <b>{{ form_label(parameter.value) }}</b>

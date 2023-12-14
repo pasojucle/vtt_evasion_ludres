@@ -65,8 +65,8 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/inscription/{step}', name: 'registration_form', methods: ['GET', 'POST'], defaults:['step' => 1])]
-    #[Route('/mon-compte/inscription/{step}', name: 'user_registration_form', methods: ['GET', 'POST'])]
+    #[Route('/inscription/{step}', name: 'registration_form', methods: ['GET', 'POST'], requirements:['step' => '\d+'], defaults:['step' => 1])]
+    #[Route('/mon-compte/inscription/{step}', name: 'user_registration_form', requirements:['step' => '\d+'], methods: ['GET', 'POST'])]
     public function registerForm(
         Request $request,
         MembershipFeeRepository $membershipFeeRepository,
@@ -76,33 +76,34 @@ class RegistrationController extends AbstractController
         int $step
     ): Response {
         $session = $this->requestStack->getSession();
-        
+        /** @var User $user */
+        $user = $this->getUser();
         if ((int) $session->get('registrationMaxStep') < $step) {
             $this->requestStack->getSession()->set('registrationMaxStep', $step);
         }
         $progress = $this->getProgress->execute($step);
-
-        if (null !== $this->getUser() && $progress['nextIndex'] && 'registration_form' === $request->attributes->get('_route')) {
+    
+        if ($user && $progress->nextStep && 'registration_form' === $request->attributes->get('_route')) {
             return $this->redirectToRoute('user_registration_form', ['step' => $step]);
         };
 
-        if (!$progress['nextIndex'] && 'registration_form' === $request->attributes->get('_route') && null !== $this->getUser()) {
+        if (!$progress->nextStep && 'registration_form' === $request->attributes->get('_route') && null !== $this->getUser()) {
             $selfAuthentication->logout();
         }
 
-        $user = $progress['user'];
-        if (Licence::STATUS_IN_PROCESSING < $user->lastLicence->status && UserType::FORM_REGISTRATION_FILE !== $progress['current']->form) {
-            return $this->redirectToRoute('registration_download', [
-                'user' => $user->id,
-            ]);
+        if ($progress->redirecToRoute) {
+            return $this->redirectToRoute($progress->redirecToRoute);
         }
-        $form = $progress['current']->formObject;
 
-        $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress['user']);
-        if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress['current']->form && !$progress['user']->licenceNumber) {
+        $form = $progress->current->formObject;
+
+        $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress->user);
+
+        if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress->current->form && !$progress->user->licenceNumber) {
             $message = str_replace(['<p>', '</p>'], '', html_entity_decode($schoolTestingRegistration['message']));
             $this->addFlash('success', $message);
         }
+
         $maxStep = $step;
         $session->set('registrationMaxStep', $maxStep);
 
@@ -114,36 +115,18 @@ class RegistrationController extends AbstractController
             $route = $editRegistration->execute($request, $form, $progress);
             
             return $this->redirectToRoute($route, [
-                'step' => $progress['nextIndex'],
+                'step' => $progress->nextStep,
             ]);
         }
 
         return $this->render('registration/registrationForm.html.twig', [
             'step' => $step,
-            'steps' => $progress['steps'],
+            'progress' => $progress,
             'form' => (null !== $form) ? $form->createView() : null,
-            'template' => $progress['current']->template,
-            'prev' => $progress['prevIndex'],
-            'current' => $progress['current'],
-            'next' => $progress['nextIndex'],
             'maxStep' => $this->requestStack->getSession()->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
             'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
-            'user' => $progress['user'],
             'media' => RegistrationStep::RENDER_VIEW,
-            'has_required_fields' => $progress['hasRequiredFields'],
-        ]);
-    }
-
-    #[Route('/inscription/telechargement/{user}', name: 'registration_download', methods: ['GET'])]
-    #[IsGranted('USER_EDIT', 'user')]
-    public function registrationDownload(
-        GetStatusWarning $getStatusWarning,
-        User $user
-    ): Response {
-        return $this->render('registration/download.html.twig', [
-            'user_id' => $user->getId(),
-            'warning' => $getStatusWarning->execute($user),
         ]);
     }
 
@@ -203,5 +186,28 @@ class RegistrationController extends AbstractController
             }
         }
         return new Response(null, Response::HTTP_NOT_FOUND);
+    }
+
+
+    #[Route('/inscription/existante', name: 'registration_existing', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function registrationDownload(
+        GetStatusWarning $getStatusWarning
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        return $this->render('registration/unregistrable.html.twig', [
+            'user_id' => $user->getId(),
+            'warning' => $getStatusWarning->execute($user),
+        ]);
+    }
+
+    #[Route('/reinscription/impossible', name: 'unregistrable_new_saison', methods: ['GET'])]
+    public function unregistrableNewSeason(
+        ParameterService $parameterService,
+    ): Response {
+        return $this->render('registration/unregistrable.html.twig', [
+            'warning' => $parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_DISABLED_MESSAGE'),
+         ]);
     }
 }
