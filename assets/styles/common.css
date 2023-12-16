@@ -1471,6 +1471,12 @@ iframe.youtube {
     height: calc(100vw * 0.25);
 }
 
+.licence-amount {
+    background-color: var(--primary-color-darker);
+    padding: 5px;
+    color: var(--white-color);
+}
+
 @media screen and (min-width: 800px) {
     .block.block-flash.background-color .block-title::after {
         box-sizing: border-box;

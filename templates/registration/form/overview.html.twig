@@ -5,7 +5,7 @@
         {% include(step.overviewTemplate) %}
     {% endif %}
 {% endfor %}
-{% dump(progress) %}
+
 {% if progress.user.lastLicence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
     <ul class="block background-ligth">
         <li class="row">

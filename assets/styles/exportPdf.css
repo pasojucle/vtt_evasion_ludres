@@ -232,3 +232,7 @@ li::before {
     font-weight: 700;
     text-align: right;
 }
+.licence-amount {
+    background-color: #e6841b;
+    padding: 5px;
+}

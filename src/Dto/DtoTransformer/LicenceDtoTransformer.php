@@ -203,7 +203,7 @@ class LicenceDtoTransformer
                 if ($licence->getAdditionalFamilyMember()) {
                     $amountToStr .= "Un membre de votre famille est déja inscrit au club</br>";
                 }
-                $amountToStr .= "<b>Le montant de votre inscription pour la formule d'assurance {$coveragesToString} est de {$amount->toString()}</b>";
+                $amountToStr .= "<b>Le montant de votre inscription pour la formule d'assurance {$coveragesToString} est de <span class=\"licence-amount\">{$amount->toString()}</span></b>";
             }
         } else {
             $amountToStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";
