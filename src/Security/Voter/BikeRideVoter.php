@@ -8,6 +8,7 @@ use App\Entity\Cluster;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
+use DateTime;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -58,13 +59,24 @@ class BikeRideVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, User $user, BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
 
-        if ($subject && $isUserWithPermission && $this->getSession($subject, $user)) {
+        $startAt = match (true) {
+            $subject instanceof Cluster => $subject->getBikeRide()->getStartAt(),
+            $subject instanceof Session => $subject->getCluster()->getBikeRide()->getStartAt(),
+            default => $subject->getStartAt(),
+        };
+
+        $today = new DateTime();
+        if ($today < $startAt->setTime(0, 0, 0) || $startAt->setTime(23, 59, 59) < $today) {
+            return false;
+        }
+
+        if ($isUserWithPermission && $this->getSession($subject, $user)) {
             return true;
         };
 
