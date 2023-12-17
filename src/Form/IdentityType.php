@@ -189,6 +189,7 @@ class IdentityType extends AbstractType
                             ],
                             'attr' => [
                                 'data-constraint' => 'app-Phone',
+                                'data-multiple-fields' => 1,
                                 'autocomplete' => 'off',
                                 'class' => 'phone-number',
                             ],
