@@ -50,7 +50,7 @@ class UserVoter extends Voter
 
         return match ($attribute) {
             self::EDIT, self::VIEW => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
-            self::LIST => $this->canList($token, $user, $subject, $isActiveUser, $isUserWithPermission),
+            self::LIST => $this->canList($token, $isUserWithPermission),
             self::SHARE => $this->canShare($token, $user, $subject, $isActiveUser, $isUserWithPermission, $isUserWithSharePermission),
             default => false
         };
@@ -65,7 +65,7 @@ class UserVoter extends Voter
         return $this->isOwner($subject, $user) && $isActiveUser;
     }
 
-    private function canList(TokenInterface $token, User $user, null|User|UserDto|Licence $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canList(TokenInterface $token, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;

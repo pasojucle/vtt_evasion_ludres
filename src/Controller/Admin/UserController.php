@@ -75,7 +75,7 @@ class UserController extends AbstractController
     #[Route('/inscription/adherent/{user}', name: 'registration_user', requirements:['user' => '\d+'], methods: ['GET'])]
     #[Route('/adherent/calendrier/{user}', name: 'bike_rides_user', requirements:['user' => '\d+'], methods: ['GET'])]
     #[Route('/adherent/assurance/{user}', name: 'coverage_user', requirements:['user' => '\d+'], methods: ['GET'])]
-    #[IsGranted('USER_VIEW', 'user')]
+    #[IsGranted('USER_SHARE', 'user')]
     public function adminUser(
         User $user,
         Request $request
