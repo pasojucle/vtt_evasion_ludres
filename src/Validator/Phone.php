@@ -11,5 +11,6 @@ use Symfony\Component\Validator\Constraint;
  */
 class Phone extends Constraint
 {
-    public $message = 'Le numéro doit comporter 10 chiffres.';
+    public $format = 'Le numéro doit comporter 10 chiffres.';
+    public $nonUnique = 'Ce numéro doit être différent du téléphone mobile.';
 }
