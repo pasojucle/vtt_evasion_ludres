@@ -42,7 +42,6 @@ class ModalWindowService
         $session->set('modal_window_showed', json_encode($modalWindowShowOn));
     }
 
-
     public function addToModalWindow(string $title, string $content): void
     {
         $session = $this->requestStack->getSession();

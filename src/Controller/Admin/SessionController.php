@@ -141,7 +141,7 @@ class SessionController extends AbstractController
         $this->entityManager->remove($session);
         $this->entityManager->flush();
 
-        $this->addFlash('success', $userDto->member->fullName . ' à bien été désincrit');
+        $this->addFlash('success', $userDto->member->fullName . ' à bien été désinscrit');
 
         return $this->redirectToRoute('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),

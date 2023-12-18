@@ -184,7 +184,7 @@ class BikeRideDtoTransformer
                 : [
                     'route' => 'session_delete',
                     'sessionId' => $session->getId(),
-                    'btnLabel' => '<i class="fas fa-times-circle"></i> Se désincrire',
+                    'btnLabel' => '<i class="fas fa-times-circle"></i> Se désinscrire',
                 ];
             }
         }
