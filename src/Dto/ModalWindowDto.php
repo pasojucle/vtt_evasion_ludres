@@ -12,7 +12,7 @@ class ModalWindowDto
 
     public ?string $content;
 
-    public ?string $url;
+    public ?string $url = null;
 
     public ?string $labelButton;
 }

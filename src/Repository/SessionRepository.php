@@ -166,4 +166,22 @@ class SessionRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+    public function findAvailableByUser(User $user): array
+    {
+        $today = new DateTimeImmutable();
+        return $this->createQueryBuilder('s')
+            ->join('s.cluster', 'c')
+            ->join('c.bikeRide', 'br')
+            ->andWhere(
+                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->gte('br.startAt', ':start'),
+            )
+            ->setParameters([
+                'user' => $user,
+                'start' => $today->setTime(0, 0, 0),
+            ])
+            ->getQuery()
+            ->getResult();
+    }
 }

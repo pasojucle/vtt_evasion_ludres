@@ -39,10 +39,9 @@ class ShowModalWindow
     public function execute(): ?ModalWindowDto
     {
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
-        $modalWindowShowOn = (null !== $this->session->get('modal_window_show_on'))
-            ? json_decode($this->session->get('modal_window_show_on'), true)
+        $modalWindowShowOn = (null !== $this->session->get('modal_window_showed'))
+            ? json_decode($this->session->get('modal_window_showed'), true)
             : [];
-        dump($this->session->get('modal_window_show_on'));
         /** @var User $user */
         $user = $this->security->getUser();
 
@@ -56,7 +55,7 @@ class ShowModalWindow
             foreach ($modalWidowSDto as $modalWindow) {
                 if (!in_array($modalWindow->index, $modalWindowShowOn)) {
                     $modalWindowShowOn[] = $modalWindow->index;
-                    $this->session->set('modal_window_show_on', json_encode($modalWindowShowOn));
+                    $this->session->set('modal_window_showed', json_encode($modalWindowShowOn));
                     return $modalWindow;
                 }
             }
@@ -73,13 +72,17 @@ class ShowModalWindow
             return [];
         }
 
+        $modalWindowsToShowJson = $this->session->get('modal_windows_to_show');
+        $modalWindowsToShow = ($modalWindowsToShowJson) ? json_decode($modalWindowsToShowJson, true) : [];
+
         $modalWindows = $this->modalWindowRepository->findByAge($userDto->member?->age);
+        $modalWindowsToShow = array_merge($modalWindowsToShow, $modalWindows);
         $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user);
-        $modalWindows = array_merge($modalWindows, $surveys);
+        $modalWindowsToShow = array_merge($modalWindowsToShow, $surveys);
         $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($user);
 
         if (null !== $orderHeaderToValidate) {
-            $modalWindows = array_merge($modalWindows, [$orderHeaderToValidate]);
+            $modalWindowsToShow[] = $orderHeaderToValidate;
         }
 
         $search = [
@@ -95,14 +98,13 @@ class ShowModalWindow
         }
 
         if (Licence::STATUS_IN_PROCESSING === $userDto->lastLicence?->status && !str_contains($route['_route'], 'registration_form')) {
-            $modalWindows = array_merge($modalWindows, [$user->getLastLicence()]);
+            $modalWindowsToShow[] = $user->getLastLicence();
         }
 
         $season = $this->session->get('currentSeason');
 
-        dump($userDto->lastLicence->status);
         if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && Licence::STATUS_WAITING_RENEW === $userDto->lastLicence->status) {
-            $modalWindows[] = [
+            $modalWindowsToShow[] = [
                 'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
                 'title' => sprintf('Inscription à la saison %s', $season),
                 'content' => $this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
@@ -112,6 +114,6 @@ class ShowModalWindow
             ];
         }
 
-        return $modalWindows;
+        return $modalWindowsToShow;
     }
 }

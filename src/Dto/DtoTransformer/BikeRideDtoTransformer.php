@@ -6,13 +6,17 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
+use App\Dto\SessionDto;
 use App\Entity\BikeRide;
+use App\Entity\Session;
 use App\Entity\User;
+use App\Repository\SessionRepository;
 use App\Service\ProjectDirService;
 use App\Twig\AppExtension;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use DateInterval;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -35,11 +39,12 @@ class BikeRideDtoTransformer
         private ProjectDirService $projectDirService,
         private BikeRideTypeDtoTransformer $bikeRideTypeDtoTransformer,
         private SurveyDtoTransformer $surveyDtoTransformer,
+        private SessionRepository $sessionRepository,
     ) {
         $this->today = (new DateTimeImmutable())->setTime(0, 0, 0);
     }
 
-    public function fromEntity(?BikeRide $bikeRide): BikeRideDto
+    public function fromEntity(?BikeRide $bikeRide, ?array $userAvailableSessions = null): BikeRideDto
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -63,6 +68,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
             $bikeRideDto->isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
             $bikeRideDto->isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
+            $bikeRideDto->unregistrable = $this->getUnregistrable($userAvailableSessions, $bikeRide);
             $bikeRideDto->btnLabel = $this->getBtnLabel($bikeRideDto);
             $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
             $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
@@ -78,8 +84,11 @@ class BikeRideDtoTransformer
     public function fromEntities(Paginator|Collection|array $bikeRideEntities): array
     {
         $bikeRides = [];
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $userAvailableSessions = ($user) ? $this->sessionRepository->findAvailableByUser($user) : null;
         foreach ($bikeRideEntities as $bikeRideEntity) {
-            $bikeRides[] = $this->fromEntity($bikeRideEntity);
+            $bikeRides[] = $this->fromEntity($bikeRideEntity, $userAvailableSessions);
         }
 
         return $bikeRides;
@@ -156,5 +165,30 @@ class BikeRideDtoTransformer
         }
 
         return !($private && !$user);
+    }
+
+    private function getUnregistrable(?array $userAvailableSessions, BikeRide $bikeRide): false|array
+    {
+        if (!$userAvailableSessions) {
+            return false;
+        }
+        /** @var Session $session */
+        foreach ($userAvailableSessions as $session) {
+            if ($session->getCluster()->getBikeRide() === $bikeRide) {
+                return ($session->getAvailability())
+                ? [
+                    'route' => 'session_availability_edit',
+                    'sessionId' => $session->getId(),
+                    'btnLabel' => '<i class="fas fa-edit"></i> Modifier sa disponibilité',
+                ]
+                : [
+                    'route' => 'session_delete',
+                    'sessionId' => $session->getId(),
+                    'btnLabel' => '<i class="fas fa-times-circle"></i> Se désincrire',
+                ];
+            }
+        }
+
+        return false;
     }
 }

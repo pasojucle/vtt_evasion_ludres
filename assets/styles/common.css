@@ -1098,6 +1098,14 @@ li.list-dropdown.border-bottom::after {
     margin: 20px;
     width: calc(100% - 40px);
 }
+.block-footer {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.block-footer > .btn:first-child {
+    margin-left: auto;
+}
 .block-footer::after,
 .wrapper-footer::after {
     content: '';
@@ -1739,5 +1747,14 @@ iframe.youtube {
     }
     iframe.youtube {
         height: auto;
+    }
+    .block-footer {
+        flex-direction: column;
+    }
+    .block-footer > .btn:first-child {
+        margin-left: unset;
+    }
+    .block-footer > .btn {
+        text-align: center;
     }
 }

@@ -10,6 +10,7 @@ use App\Entity\OrderHeader;
 use App\Entity\Survey;
 use App\Entity\User;
 use DateTime;
+use DateTimeImmutable;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -32,12 +33,26 @@ class ModalWindowService
             : $id . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
     }
 
-    public function addToModalWindowShowOn(OrderHeader|Licence $entity): void
+    public function addToModalWindowShowed(OrderHeader|Licence $entity): void
     {
         $session = $this->requestStack->getSession();
-        $modalWindowShowOn = $session->get('modal_window_show_on');
+        $modalWindowShowOn = $session->get('modal_window_showed');
         $modalWindowShowOn = (null !== $modalWindowShowOn) ? json_decode($modalWindowShowOn) : [];
         $modalWindowShowOn[] = $this->getIndex($entity);
-        $session->set('modal_window_show_on', json_encode($modalWindowShowOn));
+        $session->set('modal_window_showed', json_encode($modalWindowShowOn));
+    }
+
+
+    public function addToModalWindow(string $title, string $content): void
+    {
+        $session = $this->requestStack->getSession();
+        $modalWindowsToShowJson = $session->get('modal_windows_to_show');
+        $modalWindows = ($modalWindowsToShowJson) ? json_decode($modalWindowsToShowJson, true) : [];
+        $modalWindows[] = [
+            'index' => (string) (new DateTimeImmutable())->getTimestamp(),
+            'title' => $title,
+            'content' => $content,
+        ];
+        $session->set('modal_windows_to_show', json_encode($modalWindows));
     }
 }

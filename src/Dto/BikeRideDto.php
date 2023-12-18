@@ -29,6 +29,8 @@ class BikeRideDto
 
     public ?bool $isRegistrable;
 
+    public false|array $unregistrable = false;
+
     public ?int $minAge;
 
     public ?string $displayClass;

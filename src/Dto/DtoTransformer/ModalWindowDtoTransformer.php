@@ -82,8 +82,10 @@ class ModalWindowDtoTransformer
         $modalWindowDto->index = $this->modalWindowService->getIndex($data['index']);
         $modalWindowDto->title = $data['title'];
         $modalWindowDto->content = $data['content'];
-        $modalWindowDto->url = $this->router->generate($data['route'], $data['routeParams']);
-        $modalWindowDto->labelButton = $data['labelBtn'];
+        if (array_key_exists('route', $data)) {
+            $modalWindowDto->url = $this->router->generate($data['route'], $data['routeParams']);
+            $modalWindowDto->labelButton = $data['labelBtn'];
+        }
 
         return $modalWindowDto;
     }

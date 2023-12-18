@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="wrapper-body">
-            <a href="{{ path('admin_bike_ride_type_edit') }}" class="btn btn-primary" title="Ajouter un type de sortie"><i class="fas fa-plus"></i> Ajouter un type de sortie</a>
+            <a href="{{ path('admin_bike_ride_type_add') }}" class="btn btn-primary" title="Ajouter un type de sortie"><i class="fas fa-plus"></i> Ajouter un type de sortie</a>
             {% include 'common/pagination.html.twig' with {'margin': 'both'} %} 
             <ul class="list-group">
                 {% for bikeRideType in bikeRideTypes %}     

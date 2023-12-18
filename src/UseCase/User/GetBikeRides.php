@@ -7,6 +7,7 @@ namespace App\UseCase\User;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Entity\Session;
 use App\Entity\User;
+use App\Repository\SessionRepository;
 use App\Service\SessionService;
 use DateTime;
 
@@ -15,6 +16,7 @@ class GetBikeRides
     public function __construct(
         private SessionDtoTransformer $sessionDtoTransformer,
         private SessionService $sessionService,
+        private SessionRepository $sessionRepository,
     ) {
     }
 
@@ -25,16 +27,14 @@ class GetBikeRides
         $today = new DateTime();
 
         /** @var Session $session */
-        foreach ($user->getSessions() as $session) {
+        foreach ($this->sessionRepository->findAvailableByUser($user) as $session) {
             $sessionDto = $this->sessionDtoTransformer->fromEntity($session);
-            if ($today <= $sessionDto->bikeRide->startAt->setTime(14, 0, 0)) {
-                $bikeRides[] = [
-                    'bikeRide' => $sessionDto->bikeRide,
-                    'availability' => $sessionDto->availability,
-                    'sessionId' => $sessionDto->id,
-                    'memberList' => $this->sessionService->getBikeRideMembers($session->getCluster()->getBikeRide())
-                ];
-            }
+            $bikeRides[] = [
+                'bikeRide' => $sessionDto->bikeRide,
+                'availability' => $sessionDto->availability,
+                'sessionId' => $sessionDto->id,
+                'memberList' => $this->sessionService->getBikeRideMembers($session->getCluster()->getBikeRide())
+            ];
         }
 
         usort($bikeRides, function ($a, $b) {

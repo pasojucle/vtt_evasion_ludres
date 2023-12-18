@@ -41,12 +41,12 @@ class BikeRideTypeController extends AbstractController
         ]);
     }
 
-    #[Route('/type-rando/{bikeRideType}', name: 'bike_ride_type_edit', methods: ['GET', 'POST'], defaults:['bikeRideType' => null])]
+    #[Route('/type-rando', name: 'bike_ride_type_add', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminEdit(
+    public function adminAdd(
         Request $request,
-        ?BikeRideType $bikeRideType
     ): Response {
+        $bikeRideType = new BikeRideType();
         $form = $this->createForm(BikeRideTypeType::class, $bikeRideType);
         $form->handleRequest($request);
         
@@ -57,6 +57,32 @@ class BikeRideTypeController extends AbstractController
             }
 
             $this->entityManager->persist($bikeRideType);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_bike_ride_types');
+        }
+
+        return $this->render('bike_ride_type/admin/edit.html.twig', [
+            'bike_ride_type' => $bikeRideType,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/type-rando/{bikeRideType}', name: 'bike_ride_type_edit', methods: ['GET', 'POST'], requirements: ['bikeRideType' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminEdit(
+        Request $request,
+        BikeRideType $bikeRideType
+    ): Response {
+        $form = $this->createForm(BikeRideTypeType::class, $bikeRideType);
+        $form->handleRequest($request);
+        
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $bikeRideType = $form->getData();
+            if (BikeRideType::REGISTRATION_CLUSTERS !== $bikeRideType->getRegistration()) {
+                $bikeRideType->setClusters([]);
+            }
+
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_bike_ride_types');

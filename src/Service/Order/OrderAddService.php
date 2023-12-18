@@ -42,7 +42,7 @@ class OrderAddService
         if ($form->isValid()) {
             $this->entityManager->persist($orderLine);
             $this->entityManager->flush();
-            $this->modalWindowService->addToModalWindowShowOn($orderHeader);
+            $this->modalWindowService->addToModalWindowShowed($orderHeader);
         }
     }
 

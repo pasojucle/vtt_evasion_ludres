@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Form\SessionAvailabilityType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
+use App\Service\ModalWindowService;
 use App\Service\SessionService;
 use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
@@ -35,7 +36,7 @@ class SessionController extends AbstractController
     public function sessionAdd(
         Request $request,
         GetFormSession $getFormSession,
-        AddSession $AddSession,
+        AddSession $addSession,
         UnregistrableSessionMessage $unregistrableSessionMessage,
         BikeRide $bikeRide
     ): Response {
@@ -55,9 +56,7 @@ class SessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $AddSession->execute($form, $user, $bikeRide);
-
-            $this->addFlash('success', 'Votre inscription a bien été prise en compte');
+            $addSession->execute($form, $user, $bikeRide);
 
             $this->sessionService->checkEndTesting($user);
 
