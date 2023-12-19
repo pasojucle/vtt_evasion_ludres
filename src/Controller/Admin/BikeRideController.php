@@ -9,7 +9,6 @@ use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
-use App\Repository\BikeRideTypeRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetEmailMembers;
@@ -56,7 +55,7 @@ class BikeRideController extends AbstractController
         return $this->render('bike_ride/admin/list.html.twig', $response['parameters']);
     }
 
-    #[Route('/sortie', name: 'admin_bike_ride_add', methods: ['GET', 'POST'], defaults:['bikeRide' => null])]
+    #[Route('/sortie', name: 'admin_bike_ride_add', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_ADD')]
     public function adminAdd(
         Request $request,

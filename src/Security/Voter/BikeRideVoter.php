@@ -59,7 +59,7 @@ class BikeRideVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;

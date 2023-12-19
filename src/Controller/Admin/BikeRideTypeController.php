@@ -62,9 +62,17 @@ class BikeRideTypeController extends AbstractController
             return $this->redirectToRoute('admin_bike_ride_types');
         }
 
+        $showErrors = false;
+        foreach ($form->getErrors() as $error) {
+            if ('6e5212ed-a197-4339-99aa-5654798a4855' !== $error->getCause()->getCode()) {
+                $showErrors = true;
+            }
+        }
+
         return $this->render('bike_ride_type/admin/edit.html.twig', [
             'bike_ride_type' => $bikeRideType,
             'form' => $form->createView(),
+            'show_errors' => $showErrors,
         ]);
     }
 

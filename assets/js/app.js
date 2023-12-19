@@ -182,11 +182,12 @@ function formModifier(event) {
     const target = event.target.dataset.modifier;
     const addToFetch = event.target.dataset.addToFetch;
     const data = new FormData(form, event.submitter);
-    for(let entry of data) {
-        if (entry[0].endsWith('[_token]')) {
-            data.set(entry[0], '');
-        }
-    }
+    // for(let entry of data) {
+    //     if (entry[0].endsWith('[_token]')) {
+    //         data.set(entry[0], '');
+    //     }
+    // }
+    data.append(`${form.name}['handler']`, event.target.name)
     if (event.target.type === 'button') {
         data.append(event.target.name, 1)
     }

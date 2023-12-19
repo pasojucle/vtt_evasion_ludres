@@ -35,6 +35,8 @@
                             data-prototype="{{ form_row(form.clusters.vars.prototype)|e('html_attr') }}">
                                 {{ form_widget(form.clusters) }}
                             </div>
+
+                            {{ form_errors(form.clusters) }}
                         </div>
                         <div class="col-md-4">
                             <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.clusters.vars.id }}">
@@ -48,7 +50,6 @@
                 {{ form_row(form.useLevels) }}
                 {{ form_row(form.showMemberList) }}
                 {{ form_row(form.displayBikeKind) }}
-                {{ form_errors(form) }}
             </div>
             <div class="wrapper-footer">
                 {{ form_widget(form.save) }}

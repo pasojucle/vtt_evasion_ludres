@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
-use App\Validator\NotEmpty;
 use App\Validator\NotEmptyArray;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
@@ -20,8 +19,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 class BikeRideTypeType extends AbstractType
 {
@@ -33,6 +30,7 @@ class BikeRideTypeType extends AbstractType
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
+                'empty_data' => 'Nouveau type de sortie',
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
