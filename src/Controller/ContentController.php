@@ -19,7 +19,9 @@ use App\Repository\LinkRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
 use App\Service\ParameterService;
+use App\Service\ProjectDirService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -186,5 +188,17 @@ class ContentController extends AbstractController
     public function PermanentRedirect(): Response
     {
         return $this->redirectToRoute('home', [], 308);
+    }
+
+    #[Route('/{filename}', name: 'apple_touch_icon', methods: ['GET'], requirements:['filename' => 'apple-touch-icon-(?:[a-z0-9]+).png'])]
+    public function appleTouchIcon(ProjectDirService $projectDir, string $filename): Response
+    {
+        $path = $projectDir->path('logos', $filename);
+        if (!file_exists($path)) {
+            $path = $projectDir->path('logos', 'apple-touch-icon-72x72.png');
+            ;
+        }
+
+        return new BinaryFileResponse($path);
     }
 }
