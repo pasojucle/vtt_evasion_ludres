@@ -41,10 +41,10 @@
                         {% include progress.current.template %}
                     {% endif %}
                 </div>
+                {% if progress.current.hasRequiredFields %}
+                    <p>* champs obligatoires </p>
+                {% endif %}
                 <div class="block-footer">
-                    {% if progress.current.hasRequiredFields %}
-                        <p>* champs obligatoires </p><br>
-                    {% endif %}
                     {% if progress.prevStep is not null and progress.current.form != constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
                         <a class="btn btn-primary float-left" href="{{ path(route, {'step': progress.prevStep }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
                     {% endif %}
