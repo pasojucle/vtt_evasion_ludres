@@ -9,6 +9,7 @@ use App\Form\Admin\BikeRideType;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
+use App\Validator\RangeAge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -67,7 +68,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     {
         $disabled = BikeRideKind::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
-        $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MIN_AGE !== $restriction;
+        $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction;
         $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;
 
         $addFramersClass = 'btn btn-xs btn-primary form-modifier';
@@ -119,11 +120,21 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             ->add('minAge', IntegerType::class, [
                 'label' => false,
                 'attr' => [
-                    'min' => 10,
+                    'min' => 5,
                     'max' => 90,
                 ],
                 'required' => !$disabledMinAge,
                 'disabled' => $disabledMinAge,
+            ])
+            ->add('maxAge', IntegerType::class, [
+                'label' => false,
+                'attr' => [
+                    'min' => 5,
+                    'max' => 90,
+                ],
+                'required' => !$disabledMinAge,
+                'disabled' => $disabledMinAge,
+                'constraints' => [new RangeAge()]
             ])
             ;
     }
@@ -134,7 +145,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $data['users'] = [];
             $bikeRide->clearUsers();
         }
-        if (BikeRideType::RESTRICTION_TO_MIN_AGE !== $restriction) {
+        if (BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction) {
             $data['minAge'] = '';
         }
         if (array_key_exists('users', $data)) {

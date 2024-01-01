@@ -28,10 +28,10 @@ class IsRegistrable
         if (!$users->isEmpty() && !$users->contains($user)) {
             return false;
         }
-    
-        if ($bikeRide->getMinAge()) {
-            $interval = new DateInterval('P' . $bikeRide->getMinAge() . 'Y');
-            if ($user->getMemberIdentity() && (new DateTime())->sub($interval) < $user->getMemberIdentity()->getBirthDate()) {
+
+        if ($bikeRide->getMinAge() && $bikeRide->getMaxAge()) {
+            $memberAge = (int) $bikeRide->getStartAt()->diff($user->getMemberIdentity()->getBirthDate())->format('%Y');
+            if (!$user->getMemberIdentity() || $memberAge < $bikeRide->getMinAge() || $bikeRide->getMaxAge() < $memberAge) {
                 return false;
             }
         }

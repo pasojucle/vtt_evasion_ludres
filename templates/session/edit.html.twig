@@ -20,8 +20,8 @@
                 </div>
                 <div class="block-body">
                     <h3>{{ bikeRide.title }}</h3>
-                    {% if bikeRide.minAge is not null %}
-                        <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
+                    {% if bikeRide.rangeAge is not null %}
+                        <p class='info'>{{ bikeRide.rangeAge }}</p>
                     {% endif %}
                     <p>{{ bikeRide.content |raw }}</p>
                     <div class="form-group">

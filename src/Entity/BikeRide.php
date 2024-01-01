@@ -8,6 +8,7 @@ use App\Repository\BikeRideRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -69,6 +70,10 @@ class BikeRide
     #[Column(type: 'integer', nullable: true)]
     private $minAge;
 
+
+    #[Column(type: Types::INTEGER, nullable: true)]
+    private ?int $maxAge = null;
+
     #[OneToMany(targetEntity: Cluster::class, mappedBy: 'bikeRide')]
     private Collection $clusters;
 
@@ -116,7 +121,7 @@ class BikeRide
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
@@ -128,7 +133,7 @@ class BikeRide
         return $this->content;
     }
 
-    public function setContent(?string $content): self
+    public function setContent(?string $content): static
     {
         $this->content = $content;
 
@@ -140,7 +145,7 @@ class BikeRide
         return $this->startAt;
     }
 
-    public function setStartAt(?DateTimeImmutable $startAt): self
+    public function setStartAt(?DateTimeImmutable $startAt): static
     {
         $this->startAt = $startAt;
 
@@ -152,7 +157,7 @@ class BikeRide
         return $this->endAt;
     }
 
-    public function setEndAt(?DateTimeImmutable $endAt): self
+    public function setEndAt(?DateTimeImmutable $endAt): static
     {
         $this->endAt = $endAt;
 
@@ -164,7 +169,7 @@ class BikeRide
         return $this->displayDuration;
     }
 
-    public function setDisplayDuration(?int $displayDuration): self
+    public function setDisplayDuration(?int $displayDuration): static
     {
         $this->displayDuration = $displayDuration;
 
@@ -176,9 +181,21 @@ class BikeRide
         return $this->minAge;
     }
 
-    public function setMinAge(?int $minAge): self
+    public function setMinAge(?int $minAge): static
     {
         $this->minAge = $minAge;
+
+        return $this;
+    }
+
+    public function getMaxAge(): ?int
+    {
+        return $this->maxAge;
+    }
+
+    public function setMaxAge(?int $maxAge): static
+    {
+        $this->maxAge = $maxAge;
 
         return $this;
     }
@@ -191,7 +208,7 @@ class BikeRide
         return $this->clusters;
     }
 
-    public function addCluster(Cluster $cluster): self
+    public function addCluster(Cluster $cluster): static
     {
         if (!$this->clusters->contains($cluster)) {
             $this->clusters[] = $cluster;
@@ -201,7 +218,7 @@ class BikeRide
         return $this;
     }
 
-    public function removeCluster(Cluster $cluster): self
+    public function removeCluster(Cluster $cluster): static
     {
         if ($this->clusters->removeElement($cluster)) {
             // set the owning side to null (unless already changed)
@@ -218,7 +235,7 @@ class BikeRide
         return $this->closingDuration;
     }
 
-    public function setClosingDuration(int $closingDuration): self
+    public function setClosingDuration(int $closingDuration): static
     {
         $this->closingDuration = $closingDuration;
 
@@ -230,7 +247,7 @@ class BikeRide
         return $this->bikeRideType;
     }
 
-    public function setBikeRideType(?BikeRideType $bikeRideType): self
+    public function setBikeRideType(?BikeRideType $bikeRideType): static
     {
         $this->bikeRideType = $bikeRideType;
 
@@ -242,7 +259,7 @@ class BikeRide
         return $this->filename;
     }
 
-    public function setFilename(?string $filename): self
+    public function setFilename(?string $filename): static
     {
         $this->filename = $filename;
 
@@ -254,7 +271,7 @@ class BikeRide
         return $this->survey;
     }
 
-    public function setSurvey(?Survey $survey): self
+    public function setSurvey(?Survey $survey): static
     {
         // unset the owning side of the relation if necessary
         if (null === $survey && null !== $this->survey) {
@@ -276,7 +293,7 @@ class BikeRide
         return $this->deleted;
     }
 
-    public function setDeleted(bool $deleted): self
+    public function setDeleted(bool $deleted): static
     {
         $this->deleted = $deleted;
 
@@ -291,7 +308,7 @@ class BikeRide
         return $this->users;
     }
 
-    public function addUser(User $user): self
+    public function addUser(User $user): static
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
@@ -300,21 +317,21 @@ class BikeRide
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeUser(User $user): static
     {
         $this->users->removeElement($user);
 
         return $this;
     }
 
-    public function clearUsers(): self
+    public function clearUsers(): static
     {
         $this->users->clear();
 
         return $this;
     }
 
-    public function setRestriction(?int $restriction): self
+    public function setRestriction(?int $restriction): static
     {
         $this->restriction = $restriction;
 
@@ -331,7 +348,7 @@ class BikeRide
         return $this->levelFilter;
     }
 
-    public function setLevelFilter(array $levelFilter): self
+    public function setLevelFilter(array $levelFilter): static
     {
         $this->levelFilter = $levelFilter;
 

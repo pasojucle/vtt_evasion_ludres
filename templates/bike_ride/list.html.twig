@@ -40,8 +40,8 @@
                         </div>
                         <div class="bike-ride-detail {{ bikeRide.displayClass }}">
                             <h3>{{ bikeRide.title }}</h3>
-                            {% if bikeRide.minAge is not null %}
-                                <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
+                            {% if bikeRide.rangeAge is not null %}
+                                <p class='info'>{{ bikeRide.rangeAge }}</p>
                             {% endif %}
                             {% if bikeRide.filename is not null %}
                                 <div class="row">

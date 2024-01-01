@@ -60,7 +60,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->endAt = $bikeRide->getEndAt();
             $bikeRideDto->closingDuration = $bikeRide->getClosingDuration();
             $bikeRideDto->displayDuration = $bikeRide->getDisplayDuration();
-            $bikeRideDto->minAge = $bikeRide->getMinAge();
+            $bikeRideDto->rangeAge = $this->getRangeAge($bikeRide);
 
             $this->displayAt = $bikeRideDto->startAt->setTime(0, 0, 0);
             $this->closingAt = $bikeRideDto->startAt->setTime(23, 59, 59);
@@ -190,5 +190,13 @@ class BikeRideDtoTransformer
         }
 
         return false;
+    }
+
+    private function getRangeAge(BikeRide $bikeRide): ?string
+    {
+        if ($bikeRide->getMinAge() && $bikeRide->getMaxAge()) {
+            return sprintf('De %d jusqu\'à %d ans', $bikeRide->getMinAge(), $bikeRide->getMaxAge());
+        }
+        return null;
     }
 }

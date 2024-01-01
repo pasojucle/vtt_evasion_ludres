@@ -119,7 +119,7 @@ class AddContentSubscriber implements EventSubscriberInterface
                     'choices' => [
                         'Accessible à tous les membres' => BikeRideType::NO_RESTRICTION,
                         'Limiter à des participants' => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
-                        'Imposer un âge minimum' => BikeRideType::RESTRICTION_TO_MIN_AGE,
+                        'Imposer une tranche d\'âge' => BikeRideType::RESTRICTION_TO_RANGE_AGE,
                     ],
                     'choice_attr' => function () {
                         return [
@@ -141,7 +141,7 @@ class AddContentSubscriber implements EventSubscriberInterface
     {
         $restriction = match (true) {
             !$bikeRide->getUsers()->isEmpty() || !empty($bikeRide->getLevelFilter()) => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
-            null !== $bikeRide->getMinAge() => BikeRideType::RESTRICTION_TO_MIN_AGE,
+            null !== $bikeRide->getMinAge() => BikeRideType::RESTRICTION_TO_RANGE_AGE,
             default => BikeRideType::NO_RESTRICTION,
         };
 

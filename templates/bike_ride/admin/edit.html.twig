@@ -44,8 +44,12 @@
                             <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
                         </div>
                     {% endif %}
-                    {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_MIN_AGE') %}
-                        <div class="form-group radio-group">{{ form_row(form.minAge) }}</div>
+                    {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_RANGE_AGE') %}
+                        <div class="form-group radio-group">
+                            <div class="input-group">De {{ form_widget(form.minAge) }} jusqu'à {{ form_widget(form.maxAge) }} ans</div>
+                            {{ form_errors(form.maxAge) }}
+                        
+                        </div>
                     {% endif %}
                 {% endfor %}
             </div>

@@ -27,7 +27,7 @@ class BikeRideType extends AbstractType
 {
     public const NO_RESTRICTION = null;
     public const RESTRICTION_TO_MEMBER_LIST = 1;
-    public const RESTRICTION_TO_MIN_AGE = 2;
+    public const RESTRICTION_TO_RANGE_AGE = 2;
 
     public function __construct(
         private LevelService $levelService,

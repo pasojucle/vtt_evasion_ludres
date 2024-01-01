@@ -151,7 +151,7 @@ body > script {display: none !important;}
     margin-bottom: 15px;
 }
 .alert-danger::before, 
-.success:not(.form-group, .form-group-inline)::before {
+.success:not(.form-group, traline)::before {
     content: '\f071';
     color: var(--danger-color);
     font-family: "Font Awesome 5 Free";
@@ -268,10 +268,10 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
-.alert-warning:not(.form-group-inline, .form-group), h2.alert-danger, .alert-warning-color {
+.alert-warning:not(traline, .form-group), h2.alert-danger, .alert-warning-color {
     color: var(--primary-color-darker);
 }
-.alert-warning:not(.form-group-inline, .form-group)::before {
+.alert-warning:not(traline, .form-group)::before {
     content: '\f06a';
     color: var(--primary-color-darker);
     font-family: "Font Awesome 5 Free";
@@ -303,18 +303,18 @@ body > script {display: none !important;}
     font-size: 20px;
 }
 .success-color,
-.success:not(.form-group-inline, .form-group) {
+.success:not(traline, .form-group) {
     color: var(--success-color);
 }
-.success:not(.form-group-inline, .form-group, .home)::before {
+.success:not(traline, .form-group, .home)::before {
     content: '\f058';
     color: var(--success-color);
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
 }
-.form-group-inline.success::after, .form-group.success::after,
-.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
+traline.success::after, .form-group.success::after,
+traline.alert-warning::after, .form-group.alert-warning::after {
     content: '';
     background-color: var(--success-color);
     display: block;
@@ -325,13 +325,13 @@ body > script {display: none !important;}
     left: 0;
 }
 
-.form-group-inline.success::after, .form-group.success::after{
+traline.success::after, .form-group.success::after{
     background-color: var(--success-color);
 }
-.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
+traline.alert-warning::after, .form-group.alert-warning::after {
     background-color: var(--primary-color-darker);
 }
-.form-group-inline.success, .form-group-inline.alert-warning, .form-group.success, .form-group.alert-warning {
+traline.success, traline.alert-warning, .form-group.success, .form-group.alert-warning {
     position: relative;
 }
 .success-test {
@@ -547,13 +547,17 @@ main:not(.admin) {
 .form-group > textarea,  
 .form-group-inline > textarea, 
 .form-group > select,
-.form-group > .input-group-money > input {
+.form-group > .input-group-money > input,
+.input-group > input {
     width: 100%;
     height: 30px;
     line-height: 30px;
     border: none;
     background: var(--light-color);
     padding: 5px;
+}
+.input-group > input {
+    width: unset;
 }
 .form-group > .input-group-money {
     display: flex;
@@ -570,6 +574,7 @@ main:not(.admin) {
 .form-group > select:disabled,
 .form-group > textarea:disabled,
 .form-group-inline > input:disabled,
+.input-group > input:disabled, 
 .select2-container--default.select2-container--disabled .select2-selection--multiple,
 .select2-container--default.select2-container--disabled .select2-selection--single {
     background: var(--gray-color);
@@ -1607,10 +1612,10 @@ iframe.youtube {
         display: block;
     }
 
-    .form-group-inline {
+    traline {
         width: 100%;
     }
-    .form-group-inline:not(:first-child) {
+    traline:not(:first-child) {
         margin-left: unset;
     }
     .inputGroup {
