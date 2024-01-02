@@ -151,7 +151,7 @@ body > script {display: none !important;}
     margin-bottom: 15px;
 }
 .alert-danger::before, 
-.success:not(.form-group, traline)::before {
+.success:not(.form-group, .form-group-inline)::before {
     content: '\f071';
     color: var(--danger-color);
     font-family: "Font Awesome 5 Free";
@@ -268,10 +268,10 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
-.alert-warning:not(traline, .form-group), h2.alert-danger, .alert-warning-color {
+.alert-warning:not(.form-group-inline, .form-group), h2.alert-danger, .alert-warning-color {
     color: var(--primary-color-darker);
 }
-.alert-warning:not(traline, .form-group)::before {
+.alert-warning:not(.form-group-inline, .form-group)::before {
     content: '\f06a';
     color: var(--primary-color-darker);
     font-family: "Font Awesome 5 Free";
@@ -303,10 +303,10 @@ body > script {display: none !important;}
     font-size: 20px;
 }
 .success-color,
-.success:not(traline, .form-group) {
+.success:not(.form-group-inline, .form-group) {
     color: var(--success-color);
 }
-.success:not(traline, .form-group, .home)::before {
+.success:not(.form-group-inline, .form-group, .home)::before {
     content: '\f058';
     color: var(--success-color);
     font-family: "Font Awesome 5 Free";
@@ -338,13 +338,13 @@ body > script {display: none !important;}
     left: 0;
 }
 
-traline.success::after, .form-group.success::after{
+.form-group-inline.success::after, .form-group.success::after{
     background-color: var(--success-color);
 }
-traline.alert-warning::after, .form-group.alert-warning::after {
+.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
     background-color: var(--primary-color-darker);
 }
-traline.success, traline.alert-warning, .form-group.success, .form-group.alert-warning {
+.form-group-inline.success, .form-group-inline.alert-warning, .form-group.success, .form-group.alert-warning {
     position: relative;
 }
 .success-test {
@@ -1621,10 +1621,10 @@ iframe.youtube {
         display: block;
     }
 
-    traline {
+    .form-group-inline {
         width: 100%;
     }
-    traline:not(:first-child) {
+    .form-group-inline:not(:first-child) {
         margin-left: unset;
     }
     .inputGroup {
