@@ -81,6 +81,21 @@ class BikeRideDtoTransformer
         return $bikeRideDto;
     }
 
+    public function getHeaderFromEntity(?BikeRide $bikeRide): BikeRideDto
+    {
+        $bikeRideDto = new BikeRideDto();
+        if ($bikeRide) {
+            $bikeRideDto->id = $bikeRide->getId();
+            $bikeRideDto->title = $bikeRide->getTitle();
+            $bikeRideDto->startAt = $bikeRide->getStartAt();
+            $bikeRideDto->endAt = $bikeRide->getEndAt();
+            $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
+            $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
+        }
+
+        return $bikeRideDto;
+    }
+
     public function fromEntities(Paginator|Collection|array $bikeRideEntities): array
     {
         $bikeRides = [];

@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
@@ -45,5 +46,22 @@ class LicenceRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException) {
             return null;
         }
+    }
+
+
+    public function findAllByLastSeason(): array
+    {
+        $season = $this->request->getSession()->get('currentSeason');
+
+        return $this->createQueryBuilder('li')
+            ->andWhere(
+                (new Expr())->gte('li.season', ':lastSeason')
+            )
+            ->setParameters([
+                'lastSeason' => $season - 1,
+            ])
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

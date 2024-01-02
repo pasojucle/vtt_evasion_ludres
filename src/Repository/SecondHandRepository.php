@@ -96,4 +96,19 @@ class SecondHandRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+
+
+    public function findAllNotDeleted(): array
+    {
+        return $this->createQueryBuilder('s')
+           ->andWhere(
+               (new Expr())->eq('s.deleted', ':deleted')
+           )
+           ->setParameter('deleted', false)
+           ->orderBy('s.createdAt', 'DESC')
+           ->getQuery()
+           ->getResult()
+       ;
+    }
 }

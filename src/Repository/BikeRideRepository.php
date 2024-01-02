@@ -9,6 +9,7 @@ use App\Entity\Survey;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -145,5 +146,25 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->isNotNull('s.bikeRide')
             )
             ->getDQL();
+    }
+
+    public function findNextSchoolBikeRides(): array
+    {
+        return $this->createQueryBuilder('br')
+            ->join('br.bikeRideType', 'brt')
+            ->andWhere(
+                (new Expr())->eq('brt.needFramers', ':needFramers'),
+                (new Expr())->gte('br.startAt', ':today'),
+            )
+            ->setParameters([
+                'needFramers' => true,
+                'today' => new DateTimeImmutable(),
+            ])
+            ->andHaving(
+                (new Expr())->eq('br.startAt', (new Expr())->min('br.startAt'))
+            )
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

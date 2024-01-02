@@ -187,9 +187,6 @@ class Zone {
         if (this.isDraggable) {
             this.positionY = mediaPosition.currentY - this.startY;
             this.positionX = mediaPosition.currentX - this.startX;
-            console.log('mediaPosition.currentX', mediaPosition.currentX);
-            console.log('this.startX', this.startX);
-            console.log('positionY', this.positionY);
             if (this.positionY < 0) {
                 this.positionY = 0;
             }

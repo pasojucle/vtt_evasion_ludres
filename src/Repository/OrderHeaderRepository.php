@@ -90,7 +90,7 @@ class OrderHeaderRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('oh');
 
-        if (!empty($filters) && !empty($filters['status'])) {
+        if (isset($filters['status'])) {
             $qb
                 ->andWhere(
                     (new Expr())->eq('oh.status', ':status'),

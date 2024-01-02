@@ -61,19 +61,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (array_key_exists('is_final_licence', $filters)) {
                 $isFinalLicence = $filters['is_final_licence'];
             }
-            if (null !== $filters['fullName']) {
+            if (isset($filters['fullName'])) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
             }
             if (!empty($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
-            if (array_key_exists('levels', $filters) && null !== $filters['levels']) {
+            if (isset($filters['levels'])) {
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
-            if (array_key_exists('status', $filters) && null !== $filters['status'] && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
+            if (isset($filters['status']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
-            if (array_key_exists('season', $filters) && null !== $filters['season'] && is_string($filters['season']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches)) {
+            if (isset($filters['season']) && is_string($filters['season']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
             if (array_key_exists('season', $filters) && $this->seasonService::MIN_SEASON_TO_TAKE_PART === $filters['season']) {
@@ -84,7 +84,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $this->addCriteriaTestinInProgress($qb, $currentSeason);
                 $isFinalLicence = false;
             }
-            if (array_key_exists('bikeRide', $filters) && null !== $filters['bikeRide']) {
+            if (isset($filters['bikeRide'])) {
                 $this->addCriteriaWithNoSession($qb, $filters['bikeRide']);
             }
         }
@@ -498,16 +498,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQuery();
 
         if (!empty($filters)) {
-            if (null !== $filters['fullName']) {
+            if (isset($filters['fullName'])) {
                 $this->addCriteriaByName($qb, $filters['fullName']);
             }
-            if (null !== $filters['user']) {
+            if (isset($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
-            if (null !== $filters['levels']) {
+            if (isset($filters['levels'])) {
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
-            if (null !== $filters['status']) {
+            if (isset($filters['status'])) {
                 match ($filters['status']) {
                     Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaTestinInProgress($qb, $currentSeason),
                     Licence::STATUS_TESTING_COMPLETE => $this->addCriteriaTestinComplete($qb, $currentSeason),
@@ -518,7 +518,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 };
             }
         }
-        if (null === $filters['status']) {
+        if (array_key_exists('status', $filters) && null === $filters['status']) {
             $this->addCriteriaRegistrationBySeason($qb, $currentSeason);
         }
 
@@ -618,5 +618,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('boardRole', $boardRole)
             ->getQuery()
             ->execute();
+    }
+
+    public function findAllByCurrentSeason(): array
+    {
+        $season = $this->seasonService->getCurrentSeason();
+
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.licences', 'li')
+            ->andWhere(
+                (new Expr())->eq('li.season', ':season')
+            )
+            ->setParameters([
+                'season' => $season,
+            ])
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

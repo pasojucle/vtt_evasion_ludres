@@ -19,6 +19,7 @@ class ClusterDtoTransformer
 {
     public function __construct(
         private SessionDtoTransformer $sessionDtoTransformer,
+        private LevelDtoTransformer $levelDtoTransformer,
         private ClusterService $clusterService,
         private UserDtoTransformer $userDtoTransformer,
     ) {
@@ -32,7 +33,7 @@ class ClusterDtoTransformer
         $clusterDto->id = $cluster->getId();
         $clusterDto->entity = $cluster;
         $clusterDto->title = $cluster->getTitle();
-        $clusterDto->level = $cluster->getLevel();
+        $clusterDto->level = $this->levelDtoTransformer->fromEntity($cluster->getLevel());
         $clusterDto->sessions = $this->getSessions($sessionEntities);
         $clusterDto->maxUsers = $cluster->getMaxUsers();
         $clusterDto->role = $cluster->getRole();

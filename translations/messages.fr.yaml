@@ -144,10 +144,10 @@ content:
 
 order:
   in_progress: En cours
-  ordered: Commandée
-  valided: Validée
-  completed: Cloturée
-  canceled: Annulée
+  ordered: Commandées
+  valided: Validées
+  completed: Cloturées
+  canceled: Annulées
 
 menu:
   group:

@@ -190,7 +190,7 @@ class ContentController extends AbstractController
         return $this->redirectToRoute('home', [], 308);
     }
 
-    #[Route('/{filename}', name: 'apple_touch_icon', methods: ['GET'], requirements:['filename' => 'apple-touch-icon-(?:[a-z0-9]+).png'])]
+    #[Route('/{filename}', name: 'apple_touch_icon', methods: ['GET'], requirements:['filename' => 'apple-touch-icon-(?:[a-z0-9-]+).png'])]
     public function appleTouchIcon(ProjectDirService $projectDir, string $filename): Response
     {
         $path = $projectDir->path('logos', $filename);

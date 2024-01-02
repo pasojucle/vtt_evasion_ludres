@@ -313,8 +313,21 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
-traline.success::after, .form-group.success::after,
-traline.alert-warning::after, .form-group.alert-warning::after {
+.toggle-on::before {
+    content: '\f205';
+    color: var(--success-color);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+.toggle-off::before {
+    content: '\f204';
+    color: var(--danger-color);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+.form-group-inline.success::after, .form-group.success::after,
+.form-group-inline.alert-warning::after, .form-group.alert-warning::after {
     content: '';
     background-color: var(--success-color);
     display: block;
@@ -599,7 +612,7 @@ button[type=submit].btn.btn-primary:disabled {
 .form-group > input.widget-inline {
     display: inline-block;
     width: 25%;
-}
+}.form-group-inline.
 
 .form-group > .widget-inline.widget-curent-treatment {
     width: calc(50% + 4px);
@@ -774,10 +787,6 @@ input[type="file"] {
     line-height: 24px;
     padding: 3px;
     border-radius: 15px;
-}
-.badge.small {
-    font-size: 10px;
-    font-weight: 300;
 }
 .badge-members:not(:empty) {
     margin-top: 15px;

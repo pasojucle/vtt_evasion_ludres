@@ -47,10 +47,6 @@ class OrderController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $request->query->set('p', 1);
-
-            return $this->redirectToRoute('admin_orders', [
-                'filtered' => true,
-            ]);
         }
         $request->getSession()->set('admin_orders_filters', $filters);
         $request->getSession()->set('order_return', $this->generateUrl('admin_orders', [
@@ -105,7 +101,6 @@ class OrderController extends AbstractController
             'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
         ]);
     }
-
 
     #[Route('/admin/export/commande', name: 'admin_order_headers_export', methods: ['GET'])]
     #[IsGranted('PRODUCT_LIST')]

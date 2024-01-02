@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Tableau de bord</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="flex mb-20">                
+                <div class="dashboard-item" data-route="admin_dashboard_saison_detail"></div>
+                <div class="dashboard-item" data-route="admin_dashboard_next_school_bike_rides"></div>
+                <div class="dashboard-item">
+                    <div class="dashboard-item-title">
+                        <h2>Participation école VTT</h2>
+                    </div>
+                    <div class="dashboard-item-body">
+                        <div class="content-center">
+                            <canvas class="line-chart" data-route="members_presence_monthly"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex"> 
+                <div class="dashboard-item" data-route="admin_dashboard_orders"></div>
+                <div class="dashboard-item" data-route="admin_dashboard_second_hands"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

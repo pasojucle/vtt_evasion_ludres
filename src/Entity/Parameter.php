@@ -91,10 +91,6 @@ class Parameter
 
     public function getValue(): string|bool|array|int|null
     {
-        // if (null === $this->value) {
-        //     return $this->value;
-        // }
-
         return match ($this->type) {
             self::TYPE_BOOL => (bool) $this->value,
             self::TYPE_INTEGER => (int) $this->value,

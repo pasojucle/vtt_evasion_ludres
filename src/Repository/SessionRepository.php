@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\BikeRideType;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\User;
@@ -165,6 +166,41 @@ class SessionRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException) {
             return null;
         }
+    }
+
+    public function findMemberpresence(array $filters): array
+    {
+        $parameters = ['needFramers' => true, 'isPresent' => true];
+        $andX = (new Expr())->andX();
+        $andX->add((new Expr())->eq('s.isPresent', ':isPresent'));
+        $andX->add((new Expr())->eq('brt.needFramers', ':needFramers'));
+
+
+        if (array_key_exists('period', $filters) && !empty($filters['period'])) {
+            if (is_array($filters['period'])) {
+                $parameters['startAt'] = $filters['period']['startAt'];
+                $parameters['endAt'] = $filters['period']['endAt'];
+            }
+            if (is_string($filters['period'])) {
+                list($startAt, $endAt) = explode('-', $filters['period']);
+                $parameters['startAt'] = DateTimeImmutable::createFromFormat('d/m/Y', trim($startAt));
+                $parameters['endAt'] = DateTimeImmutable::createFromFormat('d/m/Y', trim($endAt));
+            }
+            $andX->add((new Expr())->between('br.startAt', ':startAt', ':endAt'));
+        }
+
+        return $this->createQueryBuilder('s')
+            ->select((new Expr())->count('s.isPresent'), 'br.startAt')
+            ->join('s.cluster', 'c')
+            ->join('c.bikeRide', 'br')
+            ->join('br.bikeRideType', 'brt')
+            ->andWhere($andX)
+            ->setParameters($parameters)
+            ->groupBy('c.bikeRide')
+            ->orderBy('br.startAt')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     public function findAvailableByUser(User $user): array

@@ -1,0 +1,40 @@
+{# <div class="dashboard-item{% if 0 < total %} dashboard-flash{% endif %}">
+    <a href="{{ link }}">
+        <div class="dashboard-item-body">
+            <div class="flex">
+                <div>{{ title }}</div>
+                {% if 0 < total %} 
+                    <div class="auto-margin"><span class="badge small">{{ total }}</span></div>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+</div> #}
+
+<div class="dashboard-item">
+    <a href="{{ link }}">
+        <div class="dashboard-item-title">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="dashboard-item-body">
+            <ul>
+                {% for type, items in data %}
+                    <li class="flex">
+                        <div>{{ type|trans }}</div>
+                        <div class="auto-margin"><span class="badge small">{{ items|length }}</span></div>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if parameters is defined %}
+                <ul class="mt-10">
+                    {% for parameter in parameters %}
+                        <li class="flex">
+                            <div>{{ parameter.label }}</div>
+                            <div class="auto-margin"><span class="{% if parameter.value %}toggle-on{% else %}toggle-off{% endif %}"></span></div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </a>
+</div>

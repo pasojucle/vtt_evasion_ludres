@@ -10,11 +10,11 @@ class LevelDto
 {
     public ?Level $entity;
 
-    public ?string $title;
+    public ?string $title = null;
 
-    public ?int $type;
+    public ?int $type = null;
 
-    public ?array $colors;
+    public ?array $colors = ['background' => '#aaaaaa', 'color' => '#ffffff'];
 
-    public ?bool $accompanyingCertificat;
+    public ?bool $accompanyingCertificat = null;
 }

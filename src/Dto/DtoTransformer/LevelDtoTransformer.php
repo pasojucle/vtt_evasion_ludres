@@ -12,11 +12,13 @@ class LevelDtoTransformer
     public function fromEntity(?Level $level): LevelDto
     {
         $levelDto = new LevelDto();
-        $levelDto->title = $level->getTitle();
-        $levelDto->type = $level->getType();
-        $levelDto->entity = $level;
-        $levelDto->colors = $this->getColors($level->getColor());
-        $levelDto->accompanyingCertificat = $level->isAccompanyingCertificat();
+        if ($level) {
+            $levelDto->title = $level->getTitle();
+            $levelDto->type = $level->getType();
+            $levelDto->entity = $level;
+            $levelDto->colors = $this->getColors($level->getColor());
+            $levelDto->accompanyingCertificat = $level->isAccompanyingCertificat();
+        }
 
         return $levelDto;
     }

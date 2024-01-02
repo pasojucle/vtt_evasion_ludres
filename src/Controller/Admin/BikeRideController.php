@@ -204,7 +204,6 @@ class BikeRideController extends AbstractController
         ]);
     }
 
-    
     #[Route('/emails/adherents/{bikeRide}', name: 'admin_bike_ride_members_email_to_clipboard', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_VIEW', 'bikeRide')]
     public function adminEmailMembers(
