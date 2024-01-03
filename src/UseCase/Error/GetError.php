@@ -32,10 +32,13 @@ class GetError
         $logError->setUrl($request->getRequestUri())
             ->setErrorMessage($exception->getMessage() . ' / ' . get_class($exception))
             ->setMessage('Une erreur est survenue !<br>Veuillez réessayer plus tard')
-            ->setUserAgent($request->headers->get('user-agent'))
             ->setCreatedAt(new DateTime())
             ->setStatusCode(500)
             ;
+            $userAgent = $request->headers->get('user-agent');
+            if ($userAgent) {
+                $logError->setUserAgent($userAgent);
+            }
 
         if ($exception instanceof ErrorException || $exception instanceof RuntimeError) {
             $logError->setFileName($exception->getFile())

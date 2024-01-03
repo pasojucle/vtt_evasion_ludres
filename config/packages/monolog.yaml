@@ -66,6 +66,6 @@ when@prod:
                 from_email:   'contact@vttevasionludres.fr'
                 to_email:     'patrick@blng.fr'
                 subject:      'An Error Occurred! %%message%%'
-                level:        error
+                level:        critical
                 formatter:    monolog.formatter.html
                 content_type: text/html
