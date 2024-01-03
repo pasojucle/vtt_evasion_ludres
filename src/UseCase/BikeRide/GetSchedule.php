@@ -18,6 +18,7 @@ use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\RequestStack;
+use ValueError;
 
 class GetSchedule
 {
@@ -107,7 +108,12 @@ class GetSchedule
     private function getFiltersByData(array $data)
     {
         $period = $data['period'];
-        $date = new DateTimeImmutable($data['date']);
+        try {
+            $date = DateTimeImmutable::createFromFormat('y-m-d', $data['date']);
+        } catch (ValueError) {
+            $date = new DateTimeImmutable();
+        }
+        
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
 
         return $this->getFilters->execute($period, $date, $direction);
