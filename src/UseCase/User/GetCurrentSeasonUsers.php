@@ -10,6 +10,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class GetCurrentSeasonUsers
 {
+    private const MEMBER = 'Adhérents';
+    private const TESTING = 'Inscriptions aux 3 séances d\'essai';
+    private const REGISTRATION = 'Nouvelles inscriptions';
+    private const RE_REGISTRATION = 'Renouvellements';
+
+
     public function __construct(
         private LicenceRepository $licenceRepository,
         private RequestStack $request,
@@ -20,7 +26,7 @@ class GetCurrentSeasonUsers
     {
         $season = $this->request->getSession()->get('currentSeason');
 
-        $licencesBySeason = [];
+        $licencesBySeason = [self::MEMBER => [], self::TESTING => [], self::REGISTRATION => [], self::RE_REGISTRATION => []];
         /** @var Licence $licence */
         foreach ($this->licenceRepository->findAllByLastSeason() as $licence) {
             $licencesBySeason[$licence->getSeason()][$licence->getUser()->getId()] = $licence;
@@ -30,7 +36,7 @@ class GetCurrentSeasonUsers
         foreach ($licencesBySeason[$season] as $licence) {
             $type = ($licence->isFinal())
                 ? $this->getFinalType($licence, $licencesBySeason[$season - 1])
-                : 'Inscriptions aux 3 séances d\'essai';
+                : self::TESTING;
             if ($type) {
                 $usersByType[$type][] = $licence;
             }
@@ -43,13 +49,13 @@ class GetCurrentSeasonUsers
     private function getFinalType(Licence $licence, array $lastSeasonLicences): ?string
     {
         if (Licence::STATUS_VALID === $licence->getStatus()) {
-            return 'Adhérents';
+            return self::MEMBER;
         }
         if (Licence::STATUS_WAITING_VALIDATE <= $licence->getStatus()) {
             if (array_key_exists($licence->getUser()->getId(), $lastSeasonLicences)) {
-                return 'Renouvellements';
+                return self::RE_REGISTRATION;
             }
-            return 'Nouvelles inscriptions';
+            return self::REGISTRATION;
         }
         return null;
     }
