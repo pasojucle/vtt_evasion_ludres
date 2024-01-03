@@ -26,12 +26,12 @@ class GetCurrentSeasonUsers
     {
         $season = $this->request->getSession()->get('currentSeason');
 
-        $licencesBySeason = [self::MEMBER => [], self::TESTING => [], self::REGISTRATION => [], self::RE_REGISTRATION => []];
+        $licencesBySeason = [];
         /** @var Licence $licence */
         foreach ($this->licenceRepository->findAllByLastSeason() as $licence) {
             $licencesBySeason[$licence->getSeason()][$licence->getUser()->getId()] = $licence;
         }
-        $usersByType = [];
+        $usersByType = [self::MEMBER => [], self::TESTING => [], self::REGISTRATION => [], self::RE_REGISTRATION => []];
         /** @var Licence $licence */
         foreach ($licencesBySeason[$season] as $licence) {
             $type = ($licence->isFinal())
