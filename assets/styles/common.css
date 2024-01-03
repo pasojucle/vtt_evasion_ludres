@@ -612,7 +612,7 @@ button[type=submit].btn.btn-primary:disabled {
 .form-group > input.widget-inline {
     display: inline-block;
     width: 25%;
-}.form-group-inline.
+}
 
 .form-group > .widget-inline.widget-curent-treatment {
     width: calc(50% + 4px);
@@ -1546,6 +1546,7 @@ iframe.youtube {
         width: 100%;
         height: 50px;
         z-index: 99;
+        top: 0;
     }
     .nav-bar > * {
         vertical-align: middle;
