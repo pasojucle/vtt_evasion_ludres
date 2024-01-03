@@ -29,7 +29,7 @@ class MembersPresenceController extends AbstractController
     #[Route('/mensuelle', name: '_monthly', methods: ['GET'], options: ['expose' => true])]
     public function monthly(): JsonResponse
     {
-        $today = new DateTimeImmutable('2023-06-01');
+        $today = new DateTimeImmutable();
         $filters = ['period' => ['startAt' => $today->sub(new DateInterval('P6M')), 'endAt' => $today]];
         
         return new JsonResponse(['format' => 'card', 'membersPrecences' => [$this->sessionRepository->findMemberpresence($filters)]]);
