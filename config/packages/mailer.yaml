@@ -5,4 +5,3 @@ framework:
             sender: 'contact@vttevasionludres.fr'
         headers:
             from: 'VTT Evasion Ludres <contact@vttevasionludres.fr>'
-            bcc: 'pasojucle@gmail.com'

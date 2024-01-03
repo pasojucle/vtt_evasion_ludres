@@ -34,6 +34,10 @@ class MailerService
             ])
         ;
 
+        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
+            $email->addBcc(new Address('pasojucle@gmail.com'));
+        }
+
         try {
             $this->mailer->send($email);
 
@@ -77,6 +81,10 @@ class MailerService
             foreach ($attachements as $attachement) {
                 $email->addPart(new DataPart(new File($attachement)));
             }
+        }
+
+        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
+            $email->addBcc(new Address('pasojucle@gmail.com'));
         }
 
         try {
