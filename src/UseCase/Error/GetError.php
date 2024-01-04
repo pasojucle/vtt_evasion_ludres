@@ -73,7 +73,7 @@ class GetError
     {
         $robots = $this->parameterService->getParameterByName('ERROR_USER_AGENT_IGNORE');
         $pattern = '#%s#i';
-        if (1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
+        if ($logError->getUserAgent() && 1 === preg_match(sprintf($pattern, implode('|', $robots)), $logError->getUserAgent())) {
             $logError->setPersist(false);
         }
 
