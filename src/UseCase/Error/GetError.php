@@ -35,10 +35,10 @@ class GetError
             ->setCreatedAt(new DateTime())
             ->setStatusCode(500)
             ;
-            $userAgent = $request->headers->get('user-agent');
-            if ($userAgent) {
-                $logError->setUserAgent($userAgent);
-            }
+        $userAgent = $request->headers->get('user-agent');
+        if ($userAgent) {
+            $logError->setUserAgent($userAgent);
+        }
 
         if ($exception instanceof ErrorException || $exception instanceof RuntimeError) {
             $logError->setFileName($exception->getFile())

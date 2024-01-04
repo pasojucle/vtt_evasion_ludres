@@ -25,8 +25,8 @@ class LogError
 
     private ?string $message = null;
 
-    #[Column(type: 'string', length: 255)]
-    private string $userAgent;
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private ?string $userAgent = null;
 
     #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $fileName;
@@ -85,7 +85,7 @@ class LogError
         return $this->userAgent;
     }
 
-    public function setUserAgent(string $userAgent): self
+    public function setUserAgent(?string $userAgent): self
     {
         $this->userAgent = $userAgent;
 
