@@ -46,7 +46,7 @@ class GetError
                 ;
         }
 
-        if ($exception instanceof AccessDeniedHttpException) {
+        if ($exception instanceof NotFoundHttpException || $exception instanceof AccessDeniedHttpException) {
             $statusCode = $exception->getStatusCode();
             $logError->setStatusCode($statusCode);
 
