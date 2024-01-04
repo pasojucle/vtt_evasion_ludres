@@ -123,8 +123,11 @@ class UserDtoTransformer
         return $this->licenceDtoTransformer->fromEntity($licence, $changes);
     }
 
-    private function getPrevLicence(User $user): LicenceDto
+    private function getPrevLicence(User $user): ?LicenceDto
     {
+        if (!$user->getId()) {
+            return null;
+        }
         return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($user));
     }
 

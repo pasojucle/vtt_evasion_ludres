@@ -75,11 +75,14 @@ class RegistrationController extends AbstractController
         SelfAuthentication $selfAuthentication,
         int $step
     ): Response {
-        $session = $this->requestStack->getSession();
+        if ('user_registration_form' === $request->attributes->get('_route')) {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+        }
+        $session = $request->getSession();
         /** @var User $user */
         $user = $this->getUser();
         if ((int) $session->get('registrationMaxStep') < $step) {
-            $this->requestStack->getSession()->set('registrationMaxStep', $step);
+            $session->set('registrationMaxStep', $step);
         }
         $progress = $this->getProgress->execute($step);
     
