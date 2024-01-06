@@ -158,7 +158,7 @@ class BikeRideRepository extends ServiceEntityRepository
             )
             ->setParameters([
                 'needFramers' => true,
-                'today' => new DateTimeImmutable(),
+                'today' => (new DateTimeImmutable())->setTime(0,0,0),
             ])
             ->andHaving(
                 (new Expr())->eq('br.startAt', (new Expr())->min('br.startAt'))
