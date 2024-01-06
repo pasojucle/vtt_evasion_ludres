@@ -95,6 +95,10 @@ class UserController extends AbstractController
             $data = $form->getData();
             $userDto = $this->userDtoTransformer->fromEntity($user);
             $subject = 'Demande de modification d\'informations personnelles';
+            $data['subject'] = $subject;
+            $data['name'] = $userDto->member->name;
+            $data['firstName'] = $userDto->member->firstName;
+            $data['email'] = $userDto->mainEmail;
 
             if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userDto, $subject, $parameterService->getParameterByName('EMAIL_CHANGE_USER_INFOS'))) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
