@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
-use App\Dto\RegistrationProgressDto;
-use App\Entity\Address;
-use App\Entity\Approval;
+use App\Entity\User;
 use App\Entity\Health;
-use App\Entity\Identity;
+use App\Form\UserType;
+use App\Entity\Address;
 use App\Entity\Licence;
-use App\Entity\LicenceSwornCertification;
+use App\Entity\Approval;
+use App\Entity\Identity;
+use App\Service\HealthService;
+use App\Service\SeasonService;
+use App\Service\LicenceService;
 use App\Entity\RegistrationStep;
 use App\Entity\SwornCertification;
-use App\Entity\User;
-use App\Form\UserType;
 use App\Repository\LevelRepository;
-use App\Repository\RegistrationStepRepository;
-use App\Service\HealthService;
-use App\Service\LicenceService;
-use App\Service\SeasonService;
+use App\Dto\RegistrationProgressDto;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\LicenceSwornCertification;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Repository\RegistrationStepRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetProgress
 {
@@ -56,7 +57,9 @@ class GetProgress
         $this->updateStatus();
         $category = $this->seasonLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
-
+        if ($step < 1 || count($steps) < $step ) {
+            throw new NotFoundHttpException('The registration step does not exist');
+        }
         $progress = $this->registrationProgressDtoTransformer->fromEntities($steps, $step, $this->user, $this->season);
         
         if (UserType::FORM_REGISTRATION_FILE === $progress->current->form) {

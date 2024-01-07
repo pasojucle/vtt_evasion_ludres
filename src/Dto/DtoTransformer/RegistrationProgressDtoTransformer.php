@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\RegistrationProgressDto;
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\RegistrationChangeRepository;
+use App\Entity\Licence;
+use App\Entity\RegistrationStep;
 use App\Service\ParameterService;
+use App\Dto\RegistrationProgressDto;
+use App\Repository\RegistrationChangeRepository;
 
 class RegistrationProgressDtoTransformer
 {
@@ -77,6 +77,7 @@ class RegistrationProgressDtoTransformer
         if (Licence::STATUS_IN_PROCESSING < $progress->user->lastLicence->status && UserType::FORM_REGISTRATION_FILE !== $progress->current->form) {
             return 'registration_existing';
         }
+
         return null;
     }
 
