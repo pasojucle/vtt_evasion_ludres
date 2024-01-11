@@ -7,6 +7,7 @@
         <div class="wrapper-title">
             <h1>Gestion des commandes - <span class="badge badge-info">{{ paginator.total }}</span></h1>
             <div class="tool-group">
+                <a href="{{ path('wiki_show', {'directory': 'boutique'})}}" target="_blank" title="wiki" class="btn-wiki"></a>
                 {% include 'component/dropdown_settings.html.twig' %}
                 <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>

@@ -10,6 +10,18 @@
         position: relative;
         z-index: 999;
     }
+    .btn-wiki {
+        display: block;
+        width: 40px;
+        &::after {
+            content: '\f128';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--background-color);
+            text-align: center;
+            display: block;
+        }
+    }
 }
 .dropdown {
     position: absolute;

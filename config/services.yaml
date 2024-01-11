@@ -35,6 +35,7 @@ parameters:
         tmp: 'data/tmp'
         cmd: 'data/cmd'
         documentation: 'data/documentation'
+        wiki: 'data/wiki'
     environment: '%env(APP_ENV)%'
     maintenance:
         ipAuthorized: ["127.0.0.1","88.166.188.236","86.216.124.78","81.51.249.36", "2a01:cb11:3e7:a00:44f1:6289:a76f:7283", "2a01:cb11:8a1:5000:69f7:2c40:a506:e3c4"] 

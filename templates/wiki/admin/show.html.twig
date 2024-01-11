@@ -1,0 +1,46 @@
+{% set isAdmin = app.request.get('_route') matches '/admin/' %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		{% if parameter_service.getParameterByName('TEST_MODE') %}
+			<link rel="icon" type="image/jpg" href="/favicon_test.ico">
+		{% else %}
+			<link rel="icon" type="image/jpg" href="/favicon.ico">
+		{% endif %}
+		<link rel="apple-touch-icon-precomposed" href="/favicon.jpg">
+		<title>{{ directory }}</title>
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('wiki', null, 'mainConfig') }}
+		{% endblock %}
+	</head>
+	<body class="bg-dark bg-gradient text-white">
+		<main class="container">
+			<div class="bg-dark p-2 text-center">
+				<h1>{{ directory }}</h1>
+			</div>
+				<div class="row gx-5">
+					<div class="col-9">
+						<div class="p-3">
+							{% apply markdown_to_html %}
+								{{ content|raw }}
+							{% endapply %}
+						</div>
+					</div>
+					<div class="col-3">
+						<ul class="list-group p-3">
+							{% for item in nav_barre %}
+								<li class="list-group-item list-group-item-dark">
+									<a href="{{ path('wiki_show', {'directory' : item.directory})}}">{{ item.title }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+		</main>
+	</body>
+	{% block javascripts %}
+        {{ encore_entry_script_tags('wiki', null, 'mainConfig') }}
+    {% endblock %}
+</html>

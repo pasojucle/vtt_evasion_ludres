@@ -2,28 +2,38 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/main_build/runtime.226f6bb9.js",
+        "/build/main_build/runtime.725dd7e0.js",
         "/build/main_build/609.dd8551de.js",
         "/build/main_build/45.6e7a01ae.js",
         "/build/main_build/885.5bd6abba.js",
         "/build/main_build/app.cea5eb6e.js"
       ],
       "css": [
-        "/build/main_build/885.dc18e8c7.css",
+        "/build/main_build/885.f16b78b7.css",
         "/build/main_build/app.f741ee5c.css"
       ]
     },
     "admin": {
       "js": [
-        "/build/main_build/runtime.226f6bb9.js",
+        "/build/main_build/runtime.725dd7e0.js",
         "/build/main_build/609.dd8551de.js",
         "/build/main_build/907.5b3c20b9.js",
         "/build/main_build/885.5bd6abba.js",
         "/build/main_build/admin.3ed44273.js"
       ],
       "css": [
-        "/build/main_build/885.dc18e8c7.css",
+        "/build/main_build/885.f16b78b7.css",
         "/build/main_build/admin.ec81f29f.css"
+      ]
+    },
+    "wiki": {
+      "js": [
+        "/build/main_build/runtime.725dd7e0.js",
+        "/build/main_build/138.18c4fe29.js",
+        "/build/main_build/wiki.fafdb940.js"
+      ],
+      "css": [
+        "/build/main_build/wiki.3c177990.css"
       ]
     }
   }

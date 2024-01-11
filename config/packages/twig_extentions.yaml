@@ -8,4 +8,5 @@ services:
     #Twig\Extensions\ArrayExtension: ~
     #Twig\Extensions\DateExtension: ~
     Twig\Extensions\IntlExtension: ~
+    Twig\Extensions\MarkdownExtension: ~
     #Twig\Extensions\TextExtension: ~

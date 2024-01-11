@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\User;
-use App\Form\UserType;
+use App\Dto\RegistrationProgressDto;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
-use App\Service\ParameterService;
-use App\Dto\RegistrationProgressDto;
+use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\RegistrationChangeRepository;
+use App\Service\ParameterService;
 
 class RegistrationProgressDtoTransformer
 {

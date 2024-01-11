@@ -17,6 +17,7 @@
         "friendsofsymfony/ckeditor-bundle": "^2.3",
         "friendsofsymfony/jsrouting-bundle": "^3.0",
         "helios-ag/fm-elfinder-bundle": "^12.1",
+        "league/commonmark": "^2.4",
         "phpdocumentor/reflection-docblock": "^5.2",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.3",
@@ -53,8 +54,9 @@
         "symfonycasts/reset-password-bundle": "^1.9",
         "tetranz/select2entity-bundle": "^3.1",
         "twig/cssinliner-extra": "^3.3",
-        "twig/extra-bundle": "^3.3",
+        "twig/extra-bundle": "^3.8",
         "twig/intl-extra": "^3.3",
+        "twig/markdown-extra": "^3.8",
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
