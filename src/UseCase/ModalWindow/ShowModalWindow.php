@@ -8,7 +8,6 @@ use App\Dto\DtoTransformer\ModalWindowDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\ModalWindowDto;
 use App\Entity\Licence;
-use App\Entity\ModalWindow;
 use App\Entity\User;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;

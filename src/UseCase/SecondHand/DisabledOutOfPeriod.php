@@ -39,7 +39,12 @@ class DisabledOutOfPeriod
 
         $this->entityManager->flush();
 
-        return $secondHands;
+        return [
+            'codeError' => 0,
+             'message' => (empty($secondHands))
+                ? 'no secondHands to disabling'
+                : sprintf('%d secondHands disabled', count($secondHands)),
+        ];
     }
 
     private function sendMailToSeller(SecondHand $secondHand): void

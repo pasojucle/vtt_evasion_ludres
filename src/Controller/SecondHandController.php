@@ -11,17 +11,14 @@ use App\Entity\SecondHand;
 use App\Entity\User;
 use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
-use App\Repository\ParameterRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
 use App\Service\PaginatorService;
 use App\Service\ParameterService;
-use App\UseCase\SecondHand\DisabledOutOfPeriod;
 use App\UseCase\SecondHand\EditSecondHand;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -191,22 +188,5 @@ class SecondHandController extends AbstractController
         }
 
         return $this->redirectToRoute('second_hand_show', ['secondHand' => $secondHand->getId()]);
-    }
-
-    #[Route('/occasion/disable/out/of/period', name: 'disable_out_of_period', methods: ['GET'])]
-    public function disableOutOfPeriod(DisabledOutOfPeriod $disabledOutOfPeriod): Response
-    {
-        try {
-            $secondHands = $disabledOutOfPeriod->execute();
-        } catch (Exception $exception) {
-            return new JsonResponse(['codeError' => 1, 'error' => $exception->getMessage()]);
-        }
-
-        return new JsonResponse([
-            'codeError' => 0,
-             'message' => (empty($secondHands))
-                ? 'no disabling'
-                : sprintf('%d secondHands disabled', count($secondHands)),
-            ]);
     }
 }
