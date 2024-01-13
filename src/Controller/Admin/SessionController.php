@@ -46,7 +46,7 @@ class SessionController extends AbstractController
 
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
+            'clusters' => $clusterDtoTransformer->fromBikeRide($bikeRide),
             'bike_rides_filters' => [],
             'permission' => 7,
         ]);

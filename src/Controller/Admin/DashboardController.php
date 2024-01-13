@@ -43,7 +43,7 @@ class DashboardController extends AbstractController
         foreach ($bikeRideRepository->findNextSchoolBikeRides() as $bikeRide) {
             $bikeRides[] = [
                 'bikeRide' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
-                'clusters' => $clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
+                'clusters' => $clusterDtoTransformer->fromBikeRide($bikeRide),
             ];
         }
 

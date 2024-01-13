@@ -13,7 +13,7 @@ use DateTimeImmutable;
 
 class HealthDtoTransformer
 {
-    public function fromEntity(?Health $health, LicenceDto $lastLicence): HealthDto
+    public function fromEntity(?Health $health): HealthDto
     {
         $healthDto = new HealthDto();
         if ($health) {

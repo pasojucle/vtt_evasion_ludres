@@ -9,8 +9,10 @@ use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
+use App\Repository\SessionRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
+use App\UseCase\BikeRide\GetClusters;
 use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
@@ -118,7 +120,8 @@ class BikeRideController extends AbstractController
     #[IsGranted('BIKE_RIDE_VIEW', 'bikeRide')]
     public function adminClusterShow(
         Request $request,
-        BikeRide $bikeRide
+        BikeRide $bikeRide,
+        SessionRepository $sessionRepository,
     ): Response {
         $filters = $request->getSession()->get('admin_bike_rides_filters');
         $request->getSession()->set('admin_user_redirect', $this->generateUrl('admin_bike_ride_cluster_show', [
@@ -127,7 +130,7 @@ class BikeRideController extends AbstractController
 
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $this->clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
+            'clusters' => $this->clusterDtoTransformer->fromBikeRide($bikeRide),
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }

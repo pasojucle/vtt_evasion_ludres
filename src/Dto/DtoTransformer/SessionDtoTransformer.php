@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\BikeRideTypeDto;
 use App\Dto\SessionDto;
+use App\Entity\BikeRideType;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Model\Currency;
@@ -31,12 +32,12 @@ class SessionDtoTransformer
         if ($session) {
             $sessionDto->id = $session->getId();
             $sessionDto->availability = $this->getAvailability($session->getAvailability());
-            $sessionDto->bikeRide = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
+            $sessionDto->bikeRide = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
             $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
             $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToHtml($session->isPresent());
-            $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $sessionDto->bikeRide->bikeRideType, $sessionDto->userIsOnSite);
+            $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
             $sessionDto->bikeKind = ($session->getBikeKind()) ? $this->translator->trans(Session::BIKEKINDS[$session->getBikeKind()]) : null;
@@ -75,7 +76,7 @@ class SessionDtoTransformer
         return $availabilityView;
     }
 
-    private function getIndemnity(User $user, BikeRideTypeDto $bikeRideType, bool $userIsOnSite): ?Currency
+    private function getIndemnity(User $user, BikeRideType $bikeRideType, bool $userIsOnSite): ?Currency
     {
         foreach ($this->indemnityRepository->findAll() as $indemnity) {
             if ($bikeRideType === $indemnity->getBikeRideType() && $user->getLevel() === $indemnity->getLevel() && $userIsOnSite) {

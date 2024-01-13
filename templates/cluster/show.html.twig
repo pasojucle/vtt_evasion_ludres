@@ -34,14 +34,14 @@
                             <ul class="dropdown-body">
                                 <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.id, 'cluster': cluster.id}) }}" class="dropdown-item" title="Renomer"><i class="fa-solid fa-pen-to-square"></i> Renommer</a></li>
                                 {% if 0 == cluster.sessions|length %}
-                                    <li><a href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" class="dropdown-item' title="Supprimer"><i class="fa-solid fa-circle-xmark"></i> Supprimer</a></li>
+                                    <li><a href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" class="dropdown-item" title="Supprimer"><i class="fa-solid fa-circle-xmark"></i> Supprimer</a></li>
                                 {% endif %}
                             </ul>
                         </div>
                     </div>
                 {% endif %}
             </div>
-            {% if cluster.sessions | length > 0 %}
+            {% if cluster.availableSessions | length > 0 %}
                 <ul>
                     {% for session in cluster.availableSessions %}             
                         {% include 'session/admin/list.html.twig' with {'user': session.user} %}

@@ -10,10 +10,10 @@ use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Level;
 use App\Entity\Session;
+use App\Repository\SessionRepository;
 use App\Service\ClusterService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ClusterDtoTransformer
 {
@@ -22,19 +22,24 @@ class ClusterDtoTransformer
         private LevelDtoTransformer $levelDtoTransformer,
         private ClusterService $clusterService,
         private UserDtoTransformer $userDtoTransformer,
+        private SessionRepository $sessionRepository,
     ) {
     }
 
-    public function fromEntity(Cluster $cluster): ClusterDto
+    public function fromEntity(Cluster $cluster, $sessionEntities = null): ClusterDto
     {
-        $sessionEntities = $cluster->getSessions();
-
+        $fromEntities = true;
+        if (!$sessionEntities) {
+            $sessionEntities = $cluster->getSessions();
+            $fromEntities = false;
+        }
+        
         $clusterDto = new ClusterDto();
         $clusterDto->id = $cluster->getId();
         $clusterDto->entity = $cluster;
         $clusterDto->title = $cluster->getTitle();
         $clusterDto->level = $this->levelDtoTransformer->fromEntity($cluster->getLevel());
-        $clusterDto->sessions = $this->getSessions($sessionEntities);
+        $clusterDto->sessions = $this->getSessions($sessionEntities, $fromEntities);
         $clusterDto->maxUsers = $cluster->getMaxUsers();
         $clusterDto->role = $cluster->getRole();
         $clusterDto->isComplete = $cluster->isComplete();
@@ -45,22 +50,32 @@ class ClusterDtoTransformer
         return $clusterDto;
     }
     
-    public function fromEntities(Paginator|Collection|array $clusterEntities): array
+    public function fromBikeRide(BikeRide $bikeRide): array
     {
+        $sessionsByClusters = [];
+        /** @var Session $session */
+        foreach ($this->sessionRepository->findByBikeRide($bikeRide) as $session) {
+            $clusterId = $session->getCluster()->getId();
+            $sessionsByClusters[$clusterId][] = $session;
+        }
+
         $clusters = [];
-        foreach ($clusterEntities as $clusterEntity) {
-            $clusters[] = $this->fromEntity($clusterEntity);
+        foreach ($bikeRide->getClusters() as $clusterEntity) {
+            $sessions = (array_key_exists($clusterEntity->getId(), $sessionsByClusters)) ? $sessionsByClusters[$clusterEntity->getId()] : [];
+            $clusters[] = $this->fromEntity($clusterEntity, new ArrayCollection($sessions));
         }
 
         return $clusters;
     }
 
-    private function getSessions(Collection $sessionEntities): array
+    private function getSessions(Collection $sessionEntities, bool $fromEntities): array
     {
         $sessions = [];
         foreach ($sessionEntities as $session) {
             $sessions[] = [
-                'user' => $this->userDtoTransformer->fromEntity($session->getUser()),
+                'user' => ($fromEntities)
+                    ? $this->userDtoTransformer->getHeaderFromEntity($session->getUser())
+                    : $this->userDtoTransformer->fromEntity($session->getUser()),
                 'availability' => $session->getAvailability(),
                 'isPresent' => $session->isPresent(),
             ];
@@ -69,7 +84,7 @@ class ClusterDtoTransformer
         return $sessions;
     }
 
-    public function getAvailableSessions(Collection $sessionEntities): ArrayCollection
+    private function getAvailableSessions(Collection $sessionEntities): ArrayCollection
     {
         $sortedSessions = [];
 
@@ -93,7 +108,7 @@ class ClusterDtoTransformer
         return new ArrayCollection($sortedSessions);
     }
 
-    public function getUsersOnSiteCount(Collection $sessionEntities, BikeRide $bikeRide): int
+    private function getUsersOnSiteCount(Collection $sessionEntities, BikeRide $bikeRide): int
     {
         $userOnSiteSessions = [];
         foreach ($sessionEntities as $session) {

@@ -38,7 +38,7 @@ class ClusterController extends AbstractController
 
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $this->clusterDtoTransformer->fromEntities($bikeRide->getClusters()),
+            'clusters' => $this->clusterDtoTransformer->fromBikeRide($bikeRide),
             'bike_rides_filters' => [],
             'permission' => 7,
         ]);

@@ -22,6 +22,7 @@ class IdentityDtoTransformer
         private SeasonService $seasonService,
     ) {
     }
+
     public function fromEntity(Identity $identity, ?array $changes = null): IdentityDto
     {
         $identityDto = new IdentityDto();

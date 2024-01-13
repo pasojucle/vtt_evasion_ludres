@@ -45,11 +45,10 @@ class UserDtoTransformer
         $userDto->secondKinship = (array_key_exists(Identity::TYPE_SECOND_CONTACT, $identitiesByType)) ? $identitiesByType[Identity::TYPE_SECOND_CONTACT] : null;
         $userDto->lastLicence = $this->getLastLicence($user, $changes);
         $userDto->prevLicence = $this->getPrevLicence($user);
-        $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth(), $userDto->lastLicence);
+        $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
         $userDto->boardRole = $user->getBoardRole()?->getName();
-        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
         $userDto->isBoardMember = null !== $user->getBoardRole();
         $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
@@ -59,6 +58,23 @@ class UserDtoTransformer
         $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $sessionsTotal);
         $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
         $userDto->mustProvideRegistration = $this->mustProvideRegistration($userDto->lastLicence, $user->getLicences()->count());
+
+        return $userDto;
+    }
+
+    public function getHeaderFromEntity(User $user, ?array $changes = null): UserDto
+    {
+        $identitiesByType = $this->identityDtoTransformer->fromEntities($user->getIdentities(), $changes);
+
+        $userDto = new UserDto();
+
+        $userDto->id = $user->getId();
+        $userDto->licenceNumber = $user->getLicenceNumber();
+        $userDto->member = (array_key_exists(Identity::TYPE_MEMBER, $identitiesByType)) ? $identitiesByType[Identity::TYPE_MEMBER] : null;
+        $userDto->kinship = (array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : null;
+        $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
+        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
+        $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
 
         return $userDto;
     }
