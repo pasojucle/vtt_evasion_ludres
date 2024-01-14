@@ -36,7 +36,6 @@ class ClusterDtoTransformer
         
         $clusterDto = new ClusterDto();
         $clusterDto->id = $cluster->getId();
-        $clusterDto->entity = $cluster;
         $clusterDto->title = $cluster->getTitle();
         $clusterDto->level = $this->levelDtoTransformer->fromEntity($cluster->getLevel());
         $clusterDto->sessions = $this->getSessions($sessionEntities, $fromEntities);
@@ -63,6 +62,19 @@ class ClusterDtoTransformer
         foreach ($bikeRide->getClusters() as $clusterEntity) {
             $sessions = (array_key_exists($clusterEntity->getId(), $sessionsByClusters)) ? $sessionsByClusters[$clusterEntity->getId()] : [];
             $clusters[] = $this->fromEntity($clusterEntity, new ArrayCollection($sessions));
+        }
+
+        return $clusters;
+    }
+    
+    public function headerFromBikeRide(BikeRide $bikeRide): array
+    {
+        $clusters = [];
+        foreach ($bikeRide->getClusters() as $clusterEntity) {
+            $clusterDto = new ClusterDto();
+            $clusterDto->id = $clusterEntity->getId();
+            $clusterDto->title = $clusterEntity->getTitle();
+            $clusters[] = $clusterDto;
         }
 
         return $clusters;

@@ -128,9 +128,9 @@ class BikeRideController extends AbstractController
             'bikeRide' => $bikeRide->getId(),
         ]));
 
-        return $this->render('cluster/show.html.twig', [
+        return $this->render('bike_ride/admin/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $this->clusterDtoTransformer->fromBikeRide($bikeRide),
+            'clusters' => $this->clusterDtoTransformer->headerFromBikeRide($bikeRide),
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }

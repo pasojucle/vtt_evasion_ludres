@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Dto\ClusterDto;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;

@@ -17,6 +17,7 @@ use App\Service\SeasonService;
 use App\Service\SessionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,24 +33,32 @@ class SessionController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/seance/{session}', name: 'admin_session_present', methods: ['GET'])]
+    #[Route('/admin/seance', name: 'admin_session_present', methods: ['POST'], options:['expose' => true])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminPresent(
-        Session $session,
+        Request $request,
+        SessionRepository $sessionRepository,
         ClusterDtoTransformer $clusterDtoTransformer,
     ): Response {
-        $isPresent = !$session->isPresent();
+        $codeError = 1;
+        $html = null;
+        $sessionId = $request->request->get('sessionId');
 
-        $session->setIsPresent($isPresent);
-        $this->entityManager->flush();
-        $bikeRide = $session->getCluster()->getBikeRide();
+        $session = $sessionRepository->find($sessionId);
+        if ($session) {
+            $isPresent = !$session->isPresent();
+            $session->setIsPresent($isPresent);
+            $this->entityManager->flush();
+            $codeError = 0;
+            $cluster = $session->getCluster();
+            $html = $this->renderView('cluster/show.html.twig', [
+                'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
+                'cluster' => $clusterDtoTransformer->fromEntity($cluster),
+                'cluster_entity' => $cluster,
+            ]);
+        }
 
-        return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $clusterDtoTransformer->fromBikeRide($bikeRide),
-            'bike_rides_filters' => [],
-            'permission' => 7,
-        ]);
+        return new JsonResponse(['codeError' => $codeError, 'text' => $html]);
     }
 
     #[Route('/admin/groupe/change/{session}', name: 'admin_bike_ride_switch_cluster', methods: ['GET', 'POST'])]

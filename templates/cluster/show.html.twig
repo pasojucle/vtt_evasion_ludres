@@ -1,79 +1,50 @@
-{% extends 'base.html.twig' %}
-{% block title %}{{ bikeRide.title }}{% endblock %}
-
-{% block body %}
-<div class="wrapper">
-    <div class="wrapper-title">
-        <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
-        <div class="tool-group">
-            <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
-            {% if bikeRide.isEditable %}
-                <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                    <div class="dropdown-menu" data-target="dropdown-tools">
-                        <ul class="dropdown-body">
-                            {% if bikeRide.bikeRideType.isNeedFramers %}
-                                <li><a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.id})}}"  class="dropdown-item" title="Voir l'encadrement"><i class="fa-solid fa-user-tie"></i> Voir l'encadrement</a></li>
-                            {% endif %}
-                            <li><a href="{{ path('admin_session_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un participant"><i class="fa-solid fa-user"></i> Ajouter un participant</a></li>
-                            <li><a href="{{ path('admin_cluster_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un goupe"><i class="fa-solid fa-users"></i> Ajouter un groupe</a></li>
-                        </ul>
-                    </div>
+{% set permission = is_granted('BIKE_RIDE_EDIT', cluster_entity) %}
+<div id="cluster-{{ cluster.id }}" class="cluster-container mb-20">
+    <div class="cluster-title">
+        <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
+            {% if is_granted('USER_VIEW', bikeRide) %}
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                <div class="dropdown-menu" data-target="dropdown-tools">
+                    <ul class="dropdown-body">
+                        <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.id, 'cluster': cluster.id}) }}" class="dropdown-item" title="Renomer"><i class="fa-solid fa-pen-to-square"></i> Renommer</a></li>
+                        {% if 0 == cluster.sessions|length %}
+                            <li><a href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" class="dropdown-item" title="Supprimer"><i class="fa-solid fa-circle-xmark"></i> Supprimer</a></li>
+                        {% endif %}
+                    </ul>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
-    <div id="sessions_container" class="wrapper-body">
-        {% for cluster in clusters %}
-            <div class="cluster-title">
-                <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
-                    {% if is_granted('USER_VIEW', bikeRide) %}
-                    <div class="dropdown">
-                        <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                        <div class="dropdown-menu" data-target="dropdown-tools">
-                            <ul class="dropdown-body">
-                                <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.id, 'cluster': cluster.id}) }}" class="dropdown-item" title="Renomer"><i class="fa-solid fa-pen-to-square"></i> Renommer</a></li>
-                                {% if 0 == cluster.sessions|length %}
-                                    <li><a href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" class="dropdown-item" title="Supprimer"><i class="fa-solid fa-circle-xmark"></i> Supprimer</a></li>
-                                {% endif %}
-                            </ul>
+    {% if cluster.availableSessions | length > 0 %}
+        <ul>
+            {% for session in cluster.availableSessions %}             
+                {% include 'session/admin/list.html.twig' with {'user': session.user} %}
+            {% endfor %}
+        </ul>
+        {% if cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+            <div>
+                {% if not cluster.isComplete %}
+                    <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if not permission %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" target="_blank">
+                        <i class="fas fa-check"></i> Valider le groupe
+                    </a>
+                {% else %}
+                    <div class="row row-list">
+                        <div class="col-md-9 col-xs-8">
+                            <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete{% if not permission %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}">
+                                <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-xs-4">
+                            <a id="cluster_export_{{ cluster.id }}" href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success{% if not permission %} disabled{% endif %}">
+                                <i class="fas fa-file-pdf"></i> Exporter
+                            </a>
                         </div>
                     </div>
                 {% endif %}
             </div>
-            {% if cluster.availableSessions | length > 0 %}
-                <ul>
-                    {% for session in cluster.availableSessions %}             
-                        {% include 'session/admin/list.html.twig' with {'user': session.user} %}
-                    {% endfor %}
-                </ul>
-                {% if clusters is not empty and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
-                    <div>
-                        {% set permission = is_granted('BIKE_RIDE_EDIT', cluster) %}
-                        {% if not cluster.isComplete %}
-                            <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if permission %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" target="_blank">
-                                <i class="fas fa-check"></i> Valider le groupe
-                            </a>
-                        {% else %}
-                            <div class="row row-list">
-                                <div class="col-md-9 col-xs-8">
-                                    <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete{% if permission %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}">
-                                        <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
-                                    </a>
-                                </div>
-                                <div class="col-md-3 col-xs-4">
-                                    <a id="cluster_export_{{ cluster.id }}" href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success{% if permission %} disabled{% endif %}">
-                                        <i class="fas fa-file-pdf"></i> Exporter
-                                    </a>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endif %}
-            {% else %}
-                <p class="padding-10">Aucun inscrit</p>
-            {% endif %}
-            <br>
-        {% endfor %}
-    </div>
-{% endblock %}
+        {% endif %}
+    {% else %}
+        <p class="padding-10">Aucun inscrit</p>
+    {% endif %}
+</div>

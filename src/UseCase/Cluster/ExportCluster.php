@@ -42,7 +42,7 @@ class ExportCluster
         }
         $this->addSessions();
 
-        return $this->getResponse();
+        return $this->getResponse($cluster);
     }
 
     private function addSessions(): void
@@ -62,9 +62,9 @@ class ExportCluster
         }
     }
 
-    private function getResponse(): Response
+    private function getResponse(Cluster $cluster): Response
     {
-        $fileName = $this->cluster->title . '_' . $this->cluster->entity->getBikeRide()->getStartAt()->format('Ymd');
+        $fileName = $this->cluster->title . '_' . $cluster->getBikeRide()->getStartAt()->format('Ymd');
         $fileName = $this->stringService->clean($fileName) . '.pdf';
         $pathName = $this->pdfService->joinPdf($this->files, null, null, $this->projectDir->path('tmp', $fileName));
         $fileContent = file_get_contents($pathName);

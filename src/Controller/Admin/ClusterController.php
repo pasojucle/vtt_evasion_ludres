@@ -38,9 +38,9 @@ class ClusterController extends AbstractController
 
         return $this->render('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $this->clusterDtoTransformer->fromBikeRide($bikeRide),
+            'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
+            'cluster_entity' => $cluster,
             'bike_rides_filters' => [],
-            'permission' => 7,
         ]);
     }
 
@@ -85,6 +85,18 @@ class ClusterController extends AbstractController
         return $this->render('cluster/edit.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/groupe/show/{cluster}', name: 'admin_cluster_show', methods: ['GET'], options:['expose' => true])]
+    #[IsGranted('BIKE_RIDE_VIEW', 'cluster')]
+    public function adminClusterShow(
+        Cluster $cluster
+    ): Response {
+        return $this->render('cluster/show.html.twig', [
+            'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
+            'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
+            'cluster_entity' => $cluster,
         ]);
     }
 

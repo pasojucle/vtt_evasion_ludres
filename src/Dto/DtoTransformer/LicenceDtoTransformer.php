@@ -117,7 +117,7 @@ class LicenceDtoTransformer
         return $this->translator->trans($title);
     }
 
-    public function getCurrentSeasonForm(Licence $licence, int $currentSeason)
+    public function getCurrentSeasonForm(Licence $licence, int $currentSeason): bool
     {
         $coverageFormStartAt = $this->parameterService->getParameterByName('COVERAGE_FORM_AVAILABLE_AT');
         $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');

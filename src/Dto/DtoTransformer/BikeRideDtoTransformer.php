@@ -6,7 +6,6 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
-use App\Dto\SessionDto;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
@@ -16,7 +15,6 @@ use App\Twig\AppExtension;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use DateInterval;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -91,6 +89,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->endAt = $bikeRide->getEndAt();
             $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
             $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
+            $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
         }
 
         return $bikeRideDto;

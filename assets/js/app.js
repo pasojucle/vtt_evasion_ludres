@@ -33,16 +33,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     $(document).on('change', '.filters .customSelect2, .filters select, .filters .btn, .filters input', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
-
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', 'button.form-modifier', formModifier);
-    $(document).on('click', '.admin-session-present', adminSessionPresent);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
-    $(document).on('click', '.cluster-complete', clusterComplete);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
     $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
-
 
     if (window.matchMedia("(min-width: 800px)").matches) {
         $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
@@ -217,34 +213,8 @@ function formModifier(event) {
     });
 }
 
-function clusterComplete(event) {
-    event.preventDefault();
-    const parameters = {};
-    parameters['cluster'] = $(this).data('cluster-id');
-    const route = Routing.generate('admin_cluster_complete', parameters);
-
-    $.ajax({
-        url : route,
-        success: function(html) {
-            $('#sessions_container').replaceWith($(html).find('#sessions_container'));
-            if (0 < $('a#cluster_export_'+parameters['cluster']).length) {
-                $('a#cluster_export_'+parameters['cluster'])[0].click();
-            }
-        }
-      });
-}
 
 
-function adminSessionPresent(e) {
-    e.preventDefault();
-
-    $.ajax({
-        url : $(this).attr('href'),
-        success: function(html) {
-            $('#sessions_container').replaceWith($(html).find('#sessions_container'));
-        }
-      });
-}
 
 function setOrderLineQuantity(e) {
     e.preventDefault();

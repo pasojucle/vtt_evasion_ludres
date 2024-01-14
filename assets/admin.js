@@ -18,6 +18,7 @@ import './styles/radio.css';
 import './styles/component/checkbox.scss';
 import './styles/health.scss';
 import './styles/list-group.scss';
+import './styles/loader.scss';
 
 import './js/app.js';
 import './js/js-datepicker';
@@ -33,3 +34,4 @@ import './js/select2/i18n/fr.js';
 import './js/clipboard.js';
 import './js/line_chart.js';
 import './js/dashboard.js';
+import './js/clusters.js';
