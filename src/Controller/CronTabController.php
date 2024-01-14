@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CronTabController extends AbstractController
 {
+    #[Route('/occasion/disable/out/of/period', name: 'disable_out_of_period', methods: ['GET'])]
     #[Route('/crontab', name: 'crontab', methods: ['GET'])]
     public function disableOutOfPeriod(
         DisabledOutOfPeriod $disabledOutOfPeriod,
