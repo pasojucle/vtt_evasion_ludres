@@ -51,6 +51,18 @@ class IdentityDtoTransformer
         return $identityDto;
     }
 
+
+    public function headerFromEntity(Identity $identity, ?array $changes = null): IdentityDto
+    {
+        $identityDto = new IdentityDto();
+
+        $identityDto->id = $identity->getId();
+        $identityDto->fullName = $identity->getName() . ' ' . $identity->getFirstName();
+
+        return $identityDto;
+    }
+
+
     public function fromEntities(Collection $identityEntities, ?array $changes = null): array
     {
         $identities = [];

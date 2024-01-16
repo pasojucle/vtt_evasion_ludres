@@ -3,74 +3,120 @@ document.addEventListener("DOMContentLoaded", (event) => {
     getClusters()
 });
 
-const init = (elementId = null) => {
-    const parent = (parent) ? document.getElementById(elementId) : document;
-    parent.querySelectorAll('.admin-session-present').forEach((element) => {
-        element.addEventListener('click', adminSessionPresent);
-    })
-    parent.querySelectorAll('.cluster-complete').forEach((element) => {
-        element.addEventListener('click', clusterComplete);
-    })
-}
 
 const getClusters = () => {
     document.querySelectorAll('.cluster-container').forEach((element) => {
         intervals[element.id] = null;
-        getCluster(element);
+        new Cluster(element);
     })
 }
 
-const getCluster = (element) => {
-    fetch(Routing.generate('admin_cluster_show', {'cluster': element.id.replace('cluster-', '')}))
-    .then((response) => response.text())
-    .then((text) => {
-        replaceCluster(element, text);
-    });
-}
-
-const replaceCluster = (element, text) => {
-    const htmlElement = document.createRange().createContextualFragment(text);
-    const clusterEl = document.getElementById(element.id);
-    clusterEl.replaceWith(htmlElement);
-    init(element.id);
-    clearInterval(intervals[element.id]);
-    intervals[element.id] = setInterval(getCluster, 60000, element)
-} 
-
-const clusterComplete = (event) => {
-    event.preventDefault();
-    const targetEl = (event.tagName === 'A') ? event.target : event.target.closest('a');
-    const parameters = {};
-    parameters['cluster'] = targetEl.dataset.clusterId;
-    const route = Routing.generate('admin_cluster_complete', parameters);
-
-    fetch(route)
-    .then((response) => response.text())
-    .then((text)=> {
-        const clusterEl = targetEl.closest('.cluster-container'); 
-        replaceCluster(clusterEl, text);
-        exportButton = document.getElementById(`cluster_export_${parameters['cluster']}`);
-        if (exportButton) {
-            exportButton.click();
+class Cluster {
+    constructor(clusterEl) {
+        this.element = clusterEl;
+        this.id = clusterEl.id;
+        this.getSessions();
+    }
+    getSessions = () => {
+        fetch(Routing.generate('admin_cluster_show', {'cluster': this.id.replace('cluster-', '')}))
+        .then(checkStatus)
+        .then((response) => response.text())
+        .then((text) => {
+            this.replaceCluster(text);
+        });
+    }
+    replaceCluster = (text) => {
+        const htmlElement = document.createRange().createContextualFragment(text);
+        this.element.replaceWith(htmlElement);
+        this.init();
+        this.clearCluster();
+    }
+    init = () => {
+        this.element = document.getElementById(this.id);
+        this.element.querySelectorAll('.admin-session-present').forEach((element) => {
+            new Attendance(this, element);
+        })
+        this.btnComplete = this.element.querySelector('.cluster-complete');
+        if (this.btnComplete) {
+            this.btnComplete.addEventListener('click', this.complete);
         }
-    });
+    }
+    clearCluster = () => {
+        clearInterval(intervals[this.id]);
+        const self = this;
+        intervals[this.id] = setInterval(self.getSessions, 60000, self.element)
+    }
+    complete = (event) => {
+        event.preventDefault();
+        const route = Routing.generate('admin_cluster_complete', {'cluster': this.btnComplete.dataset.clusterId});
+    
+        fetch(route)
+        .then((response) => response.text())
+        .then((text)=> {
+            this.replaceCluster(text);
+            const exportButton = document.getElementById(this.id);
+            if (exportButton) {
+                exportButton.click();
+            }
+        });
+    }
 }
 
-const adminSessionPresent = (event) => {
-    event.preventDefault();
-    const targetEl = (event.tagName === 'a') ? event.target : event.target.closest('a');
+class Attendance {
+    
+    constructor(cluster, btnEl) {
+        this.cluster = cluster;
+        this.element = btnEl;
+        this.session = btnEl.dataset.session;
+        this.btnLight = {'btn':'btn-light', 'icon': 'fa-check'};
+        this.btnSuccess = {'btn':'btn-success', 'icon': 'fa-check-circle'};
 
-    const data = new FormData();
-    data.append('sessionId', targetEl.dataset.session);
-    fetch(Routing.generate('admin_session_present'), {
-        method: 'POST',
-        body : data,
-    })
-    .then((response) => response.json())
-    .then((json)=> {
-        if (json.codeError === 0) {
-            const clusterEl = targetEl.closest('.cluster-container');
-            replaceCluster(clusterEl, json.text)
+        this.addEventListener();
+    }
+    addEventListener = () => {
+        this.element.addEventListener('click', this.adminSessionPresent);
+    }
+    adminSessionPresent = (event) => {
+        event.preventDefault();
+        this.btnEl = (event.tagName === 'A') ? event.target : event.target.closest('a');
+        this.btnClass = this.btnEl.classList.contains('btn-success') ? this.btnSuccess : this.btnLight;
+        this.iconEl = this.btnEl.querySelector('i');
+        this.toggleSessionPresent()
+        const data = new FormData();
+        data.append('sessionId', this.session);
+        this.cluster.clearCluster();
+        fetch(Routing.generate('admin_session_present'), {
+            method: 'POST',
+            body : data,
+        })
+        .then(checkStatus)
+        .catch(() => this.toggleSessionPresent())
+    }
+    toggleSessionPresent = () => {
+        this.newBtnClass = [this.btnSuccess, this.btnLight].find(el => el !== this.btnClass);
+        this.element.classList.remove(this.btnClass.btn);
+        this.element.classList.add(this.newBtnClass.btn);
+
+        this.iconEl.classList.remove(this.btnClass.icon);
+        this.iconEl.classList.add(this.newBtnClass.icon);
+        this.refreshTotal();
+    }
+    refreshTotal = () => {
+        const totalEl = this.cluster.element.querySelector('.badge.badge-info');
+        let total = parseInt(totalEl.textContent);
+        if (this.newBtnClass.btn === 'btn-success') {
+            ++total;
+        } else {
+            --total;
         }
-    })
+        totalEl.textContent = total;
+    }
+}
+
+
+const checkStatus = (response) => {
+    if(response.status !== 500) {
+         return response;    
+    }
+    throw new Error('Something went wrong.');    
 }

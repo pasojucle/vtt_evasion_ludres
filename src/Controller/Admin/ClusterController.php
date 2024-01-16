@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
-use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\BikeRide;
 use App\Form\Admin\ClusterType;
 use App\UseCase\Cluster\ExportCluster;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ClusterController extends AbstractController
 {
@@ -33,6 +34,9 @@ class ClusterController extends AbstractController
     ): Response {
         $cluster->setIsComplete(!$cluster->isComplete());
         $this->entityManager->flush();
+
+        $cachePool = new FilesystemAdapter();
+        $cachePool->deleteItem(sprintf('cluster.%s', $cluster->getId()));
 
         $bikeRide = $cluster->getBikeRide();
 
@@ -79,6 +83,10 @@ class ClusterController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
+
+            $cachePool = new FilesystemAdapter();
+            $cachePool->deleteItem(sprintf('cluster.%s', $cluster->getId()));
+
             return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
         }
 
@@ -117,6 +125,9 @@ class ClusterController extends AbstractController
         $bikeRide = $cluster->getBikeRide();
         $this->entityManager->remove($cluster);
         $this->entityManager->flush();
+
+        $cachePool = new FilesystemAdapter();
+        $cachePool->deleteItem(sprintf('cluster.%s', $cluster->getId()));
 
         return $this->redirectToRoute('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),
