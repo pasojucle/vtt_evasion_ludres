@@ -33,8 +33,6 @@ class ClusterDtoTransformer
 
         $clusterCache = $cachePool->getItem(sprintf('cluster.%s', $cluster->getId()));
         if (!$clusterCache->isHit()) {
-            dump(sprintf(' set cache cluster.%s', $cluster->getId()));
-
             $fromEntities = true;
             if (!$sessionEntities) {
                 $sessionEntities = $cluster->getSessions();
