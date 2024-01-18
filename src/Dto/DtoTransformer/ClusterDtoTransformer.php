@@ -52,6 +52,7 @@ class ClusterDtoTransformer
             $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
 
             $clusterCache->set($clusterDto);
+            $clusterCache->expiresAfter(3600);
             $cachePool->save($clusterCache);
         }
 

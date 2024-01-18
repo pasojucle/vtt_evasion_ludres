@@ -17,6 +17,7 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ClusterController extends AbstractController
 {
@@ -38,14 +39,12 @@ class ClusterController extends AbstractController
         $cachePool = new FilesystemAdapter();
         $cachePool->deleteItem(sprintf('cluster.%s', $cluster->getId()));
 
-        $bikeRide = $cluster->getBikeRide();
-
-        return $this->render('cluster/show.html.twig', [
-            'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
+        $html = $this->renderView('cluster/show.html.twig', [
+            'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
             'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
             'cluster_entity' => $cluster,
-            'bike_rides_filters' => [],
         ]);
+        return new JsonResponse(['codeError' => 0, 'html' => $html]);
     }
 
     #[Route('/admin/groupe/ajoute/{bikeRide}', name: 'admin_cluster_add', methods: ['GET', 'POST'])]
@@ -101,11 +100,12 @@ class ClusterController extends AbstractController
     public function adminClusterShow(
         Cluster $cluster
     ): Response {
-        return $this->render('cluster/show.html.twig', [
+        $html = $this->renderView('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
             'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
             'cluster_entity' => $cluster,
         ]);
+        return new JsonResponse(['codeError' => 0, 'html' => $html]);
     }
 
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]

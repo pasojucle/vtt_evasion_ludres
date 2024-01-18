@@ -1,4 +1,3 @@
-var intervals = [];
 document.addEventListener("DOMContentLoaded", (event) => {
     getClusters()
 });
@@ -6,24 +5,29 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 const getClusters = () => {
     document.querySelectorAll('.cluster-container').forEach((element) => {
-        intervals[element.id] = null;
         new Cluster(element);
     })
 }
 
 class Cluster {
     constructor(clusterEl) {
+        this.interval = null;
         this.element = clusterEl;
         this.id = clusterEl.id;
+        this.entityId = this.id.replace('cluster-', '')
         this.getSessions();
     }
     getSessions = () => {
         fetch(Routing.generate('admin_cluster_show', {'cluster': this.id.replace('cluster-', '')}))
         .then(checkStatus)
-        .then((response) => response.text())
-        .then((text) => {
-            this.replaceCluster(text);
-        });
+        .then(isJsonResponse)
+        .then((response) => response.json())
+        .then((json) => {
+            if (parseInt(json.codeError) === 0) {
+                this.replaceCluster(json.html);
+            }
+        })
+        .catch(() => location.replace(location.origin));
     }
     replaceCluster = (text) => {
         const htmlElement = document.createRange().createContextualFragment(text);
@@ -42,19 +46,20 @@ class Cluster {
         }
     }
     clearCluster = () => {
-        clearInterval(intervals[this.id]);
+        clearInterval(this.interval);
         const self = this;
-        intervals[this.id] = setInterval(self.getSessions, 60000, self.element)
+        this.interval = setInterval(self.getSessions, 60000, self.element)
     }
     complete = (event) => {
         event.preventDefault();
-        const route = Routing.generate('admin_cluster_complete', {'cluster': this.btnComplete.dataset.clusterId});
+        const route = Routing.generate('admin_cluster_complete', {'cluster': this.entityId});
     
         fetch(route)
-        .then((response) => response.text())
-        .then((text)=> {
-            this.replaceCluster(text);
-            const exportButton = document.getElementById(this.id);
+        .then(isJsonResponse)
+        .then((response) => response.json())
+        .then((json)=> {
+            this.replaceCluster(json.html);
+            const exportButton = document.getElementById(`cluster_export_${this.entityId}`);
             if (exportButton) {
                 exportButton.click();
             }
@@ -113,9 +118,16 @@ class Attendance {
     }
 }
 
-
 const checkStatus = (response) => {
     if(response.status !== 500) {
+         return response;    
+    }
+    throw new Error('Something went wrong.');    
+}
+
+const isJsonResponse = (response) => {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
          return response;    
     }
     throw new Error('Something went wrong.');    
