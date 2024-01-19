@@ -15,7 +15,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use ReflectionClass;
-use function Symfony\Component\String\u;
 
 #[AsDoctrineListener(event: Events::postUpdate)]
 class RegistrationChangeListener
