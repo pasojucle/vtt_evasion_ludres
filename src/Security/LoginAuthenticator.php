@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 
 class LoginAuthenticator extends AbstractAuthenticator
 {
@@ -41,7 +42,7 @@ class LoginAuthenticator extends AbstractAuthenticator
         $password = $login['password'];
         $licenceNumber = $login['licenceNumber'];
         $csrfToken = $login['_csrf_token'];
-        $request->getSession()->set(Security::LAST_USERNAME, $licenceNumber);
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $licenceNumber);
 
         return new Passport(
             new UserBadge($licenceNumber), // Badge pour transporter l'user
@@ -79,7 +80,7 @@ class LoginAuthenticator extends AbstractAuthenticator
                 ]));
             }
 
-            return new RedirectResponse($targetPath);
+            // return new RedirectResponse($targetPath);
         }
 
         // if ($targetPath = $request->getSession()->get('registrationPath')) {
