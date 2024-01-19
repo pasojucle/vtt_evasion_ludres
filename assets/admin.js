@@ -35,3 +35,4 @@ import './js/clipboard.js';
 import './js/line_chart.js';
 import './js/dashboard.js';
 import './js/clusters.js';
+import './js/isGranted.js';

@@ -14,5 +14,4 @@ const fetchData = async(element) => {
             const htmlElement = document.createRange().createContextualFragment(text);
             element.replaceWith(htmlElement);
         });
-
 }

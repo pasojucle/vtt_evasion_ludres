@@ -22,6 +22,7 @@ use App\Service\ParameterService;
 use App\Service\ProjectDirService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -200,5 +201,11 @@ class ContentController extends AbstractController
         }
 
         return new BinaryFileResponse($path);
+    }
+
+    #[Route('/granted/{role}', name: 'is_granted_by_role', methods: ['GET'], options:['expose' => true])]
+    public function isGrantedUser(string $role): JsonResponse
+    {
+        return new JsonResponse(['isGranted' => $this->isGranted($role)]);
     }
 }
