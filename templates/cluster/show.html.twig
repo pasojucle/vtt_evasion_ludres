@@ -1,5 +1,5 @@
 {% set permission = is_granted('BIKE_RIDE_EDIT', cluster_entity) %}
-<div id="cluster-{{ cluster.id }}" class="cluster-container mb-20">
+<div id="cluster-{{ cluster.id }}" data-route="{{ path('admin_cluster_show', {'cluster': cluster.id })}}" class="cluster-container mb-20">
     <div class="cluster-title">
         <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
             {% if is_granted('USER_VIEW', bikeRide) %}
