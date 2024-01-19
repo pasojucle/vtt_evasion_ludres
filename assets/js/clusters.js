@@ -14,11 +14,12 @@ class Cluster {
         this.interval = null;
         this.element = clusterEl;
         this.id = clusterEl.id;
-        this.entityId = this.id.replace('cluster-', '')
+        this.entityId = this.id.replace('cluster-', '');
+        this.route = clusterEl.dataset.route;
         this.getSessions();
     }
     getSessions = () => {
-        fetch(Routing.generate('admin_cluster_show', {'cluster': this.id.replace('cluster-', '')}))
+        fetch(this.route)
         .then(checkStatus)
         .then(isJsonResponse)
         .then((response) => response.json())
