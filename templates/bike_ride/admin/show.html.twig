@@ -29,7 +29,9 @@
                 <div class="cluster-title">
                     <h2>{{ cluster.title }} - <span class="badge badge-info">0</span></h2>
                 </div>
-                {% include 'cluster/show.html.twig' %}
+                <div class="loader-container">
+                    <div class="loader"></div>
+                </div>
             </div>
         {% endfor %}
     </div>
