@@ -63,7 +63,7 @@ class ClusterDtoTransformer
     {
         $sessionsByClusters = [];
         /** @var Session $session */
-        foreach ($this->sessionRepository->findByBikeRide($bikeRide) as $session) {
+        foreach ($this->sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
             $clusterId = $session->getCluster()->getId();
             $sessionsByClusters[$clusterId][] = $session;
         }
