@@ -74,6 +74,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
             $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
+            $bikeRideDto->permission = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
         }
 
         return $bikeRideDto;

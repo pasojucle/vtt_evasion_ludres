@@ -50,4 +50,6 @@ class BikeRideDto
     public bool $display = false;
 
     public bool $isEditable = false;
+
+    public bool $permission = false;
 }

@@ -130,7 +130,7 @@ class BikeRideController extends AbstractController
 
         return $this->render('bike_ride/admin/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
-            'clusters' => $this->clusterDtoTransformer->headerFromBikeRide($bikeRide),
+            'clusters' => $this->clusterDtoTransformer->fromBikeRide($bikeRide),
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }
