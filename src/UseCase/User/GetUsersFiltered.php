@@ -100,8 +100,8 @@ abstract class GetUsersFiltered
         $users = $query->getQuery()->getResult();
         $emails = [];
         if (!empty($users)) {
-            foreach ($this->userDtoTransformer->fromEntities($users) as $user) {
-                $emails[] = $user->mainEmail;
+            foreach ($users as $user) {
+                $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
             }
         }
 
@@ -162,9 +162,10 @@ abstract class GetUsersFiltered
         $row = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
-        foreach ($this->userDtoTransformer->fromEntities($users) as $user) {
-            $isTesting = ($user->lastLicence?->isFinal) ? 0 : 1;
-            $row = [$user->licenceNumber, $user->member->name, $user->member->firstName, $user->level?->title, $user->mainEmail, $user->member->birthDate, $user->lastLicence->shortSeason, $isTesting, $user->lastLicence->status];
+        foreach ($users as $user) {
+            $userDto = $this->userDtoTransformer->fromEntity($user);
+            $isTesting = ($userDto->lastLicence?->isFinal) ? 0 : 1;
+            $row = [$userDto->licenceNumber, $userDto->member->name, $userDto->member->firstName, $userDto->level?->title, $userDto->mainEmail, $userDto->member->birthDate, $userDto->lastLicence->shortSeason, $isTesting, $userDto->lastLicence->status];
             $content[] = implode(',', $row);
         }
 

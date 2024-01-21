@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\UserDto;
-use App\Entity\User;
-use App\Entity\Level;
 use App\Dto\LicenceDto;
-use App\Entity\Licence;
+use App\Dto\UserDto;
 use App\Entity\Identity;
+use App\Entity\Level;
+use App\Entity\Licence;
+use App\Entity\User;
 use App\Repository\LicenceRepository;
-use App\Repository\IdentityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserDtoTransformer
 {
@@ -30,7 +29,6 @@ class UserDtoTransformer
         private AccessDecisionManagerInterface $accessDecisionManager,
         private TranslatorInterface $translator,
         private LicenceRepository $licenceRepository,
-        private IdentityRepository $identityRepository,
     ) {
     }
 
@@ -70,7 +68,7 @@ class UserDtoTransformer
 
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
-        $userDto->member = $this->identityDtoTransformer->headerFromEntity($user->getMemberIdentity(), $changes);
+        $userDto->member = $this->identityDtoTransformer->fromEntity($user->getMemberIdentity(), $changes);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->lastLicence = $this->getLastLicence($user, $changes);
 
@@ -100,7 +98,7 @@ class UserDtoTransformer
         return $users;
     }
 
-    public function getMainEmail(array $identitiesByType, int $category): ?string
+    private function getMainEmail(array $identitiesByType, int $category): ?string
     {
         if (!empty($identitiesByType)) {
             $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
@@ -110,17 +108,7 @@ class UserDtoTransformer
         return '';
     }
 
-    public function isMember(?Level $level): bool
-    {
-        return Level::TYPE_SCHOOL_MEMBER === $level?->getType();
-    }
-
-    public function isFramer(?Level $level): bool
-    {
-        return Level::TYPE_FRAME === $level?->getType();
-    }
-
-    public function isEndTesting(LicenceDto $lastLicence, int $sessionTotal): bool
+    private function isEndTesting(LicenceDto $lastLicence, int $sessionTotal): bool
     {
         if (false === $lastLicence->isFinal) {
             return 2 < $sessionTotal;
@@ -129,7 +117,7 @@ class UserDtoTransformer
         return false;
     }
 
-    public function testingBikeRides(LicenceDto $lastLicence, int $sessionsTotal): ?int
+    private function testingBikeRides(LicenceDto $lastLicence, int $sessionsTotal): ?int
     {
         if (false === $lastLicence->isFinal) {
             return $sessionsTotal;
@@ -138,7 +126,7 @@ class UserDtoTransformer
         return null;
     }
 
-    public function mustProvideRegistration(LicenceDto $lastLicence, int $licencesTotal): bool
+    private function mustProvideRegistration(LicenceDto $lastLicence, int $licencesTotal): bool
     {
         return 1 === $licencesTotal && $lastLicence->isSeasonLicence && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
     }
@@ -173,5 +161,12 @@ class UserDtoTransformer
         }
 
         return (!empty($permissions)) ? implode('<br>', $permissions) : null;
+    }
+
+    public function mainEmailFromEntity(User $userEntity): string
+    {
+        $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
+        $lastLicence = $this->getLastLicence($userEntity, null);
+        return $this->getMainEmail($identitiesByType, $lastLicence->category);
     }
 }
