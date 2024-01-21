@@ -17,7 +17,7 @@ class ErrorController extends AbstractController
     public function show(Request $request, EntityManagerInterface $entityManager, GetError $getError)
     {
         $logError = $getError->execute($request);
-
+        $entityManager->clear();
         if ($logError->getPersist()) {
             $entityManager->persist($logError);
             $entityManager->flush();
