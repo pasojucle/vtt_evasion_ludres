@@ -162,7 +162,7 @@ class LicenceDtoTransformer
                 if ('status' === $property) {
                     continue;
                 }
-                if ($licenceDto->$property instanceof string) {
+                if (is_string($licenceDto->$property)) {
                     $licenceDto->$property = sprintf('<b>%s</b>', $licenceDto->$property);
                 }
             }
