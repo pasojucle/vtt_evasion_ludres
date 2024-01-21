@@ -88,6 +88,8 @@ class BikeRideDtoTransformer
             $bikeRideDto->startAt = $bikeRide->getStartAt();
             $bikeRideDto->endAt = $bikeRide->getEndAt();
             $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
+            $bikeRideDto->content = $bikeRide->getContent();
+            $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
             $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
         }
