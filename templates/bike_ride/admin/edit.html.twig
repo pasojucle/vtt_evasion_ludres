@@ -5,8 +5,9 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    {{ form_start(form) }}
+    
     <div class="wrapper">
+        {{ form_start(form) }}
         <div class="wrapper-title">
             <h1>{{ title }}</h1>
             <span class="tools">
@@ -57,6 +58,6 @@
         <div class="wrapper-footer">
             {{ form_row(form.save) }}
         </div>
+        {{ form_end(form) }}
     </div>
-    {{ form_end(form) }}
 {% endblock %}
