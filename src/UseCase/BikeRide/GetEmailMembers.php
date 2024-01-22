@@ -40,8 +40,8 @@ class GetEmailMembers
     private function getEmails(array $users): array
     {
         $emails = [];
-        foreach ($this->userDtoTransformer->fromEntities($users) as $user) {
-            $emails[] = $user->mainEmail;
+        foreach ($users as $user) {
+            $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
         }
         return $emails;
     }
