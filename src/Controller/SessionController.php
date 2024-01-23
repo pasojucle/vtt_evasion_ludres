@@ -11,7 +11,7 @@ use App\Entity\User;
 use App\Form\SessionAvailabilityType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
-use App\Service\ModalWindowService;
+use App\Service\CacheService;
 use App\Service\SessionService;
 use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
@@ -28,6 +28,7 @@ class SessionController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private CacheService $cacheService,
         private SessionService $sessionService
     ) {
     }
@@ -84,7 +85,7 @@ class SessionController extends AbstractController
             $session = $form->getData();
 
             $this->entityManager->flush();
-
+            $this->cacheService->deleteCacheIndex($session->getCluster());
             $this->addFlash('success', 'Votre disponibilité a bien été modifiée');
             $confirmationSession->execute($session);
 
@@ -114,7 +115,7 @@ class SessionController extends AbstractController
                 $surveyResponseRepository->deleteResponsesByUserAndSurvey($session->getUser(), $survey);
                 $respondentRepository->deleteResponsesByUserAndSurvey($session->getUser(), $survey);
             }
-
+            $this->cacheService->deleteCacheIndex($session->getCluster());
             $this->entityManager->remove($session);
             $this->entityManager->flush();
 

@@ -4,30 +4,32 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\BikeRide;
 use App\Entity\Level;
 use App\Entity\Session;
-use App\Entity\BikeRide;
-use App\Service\SeasonService;
 use App\Form\Admin\SessionType;
 use App\Form\SessionSwitchType;
-use App\Service\SessionService;
 use App\Repository\SessionRepository;
+use App\Service\CacheService;
+use App\Service\SeasonService;
+use App\Service\SessionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private CacheService $cacheService,
         private SessionService $sessionService,
         private SessionRepository $sessionRepository,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
@@ -39,10 +41,8 @@ class SessionController extends AbstractController
     public function adminPresent(
         Request $request,
         SessionRepository $sessionRepository,
-        ClusterDtoTransformer $clusterDtoTransformer,
     ): Response {
         $codeError = 1;
-        $html = null;
         $sessionId = $request->request->get('sessionId');
 
         $session = $sessionRepository->find($sessionId);
@@ -53,16 +53,12 @@ class SessionController extends AbstractController
             $isPresent = !$session->isPresent();
             $session->setIsPresent($isPresent);
             $this->entityManager->flush();
+
+            $this->cacheService->deleteCacheIndex($session->getCluster());
             $codeError = 0;
-            $cluster = $session->getCluster();
-            $html = $this->renderView('cluster/show.html.twig', [
-                'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
-                'cluster' => $clusterDtoTransformer->fromEntity($cluster),
-                'cluster_entity' => $cluster,
-            ]);
         }
 
-        return new JsonResponse(['codeError' => $codeError, 'text' => $html]);
+        return new JsonResponse(['codeError' => $codeError]);
     }
 
     #[Route('/admin/groupe/change/{session}', name: 'admin_bike_ride_switch_cluster', methods: ['GET', 'POST'])]
@@ -73,15 +69,14 @@ class SessionController extends AbstractController
     ): Response {
         $bikeRide = $session->getCluster()->getBikeRide();
         $form = $this->createForm(SessionSwitchType::class, $session);
-        $oldCluster = $session->getCluster()->getId();
+        $oldCluster = $session->getCluster();
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $session = $form->getData();
             $this->entityManager->flush();
-            $cachePool = new FilesystemAdapter();
-            $cachePool->deleteItem(sprintf('cluster.%s', $oldCluster));
-            $cachePool->deleteItem(sprintf('cluster.%s', $session->getCluster()->getId()));
+            $this->cacheService->deleteCacheIndex($oldCluster);
+            $this->cacheService->deleteCacheIndex($session->getCluster());
 
             return $this->redirectToRoute('admin_bike_ride_cluster_show', [
                 'bikeRide' => $bikeRide->getId(),
@@ -128,8 +123,7 @@ class SessionController extends AbstractController
                 $user->addSession($userSession);
                 $this->entityManager->persist($userSession);
 
-                $cachePool = new FilesystemAdapter();
-                $cachePool->deleteItem(sprintf('cluster.%s', $userCluster->getId()));
+                $this->cacheService->deleteCacheIndex($userSession->getCluster());
 
                 $this->entityManager->flush();
                 $this->addFlash('success', 'Le participant a bien été inscrit');
@@ -152,8 +146,8 @@ class SessionController extends AbstractController
     #[Route('/admin/rando/supprime/{session}', name: 'admin_session_delete', methods: ['GET'])]
     #[IsGranted('BIKE_RIDE_VIEW', 'session')]
     public function adminSessionDelete(
-        Session $session,
         UserDtoTransformer $userDtoTransformer,
+        Session $session,
     ) {
         $userDto = $userDtoTransformer->fromEntity($session->getUser());
         $bikeRide = $session->getCluster()->getBikeRide();
@@ -161,8 +155,7 @@ class SessionController extends AbstractController
         $this->entityManager->remove($session);
         $this->entityManager->flush();
 
-        $cachePool = new FilesystemAdapter();
-        $cachePool->deleteItem(sprintf('cluster.%s', $session->getCluster()->getId()));
+        $this->cacheService->deleteCacheIndex($session->getCluster());
 
         $this->addFlash('success', $userDto->member->fullName . ' à bien été désinscrit');
 

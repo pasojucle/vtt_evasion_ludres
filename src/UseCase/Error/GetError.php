@@ -11,6 +11,7 @@ use DateTime;
 use ErrorException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -20,7 +21,7 @@ class GetError
 {
     public function __construct(
         private Security $security,
-        private ParameterService $parameterService
+        private ParameterService $parameterService,
     ) {
     }
 
@@ -33,7 +34,7 @@ class GetError
             ->setErrorMessage($exception->getMessage() . ' / ' . get_class($exception))
             ->setMessage('Une erreur est survenue !<br>Veuillez réessayer plus tard')
             ->setCreatedAt(new DateTime())
-            ->setStatusCode(500)
+            ->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR)
             ;
         $userAgent = $request->headers->get('user-agent');
         if ($userAgent) {
@@ -50,7 +51,7 @@ class GetError
             $statusCode = $exception->getStatusCode();
             $logError->setStatusCode($statusCode);
 
-            if (403 === $statusCode) {
+            if (Response::HTTP_FORBIDDEN === $statusCode) {
                 /** @var AccessDeniedException  $previousExceptions */
                 $previousExceptions = $exception->getPrevious();
                 $route = (!$previousExceptions->getSubject() instanceof User) ? $previousExceptions->getSubject()?->attributes?->get('_route') : null;
@@ -58,12 +59,14 @@ class GetError
                     ->setMessage('Vous n\'avez pas les droits nécessaires pour afficher cette page.')
                 ;
             }
-            if (404 === $statusCode) {
+            if (Response::HTTP_NOT_FOUND === $statusCode) {
                 $logError->setMessage('La page recherchée n\'existe pas.');
             }
         }
-        $this->addUser($logError);
-
+        if (Response::HTTP_NOT_FOUND !== $logError->getStatusCode()) {
+            $this->addUser($logError);
+        }
+        
         $this->setPersist($logError);
 
         return $logError;

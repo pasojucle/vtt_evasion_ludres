@@ -9,6 +9,8 @@ use App\Entity\BikeRide;
 use App\Entity\Respondent;
 use App\Entity\Session;
 use App\Entity\User;
+use App\Service\CacheService;
+use App\Service\ClusterService;
 use App\Service\ModalWindowService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +23,7 @@ class AddSession
         private ConfirmationSession $confirmationSession,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private ModalWindowService $modalWindowService,
+        private CacheService $cacheService,
     ) {
     }
 
@@ -31,7 +34,7 @@ class AddSession
 
         $this->answerTheSurvey($data, $user, $bikeRide);
         $this->confirmationSession->execute($data['session']);
-
+        $this->cacheService->deleteCacheIndex($data['session']->getCluster());
         $this->entityManager->persist($data['session']);
         $this->entityManager->flush();
 

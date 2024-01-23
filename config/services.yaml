@@ -73,7 +73,7 @@ services:
           - { name: kernel.event_listener, event: kernel.request }
        arguments: ['%maintenance%']
 
-    App\EventListeners\CurrentSeasonListener:
+    App\EventListeners\CurrentParamsListener:
        tags:
           - { name: kernel.event_listener, event: kernel.request }
 

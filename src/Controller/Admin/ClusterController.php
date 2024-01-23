@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Cluster;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
+use App\Service\CacheService;
 use App\UseCase\Cluster\ExportCluster;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ClusterController extends AbstractController
 {
@@ -24,6 +25,7 @@ class ClusterController extends AbstractController
         private EntityManagerInterface $entityManager,
         private BikeRideDtoTransformer $bikeRideDtoTransformer,
         private ClusterDtoTransformer $clusterDtoTransformer,
+        private CacheService $cacheService,
     ) {
     }
 
@@ -34,6 +36,7 @@ class ClusterController extends AbstractController
     ): Response {
         $cluster->setIsComplete(!$cluster->isComplete());
         $this->entityManager->flush();
+        $this->cacheService->deleteCacheIndex($cluster);
 
         $html = $this->renderView('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
@@ -57,6 +60,8 @@ class ClusterController extends AbstractController
             $this->entityManager->persist($cluster);
             $this->entityManager->flush();
 
+            $this->cacheService->deleteCacheIndex($cluster);
+
             return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
         }
 
@@ -77,6 +82,8 @@ class ClusterController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
+
+            $this->cacheService->deleteCacheIndex($cluster);
 
             return $this->redirectToRoute('admin_bike_ride_cluster_show', ['bikeRide' => $bikeRide->getId()]);
         }
@@ -117,6 +124,8 @@ class ClusterController extends AbstractController
         $bikeRide = $cluster->getBikeRide();
         $this->entityManager->remove($cluster);
         $this->entityManager->flush();
+
+        $this->cacheService->deleteCacheIndex($cluster);
 
         return $this->redirectToRoute('admin_bike_ride_cluster_show', [
             'bikeRide' => $bikeRide->getId(),

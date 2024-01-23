@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\Level;
 use App\Dto\ClusterDto;
-use App\Entity\Cluster;
-use App\Entity\Session;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
-use App\Service\ClusterService;
+use App\Entity\Cluster;
+use App\Entity\Level;
+use App\Entity\Session;
 use App\Repository\SessionRepository;
-use Doctrine\Common\Collections\Collection;
+use App\Service\CacheService;
+use App\Service\ClusterService;
+use DateInterval;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class ClusterDtoTransformer
 {
     public function __construct(
         private SessionDtoTransformer $sessionDtoTransformer,
         private LevelDtoTransformer $levelDtoTransformer,
+        private CacheService $cacheService,
         private ClusterService $clusterService,
         private UserDtoTransformer $userDtoTransformer,
         private SessionRepository $sessionRepository,
@@ -28,25 +31,33 @@ class ClusterDtoTransformer
 
     public function fromEntity(Cluster $cluster, $sessionEntities = null): ClusterDto
     {
-        $fromEntities = true;
-        if (!$sessionEntities) {
-            $sessionEntities = $cluster->getSessions();
-            $fromEntities = false;
+        $cachePool = $this->cacheService->getCache();
+        $clusterCache = $cachePool->getItem($this->cacheService->getCacheIndex($cluster));
+        if (!$clusterCache->isHit()) {
+            $fromEntities = true;
+            if (!$sessionEntities) {
+                $sessionEntities = $cluster->getSessions();
+                $fromEntities = false;
+            }
+
+            $clusterDto = new ClusterDto();
+            $clusterDto->id = $cluster->getId();
+            $clusterDto->title = $cluster->getTitle();
+            $clusterDto->level = $this->levelDtoTransformer->fromEntity($cluster->getLevel());
+            $clusterDto->sessions = $this->getSessions($sessionEntities, $fromEntities);
+            $clusterDto->maxUsers = $cluster->getMaxUsers();
+            $clusterDto->role = $cluster->getRole();
+            $clusterDto->isComplete = $cluster->isComplete();
+            $clusterDto->memberSessions = $this->clusterService->getMemberSessions($cluster);
+            $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities);
+            $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
+
+            $clusterCache->set($clusterDto);
+            $clusterCache->expiresAfter(DateInterval::createFromDateString('1 hour'));
+            $cachePool->save($clusterCache);
         }
 
-        $clusterDto = new ClusterDto();
-        $clusterDto->id = $cluster->getId();
-        $clusterDto->title = $cluster->getTitle();
-        $clusterDto->level = $this->levelDtoTransformer->fromEntity($cluster->getLevel());
-        $clusterDto->sessions = $this->getSessions($sessionEntities, $fromEntities);
-        $clusterDto->maxUsers = $cluster->getMaxUsers();
-        $clusterDto->role = $cluster->getRole();
-        $clusterDto->isComplete = $cluster->isComplete();
-        $clusterDto->memberSessions = $this->clusterService->getMemberSessions($cluster);
-        $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities);
-        $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
-
-        return $clusterDto;
+        return $clusterCache->get();
     }
     
     public function fromBikeRide(BikeRide $bikeRide): array
