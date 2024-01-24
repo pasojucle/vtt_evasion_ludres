@@ -140,7 +140,7 @@ class IdentityDtoTransformer
                     $property = 'birthPlace';
                 }
                 if (1 === preg_match('#name|firstName#', $property)) {
-                    $identityDto->fullName = sprintf('<b>%s</b>', $identityDto->$property);
+                    $identityDto->fullName = sprintf('<b>%s</b>', $identityDto->fullName);
                 }
                 
                 $identityDto->$property = sprintf('<b>%s</b>', $identityDto->$property);

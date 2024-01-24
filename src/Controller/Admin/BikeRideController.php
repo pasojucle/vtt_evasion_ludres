@@ -12,7 +12,6 @@ use App\Repository\BikeRideRepository;
 use App\Repository\SessionRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
-use App\UseCase\BikeRide\GetClusters;
 use App\UseCase\BikeRide\GetEmailMembers;
 use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
