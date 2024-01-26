@@ -41,9 +41,10 @@ class GetSchedule
         $filters = $this->getFiltersByParam($period, $year, $month, $day, $route);
         $form = $this->formFactory->create(BikeRideFilterType::class, $filters);
         $form->handleRequest($request);
-
+        dump($filters);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            dump($data);
             /** @var ?SubmitButton  $next */
             $next = ($form->has('next') && $form->get('next') instanceof ClickableInterface) ? $form->get('next') : null;
             /** @var ?SubmitButton  $prev */
@@ -97,7 +98,7 @@ class GetSchedule
 
     private function getFiltersByParam(?string $period, ?int $year, ?int $month, ?int $day, string $route)
     {
-        $date = (null === $year && null === $month && null === $day) ? new DateTimeImmutable() : DateTimeImmutable::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
+        $date = ((null === $year && null === $month && null === $day) || BikeRide::PERIOD_NEXT === $period) ? new DateTimeImmutable() : DateTimeImmutable::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
         if (null === $period) {
             $period = ('admin_bike_rides' === $route) ? BikeRide::PERIOD_NEXT : BikeRide::PERIOD_MONTH;
         }
@@ -112,7 +113,7 @@ class GetSchedule
             $date = DateTimeImmutable::createFromFormat('y-m-d', $data['date']);
         } catch (ValueError) {
             $date = new DateTimeImmutable();
-        }
+        }dump($data);
         
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
 
