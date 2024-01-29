@@ -41,10 +41,10 @@ class GetSchedule
         $filters = $this->getFiltersByParam($period, $year, $month, $day, $route);
         $form = $this->formFactory->create(BikeRideFilterType::class, $filters);
         $form->handleRequest($request);
-        dump($filters);
+
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            dump($data);
+
             /** @var ?SubmitButton  $next */
             $next = ($form->has('next') && $form->get('next') instanceof ClickableInterface) ? $form->get('next') : null;
             /** @var ?SubmitButton  $prev */
