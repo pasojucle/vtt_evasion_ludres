@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use ValueError;
+use DateTimeImmutable;
 use App\Entity\BikeRide;
 use App\Form\BikeRideFilterType;
-use App\Repository\BikeRideRepository;
-use App\Repository\ContentRepository;
-use App\Repository\ParameterRepository;
 use App\Service\PaginatorService;
 use App\UseCase\BikeRide\GetFilters;
-use DateTimeImmutable;
+use App\Repository\ContentRepository;
+use App\Repository\BikeRideRepository;
+use App\Repository\ParameterRepository;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\HttpFoundation\RequestStack;
-use ValueError;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 
 class GetSchedule
 {
@@ -30,12 +30,11 @@ class GetSchedule
         private ContentRepository $contentRepository,
         private ParameterRepository $parameterRepository,
         private GetFilters $getFilters,
-        private RequestStack $requestStack,
         private FormFactoryInterface $formFactory
     ) {
     }
 
-    public function execute($request, $period, $year, $month, $day): array
+    public function execute(Request $request, ?string $period, ?int $year, ?int $month, ?int $day): array
     {
         $route = $request->get('_route');
         $filters = $this->getFiltersByParam($period, $year, $month, $day, $route);
@@ -60,7 +59,7 @@ class GetSchedule
             //     $data['date'] = $today->format('Y-m-d');
             // }
             $filters = $this->getFiltersByData($data);
-            $this->requestStack->getSession()->set('admin_bike_rides_filters', $filters);
+            $request->getSession()->set('admin_bike_rides_filters', $filters);
 
             return [
                 'redirect' => $route,
@@ -113,7 +112,7 @@ class GetSchedule
             $date = DateTimeImmutable::createFromFormat('y-m-d', $data['date']);
         } catch (ValueError) {
             $date = new DateTimeImmutable();
-        }dump($data);
+        }
         
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
 
