@@ -20,7 +20,7 @@ Les informations de chaque section sont modifiables à partir de l'icone du cray
 
 🛈 **NOTE :** Depuis la section licence, un bouton permet d'envoyer le numéro de licence par mail. Le texte du message est modifiable via le menus *Paramètrage*
 
-🛈 **NOTE :** Il est possible d'affecter à un addhérent, un droit pour la gestion d'une partie du site, via la section *niveau et rôle*. Exemple : l'accès aux fiches des adhérents et aux inscritions pour le secrétaire du club.
+🛈 **NOTE :** Il est possible d'affecter à un addhérent, un droit pour la gestion d'une partie du site, via la section *niveau et rôle*. Exemple : l'accès aux fiches des adhérents et aux inscriptions pour le secrétaire du club.
 
 ## Niveaux
 
