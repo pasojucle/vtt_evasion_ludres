@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Cluster;
+use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class CacheService
 {
     public function __construct(
-        private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
     public function getCache(): FilesystemAdapter
     {
-        return new FilesystemAdapter($this->requestStack->getSession()->get('databaseName'));
+        return new FilesystemAdapter($databaseName = $this->entityManager->getConnection()->getParams()['dbname']);
     }
     
     public function getCacheIndex(Cluster $entity): string

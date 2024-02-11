@@ -2,15 +2,15 @@
 
 namespace App\Command;
 
+use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Service\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'database:short:clusters',
@@ -19,9 +19,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ShortClustersCommand extends Command
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
-    )
-    {
+        private EntityManagerInterface $entityManager,
+        private CacheService $cacheService,
+    ) {
         parent::__construct();
     }
 
@@ -35,11 +35,16 @@ class ShortClustersCommand extends Command
         foreach ($clusters as $cluster) {
             $clustersByBikeRide[$cluster->getBikeRide()->getId()][] = $cluster;
         }
-        foreach($clustersByBikeRide as $clusters) {
-            foreach($clusters as $key => $cluster) {
-                $position = $this->getPosition($key, $cluster);
+        foreach ($clustersByBikeRide as $clusters) {
+            foreach ($clusters as $key => $cluster) {
+                $bikeRideType = $cluster->getBikeRide()->getBikeRideType();
+                $position = $this->getPosition($key, $cluster, $bikeRideType);
                 $cluster->setPosition($position);
-            } 
+                if ($bikeRideType->isUseLevels() && $cluster->getLevel()) {
+                    $cluster->setTitle($cluster->getLevel()->getTitle());
+                    $this->cacheService->deleteCacheIndex($cluster);
+                }
+            }
         }
 
         $this->entityManager->flush();
@@ -49,20 +54,19 @@ class ShortClustersCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function getPosition(int $key, Cluster $cluster): int
+    private function getPosition(int $key, Cluster $cluster, BikeRideType $bikeRideType): int
     {
         if ('ROLE_FRAME' === $cluster->getRole()) {
             return 0;
         }
 
         $position = $key;
-        $bikeRideType = $cluster->getBikeRide()->getBikeRideType();
         if ($bikeRideType->isUseLevels() && $cluster->getLevel()) {
-            $position = $cluster->getLevel()?->getOrderBy();
+            $position = $cluster->getLevel()->getOrderBy();
         }
 
         if (!$bikeRideType->isUseLevels() && $bikeRideType->getClusters()) {
-            $position = array_search($cluster->getTitle(),  $bikeRideType->getClusters());
+            $position = array_search($cluster->getTitle(), $bikeRideType->getClusters());
         }
 
         if ($cluster->getBikeRide()->getBikeRideType()->isNeedFramers()) {
