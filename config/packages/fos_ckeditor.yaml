@@ -7,11 +7,13 @@ twig:
 fos_ck_editor:
     configs:
         minimum_config:
+            versionCheck: false
             toolbar: "minimum_toolbar"
             filebrowserBrowseRoute: elfinder
             filebrowserBrowseRouteParameters: []
             extraPlugins: [iframe]
         full_config:
+            versionCheck: false
             toolbar: "full_toolbar"
             filebrowserBrowseRoute: elfinder
             filebrowserBrowseRouteParameters: []
