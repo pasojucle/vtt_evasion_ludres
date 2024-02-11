@@ -131,7 +131,7 @@ class SessionService
                 $cluster->setTitle($user->getLevel()->getTitle() . ' ' . $count)
                     ->setLevel($user->getLevel())
                     ->setBikeRide($bikeRide)
-                    ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
+                    ->setMaxUsers(Cluster::SCHOOL_MAX_MEMBERS)
                 ;
             }
         }

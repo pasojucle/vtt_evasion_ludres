@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class CreateClusters
 {
+    private int $position = 0;
     public function __construct(
         private LevelRepository $levelRepository,
         private EntityManagerInterface $entityManager,
@@ -34,16 +35,16 @@ class CreateClusters
     private function addSchoolClusters(BikeRide $bikeRide): void
     {
         $levels = $this->levelRepository->findAllTypeMember();
-        if (null !== $levels) {
-            foreach ($levels as $level) {
-                $cluster = new Cluster();
-                $cluster->setTitle($level->getTitle())
-                    ->setLevel($level)
-                    ->setMaxUsers(Cluster::SCHOOL_MAX_MEMEBERS)
-                ;
-                $bikeRide->addCluster($cluster);
-                $this->entityManager->persist($cluster);
-            }
+        foreach ($levels as $level) {
+            $cluster = new Cluster();
+            $cluster->setTitle($level->getTitle())
+                ->setLevel($level)
+                ->setMaxUsers(Cluster::SCHOOL_MAX_MEMBERS)
+                ->setPosition($this->position)
+            ;
+            $bikeRide->addCluster($cluster);
+            $this->entityManager->persist($cluster);
+            ++$this->position;
         }
     }
 
@@ -51,9 +52,12 @@ class CreateClusters
     {
         foreach ($bikeRide->getBikeRideType()->getClusters() as $clusterTitle) {
             $cluster = new Cluster();
-            $cluster->setTitle($clusterTitle);
+            $cluster->setTitle($clusterTitle)
+                ->setPosition($this->position)
+            ;
             $bikeRide->addCluster($cluster);
             $this->entityManager->persist($cluster);
+            ++$this->position;
         }
     }
 
@@ -62,8 +66,10 @@ class CreateClusters
         $cluster = new Cluster();
         $cluster->setTitle(Cluster::CLUSTER_FRAME)
             ->setRole('ROLE_FRAME')
+            ->setPosition($this->position)
         ;
         $bikeRide->addCluster($cluster);
         $this->entityManager->persist($cluster);
+        ++$this->position;
     }
 }

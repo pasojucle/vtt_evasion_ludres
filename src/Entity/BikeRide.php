@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\OrderBy;
 
 #[Entity(repositoryClass: BikeRideRepository::class)]
 class BikeRide
@@ -70,11 +71,11 @@ class BikeRide
     #[Column(type: 'integer', nullable: true)]
     private $minAge;
 
-
     #[Column(type: Types::INTEGER, nullable: true)]
     private ?int $maxAge = null;
 
     #[OneToMany(targetEntity: Cluster::class, mappedBy: 'bikeRide')]
+    #[OrderBy(['position' => 'ASC'])]
     private Collection $clusters;
 
     #[Column(type: 'integer', options: ['default' => 1])]

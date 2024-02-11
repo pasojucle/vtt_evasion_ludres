@@ -22,11 +22,9 @@ class MaintenanceListener
         private ParameterService $parameterService,
         private BackgroundService $backgroundService,
         private RequestStack $request,
-    )
-    {
+    ) {
         $this->maintenanceMode = $this->parameterService->getParameterByName('MAINTENANCE_MODE');
         $this->ipAuthorized = $maintenance['ipAuthorized'];
-
     }
 
     public function onKernelRequest(RequestEvent $event)

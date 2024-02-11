@@ -26,7 +26,7 @@ class EditBikeRide
 
         $clusters = $bikeRide->getClusters();
 
-        if ($clusters->isEmpty($bikeRide)) {
+        if ($clusters->isEmpty()) {
             $this->createClusters->execute($bikeRide);
         }
 

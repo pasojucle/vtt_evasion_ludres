@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\ClusterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -18,7 +19,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 #[Entity(repositoryClass: ClusterRepository::class)]
 class Cluster
 {
-    public const SCHOOL_MAX_MEMEBERS = 6;
+    public const SCHOOL_MAX_MEMBERS = 6;
 
     public const CLUSTER_FRAME = 'Encadrement';
 
@@ -47,6 +48,9 @@ class Cluster
 
     #[Column(type: 'boolean', options: ['default' => false])]
     private bool $isComplete = false;
+
+    #[Column(type: Types::INTEGER, nullable: true)]
+    private ?int $position = null;
 
     public function __construct()
     {
@@ -161,6 +165,18 @@ class Cluster
     public function setIsComplete(bool $isComplete): self
     {
         $this->isComplete = $isComplete;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): static
+    {
+        $this->position = $position;
 
         return $this;
     }

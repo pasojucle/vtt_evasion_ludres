@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
-use ValueError;
-use DateTimeImmutable;
-use App\Entity\BikeRide;
-use App\Form\BikeRideFilterType;
-use App\Service\PaginatorService;
-use App\UseCase\BikeRide\GetFilters;
-use App\Repository\ContentRepository;
-use App\Repository\BikeRideRepository;
-use App\Repository\ParameterRepository;
-use Symfony\Component\Form\SubmitButton;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\ClickableInterface;
-use Symfony\Component\Form\FormFactoryInterface;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Entity\BikeRide;
+use App\Form\BikeRideFilterType;
+use App\Repository\BikeRideRepository;
+use App\Repository\ContentRepository;
+use App\Repository\ParameterRepository;
+use App\Service\PaginatorService;
+use App\UseCase\BikeRide\GetFilters;
+use DateTimeImmutable;
+use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\HttpFoundation\Request;
+use ValueError;
 
 class GetSchedule
 {
