@@ -30,7 +30,7 @@ class MembersPresenceController extends AbstractController
     public function monthly(
         bool $isSchool
     ): JsonResponse {
-        $today = new DateTimeImmutable('2023-09-01');
+        $today = new DateTimeImmutable();
         $filters = ['period' => ['startAt' => $today->sub(new DateInterval('P6M')), 'endAt' => $today], 'isSchool' => (bool) $isSchool];
         
         return new JsonResponse(['format' => 'card', 'membersPrecences' => [$this->sessionRepository->findMemberpresence($filters)]]);
