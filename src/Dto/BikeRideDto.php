@@ -15,6 +15,8 @@ class BikeRideDto
 
     public ?string $title = null;
 
+    public ?string $shortTitle = null;
+
     public ?string $content;
 
     public ?DateTimeImmutable $startAt;

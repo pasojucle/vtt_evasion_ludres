@@ -20,7 +20,7 @@
             <ul>
                 {% for type, items in data %}
                     <li class="flex">
-                        <div>{{ type|trans }}</div>
+                        <div class="flex-label">{{ type|trans }}</div>
                         <div class="auto-margin"><span class="badge small">{{ items|length }}</span></div>
                     </li>
                 {% endfor %}
@@ -29,7 +29,7 @@
                 <ul class="mt-10">
                     {% for parameter in parameters %}
                         <li class="flex">
-                            <div>{{ parameter.label }}</div>
+                            <div class="flex-label">{{ parameter.label }}</div>
                             <div class="auto-margin"><span class="{% if parameter.value %}toggle-on{% else %}toggle-off{% endif %}"></span></div>
                         </li>
                     {% endfor %}

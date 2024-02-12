@@ -18,18 +18,22 @@ class LineChart {
 
     constructor(canvas) {
         this.display = {};
+        this.id = canvas.id;
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
         this.route = canvas.dataset.route;
+        this.routeParams = {'isSchool': canvas.dataset.isSchool}; 
+        this.color = canvas.dataset.color;
         this.ratioY = 0;
         this.delay = 1000 / 30;
         this.loop = 0;
         this.startLoop = 10;
         this.base = 100;
+        this.interval = null;
         this.initialize();
     }
     initialize = async() => {
-        await fetch(Routing.generate(this.route), )
+        await fetch(Routing.generate(this.route, this.routeParams),)
         .then((response) => response.json())
         .then((json)=> {
             console.log(json)
@@ -57,6 +61,7 @@ class LineChart {
         this.textPosition = this.height - this.footer + this.padding
     }
     next = () => {
+        console.log(this.id)
         this.loop++;
         if (this.startLoop < this.loop) {
             this.ratioY = Math.pow(this.loop - this.startLoop, 2); 
@@ -66,17 +71,16 @@ class LineChart {
         this.delay = 1000 / 30;
     }
     run = () => {
-        self = this;
-        const transition = this.interval = setInterval(() => {
+        this.interval = setInterval(() => {
             this.context.clearRect(0, 0, this.width, this.height);
             this.lines.forEach((line) => {
                 line.draw();
-                self.next();
-                if (self.base < self.ratioY) {
-                    clearInterval(transition);
+                this.next();
+                if (this.base < this.ratioY) {
+                    clearInterval(this.interval);
                 }
             })
-        }, self.delay);
+        }, this.delay, this);
     }
 }
 
@@ -85,7 +89,7 @@ class Line {
     constructor(lineChart, data) {
         this.lineChart = lineChart;
         this.data = data;
-        this.color = 'rgba(230,132,27,1)'
+        this.color = lineChart.color;
         this.markColor = 'rgba(0,0,0,0.7)'
     }
     draw = () => {
@@ -98,6 +102,7 @@ class Line {
         this.lineChart.context.beginPath();
         this.lineChart.context.strokeStyle = this.color;
         this.data.forEach((presence, index) => {
+            
             const value = parseInt(presence[1]) * this.lineChart.ratioY / this.lineChart.base;
             this.drawItem(value, index);
             this.writeDate(presence);

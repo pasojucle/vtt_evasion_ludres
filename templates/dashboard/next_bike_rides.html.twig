@@ -2,13 +2,13 @@
     <div class="dashboard-item">
         <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': item.bikeRide.id})}}">
             <div class="dashboard-item-title">
-                <h2>{{ item.bikeRide.title }} du {{ item.bikeRide.period }}</h2>
+                <h2>{{ item.bikeRide.shortTitle }} du {{ item.bikeRide.period }}</h2>
             </div>
             <div class="dashboard-item-body">
                 <ul>
                     {% for cluster in item.clusters %}
                         <li class="flex">
-                            <div>{{ cluster.title }}</div>
+                            <div class="flex-label">{{ cluster.title }}</div>
                             <div class="auto-margin"><span class="badge small" style="background-color:{{ cluster.level.colors.background }}; color:{{ cluster.level.colors.color }}">{{ cluster.sessions|length }}</span></div>
                         </li>
                     {% endfor %}

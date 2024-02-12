@@ -170,11 +170,14 @@ class SessionRepository extends ServiceEntityRepository
 
     public function findMemberpresence(array $filters): array
     {
-        $parameters = ['needFramers' => true, 'isPresent' => true];
+        $parameters = ['isPresent' => true];
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->eq('s.isPresent', ':isPresent'));
-        $andX->add((new Expr())->eq('brt.needFramers', ':needFramers'));
 
+        if (array_key_exists('isSchool', $filters)) {
+            $andX->add((new Expr())->eq('brt.needFramers', ':needFramers'));
+            $parameters['needFramers'] = $filters['isSchool'];
+        }
 
         if (array_key_exists('period', $filters) && !empty($filters['period'])) {
             if (is_array($filters['period'])) {

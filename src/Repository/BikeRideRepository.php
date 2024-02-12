@@ -167,4 +167,24 @@ class BikeRideRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findNextAdultBikeRides(): array
+    {
+        return $this->createQueryBuilder('br')
+            ->join('br.bikeRideType', 'brt')
+            ->andWhere(
+                (new Expr())->eq('brt.needFramers', ':needFramers'),
+                (new Expr())->gte('br.startAt', ':today'),
+            )
+            ->setParameters([
+                'needFramers' => false,
+                'today' => (new DateTimeImmutable())->setTime(0, 0, 0),
+            ])
+            ->andHaving(
+                (new Expr())->eq('br.startAt', (new Expr())->min('br.startAt'))
+            )
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

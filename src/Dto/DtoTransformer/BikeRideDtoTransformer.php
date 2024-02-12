@@ -85,6 +85,7 @@ class BikeRideDtoTransformer
         if ($bikeRide) {
             $bikeRideDto->id = $bikeRide->getId();
             $bikeRideDto->title = $bikeRide->getTitle();
+            $bikeRideDto->shortTitle = $this->getShorTilte($bikeRide->getTitle());
             $bikeRideDto->startAt = $bikeRide->getStartAt();
             $bikeRideDto->endAt = $bikeRide->getEndAt();
             $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
@@ -108,6 +109,14 @@ class BikeRideDtoTransformer
         }
 
         return $bikeRides;
+    }
+
+    private function getShorTilte(string $title): string
+    {
+        if (1 === preg_match('#^(.+)\s\((.+)\)$#', $title, $matches)) {
+            return $matches[1];
+        }
+        return $title;
     }
 
     public function isOver(): bool

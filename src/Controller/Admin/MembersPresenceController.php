@@ -26,11 +26,12 @@ class MembersPresenceController extends AbstractController
         return $this->render('members_presence/search.html.twig');
     }
 
-    #[Route('/mensuelle', name: '_monthly', methods: ['GET'], options: ['expose' => true])]
-    public function monthly(): JsonResponse
-    {
-        $today = new DateTimeImmutable();
-        $filters = ['period' => ['startAt' => $today->sub(new DateInterval('P6M')), 'endAt' => $today]];
+    #[Route('/mensuelle/{isSchool}', name: '_monthly', methods: ['GET'], options: ['expose' => true])]
+    public function monthly(
+        bool $isSchool
+    ): JsonResponse {
+        $today = new DateTimeImmutable('2023-09-01');
+        $filters = ['period' => ['startAt' => $today->sub(new DateInterval('P6M')), 'endAt' => $today], 'isSchool' => (bool) $isSchool];
         
         return new JsonResponse(['format' => 'card', 'membersPrecences' => [$this->sessionRepository->findMemberpresence($filters)]]);
     }
