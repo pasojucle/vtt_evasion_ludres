@@ -31,7 +31,7 @@ class DashboardController extends AbstractController
         return $this->render('dashboard/index.html.twig');
     }
 
-    #[Route('/nextSchoolBikeRides', name: '_next_school_bike_rides', methods: ['GET'], options:['expose' => true])]
+    #[Route('/nextBikeRides', name: '_next_bike_rides', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function nextSchoolBikeRide(
         BikeRideRepository $bikeRideRepository,
@@ -40,7 +40,7 @@ class DashboardController extends AbstractController
     ): Response {
         $bikeRides = [];
         /** @var BikeRide $bikeRide */
-        foreach ($bikeRideRepository->findNextSchoolBikeRides() as $bikeRide) {
+        foreach ($bikeRideRepository->findNextBikeRides() as $bikeRide) {
             $bikeRides[] = [
                 'bikeRide' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
                 'clusters' => $clusterDtoTransformer->fromBikeRide($bikeRide),

@@ -23,7 +23,6 @@ class LineChart {
         this.context = canvas.getContext("2d");
         this.route = canvas.dataset.route;
         this.routeParams = {'isSchool': canvas.dataset.isSchool}; 
-        this.color = canvas.dataset.color;
         this.ratioY = 0;
         this.delay = 1000 / 30;
         this.loop = 0;
@@ -37,16 +36,16 @@ class LineChart {
         .then((response) => response.json())
         .then((json)=> {
             console.log(json)
-            json.membersPrecences.forEach((data) => {
-                this.addLine(data);
+            json.membersPrecences.forEach((presences) => {
+                this.addLine(presences);
             });
             this.setFormat(json.format);
             console.log('canvas', this);
             this.run();
         });
     }
-    addLine = (data) => {
-        this.lines.push(new Line(this, data));
+    addLine = (presences) => {
+        this.lines.push(new Line(this, presences));
     }
     setFormat = (format) => {
         if (format === 'card') {
@@ -61,7 +60,6 @@ class LineChart {
         this.textPosition = this.height - this.footer + this.padding
     }
     next = () => {
-        console.log(this.id)
         this.loop++;
         if (this.startLoop < this.loop) {
             this.ratioY = Math.pow(this.loop - this.startLoop, 2); 
@@ -86,10 +84,10 @@ class LineChart {
 
 class Line {
     offsetX = 0;
-    constructor(lineChart, data) {
+    constructor(lineChart, presences) {
         this.lineChart = lineChart;
-        this.data = data;
-        this.color = lineChart.color;
+        this.data = presences.data;
+        this.color = presences.color;
         this.markColor = 'rgba(0,0,0,0.7)'
     }
     draw = () => {

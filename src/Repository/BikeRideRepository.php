@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\Survey;
+use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -148,21 +149,18 @@ class BikeRideRepository extends ServiceEntityRepository
             ->getDQL();
     }
 
-    public function findNextSchoolBikeRides(): array
+    public function findNextBikeRides(): array
     {
         return $this->createQueryBuilder('br')
             ->join('br.bikeRideType', 'brt')
             ->andWhere(
-                (new Expr())->eq('brt.needFramers', ':needFramers'),
-                (new Expr())->gte('br.startAt', ':today'),
+                (new Expr())->gte('br.startAt', ':start'),
+                (new Expr())->lte('br.startAt', ':end'),
             )
             ->setParameters([
-                'needFramers' => true,
-                'today' => (new DateTimeImmutable())->setTime(0, 0, 0),
+                'start' => (new DateTimeImmutable())->setTime(0, 0, 0),
+                'end' => (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59),
             ])
-            ->andHaving(
-                (new Expr())->eq('br.startAt', (new Expr())->min('br.startAt'))
-            )
             ->getQuery()
             ->getResult()
         ;

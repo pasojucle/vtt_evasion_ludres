@@ -33,6 +33,11 @@ class MembersPresenceController extends AbstractController
         $today = new DateTimeImmutable();
         $filters = ['period' => ['startAt' => $today->sub(new DateInterval('P6M')), 'endAt' => $today], 'isSchool' => (bool) $isSchool];
         
-        return new JsonResponse(['format' => 'card', 'membersPrecences' => [$this->sessionRepository->findMemberpresence($filters)]]);
+        return new JsonResponse([
+            'format' => 'card',
+            'membersPrecences' => [
+                ['data' => $this->sessionRepository->findMemberpresence($filters), 'color' => "rgba(230,132,27,1)"],
+            ],
+        ]);
     }
 }

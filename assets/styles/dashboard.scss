@@ -3,7 +3,7 @@
     flex-wrap: wrap;
     gap: 20px;
     .flex-label {
-        max-width: 80%;
+        max-width: calc(100% - 35px);
         text-overflow: ellipsis;
     }
     .auto-margin {
@@ -13,7 +13,7 @@
 
 .dashboard-item {
     background-color: var(--light-color);
-    flex: 1 1 0px;
+    flex: .5 .5 0px;
     min-width: 320px;
     &.dashboard-flash {
         background-color: var(--primary-color);

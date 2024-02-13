@@ -9,8 +9,7 @@
         </div>
         <div class="wrapper-body">
             <div class="flex mb-20">                
-                <div class="dashboard-item" data-route="admin_dashboard_next_school_bike_rides"></div>
-                <div class="dashboard-item" data-route="admin_dashboard_next_adult_bike_rides"></div>
+                <div class="dashboard-item" data-route="admin_dashboard_next_bike_rides"></div>
                 <div class="dashboard-item">
                     <div class="dashboard-item-title">
                         <h2>Participation école VTT</h2>
@@ -18,7 +17,7 @@
                     <div class="dashboard-item-body">
                         <div class="content-center">
                             {% set route_params = {'isScool': true} %}
-                            <canvas id="school_line_chart" class="line-chart" data-route="members_presence_monthly" data-is-school="1" data-color="rgba(230,132,27,1)"></canvas>
+                            <canvas id="school_line_chart" class="line-chart" data-route="members_presence_monthly" data-is-school="1"</canvas>
                         </div>
                     </div>
                 </div>
@@ -28,15 +27,11 @@
                     </div>
                     <div class="dashboard-item-body">
                         <div class="content-center">
-                            <canvas id="adult_line_chart" class="line-chart" data-route="members_presence_monthly" data-is-school="0" data-color="rgba(23,132,230,1)"></canvas>
+                            <canvas id="adult_line_chart" class="line-chart" data-route="members_presence_monthly" data-is-school="0"></canvas>
                         </div>
                     </div>
                 </div>
                 <div class="dashboard-item" data-route="admin_dashboard_saison_detail"></div>
-            </div>
-
-            
-            <div class="flex"> 
                 <div class="dashboard-item" data-route="admin_dashboard_orders"></div>
                 <div class="dashboard-item" data-route="admin_dashboard_second_hands"></div>
             </div>
