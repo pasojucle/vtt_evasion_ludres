@@ -52,27 +52,6 @@ class DashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/nextAdultlBikeRides', name: '_next_adult_bike_rides', methods: ['GET'], options:['expose' => true])]
-    #[IsGranted('BIKE_RIDE_LIST')]
-    public function nextAdultBikeRide(
-        BikeRideRepository $bikeRideRepository,
-        BikeRideDtoTransformer $bikeRideDtoTransformer,
-        ClusterDtoTransformer $clusterDtoTransformer,
-    ): Response {
-        $bikeRides = [];
-        /** @var BikeRide $bikeRide */
-        foreach ($bikeRideRepository->findNextAdultBikeRides() as $bikeRide) {
-            $bikeRides[] = [
-                'bikeRide' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
-                'clusters' => $clusterDtoTransformer->fromBikeRide($bikeRide),
-            ];
-        }
-
-        return $this->render('dashboard/next_bike_rides.html.twig', [
-            'bike_rides' => $bikeRides,
-        ]);
-    }
-
     #[Route('/season/detail', name: '_saison_detail', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('USER_SHARE')]
     public function seasonDetail(
