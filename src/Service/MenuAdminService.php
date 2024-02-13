@@ -51,6 +51,12 @@ class MenuAdminService
     {
         return $this->getMenusGranted([
             [
+                'label' => 'Tableau de bord',
+                'route' => 'admin_dashboard',
+                'pattern' => '/^admin_dashboard/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Programme',
                 'route' => 'admin_bike_rides',
                 'pattern' => '/^admin_bike_ride/',
