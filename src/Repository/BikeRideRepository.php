@@ -156,10 +156,12 @@ class BikeRideRepository extends ServiceEntityRepository
             ->andWhere(
                 (new Expr())->gte('br.startAt', ':start'),
                 (new Expr())->lte('br.startAt', ':end'),
+                (new Expr())->gt('brt.registration', ':registration'),
             )
             ->setParameters([
                 'start' => (new DateTimeImmutable())->setTime(0, 0, 0),
                 'end' => (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59),
+                'registration' => 0,
             ])
             ->getQuery()
             ->getResult()
