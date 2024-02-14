@@ -13,7 +13,7 @@
 
 .dashboard-item {
     background-color: var(--light-color);
-    flex: .5 .5 0px;
+    flex: 1 1 0px;
     min-width: 320px;
     &.dashboard-flash {
         background-color: var(--primary-color);
@@ -31,7 +31,7 @@
     }
     .dashboard-item-title {
         text-align: center;
-        padding: 5px 0;
+        padding: 5px;
         background-color: var(--light-color-darker);
         width: 100%;
         box-sizing: border-box;
