@@ -12,6 +12,8 @@ class ContentDto
 
     public ?string $route = null;
 
+    public string $routeName = 'content.route.home';
+
     public ?string $content = null;
 
     public ?bool $isFlash = false;

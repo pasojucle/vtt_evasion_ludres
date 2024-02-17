@@ -46,8 +46,9 @@ class ContentType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $content = $event->getData();
             $form = $event->getForm();
-            if (null === $content?->getParent() && 'admin_home_content_edit' === $this->requestStack->getCurrentRequest()->attributes->get('_route')) {
+            if (null === $content) {
                 $parent = $this->contentRepository->findOneByRoute('home');
+                $content = new Content();
                 $content->setRoute('home')->setParent($parent);
                 $event->setData($content);
             }
@@ -99,6 +100,7 @@ class ContentType extends AbstractType
                     ->add('isFlash', CheckboxType::class, [
                         'label' => 'Message flash',
                         'required' => false,
+                        'block_prefix' => 'customsimplecheck',
                     ])
                     ->add('file', FileType::class, [
                         'label' => 'Fichier (optionnel)',

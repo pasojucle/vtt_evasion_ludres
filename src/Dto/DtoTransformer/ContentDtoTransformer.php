@@ -27,6 +27,7 @@ class ContentDtoTransformer
             $contentDto->id = $content->getId();
             $contentDto->title = $content->getTitle();
             $contentDto->route = $content->getRoute();
+            $contentDto->routeName = ($content->getRoute()) ? sprintf('content.route.%s', $content->getRoute()) : 'content.route.home';
             $contentDto->isFlash = $content->IsFlash();
             $contentDto->content = $content->getContent();
             $contentDto->fileName = $this->getPath($content->getFileName());

@@ -93,10 +93,10 @@ class ContentController extends AbstractController
         ]);
     }
 
+
     #[Route('/page/accueil/contenu/{content}', name: 'admin_home_content_edit', methods: ['GET', 'POST'], defaults:['content' => null])]
-    #[Route('/contenu/{content}', name: 'admin_content_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminContentEdit(
+    public function adminHomeContentEdit(
         Request $request,
         ContentDtoTransformer $contentDtoTransformer,
         UploadService $uploadService,
@@ -122,15 +122,52 @@ class ContentController extends AbstractController
             $this->entityManager->persist($content);
             $this->entityManager->flush();
 
-            if ('home' === $content->getRoute()) {
-                $contents = $this->contentRepository->findByRoute('home', !$content->isFlash());
-                $this->orderByService->resetOrders($contents);
+            $contents = $this->contentRepository->findByRoute('home', !$content->isFlash());
+            $this->orderByService->resetOrders($contents);
 
-                return $this->redirectToRoute('admin_home_contents', [
-                    'route' => $content->getRoute(),
-                    'tab' => (int) $content->isFlash() ? self::HOME_TAB_FLASH : self::HOME_TAB_CONTENT,
-                ]);
+            return $this->redirectToRoute('admin_home_contents', [
+                'route' => $content->getRoute(),
+                'tab' => (int) $content->isFlash() ? self::HOME_TAB_FLASH : self::HOME_TAB_CONTENT,
+            ]);
+        }
+
+        return $this->render('content/admin/edit.html.twig', [
+            'content' => $contentDtoTransformer->fromEntity($content),
+            'form' => $form->createView(),
+            'settings' => [
+                'parameters' => ($content?->getParameters()) ? $parameterRepository->findByNames($content->getParameters()) : null,
+                'routes' => [],
+            ],
+        ]);
+    }
+
+    #[Route('/contenu/{content}', name: 'admin_content_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminContentEdit(
+        Request $request,
+        ContentDtoTransformer $contentDtoTransformer,
+        UploadService $uploadService,
+        ParameterRepository $parameterRepository,
+        Content $content
+    ): Response {
+        $form = $this->createForm(ContentType::class, $content);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $content = $form->getData();
+            if (null === $content->getOrderBy()) {
+                $content->setOrderBy(0);
+                $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
+                $content->setOrderBy($order);
             }
+
+            if ($request->files->get('content')) {
+                $file = $request->files->get('content')['file'];
+                $content->setFileName($uploadService->uploadFile($file));
+            }
+
+            $this->entityManager->persist($content);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_contents');
         }
@@ -139,7 +176,7 @@ class ContentController extends AbstractController
             'content' => $contentDtoTransformer->fromEntity($content),
             'form' => $form->createView(),
             'settings' => [
-                'parameters' => ($content->getParameters()) ? $parameterRepository->findByNames($content->getParameters()) : null,
+                'parameters' => ($content?->getParameters()) ? $parameterRepository->findByNames($content->getParameters()) : null,
                 'routes' => [],
             ],
         ]);
