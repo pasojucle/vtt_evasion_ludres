@@ -45,7 +45,7 @@ class GetUsersOffSite
             }
             $this->askConfirmResponse($request, $cluster, $usersOffSite, $response);
         }
-        dump($usersOffSite, $response);
+        
         return [$usersOffSite, $response];
     }
 
