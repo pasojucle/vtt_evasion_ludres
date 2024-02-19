@@ -49,16 +49,16 @@ class DisabledOutOfPeriod
 
     private function sendMailToSeller(SecondHand $secondHand): void
     {
-        $userDto = $this->userDtoTransformer->fromEntity($secondHand->getUser());
+        $userDto = $this->userDtoTransformer->identifiersFromEntity($secondHand->getUser());
         $subject = sprintf('Votre annonce %s', $secondHand->getName());
+        $content = $this->parameterService->getParameterByName('SECOND_HAND_DISABLED_MESSAGE');
 
-        $search = ['{{ nom_annonce }}', '{{ url }}', '{{ durree }}'];
-        $replace = [
-            'secondHandName' => $secondHand->getName(),
-            'url' => $this->urlGenerator->generate('second_hand_user_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            'duration' => $this->parameterService->getParameterByName('SECOND_HAND_DURATION'),
+        $AdditionnalParams = [
+            '{{ nom_annonce }}' => $secondHand->getName(),
+            '{{ url }}' => $this->urlGenerator->generate('second_hand_user_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            '{{ durree }}' => $this->parameterService->getParameterByName('SECOND_HAND_DURATION'),
         ];
         
-        $this->mailerService->sendMailToMember($userDto, $subject, str_replace($search, $replace, $this->parameterService->getParameterByName('SECOND_HAND_DISABLED_MESSAGE')));
+        $this->mailerService->sendMailToMember($userDto, $subject, $content, null, $AdditionnalParams);
     }
 }

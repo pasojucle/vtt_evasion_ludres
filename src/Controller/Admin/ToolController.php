@@ -97,7 +97,7 @@ class ToolController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $licence = $data['user']->getLastLicence();
-            $user = $userDtoTransformer->fromEntity($data['user']);
+            $user = $userDtoTransformer->identifiersFromEntity($data['user']);
             /** @var SubmitButton $submit */
             $submit = $form->get('submit');
             $content = ($submit->isClicked())

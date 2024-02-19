@@ -154,7 +154,7 @@ class SessionService
 
     public function checkEndTesting(User $user): void
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
 
         if ($userDto->isEndTesting) {
             $subject = 'Fin de la période d\'essai';

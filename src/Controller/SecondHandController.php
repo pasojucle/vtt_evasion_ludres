@@ -174,14 +174,19 @@ class SecondHandController extends AbstractController
         
         /** @var ?User $buyer */
         $buyer = $this->getUser();
-        $buyerDto = $userDtoTransformer->fromEntity($buyer);
-        $search = ['{{ nom_annonce }}', '{{ telephone }}', '{{ email }}', '{{ prenom_nom }}'];
-        $replace = [$secondHand->getName(), $buyerDto->member->phone, $buyerDto->mainEmail, $buyerDto->member->fullName];
+        $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);
+        $content = $parameterService->getParameterByName('second_hand_contact');
+        $additionalParams = [
+            '{{ nom_annonce }}' => $secondHand->getName(),
+            '{{ telephone }}' => $buyerDto->member->phone,
+            '{{ email }}' => $buyerDto->mainEmail,
+            '{{ prenom_nom }}' => $buyerDto->member->fullName,
+        ];
         $seller = $secondHand->getUser();
-        $sellerDto = $userDtoTransformer->fromEntity($seller);
+        $sellerDto = $userDtoTransformer->identifiersFromEntity($seller);
         $subject = sprintf('Votre annonce %s', $secondHand->GetName());
         
-        if ($mailerService->sendMailToMember($sellerDto, $subject, str_replace($search, $replace, $parameterService->getParameterByName('second_hand_contact')))) {
+        if ($mailerService->sendMailToMember($sellerDto, $subject, $content, null, $additionalParams)) {
             $this->addFlash('success', 'Votre message a bien été envoyé');
         } else {
             $this->addFlash('danger', 'Une erreure est survenue');

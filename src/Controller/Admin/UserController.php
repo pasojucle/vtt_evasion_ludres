@@ -170,7 +170,7 @@ class UserController extends AbstractController
         ParameterService $parameterService,
         User $user
     ): RedirectResponse {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
         $subject = 'Votre numero de licence';
         $mailerService->sendMailToMember($userDto, $subject, $parameterService->getParameterByName('EMAIL_LICENCE_VALIDATE'));
 

@@ -117,7 +117,7 @@ class EditRegistration
 
     private function sendMailToUser(User $user, bool $isLoginSend): void
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
+        $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
 
         $parameter = $this->parameterRepository->findOneByName((!$isLoginSend) ? 'EMAIL_ACCOUNT_CREATED' : 'EMAIL_REGISTRATION');
         $subject = 'Votre inscription sur le site VTT Evasion Ludres';

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\Identity;
@@ -48,6 +49,7 @@ class UserDtoTransformer
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
+        $userDto->mainFullName = $this->getMainFullName($identitiesByType, $userDto->lastLicence->category);
         $userDto->boardRole = $user->getBoardRole()?->getName();
         $userDto->isBoardMember = null !== $user->getBoardRole();
         $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
@@ -108,6 +110,39 @@ class UserDtoTransformer
         return '';
     }
 
+    private function getMainFullName(array $identitiesByType, int $category): ?string
+    {
+        if (!empty($identitiesByType)) {
+            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
+            return $identity?->fullName;
+        }
+
+        return '';
+    }
+
+    private function getMainIdentity(User $userEntity): ?IdentityDto
+    {
+        $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
+        $lastLicence = $this->getLastLicence($userEntity, null);
+        if (!empty($identitiesByType)) {
+            return (Licence::CATEGORY_MINOR === $lastLicence->category && array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
+        }
+
+        return null;
+    }
+
+    public function identifiersFromEntity(User $userEntity): UserDto
+    {
+        $userDto = new UserDto();
+        /** @var IdentityDto $mainIdentity */
+        $mainIdentity = $this->getMainIdentity($userEntity);
+        
+        $userDto->member = $this->identityDtoTransformer->headerFromEntity($userEntity->getMemberIdentity());
+        $userDto->mainEmail = $mainIdentity->email;
+        $userDto->mainFullName = $mainIdentity->fullName;
+        return $userDto;
+    }
+    
     private function isEndTesting(LicenceDto $lastLicence, int $sessionTotal): bool
     {
         if (false === $lastLicence->isFinal) {

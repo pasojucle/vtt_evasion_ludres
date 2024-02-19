@@ -24,7 +24,7 @@
         {% if cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
             <div>
                 {% if not cluster.isComplete %}
-                    <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if not bikeRide.isEditable %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" target="_blank">
+                    <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if not bikeRide.isEditable %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" >
                         <i class="fas fa-check"></i> Valider le groupe
                     </a>
                 {% else %}

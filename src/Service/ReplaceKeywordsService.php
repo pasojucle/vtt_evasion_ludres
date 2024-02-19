@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\HealthDto;
+use App\Dto\IdentityDto;
+use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
 use DateTime;
+use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -18,7 +22,7 @@ class ReplaceKeywordsService
     ) {
     }
 
-    public function replace(UserDto $user, ?string $content, int $render = RegistrationStep::RENDER_VIEW): null|string|array
+    public function replace(UserDto $user, ?string $content, int $render = RegistrationStep::RENDER_VIEW, array $additionalParams = []): null|string|array
     {
         if (null !== $content) {
             if (RegistrationStep::RENDER_FILE === $render) {
@@ -26,7 +30,8 @@ class ReplaceKeywordsService
                 $content = $this->removeButton($content);
             }
             if (null !== $content) {
-                $content = str_replace($this->search(), $this->replaces($user, $render), $content);
+                $keyWords = $this->getKeyWords($content);
+                $content = str_replace($keyWords, $this->getReplace($keyWords, $user, $render, $additionalParams), $content);
                 $content = $this->splitHeaderAndFooter($content);
             }
         }
@@ -73,70 +78,78 @@ class ReplaceKeywordsService
         return $content;
     }
 
-    private function search(): array
+    private function getKeyWords(string $content): array
     {
-        return [
-            '{{ prenom_nom }}',
-            '{{ adresse }}',
-            '{{ date_naissance }}',
-            '{{ lieu_naissance }}',
-            '{{ saison }}',
-            '{{ full_saison }}',
-            '{{ numero_licence }}',
-            '{{ cotisation }}',
-            '{{ date }}',
-            '{{ prenom_nom_parent }}',
-            '{{ date_naissance_parent }}',
-            '{{ adresse_parent }}',
-            '{{ prenom_nom_enfant }}',
-            '{{ date_naissance_enfant }}',
-            '{{ saut_page }}',
-            '{{ titre_licence }}',
-            '{{ type_assurance}}',
-            '{{ VTTAE }}',
-            '{{ necessite_sertificat_medical }}',
-            '{{ attestations_sur_honneur }}',
-            '{{ montant }}',
-            '<p>&nbsp;</p>',
-            '{{ autorisation_droit_image }}',
-            '{{ saison_actuelle }}',
-            '{{ email_principal }}',
-        ];
+        if (preg_match_all('#({{ [a-z_]+ }})#', $content, $matches, PREG_PATTERN_ORDER)) {
+            return $matches[1];
+        };
+        return [];
     }
 
-    private function replaces(UserDto $user, int $render): array
+    private function getReplace(array $keyWords, UserDto $user, int $render, array $additionalParams): array
     {
-        $address = $user->member->address->toString();
-        $kinshipAddress = $user->kinship?->address->toString();
-        $today = new DateTime();
-        $licence = $user->lastLicence;
+        $replace = [];
+        /** @var ?LicenceDto $licence */
+        $licence = $this->getDtoProperty($user, 'lastLicence');
+        /** @var ?IdentityDto $kinship */
+        $kinship = $this->getDtoProperty($user, 'kinship');
+        /** @var ?HealthDto $health */
+        $health = $this->getDtoProperty($user, 'health');
 
-        return [
-            $user->member->fullName,
-            $address,
-            $user->member->birthDate,
-            $user->member->birthPlace,
-            $licence->shortSeason,
-            $licence->fullSeason,
-            $user->licenceNumber,
-            $licence->amount['str'],
-            $today->format('d/m/Y'),
-            $user->kinship?->fullName,
-            $user->kinship?->birthDate,
-            $kinshipAddress,
-            $user->member->fullName,
-            $user->member->birthDate,
-            '<br>',
-            $licence->registrationTitle,
-            $this->translator->trans($licence->coverageStr),
-            ($licence->isVae) ? 'Oui' : 'Non',
-            $user->health->isMedicalCertificateRequired,
-            $licence->licenceSwornCertifications,
-            $licence->amount['value']?->toString(),
-            '<br>',
-            (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $user->approvals['rightToTheImage']->toString) : 'autorise',
-            $this->requestStack->getSession()->get('currentSeason'),
-            $user->mainEmail,
-        ];
+        foreach ($keyWords as $keyWord) {
+            $replace[] = match ($keyWord) {
+                '{{ prenom_nom }}' => $user->member->fullName,
+                '{{ adresse }}' => $this->getAddress($user->member),
+                '{{ date_naissance }}', '{{ date_naissance_enfant }}' => $this->getDtoProperty($user->member, 'birthDate'),
+                '{{ lieu_naissance }}' => $this->getDtoProperty($user->member, 'birthPlace'),
+                '{{ saison }}' => $licence?->shortSeason,
+                '{{ full_saison }}' => $licence?->fullSeason,
+                '{{ numero_licence' => $this->getDtoProperty($user, 'licenceNumber'),
+                '{{ cotisation }}' => $licence?->amount['str'],
+                '{{ date }}' => (new DateTime())->format('d/m/Y'),
+                '{{ prenom_nom_parent }}' => $kinship?->fullName,
+                '{{ date_naissance_parent }}' => $kinship?->birthDate,
+                '{{ adresse_parent }}' => $this->getAddress($user->kinship),
+                '{{ prenom_nom_enfant }}' => $user->member->fullName,
+                '{{ saut_page }}', '<p>&nbsp;</p>' => '<br>',
+                '{{ titre_licence }}' => $licence?->registrationTitle,
+                '{{ type_assurance }}' => $this->translator->trans($licence?->coverageStr),
+                '{{ VTTAE }}' => ($licence?->isVae) ? 'Oui' : 'Non',
+                '{{ necessite_sertificat_medical }}' => $health?->isMedicalCertificateRequired,
+                '{{ attestations_sur_honneur }}' => $licence?->licenceSwornCertifications,
+                '{{ montant }}' => $licence?->amount['value']?->toString(),
+                '{{ autorisation_droit_image }}' => $this->getRightToTheImage($user, $render),
+                '{{ saison_actuelle }}' => $this->requestStack->getSession()->get('currentSeason'),
+                '{{ email_principal }}' => $user->mainEmail,
+                '{{ nom_domaine }}' => $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost(),
+                default => (array_key_exists($keyWord, $additionalParams)) ? $additionalParams[$keyWord] : $keyWord
+            };
+        }
+        dump($keyWords, $replace);
+        return $replace;
+    }
+
+    private function getAddress(?IdentityDto $identity): string
+    {
+        if (!$identity) {
+            return '';
+        }
+
+        return((new ReflectionProperty($identity, 'address'))->isInitialized($identity)) ? $identity->address->toString() : '';
+    }
+
+    private function getDtoProperty(UserDto|IdentityDto $dto, string $property): string|array|null|LicenceDto|HealthDto|IdentityDto
+    {
+        return (new ReflectionProperty($dto, $property))->isInitialized($dto) ? $dto->$property : '';
+    }
+
+    private function getRightToTheImage(UserDto $user, int $render): string
+    {
+        $approvals = $this->getDtoProperty($user, 'approvals');
+        if (!$approvals) {
+            return '';
+        }
+
+        return (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $approvals['rightToTheImage']?->toString) : 'autorise';
     }
 }

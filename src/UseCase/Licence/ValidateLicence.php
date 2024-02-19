@@ -66,7 +66,7 @@ class ValidateLicence
     {
         $userDto = $this->userDtoTransformer->fromEntity($user);
         if ($licenceNumber !== $userDto->licenceNumber) {
-            $userDto = $this->userDtoTransformer->fromEntity($user);
+            $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
             $subject = 'Votre numero de licence';
             $this->mailerService->sendMailToMember($userDto, $subject, $this->parameterService->getParameterByName('EMAIL_LICENCE_VALIDATE'));
         }

@@ -35,14 +35,13 @@ class ConfirmationSession
             : (Level::TYPE_FRAME === $user->level->type && $bikeRide->bikeRideType->isSchool ? 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_FRAMER' : 'EMAIL_ACKNOWLEDGE_SESSION_REGISTRATION_ADULT');
         
         $subject = 'Confirmation d\'inscription à une sortie';
-    
-        $search = ['{{ bikeRideTitleAndPeriod }}', '{{ disponibilite }}'];
-        $replace = [
-                'bikeRideTitleAndPeriod' => $bikeRide->title . ' du ' . $bikeRide->period,
-                'sessionAvailability' => $this->availabilityToString($session->getAvailability()),
+        $content = $this->parameterService->getParameterByName($parameterName);
+        $additionalParams = [
+                '{{ bikeRideTitleAndPeriod }}' => $bikeRide->title . ' du ' . $bikeRide->period,
+                '{{ disponibilite }}' => $this->availabilityToString($session->getAvailability()),
             ];
             
-        $this->mailerService->sendMailToMember($user, $subject, str_replace($search, $replace, $this->parameterService->getParameterByName($parameterName)));
+        $this->mailerService->sendMailToMember($user, $subject, $content, null, $additionalParams);
     }
 
     private function availabilityToString(?int $availability): ?string

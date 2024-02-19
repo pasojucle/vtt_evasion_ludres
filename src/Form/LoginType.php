@@ -40,9 +40,6 @@ class LoginType extends AbstractType
                 'data' => true,
                 'required' => false,
                 'block_prefix' => 'customsimplecheck',
-                // 'row_attr' => [
-                //     'class' => 'form-group',
-                // ],
             ])
             ;
     }

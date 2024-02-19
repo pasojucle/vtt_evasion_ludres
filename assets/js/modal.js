@@ -31,9 +31,7 @@ function showModal(route, modalType) {
         type: "get",
         success: function (html, textStatus, xhr) {
             if (204 !== xhr.status) {
-                $('.modal').replaceWith($(html));
-                $('.modal').find('.modal-header').addClass('bg-'+modalType);
-                $('.modal').find('button:not(button[data-dismiss="modal"])').addClass('btn-'+modalType);
+                openModal(html, modalType);
                 $('.js-datepicker').datepicker({
                     format: 'yyyy-mm-dd hh:ii',
                 });
@@ -48,7 +46,19 @@ function showModal(route, modalType) {
     });
 }
 
-function closeModal() {
+export function openModal(text, modalType) {
+    const htmlElement = document.createRange().createContextualFragment(text);
+    document.querySelector('.modal').replaceWith(htmlElement);
+    document.querySelector('.modal .modal-header').classList.add('bg-'+modalType);
+    document.querySelectorAll('.modal button:not(button[data-dismiss="modal"])').forEach((element) => {
+        element.classList.add('btn-'+modalType);
+    })
+    setTimeout(function () {
+        document.querySelector('.modal .modal-dialog').classList.add('modal-open');
+    }, 100);
+}
+
+export function closeModal() {
     $('.modal-dialog').removeClass('modal-open');
     let html = document.createElement("div");
     $(html).addClass('modal').attr('tabindex', -1);

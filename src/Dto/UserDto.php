@@ -34,6 +34,8 @@ class UserDto
 
     public ?string $mainEmail;
 
+    public ?string $mainFullName;
+
     public array $approvals = [];
 
     public bool $isBoardMember = false;

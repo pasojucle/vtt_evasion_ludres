@@ -47,7 +47,7 @@ class MailerService
         }
     }
 
-    public function sendMailToMember(array|UserDto $user, string $subject, string $content, ?array $attachements = null): array
+    public function sendMailToMember(array|UserDto $user, string $subject, string $content, ?array $attachements = null, ?array $additionalParams = []): array
     {
         list($userEmail, $fullName) = $this->getUserData($user);
         if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
@@ -55,7 +55,7 @@ class MailerService
         }
 
         if ($user instanceof UserDto) {
-            $content = $this->replaceKeywords->replace($user, $content, RegistrationStep::RENDER_FILE);
+            $content = $this->replaceKeywords->replace($user, $content, RegistrationStep::RENDER_FILE, $additionalParams);
         }
 
         try {
@@ -104,7 +104,7 @@ class MailerService
     private function getUserData(array|UserDto $user): array
     {
         if ($user instanceof UserDto) {
-            return [$user->mainEmail, $user->member->fullName];
+            return [$user->mainEmail, $user->mainFullName];
         }
         return [$user['email'], sprintf('%s %s', $user['name'], $user['firstName'])];
     }

@@ -1,3 +1,5 @@
+import { openModal, closeModal } from './modal.js'
+
 document.addEventListener("DOMContentLoaded", (event) => {
     getClusters()
 });
@@ -36,6 +38,12 @@ class Cluster {
         this.init();
         this.clearCluster();
     }
+    exportCluster = () => {
+        const exportButton = document.getElementById(`cluster_export_${this.entityId}`);
+        if (exportButton) {
+            exportButton.click();
+        }
+    }
     init = () => {
         this.element = document.getElementById(this.id);
         this.element.querySelectorAll('.admin-session-present').forEach((element) => {
@@ -54,16 +62,35 @@ class Cluster {
     complete = (event) => {
         event.preventDefault();
         const route = Routing.generate('admin_cluster_complete', {'cluster': this.entityId});
-    
         fetch(route)
         .then(isJsonResponse)
         .then((response) => response.json())
         .then((json)=> {
-            this.replaceCluster(json.html);
-            const exportButton = document.getElementById(`cluster_export_${this.entityId}`);
-            if (exportButton) {
-                exportButton.click();
+            if (json.html) {
+                this.replaceCluster(json.html);
+                this.exportCluster();
             }
+            if (json.modal) {
+                openModal(json.modal, 'primary');
+                document.querySelector('.modal form').addEventListener('submit', this.confirmComplete)
+            }
+        });
+    }
+    confirmComplete = (event) => {
+        event.preventDefault();
+        closeModal();
+        const route = Routing.generate('admin_cluster_complete', {'cluster': this.entityId});
+        const data = new FormData();
+        data.append('sessionId', this.session);
+        fetch(route, {
+            method: 'POST',
+            body : data,
+        })
+        .then(isJsonResponse)
+        .then((response) => response.json())
+        .then((json)=> {
+            this.replaceCluster(json.html);
+            this.exportCluster();
         });
     }
 }

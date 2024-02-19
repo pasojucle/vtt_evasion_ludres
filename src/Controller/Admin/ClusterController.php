@@ -11,6 +11,8 @@ use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
 use App\Service\CacheService;
 use App\UseCase\Cluster\ExportCluster;
+use App\UseCase\Cluster\GetUsersOffSite;
+use App\UseCase\Cluster\MailerSendUsersOffSite;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,21 +31,34 @@ class ClusterController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET'])]
+    #[Route('/admin/groupe/complete/{cluster}', name: 'admin_cluster_complete', options:['expose' => true], methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function adminClusterComplete(
+        Request $request,
+        GetUsersOffSite $usersOffSite,
+        MailerSendUsersOffSite $mailerSendUsersOffSite,
         Cluster $cluster
     ): Response {
+        /** @var BikeRide $bikeRide */
+        $bikeRide = $cluster->getBikeRide();
+        list($usersOffSite, $response) = $usersOffSite->execute($request, $cluster);
+        if ($response instanceof Response) {
+            return $response;
+        }
+
         $cluster->setIsComplete(!$cluster->isComplete());
         $this->entityManager->flush();
         $this->cacheService->deleteCacheIndex($cluster);
+        $mailerSendUsersOffSite->execute($usersOffSite, $bikeRide);
 
-        $html = $this->renderView('cluster/show.html.twig', [
-            'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
-            'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
-            'cluster_entity' => $cluster,
+        return new JsonResponse([
+            'codeError' => 0,
+            'html' => $this->renderView('cluster/show.html.twig', [
+                'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
+                'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
+                'cluster_entity' => $cluster,
+            ]),
         ]);
-        return new JsonResponse(['codeError' => 0, 'html' => $html]);
     }
 
     #[Route('/admin/groupe/ajoute/{bikeRide}', name: 'admin_cluster_add', methods: ['GET', 'POST'])]

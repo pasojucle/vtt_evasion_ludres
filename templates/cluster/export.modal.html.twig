@@ -1,0 +1,12 @@
+{% extends 'base_modal.html.twig' %}
+{# {% set button_href = path('admin_category_delete', {'category' : category.id}) %} #}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Valider un groupe{% endblock %}
+{% block body %}
+    <p>{{ users_off_site|join(', ') }} {% if users_off_site|length > 1 %}sont absents.{% else %}est absent.{% endif %}</p>
+    <p>Êtes-vous sûre de vouloir valider le groupe ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Valider le groupe' %}
+    {{ parent() }}
+{% endblock %}
