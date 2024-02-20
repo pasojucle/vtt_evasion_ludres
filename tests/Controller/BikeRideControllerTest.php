@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use DateTime;
 use DateInterval;
 use App\Entity\User;
@@ -16,8 +15,10 @@ use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
 use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 class BikeRideControllerTest extends WebTestCase
 {
@@ -113,7 +114,7 @@ class BikeRideControllerTest extends WebTestCase
     {
         $this->client->request('GET', sprintf('/admin/rando/inscription/%s', $bikeRide->getId()));
         $form = $this->client->getCrawler()->selectButton('session_submit')->form();
-        /** @var Form $formUserSession */
+        /** @var ChoiceFormField $formUserSession */
         $formUserSession = $form['session[user]'];
         $formUserSession->disableValidation()->setValue((string) $user->getId());
         $this->client->submit($form);

@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use DateTime;
-use DateInterval;
-use App\Entity\User;
+use App\Entity\BikeRide;
+use App\Entity\BoardRole;
+use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
-use App\Entity\BikeRide;
-use App\Entity\Identity;
-use App\Entity\BoardRole;
-use Doctrine\ORM\Query\Expr;
+use App\Entity\User;
 use App\Form\Admin\LevelType;
 use App\Service\SeasonService;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\NoResultException;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use DateInterval;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
