@@ -51,8 +51,7 @@ class EditSecondHand
     private function saveFile(SecondHand $secondHand, Request $request): void
     {
         $files = $request->files->all('second_hand');
-        $file = $files['filename'];
-        if ($file) {
+        if (array_key_exists('filename', $files) && $file = $files['filename']) {
             $secondHand->setFilename($this->uploadService->uploadFile($file, 'second_hands_directory_path'));
         }
     }

@@ -4,24 +4,25 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\BikeRide;
-use App\Entity\BoardRole;
-use App\Entity\Identity;
+use DateTime;
+use DateInterval;
+use App\Entity\User;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
-use App\Entity\User;
-use App\Service\SeasonService;
-use DateInterval;
-use DateTime;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NoResultException;
+use App\Entity\BikeRide;
+use App\Entity\Identity;
+use App\Entity\BoardRole;
 use Doctrine\ORM\Query\Expr;
+use App\Form\Admin\LevelType;
+use App\Service\SeasonService;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -631,6 +632,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
             ->setParameters([
                 'season' => $season,
+            ])
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findAllMemberByCurrentSeason(): array
+    {
+        $season = $this->seasonService->getCurrentSeason();
+
+        return $this->createQueryBuilder('u')
+            ->join('u.licences', 'li')
+            ->join('u.level', 'le')
+            ->andWhere(
+                (new Expr())->eq('li.season', ':season'),
+                (new Expr())->neq('le.type', ':levelType'),
+            )
+            ->setParameters([
+                'season' => $season,
+                'levelType' => Level::TYPE_FRAME,
             ])
             ->getQuery()
             ->getResult()

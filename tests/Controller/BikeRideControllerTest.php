@@ -27,7 +27,6 @@ class BikeRideControllerTest extends WebTestCase
     {
         $this->client = static::createClient([], ['REMOTE_ADDR' => '11.11.11.11']);
         $this->cleanDataBase();
-        $this->loginAdmin();
         $this->testAdminSchedule();
         $bikeRideType = $this->testAdminAddBikeRide(2);
         $bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
@@ -62,6 +61,7 @@ class BikeRideControllerTest extends WebTestCase
     private function testAdminSchedule(): void
     {
         $this->client->request('GET', '/admin/calendrier');
+        $this->loginAdmin();
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
@@ -113,7 +113,9 @@ class BikeRideControllerTest extends WebTestCase
     {
         $this->client->request('GET', sprintf('/admin/rando/inscription/%s', $bikeRide->getId()));
         $form = $this->client->getCrawler()->selectButton('session_submit')->form();
-        $form['session[user]']->disableValidation()->setValue((string) $user->getId());
+        /** @var Form $formUserSession */
+        $formUserSession = $form['session[user]'];
+        $formUserSession->disableValidation()->setValue((string) $user->getId());
         $this->client->submit($form);
         $sessionRepository = static::getContainer()->get(SessionRepository::class);
         return $sessionRepository->findOneByUserAndBikeRide($user, $bikeRide);
