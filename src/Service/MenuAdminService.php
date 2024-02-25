@@ -110,6 +110,12 @@ class MenuAdminService
                 'pattern' => '/second_hand/',
                 'role' => 'SECOND_HAND_LIST',
             ],
+            [
+                'label' => 'Diaporama',
+                'route' => 'admin_slideshow_list',
+                'pattern' => '/slideshow/',
+                'role' => 'SLIDESHOW_LIST',
+            ],
         ]);
     }
 

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Diaporama{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div is="my-slideshow" class="slideshow">
+            <div class="frame"></div>
+            <a class="btn-slide slide-to-right"><i class="fa-solid fa-chevron-left"></i></a>
+            <a class="btn-slide slide-to-left"><i class="fa-solid fa-chevron-right"></i></a>
+            <a class="btn-slide full-screen"><i class="fa-solid fa-maximize"></i></a>
+        </div>
+    </div>
+{% endblock %}

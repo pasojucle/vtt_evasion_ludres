@@ -41,10 +41,16 @@
                         <ul class="dropdown-menu">
                             {% for sub_menu in menu.subMenus %}
                                 <li>
-                                    <a href="{{ path(sub_menu.route) }}"
-                                        {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
-                                        <span>{{ sub_menu.label }}</span>
-                                    </a>
+                                    {% if sub_menu.class is defined %}
+                                        <a class="{{ sub_menu.class }}"
+                                            <span>{{ sub_menu.label }}</span>
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ path(sub_menu.route) }}"
+                                            {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
+                                            <span>{{ sub_menu.label }}</span>
+                                        </a>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                         </ul>

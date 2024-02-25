@@ -14,6 +14,7 @@ import './styles/modal.css';
 import './styles/dropdown.scss';
 import './styles/component/checkbox.scss';
 import './styles/health.scss';
+import './styles/loader.scss';
 
 import './styles/reveal.css';
 import './styles/carrousel.css';
@@ -26,3 +27,4 @@ import './js/reveal.js';
 import './js/select2/i18n/fr.js';
 import './js/js-datepicker.js';
 import './js/form.js'
+import './js/slideshow.js'

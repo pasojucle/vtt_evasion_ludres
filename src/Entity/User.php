@@ -41,6 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const PERMISSION_SECOND_HAND = 'SECOND_HAND';
     public const PERMISSION_PERMISSION = 'PERMISSION';
     public const PERMISSION_DOCUMENTATION = 'DOCUMENTATION';
+    public const PERMISSION_SLIDESHOW = 'SLIDESHOW';
     public const PERMISSIONS = [
         self::PERMISSION_BIKE_RIDE => 'permission.bike_ride',
         self::PERMISSION_USER => 'permission.user',
@@ -49,6 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::PERMISSION_MODAL_WINDOW => 'permission.modal_window',
         self::PERMISSION_SECOND_HAND => 'permission.second_hand',
         self::PERMISSION_DOCUMENTATION => 'permission.documentation',
+        self::PERMISSION_SLIDESHOW => 'permission.slideshow',
     ];
 
     #[Column(type: 'integer')]

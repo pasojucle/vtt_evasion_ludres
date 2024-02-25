@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion du diaporma{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+
+    <div class="wrapper-title">
+        <h1>Diaporama</h1>
+        <span class="tools">
+        </span>
+    </div>
+    <div class="wrapper-body">
+        <a class="btn btn-primary mb-20" href="{{ path('admin_slideshow_directory_add') }}" title="Ajouter un répertoire" data-toggle="modal" data-type="primary">Ajouter un répertoire</a>
+        <div class="slideshow-list">
+            {% for directory in directories %}
+                <a class="slideshow-element" href="{{ path('admin_slideshow_list', {'directory': directory.id}) }}">
+                    <i class="fa-solid fa-folder"></i>
+                    <div>{{ directory.name }}</div>                   
+                </a>  
+            {% endfor %}
+            {% for image in images %}
+                <div class="slideshow-element">
+                    <img src="{{ image.url }}" alt="">
+                    <div>{{ image.name }}</div>                   
+                </div>  
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

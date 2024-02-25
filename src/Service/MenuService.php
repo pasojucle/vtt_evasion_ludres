@@ -29,16 +29,16 @@ class MenuService
         return $this->menuAdminService->getMenusGranted([
             [
                 'label' => 'Le club',
-                'route' => 'club',
+                'route' => null,
                 'pattern' => '/club/',
-                'subMenus' => [],
+                'subMenus' => $this->setSubMenusStatus($this->getClubSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'L\'école VTT',
                 'route' => null,
                 'pattern' => '/school/',
-                'subMenus' => $this->menuAdminService->getMenusGranted($this->getSchoolSubMenu()),
+                'subMenus' => $this->setSubMenusStatus($this->getSchoolSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
@@ -121,6 +121,23 @@ class MenuService
         return [
             'fullName' => $fullName,
             'menus' => ($fullName) ? $this->user : [],
+        ];
+    }
+    public function getClubSubMenu(): array
+    {
+        return [
+            [
+                'label' => 'Présentation',
+                'route' => 'club_overview',
+                'pattern' => '/club_overview/',
+                'role' => 'PUBLIC_ACCESS',
+            ],
+            [
+                'label' => 'Diaporama',
+                'route' => 'club_slideshow',
+                'pattern' => '/club_slideshow/',
+                'role' => 'SLIDESHOW_LIST',
+            ],
         ];
     }
 
@@ -237,5 +254,17 @@ class MenuService
         }
 
         return $routes;
+    }
+
+
+    public function setSubMenusStatus(array $subMenus): array
+    {
+        foreach ($subMenus as $key => $subMenu) {
+            if (!$this->security->isGranted($subMenu['role'])) {
+                $subMenus[$key]['class'] = 'disabled';
+            }
+        }
+
+        return $subMenus;
     }
 }

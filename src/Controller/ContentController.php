@@ -4,29 +4,32 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ContentDtoTransformer;
-use App\Dto\DtoTransformer\DocumentationDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Link;
 use App\Entity\User;
 use App\Form\ContactType;
-use App\Repository\BikeRideRepository;
-use App\Repository\ContentRepository;
-use App\Repository\DocumentationRepository;
-use App\Repository\LevelRepository;
-use App\Repository\LinkRepository;
-use App\Service\IdentityService;
 use App\Service\MailerService;
+use App\Service\IdentityService;
 use App\Service\ParameterService;
+use App\Repository\LinkRepository;
 use App\Service\ProjectDirService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\LevelRepository;
+use Symfony\Component\Finder\Finder;
+use App\Repository\ContentRepository;
+use App\Repository\BikeRideRepository;
+use Symfony\Component\Finder\SplFileInfo;
+use App\Repository\DocumentationRepository;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\ContentDtoTransformer;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Dto\DtoTransformer\DocumentationDtoTransformer;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ContentController extends AbstractController
 {
@@ -58,7 +61,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    #[Route('/club', name: 'club', methods: ['GET'])]
+    #[Route('/club', name: 'club_overview', methods: ['GET'])]
     public function club(): Response
     {
         return $this->render('content/club.html.twig', [
@@ -207,5 +210,46 @@ class ContentController extends AbstractController
     public function isGrantedUser(string $role): JsonResponse
     {
         return new JsonResponse(['isGranted' => $this->isGranted($role)]);
+    }
+
+    #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
+    public function slideshow(): Response
+    {
+
+
+        return $this->render('content/slideshow.html.twig');
+    }
+
+
+    #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
+    public function slideshowImages(
+        ProjectDirService $projectDir
+    ): JsonResponse
+    {
+        $images = [];
+        $finder = new Finder();
+        $finder->files()->in($projectDir->path('public', 'images'))->name('*.jpg')->depth('== 0');
+
+        /** @var SplFileInfo $file */
+        foreach($finder as $file) {
+            $images[] = $this->generateUrl('slideshow_image', ['filename' => $file->getFilename()]);
+        }
+
+        return new JsonResponse(['images' => $images]);
+    }
+
+    #[Route('/club/image/{filename}', name: 'slideshow_image', methods: ['GET'])]
+    public function slideshowImage(
+        ProjectDirService $projectDir,
+        string $filename,
+    ): BinaryFileResponse|Response
+    {
+        $filesystem = new Filesystem();
+        $path = $projectDir->path('public', 'images', $filename);
+
+        if($filesystem->exists($path)) {
+            return new BinaryFileResponse($path);
+        }
+        return new Response(null, Response::HTTP_NOT_FOUND);
     }
 }
