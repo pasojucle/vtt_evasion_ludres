@@ -1,0 +1,10 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Modifier un répertoire{% endblock %}
+{% block body %}
+    {{ form_row(form.name)}}
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Modifier' %}
+    {{ parent() }}
+{% endblock %}

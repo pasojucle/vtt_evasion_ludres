@@ -1,0 +1,10 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Supprimer l'image{{ image.filename }}{% endblock %}
+{% block body %}
+    <p>Etes vous certain de supprimer l'image {{ image.filename }} ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Supprimer' %}
+    {{ parent() }}
+{% endblock %}

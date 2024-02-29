@@ -18,6 +18,9 @@ class SlideshowDirectoryType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
                 'constraints' => [
                     new Length(['min' => 3, "max" => 50]),
                 ]

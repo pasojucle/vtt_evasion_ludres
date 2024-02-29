@@ -19,7 +19,6 @@ import './styles/component/checkbox.scss';
 import './styles/health.scss';
 import './styles/list-group.scss';
 import './styles/loader.scss';
-import './styles/slideshow.scss';
 
 import './js/app.js';
 import './js/js-datepicker';
@@ -37,3 +36,6 @@ import './js/line_chart.js';
 import './js/dashboard.js';
 import './js/clusters.js';
 import './js/isGranted.js';
+import './js/slideshow.js';
+
+import './js/uploadFile.js'

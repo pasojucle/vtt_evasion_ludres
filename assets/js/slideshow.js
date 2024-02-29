@@ -1,11 +1,5 @@
 import '../styles/slideshow.scss';
 
-const resizeObserver = new ResizeObserver(entries => {
-    for (let entry of entries) {
-        console.log('entry', entry)
-    }
-});
-
 class Slideshow extends HTMLDivElement {
     images = [];
     leftIndex = null
@@ -51,9 +45,6 @@ class Slideshow extends HTMLDivElement {
             this.style.height = 16/9*width + 'px';
         }
         this.slideWith = this.offsetWidth;
-        console.log(' window.innerHeight',  window.innerHeight, screen.innerHeight)
-        console.log('window.innerWidth', window.innerWidth, screen.width)
-        console.log('slideWith', this.slideWith)
         this.toogglePosition();
     }
     addImages = async() => {

@@ -31,7 +31,7 @@
         text-align: center;
         width: 36px;
         line-height: 36px;
-        border-radius: 50%;
+        border-radius: 58;
         border: 2px solid var(--white-color);
         &.slide-to-right {
             left: 10px;
@@ -47,7 +47,13 @@
 }
 .slideshow-list {
     display: flex;
+    align-items: flex-end;
     gap: 20px;
+    padding: 10px;
+    border: 1px solid var(--background-color);
+    &.drop-area.highlight {
+        background-color: rgba($color: #68d420, $alpha: 0.2);
+    }
     .slideshow-element {
         display: flex;
         flex-wrap: wrap;
@@ -55,18 +61,38 @@
         justify-content: center;
         align-items: center;
         gap: 3px;
-        & > i {
-            font-size: 60px;
-            line-height: 60px;
-            color: var(--clear-color);
+        text-decoration: none;
+        position: relative;
+        & > a {
+            & > i {
+                font-size: 60px;
+                line-height: 60px;
+                color: var(--gray-color);
+            }
         }
-        & > div {
+        .name {
             text-align: center;
             font-size: 12px;
+            color: black;
+            &:hover {
+                cursor: text;
+            }
         }
         & > img {
             max-height: 80px;
-            max-width: 80px;
+            max-width: 100px;
+        }
+        .btn-delete {
+            position: absolute;
+            right: 0;
+            top: 10px;
+            & > i {
+                font-size: 20px;
+                color: var(--danger-color);
+                background-color: var(--white-color);
+                line-height: 20px;
+                border-radius: 50%;
+            }
         }
     }
 }

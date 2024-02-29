@@ -1,0 +1,14 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Supprimer le répertoire{{ directory.name }}{% endblock %}
+{% block body %}
+    {% if has_images %}
+        <p>Etes vous certain de supprimer le répetroire {{ directory.name }} et tous les fichiers qu'il contient ?</p>
+    {% else %}
+        <p>Etes vous certain de supprimer le répetroire {{ directory.name }} ?</p>
+    {% endif %}
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Supprimer' %}
+    {{ parent() }}
+{% endblock %}

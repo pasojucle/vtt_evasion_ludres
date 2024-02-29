@@ -12,19 +12,36 @@
     </div>
     <div class="wrapper-body">
         <a class="btn btn-primary mb-20" href="{{ path('admin_slideshow_directory_add') }}" title="Ajouter un répertoire" data-toggle="modal" data-type="primary">Ajouter un répertoire</a>
-        <div class="slideshow-list">
-            {% for directory in directories %}
-                <a class="slideshow-element" href="{{ path('admin_slideshow_list', {'directory': directory.id}) }}">
-                    <i class="fa-solid fa-folder"></i>
-                    <div>{{ directory.name }}</div>                   
-                </a>  
-            {% endfor %}
-            {% for image in images %}
-                <div class="slideshow-element">
-                    <img src="{{ image.url }}" alt="">
-                    <div>{{ image.name }}</div>                   
-                </div>  
-            {% endfor %}
+        <div><a href="{{ path('admin_slideshow_list') }}"><i class="fa-solid fa-house"></i>/</a>
+            {% if directory is not null %}{{ directory.name }}{% endif %}
+        </div>
+        
+        <div is="my-uploadfile">
+            {{ form_start(form)}}
+            <div class="slideshow-list drop-area">
+                {% for directory in directories %}
+                    <div class="slideshow-element" >
+                        <a href="{{ path('admin_slideshow_list', {'directory': directory.id}) }}">
+                            <i class="fa-solid fa-folder"></i>
+                        </a>
+                        <a class="name" href="{{ path('admin_slideshow_directory_edit', {'directory': directory.id}) }}" title="Mofifier un répertoire" data-toggle="modal" data-type="primary">
+                            {{ directory.name }}
+                        </a>
+                        <a class="btn-delete" href="{{ path('admin_slideshow_directory_delete', {'directory': directory.id}) }}" title="Supprimer un répertoire" data-toggle="modal" data-type="danger"><i class="fa-solid fa-circle-xmark"></i></a>
+                    </div>
+                {% endfor %}
+                {% for image in images %}
+                    <div class="slideshow-element">
+                        <img src="{{ image.url }}" alt="">
+                        <div class="name">{{ image.name }}</div>
+                        <a class="btn-delete" href="{{ path('admin_slideshow_image_delete', {'image': image.id}) }}" title="Supprimer une image" data-toggle="modal" data-type="danger"><i class="fa-solid fa-circle-xmark"></i></a>
+                    </div>  
+                {% endfor %}
+            </div>
+            {{ form_row(form.uploadFile)}}
+
+            {{ form_end(form)}}
+            <progress id="progress-bar" max=100 value=0></progress>
         </div>
 
     </div>

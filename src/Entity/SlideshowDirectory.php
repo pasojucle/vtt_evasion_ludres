@@ -21,6 +21,9 @@ class SlideshowDirectory
     #[ORM\OneToMany(mappedBy: 'directory', targetEntity: SlideshowImage::class)]
     private Collection $slideshowImages;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $ceratedAt = null;
+
     public function __construct()
     {
         $this->slideshowImages = new ArrayCollection();
@@ -69,6 +72,18 @@ class SlideshowDirectory
                 $slideshowImage->setDirectory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCeratedAt(): ?\DateTimeImmutable
+    {
+        return $this->ceratedAt;
+    }
+
+    public function setCeratedAt(\DateTimeImmutable $ceratedAt): static
+    {
+        $this->ceratedAt = $ceratedAt;
 
         return $this;
     }

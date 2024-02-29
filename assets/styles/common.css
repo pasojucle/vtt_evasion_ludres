@@ -1059,6 +1059,7 @@ li.list-dropdown.border-bottom::after {
 .wrapper .wrapper-title {
     position: relative;
     padding: 10px 20px;
+    z-index: 1;
 }
 .wrapper .wrapper-title h1 {
     width: calc(100% - 50px);

@@ -5,10 +5,10 @@
     display: flex;
     align-items: center;
     height: 100%;
-    z-index: 99;
+    // z-index: 99;
     .dropdown {
         position: relative;
-        z-index: 999;
+        // z-index: 999;
     }
     .btn-wiki {
         display: block;
@@ -29,13 +29,14 @@
     height: 100%;
     right: 0;
     top: 0;
-    z-index: 99;
+    // z-index: 99;
     button.dropdown-toggle {
         width: 100%;
         height: 100%;
         border: none;
         background-color: transparent;
         cursor: pointer;
+        z-index: 99;
         &::after {
             content: '\f142';
             font-family: "Font Awesome 6 Free";
@@ -66,7 +67,7 @@
         max-width: 400px;
         &.active {
             display: block;
-            z-index: 99999;
+            z-index: 99;
             &.active-top {
                 top: 0;
             }
