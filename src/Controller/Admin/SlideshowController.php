@@ -17,6 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\SlideshowDirectoryRepository;
+use App\Service\ImageService;
+use App\Service\SlideshowService;
+use App\Service\UploadService;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -41,7 +44,7 @@ class SlideshowController extends AbstractController
         ?SlideshowDirectory $directory,
     ): Response {
         $form = $this->createForm(UploadFileType::class, null, [
-            'action' => $this->generateUrl('admin_slideshow_image_upload'),
+            'action' => $this->generateUrl('admin_slideshow_image_upload', ['directory' => $directory?->getId()]),
         ]);
         $directories = [];
         $images = [];
@@ -149,16 +152,17 @@ class SlideshowController extends AbstractController
         Request $request,
         SlideshowImage $image,
     ): Response {
+        $directory = $image->getDirectory();
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filesystem = new Filesystem;
-            $filesystem->remove($this->projectDir->path('public', 'images', $image->getFilename()));
+            $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId(), $image->getFilename()));
             $this->entityManager->remove($image);
             $this->entityManager->flush();
-            return $this->redirect($this->generateUrl('admin_slideshow_list'));
+            return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
         }
 
         return $this->render('slideshow/admin/image_delete.modal.html.twig', [
@@ -167,18 +171,30 @@ class SlideshowController extends AbstractController
         ]);
     }
 
-    #[Route('/image/upload', name: 'image_upload', methods: ['GET', 'POST'])]
+    #[Route('/image/upload/{directory}', name: 'image_upload', defaults:['directory' => null], methods: ['GET', 'POST'])]
     #[IsGranted('SLIDESHOW_ADD')]
     public function adminSlideshowImageUpload(
-        Request $request
+        Request $request,
+        UploadService $uploadService,
+        ?SlideshowDirectory $directory
     ): Response {
         $form = $this->createForm(UploadFileType::class, null, [
             'action' => $this->generateUrl($request->attributes->get('_route')),
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            dump($form->get('uploadFile')->getF);
-
+            /** @var UploadedFile $file */
+            foreach($request->files as $file) {
+                $filename = $uploadService->uploadFile($file, 'tmp');
+                $uploadService->resize('tmp', $filename, UploadService::HD, $this->projectDir->dir('slideshow', (string) $directory->getId()));
+                $slideShowImage = new SlideshowImage();
+                $slideShowImage->setFilename($filename)
+                    ->setDirectory($directory)                
+                    ->setCreatedAt(new DateTimeImmutable());
+                $this->entityManager->persist($slideShowImage);
+                $this->entityManager->flush();
+                return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
+            };
         }
 
         return new Response();

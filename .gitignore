@@ -29,6 +29,7 @@ data/Attestation_d_adulte_accompaganteur.pdf
 data/Attestation_d_inscription.pdf
 data/documentation
 data/licences
+data/slideshow
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 npm-debug.log

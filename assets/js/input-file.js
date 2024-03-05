@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $(document).on('change', 'input[type="file"]', previewFile);
+    $(document).on('change', 'input[type="file"].input-file', previewFile);
     $(document).on('click', '.input-file-button', getFile);
 });
 

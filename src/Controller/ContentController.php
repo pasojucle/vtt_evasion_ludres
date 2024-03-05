@@ -228,7 +228,7 @@ class ContentController extends AbstractController
     {
         $images = [];
         $finder = new Finder();
-        $finder->files()->in($projectDir->path('public', 'images'))->name('*.jpg')->depth('== 0');
+        $finder->files()->in($projectDir->path('slideshow'))->name('*.jpg')->depth('<= 1');
 
         /** @var SplFileInfo $file */
         foreach($finder as $file) {
@@ -244,12 +244,16 @@ class ContentController extends AbstractController
         string $filename,
     ): BinaryFileResponse|Response
     {
-        $filesystem = new Filesystem();
-        $path = $projectDir->path('public', 'images', $filename);
-
-        if($filesystem->exists($path)) {
-            return new BinaryFileResponse($path);
+        $finder = new Finder();
+        $finder->files()->in($projectDir->path('slideshow'))->name($filename)->depth('<= 1');
+        if ($finder->hasResults()) {
+            $results = iterator_to_array($finder);
+            dump($results);
+            $file = array_shift($results);
+            dump($file);
+            return new BinaryFileResponse($file);
         }
+
         return new Response(null, Response::HTTP_NOT_FOUND);
     }
 }

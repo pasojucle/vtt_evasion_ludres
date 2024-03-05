@@ -4,12 +4,21 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Error;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Mime\Exception\InvalidArgumentException;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
+use function PHPUnit\Framework\throwException;
 
 class UploadService
 {
+    public const HD = '1920x 1080';
+    public const LANDSCAPE = 0;
+    public const PORTRAIT = 1;
+
     public function __construct(
         private ProjectDirService $projectDirService,
         private SluggerInterface $slugger,
@@ -21,9 +30,9 @@ class UploadService
         if ($pictureFile) {
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $pictureFile->guessExtension();
+            $newFilename = sprintf('%s-%s.%s',$safeFilename, uniqid(), $this->getExtention($pictureFile));
             $directory = $this->projectDirService->path($dir);
-            
+
             if (!is_dir($directory)) {
                 mkdir($directory);
             }
@@ -34,7 +43,7 @@ class UploadService
                     $newFilename
                 );
             } catch (FileException $e) {
-                // ... handle exception if something happens during file upload
+                throw new Error($e->getMessage());
             }
 
             return $newFilename;
@@ -42,4 +51,93 @@ class UploadService
 
         return null;
     }
+
+    private function getExtention(UploadedFile $pictureFile): string
+    {
+        try {
+            return $pictureFile->guessExtension();
+        } catch(InvalidArgumentException) {
+            return pathinfo($pictureFile->getClientOriginalName(), PATHINFO_EXTENSION);
+        }        
+    }
+
+    public function resize(string $inputdir, string $filename, string $size, string $outputDir): bool
+    {
+        $inputPath = $this->projectDirService->path($inputdir, $filename);
+        $outputPath = $this->projectDirService->path($outputDir, $filename);
+        $this->mkdirIfNotExists($outputDir);
+        list($originWidth, $originHeight, $type) = getimagesize($inputPath);
+        $orientation = $this->getOrientation($originWidth, $originHeight);
+
+        list($outputWidth, $outputHeight) = $this->getOutputSize($originWidth, $originHeight, $orientation, $size);
+
+        $imageSrc = (IMAGETYPE_JPEG == $type) ? imagecreatefromjpeg($inputPath) : imagecreatefrompng($inputPath);
+        $imageBlack = imagecreatetruecolor($outputWidth, $outputHeight);
+
+        imagecopyresampled($imageBlack, $imageSrc, 0, 0, 0, 0, $outputWidth, $outputHeight, $originWidth, $originHeight);
+
+        if (!imagejpeg($imageBlack, $outputPath) || !imagepng($imageBlack, $outputPath)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getOrientation(int $originWidth, int $originHeight): int
+    {
+        return ($originHeight < $originWidth) ? self::LANDSCAPE : self::PORTRAIT;
+    }
+
+    private function getOutputSize(int $originWidth, int $originHeight, int $orientation, string $size): array
+    {
+        list($width, $height) = explode('x', $size);
+        if (self::PORTRAIT === $orientation) {
+            list($width, $height) = [$height, $width];
+        }
+        $ratio = ($width / $height < $originWidth/ $originHeight)
+        ? $width / $originWidth
+        : $height / $originHeight;
+
+        return [(int) round($originWidth * $ratio), (int) round($originHeight * $ratio)];
+    }
+
+    public function getMaxAllowedUploadSize(): array
+    {
+        $configOptions = ['upload_max_filesize', 'post_max_size', 'memory_limit'];
+
+        $values = [];
+        $sizeInBytes = [];
+        foreach($configOptions as $option) {
+            $values[$option] = ini_get($option);
+            if (1 === preg_match('#(\d+)([kmgt])#i', ini_get($option), $matches)) {
+                list($term, $num, $unit) = $matches;
+                $bytes = match(strtolower($unit)) {
+                    'k' => $num * 1024,
+                    'm' => $num * pow(1024, 2),
+                    'g' => $num * pow(1024, 3),
+                    't' => $num * pow(1024, 4),
+                    default => null,
+                };
+                if ($bytes) {
+                    $sizeInBytes[$option] = $bytes;
+                }
+            }
+        }
+
+        $minOption =  array_search(min($sizeInBytes), $sizeInBytes);
+
+        return ['value' => $values[$minOption], 'toBytes' => $sizeInBytes[$minOption]];
+    }
+
+    private function mkdirIfNotExists(string $outputDir): string
+    {
+        $outputPath = $this->projectDirService->path($outputDir);
+        $filesystem = new Filesystem();
+        if (!$filesystem->exists($outputPath)) {
+            $filesystem->mkdir($outputPath, 0775);
+        }
+
+        return $outputPath;
+    }
+
 }

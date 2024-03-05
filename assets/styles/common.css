@@ -639,8 +639,11 @@ button[type=submit].btn.btn-primary:disabled {
     padding: 5% 20%;
     box-sizing: border-box;
 }
-.hidden , .form-group-inline.hidden {
+.hidden , .form-group-inline.hidden, .d-none {
     display: none;
+}
+.ms-auto {
+    margin-left: auto;
 }
 .float-left {
     float: left;

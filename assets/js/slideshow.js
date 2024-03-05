@@ -23,7 +23,7 @@ class Slideshow extends HTMLDivElement {
     }
     init = () => {
         this.find(this.frameIndex).append(0);
-        if (this.images.length > 2) {
+        if (this.images.length > 1) {
             this.lastIndex = this.images.length - 1;
             this.leftIndex = this.lastIndex;
             this.rightIndex = 1;
@@ -136,10 +136,10 @@ class Slideshow extends HTMLDivElement {
         }
     }
     toogglePosition = () => {
-        if (this.leftIndex) {
+        if (Number.isInteger(this.leftIndex)) {
             this.find(this.leftIndex).slide(-1);
         }
-        if (this.rightIndex) {
+        if (Number.isInteger(this.rightIndex)) {
             this.find(this.rightIndex).slide(1);
         }
     }
@@ -161,6 +161,9 @@ class SliderImage {
         this.index = index;
         this.url = url;
     }
+    getOrientation = () => {
+        return (this.image.height < this.image.width) ? 'landscape' : 'portrait';
+    }
     append = (position) => {
         this.image = new Image();
         this.image.src = this.url;
@@ -178,11 +181,13 @@ class SliderImage {
         
         this.image.onload = () => {
             if (this.image.complete) {
+                this.image.classList.add(this.getOrientation());
                 this.loader.replaceWith(this.image);
             }
         }
     }
     slide(position) {
+        console.log(this.imageEl, this.slideshow.slideWith)
         this.imageEl.style.left = position * this.slideshow.slideWith + 'px';
     }
 }
