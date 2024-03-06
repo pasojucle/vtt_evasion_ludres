@@ -13,9 +13,11 @@ use App\Repository\ContentRepository;
 use App\Repository\ParameterRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
+use App\Service\ProjectDirService;
 use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -232,5 +234,28 @@ class ContentController extends AbstractController
         $this->orderByService->setNewOrders($content, $contents, $newOrder);
 
         return new Response();
+    }
+
+
+
+    #[Route('/file/content/delete/{content}', name: 'admin_content_file_delete', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminFileContentDelete(
+        ProjectDirService $projectDir,
+        Content $content
+    ): Response {
+        $filename = $content->getFilename();
+        $filesystem = new Filesystem();
+        $filePath = $projectDir->path('uploads_directory_path', $filename);
+        if ($filesystem->exists($filePath)) {
+            $filesystem->remove($filePath);
+        }
+        $content->setFilename(null);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('admin_home_content_edit', [
+            'content' => $content->getId(),
+
+        ]);
     }
 }

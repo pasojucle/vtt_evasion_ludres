@@ -439,6 +439,21 @@ body > script {display: none !important;}
     color: var(--white-color);
     border: 2px solid var(--danger-color);
 }
+.group-picture {
+    position: relative;
+}
+.group-picture .btn-danger {
+    position: absolute;
+    background-color: var(--white-color);
+    color: var(--danger-color);
+    border: unset;
+    border-radius: 50%;
+    top: -10px;
+    right: -10px;
+}
+.group-picture .btn-danger i{
+    font-size: 32px;
+}
 .btn-light {
     background-color: var(--light-color);
     color: var(--backgroud-color);

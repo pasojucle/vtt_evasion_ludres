@@ -35,8 +35,11 @@
             {% if form.file is defined %}
                 <div class="form-group">
                     {{ form_row(form.file) }}
-                        <div class="form-group-inline">
-                        <img class="user-picture" src="{{ content.fileName }}" alt="{{ content.fileName }}">   
+                    <div class="form-group-inline group-picture">
+                        <img class="user-picture" src="{{ content.fileName }}" alt="{{ content.fileName }}">
+                        {% if content.fileName is not null %}
+                            <a class="btn-danger" href="{{ path('admin_content_file_delete', {'content': content.id})}}" title="Supprimer"><i class="fa-solid fa-circle-xmark"></i></a>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}

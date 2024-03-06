@@ -4,32 +4,32 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ContentDtoTransformer;
+use App\Dto\DtoTransformer\DocumentationDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Link;
 use App\Entity\User;
 use App\Form\ContactType;
-use App\Service\MailerService;
-use App\Service\IdentityService;
-use App\Service\ParameterService;
-use App\Repository\LinkRepository;
-use App\Service\ProjectDirService;
-use App\Repository\LevelRepository;
-use Symfony\Component\Finder\Finder;
-use App\Repository\ContentRepository;
 use App\Repository\BikeRideRepository;
-use Symfony\Component\Finder\SplFileInfo;
+use App\Repository\ContentRepository;
 use App\Repository\DocumentationRepository;
-use Symfony\Component\HttpFoundation\Request;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Dto\DtoTransformer\ContentDtoTransformer;
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Dto\DtoTransformer\DocumentationDtoTransformer;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\LevelRepository;
+use App\Repository\LinkRepository;
+use App\Service\IdentityService;
+use App\Service\MailerService;
+use App\Service\ParameterService;
+use App\Service\ProjectDirService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ContentController extends AbstractController
 {
@@ -215,8 +215,6 @@ class ContentController extends AbstractController
     #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
     public function slideshow(): Response
     {
-
-
         return $this->render('content/slideshow.html.twig');
     }
 
@@ -224,14 +222,13 @@ class ContentController extends AbstractController
     #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
     public function slideshowImages(
         ProjectDirService $projectDir
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $images = [];
         $finder = new Finder();
         $finder->files()->in($projectDir->path('slideshow'))->name('*.jpg')->depth('<= 1');
 
         /** @var SplFileInfo $file */
-        foreach($finder as $file) {
+        foreach ($finder as $file) {
             $images[] = $this->generateUrl('slideshow_image', ['filename' => $file->getFilename()]);
         }
 
@@ -242,8 +239,7 @@ class ContentController extends AbstractController
     public function slideshowImage(
         ProjectDirService $projectDir,
         string $filename,
-    ): BinaryFileResponse|Response
-    {
+    ): BinaryFileResponse|Response {
         $finder = new Finder();
         $finder->files()->in($projectDir->path('slideshow'))->name($filename)->depth('<= 1');
         if ($finder->hasResults()) {

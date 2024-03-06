@@ -21,15 +21,15 @@ class SlideshowDirectoryRepository extends ServiceEntityRepository
         parent::__construct($registry, SlideshowDirectory::class);
     }
 
-   /**
-    * @return SlideshowDirectory[] Returns an array of SlideshowDirectory objects
-    */
-   public function findAllASC(): array
-   {
-       return $this->createQueryBuilder('s')
+    /**
+     * @return SlideshowDirectory[] Returns an array of SlideshowDirectory objects
+     */
+    public function findAllASC(): array
+    {
+        return $this->createQueryBuilder('s')
            ->orderBy('s.name', 'ASC')
            ->getQuery()
            ->getResult()
        ;
-   }
+    }
 }

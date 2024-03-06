@@ -23,17 +23,17 @@ class SlideshowImageRepository extends ServiceEntityRepository
         parent::__construct($registry, SlideshowImage::class);
     }
 
-   /**
-    * @return SlideshowImage[] Returns an array of SlideshowImage objects
-    */
-   public function findRoot(): array
-   {
-       return $this->createQueryBuilder('i')
+    /**
+     * @return SlideshowImage[] Returns an array of SlideshowImage objects
+     */
+    public function findRoot(): array
+    {
+        return $this->createQueryBuilder('i')
            ->andWhere(
-                (new Expr)->isNull('i.directory')
+               (new Expr())->isNull('i.directory')
            )
            ->getQuery()
            ->getResult()
        ;
-   }
+    }
 }

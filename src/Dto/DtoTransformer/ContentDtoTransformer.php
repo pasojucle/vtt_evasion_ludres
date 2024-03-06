@@ -31,7 +31,7 @@ class ContentDtoTransformer
             $contentDto->isFlash = $content->IsFlash();
             $contentDto->content = $content->getContent();
             $contentDto->fileName = $this->getPath($content->getFileName());
-            $contentDto->fileTag = $this->getFileTag($contentDto->fileName);
+            $contentDto->fileTag = $this->getFileTag($content->getFileName());
             $contentDto->fileRatio = $this->getFileRatio($contentDto->fileName, $contentDto->fileTag);
 
             $contentDto->buttonLabel = $content->getButtonLabel() ?? 'Voir';
@@ -70,13 +70,17 @@ class ContentDtoTransformer
 
     private function getPath(?string $fileName): ?string
     {
-        return ($fileName) ? $this->projectDirService->path('upload', $fileName) : null;
+        return ($fileName) ? $this->projectDirService->dir('', 'uploads', $fileName) : null;
     }
 
     private function getFileTag(?string $fileName): ?string
     {
-        if ($fileName) {
-            $file = new File($fileName);
+        if (!$fileName) {
+            return null;
+        }
+        $path = $this->projectDirService->path('uploads_directory_path', $fileName);
+        if (file_exists($path)) {
+            $file = new File($path);
 
             return (str_contains($file->getMimeType(), 'image')) ? 'img' : 'pdf';
         }

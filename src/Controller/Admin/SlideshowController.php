@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use DateTimeImmutable;
-use App\Form\UploadFileType;
-use App\Entity\SlideshowImage;
 use App\Entity\SlideshowDirectory;
-use App\Service\ProjectDirService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\SlideshowImage;
 use App\Form\Admin\SlideshowDirectoryType;
+use App\Form\UploadFileType;
+use App\Repository\SlideshowDirectoryRepository;
 use App\Repository\SlideshowImageRepository;
+use App\Service\ImageService;
+use App\Service\ProjectDirService;
+use App\Service\SlideshowService;
+use App\Service\UploadService;
+use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\SlideshowDirectoryRepository;
-use App\Service\ImageService;
-use App\Service\SlideshowService;
-use App\Service\UploadService;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/diaporama', name: 'admin_slideshow_')]
 class SlideshowController extends AbstractController
@@ -33,9 +33,7 @@ class SlideshowController extends AbstractController
         private SlideshowImageRepository $slideshowImageRepository,
         private EntityManagerInterface $entityManager,
         private ProjectDirService $projectDir,
-    )
-    {
-        
+    ) {
     }
 
     #[Route('/{directory}', name: 'list', defaults:['directory' => null], methods: ['GET'])]
@@ -56,7 +54,7 @@ class SlideshowController extends AbstractController
         }
 
         /** @var SlideshowImage $imagesEntity */
-        foreach($imagesEntities as $imagesEntity) {
+        foreach ($imagesEntities as $imagesEntity) {
             $images[] = [
                 'id' => $imagesEntity->getId(),
                 'name' => $imagesEntity->getFilename(),
@@ -126,11 +124,11 @@ class SlideshowController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $images = [];
-            foreach($directory->getSlideshowImages() as $image) {
+            foreach ($directory->getSlideshowImages() as $image) {
                 $images[] = $this->projectDir->path('public', 'images', $image->getFilename());
             }
             if (!empty($images)) {
-                $filesystem = new Filesystem;
+                $filesystem = new Filesystem();
                 $filesystem->remove($images);
             }
 
@@ -158,7 +156,7 @@ class SlideshowController extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $filesystem = new Filesystem;
+            $filesystem = new Filesystem();
             $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId(), $image->getFilename()));
             $this->entityManager->remove($image);
             $this->entityManager->flush();
@@ -184,12 +182,12 @@ class SlideshowController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $file */
-            foreach($request->files as $file) {
+            foreach ($request->files as $file) {
                 $filename = $uploadService->uploadFile($file, 'tmp');
                 $uploadService->resize('tmp', $filename, UploadService::HD, $this->projectDir->dir('slideshow', (string) $directory->getId()));
                 $slideShowImage = new SlideshowImage();
                 $slideShowImage->setFilename($filename)
-                    ->setDirectory($directory)                
+                    ->setDirectory($directory)
                     ->setCreatedAt(new DateTimeImmutable());
                 $this->entityManager->persist($slideShowImage);
                 $this->entityManager->flush();

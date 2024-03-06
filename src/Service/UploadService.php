@@ -6,10 +6,10 @@ namespace App\Service;
 
 use Error;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Mime\Exception\InvalidArgumentException;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 use function PHPUnit\Framework\throwException;
 
@@ -30,7 +30,7 @@ class UploadService
         if ($pictureFile) {
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = sprintf('%s-%s.%s',$safeFilename, uniqid(), $this->getExtention($pictureFile));
+            $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $this->getExtention($pictureFile));
             $directory = $this->projectDirService->path($dir);
 
             if (!is_dir($directory)) {
@@ -56,9 +56,9 @@ class UploadService
     {
         try {
             return $pictureFile->guessExtension();
-        } catch(InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             return pathinfo($pictureFile->getClientOriginalName(), PATHINFO_EXTENSION);
-        }        
+        }
     }
 
     public function resize(string $inputdir, string $filename, string $size, string $outputDir): bool
@@ -94,9 +94,9 @@ class UploadService
         if (self::PORTRAIT === $orientation) {
             list($width, $height) = [$height, $width];
         }
-        $ratio = ($width / $height < $originWidth/ $originHeight)
-        ? $width / $originWidth
-        : $height / $originHeight;
+        $ratio = ((int) $width / (int) $height < $originWidth / $originHeight)
+        ? (int) $width / $originWidth
+        : (int) $height / $originHeight;
 
         return [(int) round($originWidth * $ratio), (int) round($originHeight * $ratio)];
     }
@@ -107,15 +107,15 @@ class UploadService
 
         $values = [];
         $sizeInBytes = [];
-        foreach($configOptions as $option) {
+        foreach ($configOptions as $option) {
             $values[$option] = ini_get($option);
             if (1 === preg_match('#(\d+)([kmgt])#i', ini_get($option), $matches)) {
                 list($term, $num, $unit) = $matches;
-                $bytes = match(strtolower($unit)) {
-                    'k' => $num * 1024,
-                    'm' => $num * pow(1024, 2),
-                    'g' => $num * pow(1024, 3),
-                    't' => $num * pow(1024, 4),
+                $bytes = match (strtolower($unit)) {
+                    'k' => (int) $num * 1024,
+                    'm' => (int) $num * pow(1024, 2),
+                    'g' => (int) $num * pow(1024, 3),
+                    't' => (int) $num * pow(1024, 4),
                     default => null,
                 };
                 if ($bytes) {
@@ -124,7 +124,7 @@ class UploadService
             }
         }
 
-        $minOption =  array_search(min($sizeInBytes), $sizeInBytes);
+        $minOption = array_search(min($sizeInBytes), $sizeInBytes);
 
         return ['value' => $values[$minOption], 'toBytes' => $sizeInBytes[$minOption]];
     }
@@ -139,5 +139,4 @@ class UploadService
 
         return $outputPath;
     }
-
 }
