@@ -110,6 +110,7 @@ class ContentController extends AbstractController
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $content = $form->getData();
+            dump($content);
             if (null === $content->getOrderBy()) {
                 $content->setOrderBy(0);
                 $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
@@ -118,9 +119,11 @@ class ContentController extends AbstractController
 
             if ($request->files->get('content')) {
                 $file = $request->files->get('content')['file'];
-                $content->setFileName($uploadService->uploadFile($file));
+                if ($file) {
+                    $content->setFileName($uploadService->uploadFile($file));
+                }
             }
-
+            dump($content);
             $this->entityManager->persist($content);
             $this->entityManager->flush();
 
