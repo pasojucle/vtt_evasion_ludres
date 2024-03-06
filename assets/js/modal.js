@@ -47,12 +47,15 @@ function showModal(route, modalType) {
 }
 
 export function openModal(text, modalType) {
-    const htmlElement = document.createRange().createContextualFragment(text);
-    document.querySelector('.modal').replaceWith(htmlElement);
-    document.querySelector('.modal .modal-header').classList.add('bg-'+modalType);
-    document.querySelectorAll('.modal button:not(button[data-dismiss="modal"])').forEach((element) => {
-        element.classList.add('btn-'+modalType);
-    })
+    $('.modal').replaceWith($(text));
+    $('.modal').find('.modal-header').addClass('bg-'+modalType);
+    $('.modal').find('button:not(button[data-dismiss="modal"])').addClass('btn-'+modalType);
+    // const htmlElement = document.createRange().createContextualFragment(text);
+    // document.querySelector('.modal').replaceWith(htmlElement);
+    // document.querySelector('.modal .modal-header').classList.add('bg-'+modalType);
+    // document.querySelectorAll('.modal button:not(button[data-dismiss="modal"])').forEach((element) => {
+    //     element.classList.add('btn-'+modalType);
+    // })
     setTimeout(function () {
         document.querySelector('.modal .modal-dialog').classList.add('modal-open');
     }, 100);
