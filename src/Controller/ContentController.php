@@ -244,9 +244,7 @@ class ContentController extends AbstractController
         $finder->files()->in($projectDir->path('slideshow'))->name($filename)->depth('<= 1');
         if ($finder->hasResults()) {
             $results = iterator_to_array($finder);
-            dump($results);
             $file = array_shift($results);
-            dump($file);
             return new BinaryFileResponse($file);
         }
 
