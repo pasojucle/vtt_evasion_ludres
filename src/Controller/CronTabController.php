@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\UseCase\Parameter\DisabledNewSeasonReRegistration;
 use App\UseCase\SecondHand\DisabledOutOfPeriod;
+use App\UseCase\Slideshow\DeleteOutOfPeriod;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,13 +19,15 @@ class CronTabController extends AbstractController
     #[Route('/crontab', name: 'crontab', methods: ['GET'])]
     public function disableOutOfPeriod(
         DisabledOutOfPeriod $disabledOutOfPeriod,
-        DisabledNewSeasonReRegistration $disabledNewSeasonReRegistration
+        DisabledNewSeasonReRegistration $disabledNewSeasonReRegistration,
+        DeleteOutOfPeriod $deleteOutOfPeriod,
     ): Response {
         $results = [];
 
         try {
             $results[] = $disabledOutOfPeriod->execute();
             $results[] = $disabledNewSeasonReRegistration->execute();
+            $results[] = $deleteOutOfPeriod->execute();
         } catch (Exception $exception) {
             return new JsonResponse(['codeError' => 1, 'error' => $exception->getMessage()]);
         }

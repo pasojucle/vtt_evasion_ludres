@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\SlideshowDirectory;
 use App\Entity\SlideshowImage;
+use DateInterval;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
@@ -32,6 +34,21 @@ class SlideshowImageRepository extends ServiceEntityRepository
            ->andWhere(
                (new Expr())->isNull('i.directory')
            )
+           ->getQuery()
+           ->getResult()
+       ;
+    }
+
+    /**
+     * @return SlideshowImage[] Returns an array of SlideshowImage objects
+     */
+    public function findOutOfPeriod(): array
+    {
+        return $this->createQueryBuilder('i')
+           ->andWhere(
+               (new Expr())->lt('i.createdAt', ':deadline')
+           )
+           ->setParameter('deadline', (new DateTime())->sub(new DateInterval('P1Y')))
            ->getQuery()
            ->getResult()
        ;
