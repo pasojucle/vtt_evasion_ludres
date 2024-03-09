@@ -1,7 +1,7 @@
 <div class="row row-align-top">
     <div class="{{ content.contentStyleMd }} col-xs-12">{{ content.content | raw}}</div>
     {% if content.fileName is not null %}
-        <div class="col-md-3 col-xs-12" data-ratio="{{ content.fileRatio }}">
+        <div class="col-md-4 col-xs-12" data-ratio="{{ content.fileRatio }}">
         {% if content.fileTag == 'img' %}
             <img src="{{ content.fileName }}">
         {% else %}

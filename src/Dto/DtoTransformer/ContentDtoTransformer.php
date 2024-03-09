@@ -116,7 +116,7 @@ class ContentDtoTransformer
     {
         $col = 12;
         if ($hasFileName) {
-            $col -= 3;
+            $col -= 4;
         }
         if ($hasUrl) {
             $col -= 3;
