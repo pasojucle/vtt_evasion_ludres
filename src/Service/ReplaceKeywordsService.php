@@ -80,7 +80,7 @@ class ReplaceKeywordsService
 
     private function getKeyWords(string $content): array
     {
-        if (preg_match_all('#({{ [a-z_]+ }})#', $content, $matches, PREG_PATTERN_ORDER)) {
+        if (preg_match_all('#({{ [a-zA-Z_]+ }})#', $content, $matches, PREG_PATTERN_ORDER)) {
             return $matches[1];
         };
         return [];
