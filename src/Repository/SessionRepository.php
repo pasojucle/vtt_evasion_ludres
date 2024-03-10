@@ -14,6 +14,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Andx;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -141,6 +142,72 @@ class SessionRepository extends ServiceEntityRepository
         }
 
         return $qb;
+    }
+
+    public function findByFilters(array $filters): array
+    {
+        $parameters = [];
+        $andX = (new Expr())->andX();
+        if (isset($filters['startAt']) && isset($filters['endAt'])) {
+            $andX->add((new Expr())->between('br.startAt', ':startAt', ':endAt'));
+            $parameters['startAt'] = $filters['startAt'];
+            $parameters['endAt'] = $filters['endAt'];
+        }
+
+        if (isset($filters['bikeRideType'])) {
+            $andX->add((new Expr())->eq('br.bikeRideType', ':bikeRideType'));
+            $parameters['bikeRideType'] = $filters['bikeRideType'];
+        }
+
+        if (isset($filters['levels'])) {
+            $this->addCriteriaByLevel($andX, $parameters, $filters['levels']);
+        }
+
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.cluster', 'c')
+            ->leftJoin('c.bikeRide', 'br')
+            ->leftJoin('s.user', 'u')
+            ->leftJoin('u.level', 'l')
+            ->andWhere($andX)
+            ->setParameters($parameters)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    private function addCriteriaByLevel(Andx &$andX, array &$parameters, array $filterLevels): void
+    {
+        $types = [];
+        $levels = [];
+        $isBoardmember = false;
+
+        foreach ($filterLevels as $level) {
+            match ($level) {
+                Level::TYPE_ALL_MEMBER => $types[] = Level::TYPE_SCHOOL_MEMBER,
+                Level::TYPE_ALL_FRAME => $types[] = Level::TYPE_FRAME,
+                Level::TYPE_BOARD_MEMBER => $isBoardmember = true,
+                default => $levels[] = $level,
+            };
+        }
+ 
+        $orX = (new Expr())->orX();
+        if (!empty($levels)) {
+            $orX->add((new Expr())->in('u.level', ':levels'));
+            $parameters['levels'] = $levels;
+        }
+
+        if (!empty($types)) {
+            $orX->add((new Expr())->in('l.type', ':types'));
+            $parameters['types'] = $types;
+        }
+
+        if ($isBoardmember) {
+            $orX->add((new Expr())->isNotNull('u.boardRole'));
+        }
+
+        if (0 < $orX->count()) {
+            $andX->add($orX);
+        }
     }
 
     public function findOfTheDayByUser(User $user): ?Session

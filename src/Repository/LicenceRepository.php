@@ -48,7 +48,6 @@ class LicenceRepository extends ServiceEntityRepository
         }
     }
 
-
     public function findAllByLastSeason(): array
     {
         $season = $this->request->getSession()->get('currentSeason');

@@ -11,6 +11,7 @@ use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Repository\IdentityRepository;
 use App\Repository\LicenceRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -30,6 +31,7 @@ class UserDtoTransformer
         private AccessDecisionManagerInterface $accessDecisionManager,
         private TranslatorInterface $translator,
         private LicenceRepository $licenceRepository,
+        private IdentityRepository $identityRepository,
     ) {
     }
 
@@ -64,25 +66,29 @@ class UserDtoTransformer
         return $userDto;
     }
 
-    public function getHeaderFromEntity(User $user, ?array $changes = null): UserDto
+    public function getHeaderFromEntity(User $user, ?array $changes = null, ?Identity $member = null): UserDto
     {
         $userDto = new UserDto();
-
+        if (!$member) {
+            $member = $user->getMemberIdentity();
+        }
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
-        $userDto->member = $this->identityDtoTransformer->fromEntity($user->getMemberIdentity(), $changes);
+        $userDto->member = $this->identityDtoTransformer->fromEntity($member, $changes);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->lastLicence = $this->getLastLicence($user, $changes);
 
         return $userDto;
     }
 
-    public function getSessionHeaderFromEntity(User $user, ?array $changes = null): UserDto
+    public function getSessionHeaderFromEntity(User $user, ?array $changes = null, ?Identity $member = null): UserDto
     {
         $userDto = new UserDto();
-
+        if (!$member) {
+            $member = $user->getMemberIdentity();
+        }
         $userDto->id = $user->getId();
-        $userDto->member = $this->identityDtoTransformer->headerFromEntity($user->getMemberIdentity(), $changes);
+        $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $changes);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
@@ -93,8 +99,14 @@ class UserDtoTransformer
     public function fromEntities(Paginator|Collection|array $userEntities): array
     {
         $users = [];
+        $members = [];
+        /** @var Identity $member */
+        foreach ($this->identityRepository->findMembersByUsers($userEntities) as $member) {
+            $members[$member->getUser()->getId()] = $member;
+        }
         foreach ($userEntities as $userEntity) {
-            $users[] = $this->getHeaderFromEntity($userEntity);
+            $member = (array_key_exists($userEntity->getId(), $members)) ? $members[$userEntity->getId()] : null;
+            $users[] = $this->getHeaderFromEntity($userEntity, null, $member);
         }
 
         return $users;

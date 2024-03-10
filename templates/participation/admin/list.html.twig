@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Participations{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Participation</h1>
+             <div class="tool-group">
+            <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}" class="btn btn-ico" title="Retour à la liste des adhérents"><i class="fas fa-chevron-left"></i></a>
+            {# <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                <div class="dropdown-menu" data-target="dropdown-tools">
+                    <ul class="dropdown-body">
+                        <li><a href="{{ path('admin_user_participation_export', {'user': user.id}) }}" class="dropdown-item" title="Exporter"<i class="fas fa-file-download"></i> Exporter la sélection</a></li>
+                    </ul>
+                </div>
+            </div> #}
+        </div>
+        </div>
+        <div class="wrapper-body">
+            {{ form_start(form) }}
+            <div class="form-group filters align-items-bottom">
+                <div class="form-group-inline">{{ form_row(form.levels) }}</div>
+                <div class="form-group-inline">{{ form_row(form.bikeRideType) }}</div>
+                <div class="form-group-inline">
+                    {{ form_row(form.startAt) }}
+                    {{ form_row(form.endAt) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
+            <div class="d-flex justify-content-end">
+                {% if pannel.previous is not null %} 
+                    <a href="?p={{ pannel.previous }}" class="btn btn-xs btn-default" title="Précedents">
+                        <i class="fas fa-angle-left" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+                {% if pannel.next is not null %} 
+                    <a href="?p={{ pannel.next }}" class="btn btn-xs btn-default ms-20" title="Suivants">
+                        <i class="fas fa-angle-right" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+            </div>
+            <ul>
+                <li class="row row-list light-separator">
+                    <div class="col-md-4"></div>
+                    {% for user in users %}
+                        <div class="col-md-2 align-center">
+                            {{ user.member.fullName }}
+                        </div>
+                    {% endfor %}
+                </li>
+                {% for bike_ride in bike_rides %}       
+                    <li class="row row-list light-separator">
+                        <div class="col-md-4">
+                            {{ bike_ride.entity.period }}
+                            {{ bike_ride.entity.title }} 
+                        </div>
+                        {% for session in bike_ride.sessions %}  
+                        <div class="col-md-2 align-center">
+                            {{ session.userIsOnSiteToHtml|raw }}
+                            {% if session.indemnityStr is defined %}
+                                {{ session.indemnityStr }} 
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

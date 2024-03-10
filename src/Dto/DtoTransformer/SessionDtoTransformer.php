@@ -46,6 +46,25 @@ class SessionDtoTransformer
         return $sessionDto;
     }
 
+    public function getPresence(?Session $session): SessionDto
+    {
+        $sessionDto = new SessionDto();
+        if ($session) {
+            $sessionDto->id = $session->getId();
+            $sessionDto->availability = $this->getAvailability($session->getAvailability());
+            // $sessionDto->bikeRide = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
+            // $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
+            // $sessionDto->user = $this->userDtoTransformer->getHeaderFromEntity($session->getUser());
+            $sessionDto->userIsOnSite = $session->isPresent();
+            $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session->isPresent());
+            $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
+            $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
+            $sessionDto->bikeKind = ($session->getBikeKind()) ? $this->translator->trans(Session::BIKEKINDS[$session->getBikeKind()]) : null;
+        }
+
+        return $sessionDto;
+    }
+
     public function fromEntities(Paginator|Collection|array $sessionEntities): array
     {
         $sessions = [];
@@ -97,5 +116,10 @@ class SessionDtoTransformer
     private function getUserIsOnSiteToHtml(bool $isPresent): string
     {
         return ($isPresent) ? '<span class="success"></span> Présent' : '<span class="alert-danger"></span> Absent';
+    }
+
+    private function getUserIsOnSiteToIcon(bool $isPresent): string
+    {
+        return ($isPresent) ? '<i class="fa-solid fa-user-check text-success"></i>' : '<i class="fa-solid fa-user-xmark alert-danger"></i>';
     }
 }

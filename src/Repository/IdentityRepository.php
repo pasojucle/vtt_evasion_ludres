@@ -7,8 +7,10 @@ namespace App\Repository;
 use App\Entity\Identity;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -58,6 +60,18 @@ class IdentityRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException $e) {
             return null;
         }
+    }
+
+    public function findMembersByUsers(Paginator|array $users): array
+    {
+        return $this->createQueryBuilder('li')
+            ->andWhere(
+                (new Expr())->in('li.user', ':users')
+            )
+            ->setParameter('users', $users)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     public function findKinShipsByUser(User $user): array

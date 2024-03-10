@@ -4,26 +4,30 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Form\Admin\ParticipationFilterType;
 use App\Repository\SessionRepository;
-use DateInterval;
 
+use App\Service\PaginatorService;
+use App\UseCase\User\GetParticipations;
+use DateInterval;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/participation', name: 'members_presence', methods: ['GET'])]
-class MembersPresenceController extends AbstractController
+#[Route('/admin/participation', name: 'admin_participation', methods: ['GET'])]
+class ParticipationController extends AbstractController
 {
     public function __construct(
         private readonly SessionRepository $sessionRepository,
     ) {
     }
-    #[Route('/recherche', name: '_search', methods: ['GET'])]
-    public function Search(): Response
+    #[Route('s/{filtered}', name: '_list', defaults: ['filtered' => false], methods: ['GET', 'POST'])]
+    public function participations(Request $request, GetParticipations $getParticipations, bool $filtered): Response
     {
-        return $this->render('members_presence/search.html.twig');
+        return $this->render('participation/admin/list.html.twig', $getParticipations->execute($request, $filtered));
     }
 
     #[Route('/mensuelle/{isSchool}', name: '_monthly', methods: ['GET'], options: ['expose' => true])]

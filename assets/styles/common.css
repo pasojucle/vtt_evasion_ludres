@@ -303,6 +303,7 @@ body > script {display: none !important;}
     font-size: 20px;
 }
 .success-color,
+.text-success,
 .success:not(.form-group-inline, .form-group) {
     color: var(--success-color);
 }
@@ -438,6 +439,11 @@ body > script {display: none !important;}
     background-color: var(--danger-color);
     color: var(--white-color);
     border: 2px solid var(--danger-color);
+}
+.btn-default {
+    background-color: var(--light-color);
+    color: var(--background-color);
+    border: 2px solid var(--light-color);
 }
 .group-picture {
     position: relative;
@@ -659,6 +665,9 @@ button[type=submit].btn.btn-primary:disabled {
 }
 .ms-auto {
     margin-left: auto;
+}
+.ms-20 {
+    margin-left: 20px;
 }
 .float-left {
     float: left;
@@ -940,6 +949,12 @@ span.select2-selection.select2-selection--single {
 }
 .row.flex-column {
     flex-direction: column;
+}
+.d-flex {
+    display: flex;
+}
+.d-flex.justify-content-end {
+    justify-content: end;
 }
 ul > li.list {
     position: relative;
