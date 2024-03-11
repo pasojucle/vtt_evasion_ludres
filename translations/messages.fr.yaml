@@ -94,7 +94,7 @@ session:
     vttae: VTTAE
     roadbike: Vélo de route
     gravel: Gravel
-
+    walking: Marche
 
 role:
    ROLE_FRAME: Encadrant

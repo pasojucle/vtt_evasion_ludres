@@ -33,12 +33,14 @@ class Session
     public const BIKEKIND_VTTAE = 2;
     public const BIKEKIND_ROADBIKE = 3;
     public const BIKEKIND_GRAVEL = 4;
+    public const BIKEKIND_WALKING = 5;
 
     public const BIKEKINDS = [
         self::BIKEKIND_VTT => 'session.bike_kind.vtt',
         self::BIKEKIND_VTTAE => 'session.bike_kind.vttae',
         self::BIKEKIND_ROADBIKE => 'session.bike_kind.roadbike',
         self::BIKEKIND_GRAVEL => 'session.bike_kind.gravel',
+        self::BIKEKIND_WALKING => 'session.bike_kind.walking',
     ];
 
     #[Column(type: 'integer')]
