@@ -161,7 +161,7 @@ class BikeRideDtoTransformer
 
     private function getFilename(?string $filename): ?string
     {
-        return ($filename) ? $this->projectDirService->dir('upload', $filename) : null;
+        return ($filename) ? $this->projectDirService->dir('','upload', $filename) : null;
     }
 
     private function getMembers(DateTimeImmutable $startAt, BikeRideTypeDto $bikeRideType, Collection $clusters): string
