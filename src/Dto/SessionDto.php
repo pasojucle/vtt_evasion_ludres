@@ -8,19 +8,19 @@ use App\Model\Currency;
 
 class SessionDto
 {
-    public ?int $id;
+    public ?int $id = null;
 
-    public ?array $availability;
+    public ?array $availability = null;
 
     public ?BikeRideDto $bikeRide;
 
     public ?UserDto $user;
 
-    public ?bool $userIsOnSite;
+    public ?bool $userIsOnSite = false;
 
-    public string $userIsOnSiteToStr;
+    public string $userIsOnSiteToStr = '';
 
-    public string $userIsOnSiteToHtml;
+    public string $userIsOnSiteToHtml = '';
 
     public ?Currency $indemnity;
 

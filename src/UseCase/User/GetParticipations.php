@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\SessionDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use DateTime;
+use App\Dto\UserDto;
+use App\Entity\User;
 use App\Dto\SessionDto;
 use App\Entity\Session;
-use App\Entity\User;
-use App\Form\Admin\ParticipationFilterType;
-use App\Repository\BikeRideTypeRepository;
-use App\Repository\SessionRepository;
+use App\Dto\BikeRideDto;
+use App\Service\LevelService;
 use App\Service\SeasonService;
-use DateTime;
-use Symfony\Component\Form\FormFactoryInterface;
+use App\Repository\SessionRepository;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Repository\BikeRideTypeRepository;
+use App\Form\Admin\ParticipationFilterType;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormFactoryInterface;
+use App\Dto\DtoTransformer\SessionDtoTransformer;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GetParticipations
@@ -28,14 +31,15 @@ class GetParticipations
     public string $remoteRoute;
 
     public function __construct(
-        private FormFactoryInterface $formFactory,
-        private UserDtoTransformer $userDtoTransformer,
-        private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private SessionDtoTransformer $sessionDtoTransformer,
-        private SessionRepository $sessionRepository,
-        private SeasonService $seasonService,
-        private BikeRideTypeRepository $bikeRideTypeRepository,
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly UserDtoTransformer $userDtoTransformer,
+        private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private readonly SessionDtoTransformer $sessionDtoTransformer,
+        private readonly SessionRepository $sessionRepository,
+        private readonly SeasonService $seasonService,
+        private readonly BikeRideTypeRepository $bikeRideTypeRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LevelService $levelService,
     ) {
     }
 
@@ -91,6 +95,7 @@ class GetParticipations
             'startAt' => $period['startAt'],
             'endAt' => $period['endAt'],
             'bikeRideType' => null,
+            'levels' => null,
         ];
     }
 
@@ -111,39 +116,6 @@ class GetParticipations
         return $users;
     }
 
-    private function getParticipations(array $sessions): array
-    {
-        $participations = ['bikeRides' => [], 'users' => []];
-        /** @var Session $session */
-        foreach ($sessions as $session) {
-            $bikeRide = $session->getCluster()->getBikeRide();
-            if (!array_key_exists($bikeRide->getId(), $participations['bikeRides'])) {
-                $participations['bikeRides'][$bikeRide->getId()] = [
-                    'bikeRide' => $bikeRide,
-                    'sessions' => [],
-                ];
-            }
-            $user = $session->getUser();
-            if (!array_key_exists($user->getId(), $participations['users'])) {
-                $participations['users'][$user->getId()] = $user;
-            }
-            $participations['bikeRides'][$bikeRide->getId()]['sessions'][$session->getUser()->getId()] = $session;
-        }
-
-        return $this->sortParticipations($participations);
-    }
-
-    private function sortParticipations(array $particiaptions): array
-    {
-        $users = $this->userDtoTransformer->fromEntities($particiaptions['users']);
-        $bikeRides = $particiaptions['bikeRides'];
-        $this->sortUsers($users);
-        $this->sortBikeRides($bikeRides);
-        $particiaptions['users'] = $users;
-        $particiaptions['bikeRides'] = $bikeRides;
-        return $particiaptions;
-    }
-
     private function sortUsers(array &$users): void
     {
         uasort($users, function ($a, $b) {
@@ -158,20 +130,20 @@ class GetParticipations
         });
     }
 
-    public function export(Request $request, User $user)
+    public function export(Request $request): Response
     {
         $session = $request->getSession();
         $filters = $session->get($this->filterName);
-        $query = $this->sessionRepository->findByUserAndFilters($user, $filters);
-        $sessions = $query->getQuery()->getResult();
+        $sessions = $this->sessionRepository->findByFilters($filters);
+        $users = $this->getUsers($sessions);
         $content = [];
-        $this->addExportHeader($content, $user, $filters);
-        $this->addExportContent($content, $sessions);
+        $this->addExportHeader($content, $filters);
+        $this->addExportContent($content, $users, $sessions);
 
         $response = new Response(implode(PHP_EOL, $content));
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            sprintf('export_participation_%s.csv', $user->getLicenceNumber())
+            'export_participations.csv'
         );
 
         $response->headers->set('Content-Disposition', $disposition);
@@ -179,12 +151,8 @@ class GetParticipations
         return $response;
     }
 
-    private function addExportHeader(array &$content, User $user, array $filters): void
+    private function addExportHeader(array &$content, array $filters): void
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
-        $row = [$userDto->member->fullName, $userDto->licenceNumber];
-        $content[] = implode(',', $row);
-
         if (isset($filters['startAt']) && isset($filters['endAt'])) {
             $content[] = sprintf('Du %s au %s', $filters['startAt']->format('d/m/Y'), $filters['endAt']->format('d/m/Y'));
         }
@@ -192,17 +160,42 @@ class GetParticipations
         if (isset($filters['bikeRideType'])) {
             $content[] = sprintf('Type de sortie : %s', $filters['bikeRideType']->getName());
         }
+
+        if (isset($filters['levels'])) {
+            $levelsToStr = $this->levelService->getLevelsAndTypesToStr();
+            $levels = [];
+            foreach($filters['levels'] as $level) {
+                $levels[] = $levelsToStr[$level];
+            }
+            $content[] = sprintf('Niveau(x) : %s', implode(' - ', $levels));
+        }
         $content[] = '';
     }
 
-    private function addExportContent(array &$content, array $sessions): void
+    private function addExportContent(array &$content, array $users, array $sessions,): void
     {
-        $row = ['Date', 'Sortie', 'Présence'];
+        $row = [''];
+        /** @var UserDto $user */
+        foreach($users as $user) {
+            $row[] = $user->member->fullName;
+        }
         $content[] = implode(',', $row);
 
-        /** @var SessionDto $session */
-        foreach ($this->sessionDtoTransformer->fromEntities($sessions) as $session) {
-            $row = [$session->bikeRide->period, $session->bikeRide->title, $session->userIsOnSiteToStr];
+        $participationsByBikeRide = $this->getParticipationsByBikeRide($users, $sessions);
+
+        /** @var BikeRideDto $bikeRide */
+        foreach($participationsByBikeRide as $bikeRide) {
+            $row = [$bikeRide['entity']->period . ' - ' . $bikeRide['entity']->title];
+            foreach ($bikeRide['sessions'] as $session) {
+                $participation = 'Absent';
+                if ($session instanceof SessionDto) {
+                    $participation = $session->userIsOnSiteToStr;
+                    if ($session->indemnityStr) {
+                        $participation .= " - ". $session->indemnityStr;
+                    }
+                }
+                $row[] = $participation;
+            }
             $content[] = implode(',', $row);
         }
     }
@@ -214,30 +207,37 @@ class GetParticipations
 
         $offset = $limit * ($currentPage - 1);
         $users = array_slice($allUsers, $offset, $limit);
-        $bikeRides = [];
+        $unpresent = ['userIsOnSiteToHtml' => '<i class="fa-solid fa-user-xmark alert-danger"></i>'];
+        
+        return [
+            'users' => $users,
+            'bikeRides' => $this->getParticipationsByBikeRide($users, $sessions, $unpresent),
+            'previous' => (1 < $currentPage) ? $currentPage - 1 : null,
+            'next' => ($currentPage < $lastPage) ? $currentPage + 1 : null
+        ];
+    }
+
+    private function getParticipationsByBikeRide(array $users, array $sessions, ?array $unpresent = null): array
+    {
+        $participationsByBikeRide = [];
         foreach ($users as $user) {
             foreach ($sessions as $session) {
                 $bikeRide = $session->getCluster()->getBikeRide();
-                if (!array_key_exists($bikeRide->getId(), $bikeRides)) {
-                    $bikeRides[$bikeRide->getId()] = [
+                if (!array_key_exists($bikeRide->getId(), $participationsByBikeRide)) {
+                    $participationsByBikeRide[$bikeRide->getId()] = [
                         'entity' => $this->bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
                         'sessions' => [],
                     ];
                 }
                 if ($user->id === $session->getUser()->getId()) {
-                    $bikeRides[$bikeRide->getId()]['sessions'][$user->id] = $this->sessionDtoTransformer->getPresence($session);
+                    $participationsByBikeRide[$bikeRide->getId()]['sessions'][$user->id] = $this->sessionDtoTransformer->getPresence($session);
                 }
-                if (!array_key_exists($user->id, $bikeRides[$bikeRide->getId()]['sessions'])) {
-                    $bikeRides[$bikeRide->getId()]['sessions'][$user->id] = ['userIsOnSiteToHtml' => '<i class="fa-solid fa-user-xmark alert-danger"></i>'];
+                if (!array_key_exists($user->id, $participationsByBikeRide[$bikeRide->getId()]['sessions'])) {
+                    $participationsByBikeRide[$bikeRide->getId()]['sessions'][$user->id] = $unpresent;
                 }
             }
         }
-       
-        return [
-            'users' => $users,
-            'bikeRides' => $bikeRides,
-            'previous' => (1 < $currentPage) ? $currentPage - 1 : null,
-            'next' => ($currentPage < $lastPage) ? $currentPage + 1 : null
-        ];
+
+        return $participationsByBikeRide;
     }
 }

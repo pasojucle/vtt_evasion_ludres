@@ -56,6 +56,7 @@ class SessionDtoTransformer
             // $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
             // $sessionDto->user = $this->userDtoTransformer->getHeaderFromEntity($session->getUser());
             $sessionDto->userIsOnSite = $session->isPresent();
+            $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
             $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session->isPresent());
             $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;

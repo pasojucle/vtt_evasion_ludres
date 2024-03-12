@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Level;
 use App\Repository\LevelRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 class LevelService
@@ -14,6 +13,9 @@ class LevelService
     public const STATUS_TYPE_COVERAGE = 3;
     public const LEVEL_GROUP_SCHOOL = 'École VTT';
     public const LEVEL_GROUP_FRAME = 'Encadrement';
+    public const LEVEL_ALL_MEMBER = 'Toute l\'école VTT';
+    public const LEVEL_ALL_FRAME = 'Tout l\'encadrement';
+
 
     public function __construct(private LevelRepository $levelRepository)
     {
@@ -34,7 +36,7 @@ class LevelService
         return $levelChoices;
     }
 
-    public function addLevels(Collection|array $levels, array &$array): void
+    private function addLevels(Collection|array $levels, array &$array): void
     {
         foreach ($levels as $level) {
             match ($level->getType()) {
@@ -45,15 +47,30 @@ class LevelService
         }
     }
 
-    public function addLevelTypes(Collection|array $levelTypes, array &$array): void
+    private function addLevelTypes(Collection|array $levelTypes, array &$array): void
     {
         foreach ($levelTypes as $levelType) {
             if (Level::TYPE_ALL_MEMBER === $levelType) {
-                $array[self::LEVEL_GROUP_SCHOOL] = ['Toute l\'école VTT' => Level::TYPE_ALL_MEMBER];
+                $array[self::LEVEL_GROUP_SCHOOL] = [self::LEVEL_ALL_MEMBER => Level::TYPE_ALL_MEMBER];
             }
             if (Level::TYPE_ALL_FRAME === $levelType) {
-                $array[self::LEVEL_GROUP_FRAME] = ['Tout l\'encadrement' => Level::TYPE_ALL_FRAME];
+                $array[self::LEVEL_GROUP_FRAME] = [self::LEVEL_ALL_FRAME => Level::TYPE_ALL_FRAME];
             }
         }
+    }
+
+    public function getLevelsAndTypesToStr(): array
+    {
+        $levels = [
+            Level::TYPE_ALL_MEMBER => self::LEVEL_ALL_MEMBER,
+            Level::TYPE_ALL_FRAME => self::LEVEL_ALL_FRAME,
+        ];
+
+        /** @var Level $level */
+        foreach ($this->levelRepository->findAll() as $level) {
+            $levels[$level->getId()] = $level->getTitle();
+        }
+        dump($levels);
+        return $levels;
     }
 }

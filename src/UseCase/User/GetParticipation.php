@@ -91,7 +91,7 @@ class GetParticipation
         ];
     }
 
-    public function export(Request $request, User $user)
+    public function export(Request $request, User $user): Response
     {
         $session = $request->getSession();
         $filters = $session->get($this->filterName);

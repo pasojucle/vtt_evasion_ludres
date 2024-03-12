@@ -22,12 +22,20 @@ class ParticipationController extends AbstractController
 {
     public function __construct(
         private readonly SessionRepository $sessionRepository,
+        private readonly GetParticipations $getParticipations,
     ) {
     }
+
     #[Route('s/{filtered}', name: '_list', defaults: ['filtered' => false], methods: ['GET', 'POST'])]
-    public function participations(Request $request, GetParticipations $getParticipations, bool $filtered): Response
+    public function participations(Request $request, bool $filtered): Response
     {
-        return $this->render('participation/admin/list.html.twig', $getParticipations->execute($request, $filtered));
+        return $this->render('participation/admin/list.html.twig', $this->getParticipations->execute($request, $filtered));
+    }
+
+    #[Route('/export', name: 's_export', methods: ['GET', 'POST'])]
+    public function export(Request $request): Response
+    {
+        return $this->getParticipations->export($request);
     }
 
     #[Route('/mensuelle/{isSchool}', name: '_monthly', methods: ['GET'], options: ['expose' => true])]

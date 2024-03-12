@@ -8,14 +8,14 @@
             <h1>Participation</h1>
              <div class="tool-group">
             <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}" class="btn btn-ico" title="Retour à la liste des adhérents"><i class="fas fa-chevron-left"></i></a>
-            {# <div class="dropdown">
+            <div class="dropdown">
                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                 <div class="dropdown-menu" data-target="dropdown-tools">
                     <ul class="dropdown-body">
-                        <li><a href="{{ path('admin_user_participation_export', {'user': user.id}) }}" class="dropdown-item" title="Exporter"<i class="fas fa-file-download"></i> Exporter la sélection</a></li>
+                        <li><a href="{{ path('admin_participations_export') }}" class="dropdown-item" title="Exporter"<i class="fas fa-file-download"></i> Exporter la sélection</a></li>
                     </ul>
                 </div>
-            </div> #}
+            </div>
         </div>
         </div>
         <div class="wrapper-body">
