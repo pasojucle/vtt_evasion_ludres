@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use DateTime;
-use App\Dto\UserDto;
-use App\Entity\User;
-use App\Dto\SessionDto;
-use App\Entity\Session;
 use App\Dto\BikeRideDto;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\SessionDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\SessionDto;
+use App\Dto\UserDto;
+use App\Entity\Session;
+use App\Form\Admin\ParticipationFilterType;
+use App\Repository\BikeRideTypeRepository;
+use App\Repository\SessionRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
-use App\Repository\SessionRepository;
-use Symfony\Component\Form\FormInterface;
-use App\Repository\BikeRideTypeRepository;
-use App\Form\Admin\ParticipationFilterType;
-use Symfony\Component\HttpFoundation\Request;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 use Symfony\Component\Form\FormFactoryInterface;
-use App\Dto\DtoTransformer\SessionDtoTransformer;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GetParticipations
@@ -77,7 +76,7 @@ class GetParticipations
     private function createForm(array $filters): FormInterface
     {
         return $this->formFactory->create(ParticipationFilterType::class, $filters, [
-            'action' => $this->urlGenerator->generate('admin_participation_list')
+            'action' => $this->urlGenerator->generate('admin_participation_list', ['filtered' => true])
         ]);
     }
 
@@ -123,13 +122,6 @@ class GetParticipations
         });
     }
 
-    private function sortBikeRides(array &$bikeRides): void
-    {
-        usort($bikeRides, function ($a, $b) {
-            return $a['bikeRide']->startAt < $b['bikeRide']->startAt ? -1 : 1;
-        });
-    }
-
     public function export(Request $request): Response
     {
         $session = $request->getSession();
@@ -164,7 +156,7 @@ class GetParticipations
         if (isset($filters['levels'])) {
             $levelsToStr = $this->levelService->getLevelsAndTypesToStr();
             $levels = [];
-            foreach($filters['levels'] as $level) {
+            foreach ($filters['levels'] as $level) {
                 $levels[] = $levelsToStr[$level];
             }
             $content[] = sprintf('Niveau(x) : %s', implode(' - ', $levels));
@@ -172,11 +164,11 @@ class GetParticipations
         $content[] = '';
     }
 
-    private function addExportContent(array &$content, array $users, array $sessions,): void
+    private function addExportContent(array &$content, array $users, array $sessions): void
     {
         $row = [''];
         /** @var UserDto $user */
-        foreach($users as $user) {
+        foreach ($users as $user) {
             $row[] = $user->member->fullName;
         }
         $content[] = implode(',', $row);
@@ -184,15 +176,12 @@ class GetParticipations
         $participationsByBikeRide = $this->getParticipationsByBikeRide($users, $sessions);
 
         /** @var BikeRideDto $bikeRide */
-        foreach($participationsByBikeRide as $bikeRide) {
+        foreach ($participationsByBikeRide as $bikeRide) {
             $row = [$bikeRide['entity']->period . ' - ' . $bikeRide['entity']->title];
             foreach ($bikeRide['sessions'] as $session) {
                 $participation = 'Absent';
                 if ($session instanceof SessionDto) {
                     $participation = $session->userIsOnSiteToStr;
-                    if ($session->indemnityStr) {
-                        $participation .= " - ". $session->indemnityStr;
-                    }
                 }
                 $row[] = $participation;
             }
@@ -238,6 +227,16 @@ class GetParticipations
             }
         }
 
+        $this->sortBikeRides($participationsByBikeRide);
+
         return $participationsByBikeRide;
+    }
+
+
+    private function sortBikeRides(array &$bikeRides): void
+    {
+        usort($bikeRides, function ($a, $b) {
+            return $a['entity']->startAt < $b['entity']->startAt ? -1 : 1;
+        });
     }
 }

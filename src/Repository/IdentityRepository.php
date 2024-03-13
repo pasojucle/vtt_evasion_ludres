@@ -51,9 +51,12 @@ class IdentityRepository extends ServiceEntityRepository
             return $this->createQueryBuilder('i')
                 ->andWhere(
                     (new Expr())->eq('i.user', ':user'),
-                    (new Expr())->isNull('i.kinship')
+                    (new Expr())->eq('i.type', ':member')
                 )
-                ->setParameter('user', $user)
+                ->setParameters([
+                    'user' => $user,
+                    'member' => Identity::TYPE_MEMBER,
+                ])
                 ->getQuery()
                 ->getOneOrNullResult()
             ;
@@ -64,11 +67,15 @@ class IdentityRepository extends ServiceEntityRepository
 
     public function findMembersByUsers(Paginator|array $users): array
     {
-        return $this->createQueryBuilder('li')
+        return $this->createQueryBuilder('i')
             ->andWhere(
-                (new Expr())->in('li.user', ':users')
+                (new Expr())->in('i.user', ':users'),
+                (new Expr())->eq('i.type', ':member')
             )
-            ->setParameter('users', $users)
+            ->setParameters([
+                'users' => $users,
+                'member' => Identity::TYPE_MEMBER,
+            ])
             ->getQuery()
             ->getResult()
         ;
@@ -79,9 +86,12 @@ class IdentityRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('i')
             ->andWhere(
                 (new Expr())->eq('i.user', ':user'),
-                (new Expr())->isNotNull('i.kinship')
+                (new Expr())->neq('i.type', ':member')
             )
-            ->setParameter('user', $user)
+            ->setParameters([
+                'user' => $user,
+                'member' => Identity::TYPE_MEMBER,
+            ])
             ->getQuery()
             ->getResult()
     ;

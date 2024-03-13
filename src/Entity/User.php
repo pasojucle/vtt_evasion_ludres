@@ -42,6 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const PERMISSION_PERMISSION = 'PERMISSION';
     public const PERMISSION_DOCUMENTATION = 'DOCUMENTATION';
     public const PERMISSION_SLIDESHOW = 'SLIDESHOW';
+    public const PERMISSION_PARTICIPATION = 'PARTICIPATION';
     public const PERMISSIONS = [
         self::PERMISSION_BIKE_RIDE => 'permission.bike_ride',
         self::PERMISSION_USER => 'permission.user',
@@ -51,6 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::PERMISSION_SECOND_HAND => 'permission.second_hand',
         self::PERMISSION_DOCUMENTATION => 'permission.documentation',
         self::PERMISSION_SLIDESHOW => 'permission.slideshow',
+        self::PERMISSION_PARTICIPATION => 'permission.participation',
     ];
 
     #[Column(type: 'integer')]
@@ -716,6 +718,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             self::PERMISSION_SURVEY => false,
             self::PERMISSION_MODAL_WINDOW => false,
             self::PERMISSION_SECOND_HAND => false,
+            self::PERMISSION_PARTICIPATION => false,
         ];
         return ($this->permissions) ? array_merge($permissions, $this->permissions) : $permissions;
     }

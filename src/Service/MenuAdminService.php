@@ -69,6 +69,12 @@ class MenuAdminService
                 'role' => 'USER_LIST',
             ],
             [
+                'label' => 'Participation',
+                'route' => 'admin_participation_list',
+                'pattern' => '/^admin_participation/',
+                'role' => 'PARTICIPATION_VIEW',
+            ],
+            [
                 'label' => 'Inscriptions',
                 'route' => 'admin_registrations',
                 'pattern' => '/^admin_registration/',
