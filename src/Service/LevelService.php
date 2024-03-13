@@ -70,7 +70,7 @@ class LevelService
         foreach ($this->levelRepository->findAll() as $level) {
             $levels[$level->getId()] = $level->getTitle();
         }
-        dump($levels);
+
         return $levels;
     }
 }
