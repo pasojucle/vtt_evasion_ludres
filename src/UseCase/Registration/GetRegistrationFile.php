@@ -19,7 +19,6 @@ use App\Service\PdfService;
 use App\Service\ProjectDirService;
 use App\Service\SeasonService;
 use DateTime;
-use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Environment;
 use ZipArchive;
 
@@ -35,7 +34,6 @@ class GetRegistrationFile
         private UserDtoTransformer $userDtoTransformer,
         private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         private Environment $twig,
-        private Security $security,
         private HealthService $healthService,
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
@@ -53,12 +51,7 @@ class GetRegistrationFile
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->isFinal(), RegistrationStep::RENDER_FILE);
 
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();
-        if ($this->security->getUser() === $user) {
-            $today = new DateTime();
-            $lastLicence->setCreatedAt($today);
-        }
         $this->healthService->getHealthSwornCertifications($user);
-
 
         $changes = $this->registrationChangeRepository->findBySeason($user, $season);
         $userDto = $this->userDtoTransformer->fromEntity($user, $changes);

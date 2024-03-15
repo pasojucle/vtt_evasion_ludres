@@ -127,6 +127,7 @@
                     <ul>
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>Numéro</b></div><div class="col-md-8 col-xs-6">{{ user.licenceNumber }}</div></div></li>
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>Saison</b></div><div class="col-md-8 col-xs-6">{{ licence.shortSeason }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription</b></div><div class="col-md-8 col-xs-6" title="{{ licence.createdAtLong }}">{{ licence.createdAt }}</div></div></li>
                         {% if licence.status is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.statusStr|trans }}</div></div></li>
                         {% endif %}

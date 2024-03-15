@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     project_directory: '%kernel.project_dir%/'
+    timezone: '%env(APP_TIMEZONE)%'
     public_directory: '%kernel.project_dir%/public'
     uploads_directory_path: '%kernel.project_dir%/public/uploads/'
     uploads_directory: '/uploads/'

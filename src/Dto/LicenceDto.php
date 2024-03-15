@@ -11,6 +11,7 @@ class LicenceDto
     public ?int $id;
 
     public ?string $createdAt;
+    public ?string $createdAtLong;
 
     public ?int $season = null;
 

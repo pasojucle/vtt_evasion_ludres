@@ -54,6 +54,7 @@ class LicenceDtoTransformer
             
             $licenceDto->id = $licence->getId();
             $licenceDto->createdAt = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y') : null;
+            $licenceDto->createdAtLong = ($licence->getCreatedAt()) ? $licence->getCreatedAt()->format('d/m/Y H.i') : null;
             $licenceDto->season = $licence->getSeason();
             $licenceDto->shortSeason = $this->getSeason($licence->getSeason());
             $licenceDto->fullSeason = $this->getFullSeason($licence->getSeason());

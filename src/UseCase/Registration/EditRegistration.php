@@ -20,6 +20,8 @@ use App\Service\MailerService;
 use App\Service\StringService;
 use App\Service\UploadService;
 use App\UseCase\Registration\GetRegistrationFile;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +81,9 @@ class EditRegistration
 
         if (UserType::FORM_OVERVIEW === $progress->current->form) {
             $seasonLicence = $user->getSeasonLicence($season);
-            $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE);
+            $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE)
+                ->setCreatedAt(new DateTime());
+
             $this->sendMailToClub($user);
             $this->sendMailToUser($user, $user->isLoginSend());
             $user->setLoginSend(true);
