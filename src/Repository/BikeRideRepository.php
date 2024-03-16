@@ -163,6 +163,7 @@ class BikeRideRepository extends ServiceEntityRepository
                 'end' => (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59),
                 'registration' => 0,
             ])
+            ->orderBy('br.startAt')
             ->getQuery()
             ->getResult()
         ;
