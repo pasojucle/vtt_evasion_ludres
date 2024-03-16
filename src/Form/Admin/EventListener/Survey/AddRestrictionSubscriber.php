@@ -24,8 +24,6 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     }
     public static function getSubscribedEvents(): array
     {
-        // Tells the dispatcher that you want to listen on the form.pre_set_data
-        // event and that the preSetData method should be called.
         return [
             FormEvents::PRE_SET_DATA => 'preSetData',
             FormEvents::PRE_SUBMIT => 'preSubmit',
@@ -36,8 +34,13 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     {
         $survey = $event->getData();
 
+        $memberIds = [];
+        /** @var User $member */
+        foreach ($survey->getMembers() as $member) {
+            $memberIds[] = $member->getId();
+        }
 
-        $this->modifier($event->getForm(), $survey->getRestriction(), $survey->getLevelFilter());
+        $this->modifier($event->getForm(), $survey->getRestriction(), $survey->getLevelFilter(), $memberIds);
     }
 
     public function preSubmit(FormEvent $event): void
@@ -47,21 +50,20 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $data = $event->getData();
 
         $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
-        $levelFilter = (array_key_exists('levelFilter', $data) && !empty($data['levelFilter'])) ? $data['levelFilter'] : null;
+        $levelFilter = (array_key_exists('levelFilter', $data) && !empty($data['levelFilter'])) ? $data['levelFilter'] : [];
 
-        $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : null;
-        if (array_key_exists('levelFilter', $data) || $levels) {
-            $this->addOrRemoveMembers($data, $levels, $survey);
-        }
+        $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : [];
+        $memberIds = (array_key_exists('memberIds', $data) && !empty($data['memberIds'])) ? explode(';', $data['memberIds']) : [];
+        $this->addOrRemoveMembers($data, $levels, $memberIds, $survey);
 
         $this->cleanData($restriction, $data, $survey);
         $event->setData($data);
         $event->getForm()->setData($survey);
 
-        $this->modifier($event->getForm(), $restriction, $levelFilter);
+        $this->modifier($event->getForm(), $restriction, $levelFilter, $memberIds);
     }
 
-    private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter): void
+    private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter, ?array $memberIds): void
     {
         $options = $form->getConfig()->getOptions();
         $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
@@ -108,6 +110,12 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 ],
                 'required' => !$disabledMembers,
                 'disabled' => $disabledMembers,
+                'attr' => [
+                    'data-modifier' => 'bikeRideRestriction',
+                    'class' => 'form-modifier',
+                    'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
+                    'data-add-to-fetch' => 'memberIds',
+                ],
             ])
             ->add('levelFilter', ChoiceType::class, [
                 'label' => false,
@@ -130,38 +138,53 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             ;
     }
 
-    private function addOrRemoveMembers(array &$data, ?array $levels, Survey $survey): void
+    private function addOrRemoveMembers(array &$data, ?array $levels, ?array $memberIds, Survey $survey): void
     {
-        $levelFilter = (array_key_exists('levelFilter', $data)) ? $data['levelFilter'] : null;
-        if (!$levelFilter && $levels) {
-            $this->clearMembers($data, $survey);
+        $levelFilter = [];
+        if (array_key_exists('levelFilter', $data)) {
+            $levelFilter = array_map(function ($id) {
+                return (int) $id;
+            }, $data['levelFilter']);
+        }
+        $users = [];
+        if (array_key_exists('users', $data)) {
+            $users = array_map(function ($id) {
+                return (int) $id;
+            }, $data['users']);
+        }
+        if (!array_key_exists('handler', $data)) {
             return;
         }
 
-        $levelsToAdd = ($levelFilter) ? $levelFilter : [];
-        
-        $levelsToRemove = ($levels) ? $levels : [];
-        if ($levelFilter && $levels) {
+        $membersToAdd = [];
+        $membresToRemove = [];
+        if (str_contains($data['handler'], 'levelFilter')) {
             $levelsToAdd = array_diff($levelFilter, $levels);
             $levelsToRemove = array_diff($levels, $levelFilter);
+            $membersToAdd = $this->getMembers($levelsToAdd);
+            $membresToRemove = $this->getMembers($levelsToRemove);
         }
-        
-        $membersToAdd = $this->getMembers($levelsToAdd);
-        $membresToRemove = $this->getMembers($levelsToRemove);
+        if (str_contains($data['handler'], 'memberIds')) {
+            $membersToAdd = array_diff($memberIds, $users);
+            $membresToRemove = array_diff($users, $memberIds);
+        }
         if (!array_key_exists('members', $data)) {
             $data['members'] = [];
         }
 
         foreach ($membersToAdd as $member) {
-            if (!in_array($member->getId(), $data['members'])) {
-                $data['members'][] = $member->getId();
+            $id = ($member instanceof User) ? $member->getId() : $member;
+            if (!in_array($id, $data['members'])) {
+                $data['members'][] = $id;
             }
         }
 
         foreach ($membresToRemove as $member) {
-            $key = array_search($member->getId(), $data['members']);
-            if ($key) {
+            $id = ($member instanceof User) ? $member->getId() : $member;
+            $key = array_search($id, $data['members']);
+            if (null !== $key) {
                 unset($data['members'][$key]);
+                $member = ($member instanceof User) ? $member : $this->userRepository->find($id);
                 $survey->removeMember($member);
             }
         }
@@ -202,7 +225,8 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     private function clearMembers(array &$data, Survey $survey): void
     {
         $data['members'] = [];
-        $survey->clearMembers();
-        $survey->setLevelFilter([]);
+        unset($data['levelsFilter']);
+        $survey->clearMembers()
+            ->setLevelFilter([]);
     }
 }

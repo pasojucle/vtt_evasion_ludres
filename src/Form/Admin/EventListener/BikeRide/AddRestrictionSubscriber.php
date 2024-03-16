@@ -26,8 +26,6 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        // Tells the dispatcher that you want to listen on the form.pre_set_data
-        // event and that the preSetData method should be called.
         return [
             FormEvents::PRE_SET_DATA => 'preSetData',
             FormEvents::PRE_SUBMIT => 'preSubmit',
@@ -38,7 +36,13 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     {
         $bikeRide = $event->getData();
 
-        $this->modifier($event->getForm(), $bikeRide, $bikeRide->getRestriction(), $bikeRide->getLevelFilter());
+        $userIds = [];
+        /** @var User $user */
+        foreach ($bikeRide->getUsers() as $user) {
+            $userIds[] = $user->getId();
+        }
+
+        $this->modifier($event->getForm(), $bikeRide, $bikeRide->getRestriction(), $bikeRide->getLevelFilter(), $userIds);
     }
 
     public function preSubmit(FormEvent $event): void
@@ -49,22 +53,20 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         
         $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
 
-        $levelFilter = (array_key_exists('levelFilter', $data) && !empty($data['levelFilter'])) ? $data['levelFilter'] : null;
-
-        $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : null;
-        if (array_key_exists('levelFilter', $data) || $levels) {
-            $this->addOrRemoveUsers($data, $levels, $bikeRide);
-        }
+        $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : [];
+        $levelFilter = array_key_exists('levelFilter', $data) ? $data['levelFilter'] : [];
+        $userIds = (array_key_exists('userids', $data) && !empty($data['userids'])) ? explode(';', $data['userids']) : [];
+        $this->addOrRemoveUsers($data, $levels, $userIds, $bikeRide);
 
         $this->cleanData($restriction, $data, $bikeRide);
 
         $event->setData($data);
         $event->getForm()->setData($bikeRide);
 
-        $this->modifier($event->getForm(), $bikeRide, $restriction, $levelFilter);
+        $this->modifier($event->getForm(), $bikeRide, $restriction, $levelFilter, $userIds);
     }
 
-    private function modifier(FormInterface $form, BikeRide $bikeRide, ?int $restriction, ?array $levelFilter): void
+    private function modifier(FormInterface $form, BikeRide $bikeRide, ?int $restriction, array $levelFilter, array $userIds): void
     {
         $disabled = BikeRideKind::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
@@ -97,6 +99,12 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 'disabled' => $disabledUsers,
                 'remote_params' => [
                     'filters' => json_encode($filters),
+                ],
+                'attr' => [
+                    'data-modifier' => 'bikeRideRestriction',
+                    'class' => 'form-modifier',
+                    'data-userids' => ($userIds) ? implode(';', $userIds) : '',
+                    'data-add-to-fetch' => 'userids',
                 ],
             ])
             ->add('levelFilter', ChoiceType::class, [
@@ -142,8 +150,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     private function cleanData(?int $restriction, array &$data, BikeRide $bikeRide): void
     {
         if (BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction) {
-            $data['users'] = [];
-            $bikeRide->clearUsers();
+            $this->clearUsers($data, $bikeRide);
         }
         if (BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction) {
             $data['minAge'] = '';
@@ -157,39 +164,52 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function addOrRemoveUsers(array &$data, ?array $levels, BikeRide $bikeRide): void
+    private function addOrRemoveUsers(array &$data, ?array $levels, ?array $userIds, BikeRide $bikeRide): void
     {
-        $levelFilter = (array_key_exists('levelFilter', $data)) ? $data['levelFilter'] : null;
-        if (!$levelFilter && $levels) {
-            $this->clearUsers($data, $bikeRide);
+        $levelFilter = [];
+        if (array_key_exists('levelFilter', $data)) {
+            $levelFilter = array_map(function ($id) {
+                return (int) $id;
+            }, $data['levelFilter']);
+        }
+        $users = [];
+        if (array_key_exists('users', $data)) {
+            $users = array_map(function ($id) {
+                return (int) $id;
+            }, $data['users']);
+        }
+        if (!array_key_exists('handler', $data)) {
             return;
         }
 
-        $levelsToAdd = ($levelFilter) ? $levelFilter : [];
-        
-        $levelsToRemove = ($levels) ? $levels : [];
-        if ($levelFilter && $levels) {
+        $usersToAdd = [];
+        $usersToRemove = [];
+        if (str_contains($data['handler'], 'levelFilter')) {
             $levelsToAdd = array_diff($levelFilter, $levels);
             $levelsToRemove = array_diff($levels, $levelFilter);
+            $usersToAdd = $this->getUsers($levelsToAdd);
+            $usersToRemove = $this->getUsers($levelsToRemove);
         }
-        
-        $userToAdd = $this->getUsers($levelsToAdd);
-        $usersToRemove = $this->getUsers($levelsToRemove);
+        if (str_contains($data['handler'], 'userids')) {
+            $usersToAdd = array_diff($userIds, $users);
+            $usersToRemove = array_diff($users, $userIds);
+        }
         if (!array_key_exists('users', $data)) {
             $data['users'] = [];
         }
-
-        foreach ($userToAdd as $user) {
-            if (!in_array($user->getId(), $data['users'])) {
-                $data['users'][] = $user->getId();
+        foreach ($usersToAdd as $user) {
+            $id = ($user instanceof User) ? $user->getId() : $user;
+            if (!in_array($id, $data['users'])) {
+                $data['users'][] = $id;
             }
         }
-
-        foreach ($usersToRemove as $users) {
-            $key = array_search($users->getId(), $data['users']);
-            if ($key) {
+        foreach ($usersToRemove as $user) {
+            $id = ($user instanceof User) ? $user->getId() : $user;
+            $key = array_search($id, $data['users']);
+            if (null !== $key) {
                 unset($data['users'][$key]);
-                $bikeRide->removeUser($users);
+                $user = ($user instanceof User) ? $user : $this->userRepository->find($id);
+                $bikeRide->removeUser($user);
             }
         }
     }
@@ -211,7 +231,8 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     private function clearUsers(array &$data, BikeRide $bikeRide): void
     {
         $data['users'] = [];
-        $bikeRide->clearUsers();
-        $bikeRide->setLevelFilter([]);
+        unset($data['levelsFilter']);
+        $bikeRide->clearUsers()
+            ->setLevelFilter([]);
     }
 }

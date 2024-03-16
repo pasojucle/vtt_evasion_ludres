@@ -183,7 +183,7 @@ function formModifier(event) {
     //         data.set(entry[0], '');
     //     }
     // }
-    data.append(`${form.name}['handler']`, event.target.name)
+    data.append(`${form.name}[handler]`, event.target.name)
     if (event.target.type === 'button') {
         data.append(event.target.name, 1)
     }
