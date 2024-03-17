@@ -97,7 +97,11 @@ class GetSchedule
 
     private function getFiltersByParam(?string $period, ?int $year, ?int $month, ?int $day, string $route)
     {
-        $date = ((null === $year && null === $month && null === $day) || BikeRide::PERIOD_NEXT === $period) ? new DateTimeImmutable() : DateTimeImmutable::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}");
+        $date = new DateTimeImmutable();
+        if ($year && $month && $day && $dateFromYearMontDay = DateTimeImmutable::createFromFormat('Y-m-d', "{$year}-{$month}-{$day}")) {
+            $date = $dateFromYearMontDay;
+        }
+        
         if (null === $period) {
             $period = ('admin_bike_rides' === $route) ? BikeRide::PERIOD_NEXT : BikeRide::PERIOD_MONTH;
         }
