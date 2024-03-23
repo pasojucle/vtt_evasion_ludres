@@ -8,7 +8,6 @@ use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\Identity;
-use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Repository\IdentityRepository;
@@ -77,6 +76,7 @@ class UserDtoTransformer
         $userDto->member = $this->identityDtoTransformer->fromEntity($member, $changes);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->lastLicence = $this->getLastLicence($user, $changes);
+        $userDto->seasons = $this->getSeasons($user->getLicences());
 
         return $userDto;
     }
@@ -109,7 +109,16 @@ class UserDtoTransformer
             $users[] = $this->getHeaderFromEntity($userEntity, null, $member);
         }
 
+        $this->sortByFullName($users);
+
         return $users;
+    }
+
+    private function sortByFullName(array &$users): void
+    {
+        uasort($users, function ($a, $b) {
+            return strtolower($a->member->fullName) < strtolower($b->member->fullName) ? -1 : 1;
+        });
     }
 
     private function getMainEmail(array $identitiesByType, int $category): ?string
@@ -215,5 +224,16 @@ class UserDtoTransformer
         $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
         $lastLicence = $this->getLastLicence($userEntity, null);
         return $this->getMainEmail($identitiesByType, $lastLicence->category);
+    }
+
+    public function getSeasons(?Collection $licences): string
+    {
+        $seasons = [];
+        /** @var Licence $licence */
+        foreach ($licences as $licence) {
+            $seasons[] = $licence->getSeason();
+        }
+
+        return implode(' - ', $seasons);
     }
 }

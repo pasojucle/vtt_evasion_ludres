@@ -99,11 +99,11 @@ abstract class GetUsersFiltered
         $query = $this->getQuery($filters);
         $users = $query->getQuery()->getResult();
         $emails = [];
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
-            }
+
+        foreach ($users as $user) {
+            $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
         }
+
 
         return implode(',', $emails);
     }

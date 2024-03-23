@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Saison {{season }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Saison {{season }} - List des licences</h1>
+            <span class="tools">
+                <a href="{{ path('admin_users') }}"
+                    class="btn btn-ico" title="Retour à la liste des adhérents">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </span>
+            <div class="tool-group">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                    <div class="dropdown-menu" data-target="dropdown-tools">
+                        <ul class="dropdown-body">
+                            <li><a href="{{ path('admin_overview_season_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></œli>
+                            <li><a href="{{ path('admin_overview_season_export') }}" class="dropdown-item" title="Export la sélection"><i class="fas fa-file-csv"></i> Export la sélection</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="filters mb-20 p-20">
+            {{ form_start(form) }}
+            {{ form_row(form.season) }}
+            {{ form_end(form) }}
+        </div>
+        <nav  class="nav-tab">
+            {% for tab_value, label in tabs %}
+                <a href="{{ path('admin_overview_season', {'filtered': true, 'tab': tab_value} )}}"{% if tab == tab_value %} class="active"{% endif %}>{{ label|trans}} - {{ users[tab_value]|length }}</a>
+            {% endfor %}
+        </nav>
+        <div class="wrapper-body">
+            <ul class="mb-20">
+                {% for user in users[tab] %}
+                    <li class="list-dropdown"> 
+                        <a href="{{ path('admin_user', {'user': user.id})}}"
+                            {% if user.level.colors is not null %}style="background-color: {{ user.level.colors.background }}"{% endif %}>
+                            <div class="row">
+                                <div class="col-md-4 col-xs-12">{{ user.member.fullName }}</div>
+                                <div class="col-md-8 col-xs-12">{{ user.seasons }}</div>
+                            </div>
+                        </a> 
+                        {% include('user/admin/dropdown.html.twig') %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

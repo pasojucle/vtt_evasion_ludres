@@ -14,6 +14,7 @@ use App\Service\MailerService;
 use App\Service\ParameterService;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
+use App\UseCase\User\GetOverviewSeason;
 use App\UseCase\User\GetParticipation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,8 +29,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private UserDtoTransformer $userDtoTransformer
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserDtoTransformer $userDtoTransformer,
+        private readonly GetOverviewSeason $getOverviewSeason,
     ) {
     }
 
@@ -233,5 +235,31 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse($response);
+    }
+
+    #[Route('/synthese/saison/{filtered}/{tab}', name: 'overview_season', defaults:['filtered' => false, 'tab' => GetOverviewSeason::TAB_NEW_REGISTRATIONS], methods: ['GET', 'POST'])]
+    #[IsGranted('USER_SHARE')]
+    public function overviewSeasonMembers(
+        Request $request,
+        bool $filtered,
+        int $tab,
+    ): Response {
+        return $this->render('user/admin/overviewSeason.html.twig', $this->getOverviewSeason->getMembers($request, $filtered, $tab));
+    }
+
+    #[Route('/export/synthese/saison', name: 'overview_season_export', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_SHARE')]
+    public function exportOverviewSeason(
+        Request $request,
+    ): Response {
+        return $this->getOverviewSeason->export($request);
+    }
+
+    #[Route('/emails/synthese/saison', name: 'overview_season_email_to_clipboard', methods: ['GET'])]
+    #[IsGranted('USER_SHARE')]
+    public function overviewSeasonToClicpboard(
+        Request $request
+    ): JsonResponse {
+        return new JsonResponse($this->getOverviewSeason->emailsToClipboard($request));
     }
 }

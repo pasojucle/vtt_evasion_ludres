@@ -110,16 +110,7 @@ class GetParticipations
         }
         $users = $this->userDtoTransformer->fromEntities($userEntities);
 
-        $this->sortUsers($users);
-
         return $users;
-    }
-
-    private function sortUsers(array &$users): void
-    {
-        uasort($users, function ($a, $b) {
-            return strtolower($a->member->fullName) < strtolower($b->member->fullName) ? -1 : 1;
-        });
     }
 
     public function export(Request $request): Response

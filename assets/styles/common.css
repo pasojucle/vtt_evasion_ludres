@@ -865,7 +865,9 @@ span.select2-selection.select2-selection--single {
 .filters-schedule .filters {
     padding: 20px;
 }
-
+.p-20 {
+    padding: 20px;
+}
 .col-1, .col-2, .col-3, .col-4, .col-2-1, .col-1-3 , .col-2-3, .col-content, .col-6, .col-list, .grid-background {
     display: grid;
     grid-auto-rows: max-content;

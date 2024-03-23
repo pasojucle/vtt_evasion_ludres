@@ -12,7 +12,6 @@ use App\Entity\SecondHand;
 use App\Repository\BikeRideRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SecondHandRepository;
-use App\Repository\SessionRepository;
 use App\Service\ParameterService;
 use App\UseCase\User\GetCurrentSeasonUsers;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +25,7 @@ class DashboardController extends AbstractController
 {
     #[Route('/', name:'', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function dashboard(SessionRepository $sessionRepository): Response
+    public function dashboard(): Response
     {
         return $this->render('dashboard/index.html.twig');
     }

@@ -49,4 +49,6 @@ class UserDto
     public ?int $testingBikeRides = null;
 
     public bool $mustProvideRegistration = false;
+
+    public string $seasons = '';
 }

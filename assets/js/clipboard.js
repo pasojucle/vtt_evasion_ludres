@@ -1,20 +1,24 @@
-$(document).ready(function(){
-    $(document).on('click', 'a[data-clipboard="1"]', clipboard);
-    $(document).on('click', '.email-to-clipboard', emailToClipboard);
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a[data-clipboard="1"]').forEach((element) => {
+        element.addEventListener('click', clipboard)
+    })
+    document.querySelectorAll('.email-to-clipboard').forEach((element) => {
+        element.addEventListener('click', emailToClipboard)
+    })
+   
 });
-
-function clipboard(event) {
+const clipboard = (event) => {
     event.preventDefault();
     const value = $(this).attr('href');
     navigator.clipboard.writeText(value);
 }
 
-function emailToClipboard(event) {
+const emailToClipboard = (event) => {
     event.preventDefault();
     const url = event.target.getAttribute('href');
-    fetch(url).then(function (response) {
+    fetch(url).then ((response) => {
         return response.json();
-    }).then(function (data) {
+    }).then((data) => {
         console.log(data);
         navigator.clipboard.writeText(data);
     });

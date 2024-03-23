@@ -5,7 +5,7 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Gestion des inscriptions - <span class="badge badge-info">{{ paginator.total }}</span></h1>
+            <h1>Gestion des inscriptions {{ app.session.get('currentSeason') }} - <span class="badge badge-info">{{ paginator.total }}</span></h1>
             <div class="tool-group">
                 {% include 'component/dropdown_settings.html.twig' %}
                 <div class="dropdown">

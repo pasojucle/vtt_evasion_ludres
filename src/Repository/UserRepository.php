@@ -657,4 +657,116 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult()
         ;
     }
+
+    public function findNewRegisteredBySeason(int $season): array|string
+    {
+        $currentSeasonUsers = $this->_em->createQueryBuilder()
+        ->select('lcsu.id')
+        ->from(Licence::class, 'lcs')
+        ->leftJoin('lcs.user', 'lcsu')
+        ->andWhere(
+            (new Expr())->eq('lcs.season', ':season'),
+            (new Expr())->eq('lcs.final', ':isFinal'),
+        );
+
+        $lastSeasonUsers = $this->_em->createQueryBuilder()
+        ->select('llsu.id')
+        ->from(Licence::class, 'lls')
+        ->leftJoin('lls.user', 'llsu')
+        ->andWhere(
+            (new Expr())->eq('lls.season', ':lastSeason'),
+        );
+
+        return $this->createQueryBuilder('u')
+            ->join('u.identities', 'i')
+            ->andWhere(
+                (new Expr())->eq('i.type', ':type'),
+                (new Expr())->in('u.id', $currentSeasonUsers->getDQL()),
+                (new Expr())->notIn('u.id', $lastSeasonUsers->getDQL()),
+            )
+            ->setParameters([
+                'type' => Identity::TYPE_MEMBER,
+                'season' => $season,
+                'lastSeason' => $season - 1,
+                'isFinal' => true,
+            ])
+            ->groupBy('u.id')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findUnRegisteredBySeason(int $season): array|string
+    {
+        $currentSeasonUsers = $this->_em->createQueryBuilder()
+        ->select('lcsu.id')
+        ->from(Licence::class, 'lcs')
+        ->leftJoin('lcs.user', 'lcsu')
+        ->andWhere(
+            (new Expr())->eq('lcs.season', ':season'),
+        );
+
+        $lastSeasonUsers = $this->_em->createQueryBuilder()
+        ->select('llsu.id')
+        ->from(Licence::class, 'lls')
+        ->leftJoin('lls.user', 'llsu')
+        ->andWhere(
+            (new Expr())->eq('lls.season', ':lastSeason'),
+            (new Expr())->eq('lls.final', ':isFinal'),
+        );
+
+        return $this->createQueryBuilder('u')
+            ->join('u.identities', 'i')
+            ->andWhere(
+                (new Expr())->eq('i.type', ':type'),
+                (new Expr())->notIn('u.id', $currentSeasonUsers->getDQL()),
+                (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
+            )
+            ->setParameters([
+                'type' => Identity::TYPE_MEMBER,
+                'season' => $season,
+                'lastSeason' => $season - 1,
+                'isFinal' => true,
+            ])
+            ->groupBy('u.id')
+            ->getQuery()
+            ->getResult();
+    }
+
+    
+    public function findReRegisteredBySeason(int $season): array|string
+    {
+        $currentSeasonUsers = $this->_em->createQueryBuilder()
+        ->select('lcsu.id')
+        ->from(Licence::class, 'lcs')
+        ->leftJoin('lcs.user', 'lcsu')
+        ->andWhere(
+            (new Expr())->eq('lcs.season', ':season'),
+        );
+
+        $lastSeasonUsers = $this->_em->createQueryBuilder()
+        ->select('llsu.id')
+        ->from(Licence::class, 'lls')
+        ->leftJoin('lls.user', 'llsu')
+        ->andWhere(
+            (new Expr())->eq('lls.season', ':lastSeason'),
+            (new Expr())->eq('lls.final', ':isFinal'),
+        );
+
+        return $this->createQueryBuilder('u')
+            ->join('u.identities', 'i')
+            ->andWhere(
+                (new Expr())->eq('i.type', ':type'),
+                (new Expr())->in('u.id', $currentSeasonUsers->getDQL()),
+                (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
+            )
+            ->setParameters([
+                'type' => Identity::TYPE_MEMBER,
+                'season' => $season,
+                'lastSeason' => $season - 1,
+                'isFinal' => true,
+            ])
+            ->groupBy('u.id')
+            ->getQuery()
+            ->getResult();
+    }
 }
