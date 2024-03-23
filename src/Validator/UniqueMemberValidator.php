@@ -40,7 +40,9 @@ class UniqueMemberValidator extends ConstraintValidator
             $value = ['name' => $identity->getName(), 'firstName' => $identity->getFirstName()];
         }
 
-        $uniqueMember = $this->identityRepository->findOneByNameAndFirstName(trim($value['name']), trim($value['firstName']));
+        $uniqueMember = (isset($value['name']) && isset($value['firstName']))
+            ? $this->identityRepository->findOneByNameAndFirstName(trim($value['name']), trim($value['firstName']))
+            : null;
 
         if ($uniqueMember) {
             $this->context->buildViolation($constraint->message)
