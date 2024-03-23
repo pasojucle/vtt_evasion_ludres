@@ -59,8 +59,10 @@ class RegistrationProgressDtoTransformer
                 'title' => $registrationStep->getTitle(),
                 'class' => $class,
                 'overviewTemplate' => $this->getOverviewTemplate($registrationStep->getForm()),
+                'step' => $index + 1,
             ];
         }
+
         return $progressBar;
     }
 

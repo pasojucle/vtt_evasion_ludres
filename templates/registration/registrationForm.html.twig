@@ -13,7 +13,7 @@
                     {% for index,step in progress.progressBar %}
                         {%  if index < maxStep  %}
                             <li class="StepProgress-item {{ step.class }}">
-                                <a href="{{ path(route, {'step': index }) }}"><strong>{{ step.title }}</strong></a>
+                                <a href="{{ path(route, {'step': step.step }) }}"><strong>{{ step.title }}</strong></a>
                             </li>
                         {% endif %}
                     {% endfor %}
