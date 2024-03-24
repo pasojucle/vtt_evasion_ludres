@@ -1,0 +1,33 @@
+.list-info-grid {
+    display: grid;
+    grid-template-areas: "content btn"
+                        "info info";
+    grid-template-columns: 1fr auto;
+    width: 100%;
+    padding: 10px;
+    gap: 5px;
+    .grid-content {
+        grid-area: content;
+    }
+    .grid-btn {
+        grid-area: btn;
+        display: flex;
+        justify-content: center;
+        flex-flow: column;
+    }
+    .grid-info {
+        grid-area: info;
+    }
+}
+@media screen and (max-width: 800px) {
+    .list-info-grid {
+        grid-template-areas: "content"
+                        "info"
+                        "btn";
+        grid-template-columns: 1fr;
+        .grid-btn .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+}

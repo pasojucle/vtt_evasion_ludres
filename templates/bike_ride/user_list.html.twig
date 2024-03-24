@@ -20,8 +20,8 @@
                     <ul>
                         {% for bikeRide in bikeRides %}
                             <li>
-                                <div class="row background-ligth list-dropdown mb-20">
-                                    <div class="col-md-10 col-xs-11"  data-toggle="bike-ride-content">
+                                <div class="background-ligth list-info-grid mb-20" data-toggle="bike-ride-content">
+                                    <div class="grid-content">
                                         <h2>{{ bikeRide.bikeRide.period }}</h2>
                                         <b>{{ bikeRide.bikeRide.title }}</b>
                                         {% if bikeRide.availability is not empty %}
@@ -29,34 +29,34 @@
                                         {% endif %}
                                         <p>{{ bikeRide.bikeRide.content|raw }}</p>
                                         {% if bikeRide.bikeRide.survey is not null or bikeRide.bikeRide.bikeRideType.isShowMemberList %}
-                                            <div class="mt-10">
-                                                <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Info complémentaires</span>
-                                            </div>
-                                            <div class="info-dropdown"  data-target="bike-ride-content">
-                                                {% if bikeRide.bikeRide.survey is not null %}
-                                                    <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
-                                                    <ul class="mt-10">
-                                                        {% for response in bikeRide.bikeRide.survey.getResponsesByUser(user).surveyResponses %}
-                                                        <li class="list">
-                                                            <span class="fst-italic">{{ response.issue }} : </span>
-                                                            <span>{{ response.value }}</span>
-                                                        </li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                {% endif %}
-                                                {% if bikeRide.bikeRide.bikeRideType.isShowMemberList %}
-                                                    {% include 'session/registered_list.html.twig' with {'sessions': bikeRide.memberList} %}
-                                                {% endif %}
-                                            </div>
+                                            <div title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Info complémentaires</div>
                                         {% endif %}
                                     </div>
-                                    <div class="col-md-2 col-xs-12">
+                                    <div class="grid-btn">
                                         {% if bikeRide.availability is empty %}
-                                            <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-xs btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
+                                            <a href="{{ path('session_delete',{'session': bikeRide.sessionId}) }}" class="btn btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
                                         {% else %}
-                                            <a href="{{ path('session_availability_edit',{'session': bikeRide.sessionId}) }}" class="btn btn-xs btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                            <a href="{{ path('session_availability_edit',{'session': bikeRide.sessionId}) }}" class="btn btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>
                                         {% endif %}
                                     </div>
+                                    {% if bikeRide.bikeRide.survey is not null or bikeRide.bikeRide.bikeRideType.isShowMemberList %}
+                                        <div class="info-dropdown grid-info" data-target="bike-ride-content">
+                                            {% if bikeRide.bikeRide.survey is not null %}
+                                                <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
+                                                <ul class="mt-10">
+                                                    {% for response in bikeRide.bikeRide.survey.getResponsesByUser(user).surveyResponses %}
+                                                    <li class="list">
+                                                        <span class="fst-italic">{{ response.issue }} : </span>
+                                                        <span>{{ response.value }}</span>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                            {% if bikeRide.bikeRide.bikeRideType.isShowMemberList %}
+                                                {% include 'session/registered_list.html.twig' with {'sessions': bikeRide.memberList} %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </li>
                         {% endfor %}

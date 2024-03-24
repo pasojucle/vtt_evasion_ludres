@@ -15,6 +15,7 @@ import './styles/dropdown.scss';
 import './styles/component/checkbox.scss';
 import './styles/health.scss';
 import './styles/loader.scss';
+import './styles/listInfoGrid.scss';
 
 import './styles/reveal.css';
 import './styles/carrousel.css';

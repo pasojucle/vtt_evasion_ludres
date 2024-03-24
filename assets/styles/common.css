@@ -1468,8 +1468,6 @@ h3 + ul.block.background-ligth {
     max-height: 0px;
     overflow: hidden;
     transition: all 1s ease-in;
-    padding: 0 15px;
-
 }
 .card-body.card-dropdown.down,  .info-dropdown.down {
     max-height: max-content;

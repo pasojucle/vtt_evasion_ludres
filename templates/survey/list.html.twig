@@ -21,38 +21,39 @@
                         <ul>
                             {% for survey in surveys %}
                                 <li>
-                                    <div class="row background-ligth list-dropdown mb-20" data-toggle="bike-ride-content">
-                                            <div class="col-md-4"><b>{{ survey.title }}</b></div>
-                                            {% if survey.id in respondents|keys %}
+                                    <div class="background-ligth list-info-grid mb-20" data-toggle="survey-content">
+                                        {% if survey.id in respondents|keys %}
+                                            <div class="grid-content">
+                                                <b>{{ survey.title }}</b>
                                                 {% set user_survey = respondents[survey.id]%}
-                                                <div class="col-md-5">
-                                                    <span class="info">Sondage éffectué le {{ user_survey.createdAt|date('d/m/Y H:i:s') }}</span>
-                                                    <div class="mt-10">
-                                                        <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Détail</span>
-                                                    </div>
-                                                    <div class="info-dropdown"  data-target="bike-ride-content">
-                                                        <p>{{ survey.content|raw }}</p>
-                                                        <ul class="mt-10">
-                                                            {% for response in user_survey.responses %}
-                                                            <li class="list">
-                                                                <span class="fst-italic">{{ response.issue }} : </span>
-                                                                <span>{{ response.value }}</span>
-                                                            </li>
-                                                            {% endfor %}
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Modifier</a>
-                                                </div>
-                                            {% else %}
-                                                <div class="col-md-5">du {{ survey.startAt|date('d/m/Y') }} au {{ survey.endAt|date('d/m/Y') }}</div>
-                                                <div class="col-md-3">
-                                                    <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Participer</a>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-
+                                                <p class="info">Sondage éffectué le {{ user_survey.createdAt|date('d/m/Y H:i:s') }}</p>
+                                                <div title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Détail</div>
+                                            </div>
+                                            <div class="grid-btn">
+                                                <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Modifier</a>
+                                            </div>
+                                            <div class="info-dropdown grid-info"  data-target="survey-content">
+                                                <p>{{ survey.content|raw }}</p>
+                                                <ul class="mt-10">
+                                                    {% for response in user_survey.responses %}
+                                                    <li class="list">
+                                                        <span class="fst-italic">{{ response.issue }} : </span>
+                                                        <span>{{ response.value }}</span>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% else %}
+                                            <div class="grid-content">
+                                                <b>{{ survey.title }}</b>
+                                                <p>du {{ survey.startAt|date('d/m/Y') }} au {{ survey.endAt|date('d/m/Y') }}</p>
+                                            </div>
+                                            <div class="grid-btn">
+                                                <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Participer</a>
+                                            </div>
+    
+                                        {% endif %}
+                                    </div>
                                 </li>
                             {% endfor %}
                         </ul>
