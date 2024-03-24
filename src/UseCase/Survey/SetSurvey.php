@@ -10,8 +10,9 @@ use Symfony\Component\Form\FormInterface;
 
 class SetSurvey
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {
     }
 
     public function execute(FormInterface $form, bool $persit = false): void
