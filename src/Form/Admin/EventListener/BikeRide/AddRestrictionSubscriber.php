@@ -2,25 +2,30 @@
 
 namespace App\Form\Admin\EventListener\BikeRide;
 
-use App\Entity\BikeRide;
-use App\Entity\BikeRideType as BikeRideKind;
 use App\Entity\User;
-use App\Form\Admin\BikeRideType;
-use App\Repository\UserRepository;
+use App\Entity\BikeRide;
+use App\Validator\RangeAge;
 use App\Service\LevelService;
 use App\Service\SeasonService;
-use App\Validator\RangeAge;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use App\Form\Admin\BikeRideType;
+use App\Repository\UserRepository;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use App\Form\Admin\UsersAutocompleteField;
+use App\Entity\BikeRideType as BikeRideKind;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AddRestrictionSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private LevelService $levelService, private UserRepository $userRepository)
+    public function __construct(
+        private readonly LevelService $levelService, 
+        private readonly UserRepository $userRepository,
+        private readonly UrlGeneratorInterface $urlGenerator    
+    )
     {
     }
 
@@ -79,27 +84,11 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         }
 
         $form
-            ->add('users', Select2EntityType::class, [
-                'multiple' => true,
-                'remote_route' => 'admin_member_choices',
-                'class' => User::class,
-                'primary_key' => 'id',
-                'text_property' => 'fullName',
-                'minimum_input_length' => 0,
-                'page_limit' => 10,
-                'allow_clear' => true,
-                'delay' => 250,
-                'cache' => true,
-                'cache_timeout' => 60000,
-                'language' => 'fr',
-                'placeholder' => 'Saisissez un nom et prénom',
-                'width' => '100%',
+            ->add('users', UsersAutocompleteField::class, [
                 'label' => false,
+                'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $filters),
                 'required' => !$disabledUsers,
                 'disabled' => $disabledUsers,
-                'remote_params' => [
-                    'filters' => json_encode($filters),
-                ],
                 'attr' => [
                     'data-modifier' => 'bikeRideRestriction',
                     'class' => 'form-modifier',
@@ -111,14 +100,13 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 'label' => false,
                 'multiple' => true,
                 'choices' => $this->levelService->getLevelChoices(),
+                'required' => false,
+                'autocomplete' => true,
                 'attr' => [
                     'data-modifier' => 'bikeRideRestriction',
-                    'class' => 'customSelect2 form-modifier',
+                    'class' => 'form-modifier',
                     'data-width' => '100%',
                     'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
-                    'data-maximum-selection-length' => 4,
-                    'data-language' => 'fr',
-                    'data-allow-clear' => true,
                     'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
                     'data-add-to-fetch' => 'levels',
                 ],

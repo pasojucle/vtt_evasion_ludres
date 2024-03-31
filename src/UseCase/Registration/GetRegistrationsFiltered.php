@@ -17,9 +17,11 @@ class GetRegistrationsFiltered extends GetUsersFiltered
 
     public string $filterName = 'admin_registrations_filters';
 
-    public string $remoteRoute = 'admin_registration_choices';
+    public string $remoteRoute = 'admin_registration_autocomplete';
 
     public string $exportFilename = 'export_des_inscriptions.csv';
+
+    public bool $statusIsRequire = true;
 
     public function getQuery(array $filters): QueryBuilder
     {

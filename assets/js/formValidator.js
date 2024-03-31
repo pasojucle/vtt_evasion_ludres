@@ -81,6 +81,7 @@ class Field {
         this.form = form;
         this.id = field.id;
         this.name = field.name;
+        this.element = field;
         this.baseName = getBaseName(field.name)
         this.constraint = this.getConstraint(field.dataset.constraint);
         this.multipleFields = field.dataset.multipleFields;
@@ -90,24 +91,19 @@ class Field {
         this.addEventListener();
     }
     addEventListener() {
-        if (this.baseName.shortName === 'birthDate') {
-            $(document).on('change', '[data-constraint="app-BirthDate"]', (event) => {
-                console.log('birthDate')
-                this.handleChange(event);
-            });
-        } else if (this.baseName.shortName === 'birthCommune') {
-            $(document).on('change', '.select2entity', (event) => {
-                this.handleChange(event);
-            })
+        const element = this.getFieldEl();
+
+        if (element.tagName === 'INPUT' && !element.classList.contains('js-datepicker')) {
+            element.addEventListener('keyup', this.handleChange);
+            element.addEventListener('blur', this.handleChange);
         } else {
-            this.getFieldEl().addEventListener('keyup', this.handleChange);
-            this.getFieldEl().addEventListener('blur', this.handleChange);
+            element.addEventListener('change', this.handleChange);
         }
         
-        this.getFieldEl().addEventListener('focus', this.handleChange)
+        element.addEventListener('focus', this.handleChange)
         if (this.isPhoneNumber) {
-            this.formatPhoneNumber(this.getFieldEl());
-            this.getFieldEl().addEventListener('keydown', (event) => {this.formatPhoneNumber(event.target)})
+            this.formatPhoneNumber(element);
+            element.addEventListener('keydown', (event) => {this.formatPhoneNumber(event.target)})
         }
     }
     addRelations = (dynamicFieldId) => {

@@ -31,11 +31,7 @@ class AddressSubscriber implements EventSubscriberInterface
 
     public function preSetData(FormEvent $event): void
     {
-        $form = $event->getForm();
         $data = $event->getData();
-        // $options = $form->getConfig()->getOptions();
-        // $form;
-
 
         $this->modifier($event->getForm(), $data?->getPostalCode());
     }

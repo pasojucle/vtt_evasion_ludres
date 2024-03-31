@@ -31,13 +31,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
         buildSortable();
     }
 
-    $(document).on('change', '.filters .customSelect2, .filters select, .filters .btn, .filters input', submitFom);
+    $(document).on('change', '.filters select, .filters .btn, .filters input', submitFom);
     $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', 'button.form-modifier', formModifier);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
-    $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
 
     if (window.matchMedia("(min-width: 800px)").matches) {
@@ -49,15 +48,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     addDeleteLink();
 
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
-
-    if ($('.customSelect2').length > 0) {
-        $('.customSelect2').select2();
-    }
     
-    $(document).on('customSelect2:open', (event) => {
-        const id = event.target.id;
-        document.querySelector('.select2-search__field[aria-controls="customSelect2-'+id+'-results"]').focus();
-    });
     $(document).on('click', '#user_search_submit', confirmDeleteUser)
     if (document.querySelector('select#bike_ride_bikeRideType')){
         document.querySelector('select#bike_ride_bikeRideType').addEventListener('change', handleChangeBikeRideType)
@@ -74,6 +65,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     document.querySelectorAll('.identity-other-address').forEach((element) => {
         element.addEventListener('change', updateIdentity);
+    })
+
+    document.querySelectorAll('.foreign-born').forEach((element) => {
+        element.addEventListener('click', toggleBirthPlace);
     })
 });
 
@@ -97,7 +92,6 @@ const updateIdentity = (event)  => {
     const elements = container.querySelectorAll('.address-group input, .address-group select');
     if (event.target.checked) {
         elements.forEach((element) => {
-            console.log('element', element)
             element.required = true;
         });
     } else {
@@ -106,6 +100,16 @@ const updateIdentity = (event)  => {
             element.value = '';
         })
     }
+    formValidator.validate();
+}
+
+const toggleBirthPlace = () => {
+    document.querySelectorAll('.birth-place').forEach((element) => {
+        element.classList.toggle('d-none');
+        element.querySelectorAll('input, select').forEach((field) => {
+            field.required = !field.required;
+        })
+    })
     formValidator.validate();
 }
 
@@ -178,11 +182,6 @@ function formModifier(event) {
     const target = event.target.dataset.modifier;
     const addToFetch = event.target.dataset.addToFetch;
     const data = new FormData(form, event.submitter);
-    // for(let entry of data) {
-    //     if (entry[0].endsWith('[_token]')) {
-    //         data.set(entry[0], '');
-    //     }
-    // }
     data.append(`${form.name}[handler]`, event.target.name)
     if (event.target.type === 'button') {
         data.append(event.target.name, 1)
@@ -201,8 +200,6 @@ function formModifier(event) {
         const htmlElement = document.createRange().createContextualFragment(text);
         const targetEl = document.getElementById(target);
         targetEl.replaceWith(htmlElement.getElementById(target));
-        $('.select2entity').select2entity();
-        $('.customSelect2').select2();
         $('.js-datepicker').datepicker({
             format: 'yyyy-mm-dd hh:ii',
         });
@@ -250,26 +247,6 @@ function anchorAsynchronous(e) {
                     $(element).replaceWith($(html).find(element));
                 }
             });
-        }
-      });
-}
-
-function submitAsynchronous(e) {
-    e.preventDefault();
-    console.log('submitAsynchronous');
-    const form = $(this).closest('form');
-    let selector = 'form[name="'+form.attr('name')+'"]';
-    let data = {};
-    data[$(this).attr('name')] = $(this).val();
-    $('.select2entity.submit-asynchronous').off('change', submitAsynchronous);
-    $.ajax({
-        url : form.attr('action'),
-        type: form.attr('method'),
-        data : form.serialize(),
-        success: function(html) {
-            $(selector).replaceWith($(html).find(selector));
-            $('.select2entity').select2entity();
-            $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
         }
       });
 }

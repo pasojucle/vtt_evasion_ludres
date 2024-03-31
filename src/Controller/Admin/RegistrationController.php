@@ -57,16 +57,16 @@ class RegistrationController extends AbstractController
         return new JsonResponse($getRegistrationsFiltered->emailsToClipboard($request));
     }
 
-    #[Route('/assurance/choices', name: '_choices', methods: ['GET'])]
+    #[Route('/assurance/autocomplete', name: '_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
-    public function memberChoices(
+    public function memberAutocomplete(
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
     ): JsonResponse {
-        $query = $request->query->get('q');
+        $query = $request->query->get('query');
 
         $filters = json_decode($request->query->get('filters'), true);
 
-        return new JsonResponse($getRegistrationsFiltered->choices($filters, $query));
+        return new JsonResponse(['results' => $getRegistrationsFiltered->choices($filters, $query)]);
     }
 }

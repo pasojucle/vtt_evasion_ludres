@@ -151,6 +151,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->secondHands = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->GetFirstIdentity()->getName() . ' ' . $this->GetFirstIdentity()->getFirstName();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

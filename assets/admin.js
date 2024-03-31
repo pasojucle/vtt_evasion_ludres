@@ -1,3 +1,4 @@
+import './bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -31,7 +32,6 @@ import './js/switch';
 import './js/dropdown.js';
 import './js/js-datepicker.js';
 import './js/input-file.js';
-import './js/select2/i18n/fr.js';
 import './js/clipboard.js';
 import './js/line_chart.js';
 import './js/dashboard.js';

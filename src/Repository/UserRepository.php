@@ -62,8 +62,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (array_key_exists('is_final_licence', $filters)) {
                 $isFinalLicence = $filters['is_final_licence'];
             }
-            if (isset($filters['fullName'])) {
-                $this->addCriteriaByName($qb, $filters['fullName']);
+            if (isset($filters['query'])) {
+                $this->addCriteriaByName($qb, $filters['query']);
             }
             if (!empty($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);
@@ -119,17 +119,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $currentSeason = $this->seasonService->getCurrentSeason();
         $qb = $this->createQuery();
-        if (!empty($filters)) {
-            if (null !== $filters['fullName']) {
-                $this->addCriteriaByName($qb, $filters['fullName']);
+            if (isset($filters['query'])) {
+                $this->addCriteriaByName($qb, $filters['query']);
             }
-            if (!empty($filters['user'])) {
-                $this->addCriteriaByUser($qb, $filters['user']);
-            }
-            if (null !== $filters['levels']) {
+            // if (!empty($filters['user'])) {
+            //     $this->addCriteriaByUser($qb, $filters['user']);
+            // }
+            if (isset($filters['levels'])) {
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
-        }
+        
 
         $this->addCriteriaBySeason($qb, $currentSeason);
         $this->addCriteriaMember($qb);
@@ -166,10 +165,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb->andWhere(
             $qb->expr()->orX(
-                $qb->expr()->like('i.name', $qb->expr()->literal('%' . $fullName . '%')),
-                $qb->expr()->like('i.firstName', $qb->expr()->literal('%' . $fullName . '%')),
+                $qb->expr()->like('LOWER(i.name)', ':fullname'),
+                $qb->expr()->like('LOWER(i.firstName)', ':fullname'),
             )
         )
+        ->setParameter('fullname', sprintf('%%%s%%', strtolower($fullName)));
         ;
     }
 
@@ -557,8 +557,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->join('u.identities', 'i');
 
         if (!empty($filters)) {
-            if (null !== $filters['fullName']) {
-                $this->addCriteriaByName($qb, $filters['fullName']);
+            if (null !== $filters['query']) {
+                $this->addCriteriaByName($qb, $filters['query']);
             }
             if (!empty($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);

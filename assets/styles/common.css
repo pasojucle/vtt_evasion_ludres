@@ -340,7 +340,7 @@ body > script {display: none !important;}
     height: 2px;
     width: 100%;
     position: absolute;
-    bottom: 0;
+    bottom: -2px;
     left: 0;
 }
 
@@ -576,12 +576,18 @@ main:not(.admin) {
 .form-group {
     margin-bottom: 15px;
 }
+.form-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: end;
+    gap: 10px;
+}
 
 .form-group-collection {
     margin-bottom: 5px;
 }
 .form-group > input:not([type="radio"]),
-.form-group-inline > input, 
+.form-group-inline > input:not([type="checkbox"]), 
 .form-group-inline > select, 
 .form-group > textarea,  
 .form-group-inline > textarea, 
@@ -589,11 +595,27 @@ main:not(.admin) {
 .form-group > .input-group-money > input,
 .input-group > input {
     width: 100%;
-    height: 30px;
-    line-height: 30px;
+    height: 36px;
+    line-height: 36px;
     border: none;
     background: var(--light-color);
     padding: 5px;
+}
+.form-group .ts-control {
+    background: var(--light-color);
+}
+.ts-wrapper.multi .ts-control>div {
+    background: #929292;
+    border: 1px solid #646464;
+}
+.ts-wrapper.multi .ts-control [data-value] {
+    background-image: linear-gradient(180deg, #929292, #787878);
+}
+.ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
+    border-left: 1px solid #646464;
+}
+.ts-control {
+    z-index: unset;
 }
 .input-group > input {
     width: unset;
@@ -613,9 +635,7 @@ main:not(.admin) {
 .form-group > select:disabled,
 .form-group > textarea:disabled,
 .form-group-inline > input:disabled,
-.input-group > input:disabled, 
-.select2-container--default.select2-container--disabled .select2-selection--multiple,
-.select2-container--default.select2-container--disabled .select2-selection--single {
+.input-group > input:disabled {
     background: var(--gray-color);
     color: var(--backgroud-color);
     font-weight: 600;
@@ -776,13 +796,11 @@ button[type=submit].btn.btn-primary:disabled {
     width: 100%;
     min-height: 100px;
 }
-span.select2-selection.select2-selection--single {
-    height: 32px;
-}
+
 input[type="file"] {
     opacity: 0;
 }
-.required:not(.value .required, .check .required, .ballot .required, .radio-group .required, [type="radio"] + .required)::after {
+.required:not(.value .required, .check .required, .ballot .required, .radio-group .required, [type="radio"] + .required, .ts-wrapper.required)::after {
     content: ' *';
 }
 .badge {
@@ -840,16 +858,6 @@ input[type="file"] {
     color: var(--primary-color-darker);
 }
 
-span.select2-selection.select2-selection--single {
-    height: 32px;
-}
-.filters .select2-container--default .select2-selection--single,
-.filters .select2-container--default .select2-selection--multiple {
-    background-color: var(--light-color);
-}
-.filters .select2-container--default .select2-selection--single .select2-selection__placeholder {
-    color: #75777d;
-}
 .filters > div {
     padding: 5px;
 }

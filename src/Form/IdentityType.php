@@ -4,33 +4,32 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Commune;
-use App\Entity\Identity;
-use App\Entity\Licence;
-use App\Entity\User;
-use App\Validator\BirthDate;
-use App\Validator\Phone;
-use App\Validator\SchoolTestingRegistration;
-use App\Validator\UniqueMember;
-use DateInterval;
 use DateTime;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
+use DateInterval;
+use App\Entity\User;
+use App\Entity\Licence;
+use App\Entity\Identity;
+use App\Validator\Phone;
+use App\Validator\BirthDate;
+use App\Validator\UniqueMember;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Form\AbstractType;
+use App\Form\Admin\CommuneAutocompleteField;
+use App\Validator\SchoolTestingRegistration;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class IdentityType extends AbstractType
 {
@@ -44,6 +43,8 @@ class IdentityType extends AbstractType
             $kinship = 1 < $type;
             $disabled = $this->haspreviousLicence($identity->getUser()) && !$identity->getKinship();
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
+            $foreignBorn  = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
+            list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
 
             $addressClass = (Identity::TYPE_MEMBER !== $type) ? ' identity-address' : '';
             $addressRequired = 'required';
@@ -227,35 +228,37 @@ class IdentityType extends AbstractType
                     ;
                 } else {
                     $form
-                        ->add('birthCommune', Select2EntityType::class, [
-                            'label' => 'Lieu et <b>département</b> de naissance<br><small>(Pour l\'étranger, saisissez la ville et le pays)</small>',
-                            'label_html' => true,
-                            'class' => Commune::class,
-                            'multiple' => false,
-                            'remote_route' => 'geo_department',
-                            'primary_key' => 'id',
-                            'text_property' => 'name',
-                            'minimum_input_length' => 1,
-                            'page_limit' => 10,
-                            'allow_clear' => true,
-                            'allow_add' => [
-                                'enabled' => true,
-                                'new_tag_text' => ' (Hors France)',
-                                'tag_separators' => '[";"]',
-                            ],
-                            'delay' => 250,
-                            'cache' => false,
-                            'language' => 'fr',
-                            'placeholder' => 'Rechercher une commune (sans espace)',
-                            'width' => '100%',
+                        ->add('birthCommune', CommuneAutocompleteField::class, [
+                            'label' => 'Lieu de naissance',
                             'row_attr' => [
-                                'class' => 'form-group search',
+                                'class' => $birthCommuneClass,
                             ],
                             'attr' => [
-                                'class' => 'commune-search',
-                                'data-constraint' => 'app-NotEmpty',
+                                'data-constraint' => '',
                             ],
-                            'required' => true,
+                            'required' => !$foreignBorn,
+                        ])
+                        ->add('birthPlace', TextType::class, [
+                            'label' => 'Lieu et pays de naissance',
+                            'row_attr' => [
+                                'class' => $birthPlaceClass,
+                            ],
+                            'attr' => [
+                                'data-constraint' => '',
+                            ],
+                            'required' => $foreignBorn,
+                        ])
+                        ->add('foreignBorn', CheckboxType::class, [
+                            'label' => 'Je suis né à l\'étranger',
+                            'mapped' => false,
+                            'required' => false,
+                            'row_attr' => [
+                                'class' => 'form-group-inline',
+                            ],
+                            'attr' => [
+                                'class' => 'foreign-born',
+                            ],
+                            'data' => $foreignBorn,
                         ])
                         ->add('pictureFile', FileType::class, [
                             'label' => 'Photo d\'itentité',
@@ -302,5 +305,15 @@ class IdentityType extends AbstractType
     private function haspreviousLicence(?User $user): bool
     {
         return true === $user->getLastLicence()?->isFinal();
+    }
+
+    private function getBirthPlaceClasses(bool $foreignBorn): array
+    {
+        $birthPlaceClasses = ['form-group-inline birth-place', 'form-group-inline birth-place d-none'];
+        if ($foreignBorn) {
+            return array_reverse($birthPlaceClasses);
+        };
+
+        return $birthPlaceClasses;
     }
 }

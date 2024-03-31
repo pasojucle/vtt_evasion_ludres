@@ -22,6 +22,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SurveyType extends AbstractType
 {
@@ -30,8 +31,9 @@ class SurveyType extends AbstractType
     public const DISPLAY_MEMBER_LIST = 2;
 
     public function __construct(
-        private LevelService $levelService,
-        private UserRepository $userRepository,
+        private readonly LevelService $levelService,
+        private readonly UserRepository $userRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -130,7 +132,7 @@ class SurveyType extends AbstractType
                 ]);
         };
 
-        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository));
+        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->urlGenerator));
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $formModifier) {
             $form = $event->getForm();

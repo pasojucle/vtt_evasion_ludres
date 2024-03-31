@@ -13,7 +13,6 @@
         <title>{% block title %}{% endblock %}</title>
         {% block stylesheets %}
             <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-            <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
             {% if isAdmin %}
                 {{ encore_entry_link_tags('admin', null, 'mainConfig') }}
             {% else %}
@@ -66,8 +65,6 @@
             crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="https://kit.fontawesome.com/c6257eb348.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="/bundles/tetranzselect2entity/js/select2entity.js"></script>
         {% if isAdmin %}
             {{ encore_entry_script_tags('admin', null, 'mainConfig') }}
         {% else %}

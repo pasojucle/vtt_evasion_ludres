@@ -60,9 +60,7 @@ class EditRegistration
             $selfAuthenticating = true;
         }
 
-        if ($user->getMemberIdentity()->getBirthCommune()) {
-            $this->communeService->addIfNotExists($user->getMemberIdentity()->getBirthCommune());
-        };
+        $this->setBithPlace($form, $user);
 
         if (null !== $user->getMemberIdentity()->getBirthDate()) {
             $category = $this->licenceService->getCategory($user);
@@ -153,5 +151,18 @@ class EditRegistration
                 'user' => $user->getId(),
             ], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
+    }
+
+    private function setBithPlace($form, User $user): void
+    {
+        if($form->has('identities')) {
+            foreach($form->get('identities') as $identity) {
+                if ($identity->has('foreignBorn') && $identity->get('foreignBorn')) {
+                    $user->getMemberIdentity()->setBirthCommune(null);
+                } else {
+                    $user->getMemberIdentity()->setBirthPlace(null);
+                };
+            }
+        }
     }
 }

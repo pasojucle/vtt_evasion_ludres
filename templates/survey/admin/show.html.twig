@@ -23,10 +23,10 @@
             
         <div class="filters">
             {{ form_start(form) }}
-                <ul>
-                    <li>{{ form_widget(form.issue)}}</li>
-                    <li>{{ form_widget(form.value)}}</li>
-                </ul>
+                <div class="row">
+                    <div class="col-md-9 col-xs-12">{{ form_widget(form.issue)}}</div>
+                    <div class="col-md-3 col-xs-12">{{ form_widget(form.value)}}</div>
+                </div>
             {{ form_end(form) }}
         </div>
             

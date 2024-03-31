@@ -25,6 +25,7 @@ abstract class GetUsersFiltered
     public string $statusPlaceholder;
     public string $remoteRoute;
     public string $exportFilename;
+    public bool $statusIsRequire;
 
     public function __construct(
         private PaginatorService $paginator,
@@ -108,30 +109,28 @@ abstract class GetUsersFiltered
         return implode(',', $emails);
     }
 
-    public function choices(array $filters, ?string $fullName): array
+    public function choices(array $filters): array
     {
-        $filters['fullName'] = $fullName;
-        $filters['user'] = null;
         $query = $this->getQuery($filters);
-
         $users = $query->getQuery()->getResult();
 
-        $response = [];
+        $results = [];
 
         foreach ($users as $user) {
-            $response[] = [
-                'id' => $user->getId(),
+            $results[] = [
+                'value' => $user->getId(),
                 'text' => $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName(),
             ];
         }
 
-        return $response;
+        return $results;
     }
 
     private function createForm(array $filters): FormInterface
     {
         return $this->formFactory->create(UserFilterType::class, $filters, [
             'status_choices' => $this->getStatusChoices(),
+            'status_is_require' => $this->statusIsRequire,
             'status_placeholder' => $this->statusPlaceholder,
             'filters' => $filters,
             'remote_route' => $this->remoteRoute,
@@ -150,7 +149,7 @@ abstract class GetUsersFiltered
     {
         return ($filtered && null !== $request->getSession()->get($this->filterName)) ? $request->getSession()->get($this->filterName) : [
         'user' => null,
-        'fullName' => null,
+        'query' => null,
         'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
         'levels' => null,
         ];

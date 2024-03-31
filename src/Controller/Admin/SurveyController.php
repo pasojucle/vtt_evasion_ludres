@@ -207,27 +207,4 @@ class SurveyController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
-    #[Route('/survey/issue/list/select2', name: 'survey_issue_list_select2', methods: ['GET'])]
-    #[IsGranted('SURVEY_LIST')]
-    public function userListSelect2(
-        SurveyIssueRepository $surveyIssueRepository,
-        Request $request
-    ): JsonResponse {
-        $query = $request->query->get('q');
-        $surveyId = (int) $request->query->get('surveyId');
-
-        $issues = $surveyIssueRepository->findBySurveyAndContent($surveyId, $query);
-
-        $response = [];
-
-        foreach ($issues as $issue) {
-            $response[] = [
-                'id' => $issue->getId(),
-                'text' => $issue->getContent(),
-            ];
-        }
-
-        return new JsonResponse($response);
-    }
 }

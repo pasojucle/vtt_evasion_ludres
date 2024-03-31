@@ -17,9 +17,11 @@ class GetCoveragesFiltered extends GetUsersFiltered
 
     public string $filterName = 'admin_coverage_list_filters';
 
-    public string $remoteRoute = 'admin_coverage_choices';
+    public string $remoteRoute = 'admin_coverage_autocomplete';
 
     public string $exportFilename = 'export_list_assurances.csv';
+
+    public bool $statusIsRequire = false;
 
     public function getQuery(array $filters): QueryBuilder
     {

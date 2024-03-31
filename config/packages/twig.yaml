@@ -10,7 +10,7 @@ twig:
         - 'form/custom_month_and_hour_row.html.twig'
         - 'form/custom_thumbnail_row.html.twig'
         - 'form/money_widget.html.twig'
-        - '@TetranzSelect2Entity/Form/fields.html.twig'
+        - 'form/checkbox_row.html.twig'
         - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
 
     globals:

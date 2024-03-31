@@ -32,7 +32,7 @@ class Validate
             $required = array_key_exists('required', $field) ? (bool)$field['required'] : false;
             $filled = array_key_exists('filled', $field) ? (bool)$field['filled'] : false;
 
-            $constraints = $this->getConstraints($constraintClass, $required, $value, $filled);
+            $constraints = $this->getConstraints($constraintClass, $required, $value);
 
             $violations = $this->validator->ValidateToArray($value, $constraints);
             $render = $this->twig->render('validator/errors.html.twig', [
@@ -54,7 +54,7 @@ class Validate
         return  ['constraintsValidator' => $constraintsValidator];
     }
 
-    private function getConstraints(?string $constraintClass, bool $required, array|string|null &$value, bool $filled): array
+    private function getConstraints(?string $constraintClass, bool $required, array|string|null &$value): array
     {
         $constraints = [];
         if (!empty($constraintClass)) {

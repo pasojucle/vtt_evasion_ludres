@@ -20,20 +20,16 @@ class SurveyFilterType extends AbstractType
                 'class' => SurveyIssue::class,
                 'choices' => $options['issues'],
                 'choice_label' => 'content',
-                'expanded' => false,
-                'multiple' => false,
-                'attr' => [
-                    'class' => 'btn',
-                ],
+                'autocomplete' => true,
+
             ])
             ->add('value', ChoiceType::class, [
                 'label' => 'Réponse',
                 'choices' => array_flip(SurveyResponse::VALUES),
                 'placeholder' => 'Toutes',
+                'autocomplete' => true,
                 'required' => false,
-                'attr' => [
-                    'class' => 'btn',
-                ],
+
             ])
         ;
     }

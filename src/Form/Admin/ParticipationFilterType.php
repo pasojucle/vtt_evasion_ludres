@@ -52,32 +52,19 @@ class ParticipationFilterType extends AbstractType
                 ],
                 'constraints' => [new Period()],
             ])
-            ->add('bikeRideType', EntityType::class, [
-                'label' => false,
-                'class' => BikeRideType::class,
-                'choice_label' => 'name',
-                'attr' => [
-                    'class' => 'customSelect2',
-                    'data-width' => '100%',
-                    'data-placeholder' => 'Séléctionnez un type de sortie',
-                    'data-language' => 'fr',
-                    'data-allow-clear' => true,
-                ],
-                'required' => false,
-            ])
+            ->add('bikeRideType', BikeRideTypeAutocompleteField::class)
             ->add('levels', ChoiceType::class, [
                 'label' => false,
                 'multiple' => true,
                 'choices' => $this->levelService->getLevelChoices(),
+                'required' => false,
+                'autocomplete' => true,
                 'attr' => [
-                    'class' => 'customSelect2',
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
-                    'data-maximum-selection-length' => 4,
-                    'data-language' => 'fr',
-                    'data-allow-clear' => true,
                 ],
                 'required' => false,
-            ]);
+            ])
+            ;
     }
 }

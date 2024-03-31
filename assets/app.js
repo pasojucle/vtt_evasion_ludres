@@ -1,3 +1,4 @@
+import './bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -26,7 +27,6 @@ import './js/carrousel';
 import './js/input-file';
 import './js/modal';
 import './js/reveal.js';
-import './js/select2/i18n/fr.js';
 import './js/js-datepicker.js';
 import './js/form.js'
 import './js/slideshow.js'

@@ -77,9 +77,6 @@ class Identity
     #[ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
     private $address;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $birthDepartment = null;
-
     #[Column(type: 'integer', options: ['default' => 1])]
     private int $type = self::TYPE_MEMBER;
 
@@ -248,18 +245,6 @@ class Identity
         return null === $this->name && null === $this->firstName;
     }
 
-    public function getBirthDepartment(): ?string
-    {
-        return $this->birthDepartment;
-    }
-
-    public function setBirthDepartment(?string $birthDepartment): self
-    {
-        $this->birthDepartment = $birthDepartment;
-
-        return $this;
-    }
-
     public function getType(): ?int
     {
         return $this->type;
@@ -274,9 +259,7 @@ class Identity
 
     public function getBirthCommune(): ?Commune
     {
-        return ($this->birthCommune)
-            ? $this->birthCommune
-            : (($this->birthplace) ? (new Commune())->setName($this->birthplace) : null);
+        return $this->birthCommune;
     }
 
     public function setBirthCommune(?Commune $birthCommune): self

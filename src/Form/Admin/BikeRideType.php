@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\File;
 
 class BikeRideType extends AbstractType
@@ -30,9 +31,10 @@ class BikeRideType extends AbstractType
     public const RESTRICTION_TO_RANGE_AGE = 2;
 
     public function __construct(
-        private LevelService $levelService,
-        private BikeRideTypeRepository $bikeRideTypeRepository,
-        private UserRepository $userRepository
+        private readonly LevelService $levelService,
+        private readonly BikeRideTypeRepository $bikeRideTypeRepository,
+        private readonly UserRepository $userRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -124,7 +126,7 @@ class BikeRideType extends AbstractType
 
         $builder->addEventSubscriber(new AddContentSubscriber($this->bikeRideTypeRepository));
 
-        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository));
+        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->urlGenerator));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

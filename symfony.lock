@@ -526,6 +526,20 @@
     "symfony/service-contracts": {
         "version": "v2.4.0"
     },
+    "symfony/stimulus-bundle": {
+        "version": "2.16",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.13",
+            "ref": "6acd9ff4f7fd5626d2962109bd4ebab351d43c43"
+        },
+        "files": [
+            "assets/bootstrap.js",
+            "assets/controllers.json",
+            "assets/controllers/hello_controller.js"
+        ]
+    },
     "symfony/stopwatch": {
         "version": "v5.2.7"
     },
@@ -562,6 +576,18 @@
         "files": [
             "config/packages/twig.yaml",
             "templates/base.html.twig"
+        ]
+    },
+    "symfony/ux-autocomplete": {
+        "version": "2.16",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.6",
+            "ref": "07d9602b7231ba355f484305d6cea58310c01741"
+        },
+        "files": [
+            "config/routes/ux_autocomplete.yaml"
         ]
     },
     "symfony/validator": {
@@ -631,9 +657,6 @@
     },
     "symplify/easy-coding-standard": {
         "version": "10.0.20"
-    },
-    "tetranz/select2entity-bundle": {
-        "version": "v3.1.0"
     },
     "tijsverkoyen/css-to-inline-styles": {
         "version": "2.2.3"

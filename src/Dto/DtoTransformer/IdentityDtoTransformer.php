@@ -115,7 +115,7 @@ class IdentityDtoTransformer
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
     }
 
-    private function getBirthplace(Identity $identity): string
+    private function getBirthplace(Identity $identity): ?string
     {
         $birthCommune = $identity->getBirthCommune();
         
@@ -125,7 +125,7 @@ class IdentityDtoTransformer
                 : $birthCommune->getName();
         }
 
-        return $identity->getBirthPlace() . ' (' . $identity->getBirthDepartment() . ')';
+        return $identity->getBirthPlace();
     }
 
     private function getDecoratedChanges(array $histories, IdentityDto &$identityDto): void
