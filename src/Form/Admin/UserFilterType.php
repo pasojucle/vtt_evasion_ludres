@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Form\Admin\UserAutocompleteField;
 use App\Service\LevelService;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use App\Form\Admin\UserAutocompleteField;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserFilterType extends AbstractType
@@ -24,6 +24,8 @@ class UserFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        dump($options['remote_route']);
+        dump($this->urlGenerator->generate($options['remote_route'], $options['filters']));
         $builder
             ->add('user', UserAutocompleteField::class, [
                 'autocomplete_url' => $this->urlGenerator->generate($options['remote_route'], $options['filters'])

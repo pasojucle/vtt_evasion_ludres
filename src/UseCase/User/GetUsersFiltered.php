@@ -46,7 +46,6 @@ abstract class GetUsersFiltered
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
-
         $form = $this->createForm($filters);
         $form->handleRequest($request);
 
@@ -56,7 +55,6 @@ abstract class GetUsersFiltered
             $request->query->set('p', 1);
             $form = $this->createForm($filters);
         }
-
         $session->set($this->filterName, $filters);
         $query = $this->getQuery($filters);
 

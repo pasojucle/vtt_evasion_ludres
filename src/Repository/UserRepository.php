@@ -119,17 +119,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $currentSeason = $this->seasonService->getCurrentSeason();
         $qb = $this->createQuery();
-            if (isset($filters['query'])) {
-                $this->addCriteriaByName($qb, $filters['query']);
-            }
-            // if (!empty($filters['user'])) {
-            //     $this->addCriteriaByUser($qb, $filters['user']);
-            // }
-            if (isset($filters['levels'])) {
-                $this->addCriteriaByLevel($qb, $filters['levels']);
-            }
+        if (isset($filters['query'])) {
+            $this->addCriteriaByName($qb, $filters['query']);
+        }
+        if (!empty($filters['user'])) {
+            $this->addCriteriaByUser($qb, $filters['user']);
+        }
+        if (isset($filters['levels'])) {
+            $this->addCriteriaByLevel($qb, $filters['levels']);
+        }
         
-
         $this->addCriteriaBySeason($qb, $currentSeason);
         $this->addCriteriaMember($qb);
 
@@ -495,7 +494,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findlicenceInProgressQuery(?array $filters): QueryBuilder
     {
         $currentSeason = $this->seasonService->getCurrentSeason();
-dump($filters);
+        dump($filters);
         $qb = $this->createQuery();
 
         if (!empty($filters)) {
@@ -509,7 +508,7 @@ dump($filters);
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
             if (isset($filters['status'])) {
-                match ($filters['status']) {
+                match ((int) $filters['status']) {
                     Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaTestinInProgress($qb, $currentSeason),
                     Licence::STATUS_TESTING_COMPLETE => $this->addCriteriaTestinComplete($qb, $currentSeason),
                     Licence::STATUS_NEW => $this->addCriteriaNew($qb, $currentSeason),
