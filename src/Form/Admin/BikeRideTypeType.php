@@ -7,7 +7,7 @@ namespace App\Form\Admin;
 use App\Entity\BikeRideType;
 use App\Entity\Message;
 use App\Validator\NotEmptyArray;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Form\Type\CkeditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -36,7 +36,7 @@ class BikeRideTypeType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
-                'config_name' => 'minimum_config',
+                'config_name' => 'base',
                 'row_attr' => [
                     'class' => 'form-group',
                 ],

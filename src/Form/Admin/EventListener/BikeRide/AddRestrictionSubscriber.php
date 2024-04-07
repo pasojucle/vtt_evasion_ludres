@@ -100,7 +100,6 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 'label' => false,
                 'multiple' => true,
                 'choices' => $this->levelService->getLevelChoices(),
-                'required' => false,
                 'autocomplete' => true,
                 'attr' => [
                     'data-modifier' => 'bikeRideRestriction',

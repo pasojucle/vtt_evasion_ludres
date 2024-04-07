@@ -147,12 +147,14 @@ abstract class GetUsersFiltered
 
     private function getFilters(Request $request, bool $filtered): array
     {
-        return ($filtered && null !== $request->getSession()->get($this->filterName)) ? $request->getSession()->get($this->filterName) : [
-        'user' => null,
-        'query' => null,
-        'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
-        'levels' => null,
-        ];
+        return ($filtered && null !== $request->getSession()->get($this->filterName)) 
+            ? $request->getSession()->get($this->filterName) 
+            : [
+                'user' => null,
+                'query' => null,
+                'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
+                'levels' => null,
+            ];
     }
 
     private function getExportContent(array $users): string

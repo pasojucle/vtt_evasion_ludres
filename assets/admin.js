@@ -1,4 +1,7 @@
 import './bootstrap.js';
+import { registerVueControllerComponents } from '@symfony/ux-vue';
+
+registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
 /*
  * Welcome to your app's main JavaScript file!
  *

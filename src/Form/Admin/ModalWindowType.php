@@ -4,7 +4,7 @@ namespace App\Form\Admin;
 
 use App\Entity\ModalWindow;
 use App\Validator\Period;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Form\Type\CkeditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -27,7 +27,7 @@ class ModalWindowType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
-                'config_name' => 'full_config',
+                'config_name' => 'full',
                 'required' => false,
             ])
             ->add('startAt', DateTimeType::class, [

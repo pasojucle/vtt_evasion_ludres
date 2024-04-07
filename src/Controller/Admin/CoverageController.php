@@ -26,8 +26,7 @@ class CoverageController extends AbstractController
         Request $request,
         bool $filtered
     ): Response {
-        return $this->render(
-            'coverage/admin/list.html.twig',
+        return $this->render('coverage/admin/list.html.twig',
             $getCoveragesFiltered->list($request, $filtered)
         );
     }

@@ -9,7 +9,8 @@ use App\Form\Admin\EventListener\Survey\AddRestrictionSubscriber;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Validator\CKEditorBlank;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Doctrine\Common\Collections\Collection;
+use App\Form\Type\CkeditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -48,7 +49,7 @@ class SurveyType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
-                'config_name' => 'minimum_config',
+                'config_name' => 'base',
                 'row_attr' => [
                     'class' => 'form-group',
                 ],

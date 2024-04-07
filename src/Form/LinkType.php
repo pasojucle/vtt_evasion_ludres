@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Link;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Form\Type\CkeditorType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
+
 
 class LinkType extends AbstractType
 {
@@ -46,7 +45,7 @@ class LinkType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Détail (optionnel)',
-                'config_name' => 'minimum_config',
+                'config_name' => 'base',
                 'required' => false,
                 'row_attr' => [
                     'class' => 'form-group',

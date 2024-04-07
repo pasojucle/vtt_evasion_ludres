@@ -8,7 +8,7 @@ use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
 use App\Form\UserType;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Form\Type\CkeditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -101,7 +101,7 @@ class RegistrationStepType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
-                'config_name' => 'full_config',
+                'config_name' => 'full',
                 'required' => false,
             ])
             ->add('personal', CheckboxType::class, [

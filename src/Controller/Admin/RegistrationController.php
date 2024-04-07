@@ -63,10 +63,7 @@ class RegistrationController extends AbstractController
         GetRegistrationsFiltered $getRegistrationsFiltered,
         Request $request
     ): JsonResponse {
-        $query = $request->query->get('query');
 
-        $filters = json_decode($request->query->get('filters'), true);
-
-        return new JsonResponse(['results' => $getRegistrationsFiltered->choices($filters, $query)]);
+        return new JsonResponse(['results' => $getRegistrationsFiltered->choices($request->query->all())]);
     }
 }

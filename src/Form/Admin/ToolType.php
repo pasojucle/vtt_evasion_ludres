@@ -6,7 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Form\Type\CkeditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -29,7 +29,7 @@ class ToolType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Message',
-                'config_name' => 'full_config',
+                'config_name' => 'full',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Supprimer',

@@ -1,3 +1,4 @@
+import { registerVueControllerComponents } from '@symfony/ux-vue';
 import './bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
@@ -30,3 +31,4 @@ import './js/reveal.js';
 import './js/js-datepicker.js';
 import './js/form.js'
 import './js/slideshow.js'
+registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));

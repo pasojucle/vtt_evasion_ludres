@@ -495,7 +495,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findlicenceInProgressQuery(?array $filters): QueryBuilder
     {
         $currentSeason = $this->seasonService->getCurrentSeason();
-
+dump($filters);
         $qb = $this->createQuery();
 
         if (!empty($filters)) {

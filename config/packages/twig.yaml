@@ -11,7 +11,7 @@ twig:
         - 'form/custom_thumbnail_row.html.twig'
         - 'form/money_widget.html.twig'
         - 'form/checkbox_row.html.twig'
-        - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
+        - 'form/ckeditor_row.html.twig'
 
     globals:
         menu_service: '@App\Service\MenuService'
