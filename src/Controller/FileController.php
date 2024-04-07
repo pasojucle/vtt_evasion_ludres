@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\UploadService;
 use App\Service\ProjectDirService;
+use App\Service\UploadService;
 use Error;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FileController extends AbstractController
 {
@@ -45,7 +45,8 @@ class FileController extends AbstractController
     }
 
     #[Route('/upload/{directory}', name: 'upload_file', methods: ['GET', 'POST'])]
-    public function uploadFile(Request $request, UploadService $uploadService, ProjectDirService $projectDir, string $directory): JsonResponse {
+    public function uploadFile(Request $request, UploadService $uploadService, ProjectDirService $projectDir, string $directory): JsonResponse
+    {
         $file = $request->files->get('upload');
         if ($file) {
             $filename = null;

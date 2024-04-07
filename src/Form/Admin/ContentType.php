@@ -6,8 +6,8 @@ namespace App\Form\Admin;
 
 use App\Entity\Content;
 use App\Form\Type\BackgroundsType;
-use App\Repository\ContentRepository;
 use App\Form\Type\CkeditorType;
+use App\Repository\ContentRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;

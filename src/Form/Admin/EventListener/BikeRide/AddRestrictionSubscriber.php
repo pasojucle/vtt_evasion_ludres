@@ -2,31 +2,30 @@
 
 namespace App\Form\Admin\EventListener\BikeRide;
 
-use App\Entity\User;
 use App\Entity\BikeRide;
-use App\Validator\RangeAge;
+use App\Entity\BikeRideType as BikeRideKind;
+use App\Entity\User;
+use App\Form\Admin\BikeRideType;
+use App\Form\Admin\UsersAutocompleteField;
+use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
-use App\Form\Admin\BikeRideType;
-use App\Repository\UserRepository;
+use App\Validator\RangeAge;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use App\Form\Admin\UsersAutocompleteField;
-use App\Entity\BikeRideType as BikeRideKind;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AddRestrictionSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly LevelService $levelService, 
+        private readonly LevelService $levelService,
         private readonly UserRepository $userRepository,
-        private readonly UrlGeneratorInterface $urlGenerator    
-    )
-    {
+        private readonly UrlGeneratorInterface $urlGenerator
+    ) {
     }
 
     public static function getSubscribedEvents(): array

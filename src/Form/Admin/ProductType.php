@@ -6,9 +6,9 @@ namespace App\Form\Admin;
 
 use App\Entity\Product;
 use App\Entity\Size;
+use App\Form\Type\CkeditorType;
 use App\Validator\NotEmptyFile;
 use Doctrine\ORM\EntityRepository;
-use App\Form\Type\CkeditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;

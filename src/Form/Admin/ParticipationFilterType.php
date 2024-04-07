@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\BikeRideType;
+use App\Form\Admin\BikeRideTypeAutocompleteField;
 use App\Service\LevelService;
 use App\Validator\Period;
 use DateTime;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ParticipationFilterType extends AbstractType
 {
@@ -63,7 +61,6 @@ class ParticipationFilterType extends AbstractType
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
                 ],
-                'required' => false,
             ])
             ;
     }

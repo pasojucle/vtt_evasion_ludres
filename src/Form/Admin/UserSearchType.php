@@ -13,9 +13,7 @@ class UserSearchType extends AbstractType
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
-        
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

@@ -12,7 +12,6 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Security\SelfAuthentication;
-use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\LicenceService;
 use App\Service\MailerService;
@@ -40,7 +39,6 @@ class EditRegistration
         private MailerService $mailerService,
         private LicenceService $licenceService,
         private StringService $stringService,
-        private CommuneService $communeService,
         private GetRegistrationFile $getRegistrationFile,
         private MessageService $messageService,
         private SelfAuthentication $selfAuthentication,
@@ -155,8 +153,8 @@ class EditRegistration
 
     private function setBithPlace($form, User $user): void
     {
-        if($form->has('identities')) {
-            foreach($form->get('identities') as $identity) {
+        if ($form->has('identities')) {
+            foreach ($form->get('identities') as $identity) {
                 if ($identity->has('foreignBorn') && $identity->get('foreignBorn')) {
                     $user->getMemberIdentity()->setBirthCommune(null);
                 } else {

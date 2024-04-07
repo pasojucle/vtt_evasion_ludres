@@ -27,12 +27,10 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class SessionType extends AbstractType
 {
     public function __construct(
-        private readonly SeasonService $seasonService, 
+        private readonly SeasonService $seasonService,
         private readonly SessionService $sessionService,
         private readonly UrlGeneratorInterface $urlGenerator,
-    )
-
-    {
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

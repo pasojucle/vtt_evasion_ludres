@@ -3,8 +3,8 @@
 namespace App\Form\Admin;
 
 use App\Entity\ModalWindow;
-use App\Validator\Period;
 use App\Form\Type\CkeditorType;
+use App\Validator\Period;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;

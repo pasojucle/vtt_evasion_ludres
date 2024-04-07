@@ -2,19 +2,19 @@
 
 namespace App\Form\Admin\EventListener\Survey;
 
-use App\Entity\User;
 use App\Entity\Survey;
+use App\Entity\User;
 use App\Form\Admin\BikeRideAutocompleteField;
-use App\Service\LevelService;
 use App\Form\Admin\SurveyType;
-use App\Service\SeasonService;
+use App\Form\Admin\UsersAutocompleteField;
 use App\Repository\UserRepository;
+use App\Service\LevelService;
+use App\Service\SeasonService;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use App\Form\Admin\UsersAutocompleteField;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AddRestrictionSubscriber implements EventSubscriberInterface
@@ -23,8 +23,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         private readonly LevelService $levelService,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
-    )
-    {
+    ) {
     }
     public static function getSubscribedEvents(): array
     {
