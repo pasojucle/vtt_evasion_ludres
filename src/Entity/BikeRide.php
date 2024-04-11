@@ -97,8 +97,8 @@ class BikeRide
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $private = false;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $registrationEnabled = false;
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $registrationEnabled = true;
 
     public function __construct()
     {

@@ -270,6 +270,9 @@ body > script {display: none !important;}
 }
 .alert-warning:not(.form-group-inline, .form-group), h2.alert-danger, .alert-warning-color {
     color: var(--primary-color-darker);
+    position: relative;
+    font-weight: 700;
+    padding-left: 25px;
 }
 .alert-warning:not(.form-group-inline, .form-group)::before {
     content: '\f06a';
@@ -277,6 +280,8 @@ body > script {display: none !important;}
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     margin-right: 10px;
+    position: absolute;
+    left: 0;
 }
 /* .medical-plus, .home {
     width: 30px;
