@@ -38,6 +38,10 @@ class IsRegistrable
             return false;
         }
 
+        if (!$bikeRide->registrationEnabled()) {
+            return false;
+        }
+
         $today = new DateTime();
         $intervalDisplay = new DateInterval('P' . $bikeRide->GetDisplayDuration() . 'D');
         $intervalClosing = new DateInterval('P' . $bikeRide->getClosingDuration() . 'D');

@@ -12,6 +12,7 @@ use App\Form\SessionAvailabilityType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
 use App\Service\CacheService;
+use App\Service\ParameterService;
 use App\Service\SessionService;
 use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
@@ -105,8 +106,16 @@ class SessionController extends AbstractController
         Request $request,
         SurveyResponseRepository $surveyResponseRepository,
         RespondentRepository $respondentRepository,
+        ParameterService $parameterService,
         Session $session
     ) {
+        $bikeRide = $session->getCluster()->getBikeRide();
+        if (!$bikeRide->registrationEnabled()) {
+            return $this->render('session/can_unsubscribe.html.twig', [
+                'session' => $session,
+                'can_unsubcribe_message' => $parameterService->getParameterByName('BIKE_RIDE_CAN_UNSUBSCRIBE_MESSAGE')
+            ]);
+        }
         $form = $formFactory->create();
         $form->handleRequest($request);
 

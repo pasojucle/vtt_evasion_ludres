@@ -9,18 +9,9 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
-use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: BikeRideRepository::class)]
+#[ORM\Entity(repositoryClass: BikeRideRepository::class)]
 class BikeRide
 {
     public const DEFAULT_TITLE = '';
@@ -49,61 +40,65 @@ class BikeRide
         self::PERIOD_ALL => 'bike_ride.period.all',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private int $id;
 
-    #[Column(type: 'string', length: 150)]
+    #[ORM\Column(type: 'string', length: 150)]
     private string $title = '';
 
-    #[Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content = '';
 
-    #[Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $startAt;
 
-    #[Column(type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $endAt = null;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $displayDuration = self::DEFAULT_DISPLAY_DURATION;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $minAge;
 
-    #[Column(type: Types::INTEGER, nullable: true)]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $maxAge = null;
 
-    #[OneToMany(targetEntity: Cluster::class, mappedBy: 'bikeRide')]
-    #[OrderBy(['position' => 'ASC'])]
+    #[ORM\OneToMany(targetEntity: Cluster::class, mappedBy: 'bikeRide')]
+    #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $clusters;
 
-    #[Column(type: 'integer', options: ['default' => 1])]
+    #[ORM\Column(type: 'integer', options: ['default' => 1])]
     private $closingDuration = self::DEFAULT_CLOSING_DURATION;
 
-    #[ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'bikeRides')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: BikeRideType::class, inversedBy: 'bikeRides')]
+    #[ORM\JoinColumn(nullable: false)]
     private BikeRideType $bikeRideType;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $filename = null;
 
-    #[OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
     private ?Survey $survey = null;
 
-    #[Column(type: 'boolean', options: ['default' => false])]
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $deleted = false;
 
-    #[ManyToMany(targetEntity: User::class, inversedBy: 'bikeRides')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'bikeRides')]
     private Collection $users;
 
     private ?int $restriction = null;
 
-    #[Column(type: 'json', options:['default' => '[]'])]
+    #[ORM\Column(type: 'json', options:['default' => '[]'])]
     private array $levelFilter = [];
 
-    #[Column(type: 'boolean', options: ['default' => false])]
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $private = false;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $registrationEnabled = false;
 
     public function __construct()
     {
@@ -364,6 +359,18 @@ class BikeRide
     public function setPrivate(bool $private): static
     {
         $this->private = $private;
+
+        return $this;
+    }
+
+    public function registrationEnabled(): bool
+    {
+        return $this->registrationEnabled;
+    }
+
+    public function setRegistrationEnabled(bool $registrationEnabled): static
+    {
+        $this->registrationEnabled = $registrationEnabled;
 
         return $this;
     }

@@ -28,6 +28,11 @@
             <div class="form-group">
                 {{ form_row(form.private) }}
             </div>
+            {% if form.registrationEnabled is defined %}
+                <div class="form-group">
+                    {{ form_row(form.registrationEnabled) }}
+                </div>
+            {% endif %}
             <div class="form-group">
                 {{ form_row(form.startAt) }}
                 {{ form_row(form.endAt) }}

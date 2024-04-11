@@ -11,7 +11,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240218060241 extends AbstractMigration
+final class Version20240409172226 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,11 +21,12 @@ final class Version20240218060241 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE bike_ride ADD registration_enabled TINYINT(1) DEFAULT 1 NOT NULL');
         $parameter = [
-            'name' => 'BIKE_RIDE_ABSENCE_EMAIL',
-            'label' => 'Message envoyé au responsable légal en cas d\'absence à une rando de l\'école vtt',
+            'name' => 'BIKE_RIDE_CAN_UNSUBSCRIBE_MESSAGE',
+            'label' => 'Message afficher lorsque la désinscription n\'est plus possible',
             'type' => Parameter::TYPE_HTML,
-            'value' => '<p>Votre enfant {{ prenom_nom_enfant }} n&#39;est pas pr&eacute;sent &agrave; la rando {{ nom_rando }}.</p><p>Nous vous rappelons qu&#39;en cas d&#39;impr&eacute;vu, vous devez le d&eacute;sincrire en vous connectant sur le site, onglet <a href="{{ nom_domaine }}/mon-compte/programme">Mon programme perso</a></p><p>Si cette absence vous semble anormale, vous pouvez contacter le responsable du groupe {{ nom_encadrant }} au {{ telephone_encadrant }}</p>',
+            'value' => '<p>Pour vous désinscrire, vous devez contacter un responsable du club</p>',
             'parameterGroupName' => 'BIKE_RIDE'
         ];
 
@@ -35,6 +36,7 @@ final class Version20240218060241 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-
+        $this->addSql('ALTER TABLE bike_ride DROP registration_enabled');
+        $this->addSql('DELETE FROM `parameter` WHERE `name`=\'BIKE_RIDE_CAN_UNSUBSCRIBE_MESSAGE\'');
     }
 }
