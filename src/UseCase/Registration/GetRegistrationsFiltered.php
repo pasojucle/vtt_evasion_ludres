@@ -38,4 +38,14 @@ class GetRegistrationsFiltered extends GetUsersFiltered
             'licence.status.waiting_renew' => Licence::STATUS_WAITING_RENEW,
         ];
     }
+
+    public function getDefaultFilters(): array
+    {
+        return [
+            'user' => null,
+            'query' => null,
+            'status' => Licence::STATUS_NEW,
+            'levels' => null,
+        ];
+    }
 }

@@ -24,8 +24,6 @@ class UserFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        dump($options['remote_route']);
-        dump($this->urlGenerator->generate($options['remote_route'], $options['filters']));
         $builder
             ->add('user', UserAutocompleteField::class, [
                 'autocomplete_url' => $this->urlGenerator->generate($options['remote_route'], $options['filters'])
