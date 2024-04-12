@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\BikeRide;
 use App\Entity\BoardRole;
 use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
 use App\Entity\User;
-use App\Form\Admin\LevelType;
 use App\Service\SeasonService;
 use DateInterval;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -583,9 +583,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             (new Expr())->like('LOWER(i.name)', ':query'),
             (new Expr())->like('LOWER(i.firstName)', ':query'),
         )
-        ->setParameters([
-            'query' => '%' . strtolower($query) . '%',
-        ])
+        ->setParameters(new ArrayCollection([
+            new Parameter('query', '%' . strtolower($query) . '%'),
+        ]))
         ->orderBy('u.licenceNumber', 'ASC')
         ->getQuery()
         ->getResult()
@@ -613,8 +613,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->where(
                 (new Expr())->eq('u.boardRole', ':boardRole')
             )
-            ->setParameter('null', null)
-            ->setParameter('boardRole', $boardRole)
+            ->setParameters(new ArrayCollection([
+                new Parameter('null', null),
+                new Parameter('boardRole', $boardRole)
+            ]))
             ->getQuery()
             ->execute();
     }
@@ -628,9 +630,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere(
                 (new Expr())->eq('li.season', ':season')
             )
-            ->setParameters([
-                'season' => $season,
-            ])
+            ->setParameter('season', $season)
             ->getQuery()
             ->getResult()
         ;
@@ -647,10 +647,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->eq('li.season', ':season'),
                 (new Expr())->neq('le.type', ':levelType'),
             )
-            ->setParameters([
-                'season' => $season,
-                'levelType' => Level::TYPE_FRAME,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('season', $season),
+                new Parameter('levelType', Level::TYPE_FRAME)
+            ]))
             ->getQuery()
             ->getResult()
         ;
@@ -682,12 +682,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->in('u.id', $currentSeasonUsers->getDQL()),
                 (new Expr())->notIn('u.id', $lastSeasonUsers->getDQL()),
             )
-            ->setParameters([
-                'type' => Identity::TYPE_MEMBER,
-                'season' => $season,
-                'lastSeason' => $season - 1,
-                'isFinal' => true,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('type', Identity::TYPE_MEMBER),
+                new Parameter('season', $season),
+                new Parameter('lastSeason', $season - 1),
+                new Parameter('isFinal', true),
+            ]))
             ->groupBy('u.id')
             ->getQuery()
             ->getResult();
@@ -719,12 +719,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->notIn('u.id', $currentSeasonUsers->getDQL()),
                 (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
             )
-            ->setParameters([
-                'type' => Identity::TYPE_MEMBER,
-                'season' => $season,
-                'lastSeason' => $season - 1,
-                'isFinal' => true,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('type', Identity::TYPE_MEMBER),
+                new Parameter('season', $season),
+                new Parameter('lastSeason', $season - 1),
+                new Parameter('isFinal', true),
+            ]))
             ->groupBy('u.id')
             ->getQuery()
             ->getResult();
@@ -757,12 +757,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->in('u.id', $currentSeasonUsers->getDQL()),
                 (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
             )
-            ->setParameters([
-                'type' => Identity::TYPE_MEMBER,
-                'season' => $season,
-                'lastSeason' => $season - 1,
-                'isFinal' => true,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('type', Identity::TYPE_MEMBER),
+                new Parameter('season', $season),
+                new Parameter('lastSeason', $season - 1),
+                new Parameter('isFinal', true),
+            ]))
             ->groupBy('u.id')
             ->getQuery()
             ->getResult();

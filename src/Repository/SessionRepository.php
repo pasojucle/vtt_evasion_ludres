@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -150,13 +151,13 @@ class SessionRepository extends ServiceEntityRepository
         $andX = (new Expr())->andX();
         if (isset($filters['startAt']) && isset($filters['endAt'])) {
             $andX->add((new Expr())->between('br.startAt', ':startAt', ':endAt'));
-            $parameters['startAt'] = $filters['startAt'];
-            $parameters['endAt'] = $filters['endAt'];
+            $parameters[] = new Parameter('startAt', $filters['startAt']);
+            $parameters[] = new Parameter('endAt', $filters['endAt']);
         }
 
         if (isset($filters['bikeRideType'])) {
             $andX->add((new Expr())->eq('br.bikeRideType', ':bikeRideType'));
-            $parameters['bikeRideType'] = $filters['bikeRideType'];
+            $parameters[] = new Parameter('bikeRideType', $filters['bikeRideType']);
         }
 
         if (isset($filters['levels'])) {
@@ -169,7 +170,7 @@ class SessionRepository extends ServiceEntityRepository
             ->leftJoin('s.user', 'u')
             ->leftJoin('u.level', 'l')
             ->andWhere($andX)
-            ->setParameters($parameters)
+            ->setParameters(new ArrayCollection($parameters))
             ->getQuery()
             ->getResult()
             ;
@@ -222,12 +223,12 @@ class SessionRepository extends ServiceEntityRepository
                     (new Expr())->eq('s.user', ':user'),
                     (new Expr())->between('br.startAt', ':start', ':end'),
                 )
-                ->setParameters([
-                    'availability' => Session::AVAILABILITY_REGISTERED,
-                    'user' => $user,
-                    'start' => $today->setTime(0, 0, 0),
-                    'end' => $today->setTime(18, 0, 0),
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('availability', Session::AVAILABILITY_REGISTERED),
+                    new Parameter('user', $user),
+                    new Parameter('start', $today->setTime(0, 0, 0)),
+                    new Parameter('end', $today->setTime(18, 0, 0)),
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult();
         } catch (NonUniqueResultException) {
@@ -237,24 +238,24 @@ class SessionRepository extends ServiceEntityRepository
 
     public function findMemberpresence(array $filters): array
     {
-        $parameters = ['isPresent' => true];
+        $parameters = [new Parameter('isPresent', true)];
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->eq('s.isPresent', ':isPresent'));
 
         if (array_key_exists('isSchool', $filters)) {
             $andX->add((new Expr())->eq('brt.needFramers', ':needFramers'));
-            $parameters['needFramers'] = $filters['isSchool'];
+            $parameters[] = new Parameter('needFramers', $filters['isSchool']);
         }
 
         if (array_key_exists('period', $filters) && !empty($filters['period'])) {
             if (is_array($filters['period'])) {
-                $parameters['startAt'] = $filters['period']['startAt'];
-                $parameters['endAt'] = $filters['period']['endAt'];
+                $parameters[] = new Parameter('startAt', $filters['period']['startAt']);
+                $parameters[] = new Parameter('endAt', $filters['period']['endAt']);
             }
             if (is_string($filters['period'])) {
                 list($startAt, $endAt) = explode('-', $filters['period']);
-                $parameters['startAt'] = DateTimeImmutable::createFromFormat('d/m/Y', trim($startAt));
-                $parameters['endAt'] = DateTimeImmutable::createFromFormat('d/m/Y', trim($endAt));
+                $parameters[] = new Parameter('startAt', DateTimeImmutable::createFromFormat('d/m/Y', trim($startAt)));
+                $parameters[] = new Parameter('endAt', DateTimeImmutable::createFromFormat('d/m/Y', trim($endAt)));
             }
             $andX->add((new Expr())->between('br.startAt', ':startAt', ':endAt'));
         }
@@ -265,7 +266,7 @@ class SessionRepository extends ServiceEntityRepository
             ->join('c.bikeRide', 'br')
             ->join('br.bikeRideType', 'brt')
             ->andWhere($andX)
-            ->setParameters($parameters)
+            ->setParameters(new ArrayCollection($parameters))
             ->groupBy('c.bikeRide')
             ->orderBy('br.startAt')
             ->getQuery()
@@ -283,10 +284,10 @@ class SessionRepository extends ServiceEntityRepository
                 (new Expr())->eq('s.user', ':user'),
                 (new Expr())->gte('br.startAt', ':start'),
             )
-            ->setParameters([
-                'user' => $user,
-                'start' => $today->setTime(0, 0, 0),
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('start', $today->setTime(0, 0, 0)),
+            ]))
             ->getQuery()
             ->getResult();
     }

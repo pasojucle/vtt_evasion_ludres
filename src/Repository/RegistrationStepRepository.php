@@ -7,8 +7,10 @@ namespace App\Repository;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -92,11 +94,11 @@ class RegistrationStepRepository extends ServiceEntityRepository
                     (new Expr())->eq('r.testingRender', ':render'),
                     (new Expr())->eq('r.finalRender', ':render')
                 )
-                ->setParameters([
-                    'name' => strtolower('Assurance'),
-                    'personal' => false,
-                    'render' => RegistrationStep::RENDER_FILE
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('name', strtolower('Assurance')),
+                    new Parameter('personal', false),
+                    new Parameter('render', RegistrationStep::RENDER_FILE)
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult()
                 ;
@@ -112,10 +114,10 @@ class RegistrationStepRepository extends ServiceEntityRepository
                 (new Expr())->eq('r.registrationStepGroup', ':group'),
                 (new Expr())->eq('r.category', ':category')
             )
-            ->setParameters([
-                'group' => $group,
-                'category' => $category,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('group', $group),
+                new Parameter('category', $category),
+            ]))
             ->getQuery()
             ->getResult()
         ;

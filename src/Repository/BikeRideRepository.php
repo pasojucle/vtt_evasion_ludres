@@ -10,8 +10,10 @@ use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -80,8 +82,10 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->gte('br.startAt', ':today'),
                 (new Expr())->eq('br.deleted', ':deleted'),
             )
-            ->setParameter('today', $today)
-            ->setParameter('deleted', 0)
+            ->setParameters(new ArrayCollection([
+                new Parameter('today', $today),
+                new Parameter('deleted', 0)
+            ]))
             ->orderBy('br.startAt', 'ASC')
             ->andHaving("DATE_SUB(br.startAt, br.displayDuration, 'DAY') <= :today")
             ->getQuery()
@@ -94,6 +98,7 @@ class BikeRideRepository extends ServiceEntityRepository
      */
     public function findLike(string $query): array
     {
+        $params = [];
         if (1 === preg_match('#^(\d{2})\/(\d{1,2})#', $query)) {
             $today = new DateTime();
             $query = $query . '/' . $today->format('y');
@@ -101,10 +106,10 @@ class BikeRideRepository extends ServiceEntityRepository
         $startAt = DateTimeImmutable::createFromFormat('d/m/y', $query);
         $orX = (new Expr())->orX();
         $orX->add((new Expr())->like('br.title', ':title'));
-        $params['title'] = '%' . $query . '%';
+        $params[] = new Parameter('title', '%' . $query . '%');
         if ($startAt) {
             $orX->add((new Expr())->eq('br.startAt', ':query'));
-            $params['query'] = $startAt->setTime(0, 0, 0);
+            $params[] = new Parameter('query', $startAt->setTime(0, 0, 0));
         }
         $params['deleted'] = 0;
 
@@ -114,7 +119,7 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->eq('br.deleted', ':deleted'),
                 (new Expr())->notIn('br', $this->getBikeRideWithSurvey()),
             )
-            ->setParameters($params)
+            ->setParameters(new ArrayCollection($params))
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
             ->getResult()
@@ -158,11 +163,11 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->lte('br.startAt', ':end'),
                 (new Expr())->gt('brt.registration', ':registration'),
             )
-            ->setParameters([
-                'start' => (new DateTimeImmutable())->setTime(0, 0, 0),
-                'end' => (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59),
-                'registration' => 0,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('start', (new DateTimeImmutable())->setTime(0, 0, 0)),
+                new Parameter('end', (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59)),
+                new Parameter('registration', 0),
+            ]))
             ->orderBy('br.startAt')
             ->getQuery()
             ->getResult()

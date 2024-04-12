@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Entity\SecondHand;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -49,16 +51,16 @@ class SecondHandRepository extends ServiceEntityRepository
         $andX->add((new Expr())->eq('s.valid', ':valid'));
         
         $parameters = [
-            'deleted' => false,
-            'valid' => true,
+            new Parameter('deleted', false),
+            new Parameter('valid', true),
         ];
 
         if (null !== $valid) {
-            $parameters['valid'] = $valid;
+            $parameters[] = new Parameter('valid', $valid);
         }
         return $this->createQueryBuilder('s')
            ->andWhere($andX)
-           ->setParameters($parameters)
+           ->setParameters(new ArrayCollection($parameters))
            ->orderBy('s.createdAt', 'DESC')
        ;
     }
@@ -71,11 +73,11 @@ class SecondHandRepository extends ServiceEntityRepository
                (new Expr())->eq('s.valid', ':valid'),
                (new Expr())->eq('s.disabled', ':disabled')
            )
-           ->setParameters([
-                'deleted' => false,
-                'valid' => true,
-                'disabled' => false,
-            ])
+           ->setParameters(new ArrayCollection([
+                new Parameter('deleted', false),
+                new Parameter('valid', true),
+                new Parameter('disabled', false),
+            ]))
            ->orderBy('s.createdAt', 'DESC')
        ;
     }
@@ -88,11 +90,11 @@ class SecondHandRepository extends ServiceEntityRepository
                 (new Expr())->eq('sh.disabled', ':disabled'),
                 (new Expr())->eq('sh.deleted', ':deleted'),
             )
-            ->setParameters([
-                'deadline' => $deadline,
-                'disabled' => false,
-                'deleted' => false,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('deadline', $deadline),
+                new Parameter('disabled', false),
+                new Parameter('deleted', false),
+            ]))
             ->getQuery()
             ->getResult();
     }

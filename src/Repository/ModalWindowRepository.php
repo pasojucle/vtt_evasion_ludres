@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Entity\ModalWindow;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -86,11 +88,11 @@ class ModalWindowRepository extends ServiceEntityRepository
                 (new Expr())->eq('m.isDisabled', ':disabled'),
                 (new Expr())->eq('m.public', ':public')
             )
-            ->setParameters([
-                'today' => $today->format('Y-m-d H:i:s'),
-                'disabled' => 0,
-                'public' => 1,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('today', $today->format('Y-m-d H:i:s')),
+                new Parameter('disabled', 0),
+                new Parameter('public', 1),
+            ]))
             ->orderBy('m.id', 'DESC')
             ->getQuery()
             ->getResult()

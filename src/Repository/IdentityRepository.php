@@ -7,9 +7,10 @@ namespace App\Repository;
 use App\Entity\Identity;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -53,10 +54,10 @@ class IdentityRepository extends ServiceEntityRepository
                     (new Expr())->eq('i.user', ':user'),
                     (new Expr())->eq('i.type', ':member')
                 )
-                ->setParameters([
-                    'user' => $user,
-                    'member' => Identity::TYPE_MEMBER,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('user', $user),
+                    new Parameter('member', Identity::TYPE_MEMBER),
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult()
             ;
@@ -72,10 +73,10 @@ class IdentityRepository extends ServiceEntityRepository
                 (new Expr())->in('i.user', ':users'),
                 (new Expr())->eq('i.type', ':member')
             )
-            ->setParameters([
-                'users' => $users,
-                'member' => Identity::TYPE_MEMBER,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('users', $users),
+                new Parameter('member', Identity::TYPE_MEMBER),
+            ]))
             ->getQuery()
             ->getResult()
         ;
@@ -88,10 +89,10 @@ class IdentityRepository extends ServiceEntityRepository
                 (new Expr())->eq('i.user', ':user'),
                 (new Expr())->neq('i.type', ':member')
             )
-            ->setParameters([
-                'user' => $user,
-                'member' => Identity::TYPE_MEMBER,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('member', Identity::TYPE_MEMBER),
+            ]))
             ->getQuery()
             ->getResult()
     ;

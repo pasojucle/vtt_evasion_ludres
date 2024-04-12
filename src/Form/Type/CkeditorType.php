@@ -24,7 +24,7 @@ class CkeditorType extends AbstractType
     ) {
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }
@@ -36,7 +36,7 @@ class CkeditorType extends AbstractType
         ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['upload_url'] = $this->getUploadUrl();
         $view->vars['compound'] = false;

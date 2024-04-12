@@ -18,9 +18,6 @@
     "doctrine/collections": {
         "version": "1.6.7"
     },
-    "doctrine/common": {
-        "version": "3.1.2"
-    },
     "doctrine/dbal": {
         "version": "2.13.1"
     },
@@ -136,19 +133,6 @@
             "config/packages/google_recaptcha.yaml"
         ]
     },
-    "helios-ag/fm-elfinder-bundle": {
-        "version": "10.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "10.0",
-            "ref": "addd79a9903ee92664f4cff61eb6cdd1b95945e7"
-        },
-        "files": [
-            "config/packages/fm_elfinder.yaml",
-            "config/routes/fm_elfinder.yaml"
-        ]
-    },
     "laminas/laminas-code": {
         "version": "4.2.2"
     },
@@ -225,9 +209,6 @@
     },
     "setasign/fpdi": {
         "version": "v2.3.6"
-    },
-    "studio-42/elfinder": {
-        "version": "2.1.59"
     },
     "symfony/apache-pack": {
         "version": "1.0",

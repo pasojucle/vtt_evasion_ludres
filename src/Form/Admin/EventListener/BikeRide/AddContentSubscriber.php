@@ -4,20 +4,20 @@ namespace App\Form\Admin\EventListener\BikeRide;
 
 use App\Entity\BikeRide;
 
-use App\Form\Type\CkeditorType;
+use App\Entity\BikeRideType as BikeRideKind;
 use App\Form\Admin\BikeRideType;
+use App\Form\Type\CkeditorType;
+use App\Repository\BikeRideTypeRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use App\Repository\BikeRideTypeRepository;
-use App\Entity\BikeRideType as BikeRideKind;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AddContentSubscriber implements EventSubscriberInterface
 {
