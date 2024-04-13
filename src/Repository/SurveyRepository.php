@@ -57,7 +57,7 @@ class SurveyRepository extends ServiceEntityRepository
 
     public function findActiveAndWithoutResponse(User $member): array
     {
-        $respondents = $this->_em->createQueryBuilder()
+        $respondents = $this->getEntityManager()->createQueryBuilder()
             ->select('(r.survey)')
             ->from(Respondent::class, 'r')
             ->where(

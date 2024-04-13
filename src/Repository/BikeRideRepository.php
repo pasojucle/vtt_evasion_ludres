@@ -145,7 +145,7 @@ class BikeRideRepository extends ServiceEntityRepository
 
     private function getBikeRideWithSurvey(): string
     {
-        return $this->_em->createQueryBuilder()
+        return $this->getEntityManager()->createQueryBuilder()
             ->select('(s.bikeRide)')
             ->from(Survey::class, 's')
             ->where(

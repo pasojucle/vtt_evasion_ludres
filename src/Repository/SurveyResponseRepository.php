@@ -107,7 +107,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
 
     public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
     {
-        $issues = $this->_em->createQueryBuilder()
+        $issues = $this->getEntityManager()->createQueryBuilder()
         ->select('(issue)')
         ->from(SurveyIssue::class, 'issue')
         ->where(
@@ -131,7 +131,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
 
     public function findResponsesByUserAndSurvey(User $user, Survey $survey): array
     {
-        $issues = $this->_em->createQueryBuilder()
+        $issues = $this->getEntityManager()->createQueryBuilder()
         ->select('(issue)')
         ->from(SurveyIssue::class, 'issue')
         ->where(
