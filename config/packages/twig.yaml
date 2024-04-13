@@ -1,5 +1,5 @@
 twig:
-    default_path: '%kernel.project_dir%/templates'
+    file_name_pattern: '*.twig'
     form_themes:
         - 'form/custom_check_widget.html.twig'
         - 'form/custom_simple_check_row.html.twig'
