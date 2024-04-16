@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use DateTime;
+use DOMDocument;
 use DateInterval;
 use App\Entity\User;
 use App\Entity\Session;
@@ -18,7 +19,9 @@ use App\Repository\BikeRideTypeRepository;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\InputFormField;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Field\TextareaFormField;
 
 class BikeRideControllerTest extends WebTestCase
 {
@@ -77,14 +80,21 @@ class BikeRideControllerTest extends WebTestCase
         $bikeRideType = $bikeRideTypeRepository->find($bikeRideTypeId);
         $startAt = (new DateTime());
         $startAt->add(new DateInterval(sprintf('P%dD', 7 - $startAt->format('w'))));
-        $this->client->submitForm('Enregistrer', [
-            'bike_ride[bikeRideType]' => $bikeRideTypeId,
-            'bike_ride[title]' => $bikeRideType->getName(),
-            'bike_ride[content]' => $bikeRideType->getContent(),
-            'bike_ride[startAt]' => $startAt->format('d/m/Y'),
-            'bike_ride[displayDuration]' => 8,
-            'bike_ride[closingDuration]' => $bikeRideType->getClosingDuration() ?? 0,
-        ]);
+        $domdocument = new DOMDocument;
+        $ff = $domdocument->createElement('textarea');
+        $ff->setAttribute('name','bike_ride[content]');
+        $formfield = new TextareaFormField($ff);
+        $form = $this->client->getCrawler()->selectButton('Enregistrer')->form();
+        $form->set($formfield); 
+
+        $form['bike_ride[bikeRideType]'] = $bikeRideTypeId;
+        $form['bike_ride[title]'] = $bikeRideType->getName();
+        $form['bike_ride[content]'] = $bikeRideType->getContent();
+        $form['bike_ride[startAt]'] = $startAt->format('d/m/Y');
+        $form['bike_ride[displayDuration]'] = 8;
+        $form['bike_ride[closingDuration]'] = $bikeRideType->getClosingDuration() ?? 0;
+
+        $this->client->submit($form);
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();

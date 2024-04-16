@@ -309,7 +309,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaRenew(QueryBuilder &$qb, int $season): void
     {
-        dump($this->getEntityManager());
         $usersWhithMoreThanLicence = $this->getEntityManager()->createQueryBuilder()
             ->select('user')
             ->from(User::class, 'user')

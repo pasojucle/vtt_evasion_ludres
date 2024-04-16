@@ -52,12 +52,9 @@ class SecondHandRepository extends ServiceEntityRepository
         
         $parameters = [
             new Parameter('deleted', false),
-            new Parameter('valid', true),
+            new Parameter('valid', $valid ?? true),
         ];
 
-        if (null !== $valid) {
-            $parameters[] = new Parameter('valid', $valid);
-        }
         return $this->createQueryBuilder('s')
            ->andWhere($andX)
            ->setParameters(new ArrayCollection($parameters))
