@@ -126,6 +126,7 @@ class SlideshowController extends AbstractController
             $images = [];
             foreach ($directory->getSlideshowImages() as $image) {
                 $images[] = $this->projectDir->path('public', 'images', $image->getFilename());
+                $this->entityManager->remove($image);
             }
             if (!empty($images)) {
                 $filesystem = new Filesystem();
