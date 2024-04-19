@@ -8,9 +8,9 @@ use App\Entity\SlideshowDirectory;
 use App\Entity\SlideshowImage;
 use App\Form\Admin\SlideshowDirectoryType;
 use App\Form\UploadFileType;
+use App\Repository\ParameterRepository;
 use App\Repository\SlideshowDirectoryRepository;
 use App\Repository\SlideshowImageRepository;
-use App\Service\ImageService;
 use App\Service\ProjectDirService;
 use App\Service\SlideshowService;
 use App\Service\UploadService;
@@ -18,8 +18,6 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,6 +34,7 @@ class SlideshowController extends AbstractController
         private SlideshowImageRepository $slideshowImageRepository,
         private EntityManagerInterface $entityManager,
         private ProjectDirService $projectDir,
+        private ParameterRepository $parameterRepository,
     ) {
     }
 
@@ -70,6 +69,10 @@ class SlideshowController extends AbstractController
             'directory' => $directory,
             'images' => $images,
             'form' => $form->createView(),
+            'settings' => [
+                'parameters' => $this->parameterRepository->findByParameterGroupName('SLIDESHOW'),
+                'routes' => [],
+            ],
         ]);
     }
 
