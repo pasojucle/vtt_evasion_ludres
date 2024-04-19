@@ -30,7 +30,7 @@ final class Version20240419062721 extends AbstractMigration
 
         $parameter = [
             'name' => 'SLIDESHOW_MAX_DISK_SIZE',
-            'label' => 'Espace disque maxi pour le diaporama',
+            'label' => 'Espace disque alloué pour le diaporama',
             'type' => Parameter::TYPE_TEXT,
             'value' => '20G',
             'parameterGroupName' => 'SLIDESHOW'
