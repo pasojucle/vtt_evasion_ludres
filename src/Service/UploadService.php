@@ -11,8 +11,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Mime\Exception\InvalidArgumentException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-use function PHPUnit\Framework\throwException;
-
 class UploadService
 {
     public const HD = '1920x 1080';
@@ -22,6 +20,7 @@ class UploadService
     public function __construct(
         private ProjectDirService $projectDirService,
         private SluggerInterface $slugger,
+        private FileService $fileService,
     ) {
     }
 
@@ -108,19 +107,10 @@ class UploadService
         $values = [];
         $sizeInBytes = [];
         foreach ($configOptions as $option) {
-            $values[$option] = ini_get($option);
-            if (1 === preg_match('#(\d+)([kmgt])#i', ini_get($option), $matches)) {
-                list($term, $num, $unit) = $matches;
-                $bytes = match (strtolower($unit)) {
-                    'k' => (int) $num * 1024,
-                    'm' => (int) $num * pow(1024, 2),
-                    'g' => (int) $num * pow(1024, 3),
-                    't' => (int) $num * pow(1024, 4),
-                    default => null,
-                };
-                if ($bytes) {
-                    $sizeInBytes[$option] = $bytes;
-                }
+            $values[$option] = ('-1' === ini_get($option)) ? '64M' : ini_get($option);
+            $bytes = $this->fileService->humanToBytes($values[$option]);
+            if ($bytes) {
+                $sizeInBytes[$option] = $bytes;
             }
         }
 

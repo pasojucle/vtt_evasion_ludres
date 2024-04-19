@@ -22,16 +22,19 @@ class Slideshow extends HTMLDivElement {
         });
     }
     init = () => {
-        this.find(this.frameIndex).append(0);
+        if (this.images.length > 0) {
+            this.find(this.frameIndex).append(0);
+        }
         if (this.images.length > 1) {
             this.lastIndex = this.images.length - 1;
             this.leftIndex = this.lastIndex;
             this.rightIndex = 1;
             this.find(this.lastIndex).append(-1);
             this.find(this.rightIndex).append(1);
+            this.querySelector('.btn-slide.slide-to-left').addEventListener('click', () => {this.slideToLeft()});
+            this.querySelector('.btn-slide.slide-to-right').addEventListener('click', () => {this.slideToRight()});
         }
-        this.querySelector('.btn-slide.slide-to-left').addEventListener('click', () => {this.slideToLeft()});
-        this.querySelector('.btn-slide.slide-to-right').addEventListener('click', () => {this.slideToRight()});
+
         this.querySelector('.btn-slide.full-screen').addEventListener('click', () => {this.toggleFullScreen()});
     }
     resize = () => {

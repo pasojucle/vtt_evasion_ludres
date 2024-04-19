@@ -15,12 +15,13 @@
 ###< symfony/phpunit-bridge ###
 
 /sources/
-/data/tmp/
 /public/uploads/
 /public/images/
 /public/files/
 /public/registration_certificate/
 /public/registration_certificate/Attestation_d_inscription.pdf
+/data/tmp/
+/data/upload/
 data/cmd/doctrinemigrationmigrate-n
 data/cmd/geoconvertbirthplace
 data/cmd/geoloaddata

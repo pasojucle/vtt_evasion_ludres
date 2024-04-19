@@ -1,0 +1,24 @@
+.d-flex {
+    display: flex;
+    &.align-items-center {
+        align-items: center;
+    }
+    &.flex-column {
+        flex-direction: column;
+        gap: 0;
+    }
+    &.justify-content-center {
+        justify-content: center;
+    }
+    &.justify-content-end {
+        justify-content: end;
+    }
+    &.gap-2 {
+        gap: 0.5rem;
+    }
+}
+
+
+.ms-auto {
+    margin-left: auto;
+}

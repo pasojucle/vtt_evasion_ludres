@@ -105,8 +105,14 @@ class UploadFile extends HTMLDivElement {
         });
         xhr.addEventListener('readystatechange', (e,i) => {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                this.updateProgress(i, 100)
-                location.reload();
+                const response = JSON.parse(xhr.response)
+                if (response.errorCode === 0) {
+                    this.updateProgress(i, 100)
+                    location.reload();
+                    return;
+                }
+                this.progressBar.classList.add('d-none');
+                this.displayError(response.message);
             }
             else if (xhr.readyState === 4 && xhr.status !== 200) {
                 // Error. Inform the user

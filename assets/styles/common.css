@@ -668,9 +668,6 @@ button[type=submit].btn.btn-primary:disabled {
 .hidden , .form-group-inline.hidden, .d-none {
     display: none;
 }
-.ms-auto {
-    margin-left: auto;
-}
 .ms-20 {
     margin-left: 20px;
 }
@@ -957,12 +954,6 @@ span.select2-selection.select2-selection--single {
 .row.flex-column {
     flex-direction: column;
 }
-.d-flex {
-    display: flex;
-}
-.d-flex.justify-content-end {
-    justify-content: end;
-}
 ul > li.list {
     position: relative;
     padding: 10px 0;
@@ -1038,6 +1029,9 @@ ul > li.list {
 }
 .mt-10 {
     margin-top: 10px;
+}
+.me-10 {
+    margin-right: 10px;
 }
 .align-center {
     text-align: center;

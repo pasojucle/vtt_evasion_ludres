@@ -18,8 +18,11 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -68,6 +71,15 @@ class SlideshowController extends AbstractController
             'images' => $images,
             'form' => $form->createView(),
         ]);
+    }
+
+
+    #[Route('/directory/size', name: 'directory_size', methods: ['GET'], options:['expose' => true])]
+    #[IsGranted('SLIDESHOW_LIST')]
+    public function adminSlideshowDirectorySize(
+        SlideshowService $slideshowService
+    ): JsonResponse {
+        return new JsonResponse(['response' => $slideshowService->getSpace()]);
     }
 
     #[Route('/directory/add', name: 'directory_add', methods: ['GET', 'POST'])]
@@ -123,15 +135,12 @@ class SlideshowController extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $images = [];
             foreach ($directory->getSlideshowImages() as $image) {
-                $images[] = $this->projectDir->path('public', 'images', $image->getFilename());
                 $this->entityManager->remove($image);
             }
-            if (!empty($images)) {
-                $filesystem = new Filesystem();
-                $filesystem->remove($images);
-            }
+
+            $filesystem = new Filesystem();
+            $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId()));
 
             $this->entityManager->remove($directory);
             $this->entityManager->flush();
@@ -175,8 +184,13 @@ class SlideshowController extends AbstractController
     public function adminSlideshowImageUpload(
         Request $request,
         UploadService $uploadService,
+        SlideshowService $slideshowService,
         ?SlideshowDirectory $directory
-    ): Response {
+    ): JsonResponse {
+        if ($slideshowService->isFull()) {
+            return new JsonResponse(['errorCode' => 1, 'message' => 'Espace disque insufisant']);
+        }
+
         $form = $this->createForm(UploadFileType::class, null, [
             'action' => $this->generateUrl($request->attributes->get('_route')),
         ]);
@@ -192,10 +206,10 @@ class SlideshowController extends AbstractController
                     ->setCreatedAt(new DateTimeImmutable());
                 $this->entityManager->persist($slideShowImage);
                 $this->entityManager->flush();
-                return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
+                return new JsonResponse(['errorCode' => 0]);
             };
         }
 
-        return new Response();
+        return new JsonResponse(['errorCode' => 1, 'message' => 'Auncune données valides']);
     }
 }

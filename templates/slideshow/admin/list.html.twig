@@ -10,7 +10,17 @@
         </span>
     </div>
     <div class="wrapper-body">
-        <a class="btn btn-primary mb-20" href="{{ path('admin_slideshow_directory_add') }}" title="Ajouter un répertoire" data-toggle="modal" data-type="primary">Ajouter un répertoire</a>
+        <div class="d-flex align-items-center gap-2">
+            <a class="btn btn-primary mb-20" href="{{ path('admin_slideshow_directory_add') }}" title="Ajouter un répertoire" data-toggle="modal" data-type="primary">Ajouter un répertoire</a>
+            <div id="slideshow-space" class="ms-auto d-flex align-items-center mb-20 gap-2">
+                <span>Espace disque </span>
+                <div class="d-flex flex-column justify-content-center">
+                    <progress id="slideshow-usage" max=100 value=0></progress>
+                    <div id="slideshow-size" class="progress-label"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="slideshow-toolbar">
             <div>
                 <a href="{{ path('admin_slideshow_list') }}"><i class="fa-solid fa-house"></i> home/</a>
@@ -23,7 +33,6 @@
                     <button class="btn btn-secondary" type="button"><i class="fa-solid fa-file-arrow-up" aria-hidden="true"></i> Télécharger</button>
                 {% endif %}
             </div>
-
         </div>
         <div is="my-uploadfile">
             {{ form_start(form)}}

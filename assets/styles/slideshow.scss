@@ -69,6 +69,16 @@
         gap: 20px;
     }
 }
+
+.progress-danger {
+    accent-color: var(--danger-color)
+}
+
+.progress-label {
+    font-size: 10px;
+    text-align: center;
+}
+
 .slideshow-list {
     display: flex;
     flex-wrap: wrap;
