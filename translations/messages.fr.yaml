@@ -180,3 +180,6 @@ permission:
   documentation: Documentation
   slideshow: Diaporama
   participation: Participation
+
+slideshow:
+  files: '{0} (Aucun fichier)|{1} (%count% fichier)|[1,Inf[ (%count% fichiers)'

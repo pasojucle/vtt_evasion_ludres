@@ -27,6 +27,9 @@
                 <a href="{{ path('admin_slideshow_list') }}"><i class="fa-solid fa-house"></i> home/</a>
                 {% if directory is not null %}<a href="{{ path('admin_slideshow_list', {'directory': directory.id}) }}">{{ directory.name }}</a>{% endif %}
             </div>
+            {% if directory is not null %}
+                <div>{{'slideshow.files'|trans({'%count%': images|length}) }}</div>
+            {% endif %}
             <div class="tools">
                 <progress id="progress-bar" class="d-none" max=100 value=0></progress>
                 <div id="slideshow-error" class="d-none"></div>
