@@ -8,6 +8,7 @@ use App\Entity\ModalWindow;
 use App\Form\Admin\ModalWindowType;
 use App\Repository\ModalWindowRepository;
 use App\Repository\ParameterRepository;
+use App\Service\MessageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,14 +25,11 @@ class ModalWindowController extends AbstractController
 
     #[Route('s', name: 'list', methods: ['GET'])]
     #[IsGranted('MODAL_WINDOW_LIST')]
-    public function list(ModalWindowRepository $modalWindowRepository, ParameterRepository $parameterRepository): Response
-    {
+    public function list(
+        ModalWindowRepository $modalWindowRepository,
+    ): Response {
         return $this->render('modal_window/admin/list.html.twig', [
             'modal_window_list' => $modalWindowRepository->findAllDesc(),
-            'settings' => [
-                'parameters' => $parameterRepository->findByParameterGroupName('MODAL'),
-                'routes' => [],
-            ],
         ]);
     }
 

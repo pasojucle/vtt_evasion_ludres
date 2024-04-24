@@ -25,6 +25,7 @@ class SessionService
         private UserDtoTransformer $userDtoTransformer,
         private MailerService $mailerService,
         private ParameterService $parameterService,
+        private MessageService $messageService,
         private ClusterService $clusterService,
         private SessionDtoTransformer $sessionDtoTransformer,
     ) {
@@ -158,7 +159,7 @@ class SessionService
 
         if ($userDto->isEndTesting) {
             $subject = 'Fin de la période d\'essai';
-            $this->mailerService->sendMailToMember($userDto, $subject, $this->parameterService->getParameterByName('EMAIL_END_TESTING'));
+            $this->mailerService->sendMailToMember($userDto, $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
         }
     }
 

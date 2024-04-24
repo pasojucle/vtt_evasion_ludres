@@ -71,7 +71,6 @@ class SlideshowController extends AbstractController
             'form' => $form->createView(),
             'settings' => [
                 'parameters' => $this->parameterRepository->findByParameterGroupName('SLIDESHOW'),
-                'routes' => [],
             ],
         ]);
     }

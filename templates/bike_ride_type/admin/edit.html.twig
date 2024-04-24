@@ -22,10 +22,6 @@
                 <div class="form-group">
                     {{ form_row(form.registration) }}
                 </div>
-                <div class="form-group">
-                    {{ form_row(form.closingDuration) }}
-                </div>
-
                 {% if form.clusters is defined %}
                     <b>{{ form_label(form.clusters) }}</b>
                     <div class="row row-align-top">
@@ -45,11 +41,15 @@
                         </div>
                     </div>
                 {% endif %}
+                <div class="form-group">
+                    {{ form_row(form.closingDuration) }}
+                </div>
                 {{ form_row(form.needFramers) }}
                 {{ form_row(form.isCompensable) }}
                 {{ form_row(form.useLevels) }}
                 {{ form_row(form.showMemberList) }}
                 {{ form_row(form.displayBikeKind) }}
+                {{ form_row(form.messages) }}
             </div>
             <div class="wrapper-footer">
                 {{ form_widget(form.save) }}

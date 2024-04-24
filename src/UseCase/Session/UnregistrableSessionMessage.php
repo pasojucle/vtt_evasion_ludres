@@ -10,6 +10,7 @@ use App\Entity\BikeRide;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Repository\SessionRepository;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\SeasonService;
@@ -21,6 +22,7 @@ class UnregistrableSessionMessage
 {
     public function __construct(
         private ParameterService $parameterService,
+        private MessageService $messageService,
         private IsRegistrable $isRegistrable,
         private IsWritableAvailability $isWritableAvailability,
         private ReplaceKeywordsService $replaceKeywordsService,
@@ -41,7 +43,7 @@ class UnregistrableSessionMessage
         }
 
         if (!$this->checkSeasonLicence($userDto)) {
-            return $this->replaceKeywordsService->replace($userDto, $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'));
+            return $this->replaceKeywordsService->replace($userDto, $this->messageService->getMessageByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'));
         }
 
         if (null !== $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {

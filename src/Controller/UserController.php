@@ -12,6 +12,7 @@ use App\Form\EmailMessageType;
 use App\Repository\ContentRepository;
 use App\Repository\IdentityRepository;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -84,7 +85,7 @@ class UserController extends AbstractController
         Request $request,
         MailerService $mailerService,
         ContentRepository $contentRepository,
-        ParameterService $parameterService,
+        MessageService $messageService,
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -100,7 +101,7 @@ class UserController extends AbstractController
             $data['firstName'] = $userDto->member->firstName;
             $data['email'] = $userDto->mainEmail;
 
-            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userDto, $subject, $parameterService->getParameterByName('EMAIL_CHANGE_USER_INFOS'))) {
+            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userDto, $subject, $messageService->getMessageByName('EMAIL_CHANGE_USER_INFOS'))) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 
                 return $this->redirectToRoute('user_change_infos');

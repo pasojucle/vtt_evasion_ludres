@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\User;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -15,7 +16,7 @@ class MailerSendUsersOffSite
 {
     public function __construct(
         private MailerService $mailerService,
-        private ParameterService $parameterService,
+        private MessageService $messageService,
         private Security $security,
         private UserDtoTransformer $userDtoTransformer,
     ) {
@@ -24,7 +25,7 @@ class MailerSendUsersOffSite
     public function execute(array $usersOffSite, BikeRide $bikeRide): void
     {
         if (!empty($usersOffSite)) {
-            $content = $this->parameterService->getParameterByName('BIKE_RIDE_ABSENCE_EMAIL');
+            $content = $this->messageService->getMessageByName('BIKE_RIDE_ABSENCE_EMAIL');
             $bikeRideTitle = $bikeRide->getTitle();
             foreach ($usersOffSite['users'] as $member) {
                 $this->mailerService->sendMailToMember($member, $bikeRideTitle, $content, null, $this->additionalParams($bikeRideTitle));

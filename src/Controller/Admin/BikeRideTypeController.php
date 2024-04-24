@@ -8,6 +8,8 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRideType;
 use App\Form\Admin\BikeRideTypeType;
 use App\Repository\BikeRideTypeRepository;
+use App\Repository\MessageRepository;
+use App\Service\MessageService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,6 +32,7 @@ class BikeRideTypeController extends AbstractController
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
+        MessageRepository $messageRepository,
         Request $request
     ): Response {
         $query = $this->bikeRideTypeRepository->findBikeRideTypeQuery();
@@ -38,6 +41,12 @@ class BikeRideTypeController extends AbstractController
         return $this->render('bike_ride_type/admin/list.html.twig', [
             'bikeRideTypes' => $bikeRideTypes,
             'paginator' => $paginatorDtoTransformer->fromEntities($bikeRideTypes),
+            'settings' => [
+                'actions' => [
+                    ['name' => 'admin_message_add', 'params' => ['sectionName' => 'BIKE_RIDE_TYPE'], 'label' => '<i class="fa-solid fa-square-plus"></i> Ajouter un message'],
+                ],
+                'messages' => $messageRepository->findBySectionNameAndQuery('BIKE_RIDE_TYPE'),
+            ],
         ]);
     }
 

@@ -9,7 +9,6 @@ use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
-use DateTime;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -151,5 +150,15 @@ class ReplaceKeywordsService
         }
 
         return (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $approvals['rightToTheImage']?->toString) : 'autorise';
+    }
+
+    public function replaceCurrentSaison(string|bool|array|int|null $content): string|bool|array|int|null
+    {
+        if (is_string($content)) {
+            $session = $this->requestStack->getSession();
+            return str_replace('{{ saison_actuelle }}', (string) $session->get('currentSeason'), $content);
+        }
+
+        return $content;
     }
 }

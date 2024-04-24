@@ -12,6 +12,7 @@ use App\Entity\User;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -32,6 +33,7 @@ class ShowModalWindow
         private UserDtoTransformer $userDtoTransformer,
         private RouterInterface $router,
         private ParameterService $parameterService,
+        private MessageService $messageService,
     ) {
     }
 
@@ -106,7 +108,7 @@ class ShowModalWindow
             $modalWindowsToShow[] = [
                 'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
                 'title' => sprintf('Inscription à la saison %s', $season),
-                'content' => $this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
+                'content' => $this->messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
                 'route' => 'user_registration_form',
                 'routeParams' => ['step' => 1],
                 'labelBtn' => 'S\'incrire'

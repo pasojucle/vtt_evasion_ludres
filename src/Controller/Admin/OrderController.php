@@ -11,6 +11,7 @@ use App\Form\Admin\OrderFilterType;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\ParameterRepository;
 use App\Service\ExportService;
+use App\Service\MessageService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +36,7 @@ class OrderController extends AbstractController
     #[IsGranted('PRODUCT_LIST')]
     public function adminOrders(
         ParameterRepository $parameterRepository,
+        MessageService $messageService,
         Request $request,
         bool $filtered
     ): Response {
@@ -62,7 +64,7 @@ class OrderController extends AbstractController
             'paginator' => $this->paginatorDtoTransformer->fromEntities($orders, array_merge($filters, ['filtered' => (int) $filtered])),
             'settings' => [
                 'parameters' => $parameterRepository->findByParameterGroupName('ORDER'),
-                'routes' => [],
+                'messages' => $messageService->getMessagesBySectionName('ORDER'),
             ],
         ]);
     }

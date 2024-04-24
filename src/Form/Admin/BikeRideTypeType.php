@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
+use App\Entity\Message;
 use App\Validator\NotEmptyArray;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
@@ -19,6 +20,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class BikeRideTypeType extends AbstractType
 {
@@ -72,6 +74,23 @@ class BikeRideTypeType extends AbstractType
                     'data-modifier' => 'bikeRideTypeContainer',
                 ],
             ])
+            ->add('messages', Select2EntityType::class, [
+                'class' => Message::class,
+                'remote_route' => 'admin_message_autocomplete',
+                'primary_key' => 'id',
+                'text_property' => 'label',
+                'multiple' => true,
+                'minimum_input_length' => 0,
+                'page_limit' => 10,
+                'allow_clear' => true,
+                'delay' => 250,
+                'cache' => true,
+                'cache_timeout' => 60000,
+                'language' => 'fr',
+                'placeholder' => 'Selectionner un message',
+                'width' => '100%',
+                'required' => true,
+            ])
             ->add('useLevels', CheckboxType::class, [
                 'label_html' => true,
                 'block_prefix' => 'switch',
@@ -81,7 +100,7 @@ class BikeRideTypeType extends AbstractType
                 ],
                 'attr' => [
                     'data-switch-on' => 'Afficher le niveau des participants',
-                    'data-switch-off' => 'ne pas afficher le niveau des participants',
+                    'data-switch-off' => 'Ne pas afficher le niveau des participants',
                 ],
             ])
             ->add('showMemberList', CheckboxType::class, [
@@ -93,7 +112,7 @@ class BikeRideTypeType extends AbstractType
                 ],
                 'attr' => [
                     'data-switch-on' => 'Afficher la liste des participants à l\'inscription',
-                    'data-switch-off' => 'ne pas afficher la liste des participants à l\'inscription',
+                    'data-switch-off' => 'Ne pas afficher la liste des participants à l\'inscription',
                 ],
             ])
             ->add('displayBikeKind', CheckboxType::class, [
@@ -105,7 +124,7 @@ class BikeRideTypeType extends AbstractType
                 ],
                 'attr' => [
                     'data-switch-on' => 'Afficher le type de vélo à l\'inscription',
-                    'data-switch-off' => 'ne pas afficher le type de vélo à l\'inscription',
+                    'data-switch-off' => 'Ne pas afficher le type de vélo à l\'inscription',
                 ],
             ])
             ->add('closingDuration', IntegerType::class, [
@@ -125,7 +144,7 @@ class BikeRideTypeType extends AbstractType
                     'class' => 'btn btn-primary float-right',
                 ],
             ])
-        ;
+            ;
         $formModifier = function (FormInterface $form, ?int $registration) {
             if (BikeRideType::REGISTRATION_CLUSTERS === $registration) {
                 $form->add('clusters', CollectionType::class, [

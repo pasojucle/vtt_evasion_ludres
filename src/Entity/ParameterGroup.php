@@ -7,34 +7,36 @@ namespace App\Entity;
 use App\Repository\ParameterGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: ParameterGroupRepository::class)]
+#[ORM\Entity(repositoryClass: ParameterGroupRepository::class)]
 class ParameterGroup
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50)]
     private string $name;
 
-    #[Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $label;
 
-    #[Column(type: 'string', length: 25)]
+    #[ORM\Column(type: 'string', length: 25)]
     private string $role;
 
-    #[OneToMany(targetEntity: Parameter::class, mappedBy: 'parameterGroup')]
+    #[ORM\OneToMany(targetEntity: Parameter::class, mappedBy: 'parameterGroup')]
     private $parameters;
 
     public function __construct()
     {
         $this->parameters = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->label;
     }
 
     public function getId(): ?int

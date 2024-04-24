@@ -13,8 +13,8 @@ use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\PaginatorService;
-use App\Service\ParameterService;
 use App\UseCase\SecondHand\EditSecondHand;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -168,14 +168,14 @@ class SecondHandController extends AbstractController
     public function contact(
         MailerService $mailerService,
         UserDtoTransformer $userDtoTransformer,
-        ParameterService $parameterService,
+        MessageService $messageService,
         SecondHand $secondHand
     ): Response {
         
         /** @var ?User $buyer */
         $buyer = $this->getUser();
         $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);
-        $content = $parameterService->getParameterByName('second_hand_contact');
+        $content = $messageService->getMessageByName('second_hand_contact');
         $additionalParams = [
             '{{ nom_annonce }}' => $secondHand->getName(),
             '{{ telephone }}' => $buyerDto->member->phone,

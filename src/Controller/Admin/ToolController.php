@@ -12,6 +12,7 @@ use App\Form\Admin\UserSearchType;
 use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -88,7 +89,7 @@ class ToolController extends AbstractController
         Request $request,
         MailerService $mailerService,
         UserDtoTransformer $userDtoTransformer,
-        ParameterService $parameterService,
+        MessageService $messageService,
         ParameterRepository $parameterRepository,
     ): Response {
         $form = $this->createForm(ToolType::class);
@@ -101,8 +102,8 @@ class ToolController extends AbstractController
             /** @var SubmitButton $submit */
             $submit = $form->get('submit');
             $content = ($submit->isClicked())
-                ? utf8_encode($data['content'])
-                : $parameterService->getParameterByName('EMAIL_REGISTRATION_ERROR');
+                ? mb_convert_encoding($data['content'], 'UTF-8', mb_list_encodings())
+                : $messageService->getMessageByName('EMAIL_REGISTRATION_ERROR');
             $form = $this->createForm(ToolType::class, [
                 'user' => $data['user'],
                 'content' => $content,
@@ -125,7 +126,6 @@ class ToolController extends AbstractController
             'form' => $form->createView(),
             'settings' => [
                 'parameters' => $parameterRepository->findByNames(['EMAIL_REGISTRATION_ERROR']),
-                'routes' => [],
             ],
         ]);
     }

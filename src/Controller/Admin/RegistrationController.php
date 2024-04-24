@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Repository\ParameterRepository;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\UseCase\Registration\GetRegistrationsFiltered;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,16 +23,18 @@ class RegistrationController extends AbstractController
     public function adminRegistrations(
         GetRegistrationsFiltered $getRegistrationsFiltered,
         ParameterService $parameterService,
+        MessageService $messageService,
         Request $request,
         bool $filtered
     ): Response {
         $params = $getRegistrationsFiltered->list($request, $filtered);
 
         $params['settings'] = [
-            'parameters' => $parameterService->getParametesrByParameterGroupName('REGISTRATION'),
+            'parameters' => $parameterService->getParametersByParameterGroupName('REGISTRATION'),
             'routes' => [
                 ['name' => 'admin_registration_step_list', 'label' => 'Étapes des inscriptions'],
             ],
+            'messages' => $messageService->getMessagesBySectionName('REGISTRATION'),
         ];
         return $this->render('user/admin/registrations.html.twig', $params);
     }

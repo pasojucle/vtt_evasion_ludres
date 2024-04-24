@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\LicenceDto;
 use App\Dto\ModalWindowDto;
 use App\Entity\Licence;
 use App\Entity\ModalWindow;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
+use App\Service\MessageService;
 use App\Service\ModalWindowService;
-use App\Service\ParameterService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,10 +23,10 @@ class ModalWindowDtoTransformer
     public function __construct(
         private ModalWindowService $modalWindowService,
         private UrlGeneratorInterface $router,
-        private ParameterService $parameterService
+        private MessageService $messageService,
     ) {
-        $this->modalWindowOrderInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
-        $this->modalWindowRegistrationInProgress = $this->parameterService->getParameterByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
+        $this->modalWindowOrderInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
+        $this->modalWindowRegistrationInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
     }
 
     public function fromModalWindow(ModalWindow $modalWindow): ModalWindowDto

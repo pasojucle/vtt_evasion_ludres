@@ -107,7 +107,7 @@ class MenuAdminService
             [
                 'label' => 'Pop up',
                 'route' => 'admin_modal_window_list',
-                'pattern' => '/popup/',
+                'pattern' => '/modal/',
                 'role' => 'MODAL_WINDOW_LIST',
             ],
             [
@@ -163,6 +163,12 @@ class MenuAdminService
                 'route' => 'admin_membership_fee',
                 'pattern' => '/membership/',
                 'role' => 'ROLE_ADMIN',
+            ],
+            [
+                'label' => 'Messages',
+                'route' => 'admin_message_list',
+                'pattern' => '/message/',
+                'role' => 'ROLE_SUPER_ADMIN',
             ],
         ]);
     }

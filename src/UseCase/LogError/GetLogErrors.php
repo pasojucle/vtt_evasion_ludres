@@ -34,7 +34,6 @@ class GetLogErrors
             'paginator' => $this->paginatorDtoTransformer->fromEntities($errors, ['statusCode' => $statusCode], 'admin_log_errors'),
             'settings' => [
                 'parameters' => $this->parameterRepository->findByNames(['ERROR_USER_AGENT_IGNORE', 'ERROR_URL_IGNORE']),
-                'routes' => [],
             ],
         ];
     }

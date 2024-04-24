@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\BikeRideTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideTypeRepository::class)]
@@ -62,11 +63,14 @@ class BikeRideType
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $displayBikeKind = false;
 
+    #[ORM\ManyToMany(targetEntity: Message::class)]
+    private Collection $messages;
 
     public function __construct()
     {
         $this->bikeRides = new ArrayCollection();
         $this->indemnities = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -250,6 +254,30 @@ class BikeRideType
     public function setDisplayBikeKind(bool $displayBikeKind): static
     {
         $this->displayBikeKind = $displayBikeKind;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        $this->messages->removeElement($message);
 
         return $this;
     }

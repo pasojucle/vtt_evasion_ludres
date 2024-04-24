@@ -18,10 +18,10 @@ use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -126,7 +126,7 @@ class ContentController extends AbstractController
         IdentityService $identityService,
         MailerService $mailerService,
         UserDtoTransformer $userDtoTransformer,
-        ParameterService $parameterService,
+        MessageService $messageService,
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -147,7 +147,7 @@ class ContentController extends AbstractController
                 : $data;
 
             $data['subject'] = 'Message envoyé depuis le site vttevasionludres.fr';
-            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userData, $data['subject'], $parameterService->getParameterByName('EMAIL_FORM_CONTACT'))) {
+            if ($mailerService->sendMailToClub($data) && $mailerService->sendMailToMember($userData, $data['subject'], $messageService->getMessageByName('EMAIL_FORM_CONTACT'))) {
                 $this->addFlash('success', 'Votre message a bien été envoyé');
 
                 return $this->redirectToRoute('contact');

@@ -10,7 +10,9 @@ use App\Entity\Content;
 use App\Form\Admin\ContentType;
 use App\Form\Admin\HomeBackgroundsType;
 use App\Repository\ContentRepository;
+use App\Repository\MessageRepository;
 use App\Repository\ParameterRepository;
+use App\Service\MessageService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Service\ProjectDirService;
@@ -102,7 +104,6 @@ class ContentController extends AbstractController
         Request $request,
         ContentDtoTransformer $contentDtoTransformer,
         UploadService $uploadService,
-        ParameterRepository $parameterRepository,
         ?Content $content
     ): Response {
         $form = $this->createForm(ContentType::class, $content);
@@ -137,10 +138,6 @@ class ContentController extends AbstractController
         return $this->render('content/admin/edit.html.twig', [
             'content' => $contentDtoTransformer->fromEntity($content),
             'form' => $form->createView(),
-            'settings' => [
-                'parameters' => ($content?->getParameters()) ? $parameterRepository->findByNames($content->getParameters()) : null,
-                'routes' => [],
-            ],
         ]);
     }
 
@@ -150,7 +147,7 @@ class ContentController extends AbstractController
         Request $request,
         ContentDtoTransformer $contentDtoTransformer,
         UploadService $uploadService,
-        ParameterRepository $parameterRepository,
+        MessageRepository $messageRepository,
         Content $content
     ): Response {
         $form = $this->createForm(ContentType::class, $content);
@@ -179,8 +176,7 @@ class ContentController extends AbstractController
             'content' => $contentDtoTransformer->fromEntity($content),
             'form' => $form->createView(),
             'settings' => [
-                'parameters' => ($content->getParameters()) ? $parameterRepository->findByNames($content->getParameters()) : null,
-                'routes' => [],
+                'messages' => (empty($content->getParameters())) ? $messageRepository->findByNames($content->getParameters()) : null,
             ],
         ]);
     }

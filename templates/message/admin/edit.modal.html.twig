@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Modifier un message{% endblock %}
+{% block body %}
+    {{ form_row(form.content) }}
+    {{ form_row(form.referer) }}
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Modifier' %}
+    {{ parent() }}
+{% endblock %}

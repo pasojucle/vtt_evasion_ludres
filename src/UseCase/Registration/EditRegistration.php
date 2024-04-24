@@ -10,18 +10,17 @@ use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use App\Security\SelfAuthentication;
 use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\LicenceService;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\StringService;
 use App\Service\UploadService;
 use App\UseCase\Registration\GetRegistrationFile;
 use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +42,7 @@ class EditRegistration
         private StringService $stringService,
         private CommuneService $communeService,
         private GetRegistrationFile $getRegistrationFile,
-        private ParameterRepository $parameterRepository,
+        private MessageService $messageService,
         private SelfAuthentication $selfAuthentication,
     ) {
     }
@@ -123,11 +122,11 @@ class EditRegistration
     {
         $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
 
-        $parameter = $this->parameterRepository->findOneByName((!$isLoginSend) ? 'EMAIL_ACCOUNT_CREATED' : 'EMAIL_REGISTRATION');
+        $content = $this->messageService->getMessageByName((!$isLoginSend) ? 'EMAIL_ACCOUNT_CREATED' : 'EMAIL_REGISTRATION');
         $subject = 'Votre inscription sur le site VTT Evasion Ludres';
         $attachements = $this->getRegistrationFile->execute($user);
 
-        $this->mailerService->sendMailToMember($userDto, $subject, $parameter->getValue(), $attachements);
+        $this->mailerService->sendMailToMember($userDto, $subject, $content, $attachements);
     }
 
     private function UploadFile(Request $request, User $user): void

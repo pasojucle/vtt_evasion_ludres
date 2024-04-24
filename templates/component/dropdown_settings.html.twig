@@ -1,18 +1,32 @@
-
-{% if settings is defined and is_granted('ROLE_ADMIN') and (settings.routes is not empty or settings.parameters is not empty) %}
+ {% if settings is defined and is_granted('ROLE_ADMIN') %}
     <div class="dropdown sliders">
         <button class="dropdown-toggle" type="button" data-toggle="dropdown-settings"></button>
         <div class="dropdown-menu" data-target="dropdown-settings">
-            <div class="dropdown-title"><i class="fas fa-sliders-h"></i> Paramètrages</div>
             <ul class="dropdown-body">
+            {% if settings.routes is defined %}
                 {% for route in settings.routes %}
-                    <li><a href="{{ path(route.name) }}" class="dropdown-item" title="{{ route.label }}">{{ route.label }}</a></li>
+                    <li><a href="{{ path(route.name) }}" class="dropdown-item" title="{{ route.label }}"><i class="fas fa-sliders-h"></i> {{ route.label|raw  }}</a></li>
                 {% endfor %}
+            {% endif %}
+            {% if settings.actions is defined %}
+                {% for action in settings.actions %}
+                    <li><a href="{{ path(action.name, action.params) }}" class="dropdown-item" title="{{ action.label }}">{{ action.label|raw  }}</a></li>
+                {% endfor %}
+            {% endif %}
+            {% if settings.parameters is defined %}
                 {% for parameter in settings.parameters %}
                     <li>
-                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name })}}" title="{{ parameter.label }}" data-toggle="modal" data-type="primary">{{ parameter.label }}</a>
+                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name })}}" title="{{ parameter.label }}" data-toggle="modal" data-type="primary"><i class="fas fa-sliders-h"></i> {{ parameter.label }}</a>
                     </li>
                 {% endfor %}
+            {% endif %}
+            {% if settings.messages is defined %}
+                {% for message in settings.messages %}
+                    <li>
+                        <a class="dropdown-item" href="{{ path('admin_message_edit_content', {'message': message.id })}}" title="{{ message.label }}" data-toggle="modal" data-type="primary"><i class="fa-regular fa-message"></i> {{ message.label }}</a>
+                    </li>
+                {% endfor %}
+            {% endif %}
             </ul>
         </div>
     </div>

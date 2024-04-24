@@ -6,6 +6,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\SecondHand;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use DateInterval;
 use DateTimeImmutable;
@@ -29,6 +30,7 @@ class OutOfPeriodSecondHandsCommand extends Command
     private SymfonyStyle $ssio;
     public function __construct(
         private ParameterService $parameterService,
+        private MessageService $messageService,
         private SecondHandRepository $secondHandRepository,
         private EntityManagerInterface $entityManager,
         private MailerService $mailerService,
@@ -65,7 +67,7 @@ class OutOfPeriodSecondHandsCommand extends Command
     {
         $userDto = $this->userDtoTransformer->identifiersFromEntity($secondHand->getUser());
         $subject = sprintf('Votre annonce %s', $secondHand->getName());
-        $content = $this->parameterService->getParameterByName('SECOND_HAND_DISABLED_MESSAGE');
+        $content = $this->messageService->getMessageByName('SECOND_HAND_DISABLED_MESSAGE');
         $additionalParams = [
             '{{ url }}' => $this->urlGenerator->generate('second_hand_user_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
             '{{ nom_annonce }}' => $secondHand->getName(),

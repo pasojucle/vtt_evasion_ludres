@@ -7,14 +7,13 @@ namespace App\Service;
 use App\Dto\UserDto;
 use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class ParameterService
 {
     public function __construct(
         private ParameterRepository $parameterRepository,
+        private MessageService $messageService,
         private ReplaceKeywordsService $replaceKeywordsService,
-        private RequestStack $requestStack,
     ) {
     }
 
@@ -23,12 +22,13 @@ class ParameterService
         $parameter = $this->parameterRepository->findOneByName($name);
 
         if ($parameter) {
-            return $this->getReplaceKeywords($parameter->getValue());
+            return $this->replaceKeywordsService->replaceCurrentSaison($parameter->getValue());
         }
 
         return null;
     }
-    public function getParametesrByParameterGroupName(string $name): array
+
+    public function getParametersByParameterGroupName(string $name): array
     {
         $parameters = [];
         
@@ -36,7 +36,7 @@ class ParameterService
         foreach ($this->parameterRepository->findByParameterGroupName($name) as $parameter) {
             $parameters[] = [
                 'name' => $parameter->getName(),
-                'label' => $this->getReplaceKeywords($parameter->getLabel()),
+                'label' => $this->replaceKeywordsService->replaceCurrentSaison($parameter->getLabel()),
             ];
         };
         return $parameters;
@@ -45,22 +45,12 @@ class ParameterService
     public function getSchoolTestingRegistration(UserDto $user): array
     {
         $value = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION');
-        $message = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION_MESSAGE');
+        $message = $this->messageService->getMessageByName('SCHOOL_TESTING_REGISTRATION_MESSAGE');
         $message = $this->replaceKeywordsService->replace($user, $message);
 
         return [
             'value' => $value,
             'message' => $message,
         ];
-    }
-
-    public function getReplaceKeywords(string|bool|array|int|null $content): string|bool|array|int|null
-    {
-        if (is_string($content)) {
-            $session = $this->requestStack->getSession();
-            return str_replace('{{ saison_actuelle }}', (string) $session->get('currentSeason'), $content);
-        }
-
-        return $content;
     }
 }

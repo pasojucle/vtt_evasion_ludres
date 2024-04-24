@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Parameter;
-use App\Service\ParameterService;
+use App\Service\ReplaceKeywordsService;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ParameterType extends AbstractType
 {
-    public function __construct(private ParameterService $parameterService)
+    public function __construct(private ReplaceKeywordsService $replaceKeywords)
     {
     }
 
@@ -31,7 +31,7 @@ class ParameterType extends AbstractType
             if (null !== $parameter) {
                 $type = $parameter->getType();
                 $value = $parameter->getValue();
-                $label = $this->parameterService->getReplaceKeywords($parameter->getLabel());
+                $label = $this->replaceKeywords->replaceCurrentSaison($parameter->getLabel());
                 $form = $event->getForm();
                 $fieldOptions = [];
 

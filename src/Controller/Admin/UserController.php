@@ -11,7 +11,7 @@ use App\Form\Admin\UserBoardRoleType;
 use App\Form\Admin\UserType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
-use App\Service\ParameterService;
+use App\Service\MessageService;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetOverviewSeason;
@@ -39,6 +39,7 @@ class UserController extends AbstractController
     #[IsGranted('USER_LIST')]
     public function adminUsers(
         GetMembersFiltered $getMembersFiltered,
+        MessageService $messageService,
         Request $request,
         bool $filtered
     ): Response {
@@ -49,7 +50,8 @@ class UserController extends AbstractController
             'routes' => [
                 ['name' => 'admin_levels', 'label' => 'Niveaux'],
                 ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
-            ]
+            ],
+            'messages' => $messageService->getMessagesBySectionName('USER'),
         ];
 
         return $this->render('user/admin/users.html.twig', $params);
@@ -169,12 +171,12 @@ class UserController extends AbstractController
     #[IsGranted('USER_EDIT', 'user')]
     public function adminSendLicence(
         MailerService $mailerService,
-        ParameterService $parameterService,
+        MessageService $messageService,
         User $user
     ): RedirectResponse {
         $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
         $subject = 'Votre numero de licence';
-        $mailerService->sendMailToMember($userDto, $subject, $parameterService->getParameterByName('EMAIL_LICENCE_VALIDATE'));
+        $mailerService->sendMailToMember($userDto, $subject, $messageService->getMessageByName('EMAIL_LICENCE_VALIDATE'));
 
         $this->addFlash('success', 'Le messsage à été envoyé avec succès');
 

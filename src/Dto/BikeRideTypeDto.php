@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Entity\BikeRideType;
+use Doctrine\Common\Collections\Collection;
 
 class BikeRideTypeDto
 {
@@ -23,4 +24,6 @@ class BikeRideTypeDto
     public ?bool $isShowMemberList;
 
     public bool $isNeedFramers = false;
+
+    public array|string $messages;
 }

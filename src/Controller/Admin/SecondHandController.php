@@ -10,6 +10,7 @@ use App\Entity\SecondHand;
 use App\Form\SecondHandType;
 use App\Repository\ParameterRepository;
 use App\Repository\SecondHandRepository;
+use App\Service\MessageService;
 use App\Service\PaginatorService;
 use App\Service\UploadService;
 use DateTimeImmutable;
@@ -35,6 +36,7 @@ class SecondHandController extends AbstractController
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
+        MessageService $messageService,
         Request $request,
         bool $valid,
     ): Response {
@@ -48,7 +50,8 @@ class SecondHandController extends AbstractController
                 'parameters' => $this->parameterRepository->findByParameterGroupName('SECOND_HAND'),
                 'routes' => [
                     ['name' => 'admin_category_list', 'label' => 'Catégories d\'occasions'],
-                ]
+                ],
+                'messages' => $messageService->getMessagesBySectionName('SECOND_HAND'),
             ]
         ]);
     }

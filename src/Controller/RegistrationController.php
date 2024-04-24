@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
 use App\Security\SelfAuthentication;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
 use App\UseCase\Registration\EditRegistration;
@@ -75,7 +75,7 @@ class RegistrationController extends AbstractController
         SelfAuthentication $selfAuthentication,
         int $step
     ): Response {
-        if ('user_registration_form' === $request->attributes->get('_route')) {
+        if ('user_registration_form' === $request->attributes->get('_route') || 1 < $step) {
             $this->denyAccessUnlessGranted('ROLE_USER');
         }
         $session = $request->getSession();
@@ -207,10 +207,10 @@ class RegistrationController extends AbstractController
 
     #[Route('/reinscription/impossible', name: 'unregistrable_new_saison', methods: ['GET'])]
     public function unregistrableNewSeason(
-        ParameterService $parameterService,
+        MessageService $messageService,
     ): Response {
         return $this->render('registration/unregistrable.html.twig', [
-            'warning' => $parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_DISABLED_MESSAGE'),
+            'warning' => $messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_DISABLED_MESSAGE'),
          ]);
     }
 }
