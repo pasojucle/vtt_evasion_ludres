@@ -225,7 +225,12 @@ class ContentController extends AbstractController
     ): JsonResponse {
         $images = [];
         $finder = new Finder();
-        $finder->files()->in($projectDir->path('slideshow'))->name(['*.jpg', '*.png', '*.jpeg'])->depth('<= 1');
+        $finder->files()
+            ->in($projectDir->path('slideshow'))
+            ->name(['*.jpg', '*.png', '*.jpeg'])
+            ->depth('<= 1')
+            ->sortByChangedTime()
+            ->reverseSorting();
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
