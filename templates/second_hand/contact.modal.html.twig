@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{# {% set button_href = path('second_hand_delete', {'secondHand' : second_hand.id}) %} #}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Contacter le vendeur{% endblock %}
+{% block body %}
+    <p>{{ message|raw }}</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Contacter' %}
+    {{ parent() }}
+{% endblock %}

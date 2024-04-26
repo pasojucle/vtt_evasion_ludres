@@ -169,29 +169,44 @@ class SecondHandController extends AbstractController
         MailerService $mailerService,
         UserDtoTransformer $userDtoTransformer,
         MessageService $messageService,
+        Request $request,
         SecondHand $secondHand
     ): Response {
-        
-        /** @var ?User $buyer */
-        $buyer = $this->getUser();
-        $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);
-        $content = $messageService->getMessageByName('second_hand_contact');
-        $additionalParams = [
-            '{{ nom_annonce }}' => $secondHand->getName(),
-            '{{ telephone }}' => $buyerDto->member->phone,
-            '{{ email }}' => $buyerDto->mainEmail,
-            '{{ prenom_nom }}' => $buyerDto->member->fullName,
-        ];
-        $seller = $secondHand->getUser();
-        $sellerDto = $userDtoTransformer->identifiersFromEntity($seller);
-        $subject = sprintf('Votre annonce %s', $secondHand->GetName());
-        
-        if ($mailerService->sendMailToMember($sellerDto, $subject, $content, null, $additionalParams)) {
-            $this->addFlash('success', 'Votre message a bien été envoyé');
-        } else {
-            $this->addFlash('danger', 'Une erreure est survenue');
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl(
+                'second_hand_message',
+                ['secondHand' => $secondHand->getId()]
+            ),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            /** @var ?User $buyer */
+            $buyer = $this->getUser();
+            $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);
+            $content = $messageService->getMessageByName('SECOND_HAND_CONTACT');
+            $additionalParams = [
+                '{{ nom_annonce }}' => $secondHand->getName(),
+                '{{ telephone }}' => $buyerDto->member->phone,
+                '{{ email }}' => $buyerDto->mainEmail,
+                '{{ prenom_nom }}' => $buyerDto->member->fullName,
+            ];
+            $seller = $secondHand->getUser();
+            $sellerDto = $userDtoTransformer->identifiersFromEntity($seller);
+            $subject = sprintf('Votre annonce %s', $secondHand->GetName());
+            
+            if ($mailerService->sendMailToMember($sellerDto, $subject, $content, null, $additionalParams)) {
+                $this->addFlash('success', 'Votre message a bien été envoyé');
+            } else {
+                $this->addFlash('danger', 'Une erreure est survenue');
+            }
+
+            return $this->redirectToRoute('second_hand_list');
         }
 
-        return $this->redirectToRoute('second_hand_show', ['secondHand' => $secondHand->getId()]);
+        return $this->render('second_hand/contact.modal.html.twig', [
+            'message' => $messageService->getMessageByName('SECOND_HAND_CONTACT_CONFIRM'),
+            'form' => $form->createView(),
+        ]);
     }
 }
