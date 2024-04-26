@@ -169,15 +169,15 @@ class MessageController extends AbstractController
         Request $request,
     ): JsonResponse {
         $query = $request->query->get('q');
-        $response = [];
+        $results = [];
         $messages = $this->messageRepository->findBySectionNameAndQuery('BIKE_RIDE_TYPE', $query);
         foreach ($messages as $message) {
-            $response[] = [
-                'id' => $message->getId(),
+            $results[] = [
+                'value' => $message->getId(),
                 'text' => $message->__toString(),
             ];
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse(['results' => $results]);
     }
 }

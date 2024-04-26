@@ -8,6 +8,7 @@ use App\Entity\BikeRideType;
 use App\Form\Type\CkeditorType;
 use App\Entity\Message;
 use App\Validator\NotEmptyArray;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,10 +21,16 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BikeRideTypeType extends AbstractType
 {
+    public function __construct(
+        Private readonly UrlGeneratorInterface $urlGenerator,
+    )
+    {
+        
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -74,22 +81,9 @@ class BikeRideTypeType extends AbstractType
                     'data-modifier' => 'bikeRideTypeContainer',
                 ],
             ])
-            ->add('messages', Select2EntityType::class, [
-                'class' => Message::class,
-                'remote_route' => 'admin_message_autocomplete',
-                'primary_key' => 'id',
-                'text_property' => 'label',
-                'multiple' => true,
-                'minimum_input_length' => 0,
-                'page_limit' => 10,
-                'allow_clear' => true,
-                'delay' => 250,
-                'cache' => true,
-                'cache_timeout' => 60000,
-                'language' => 'fr',
-                'placeholder' => 'Selectionner un message',
-                'width' => '100%',
-                'required' => true,
+            ->add('messages', MessageAutocompleteField::class, [
+                'label' => 'Adhérent',
+                'autocomplete_url' => $this->urlGenerator->generate('admin_message_autocomplete'),
             ])
             ->add('useLevels', CheckboxType::class, [
                 'label_html' => true,
