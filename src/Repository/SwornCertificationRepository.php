@@ -44,7 +44,7 @@ class SwornCertificationRepository extends ServiceEntityRepository
     {
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->eq('sc.adult', ':isAdult'));
-        $parameters = ['isAdult', true];
+        $parameters = [new Parameter('isAdult', true)];
         $this->addExistingLicenceSwornCertificationCriteria($andX, $parameters, $existingLicenceSwornCertifications);
 
         return $this->createQueryBuilder('sc')
@@ -76,7 +76,7 @@ class SwornCertificationRepository extends ServiceEntityRepository
     {
         if (!empty($existingLicenceSwornCertifications)) {
             $andX->add((new Expr())->notIn('sc.id', ':existingLicenceSwornCertifications'));
-            $parameters['existingLicenceSwornCertifications'] = $existingLicenceSwornCertifications;
+            $parameters[] = new Parameter('existingLicenceSwornCertifications', $existingLicenceSwornCertifications);
         }
     }
 }

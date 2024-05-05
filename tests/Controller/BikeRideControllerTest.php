@@ -5,30 +5,25 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use DateTime;
-use DOMDocument;
 use DateInterval;
 use App\Entity\User;
 use App\Entity\Session;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
-use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
 use App\Repository\SessionRepository;
 use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Controller\AbstractTestController;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\DomCrawler\Field\TextareaFormField;
 
-class BikeRideControllerTest extends WebTestCase
+
+class BikeRideControllerTest extends AbstractTestController
 {
-    private KernelBrowser $client;
-    private UserRepository $userRepository;
-    public function testAdminList()
+    public function testAdminBikeRide()
     {
-        $this->client = static::createClient([], ['REMOTE_ADDR' => '11.11.11.11']);
+        $this->init();
         $this->cleanDataBase();
         $this->testAdminSchedule();
         $bikeRideType = $this->testAdminAddBikeRide(2);
@@ -54,20 +49,13 @@ class BikeRideControllerTest extends WebTestCase
         $connection->executeQuery("SET FOREIGN_KEY_CHECKS=1;");
     }
 
-    private function loginAdmin(): void
-    {
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $testAdmin = $this->userRepository->findOneByLicenceNumber('624758');
-        $this->client->loginUser($testAdmin);
-    }
-
     private function testAdminSchedule(): void
     {
-        $this->client->request('GET', '/admin/calendrier');
         $this->loginAdmin();
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
+        $this->client->request('GET', '/admin/calendrier');
         $this->assertSelectorTextContains('.wrapper h1', 'Programme des sorties');
     }
 
@@ -80,12 +68,10 @@ class BikeRideControllerTest extends WebTestCase
         $startAt = (new DateTime());
         $startAt->add(new DateInterval(sprintf('P%dD', 7 - $startAt->format('w'))));
         $closingDuration = $bikeRideType->getClosingDuration() ?? 0;
-        $domdocument = new DOMDocument;
-        $ff = $domdocument->createElement('textarea');
-        $ff->setAttribute('name','bike_ride[content]');
-        $formfield = new TextareaFormField($ff);
+
         $form = $this->client->getCrawler()->selectButton('Enregistrer')->form();
-        $form->set($formfield); 
+
+        $this->addAutocompleteField($form, 'bike_ride[content]'); 
 
         $form['bike_ride[bikeRideType]'] = (string) $bikeRideTypeId;
         $form['bike_ride[title]'] = $bikeRideType->getName();

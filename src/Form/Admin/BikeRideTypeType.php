@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
-use App\Form\Type\CkeditorType;
 use App\Entity\Message;
+use App\Form\Type\CkeditorType;
 use App\Validator\NotEmptyArray;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -26,10 +26,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class BikeRideTypeType extends AbstractType
 {
     public function __construct(
-        Private readonly UrlGeneratorInterface $urlGenerator,
-    )
-    {
-        
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

@@ -15,6 +15,7 @@ use DateInterval;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
@@ -766,5 +767,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->groupBy('u.id')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findOneByLicenceNumber(string $licenceNumber): ?User
+    {
+        try {
+            return $this->createQueryBuilder('u')
+                ->andWhere(
+                    (new Expr())->eq('u.licenceNumber', ':licenceNumber')
+                )
+                ->setParameter('licenceNumber', $licenceNumber)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 }

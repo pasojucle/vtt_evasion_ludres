@@ -161,6 +161,7 @@ class UserDtoTransformer
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($userEntity->getMemberIdentity());
         $userDto->mainEmail = $mainIdentity->email;
         $userDto->mainFullName = $mainIdentity->fullName;
+        $userDto->licenceNumber = $userEntity->getLicenceNumber();
         return $userDto;
     }
     

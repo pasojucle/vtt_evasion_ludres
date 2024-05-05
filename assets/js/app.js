@@ -79,7 +79,6 @@ function confirmDeleteUser(e) {
     let route = Routing.generate('admin_tool_confirm_delete_user', {'user': user});
     let anchor = $('<a class="modal-trigger" href="'+route+'" data-toggle="modal" data-type="danger"></a>');
     form.append(anchor);
-    console.log('anchor', anchor);
     anchor.click();
 }
 
