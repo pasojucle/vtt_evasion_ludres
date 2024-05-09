@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Actualitées{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Actualités</h1>
+            <div class="tool-group">
+                <a href="{{ path('admin_bike_rides') }}" class="btn btn-ico" title="Retour à la liste des randos"><i class="fas fa-chevron-left"></i></a>
+            </div>
+        </div>
+        <div class="wrapper-body">
+            <a href="{{ path('admin_summary_add', {'bikeRide': bike_ride.id}) }}" class="btn btn-primary mb-20" title="Ajouter une actualité"><i class="fas fa-plus"></i> Ajouter une actualité</a>
+            <h2>{{ bike_ride.title }} - {{ bike_ride.period }}</h2>
+            <ul>
+                {% for summary in summaries %}     
+                    <li class="list-dropdown">
+                        <a href="{{ path('admin_summary_edit', {'summary': summary.id})}}" >
+                            <div class="row">
+                                <div class="col-md-3">{{ summary.createdAt|date('d/m/Y') }}</div>
+                                <div class="col-md-9">{{ summary.Title }}</div>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

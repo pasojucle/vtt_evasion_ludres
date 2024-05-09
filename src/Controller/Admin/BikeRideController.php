@@ -177,7 +177,7 @@ class BikeRideController extends AbstractController
         return $this->render('bike_ride/admin/framer_list.html.twig', $params);
     }
 
-    #[Route('/admin/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
+    #[Route('/supprimer/sortie/{bikeRide}', name: 'admin_bike_ride_delete', methods: ['GET', 'POST'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
     public function adminLevelDelete(
         Request $request,

@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ContentDtoTransformer;
 use App\Dto\DtoTransformer\DocumentationDtoTransformer;
+use App\Dto\DtoTransformer\SummaryDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Link;
 use App\Entity\User;
@@ -16,6 +17,7 @@ use App\Repository\ContentRepository;
 use App\Repository\DocumentationRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
+use App\Repository\SummaryRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
 use App\Service\MessageService;
@@ -254,5 +256,15 @@ class ContentController extends AbstractController
         }
 
         return new Response(null, Response::HTTP_NOT_FOUND);
+    }
+
+    #[Route('/club/actualites', name: 'club_summary', methods: ['GET'])]
+    public function summary(
+        SummaryRepository $summaryRepository,
+        SummaryDtoTransformer $summaryDtoTransformer,
+    ): Response {
+        return $this->render('content/summary.html.twig', [
+            'summaries_by_bike_rides' => $summaryDtoTransformer->fromEntities($summaryRepository->findLatestDesc()),
+        ]);
     }
 }

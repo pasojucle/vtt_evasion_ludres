@@ -138,6 +138,12 @@ class MenuService
                 'pattern' => '/club_slideshow/',
                 'role' => 'SLIDESHOW_LIST',
             ],
+            [
+                'label' => 'Actualités',
+                'route' => 'club_summary',
+                'pattern' => '/club_summary/',
+                'role' => 'SUMMARY_LIST',
+            ],
         ];
     }
 

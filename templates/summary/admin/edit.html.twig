@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% set title = (summary is null) ? 'Ajouter une actualité' : 'Modifier une actualité' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+    {{ form_start(form) }}
+        <div class="wrapper-title">
+            <h1>{{ title }}</h1>
+            <span class="tools">
+                <a href="{{ path('admin_summary_list', {'bikeRide': summary.bikeRide.id}) }}" class="btn btn-ico" title="Retour à la liste des actualités"><i class="fas fa-chevron-left"></i></a>
+            </span>
+        </div>
+        <div class="wrapper-body">
+            <div class="form-group">
+                {{ form_row(form.title) }}
+            </div>
+            {{ form_row(form.content) }}
+        </div>
+        <div class="wrapper-footer">
+            {{ form_widget(form.save) }}
+            {% if form.search is defined %}
+                {{ form_widget(form.search) }}
+            {% endif %}
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

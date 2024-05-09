@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mon compte'} %}
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width">
+        <div class="wrapper-title">
+            <h1>Actualités</h1>
+        </div>
+        <div class="wrapper-body">
+            {% for bike_ride in summaries_by_bike_rides %}
+                <div class="block background-ligth">
+                    <div class="block-body">
+                        <h2>{{ bike_ride.title }}</h2>
+                        <ul>
+                            {% for summary in bike_ride.summaries %}
+                                <li class="list">
+                                    <b>{{ summary.createdAt }} - {{ summary.title }}</b>
+                                    <div>{{ summary.content|raw }}</div>
+                                    <div style="clear:both;"></div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>  
+                </div>
+            {% endfor %}
+            {% if summaries_by_bike_rides is empty %}
+                <div class="block background-white">
+                    <div class="block-body">
+                        <p>Ancunes actualités</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

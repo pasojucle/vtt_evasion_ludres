@@ -10,8 +10,8 @@ use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
+use App\Service\BikeRideService;
 use App\Service\ProjectDirService;
-use App\Twig\AppExtension;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use DateInterval;
@@ -31,13 +31,13 @@ class BikeRideDtoTransformer
 
     public function __construct(
         private Security $security,
-        private AppExtension $appExtension,
         private IsWritableAvailability $isWritableAvailability,
         private IsRegistrable $isRegistrable,
         private ProjectDirService $projectDirService,
         private BikeRideTypeDtoTransformer $bikeRideTypeDtoTransformer,
         private SurveyDtoTransformer $surveyDtoTransformer,
         private SessionRepository $sessionRepository,
+        private BikeRideService $bikeRideService,
     ) {
         $this->today = (new DateTimeImmutable())->setTime(0, 0, 0);
     }
@@ -63,7 +63,7 @@ class BikeRideDtoTransformer
             $this->displayAt = $bikeRideDto->startAt->setTime(0, 0, 0);
             $this->closingAt = $bikeRideDto->startAt->setTime(23, 59, 59);
             $bikeRideDto->displayClass = $this->getDisplayClass($bikeRideDto->displayDuration);
-            $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
+            $bikeRideDto->period = $this->bikeRideService->getPeriod($bikeRide);
             $bikeRideDto->isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
             $bikeRideDto->isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
             $bikeRideDto->unregistrable = $this->getUnregistrable($userAvailableSessions, $bikeRide);
@@ -91,7 +91,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
             $bikeRideDto->content = $bikeRide->getContent();
             $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
-            $bikeRideDto->period = $this->getPeriod($bikeRideDto->startAt, $bikeRideDto->endAt);
+            $bikeRideDto->period = $this->bikeRideService->getPeriod($bikeRide);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
         }
 
@@ -150,13 +150,6 @@ class BikeRideDtoTransformer
         }
 
         return 'S\'incrire';
-    }
-
-    private function getPeriod(DateTimeImmutable $startAt, ?DateTimeImmutable $endAt): string
-    {
-        return  (null === $endAt)
-            ? $this->appExtension->formatDateLong($startAt)
-            : $this->appExtension->formatDateLong($startAt) . ' au ' . $this->appExtension->formatDateLong($endAt);
     }
 
     private function getFilename(?string $filename): ?string

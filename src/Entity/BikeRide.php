@@ -100,11 +100,16 @@ class BikeRide
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $registrationEnabled = true;
 
+    #[ORM\OneToMany(mappedBy: 'bikeRide', targetEntity: Summary::class)]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
+    private Collection $summaries;
+
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
         $this->startAt = new DateTimeImmutable();
         $this->users = new ArrayCollection();
+        $this->summaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -371,6 +376,36 @@ class BikeRide
     public function setRegistrationEnabled(bool $registrationEnabled): static
     {
         $this->registrationEnabled = $registrationEnabled;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Summary>
+     */
+    public function getSummaries(): Collection
+    {
+        return $this->summaries;
+    }
+
+    public function addSummary(Summary $summary): static
+    {
+        if (!$this->summaries->contains($summary)) {
+            $this->summaries->add($summary);
+            $summary->setBikeRide($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSummary(Summary $summary): static
+    {
+        if ($this->summaries->removeElement($summary)) {
+            // set the owning side to null (unless already changed)
+            if ($summary->getBikeRide() === $this) {
+                $summary->setBikeRide(null);
+            }
+        }
 
         return $this;
     }
