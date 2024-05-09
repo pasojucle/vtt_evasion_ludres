@@ -65,13 +65,16 @@ class SummaryVoter extends Voter
             return true;
         }
 
-        $startAt = match (true) {
-            $subject instanceof Summary => $subject->getBikeRide()->getStartAt(),
-            default => $subject->getStartAt(),
-        };
+        list($startAt, $endAt) = ($subject instanceof Summary)
+            ? [$subject->getBikeRide()->getStartAt(), $subject->getBikeRide()->getEndAt()]
+            : [$subject->getStartAt(), $subject->getEndAt()];
+
+        if (!$endAt) {
+            $endAt = $startAt;
+        }
 
         $today = new DateTime();
-        if ($today < $startAt->setTime(0, 0, 0) || $startAt->setTime(23, 59, 59) < $today) {
+        if ($today < $startAt->setTime(0, 0, 0) || $endAt->setTime(23, 59, 59) < $today) {
             return false;
         }
 

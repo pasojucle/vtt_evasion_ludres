@@ -34,30 +34,32 @@
                         {% else %}
                             <div class="list-item">{{ bikeRide_content }}</div>
                         {% endif %}
-                        {% if is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_ADMIN') or is_granted('SUMMARY_LIST') %}
                             <div class="dropdown">
                                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ bikeRide.id }}"></button>
                                 <div class="dropdown-menu" data-target="dropdown-{{ bikeRide.id }}">
                                     <div class="dropdown-title">{{ bikeRide.startAt | date('d/m/y') }} - {{ bikeRide.title }}</div>
                                     <ul class="dropdown-body">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
-                                                <i class="fas fa-pencil-alt"></i> Modifier
-                                            </a>
-                                        </li>
-                                        {% if bikeRide.startAt > date() %}
-                                        <li>
-                                            <a class="dropdown-item  modal-trigger" data-toggle="modal" data-type="danger" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
-                                                <i class="fas fa-times"></i> Annuler
-                                            </a>
-                                        </li>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <li>
+                                                <a class="dropdown-item" href="{{ path('admin_bike_ride_edit', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
+                                                    <i class="fas fa-pencil-alt"></i> Modifier
+                                                </a>
+                                            </li>
+                                            {% if bikeRide.startAt > date() %}
+                                            <li>
+                                                <a class="dropdown-item  modal-trigger" data-toggle="modal" data-type="danger" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
+                                                    <i class="fas fa-times"></i> Annuler
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            <li>
+                                                <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Exporter la séance">
+                                                    <i class="fas fa-file-download"></i> Exporter la séance
+                                                </a>
+                                            </li>
+                                            <li><a href="{{ path('admin_bike_ride_members_email_to_clipboard', {'bikeRide': bikeRide.id}) }}" class="dropdown-item email-to-clipboard" title="Copier les emails des participants"><i class="fas fa-copy"></i> Copier les emails des participants</a></li>
                                         {% endif %}
-                                        <li>
-                                            <a href="{{ path('admin_bike_ride_export', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Exporter la séance">
-                                                <i class="fas fa-file-download"></i> Exporter la séance
-                                            </a>
-                                        </li>
-                                        <li><a href="{{ path('admin_bike_ride_members_email_to_clipboard', {'bikeRide': bikeRide.id}) }}" class="dropdown-item email-to-clipboard" title="Copier les emails des participants"><i class="fas fa-copy"></i> Copier les emails des participants</a></li>
                                         {% if is_granted('SUMMARY_LIST') %}
                                             <li><a href="{{ path('admin_summary_list', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Actualités"><i class="fa-solid fa-rectangle-list"></i> Actualités</a></li>
                                         {% endif %}

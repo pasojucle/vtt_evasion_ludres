@@ -6,7 +6,6 @@ namespace App\Form\Admin;
 
 use App\Entity\BoardRole;
 use App\Entity\Level;
-use App\Entity\Licence;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
@@ -23,7 +22,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 class UserBoardRoleType extends AbstractType
 {

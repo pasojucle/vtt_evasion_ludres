@@ -721,6 +721,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             self::PERMISSION_MODAL_WINDOW => false,
             self::PERMISSION_SECOND_HAND => false,
             self::PERMISSION_PARTICIPATION => false,
+            self::PERMISSION_SUMMARY => false,
         ];
         return ($this->permissions) ? array_merge($permissions, $this->permissions) : $permissions;
     }
