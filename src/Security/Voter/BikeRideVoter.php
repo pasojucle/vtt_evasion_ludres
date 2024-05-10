@@ -2,11 +2,11 @@
 
 namespace App\Security\Voter;
 
-use App\Dto\ClusterDto;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Session;
+use App\Entity\Summary;
 use App\Entity\User;
 use App\Repository\SessionRepository;
 use DateTime;
@@ -36,7 +36,7 @@ class BikeRideVoter extends Voter
             return true;
         }
         return in_array($attribute, [self::EDIT, self::VIEW])
-        && ($subject instanceof BikeRide || $subject instanceof Cluster || $subject instanceof Session);
+        && ($subject instanceof BikeRide || $subject instanceof Cluster || $subject instanceof Session || $subject instanceof Summary);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -60,7 +60,7 @@ class BikeRideVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
@@ -88,7 +88,7 @@ class BikeRideVoter extends Voter
         return $this->isOwner($subject, $user) && $isActiveUser;
     }
 
-    private function canView(TokenInterface $token, User $user, null|BikeRide|Cluster|Session $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canView(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
@@ -110,7 +110,7 @@ class BikeRideVoter extends Voter
         return $isActiveUser;
     }
 
-    private function getSession(BikeRide|Cluster|Session $subject, User $user): ?Session
+    private function getSession(BikeRide|Cluster|Session|Summary $subject, User $user): ?Session
     {
         if ($subject instanceof Session) {
             return $subject;
@@ -120,7 +120,7 @@ class BikeRideVoter extends Voter
         return $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide);
     }
 
-    private function isOwner(BikeRide|Cluster|Session|null $subject, User $user): bool
+    private function isOwner(BikeRide|Cluster|Session|null|Summary $subject, User $user): bool
     {
         if (!$subject) {
             return false;

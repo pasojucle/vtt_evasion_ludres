@@ -22,7 +22,7 @@
                     {% if bikeRide.minAge is not null %}
                         <p class='info'>{{ bikeRide.minAge }}</p>
                     {% endif %}
-                    <p>{{ bikeRide.content |raw }}</p>
+                    <p class='ck-content'>{{ bikeRide.content|raw }}</p>
                     <div class="form-group">
                         {% if form.session.cluster is defined %}
                             {% set field = form.session.cluster %}

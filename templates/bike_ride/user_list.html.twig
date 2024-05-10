@@ -27,7 +27,7 @@
                                         {% if bikeRide.availability is not empty %}
                                             <p class="{{ bikeRide.availability.class.color }}">{{ bikeRide.availability.class.icon|raw }} {{ bikeRide.availability.text|trans }}</p>
                                         {% endif %}
-                                        <p>{{ bikeRide.bikeRide.content|raw }}</p>
+                                        <p  class='ck-content'>{{ bikeRide.bikeRide.content|raw }}</p>
                                         {% if bikeRide.bikeRide.survey is not null or bikeRide.bikeRide.bikeRideType.isShowMemberList %}
                                             <div title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Info complémentaires</div>
                                         {% endif %}
@@ -42,7 +42,7 @@
                                     {% if bikeRide.bikeRide.survey is not null or bikeRide.bikeRide.bikeRideType.isShowMemberList %}
                                         <div class="info-dropdown grid-info" data-target="bike-ride-content">
                                             {% if bikeRide.bikeRide.survey is not null %}
-                                                <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
+                                                <p class='ck-content'>{{ bikeRide.bikeRide.survey.content|raw }}</p>
                                                 <ul class="mt-10">
                                                     {% for response in bikeRide.bikeRide.survey.responses %}
                                                     <li class="list">

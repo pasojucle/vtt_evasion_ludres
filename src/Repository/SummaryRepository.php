@@ -28,7 +28,7 @@ class SummaryRepository extends ServiceEntityRepository
      */
     public function findLatestDesc(): array
     {
-        $bikeRideLatest = $this->_em->createQueryBuilder()
+        $bikeRideLatest = $this->getEntityManager()->createQueryBuilder()
             ->select('bikeRide.id')
             ->from(BikeRide::class, 'bikeRide')
             ->join('bikeRide.summaries', 'summary')

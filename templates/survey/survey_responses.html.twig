@@ -28,7 +28,7 @@
             {% else %}
                 {{ form_start(form) }}
                     <div class="block-body">
-                        {{ survey.content|raw }}
+                        <div class='ck-content'>{{ survey.content|raw }}</div>
                         <div class="form-group row">
                             {% for response in form.surveyResponses %}
                                 <div class="col-md-6 col-xs-12">{{ survey.issues[response.vars.value.surveyIssue.id]|raw }}</div>

@@ -87,6 +87,9 @@
                                 icon: 'large'
                             }
                         ],
+                        styles: {
+                            options: ['alignLeft', 'alignRight', 'block']
+                        },
                         toolbar: [
                             'resizeImage:25',
                             'resizeImage:50',
@@ -94,9 +97,9 @@
                             'resizeImage:original',
                             'imageTextAlternative',
                             'toggleImageCaption',
-                            'imageStyle:inline',
-                            'imageStyle:block',
-                            'imageStyle:side'
+                            'imageStyle:alignLeft',
+                            'imageStyle:alignRight',
+                            'imageStyle:block'
                         ]
                     },
                     table: {

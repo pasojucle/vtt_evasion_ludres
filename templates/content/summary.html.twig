@@ -20,7 +20,7 @@
                             {% for summary in bike_ride.summaries %}
                                 <li class="list">
                                     <b>{{ summary.createdAt }} - {{ summary.title }}</b>
-                                    <div>{{ summary.content|raw }}</div>
+                                    <div class='ck-content'>{{ summary.content|raw }}</div>
                                     <div style="clear:both;"></div>
                                 </li>
                             {% endfor %}

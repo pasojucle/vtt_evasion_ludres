@@ -19,6 +19,7 @@ import './styles/health.scss';
 import './styles/loader.scss';
 import './styles/listInfoGrid.scss';
 import './styles/bootstrap.scss';
+import './styles/ck-content-styles.scss';
 
 import './styles/reveal.css';
 import './styles/carrousel.css';
