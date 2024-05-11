@@ -87,7 +87,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $isFinalLicence = false;
             }
             if (isset($filters['bikeRide'])) {
-                $this->addCriteriaWithNoSession($qb, $filters['bikeRide']);
+                $this->addCriteriaWithNoSession($qb, (int) $filters['bikeRide']);
             }
         }
 
@@ -98,7 +98,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->orderByASC($qb);
     }
 
-    private function addCriteriaWithNoSession(QueryBuilder $qb, int $bikeRidId): QueryBuilder
+    private function addCriteriaWithNoSession(QueryBuilder $qb, int $bikeRideId): QueryBuilder
     {
         $usersWithSession = $this->getEntityManager()->createQueryBuilder()
             ->select('user.id')
@@ -113,7 +113,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->andWhere(
             $qb->expr()->notIn('u.id', $usersWithSession->getDQL())
         )
-            ->setParameter('bikeRideId', $bikeRidId);
+            ->setParameter('bikeRideId', $bikeRideId);
     }
 
     public function findCoverageQuery(?array $filters): QueryBuilder
