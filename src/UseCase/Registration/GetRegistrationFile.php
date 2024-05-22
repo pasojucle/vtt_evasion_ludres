@@ -11,8 +11,8 @@ use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Repository\ContentRepository;
+use App\Repository\HistoryRepository;
 use App\Repository\MembershipFeeRepository;
-use App\Repository\RegistrationChangeRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\HealthService;
 use App\Service\PdfService;
@@ -38,7 +38,7 @@ class GetRegistrationFile
         private SeasonService $seasonService,
         private RegistrationStepRepository $registrationStepRepository,
         private ContentRepository $contentRepository,
-        private RegistrationChangeRepository $registrationChangeRepository,
+        private HistoryRepository $historyRepository,
         private ProjectDirService $projectDir,
     ) {
     }
@@ -53,8 +53,8 @@ class GetRegistrationFile
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();
         $this->healthService->getHealthSwornCertifications($user);
 
-        $changes = $this->registrationChangeRepository->findBySeason($user, $season);
-        $userDto = $this->userDtoTransformer->fromEntity($user, $changes);
+        $histories = $this->historyRepository->findBySeason($user, $season);
+        $userDto = $this->userDtoTransformer->fromEntity($user, $histories);
 
         foreach ($steps as $step) {
             $step = $this->registrationStepDtoTransformer->fromEntity($step, $user, $userDto, 1, RegistrationStep::RENDER_FILE);

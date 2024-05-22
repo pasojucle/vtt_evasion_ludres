@@ -10,8 +10,8 @@ use App\Entity\Licence;
 use App\Entity\LicenceSwornCertification;
 use App\Entity\User;
 use App\Model\Currency;
+use App\Repository\HistoryRepository;
 use App\Repository\MembershipFeeAmountRepository;
-use App\Repository\RegistrationChangeRepository;
 use App\Service\IndemnityService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
@@ -35,7 +35,7 @@ class LicenceDtoTransformer
     private array $seasonsStatus;
     public function __construct(
         private SeasonService $seasonService,
-        private RegistrationChangeRepository $registrationChangeRepository,
+        private HistoryRepository $historyRepository,
         private TranslatorInterface $translator,
         private ParameterService $parameterService,
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
@@ -45,7 +45,7 @@ class LicenceDtoTransformer
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
     }
 
-    public function fromEntity(?Licence $licence, ?array $changes = null): LicenceDto
+    public function fromEntity(?Licence $licence, ?array $histories = null): LicenceDto
     {
         $licenceDto = new LicenceDto();
 
@@ -78,19 +78,19 @@ class LicenceDtoTransformer
             if ($licence->getAdditionalFamilyMember()) {
                 $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club';
             }
-            if ($changes) {
-                $this->formatChanges($changes, $licenceDto);
+            if ($histories) {
+                $this->getDecoratedChanges($histories, $licenceDto);
             }
         }
 
         return $licenceDto;
     }
 
-    public function fromEntities(Collection|array $licenceEntities, ?array $changes = null): array
+    public function fromEntities(Collection|array $licenceEntities, ?array $histories = null): array
     {
         $licences = [];
         foreach ($licenceEntities as $licenceEntity) {
-            $licences[] = $this->fromEntity($licenceEntity, $changes);
+            $licences[] = $this->fromEntity($licenceEntity, $histories);
         }
 
         return $licences;
@@ -152,10 +152,10 @@ class LicenceDtoTransformer
         return sprintf('%s - %s (jusqu\'au 31 décembre %s) ', (string) ($season - 1), (string) $season, (string) $season);
     }
 
-    private function formatChanges(array $changes, LicenceDto &$licenceDto): void
+    private function getDecoratedChanges(array $histories, LicenceDto &$licenceDto): void
     {
-        if (array_key_exists('Licence', $changes) && array_key_exists($licenceDto->id, $changes['Licence'])) {
-            $properties = array_keys($changes['Licence'][$licenceDto->id]->getValue());
+        if (array_key_exists('Licence', $histories) && array_key_exists($licenceDto->id, $histories['Licence'])) {
+            $properties = array_keys($histories['Licence'][$licenceDto->id]->getValue());
             foreach ($properties as $property) {
                 if ('coverage' === $property) {
                     $property = 'coverageStr';
@@ -164,7 +164,7 @@ class LicenceDtoTransformer
                     continue;
                 }
                 if (is_string($licenceDto->$property)) {
-                    $licenceDto->$property = sprintf('<b>%s</b>', $licenceDto->$property);
+                    $licenceDto->$property = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $licenceDto->$property);
                 }
             }
         }

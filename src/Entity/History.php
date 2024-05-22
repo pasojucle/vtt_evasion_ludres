@@ -2,12 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\RegistrationChangeRepository;
-use Doctrine\DBAL\Types\Types;
+use App\Repository\HistoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: RegistrationChangeRepository::class)]
-class RegistrationChange
+#[ORM\Entity(repositoryClass: HistoryRepository::class)]
+class History
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,8 +14,7 @@ class RegistrationChange
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'registrationChanges')]
-    #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    private ?User $user = null;
 
     #[ORM\Column(length: 100)]
     private ?string $entity = null;
@@ -27,8 +25,8 @@ class RegistrationChange
     #[ORM\Column]
     private array $value = [];
 
-    #[ORM\Column]
-    private int $season = 1970;
+    #[ORM\Column(nullable:true)]
+    private ?int $season = null;
 
 
     public function getId(): ?int
@@ -84,12 +82,12 @@ class RegistrationChange
         return $this;
     }
 
-    public function getSeason(): int
+    public function getSeason(): ?int
     {
         return $this->season;
     }
 
-    public function setSeason(int $season): static
+    public function setSeason(?int $season): static
     {
         $this->season = $season;
 

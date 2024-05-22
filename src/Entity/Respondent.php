@@ -7,30 +7,29 @@ namespace App\Entity;
 use App\Repository\RespondentRepository;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: RespondentRepository::class)]
+#[ORM\Entity(repositoryClass: RespondentRepository::class)]
 class Respondent
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: Survey::class, inversedBy: 'respondents')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'respondents')]
+    #[ORM\JoinColumn(nullable: false)]
     private Survey $survey;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'respondents')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'respondents')]
+    #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
+
+    #[ORM\Column(type:Types::BOOLEAN, options:['default' => false])]
+    private bool $surveyChanged = false;
 
     public function geId(): ?int
     {
@@ -69,6 +68,18 @@ class Respondent
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function isSurveyChanged(): bool
+    {
+        return $this->surveyChanged;
+    }
+
+    public function setSurveyChanged(bool $SurveyChanged): static
+    {
+        $this->surveyChanged = $SurveyChanged;
 
         return $this;
     }

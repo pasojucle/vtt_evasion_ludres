@@ -9,7 +9,6 @@ use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
 use App\Service\SessionService;
-use DateTime;
 
 class GetBikeRides
 {
@@ -24,7 +23,6 @@ class GetBikeRides
     public function execute(User $user): array
     {
         $bikeRides = [];
-        $today = new DateTime();
 
         /** @var Session $session */
         foreach ($this->sessionRepository->findAvailableByUser($user) as $session) {
@@ -33,7 +31,7 @@ class GetBikeRides
                 'bikeRide' => $sessionDto->bikeRide,
                 'availability' => $sessionDto->availability,
                 'sessionId' => $sessionDto->id,
-                'memberList' => $this->sessionService->getBikeRideMembers($session->getCluster()->getBikeRide())
+                'memberList' => $this->sessionService->getBikeRideMembers($session->getCluster()->getBikeRide()),
             ];
         }
 

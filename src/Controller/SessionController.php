@@ -8,7 +8,7 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
-use App\Form\SessionAvailabilityType;
+use App\Form\SessionType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
 use App\Service\CacheService;
@@ -65,7 +65,7 @@ class SessionController extends AbstractController
             return $this->redirectToRoute('user_bike_rides');
         }
 
-        return $this->render('session/add.html.twig', $getFormSession->params);
+        return $this->render('session/edit.html.twig', $getFormSession->params);
     }
 
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
@@ -74,16 +74,28 @@ class SessionController extends AbstractController
         Request $request,
         BikeRideDtoTransformer $bikeRideDtoTransformer,
         ConfirmationSession $confirmationSession,
+        SurveyResponseRepository $surveyResponseRepository,
         Session $session
     ) {
         $bikeRide = $session->getCluster()->getBikeRide();
-        $form = $this->createForm(SessionAvailabilityType::class, $session);
+        $survey = $bikeRide->getSurvey();
+
+
+        $form = $this->createForm(SessionType::class, [
+            'session' => $session,
+            'responses' => ($survey) ? ['surveyResponses' => $surveyResponseRepository->findResponsesByUserAndSurvey($session->getUser(), $survey)] : null,
+        ], [
+            'clusters' => $session->getCluster(),
+            'is_writable_availability' => true,
+            'display_bike_kind' => $bikeRide->getBikeRideType()->isDisplayBikeKind(),
+        ]);
+
         $form->handleRequest($request);
 
         $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $session = $form->getData();
+            $session = $form->get('session')->getData();
 
             $this->entityManager->flush();
             $this->cacheService->deleteCacheIndex($session->getCluster());
@@ -95,7 +107,7 @@ class SessionController extends AbstractController
 
         return $this->render('session/edit.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRideDtoTransformer->fromEntity($bikeRide),
+            'bikeRide' => $bikeRide,
             'sessions' => $sessions,
         ]);
     }

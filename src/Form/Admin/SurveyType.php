@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\BikeRide;
 use App\Entity\Survey;
-use App\Entity\User;
 use App\Form\Admin\EventListener\Survey\AddRestrictionSubscriber;
-use App\Form\Transformer\BikeRideTransformer;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Validator\CKEditorBlank;
-use Doctrine\Common\Collections\Collection;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -26,7 +22,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class SurveyType extends AbstractType
 {

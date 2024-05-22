@@ -9,7 +9,7 @@ use App\Entity\Address;
 
 class AddressDtoTransformer
 {
-    public function fromEntity(?Address $address, ?array $changes = null): AddressDto
+    public function fromEntity(?Address $address, ?array $histories = null): AddressDto
     {
         $addressDto = new AddressDto();
         if ($address) {
@@ -18,8 +18,8 @@ class AddressDtoTransformer
             $addressDto->postalCode = $address->getPostalCode();
             $addressDto->town = $address->getCommune()?->getName() ?? $address->getTown();
 
-            if ($changes) {
-                $this->formatChanges($changes, $addressDto);
+            if ($histories) {
+                $this->getDecoratedChanges($histories, $addressDto);
             }
         }
 
@@ -27,15 +27,15 @@ class AddressDtoTransformer
         return $addressDto;
     }
 
-    private function formatChanges(array $changes, AddressDto &$addressDto): void
+    private function getDecoratedChanges(array $histories, AddressDto &$addressDto): void
     {
-        if (array_key_exists('Address', $changes) && array_key_exists($addressDto->id, $changes['Address'])) {
-            $properties = array_keys($changes['Address'][$addressDto->id]->getValue());
+        if (array_key_exists('Address', $histories) && array_key_exists($addressDto->id, $histories['Address'])) {
+            $properties = array_keys($histories['Address'][$addressDto->id]->getValue());
             foreach ($properties as $property) {
                 if ('commune' === $property) {
                     $property = 'town';
                 }
-                $addressDto->$property = sprintf('<b>%s</b>', $addressDto->$property);
+                $addressDto->$property = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $addressDto->$property);
             }
         }
     }

@@ -85,7 +85,7 @@ services:
     #     tags:
     #         - { name: kernel.event_listener, event: kernel.exception }
 
-    App\EventListener\RegistrationChangeListener:
+    App\EventListener\HistoryListener:
         tags: 
             - 
                 name: 'doctrine.orm.entity_listener'

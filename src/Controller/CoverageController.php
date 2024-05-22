@@ -9,7 +9,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
-use App\Repository\RegistrationChangeRepository;
+use App\Repository\HistoryRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\PdfService;
 use App\Service\SeasonService;
@@ -26,15 +26,15 @@ class CoverageController extends AbstractController
     #[IsGranted('USER_EDIT', 'user')]
     public function currentSeasonEdit(
         RegistrationStepRepository $registrationStepRepository,
-        RegistrationChangeRepository $registrationChangeRepository,
+        HistoryRepository $historyRepository,
         SeasonService $seasonService,
         RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         PdfService $pdfService,
         UserDtoTransformer $userDtoTransformer,
         User $user
     ) {
-        $changes = $registrationChangeRepository->findBySeason($user, $seasonService->getCurrentSeason());
-        $userDto = $userDtoTransformer->fromEntity($user, $changes);
+        $histories = $historyRepository->findBySeason($user, $seasonService->getCurrentSeason());
+        $userDto = $userDtoTransformer->fromEntity($user, $histories);
 
         $coverageStep = $registrationStepRepository->findCoverageStep();
 

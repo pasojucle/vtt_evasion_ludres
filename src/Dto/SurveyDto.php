@@ -15,4 +15,8 @@ class SurveyDto
     public string $title = '';
 
     public string $content = '';
+
+    public array $issues = [];
+
+    public array $responses = [];
 }

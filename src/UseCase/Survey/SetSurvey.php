@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Survey;
 
+use App\Entity\Survey;
 use App\Form\Admin\SurveyType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;

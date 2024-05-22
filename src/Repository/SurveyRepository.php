@@ -8,7 +8,9 @@ use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -77,6 +79,28 @@ class SurveyRepository extends ServiceEntityRepository
             )
             ->setParameter('member', $member)
             ->setParameter('rMember', $member)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findActiveChangedUser(User $member): array
+    {
+        return $this->createQueryBuilder('s')
+            ->join('s.respondents', 'r')
+            ->andWhere(
+                (new Expr())->eq('s.disabled', 0),
+                (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
+                (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
+                (new Expr())->isNull('s.bikeRide'),
+                (new Expr())->eq('r.user', ':member'),
+                (new Expr())->eq('r.surveyChanged', ':surveyChanged'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('member', $member),
+                new Parameter('surveyChanged', true)
+            ]))
             ->orderBy('s.id', 'ASC')
             ->getQuery()
             ->getResult()

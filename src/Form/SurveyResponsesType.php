@@ -29,12 +29,12 @@ class SurveyResponsesType extends AbstractType
             $form = $event->getForm();
             if (null === $form->getParent()) {
                 $form
-                        ->add('submit', SubmitType::class, [
-                            'label' => 'Enregistrer',
-                            'attr' => [
-                                'class' => 'btn btn-primary float-right',
-                            ],
-                        ]);
+                    ->add('submit', SubmitType::class, [
+                        'label' => 'Enregistrer',
+                        'attr' => [
+                            'class' => 'btn btn-primary float-right',
+                        ],
+                    ]);
             }
         });
     }

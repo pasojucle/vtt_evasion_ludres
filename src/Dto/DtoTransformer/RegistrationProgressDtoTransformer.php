@@ -9,7 +9,7 @@ use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\RegistrationChangeRepository;
+use App\Repository\HistoryRepository;
 use App\Service\ParameterService;
 
 class RegistrationProgressDtoTransformer
@@ -17,7 +17,7 @@ class RegistrationProgressDtoTransformer
     public function __construct(
         private RegistrationStepDtoTransformer $registrationStepDtoTransformer,
         private UserDtoTransformer $userDtoTransformer,
-        private RegistrationChangeRepository $registrationChangeRepository,
+        private HistoryRepository $historyRepository,
         private ParameterService $parameterService,
     ) {
     }
@@ -32,8 +32,8 @@ class RegistrationProgressDtoTransformer
 
         /** @var RegistrationStep $currentRegistrationStep */
         $currentRegistrationStep = $registrationSteps[$registrationProgressDto->currentIndex];
-        $changes = (UserType::FORM_OVERVIEW === $currentRegistrationStep->getForm()) ? $this->getChanges($user, $season) : null;
-        $userDto = $this->userDtoTransformer->fromEntity($user, $changes);
+        $histories = (UserType::FORM_OVERVIEW === $currentRegistrationStep->getForm()) ? $this->getChanges($user, $season) : null;
+        $userDto = $this->userDtoTransformer->fromEntity($user, $histories);
         $registrationProgressDto->user = $userDto;
         $registrationProgressDto->current = $this->registrationStepDtoTransformer->fromEntity($currentRegistrationStep, $user, $userDto, $step, registrationStep::RENDER_VIEW);
         $registrationProgressDto->season = $season;
@@ -68,7 +68,7 @@ class RegistrationProgressDtoTransformer
 
     private function getChanges(User $user, int $season): array
     {
-        return $this->registrationChangeRepository->findBySeason($user, $season);
+        return $this->historyRepository->findBySeason($user, $season);
     }
 
     private function validate(RegistrationProgressDto $progress): ?string

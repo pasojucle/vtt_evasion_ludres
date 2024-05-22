@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\BikeRideTypeDto;
 use App\Dto\SessionDto;
 use App\Entity\BikeRideType;
 use App\Entity\Session;
@@ -24,7 +23,6 @@ class SessionDtoTransformer
         private TranslatorInterface $translator,
     ) {
     }
-
 
     public function fromEntity(?Session $session): SessionDto
     {
@@ -52,14 +50,9 @@ class SessionDtoTransformer
         if ($session) {
             $sessionDto->id = $session->getId();
             $sessionDto->availability = $this->getAvailability($session->getAvailability());
-            // $sessionDto->bikeRide = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
-            // $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
-            // $sessionDto->user = $this->userDtoTransformer->getHeaderFromEntity($session->getUser());
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
             $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session->isPresent());
-            // $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
-            // $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->bikeKind = ($session->getBikeKind()) ? $this->translator->trans(Session::BIKEKINDS[$session->getBikeKind()]) : null;
         }
 

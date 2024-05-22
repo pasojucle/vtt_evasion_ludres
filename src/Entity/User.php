@@ -126,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ManyToOne(inversedBy: 'users')]
     private ?BoardRole $boardRole = null;
 
-    #[OneToMany(mappedBy: 'user', targetEntity: RegistrationChange::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: History::class)]
     private Collection $registrationChanges;
 
     #[OneToMany(mappedBy: 'user', targetEntity: SecondHand::class)]
@@ -652,29 +652,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, RegistrationChange>
+     * @return Collection<int, History>
      */
     public function getRegistrationChanges(): Collection
     {
         return $this->registrationChanges;
     }
 
-    public function addRegistrationChange(RegistrationChange $registrationChange): static
+    public function addRegistrationChange(History $history): static
     {
-        if (!$this->registrationChanges->contains($registrationChange)) {
-            $this->registrationChanges->add($registrationChange);
-            $registrationChange->setUser($this);
+        if (!$this->registrationChanges->contains($history)) {
+            $this->registrationChanges->add($history);
+            $history->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeRegistrationChange(RegistrationChange $registrationChange): static
+    public function removeRegistrationChange(History $history): static
     {
-        if ($this->registrationChanges->removeElement($registrationChange)) {
+        if ($this->registrationChanges->removeElement($history)) {
             // set the owning side to null (unless already changed)
-            if ($registrationChange->getUser() === $this) {
-                $registrationChange->setUser(null);
+            if ($history->getUser() === $this) {
+                $history->setUser(null);
             }
         }
 

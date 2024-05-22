@@ -44,13 +44,16 @@
                                             {% if bikeRide.bikeRide.survey is not null %}
                                                 <p>{{ bikeRide.bikeRide.survey.content|raw }}</p>
                                                 <ul class="mt-10">
-                                                    {% for response in bikeRide.bikeRide.survey.getResponsesByUser(user).surveyResponses %}
+                                                    {% for response in bikeRide.bikeRide.survey.responses %}
                                                     <li class="list">
                                                         <span class="fst-italic">{{ response.issue }} : </span>
                                                         <span>{{ response.value }}</span>
                                                     </li>
                                                     {% endfor %}
                                                 </ul>
+                                                {% if bikeRide.availability is empty %}
+                                                    <a href="{{ path('survey',{'survey': bikeRide.bikeRide.survey.id}) }}" class="btn btn-xs btn-primary" title="Modifier les réponses au sondage"><i class="fas fa-pencil-alt"></i> Modifier les réponses au sondage</a>
+                                                {% endif %}
                                             {% endif %}
                                             {% if bikeRide.bikeRide.bikeRideType.isShowMemberList %}
                                                 {% include 'session/registered_list.html.twig' with {'sessions': bikeRide.memberList} %}

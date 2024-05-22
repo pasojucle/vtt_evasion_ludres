@@ -6,7 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\IdentityDto;
 use App\Entity\Identity;
-use App\Repository\RegistrationChangeRepository;
+use App\Repository\HistoryRepository;
 use App\Service\ProjectDirService;
 use App\Service\SeasonService;
 use DateTime;
@@ -18,12 +18,12 @@ class IdentityDtoTransformer
     public function __construct(
         private AddressDtoTransformer $addressDtoTransformer,
         private ProjectDirService $projectDirService,
-        private RegistrationChangeRepository $registrationChangeRepository,
+        private HistoryRepository $historyRepository,
         private SeasonService $seasonService,
     ) {
     }
 
-    public function fromEntity(Identity $identity, ?array $changes = null): IdentityDto
+    public function fromEntity(Identity $identity, ?array $histories = null): IdentityDto
     {
         $identityDto = new IdentityDto();
 
@@ -34,7 +34,7 @@ class IdentityDtoTransformer
         $identityDto->fullName = $identity->getName() . ' ' . $identity->getFirstName();
         $identityDto->birthDate = ($bithDate) ? $bithDate->format('d/m/Y') : null;
         $identityDto->birthPlace = $this->getBirthplace($identity);
-        $identityDto->address = ($identity->getAddress()) ? $this->addressDtoTransformer->fromEntity($identity->getAddress(), $changes) : null;
+        $identityDto->address = ($identity->getAddress()) ? $this->addressDtoTransformer->fromEntity($identity->getAddress(), $histories) : null;
         $identityDto->email = $identity->getEmail();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
         $identityDto->emergencyPhone = $identity->getEmergencyPhone();
@@ -44,15 +44,15 @@ class IdentityDtoTransformer
 
         $identityDto->age = $this->getAge($bithDate);
 
-        if ($changes) {
-            $this->formatChanges($changes, $identityDto);
+        if ($histories) {
+            $this->getDecoratedChanges($histories, $identityDto);
         }
 
         return $identityDto;
     }
 
 
-    public function headerFromEntity(Identity $identity, ?array $changes = null): IdentityDto
+    public function headerFromEntity(Identity $identity, ?array $histories = null): IdentityDto
     {
         $identityDto = new IdentityDto();
 
@@ -64,12 +64,12 @@ class IdentityDtoTransformer
     }
 
 
-    public function fromEntities(Collection $identityEntities, ?array $changes = null): array
+    public function fromEntities(Collection $identityEntities, ?array $histories = null): array
     {
         $identities = [];
         /** @var Identity $identity */
         foreach ($identityEntities as $identity) {
-            $identities[$identity->getType()] = $this->fromEntity($identity, $changes);
+            $identities[$identity->getType()] = $this->fromEntity($identity, $histories);
         }
         $this->setKinshipAddress($identities);
 
@@ -128,10 +128,10 @@ class IdentityDtoTransformer
         return $identity->getBirthPlace() . ' (' . $identity->getBirthDepartment() . ')';
     }
 
-    private function formatChanges(array $changes, IdentityDto &$identityDto): void
+    private function getDecoratedChanges(array $histories, IdentityDto &$identityDto): void
     {
-        if (array_key_exists('Identity', $changes) && array_key_exists($identityDto->id, $changes['Identity'])) {
-            $properties = array_keys($changes['Identity'][$identityDto->id]->getValue());
+        if (array_key_exists('Identity', $histories) && array_key_exists($identityDto->id, $histories['Identity'])) {
+            $properties = array_keys($histories['Identity'][$identityDto->id]->getValue());
             
             foreach ($properties as $property) {
                 if ('mobile' === $property) {
@@ -141,10 +141,10 @@ class IdentityDtoTransformer
                     $property = 'birthPlace';
                 }
                 if (1 === preg_match('#name|firstName#', $property)) {
-                    $identityDto->fullName = sprintf('<b>%s</b>', $identityDto->fullName);
+                    $identityDto->fullName = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->fullName);
                 }
                 
-                $identityDto->$property = sprintf('<b>%s</b>', $identityDto->$property);
+                $identityDto->$property = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->$property);
             }
         }
     }

@@ -7,7 +7,9 @@ namespace App\UseCase\ModalWindow;
 use App\Dto\DtoTransformer\ModalWindowDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\ModalWindowDto;
+use App\Dto\UserDto;
 use App\Entity\Licence;
+use App\Entity\Survey;
 use App\Entity\User;
 use App\Repository\ModalWindowRepository;
 use App\Repository\OrderHeaderRepository;
@@ -23,18 +25,25 @@ use Symfony\Component\Routing\RouterInterface;
 class ShowModalWindow
 {
     private SessionInterface $session;
+    private array $modalWindowsToShow;
+    private ?User $user;
+    private UserDto $userDto;
+
     public function __construct(
-        private RequestStack $requestStack,
-        private Security $security,
-        private ModalWindowRepository $modalWindowRepository,
-        private SurveyRepository $surveyRepository,
-        private OrderHeaderRepository $orderHeaderRepository,
-        private ModalWindowDtoTransformer $modalWindowDtoTransformer,
-        private UserDtoTransformer $userDtoTransformer,
-        private RouterInterface $router,
-        private ParameterService $parameterService,
-        private MessageService $messageService,
+        private readonly RequestStack $requestStack,
+        protected Security $security,
+        private readonly ModalWindowRepository $modalWindowRepository,
+        private readonly SurveyRepository $surveyRepository,
+        private readonly OrderHeaderRepository $orderHeaderRepository,
+        private readonly ModalWindowDtoTransformer $modalWindowDtoTransformer,
+        private readonly UserDtoTransformer $userDtoTransformer,
+        private readonly RouterInterface $router,
+        private readonly ParameterService $parameterService,
+        private readonly MessageService $messageService,
     ) {
+        /** @var ?User $user */
+        $user = $security->getUser();
+        $this->user = $user;
     }
 
     public function execute(): ?ModalWindowDto
@@ -43,11 +52,9 @@ class ShowModalWindow
         $modalWindowShowOn = (null !== $this->session->get('modal_window_showed'))
             ? json_decode($this->session->get('modal_window_showed'), true)
             : [];
-        /** @var User $user */
-        $user = $this->security->getUser();
 
-        $modalWindows = (null !== $user)
-            ? $this->getUserModalWindows($user)
+        $modalWindows = (null !== $this->user)
+            ? $this->getUserModalWindows()
             : $this->modalWindowRepository->findPublic();
 
         if (!empty($modalWindows)) {
@@ -65,27 +72,39 @@ class ShowModalWindow
         return null;
     }
 
-    private function getUserModalWindows(User $user): array
+    private function getUserModalWindows(): array
     {
-        $userDto = $this->userDtoTransformer->fromEntity($user);
-
-        if (!$userDto->lastLicence->isActive) {
+        $this->userDto = $this->userDtoTransformer->fromEntity($this->user);
+        if (!$this->userDto->lastLicence->isActive) {
             return [];
         }
-
+        
         $modalWindowsToShowJson = $this->session->get('modal_windows_to_show');
-        $modalWindowsToShow = ($modalWindowsToShowJson) ? json_decode($modalWindowsToShowJson, true) : [];
+        $this->modalWindowsToShow = ($modalWindowsToShowJson) ? json_decode($modalWindowsToShowJson, true) : [];
+        $this->addModalWindows();
+        $this->addSurveys();
+        $this->addSurveysChanged();
+        $this->addNewOrderToValidate();
+        $this->addRegistationInProgress();
+        $this->addNewSeasonReRgistrationEnabled();
 
-        $modalWindows = $this->modalWindowRepository->findByAge($userDto->member?->age);
-        $modalWindowsToShow = array_merge($modalWindowsToShow, $modalWindows);
-        $surveys = $this->surveyRepository->findActiveAndWithoutResponse($user);
-        $modalWindowsToShow = array_merge($modalWindowsToShow, $surveys);
-        $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($user);
+        return $this->modalWindowsToShow;
+    }
 
-        if (null !== $orderHeaderToValidate) {
-            $modalWindowsToShow[] = $orderHeaderToValidate;
-        }
+    private function addModalWindows(): void
+    {
+        $modalWindows = $this->modalWindowRepository->findByAge($this->userDto->member?->age);
+        $this->modalWindowsToShow = array_merge($this->modalWindowsToShow, $modalWindows);
+    }
 
+    private function addSurveys(): void
+    {
+        $surveys = $this->surveyRepository->findActiveAndWithoutResponse($this->user);
+        $this->modalWindowsToShow = array_merge($this->modalWindowsToShow, $surveys);
+    }
+
+    private function addRegistationInProgress(): void
+    {
         $search = [
             $this->requestStack->getCurrentRequest()->getScheme(),
             '://',
@@ -98,14 +117,25 @@ class ShowModalWindow
             $route = null;
         }
 
-        if (Licence::STATUS_IN_PROCESSING === $userDto->lastLicence?->status && !str_contains($route['_route'], 'registration_form')) {
-            $modalWindowsToShow[] = $user->getLastLicence();
+        if (Licence::STATUS_IN_PROCESSING === $this->userDto->lastLicence?->status && !str_contains($route['_route'], 'registration_form')) {
+            $this->modalWindowsToShow[] = $this->user->getLastLicence();
         }
+    }
 
+    private function addNewOrderToValidate(): void
+    {
+        $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($this->user);
+
+        if (null !== $orderHeaderToValidate) {
+            $this->modalWindowsToShow[] = $orderHeaderToValidate;
+        }
+    }
+
+    private function addNewSeasonReRgistrationEnabled(): void
+    {
         $season = $this->session->get('currentSeason');
-
-        if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && Licence::STATUS_WAITING_RENEW === $userDto->lastLicence->status) {
-            $modalWindowsToShow[] = [
+        if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && Licence::STATUS_WAITING_RENEW === $this->userDto->lastLicence->status) {
+            $this->modalWindowsToShow[] = [
                 'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
                 'title' => sprintf('Inscription à la saison %s', $season),
                 'content' => $this->messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
@@ -114,7 +144,21 @@ class ShowModalWindow
                 'labelBtn' => 'S\'incrire'
             ];
         }
+    }
 
-        return $modalWindowsToShow;
+    private function addSurveysChanged(): void
+    {
+        $surveysChanged = $this->surveyRepository->findActiveChangedUser($this->user);
+        /** @var Survey $survey */
+        foreach ($surveysChanged as $survey) {
+            $this->modalWindowsToShow[] = [
+                'index' => sprintf('SURVEY_CHANGED_%s', $survey->getId()),
+                'title' => sprintf('Modification du sondage %s', $survey->getTitle()),
+                'content' => str_replace('{{ sondage }}', $survey->getTitle(), $this->messageService->getMessageByName('SURVEY_CHANGED_MESSAGE')),
+                'route' => 'survey',
+                'routeParams' => ['survey' => $survey->getId()],
+                'labelBtn' => 'Consulter'
+            ];
+        }
     }
 }

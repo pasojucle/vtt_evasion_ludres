@@ -22,7 +22,7 @@
             <div class="block-body">
                 <p class={{ message.class }}>{{ message.content }}</p>
                 <div class="block-footer">
-                    <a href="{{ path('user_surveys') }}" class="btn btn-primary float-right">Mes sondages</a>
+                    <a href="{{ path(redirect.route) }}" class="btn btn-primary float-right">{{ redirect.text }}</a>
                 </div>
             </div>
             {% else %}
@@ -31,7 +31,7 @@
                         {{ survey.content|raw }}
                         <div class="form-group row">
                             {% for response in form.surveyResponses %}
-                                <div class="col-md-6 col-xs-12">{{ response.vars.value.surveyIssue.content }}</div>
+                                <div class="col-md-6 col-xs-12">{{ survey.issues[response.vars.value.surveyIssue.id]|raw }}</div>
                                 <div class="col-md-6 col-xs-12">{{ form_widget(response)}}</div>
                             {% endfor %}
 

@@ -36,11 +36,11 @@ class SurveyResponseDtoTransformer
         return $surveyResponseDto;
     }
 
-    public function fromEntities(Collection|array $SurveyResponseEntities): array
+    public function fromEntities(Collection|array $surveyResponseEntities): array
     {
         $surveyResponses = [];
-        foreach ($SurveyResponseEntities as $SurveyResponseEntity) {
-            $surveyResponses[] = $this->fromEntity($SurveyResponseEntity);
+        foreach ($surveyResponseEntities as $surveyResponseEntity) {
+            $surveyResponses[] = $this->fromEntity($surveyResponseEntity);
         }
 
         return $surveyResponses;

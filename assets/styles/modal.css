@@ -8,6 +8,12 @@
     display: block;
     z-index: 90;
 }
+h4.modal-title {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 .modal-dialog {
     position: fixed;
     width: 600px;

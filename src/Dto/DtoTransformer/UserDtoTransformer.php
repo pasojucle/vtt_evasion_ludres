@@ -34,9 +34,9 @@ class UserDtoTransformer
     ) {
     }
 
-    public function fromEntity(User $user, ?array $changes = null): UserDto
+    public function fromEntity(User $user, ?array $histories = null): UserDto
     {
-        $identitiesByType = $this->identityDtoTransformer->fromEntities($user->getIdentities(), $changes);
+        $identitiesByType = $this->identityDtoTransformer->fromEntities($user->getIdentities(), $histories);
 
         $userDto = new UserDto();
 
@@ -45,7 +45,7 @@ class UserDtoTransformer
         $userDto->member = (array_key_exists(Identity::TYPE_MEMBER, $identitiesByType)) ? $identitiesByType[Identity::TYPE_MEMBER] : null;
         $userDto->kinship = (array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : null;
         $userDto->secondKinship = (array_key_exists(Identity::TYPE_SECOND_CONTACT, $identitiesByType)) ? $identitiesByType[Identity::TYPE_SECOND_CONTACT] : null;
-        $userDto->lastLicence = $this->getLastLicence($user, $changes);
+        $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->prevLicence = $this->getPrevLicence($user);
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
@@ -65,7 +65,7 @@ class UserDtoTransformer
         return $userDto;
     }
 
-    public function getHeaderFromEntity(User $user, ?array $changes = null, ?Identity $member = null): UserDto
+    public function getHeaderFromEntity(User $user, ?array $histories = null, ?Identity $member = null): UserDto
     {
         $userDto = new UserDto();
         if (!$member) {
@@ -73,22 +73,22 @@ class UserDtoTransformer
         }
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
-        $userDto->member = $this->identityDtoTransformer->fromEntity($member, $changes);
+        $userDto->member = $this->identityDtoTransformer->fromEntity($member, $histories);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
-        $userDto->lastLicence = $this->getLastLicence($user, $changes);
+        $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->seasons = $this->getSeasons($user->getLicences());
 
         return $userDto;
     }
 
-    public function getSessionHeaderFromEntity(User $user, ?array $changes = null, ?Identity $member = null): UserDto
+    public function getSessionHeaderFromEntity(User $user, ?array $histories = null, ?Identity $member = null): UserDto
     {
         $userDto = new UserDto();
         if (!$member) {
             $member = $user->getMemberIdentity();
         }
         $userDto->id = $user->getId();
-        $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $changes);
+        $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $histories);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
@@ -187,11 +187,11 @@ class UserDtoTransformer
         return 1 === $licencesTotal && $lastLicence->isSeasonLicence && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
     }
 
-    private function getLastLicence(User $user, ?array $changes): LicenceDto
+    private function getLastLicence(User $user, ?array $histories): LicenceDto
     {
         $licence = $user->getLastLicence();
 
-        return $this->licenceDtoTransformer->fromEntity($licence, $changes);
+        return $this->licenceDtoTransformer->fromEntity($licence, $histories);
     }
 
     private function getPrevLicence(User $user): ?LicenceDto
