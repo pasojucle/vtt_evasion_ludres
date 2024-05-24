@@ -107,7 +107,7 @@ class SessionController extends AbstractController
 
         return $this->render('session/edit.html.twig', [
             'form' => $form->createView(),
-            'bikeRide' => $bikeRide,
+            'bikeRide' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
             'sessions' => $sessions,
         ]);
     }

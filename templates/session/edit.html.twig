@@ -15,18 +15,12 @@
             <div class="block background-ligth">
             {{ form_start(form) }}
                 <div class="block-title bike-ride-date active">
-                    <h2>
-                        {% if bikeRide.endAt is null %}
-                            {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}}
-                        {% else %}
-                            du {{ bikeRide.startAt | format_date(locale='fr', pattern='EEEE d/M/yy') | capitalize}} au {{ bikeRide.endAt | format_date(locale='fr', pattern='EEEE d/M/Y') | capitalize}}
-                        {% endif %}
-                    </h2>
+                    <h2>{{ bikeRide.period }}</h2>
                 </div>
                 <div class="block-body">
                     <h3>{{ bikeRide.title }}</h3>
                     {% if bikeRide.minAge is not null %}
-                        <p class='info'>A partir de {{ bikeRide.minAge }} ans</p>
+                        <p class='info'>{{ bikeRide.minAge }}</p>
                     {% endif %}
                     <p>{{ bikeRide.content |raw }}</p>
                     <div class="form-group">
@@ -66,7 +60,7 @@
                         {% include('session/registered_list_by_type.html.twig') %}
                     {% endif %}
                     {% if bikeRide.bikeRideType.isShowMemberList %}
-                    <   div class="separator"></div>
+                        <div class="separator"></div>
                         {% include('session/registered_list.html.twig') %}
                     {% endif %}
                     {{ form_errors(form)}}

@@ -52,4 +52,6 @@ class BikeRideDto
     public bool $display = false;
 
     public bool $isEditable = false;
+
+    public ?string $minAge = null;
 }
