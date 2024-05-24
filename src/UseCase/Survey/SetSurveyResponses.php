@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Form\SurveyResponsesType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
+use App\Service\SurveyService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,6 +26,7 @@ class SetSurveyResponses
         private readonly SurveyResponseRepository $surveyResponseRepository,
         private readonly RespondentRepository $respondentRepository,
         private readonly FormFactoryInterface $formFactory,
+        private readonly SurveyService $surveyService,
     ) {
     }
 
@@ -39,9 +41,11 @@ class SetSurveyResponses
             return [null, null, $message, $this->getRedirect($survey)];
         }
         $respondent = $this->respondentRepository->findOneBySurveyAndUser($survey, $user);
+        $histories = ($respondent?->isSurveyChanged()) ? $this->surveyService->getHistory($survey) : null;
+
         if ($respondent) {
             $this->surveyChangesViewed($respondent);
-            return $this->editResponses($request, $survey, $respondent, $user, $message);
+            return $this->editResponses($request, $survey, $respondent, $user, $message, $histories);
         }
 
         return $this->addResponses($request, $survey, $user, $now, $message);
@@ -90,7 +94,7 @@ class SetSurveyResponses
         }
     }
 
-    private function editResponses(Request $request, Survey $survey, Respondent $respondent, User $user, ?array $message): array
+    private function editResponses(Request $request, Survey $survey, Respondent $respondent, User $user, ?array $message, ?array $histories): array
     {
         $form = $this->formFactory->create(SurveyResponsesType::class, [
             'surveyResponses' => $this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey),
@@ -112,7 +116,7 @@ class SetSurveyResponses
                 'content' => 'Votre participation au sondage a bien été modifiée.',
             ];
         }
-        return [$respondent, $form, $message, $this->getRedirect($survey)];
+        return [$histories, $respondent, $form, $message, $this->getRedirect($survey)];
     }
 
     private function addResponses(Request $request, Survey $survey, User $user, DateTime $now, ?array $message): array
@@ -145,7 +149,7 @@ class SetSurveyResponses
             ];
         }
 
-        return [$respondent, $form, $message, $this->getRedirect($survey)];
+        return [null, $respondent, $form, $message, $this->getRedirect($survey)];
     }
 
     public function getRedirect(Survey $survey): array

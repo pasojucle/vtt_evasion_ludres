@@ -34,10 +34,12 @@ class SurveyDtoTransformer
         if (!empty($histories)) {
             $this->formatHistories($histories, $surveyDto);
         }
-        /** @var User $user */
+        /** @var ?User $user */
         $user = $this->security->getUser();
-        $surveyDto->responses = $this->getResponsesByUser->execute($survey, $user);
-
+        if ($user) {
+            $surveyDto->responses = $this->getResponsesByUser->execute($survey, $user);
+        }
+        
         return $surveyDto;
     }
 

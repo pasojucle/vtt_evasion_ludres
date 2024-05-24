@@ -30,9 +30,8 @@ class SurveyController extends AbstractController
         SurveyService $surveyService,
         Survey $survey
     ): Response {
-        $histories = $surveyService->getHistory($survey);
+        list($histories, $respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey);
 
-        list($respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey);
         return $this->render('survey/survey_responses.html.twig', [
             'survey' => $surveyDtoTransformer->fromEntity($survey, $histories),
             'respondent' => $respondent,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Session;
@@ -24,12 +25,13 @@ class GetFormSession
     public array $params;
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private CreateClusters $createClusters,
-        private SessionRepository $sessionRepository,
-        private FormFactoryInterface $formFactory,
-        private SessionService $sessionService,
-        private IsWritableAvailability $isWritableAvailability,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly CreateClusters $createClusters,
+        private readonly SessionRepository $sessionRepository,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly SessionService $sessionService,
+        private readonly IsWritableAvailability $isWritableAvailability,
+        private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
     ) {
     }
 
@@ -119,7 +121,7 @@ class GetFormSession
         $this->params = [
             'form' => $form->createView(),
             'custom_checks' => $customChecks,
-            'bikeRide' => $bikeRide,
+            'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
             'sessions' => $sessions,
         ];
     }
