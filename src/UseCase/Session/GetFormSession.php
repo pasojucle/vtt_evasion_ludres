@@ -12,6 +12,7 @@ use App\Entity\SurveyResponse;
 use App\Entity\User;
 use App\Form\SessionType;
 use App\Repository\SessionRepository;
+use App\Repository\SurveyResponseRepository;
 use App\Service\SessionService;
 use App\UseCase\BikeRide\CreateClusters;
 use App\UseCase\BikeRide\IsWritableAvailability;
@@ -32,10 +33,11 @@ class GetFormSession
         private readonly SessionService $sessionService,
         private readonly IsWritableAvailability $isWritableAvailability,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private readonly SurveyResponseRepository $surveyResponseRepository
     ) {
     }
 
-    public function execute(User $user, BikeRide $bikeRide): FormInterface
+    public function toAdd(User $user, BikeRide $bikeRide): FormInterface
     {
         $clusters = $this->getBikeRideClusters($bikeRide);
         $userSession = $this->getUserSession($bikeRide, $user, $clusters);
@@ -45,6 +47,22 @@ class GetFormSession
             : $this->sessionService->getBikeRideMembers($bikeRide);
 
         $form = $this->getForm($userSession, $bikeRide, $clusters, $isWritableAvailability);
+
+        $this->setParams($form, $bikeRide, $sessions);
+
+        return $form;
+    }
+
+    public function toEdit(Session $session): FormInterface
+    {
+        $bikeRide = $session->getCluster()->getBikeRide();
+
+        $clusters = $this->getBikeRideClusters($bikeRide);
+        $isWritableAvailability = true;
+        $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
+        $surveyResponses = $this->surveyResponseRepository->findResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey());
+
+        $form = $this->getForm($session, $bikeRide, $clusters, $isWritableAvailability, $surveyResponses);
 
         $this->setParams($form, $bikeRide, $sessions);
 
@@ -64,10 +82,13 @@ class GetFormSession
         return $clusters;
     }
 
-    private function getSurveyResponse(BikeRide $bikeRide): ?array
+    private function getSurveyResponses(BikeRide $bikeRide, ?array $surveyResponses): ?array
     {
-        $surveyResponses = null;
-        if (null !== $bikeRide->getSurvey() && !$bikeRide->getSurvey()->getSurveyIssues()->isEmpty()) {
+        if (!$bikeRide->getSurvey() || $bikeRide->getSurvey()->getSurveyIssues()->isEmpty()) {
+            return $surveyResponses;
+        }
+
+        if (empty($surveyResponses)) {
             $uuid = uniqid('', true);
             foreach ($bikeRide->getSurvey()->getSurveyIssues() as $issue) {
                 $response = new SurveyResponse();
@@ -99,14 +120,14 @@ class GetFormSession
         return $userSession;
     }
 
-    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability): FormInterface
+    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability, ?array $surveyResponses = null): FormInterface
     {
         /** @var BikeRideType $bikeRideType */
         $bikeRideType = $bikeRide->getBikeRideType();
 
         return $this->formFactory->create(SessionType::class, [
             'session' => $userSession,
-            'responses' => ['surveyResponses' => $this->getSurveyResponse($bikeRide)],
+            'responses' => ['surveyResponses' => $this->getSurveyResponses($bikeRide, $surveyResponses)],
         ], [
             'clusters' => $clusters,
             'is_writable_availability' => $isWritableAvailability,
@@ -116,11 +137,8 @@ class GetFormSession
 
     private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions): void
     {
-        $customChecks = null;
-
         $this->params = [
             'form' => $form->createView(),
-            'custom_checks' => $customChecks,
             'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
             'sessions' => $sessions,
         ];

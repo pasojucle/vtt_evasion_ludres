@@ -134,7 +134,6 @@ class SurveyType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $formModifier) {
             $form = $event->getForm();
-            $data = $event->getData();
 
             $formModifier($form, $options);
         });

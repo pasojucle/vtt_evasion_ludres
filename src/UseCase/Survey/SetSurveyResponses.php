@@ -38,7 +38,7 @@ class SetSurveyResponses
         $now = new DateTime();
         $message = $this->validate($survey, $now);
         if ($message) {
-            return [null, null, $message, $this->getRedirect($survey)];
+            return [null, null, null, $message, $this->getRedirect($survey)];
         }
         $respondent = $this->respondentRepository->findOneBySurveyAndUser($survey, $user);
         $histories = ($respondent?->isSurveyChanged()) ? $this->surveyService->getHistory($survey) : null;

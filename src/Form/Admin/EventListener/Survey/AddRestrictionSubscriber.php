@@ -48,15 +48,18 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $survey = $event->getForm()->getData();
 
         $data = $event->getData();
-
         $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
-        $levelFilter = (array_key_exists('levelFilter', $data) && !empty($data['levelFilter'])) ? $data['levelFilter'] : [];
-
-        $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : [];
-        $memberIds = (array_key_exists('memberIds', $data) && !empty($data['memberIds'])) ? explode(';', $data['memberIds']) : [];
-        $this->addOrRemoveMembers($data, $levels, $memberIds, $survey);
-
-        $this->cleanData($restriction, $data, $survey);
+        $levelFilter = null;
+        $levels = $this->toArray($data, 'levels');
+        $memberIds = $this->toArray($data, 'memberIds');
+        if ($restriction && array_key_exists('handler', $data)) {
+            foreach (['levelFilter', 'members'] as $property) {
+                $this->initProperty($data, $property);
+            }
+            $levelFilter = $data['levelFilter'];
+            $this->addOrRemoveMembers($data, $levels, $memberIds, $survey);
+            $this->cleanData($restriction, $data, $survey);
+        }
         $event->setData($data);
         $event->getForm()->setData($survey);
 
@@ -66,10 +69,11 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter, ?array $memberIds): void
     {
         $options = $form->getConfig()->getOptions();
-        $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
-        $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction;
+        $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction || $options['display_disabled'];
+        $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction || $options['display_disabled'];
 
-        $form
+        if (!$disabledBikeRide) {
+            $form
             ->add('bikeRide', Select2EntityType::class, [
                 'multiple' => false,
                 'remote_route' => 'admin_bike_ride_choices',
@@ -86,78 +90,75 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 'placeholder' => 'Sélectionnez une sortie',
                 'width' => '100%',
                 'label' => false,
-                'required' => !$disabledBikeRide,
-                'disabled' => $disabledBikeRide,
-            ])
-            ->add('members', Select2EntityType::class, [
-                'multiple' => true,
-                'remote_route' => 'admin_member_choices',
-                'class' => User::class,
-                'primary_key' => 'id',
-                'text_property' => 'fullName',
-                'minimum_input_length' => 0,
-                'page_limit' => 10,
-                'allow_clear' => true,
-                'delay' => 250,
-                'cache' => true,
-                'cache_timeout' => 60000,
-                'language' => 'fr',
-                'placeholder' => 'Sélectionnez les adhérents',
-                'width' => '100%',
-                'label' => false,
-                'remote_params' => [
-                    'filters' => json_encode($options['filters']),
-                ],
-                'required' => !$disabledMembers,
-                'disabled' => $disabledMembers,
-                'attr' => [
-                    'data-modifier' => 'bikeRideRestriction',
-                    'class' => 'form-modifier',
-                    'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
-                    'data-add-to-fetch' => 'memberIds',
-                ],
-            ])
-            ->add('levelFilter', ChoiceType::class, [
-                'label' => false,
-                'multiple' => true,
-                'choices' => $this->levelService->getLevelChoices(),
-                'attr' => [
-                    'data-modifier' => 'surveyRestriction',
-                    'class' => 'customSelect2 form-modifier',
-                    'data-width' => '100%',
-                    'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
-                    'data-maximum-selection-length' => 4,
-                    'data-language' => 'fr',
-                    'data-allow-clear' => true,
-                    'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
-                    'data-add-to-fetch' => 'levels',
-                ],
-                'required' => false,
-                'disabled' => $disabledMembers,
-            ])
-            ;
+                'required' => true,
+            ]);
+        }
+        if (!$disabledMembers) {
+            $form
+                ->add('members', Select2EntityType::class, [
+                    'multiple' => true,
+                    'remote_route' => 'admin_member_choices',
+                    'class' => User::class,
+                    'primary_key' => 'id',
+                    'text_property' => 'fullName',
+                    'minimum_input_length' => 0,
+                    'page_limit' => 10,
+                    'allow_clear' => true,
+                    'delay' => 250,
+                    'cache' => true,
+                    'cache_timeout' => 60000,
+                    'language' => 'fr',
+                    'placeholder' => 'Sélectionnez les adhérents',
+                    'width' => '100%',
+                    'label' => false,
+                    'remote_params' => [
+                        'filters' => json_encode($options['filters']),
+                    ],
+                    'required' => true,
+                    'attr' => [
+                        'data-modifier' => 'bikeRideRestriction',
+                        'class' => 'form-modifier',
+                        'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
+                        'data-add-to-fetch' => 'memberIds',
+                        'data-disabled' => $disabledBikeRide,
+                    ],
+                ])
+                ->add('levelFilter', ChoiceType::class, [
+                    'label' => false,
+                    'multiple' => true,
+                    'choices' => $this->levelService->getLevelChoices(),
+                    'attr' => [
+                        'data-modifier' => 'surveyRestriction',
+                        'class' => 'customSelect2 form-modifier',
+                        'data-width' => '100%',
+                        'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
+                        'data-maximum-selection-length' => 4,
+                        'data-language' => 'fr',
+                        'data-allow-clear' => true,
+                        'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
+                        'data-add-to-fetch' => 'levels',
+                    ],
+                    'required' => false,
+                ])
+                ;
+        }
     }
 
     private function addOrRemoveMembers(array &$data, ?array $levels, ?array $memberIds, Survey $survey): void
     {
         $levelFilter = [];
-        if (array_key_exists('levelFilter', $data)) {
-            $levelFilter = array_map(function ($id) {
-                return (int) $id;
-            }, $data['levelFilter']);
-        }
+        $levelFilter = array_map(function ($id) {
+            return 1 === preg_match('#(\d+)#', $id) ? (int) $id : $id;
+        }, $data['levelFilter']);
+
         $users = [];
-        if (array_key_exists('users', $data)) {
-            $users = array_map(function ($id) {
-                return (int) $id;
-            }, $data['users']);
-        }
-        if (!array_key_exists('handler', $data)) {
-            return;
-        }
+        $users = array_map(function ($id) {
+            return (int) $id;
+        }, $data['members']);
 
         $membersToAdd = [];
         $membresToRemove = [];
+
         if (str_contains($data['handler'], 'levelFilter')) {
             $levelsToAdd = array_diff($levelFilter, $levels);
             $levelsToRemove = array_diff($levels, $levelFilter);
@@ -167,9 +168,6 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         if (str_contains($data['handler'], 'memberIds')) {
             $membersToAdd = array_diff($memberIds, $users);
             $membresToRemove = array_diff($users, $memberIds);
-        }
-        if (!array_key_exists('members', $data)) {
-            $data['members'] = [];
         }
 
         foreach ($membersToAdd as $member) {
@@ -188,6 +186,18 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 $survey->removeMember($member);
             }
         }
+    }
+
+    private function initProperty(array &$data, string $property): void
+    {
+        if (!array_key_exists($property, $data) || !is_array($data[$property])) {
+            $data[$property] = [];
+        }
+    }
+
+    private function toArray(array $data, string $property): array
+    {
+        return (!empty($data[$property]) && !empty($data[$property])) ? explode(';', $data[$property]) : [];
     }
 
     private function getMembers(array $levels): array
@@ -213,7 +223,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $data['bikeRide'] = [];
             $survey->setBikeRide(null);
         }
-        if (array_key_exists('members', $data)) {
+        if (array_key_exists('members', $data) && is_array($data['members'])) {
             foreach ($data['members'] as $member) {
                 if (empty($member)) {
                     unset($member);

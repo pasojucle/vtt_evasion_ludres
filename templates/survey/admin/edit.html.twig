@@ -27,13 +27,24 @@
                 {% for restriction in form.restriction %}
                 <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_BIKE_RIDE') %}
-                        <div class="form-group radio-group">{{ form_row(form.bikeRide) }}</div>
+                        {% if form.bikeRide is defined %}
+                            <div class="form-group radio-group">{{ form_row(form.bikeRide) }}</div>
+                        {% endif %}
+                        {% if form.bikeRide is not defined and survey.bikeRide %}
+                            <div class="ms-20">{{ survey.bikeRide }}</div>
+                        {% endif %}
                     {% endif %}
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_MEMBER_LIST') %}
-                        <div class="row row-align-top">
-                            <div class="form-group radio-group col-md-8">{{ form_row(form.members) }}</div>
-                            <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
-                        </div>
+                        {% if form.members is defined %}
+                            <div class="row row-align-top">
+                                <div class="form-group radio-group col-md-8">{{ form_row(form.members) }}</div>
+                                <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
+                            </div>
+                        {% endif %}
+                        {% if form.members is not defined and survey.members %}
+                            <div class="ms-20">{{ survey.members }}</div>
+                        {% endif %}
+
                     {% endif %}
                 {% endfor %}
             </div>
@@ -47,7 +58,7 @@
                     {% endfor %}
                 </ul>
                 <div>
-                    {% if survey.respondents is empty %}
+                    {% if survey.isEditable %}
                         <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.surveyIssues.vars.name }}">
                         <i class="fas fa-plus-circle"></i> Ajouter une question
                         </button>            

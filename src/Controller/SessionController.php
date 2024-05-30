@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
-use App\Form\SessionType;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyResponseRepository;
 use App\Service\CacheService;
 use App\Service\MessageService;
 use App\Service\SessionService;
-use App\UseCase\Session\AddSession;
 use App\UseCase\Session\ConfirmationSession;
 use App\UseCase\Session\GetFormSession;
+use App\UseCase\Session\SetSession;
 use App\UseCase\Session\UnregistrableSessionMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,17 +26,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class SessionController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private CacheService $cacheService,
-        private SessionService $sessionService
+        private readonly EntityManagerInterface $entityManager,
+        private readonly CacheService $cacheService,
+        private readonly SessionService $sessionService,
+        private readonly GetFormSession $getFormSession,
+        private readonly SetSession $setSession,
     ) {
     }
 
     #[Route('/mon-compte/rando/inscription/{bikeRide}', name: 'session_add', methods: ['GET', 'POST'])]
     public function sessionAdd(
         Request $request,
-        GetFormSession $getFormSession,
-        AddSession $addSession,
         UnregistrableSessionMessage $unregistrableSessionMessage,
         BikeRide $bikeRide
     ): Response {
@@ -54,62 +52,37 @@ class SessionController extends AbstractController
             ]);
         }
 
-        $form = $getFormSession->execute($user, $bikeRide);
+        $form = $this->getFormSession->toAdd($user, $bikeRide);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $addSession->execute($form, $user, $bikeRide);
+            $this->setSession->add($form, $user, $bikeRide);
 
             $this->sessionService->checkEndTesting($user);
 
             return $this->redirectToRoute('user_bike_rides');
         }
 
-        return $this->render('session/edit.html.twig', $getFormSession->params);
+        return $this->render('session/edit.html.twig', $this->getFormSession->params);
     }
 
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
-    
     public function sessionAvailabilityEdit(
         Request $request,
-        BikeRideDtoTransformer $bikeRideDtoTransformer,
-        ConfirmationSession $confirmationSession,
-        SurveyResponseRepository $surveyResponseRepository,
         Session $session
     ) {
-        $bikeRide = $session->getCluster()->getBikeRide();
-        $survey = $bikeRide->getSurvey();
-
-
-        $form = $this->createForm(SessionType::class, [
-            'session' => $session,
-            'responses' => ($survey) ? ['surveyResponses' => $surveyResponseRepository->findResponsesByUserAndSurvey($session->getUser(), $survey)] : null,
-        ], [
-            'clusters' => $session->getCluster(),
-            'is_writable_availability' => true,
-            'display_bike_kind' => $bikeRide->getBikeRideType()->isDisplayBikeKind(),
-        ]);
-
+        $form = $this->getFormSession->toEdit($session);
         $form->handleRequest($request);
 
-        $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
-
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $session = $form->get('session')->getData();
+            $this->setSession->edit($form, $session);
 
-            $this->entityManager->flush();
-            $this->cacheService->deleteCacheIndex($session->getCluster());
+
             $this->addFlash('success', 'Votre disponibilité a bien été modifiée');
-            $confirmationSession->execute($session);
-
             return $this->redirectToRoute('user_bike_rides');
         }
 
-        return $this->render('session/edit.html.twig', [
-            'form' => $form->createView(),
-            'bikeRide' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
-            'sessions' => $sessions,
-        ]);
+        return $this->render('session/edit.html.twig', $this->getFormSession->params);
     }
 
     #[Route('/mon-compte/rando/supprime/{session}', name: 'session_delete', methods: ['GET', 'POST'])]

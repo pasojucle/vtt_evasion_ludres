@@ -26,6 +26,7 @@ class SetSurvey
         if (SurveyType::DISPLAY_MEMBER_LIST !== $survey->getRestriction()) {
             $survey->removeMembers();
         }
+
         if ($persit) {
             $this->entityManager->persist($survey);
         }

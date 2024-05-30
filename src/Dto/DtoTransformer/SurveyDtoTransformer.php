@@ -6,12 +6,16 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\SurveyDto;
 use App\Entity\History;
+use App\Entity\Identity;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\User;
+use App\Service\BikeRideService;
 use App\UseCase\Survey\GetResponsesByUser;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\UnitOfWork;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -20,25 +24,35 @@ class SurveyDtoTransformer
     public function __construct(
         private readonly GetResponsesByUser $getResponsesByUser,
         private readonly Security $security,
+        private readonly BikeRideService $bikeRideService,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function fromEntity(Survey $survey, ?array $histories = null): SurveyDto
     {
         $surveyDto = new surveyDto();
-        $surveyDto->id = $survey->getId();
-        $surveyDto->entity = $survey;
-        $surveyDto->title = $survey->getTitle();
-        $surveyDto->content = $survey->getContent();
-        $surveyDto->issues = $this->getIssues($survey->getSurveyIssues());
-        if (!empty($histories)) {
-            $this->formatHistories($histories, $surveyDto);
+        $unitOfWork = $this->entityManager->getUnitOfWork();
+ 
+        if (UnitOfWork::STATE_MANAGED === $unitOfWork->getEntityState($survey)) {
+            $surveyDto->id = $survey->getId();
+            $surveyDto->entity = $survey;
+            $surveyDto->title = $survey->getTitle();
+            $surveyDto->content = $survey->getContent();
+            $surveyDto->issues = $this->getIssues($survey->getSurveyIssues());
+            if (!empty($histories)) {
+                $this->formatHistories($histories, $surveyDto);
+            }
+            /** @var ?User $user */
+            $user = $this->security->getUser();
+            if ($user) {
+                $surveyDto->responses = $this->getResponsesByUser->execute($survey, $user);
+            }
+            $surveyDto->bikeRide = $this->getBikeRide($survey);
+            $surveyDto->members = $this->getMembers($survey);
+            $surveyDto->isEditable = $survey->getRespondents()->isEmpty();
         }
-        /** @var ?User $user */
-        $user = $this->security->getUser();
-        if ($user) {
-            $surveyDto->responses = $this->getResponsesByUser->execute($survey, $user);
-        }
+
         
         return $surveyDto;
     }
@@ -106,5 +120,31 @@ class SurveyDtoTransformer
     private function getDecoratedChangesFromText(array $value): string
     {
         return sprintf('<ins style="background-color:#ccffcc">%s</ins>', $value[1]);
+    }
+
+    private function getBikeRide(?Survey $survey): ?string
+    {
+        $bikeRide = $survey->getBikeRide();
+
+        return ($bikeRide) ? sprintf('%s du %s', $bikeRide->getTitle(), $this->bikeRideService->getPeriod($bikeRide)) : null;
+    }
+
+    private function getMembers(?Survey $survey): ?string
+    {
+        /** @var Collection $collectionMembers */
+        $collectionMembers = $survey->getMembers();
+
+        if ($collectionMembers->isEmpty()) {
+            return null;
+        }
+        $members = [];
+        foreach ($collectionMembers as $user) {
+            /** @var Identity $member */
+            $member = $user->getFirstIdentity();
+            $members[] = sprintf('%s %s', $member->getName(), $member->getFirstName());
+        }
+
+        sort($members);
+        return implode(', ', $members);
     }
 }

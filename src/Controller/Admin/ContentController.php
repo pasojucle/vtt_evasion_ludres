@@ -176,7 +176,7 @@ class ContentController extends AbstractController
             'content' => $contentDtoTransformer->fromEntity($content),
             'form' => $form->createView(),
             'settings' => [
-                'messages' => (empty($content->getParameters())) ? $messageRepository->findByNames($content->getParameters()) : null,
+                'messages' => (!empty($content->getParameters())) ? $messageRepository->findByNames($content->getParameters()) : null,
             ],
         ]);
     }

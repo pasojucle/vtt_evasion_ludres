@@ -7,6 +7,7 @@ namespace App\UseCase\Survey;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Form\Admin\SurveyType;
+use DateTimeImmutable;
 
 class GetSurvey
 {
@@ -20,6 +21,7 @@ class GetSurvey
     {
         if (!$survey) {
             $survey = new Survey();
+            $survey->setStartAt(new DateTimeImmutable());
             $issue = new SurveyIssue();
             $survey->addSurveyIssue($issue);
         }

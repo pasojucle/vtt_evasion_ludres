@@ -19,4 +19,10 @@ class SurveyDto
     public array $issues = [];
 
     public array $responses = [];
+
+    public ?string $members = null;
+
+    public bool  $isEditable = true;
+
+    public ?string $bikeRide = null;
 }

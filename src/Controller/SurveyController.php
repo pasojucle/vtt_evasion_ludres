@@ -9,10 +9,8 @@ use App\Entity\Survey;
 use App\Entity\User;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyRepository;
-use App\Service\SurveyService;
 use App\UseCase\Survey\GetResponsesByUser;
 use App\UseCase\Survey\SetSurveyResponses;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +25,6 @@ class SurveyController extends AbstractController
         Request $request,
         SetSurveyResponses $setSurveyResponses,
         SurveyDtoTransformer $surveyDtoTransformer,
-        SurveyService $surveyService,
         Survey $survey
     ): Response {
         list($histories, $respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey);

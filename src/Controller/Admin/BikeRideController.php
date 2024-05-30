@@ -9,7 +9,6 @@ use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
 use App\Repository\BikeRideRepository;
-use App\Repository\SessionRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetEmailMembers;
@@ -120,7 +119,6 @@ class BikeRideController extends AbstractController
     public function adminClusterShow(
         Request $request,
         BikeRide $bikeRide,
-        SessionRepository $sessionRepository,
     ): Response {
         $filters = $request->getSession()->get('admin_bike_rides_filters');
         $request->getSession()->set('admin_user_redirect', $this->generateUrl('admin_bike_ride_cluster_show', [

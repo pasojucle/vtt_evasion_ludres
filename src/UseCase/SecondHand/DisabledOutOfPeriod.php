@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\SecondHand;
 use App\Repository\SecondHandRepository;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\ParameterService;
 use DateInterval;
 use DateTimeImmutable;
@@ -23,6 +24,7 @@ class DisabledOutOfPeriod
         private MailerService $mailerService,
         private UserDtoTransformer $userDtoTransformer,
         private UrlGeneratorInterface $urlGenerator,
+        private MessageService $messageService,
     ) {
     }
 
@@ -51,7 +53,7 @@ class DisabledOutOfPeriod
     {
         $userDto = $this->userDtoTransformer->identifiersFromEntity($secondHand->getUser());
         $subject = sprintf('Votre annonce %s', $secondHand->getName());
-        $content = $this->parameterService->getParameterByName('SECOND_HAND_DISABLED_MESSAGE');
+        $content = $this->messageService->getMessageByName('SECOND_HAND_DISABLED_MESSAGE');
 
         $AdditionnalParams = [
             '{{ nom_annonce }}' => $secondHand->getName(),

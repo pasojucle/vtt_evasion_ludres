@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
@@ -18,6 +19,7 @@ use App\UseCase\Survey\GetSurvey;
 use App\UseCase\Survey\GetSurveyResults;
 use App\UseCase\Survey\SetSurvey;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -31,8 +33,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SurveyController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SurveyResponseDtoTransformer $surveyResponseDtoTransformer,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SurveyResponseDtoTransformer $surveyResponseDtoTransformer,
+        private readonly SurveyDtoTransformer $surveyDtoTransformer,
     ) {
     }
 
@@ -72,7 +75,7 @@ class SurveyController extends AbstractController
         }
 
         return $this->render('survey/admin/edit.html.twig', [
-            'survey' => $survey,
+            'survey' => $this->surveyDtoTransformer->fromEntity($survey),
             'form' => $form->createView(),
         ]);
     }
@@ -82,7 +85,6 @@ class SurveyController extends AbstractController
     public function edit(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, ?Survey $survey): Response
     {
         $getSurvey->execute($survey);
-
         $form = $this->createForm(SurveyType::class, $survey, [
             'display_disabled' => !$survey->getRespondents()->isEmpty(),
         ]);
@@ -95,7 +97,7 @@ class SurveyController extends AbstractController
         }
 
         return $this->render('survey/admin/edit.html.twig', [
-            'survey' => $survey,
+            'survey' => $this->surveyDtoTransformer->fromEntity($survey),
             'form' => $form->createView(),
         ]);
     }
