@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 const clipboard = (event) => {
     event.preventDefault();
-    const value = $(this).attr('href');
+    const value = event.target.href;
     navigator.clipboard.writeText(value);
 }
 
@@ -19,7 +19,6 @@ const emailToClipboard = (event) => {
     fetch(url).then ((response) => {
         return response.json();
     }).then((data) => {
-        console.log(data);
         navigator.clipboard.writeText(data);
     });
 }
