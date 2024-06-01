@@ -54,14 +54,14 @@ class Slideshow extends HTMLDivElement {
         await fetch(Routing.generate('slideshow_images'),)
         .then((response) => response.json())
         .then((json)=> {
-            json.images.forEach((url, index) => {
-                this.addImage(index, url);
+            json.images.forEach((image, index) => {
+                this.addImage(index, image);
             })
             this.init();
         });
     }
-    addImage = (index, url) => {
-        this.images.push(new SliderImage(index, url, this)) 
+    addImage = (index, image) => {
+        this.images.push(new SliderImage(index, image, this)) 
     }
     find = (index) => {
         const image = this.images.find((image) => image.index === index);
@@ -159,10 +159,11 @@ class SliderImage {
     width;
     top;
     loader;
-    constructor(index, url, slideshow) {
+    constructor(index, image, slideshow) {
         this.slideshow = slideshow
         this.index = index;
-        this.url = url;
+        this.url = image.url;
+        this.directory = image.directory;
     }
     getOrientation = () => {
         return (this.image.height < this.image.width) ? 'landscape' : 'portrait';
@@ -181,7 +182,7 @@ class SliderImage {
         } else {
             this.slideshow.frameEl.append(this.imageEl);
         }
-        
+        this.appendLabel();
         this.image.onload = () => {
             if (this.image.complete) {
                 this.image.classList.add(this.getOrientation());
@@ -189,8 +190,13 @@ class SliderImage {
             }
         }
     }
+    appendLabel = () => {
+        const $label = document.createElement('div');
+        $label.classList.add('label');
+        $label.textContent = `${this.directory} - ${this.index + 1} / ${this.slideshow.images.length}`;
+        this.imageEl.append($label);
+    }
     slide(position) {
-        console.log(this.imageEl, this.slideshow.slideWith)
         this.imageEl.style.left = position * this.slideshow.slideWith + 'px';
     }
 }

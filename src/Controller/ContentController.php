@@ -17,6 +17,7 @@ use App\Repository\ContentRepository;
 use App\Repository\DocumentationRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
+use App\Repository\SlideshowImageRepository;
 use App\Repository\SummaryRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
@@ -223,20 +224,17 @@ class ContentController extends AbstractController
 
     #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
     public function slideshowImages(
-        ProjectDirService $projectDir
+        SlideshowImageRepository $slideshowImageRepository
+
     ): JsonResponse {
         $images = [];
-        $finder = new Finder();
-        $finder->files()
-            ->in($projectDir->path('slideshow'))
-            ->name(['*.jpg', '*.png', '*.jpeg'])
-            ->depth('<= 1')
-            ->sortByChangedTime()
-            ->reverseSorting();
 
         /** @var SplFileInfo $file */
-        foreach ($finder as $file) {
-            $images[] = $this->generateUrl('slideshow_image', ['filename' => $file->getFilename()]);
+        foreach ($slideshowImageRepository->findAll() as $image) {
+            $images[] = [
+                'url' => $this->generateUrl('slideshow_image', ['filename' => $image->getFilename()]),
+                'directory' => $image->getDirectory()->getName(),
+            ];
         }
 
         return new JsonResponse(['images' => $images]);
