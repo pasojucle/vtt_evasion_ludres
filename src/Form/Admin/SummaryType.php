@@ -24,7 +24,7 @@ class SummaryType extends AbstractType
             ->add('content', CKEditorType::class, [
                 'label' => 'Détail',
                 'config_name' => 'full',
-                'required' => false,
+                'required' => true,
                 'row_attr' => [
                     'class' => 'form-group',
                 ],

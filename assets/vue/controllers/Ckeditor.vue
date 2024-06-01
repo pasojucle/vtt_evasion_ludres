@@ -1,8 +1,10 @@
 <template>
-    <div id="app">
+    <div id="ckeditor-app">
         <label for="{{ formId }}" class="form-label">{{ form_label }}</label>
-        <textarea class="d-none" :id="form_id" :name="form_name" required :value="editorData"></textarea>
-        <ckeditor :editor="editor" v-model="editorData" @ready="onReady" @input="onChange" :config="editorConfig"></ckeditor>
+        <div style="position: relative;">
+            <ckeditor :editor="editor" v-model="editorData" @ready="onReady" @input="onChange" :config="editorConfig"></ckeditor>
+            <textarea style="position: absolute; top: 20px; left: 20px; opacity: 0;" :id="form_id" :name="form_name" required :value="editorData"></textarea>
+        </div>
     </div>
 </template>
 
@@ -23,7 +25,7 @@
     import { Undo } from '@ckeditor/ckeditor5-undo';
 
     export default {
-        name: 'app',
+        name: 'ckeditor-app',
         components: {
             ckeditor: CKEditor.component,
         },
