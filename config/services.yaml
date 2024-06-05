@@ -82,6 +82,10 @@ services:
        tags:
           - { name: kernel.event_listener, event: kernel.request }
 
+    App\EventListeners\LogListener:
+       tags:
+          - { name: kernel.event_listener, event: kernel.request }
+
 
     # App\EventListeners\ExceptionListener:
     #     tags:

@@ -10,6 +10,7 @@ use App\Dto\DtoTransformer\DocumentationDtoTransformer;
 use App\Dto\DtoTransformer\SummaryDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Link;
+use App\Entity\SlideshowImage;
 use App\Entity\User;
 use App\Form\ContactType;
 use App\Repository\BikeRideRepository;
@@ -22,11 +23,9 @@ use App\Repository\SummaryRepository;
 use App\Service\IdentityService;
 use App\Service\MailerService;
 use App\Service\MessageService;
-use App\Service\ParameterService;
 use App\Service\ProjectDirService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -225,11 +224,10 @@ class ContentController extends AbstractController
     #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
     public function slideshowImages(
         SlideshowImageRepository $slideshowImageRepository
-
     ): JsonResponse {
         $images = [];
 
-        /** @var SplFileInfo $file */
+        /** @var SlideshowImage $image */
         foreach ($slideshowImageRepository->findAll() as $image) {
             $images[] = [
                 'url' => $this->generateUrl('slideshow_image', ['filename' => $image->getFilename()]),

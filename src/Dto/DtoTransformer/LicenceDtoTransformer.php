@@ -187,7 +187,7 @@ class LicenceDtoTransformer
                 $membershipFeeAmount = $membershipFee->getAmount();
             }
             $lastSeason = $licence->getSeason() - 1;
-            $indemnities = $this->indemnityService->getUserIndemnities($licence->getUser(), $this->seasonService->getSeasonInterval($lastSeason));
+            $indemnities = $this->indemnityService->getUserIndemnities($licence->getUser(), $this->seasonService->getSeasonPeriod($lastSeason));
 
             if ($membershipFeeAmount) {
                 $amount = $membershipFeeAmount;

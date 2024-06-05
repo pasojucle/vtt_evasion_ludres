@@ -162,11 +162,13 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->gte('br.startAt', ':start'),
                 (new Expr())->lte('br.startAt', ':end'),
                 (new Expr())->gt('brt.registration', ':registration'),
+                (new Expr())->eq('br.deleted', ':deleted'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('start', (new DateTimeImmutable())->setTime(0, 0, 0)),
                 new Parameter('end', (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59)),
                 new Parameter('registration', 0),
+                new Parameter('deleted', false),
             ]))
             ->orderBy('br.startAt')
             ->getQuery()

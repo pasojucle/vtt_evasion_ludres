@@ -9,9 +9,11 @@ use App\Entity\Survey;
 use App\Entity\User;
 use App\Repository\RespondentRepository;
 use App\Repository\SurveyRepository;
+use App\Service\LogService;
 use App\UseCase\Survey\GetResponsesByUser;
 use App\UseCase\Survey\SetSurveyResponses;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,9 +27,14 @@ class SurveyController extends AbstractController
         Request $request,
         SetSurveyResponses $setSurveyResponses,
         SurveyDtoTransformer $surveyDtoTransformer,
+        Security $security,
+        LogService $logService,
         Survey $survey
     ): Response {
-        list($histories, $respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey);
+        /** @var User $user */
+        $user = $security->getUser();
+        list($histories, $respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey, $user);
+        $logService->writeByEntity('Survey', $survey->getId(), $user);
 
         return $this->render('survey/survey_responses.html.twig', [
             'survey' => $surveyDtoTransformer->fromEntity($survey, $histories),
@@ -37,7 +44,6 @@ class SurveyController extends AbstractController
             'redirect' => $redirect,
         ]);
     }
-
 
     #[Route('/mon-compte/sondages', name: 'user_surveys', methods: ['GET'])]
     #[IsGranted('SURVEY_LIST')]
@@ -59,7 +65,6 @@ class SurveyController extends AbstractController
                 'responses' => $getResponsesByUser->execute($survey, $user),
             ];
         }
-
 
         return $this->render('survey/list.html.twig', [
             'surveys' => $surveyRepository->findActive($user),

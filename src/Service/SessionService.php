@@ -163,7 +163,7 @@ class SessionService
         }
     }
 
-    public function getSeasonInterval(int $season): array
+    public function getSeasonPeriod(int $season): array
     {
         $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
         $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));

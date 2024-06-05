@@ -3,9 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\History;
+use App\Entity\Log;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\User;
+use App\Service\SeasonService;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
@@ -23,7 +26,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class HistoryRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly SeasonService $seasonService
+    )
     {
         parent::__construct($registry, History::class);
     }
@@ -46,7 +52,7 @@ class HistoryRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByRegistrationEntity(User $user, string $className, int $entityId, int $season): ?History
+    public function findOneByRegistrationEntity(User $user, string $className, int $entityId, DateTimeImmutable $seasonStartAt): ?History
     {
         try {
             return $this->createQueryBuilder('h')
@@ -54,13 +60,13 @@ class HistoryRepository extends ServiceEntityRepository
                     (new Expr())->eq('h.entity', ':entity'),
                     (new Expr())->eq('h.entityId', ':entityId'),
                     (new Expr())->eq('h.user', ':user'),
-                    (new Expr())->eq('h.season', ':season'),
+                    (new Expr())->eq('h.createdAt', ':seasonStartAt'),
                 )
                 ->setParameters(new ArrayCollection([
                     new Parameter('entity', $className),
                     new Parameter('entityId', $entityId),
                     new Parameter('user', $user),
-                    new Parameter('season', $season),
+                    new Parameter('seasonStartAt', $seasonStartAt),
                 ]))
                 ->getQuery()
                 ->getOneOrNullResult();
@@ -90,13 +96,14 @@ class HistoryRepository extends ServiceEntityRepository
 
     public function findBySeason(User $user, int $season): array
     {
+        $seasonPeriod = $this->seasonService->getSeasonPeriod($season);
         $qb = $this->createQueryBuilder('h')
             ->andWhere(
-                (new Expr())->eq('h.season', ':season'),
+                (new Expr())->gte('h.createdAt', ':seasonStarAt'),
                 (new Expr())->eq('h.user', ':user'),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('season', $season),
+                new Parameter('seasonStarAt', $seasonPeriod['startAt']),
                 new Parameter('user', $user)
             ]))
             ->getQuery()
@@ -110,7 +117,7 @@ class HistoryRepository extends ServiceEntityRepository
         return $histories;
     }
 
-    public function findBySurvey(Survey $survey): array
+    public function findBySurvey(Survey $survey, ?DateTimeImmutable $viewAt): array
     {
         $surveyIssues = $this->getEntityManager()->createQueryBuilder()
         ->select('issue.id')
@@ -121,21 +128,25 @@ class HistoryRepository extends ServiceEntityRepository
         ;
 
         return $this->createQueryBuilder('h')
-            ->orWhere(
-                (new Expr())->andX(
-                    (new Expr())->eq('h.entity', ':classNameSurvey'),
-                    (new Expr())->eq('h.entityId', ':entityId'),
+            ->andWhere(
+                (new Expr())->orx(
+                    (new Expr())->andX(
+                        (new Expr())->eq('h.entity', ':classNameSurvey'),
+                        (new Expr())->eq('h.entityId', ':entityId'),
+                    ),
+                    (new Expr())->andX(
+                        (new Expr())->eq('h.entity', ':classNameSurveyIssue'),
+                        (new Expr())->in('h.entityId', $surveyIssues->getDQL()),
+                    )
                 ),
-                (new Expr())->andX(
-                    (new Expr())->eq('h.entity', ':classNameSurveyIssue'),
-                    (new Expr())->in('h.entityId', $surveyIssues->getDQL()),
-                )
+                (new Expr())->gte('h.createdAt', ':viewAt')
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('classNameSurvey', 'survey'),
                 new Parameter('classNameSurveyIssue', 'surveyIssue'),
                 new Parameter('survey', $survey),
                 new Parameter('entityId', $survey->getId()),
+                new Parameter('viewAt', $viewAt),
             ]))
             ->getQuery()
             ->getResult();

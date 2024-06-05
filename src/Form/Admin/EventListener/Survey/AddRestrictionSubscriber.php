@@ -78,7 +78,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         if (!$disabledBikeRide) {
             $form
             ->add('bikeRide', BikeRideAutocompleteField::class, [
-                'required' => !$disabledBikeRide,
+                'required' => true,
                 'disabled' => $disabledBikeRide,
             ]);
         }
@@ -86,7 +86,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $form
             ->add('members', UsersAutocompleteField::class, [
                 'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $options['filters']),
-                'required' => !$disabledMembers,
+                'required' => true,
                 'disabled' => $disabledMembers,
                 'attr' => [
                     'data-modifier' => 'surveyRestriction',

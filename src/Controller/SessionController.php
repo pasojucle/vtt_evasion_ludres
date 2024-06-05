@@ -77,7 +77,6 @@ class SessionController extends AbstractController
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->setSession->edit($form, $session);
 
-
             $this->addFlash('success', 'Votre disponibilité a bien été modifiée');
             return $this->redirectToRoute('user_bike_rides');
         }

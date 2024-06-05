@@ -10,6 +10,7 @@ use App\Entity\Respondent;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Service\CacheService;
+use App\Service\LogService;
 use App\Service\ModalWindowService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,11 +20,12 @@ use Symfony\Component\Form\FormInterface;
 class SetSession
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ConfirmationSession $confirmationSession,
-        private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private ModalWindowService $modalWindowService,
-        private CacheService $cacheService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ConfirmationSession $confirmationSession,
+        private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private readonly ModalWindowService $modalWindowService,
+        private readonly CacheService $cacheService,
+        private readonly LogService $logService,
     ) {
     }
 
@@ -39,6 +41,7 @@ class SetSession
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->entityManager->persist($session);
         $this->entityManager->flush();
+        $this->writeLog($bikeRide, $user);
 
         $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
         $content = ($session->getAvailability())
@@ -51,6 +54,8 @@ class SetSession
     {
         $session = $form->get('session')->getData();
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
+        $bikeRide = $session->getCluster()->getBikeRide();
+        $user = $session->getUser();
         if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
             $entityState = UnitOfWork::STATE_MANAGED;
@@ -62,12 +67,13 @@ class SetSession
                 }
             }
             if (UnitOfWork::STATE_MANAGED < $entityState) {
-                $this->addSurveyResponses($surveyResponses, $session->getUser(), $session->getCluster()->getBikeRide());
+                $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
             }
         }
         $this->entityManager->flush();
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->confirmationSession->execute($session);
+        $this->writeLog($bikeRide, $user);
     }
 
     private function addSurveyResponses(array $surveyResponses, User $user, BikeRide $bikeRide): void
@@ -86,5 +92,12 @@ class SetSession
             ->setCreatedAt($now)
         ;
         $this->entityManager->persist($respondent);
+    }
+
+    private function writeLog(BikeRide $bikeRide, User $user): void
+    {
+        if ($survey = $bikeRide->getSurvey()) {
+            $this->logService->writeByEntity('Survey', $survey->getId(), $user);
+        }
     }
 }

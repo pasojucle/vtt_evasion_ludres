@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\HistoryRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
@@ -25,9 +26,8 @@ class History
     #[ORM\Column]
     private array $value = [];
 
-    #[ORM\Column(nullable:true)]
-    private ?int $season = null;
-
+    #[ORM\Column]
+    private ?DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -82,14 +82,14 @@ class History
         return $this;
     }
 
-    public function getSeason(): ?int
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->season;
+        return $this->createdAt;
     }
 
-    public function setSeason(?int $season): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->season = $season;
+        $this->createdAt = $createdAt;
 
         return $this;
     }

@@ -7,7 +7,6 @@ namespace App\Entity;
 use App\Repository\RespondentRepository;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RespondentRepository::class)]
@@ -27,9 +26,6 @@ class Respondent
 
     #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
-
-    #[ORM\Column(type:Types::BOOLEAN, options:['default' => false])]
-    private bool $surveyChanged = false;
 
     public function geId(): ?int
     {
@@ -68,18 +64,6 @@ class Respondent
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function isSurveyChanged(): bool
-    {
-        return $this->surveyChanged;
-    }
-
-    public function setSurveyChanged(bool $SurveyChanged): static
-    {
-        $this->surveyChanged = $SurveyChanged;
 
         return $this;
     }
