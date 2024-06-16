@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\ModalWindowRepository;
+use App\Repository\NotificationRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ModalWindowRepository::class)]
-class ModalWindow
+#[ORM\Entity(repositoryClass: NotificationRepository::class)]
+class Notification
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

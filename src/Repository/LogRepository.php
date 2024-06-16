@@ -82,4 +82,20 @@ class LogRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findSlideShowimageViewedIds(User $user): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select('l.entityId')
+            ->andWhere(
+                (new Expr())->eq('l.user', ':user'),
+                (new Expr())->eq('l.entity', ':entityName')
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', 'SlideshowImage')
+            ]))
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
 }

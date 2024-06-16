@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion de la pop'up{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Gestion de la pop'up</h1>
+            <div class="tool-group">
+                {% include 'component/dropdown_settings.html.twig' %}
+            </div>
+        </div>
+        <div class="wrapper-body">
+            <a href="{{ path('admin_notification_add') }}" class="btn btn-primary" title="Ajouter une info"><i class="fas fa-plus"></i> Ajouter une info</a>
+            <ul class="sortable padding-10" data-route="admin_level_order" data-parameter="level">
+                {% for notification in notification_list %}     
+                    <li class="col-list col-list-2btn">  
+                        <div class="list-item">{{ notification.title }}</div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div>
+                                <a class="btn btn-primary btn-ico" href="{{ path('admin_notification_edit', {'notification': notification.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
+                            </div>
+                            <div>
+                                {% if not notification.isDisabled %}
+                                    <a class="btn btn-success btn-ico" href="{{ path('admin_notification_toggle_disable', {'notification': notification.id})}}" title="Désactiver"><i class="fas fa-toggle-on"></i></a>
+                                {% else %}
+                                    <a class="btn btn-danger btn-ico" href="{{ path('admin_notification_toggle_disable', {'notification': notification.id})}}" title="Activer"><i class="fas fa-toggle-off"></i></a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

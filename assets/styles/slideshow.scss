@@ -23,7 +23,7 @@
                     height: 100%;
                 }
             }
-            & > .label{
+            & > .label {
                 position: absolute;
                 background-color: var(--clear-color);
                 color: var(--white-color);
@@ -31,6 +31,17 @@
                 font-size: 10px;
                 border-radius: 5px;
                 bottom: 20px;
+            }
+            & > .novelty {
+                position: absolute;
+                background-color: var(--primary-color-darker);
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                font-size: 10px;
+                line-height: 20px;
+                color: var(--white-color);
+                text-align: center;
             }
         }
     }

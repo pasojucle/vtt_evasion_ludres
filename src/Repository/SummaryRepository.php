@@ -4,8 +4,11 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\Summary;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -26,7 +29,7 @@ class SummaryRepository extends ServiceEntityRepository
     /**
      * @return Summary[] Returns an array of Summary objects
      */
-    public function findLatestDesc(): array
+    public function findLatestDesc(?DateTimeImmutable $viewAt = null): array
     {
         $bikeRideLatest = $this->getEntityManager()->createQueryBuilder()
             ->select('bikeRide.id')
@@ -39,12 +42,19 @@ class SummaryRepository extends ServiceEntityRepository
             ->groupBy('bikeRide.id')
             ->orderBy('bikeRide.startAt', 'DESC');
 
+        $andX = (new Expr())->andX();
+        $andX->add((new Expr())->in('br.id', ':bikeRideLatest'));
+        $parameters = [new Parameter('bikeRideLatest', $bikeRideLatest->getQuery()->getScalarResult())];
+
+        if ($viewAt) {
+            $andX->add((new Expr())->gt('s.createdAt', ':viewAt'));
+            $parameters[] = new Parameter('viewAt', $viewAt);
+        }
+
         return $this->createQueryBuilder('s')
             ->join('s.bikeRide', 'br')
-            ->andWhere(
-                (new Expr())->in('br.id', ':bikeRideLatest')
-            )
-            ->setParameter('bikeRideLatest', $bikeRideLatest->getQuery()->getScalarResult())
+            ->andWhere($andX)
+            ->setParameters(new ArrayCollection($parameters))
             ->orderBy('s.createdAt', 'DESC')
             ->getQuery()
             ->getResult()

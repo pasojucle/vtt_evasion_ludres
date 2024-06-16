@@ -11,7 +11,7 @@ use App\Entity\Session;
 use App\Entity\User;
 use App\Service\CacheService;
 use App\Service\LogService;
-use App\Service\ModalWindowService;
+use App\Service\NotificationService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
@@ -23,7 +23,7 @@ class SetSession
         private readonly EntityManagerInterface $entityManager,
         private readonly ConfirmationSession $confirmationSession,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private readonly ModalWindowService $modalWindowService,
+        private readonly NotificationService $notificationService,
         private readonly CacheService $cacheService,
         private readonly LogService $logService,
     ) {
@@ -47,7 +47,7 @@ class SetSession
         $content = ($session->getAvailability())
             ? '<p>Votre disponibilité à la sortie %s du %s a bien été prise en compte.</p><p> En cas de changement, il est impératif de se modifier sa disponibilité (voir dans Mon programme perso et faire "Modifier)"</p>'
             : '<p>Votre inscription à la sortie %s du %s a bien été prise en compte.</p><p> Si vous ne pouvez plus participez pas à cette sortie, il est impératif de se désinsrire (voir dans Mon programme perso et faire "Se désinscrire)"</p>';
-        $this->modalWindowService->addToModalWindow('Inscription à une sortie', sprintf($content, $bikeRideDto->title, $bikeRideDto->period));
+        $this->notificationService->addToNotification('Inscription à une sortie', sprintf($content, $bikeRideDto->title, $bikeRideDto->period));
     }
 
     public function edit(FormInterface $form, Session $session): void

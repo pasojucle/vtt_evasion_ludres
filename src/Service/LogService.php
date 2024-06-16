@@ -9,12 +9,14 @@ use App\Entity\User;
 use App\Repository\LogRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class LogService
 {
     public function __construct(
         private readonly LogRepository $logRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly Security $security,
     ) {
     }
 
@@ -38,16 +40,20 @@ class LogService
         $this->write($log);
     }
 
-    public function WriteByRoute(string $route, User $user): void
+    public function WriteByRoute(string $route): void
     {
-        $log = $this->logRepository->findOneByRouteAndUser($route, $user);
-        if (!$log) {
-            $log = new Log();
-            $log->setRoute($route)
-                ->setUser($user);
-            $this->entityManager->persist($log);
-        }
+        /**  @var User $user */
+        $user = $this->security->getUser();
+        if ($user) {
+            $log = $this->logRepository->findOneByRouteAndUser($route, $user);
+            if (!$log) {
+                $log = new Log();
+                $log->setRoute($route)
+                    ->setUser($user);
+                $this->entityManager->persist($log);
+            }
 
-        $this->write($log);
+            $this->write($log);
+        }
     }
 }

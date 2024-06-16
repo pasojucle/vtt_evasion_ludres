@@ -117,7 +117,7 @@ class DashboardController extends AbstractController
         ];
         /** @var SecondHand $secondHand */
         foreach ($secondHandRepository->findAllNotDeleted()as $secondHand) {
-            $type = ($secondHand->isValid()) ? $secondHandToValidate : $secondHangValid;
+            $type = (null !== $secondHand->getValidedAt()) ? $secondHandToValidate : $secondHangValid;
             $secondHandsByType[$type][] = $secondHand;
         }
 

@@ -2,7 +2,7 @@
 
 namespace App\Form\Admin;
 
-use App\Entity\ModalWindow;
+use App\Entity\Notification;
 use App\Form\Type\CkeditorType;
 use App\Validator\Period;
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ModalWindowType extends AbstractType
+class NotificationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -101,7 +101,7 @@ class ModalWindowType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ModalWindow::class,
+            'data_class' => Notification::class,
         ]);
     }
 }

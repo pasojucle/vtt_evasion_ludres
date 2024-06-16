@@ -9,7 +9,7 @@ use App\Entity\OrderLine;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
-use App\Service\ModalWindowService;
+use App\Service\NotificationService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
@@ -24,7 +24,7 @@ class OrderAddService
         private EntityManagerInterface $entityManager,
         private OrderHeaderRepository $orderHeaderRepository,
         private Security $security,
-        private ModalWindowService $modalWindowService
+        private NotificationService $notificationService
     ) {
     }
 
@@ -42,7 +42,7 @@ class OrderAddService
         if ($form->isValid()) {
             $this->entityManager->persist($orderLine);
             $this->entityManager->flush();
-            $this->modalWindowService->addToModalWindowShowed($orderHeader);
+            $this->notificationService->addToNotificationShowed($orderHeader);
         }
     }
 

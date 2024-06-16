@@ -116,11 +116,10 @@ class SecondHandController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $valid = $secondHand->isValid();
             $this->secondHandRepository->remove($secondHand, true);
 
             return $this->redirectToRoute('admin_second_hand_list', [
-                'valid' => $valid,
+                'valid' => null !== $secondHand->getValidedAt(),
             ]);
         }
 
@@ -135,7 +134,7 @@ class SecondHandController extends AbstractController
     public function validate(
         SecondHand $secondHand
     ): Response {
-        $secondHand->setValid(true);
+        $secondHand->setValidedAt(new DateTimeImmutable());
         $this->secondHandRepository->save($secondHand, true);
 
         return $this->redirectToRoute('admin_second_hand_list');

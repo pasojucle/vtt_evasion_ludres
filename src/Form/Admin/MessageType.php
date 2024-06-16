@@ -7,7 +7,7 @@ namespace App\Form\Admin;
 use App\Entity\Level;
 use App\Entity\Message;
 use App\Entity\ParameterGroup;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Form\Type\CkeditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -26,7 +26,7 @@ class MessageType extends AbstractType
         $builder
             ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
-                'config_name' => 'minimum_config',
+                'config_name' => 'base',
                 'row_attr' => [
                     'class' => 'form-group',
                 ],

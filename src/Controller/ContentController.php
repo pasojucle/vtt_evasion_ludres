@@ -18,9 +18,11 @@ use App\Repository\ContentRepository;
 use App\Repository\DocumentationRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
+use App\Repository\LogRepository;
 use App\Repository\SlideshowImageRepository;
 use App\Repository\SummaryRepository;
 use App\Service\IdentityService;
+use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ProjectDirService;
@@ -30,13 +32,15 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ContentController extends AbstractController
 {
     public function __construct(
-        private ContentRepository $contentRepository,
+        private readonly ContentRepository $contentRepository,
+        private readonly LogService $logService,
     ) {
     }
 
@@ -217,21 +221,28 @@ class ContentController extends AbstractController
     #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
     public function slideshow(): Response
     {
+        $this->logService->WriteByRoute('club_slideshow');
+
         return $this->render('content/slideshow.html.twig');
     }
 
 
     #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
     public function slideshowImages(
-        SlideshowImageRepository $slideshowImageRepository
+        SlideshowImageRepository $slideshowImageRepository,
+        LogRepository $logRepository,
     ): JsonResponse {
         $images = [];
-
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $slideShowimageViewedIds = $logRepository->findSlideShowimageViewedIds($user);
         /** @var SlideshowImage $image */
         foreach ($slideshowImageRepository->findAll() as $image) {
             $images[] = [
                 'url' => $this->generateUrl('slideshow_image', ['filename' => $image->getFilename()]),
                 'directory' => $image->getDirectory()->getName(),
+                'id' => $image->getId(),
+                'novelty' => !in_array($image->getId(), $slideShowimageViewedIds),
             ];
         }
 
@@ -241,8 +252,11 @@ class ContentController extends AbstractController
     #[Route('/club/image/{filename}', name: 'slideshow_image', methods: ['GET'])]
     public function slideshowImage(
         ProjectDirService $projectDir,
+        SlideshowImageRepository $slideshowImageRepository,
         string $filename,
     ): BinaryFileResponse|Response {
+        $image = $slideshowImageRepository->findOneByFilename($filename);
+
         $finder = new Finder();
         $finder->files()->in($projectDir->path('slideshow'))->name($filename)->depth('<= 1');
         if ($finder->hasResults()) {
@@ -259,6 +273,8 @@ class ContentController extends AbstractController
         SummaryRepository $summaryRepository,
         SummaryDtoTransformer $summaryDtoTransformer,
     ): Response {
+        $this->logService->WriteByRoute('club_summary');
+        
         return $this->render('content/summary.html.twig', [
             'summaries_by_bike_rides' => $summaryDtoTransformer->fromEntities($summaryRepository->findLatestDesc()),
         ]);

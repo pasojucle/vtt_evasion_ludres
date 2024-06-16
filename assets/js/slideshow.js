@@ -55,6 +55,7 @@ class Slideshow extends HTMLDivElement {
         .then((response) => response.json())
         .then((json)=> {
             json.images.forEach((image, index) => {
+                console.log('image', image);
                 this.addImage(index, image);
             })
             this.init();
@@ -146,6 +147,7 @@ class Slideshow extends HTMLDivElement {
             this.find(this.rightIndex).slide(1);
         }
     }
+    
 }
 
 window.customElements.define('my-slideshow', Slideshow, { extends: "div"});
@@ -159,10 +161,13 @@ class SliderImage {
     width;
     top;
     loader;
+    badge;
     constructor(index, image, slideshow) {
         this.slideshow = slideshow
         this.index = index;
         this.url = image.url;
+        this.id = image.id;
+        this.novelty = image.novelty;
         this.directory = image.directory;
     }
     getOrientation = () => {
@@ -183,11 +188,16 @@ class SliderImage {
             this.slideshow.frameEl.append(this.imageEl);
         }
         this.appendLabel();
+        
         this.image.onload = () => {
             if (this.image.complete) {
                 this.image.classList.add(this.getOrientation());
                 this.loader.replaceWith(this.image);
+                this.appendBadge();
             }
+        }
+        if (position === 0) {
+            this.writeLog();
         }
     }
     appendLabel = () => {
@@ -196,7 +206,34 @@ class SliderImage {
         $label.textContent = `${this.directory} - ${this.index + 1} / ${this.slideshow.images.length}`;
         this.imageEl.append($label);
     }
+    appendBadge = () => {
+        if (this.novelty) {
+            this.badge = document.createElement('div');
+            this.badge.classList.add('novelty');
+            this.badge.textContent = 'N';
+            this.badge.style.left = (this.imageEl.offsetWidth - this.image.offsetWidth) / 2 + 20 +'px';
+            this.badge.style.top = (this.imageEl.offsetHeight - this.image.offsetHeight) / 2 + 20 +'px';
+            this.imageEl.append(this.badge);
+        }
+    }
     slide(position) {
         this.imageEl.style.left = position * this.slideshow.slideWith + 'px';
+        if (position === 0) {
+            this.writeLog();
+        } else {
+            if (this.badge !== undefined) {
+                this.badge.remove();
+            }
+            console.log(this)
+            console.log('badge', this.badge)
+        }
+    }
+    writeLog = async() => {
+        const data = new FormData();
+        data.append('slideshowImage', this.id);
+        await fetch(Routing.generate('log_write'),{
+            method: 'POST',
+            body : data, 
+        });
     }
 }

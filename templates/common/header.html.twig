@@ -7,7 +7,7 @@
     <img src="/logos/ville-active-sportive-fleurie.jpg" alt="ville de Ludres" class="logo logo-ludres">
 </div>
 
-<a id="modal_window_show" href="{{ path('modal_window_show') }}" data-toggle="modal" data-type="succes"></a>
+<a id="notification_list" href="{{ path('notification_list') }}" data-toggle="modal" data-type="succes"></a>
 
 <div class="nav-bar">
     <a href="" class="btn btn-ico"></a>
@@ -35,12 +35,15 @@
                             <a href="" class="btn btn-ico" data-action="toggle-down"><i class="fas fa-angle-down"></i></a>
                         </span>
                     {% endif %}
+                    {% if menu.badge is defined %}
+                        <span class="nav-badge hidden"{% if menu.badge is not null %} data-route="{{ menu.badge }}"{% endif %}>N</span>
+                    {% endif %}
                 </div>
                 {% if menu.subMenus is not empty %}
                     <div class="dropdown-toggle up" data-target="block-body">
                         <ul class="dropdown-menu">
                             {% for sub_menu in menu.subMenus %}
-                                <li>
+                                <li class="nav-sub">
                                     {% if sub_menu.class is defined %}
                                         <a class="{{ sub_menu.class }}"
                                             <span>{{ sub_menu.label }}</span>
@@ -50,6 +53,9 @@
                                             {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
                                             <span>{{ sub_menu.label }}</span>
                                         </a>
+                                    {% endif %}
+                                    {% if sub_menu.badge is defined %}
+                                        <span class="nav-badge hidden" data-route="{{ sub_menu.badge }}">N</span>
                                     {% endif %}
                                 </li>
                             {% endfor %}

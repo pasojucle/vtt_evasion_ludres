@@ -37,7 +37,7 @@ class SecondHandDtoTransformer
             $secondHandDto->price = (new Currency($secondHand->getPrice()))->__toString();
             $secondHandDto->category = $secondHand->getCategory()->getName();
             $secondHandDto->createdAt = $secondHand->getCreatedAt()->format('d/m/y');
-            $secondHandDto->valid = $secondHand->isValid();
+            $secondHandDto->valid = null !== $secondHand->getValidedAt();
             $secondHandDto->disabled = $secondHand->isDisabled();
             $secondHandDto->status = $this->getStatus($secondHand);
         }
@@ -75,7 +75,7 @@ class SecondHandDtoTransformer
         if ($secondHand->isDisabled()) {
             return 'Désactivée';
         }
-        return ($secondHand->isValid()) ? 'Validée' : 'Non Validée';
+        return (null !== $secondHand->getValidedAt()) ? 'Validée' : 'Non Validée';
     }
 
     private function getPath(?string $filename): string

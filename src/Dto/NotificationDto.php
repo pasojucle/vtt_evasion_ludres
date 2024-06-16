@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-class ModalWindowDto
+class NotificationDto
 {
     public ?string $index;
 

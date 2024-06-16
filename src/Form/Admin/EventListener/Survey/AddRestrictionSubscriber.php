@@ -72,7 +72,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter, ?array $memberIds): void
     {
         $options = $form->getConfig()->getOptions();
-        $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction || $options['display_disabled'];
+        $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
         $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction || $options['display_disabled'];
 
         if (!$disabledBikeRide) {

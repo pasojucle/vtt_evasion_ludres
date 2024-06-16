@@ -27,9 +27,6 @@ class SecondHand
     #[ORM\Column(type: 'integer')]
     private int $price = 0;
 
-    #[ORM\Column(type: 'boolean', options:['default' => false])]
-    private bool $valid = false;
-
     #[ORM\Column]
     private ?DateTimeImmutable $createdAt = null;
 
@@ -46,6 +43,9 @@ class SecondHand
 
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $disabled = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $validedAt = null;
 
     public function getId(): ?int
     {
@@ -96,18 +96,6 @@ class SecondHand
     public function setPrice(int $price): static
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function isValid(): bool
-    {
-        return $this->valid;
-    }
-
-    public function setValid(bool $valid): static
-    {
-        $this->valid = $valid;
 
         return $this;
     }
@@ -168,6 +156,18 @@ class SecondHand
     public function setDisabled(bool $disabled): static
     {
         $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    public function getValidedAt(): ?\DateTimeImmutable
+    {
+        return $this->validedAt;
+    }
+
+    public function setValidedAt(?\DateTimeImmutable $validedAt): static
+    {
+        $this->validedAt = $validedAt;
 
         return $this;
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Licence;
-use App\Entity\ModalWindow;
+use App\Entity\Notification;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
 use App\Entity\User;
@@ -15,7 +15,7 @@ use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class ModalWindowService
+class NotificationService
 {
     public function __construct(
         private Security $security,
@@ -23,7 +23,7 @@ class ModalWindowService
     ) {
     }
 
-    public function getIndex(Survey|OrderHeader|ModalWindow|Licence|string $entity)
+    public function getIndex(Survey|OrderHeader|Notification|Licence|string $entity)
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -33,25 +33,25 @@ class ModalWindowService
             : $id . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
     }
 
-    public function addToModalWindowShowed(OrderHeader|Licence $entity): void
+    public function addToNotificationShowed(OrderHeader|Licence $entity): void
     {
         $session = $this->requestStack->getSession();
-        $modalWindowShowOn = $session->get('modal_window_showed');
-        $modalWindowShowOn = (null !== $modalWindowShowOn) ? json_decode($modalWindowShowOn) : [];
-        $modalWindowShowOn[] = $this->getIndex($entity);
-        $session->set('modal_window_showed', json_encode($modalWindowShowOn));
+        $notificationShowOn = $session->get('notification_showed');
+        $notificationShowOn = (null !== $notificationShowOn) ? json_decode($notificationShowOn) : [];
+        $notificationShowOn[] = $this->getIndex($entity);
+        $session->set('notification_showed', json_encode($notificationShowOn));
     }
 
-    public function addToModalWindow(string $title, string $content): void
+    public function addToNotification(string $title, string $content): void
     {
         $session = $this->requestStack->getSession();
-        $modalWindowsToShowJson = $session->get('modal_windows_to_show');
-        $modalWindows = ($modalWindowsToShowJson) ? json_decode($modalWindowsToShowJson, true) : [];
-        $modalWindows[] = [
+        $notificationsToShowJson = $session->get('notifications_to_show');
+        $notifications = ($notificationsToShowJson) ? json_decode($notificationsToShowJson, true) : [];
+        $notifications[] = [
             'index' => (string) (new DateTimeImmutable())->getTimestamp(),
             'title' => $title,
             'content' => $content,
         ];
-        $session->set('modal_windows_to_show', json_encode($modalWindows));
+        $session->set('notifications_to_show', json_encode($notifications));
     }
 }

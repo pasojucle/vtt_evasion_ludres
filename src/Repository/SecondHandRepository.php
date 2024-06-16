@@ -48,11 +48,10 @@ class SecondHandRepository extends ServiceEntityRepository
     {
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->eq('s.deleted', ':deleted'));
-        $andX->add((new Expr())->eq('s.valid', ':valid'));
-        
+        $criteria = (false === $valid) ? 'isNull' : 'isNotNull';
+        $andX->add((new Expr())->$criteria('s.validedAt'));
         $parameters = [
             new Parameter('deleted', false),
-            new Parameter('valid', $valid ?? true),
         ];
 
         return $this->createQueryBuilder('s')
@@ -62,22 +61,36 @@ class SecondHandRepository extends ServiceEntityRepository
        ;
     }
 
-    public function findSecondHandEnabled(): QueryBuilder
+    public function findSecondHandEnabledQuery(?DateTimeImmutable $viewAt = null): QueryBuilder
     {
+        $andX = (new Expr())->andX();
+        $andX->add((new Expr())->eq('s.deleted', ':deleted'));
+        $andX->add((new Expr())->isNotNull('s.validedAt'));
+        $andX->add((new Expr())->eq('s.disabled', ':disabled'));
+        $parameters = [
+            new Parameter('deleted', false),
+            new Parameter('disabled', false),
+        ];
+
+        if ($viewAt) {
+            $andX->add((new Expr())->gt('s.createdAt', ':viewAt'));
+            $parameters[] = new Parameter('viewAt', $viewAt);
+        }
+
         return $this->createQueryBuilder('s')
-           ->andWhere(
-               (new Expr())->eq('s.deleted', ':deleted'),
-               (new Expr())->eq('s.valid', ':valid'),
-               (new Expr())->eq('s.disabled', ':disabled')
-           )
-           ->setParameters(new ArrayCollection([
-                new Parameter('deleted', false),
-                new Parameter('valid', true),
-                new Parameter('disabled', false),
-            ]))
+           ->andWhere($andX)
+           ->setParameters(new ArrayCollection($parameters))
            ->orderBy('s.createdAt', 'DESC')
        ;
     }
+
+    public function findSecondHandEnabled(?DateTimeImmutable $viewAt): array
+    {
+        return $this->findSecondHandEnabledQuery($viewAt)
+            ->getQuery()
+            ->getResult();
+    }
+
 
     public function findOutOfPeriod(DateTimeImmutable $deadline): array
     {

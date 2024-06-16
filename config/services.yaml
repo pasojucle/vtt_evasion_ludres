@@ -82,24 +82,9 @@ services:
        tags:
           - { name: kernel.event_listener, event: kernel.request }
 
-    App\EventListeners\LogListener:
-       tags:
-          - { name: kernel.event_listener, event: kernel.request }
-
-
-    # App\EventListeners\ExceptionListener:
-    #     tags:
-    #         - { name: kernel.event_listener, event: kernel.exception }
-
     App\EventListener\HistoryListener:
         tags: 
             - 
                 name: 'doctrine.orm.entity_listener'
                 event: 'postUpdate'
         arguments: ['@App\Service\SeasonService']
-
-    # App\EventListener\CurrencyListener:
-    #     tags: 
-    #         - { name: 'doctrine.orm.entity_listener',  event: 'prePersist' }
-    #         - { name: 'doctrine.orm.entity_listener',  event: 'postUpdate' }
-    #         - { name: 'doctrine.orm.entity_listener',  event: 'postLoad' }

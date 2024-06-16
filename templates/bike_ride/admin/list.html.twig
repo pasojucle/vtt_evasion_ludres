@@ -58,7 +58,6 @@
                                                     <i class="fas fa-file-download"></i> Exporter la séance
                                                 </a>
                                             </li>
-                                            <li><a href="{{ path('admin_bike_ride_members_email_to_clipboard', {'bikeRide': bikeRide.id}) }}" class="dropdown-item email-to-clipboard" title="Copier les emails des participants"><i class="fas fa-copy"></i> Copier les emails des participants</a></li>
                                         {% endif %}
                                         {% if is_granted('SUMMARY_LIST') %}
                                             <li><a href="{{ path('admin_summary_list', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Actualités"><i class="fa-solid fa-rectangle-list"></i> Actualités</a></li>

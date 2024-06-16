@@ -29,8 +29,7 @@ class HistoryRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly SeasonService $seasonService
-    )
-    {
+    ) {
         parent::__construct($registry, History::class);
     }
 

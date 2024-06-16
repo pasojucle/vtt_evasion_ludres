@@ -33,6 +33,7 @@ class MenuService
                 'pattern' => '/club/',
                 'subMenus' => $this->setSubMenusStatus($this->getClubSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
+                'badge' => null,
             ],
             [
                 'label' => 'L\'école VTT',
@@ -68,6 +69,7 @@ class MenuService
                 'pattern' => '/second_hand/',
                 'subMenus' => [],
                 'role' => 'SECOND_HAND_LIST',
+                'badge' => 'notification_second_hand',
             ],
             [
                 'label' => 'Liens',
@@ -137,12 +139,14 @@ class MenuService
                 'route' => 'club_slideshow',
                 'pattern' => '/club_slideshow/',
                 'role' => 'SLIDESHOW_LIST',
+                'badge' => 'notification_slideshow',
             ],
             [
                 'label' => 'Actualités',
                 'route' => 'club_summary',
                 'pattern' => '/club_summary/',
                 'role' => 'SUMMARY_LIST',
+                'badge' => 'notification_summary_list',
             ],
         ];
     }

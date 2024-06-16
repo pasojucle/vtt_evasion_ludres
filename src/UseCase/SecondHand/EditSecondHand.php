@@ -44,7 +44,7 @@ class EditSecondHand
             ->setCreatedAt(new DateTimeImmutable())
             ->setDeleted(false)
             ->setDisabled(false)
-            ->setValid(false)
+            ->setValidedAt(null)
         ;
     }
 

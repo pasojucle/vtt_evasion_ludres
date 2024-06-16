@@ -49,7 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::PERMISSION_USER => 'permission.user',
         self::PERMISSION_PRODUCT => 'permission.product',
         self::PERMISSION_SURVEY => 'permission.survey',
-        self::PERMISSION_MODAL_WINDOW => 'permission.modal_window',
+        self::PERMISSION_MODAL_WINDOW => 'permission.notification',
         self::PERMISSION_SECOND_HAND => 'permission.second_hand',
         self::PERMISSION_DOCUMENTATION => 'permission.documentation',
         self::PERMISSION_SLIDESHOW => 'permission.slideshow',

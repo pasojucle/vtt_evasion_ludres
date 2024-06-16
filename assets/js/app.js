@@ -209,9 +209,6 @@ function formModifier(event) {
     });
 }
 
-
-
-
 function setOrderLineQuantity(e) {
     e.preventDefault();
 

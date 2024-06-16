@@ -12,6 +12,7 @@ use App\Entity\User;
 use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
 use App\Repository\SecondHandRepository;
+use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
@@ -38,10 +39,12 @@ class SecondHandController extends AbstractController
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
+        LogService $logService,
         Request $request,
     ): Response {
-        $query = $this->secondHandRepository->findSecondHandEnabled();
+        $query = $this->secondHandRepository->findSecondHandEnabledQuery();
         $secondHands = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
+        $logService->WriteByRoute('second_hand_list');
         return $this->render('second_hand/list.html.twig', [
             'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands),

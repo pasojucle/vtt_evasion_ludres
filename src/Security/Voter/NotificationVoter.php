@@ -3,14 +3,14 @@
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\ModalWindow;
+use App\Entity\Notification;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class ModalWindowVoter extends Voter
+class NotificationVoter extends Voter
 {
     public const EDIT = 'MODAL_WINDOW_EDIT';
     public const ADD = 'MODAL_WINDOW_ADD';
@@ -30,7 +30,7 @@ class ModalWindowVoter extends Voter
             return true;
         }
 
-        return in_array($attribute, [self::EDIT, self::VIEW]) && $subject instanceof ModalWindow;
+        return in_array($attribute, [self::EDIT, self::VIEW]) && $subject instanceof Notification;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -54,7 +54,7 @@ class ModalWindowVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, null|ModalWindow $subject, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, null|Notification $subject, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
@@ -63,7 +63,7 @@ class ModalWindowVoter extends Voter
         return $subject && $isUserWithPermission;
     }
 
-    private function canView(TokenInterface $token, null|ModalWindow $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canView(TokenInterface $token, null|Notification $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if (!$subject) {
             return false;
@@ -76,7 +76,7 @@ class ModalWindowVoter extends Voter
         return $isActiveUser;
     }
 
-    private function canList(TokenInterface $token, null|ModalWindow $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canList(TokenInterface $token, null|Notification $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
