@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\Log;
 use App\Entity\Summary;
+use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -56,6 +58,32 @@ class SummaryRepository extends ServiceEntityRepository
             ->andWhere($andX)
             ->setParameters(new ArrayCollection($parameters))
             ->orderBy('s.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult()
+       ;
+    }
+
+    /**
+     * @return Summary[] Returns an array of Summary objects
+     */
+    public function findNotViewedByUser(User $user): array
+    {
+        $viewed = $this->getEntityManager()->createQueryBuilder()
+            ->select('log.entityId')
+            ->from(Log::class, 'log')
+            ->andWhere(
+                (new Expr())->eq('log.user', ':user'),
+                (new Expr())->eq('log.entity', ':entityName')
+            );
+
+        return $this->createQueryBuilder('s')
+            ->andWhere(
+                (new Expr())->notIn('s.id', $viewed->getDQL())
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', 'Summary')
+            ]))
             ->getQuery()
             ->getResult()
        ;

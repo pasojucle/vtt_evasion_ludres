@@ -19,7 +19,10 @@
                         <ul>
                             {% for summary in bike_ride.summaries %}
                                 <li class="list">
-                                    <b>{{ summary.createdAt }} - {{ summary.title }}</b>
+                                    <div class="d-flex">
+                                        <div><b>{{ summary.createdAt }} - {{ summary.title }}</b></div>
+                                        {% if summary.novelty %}<div class="novelty ms-auto">N</div>{% endif %}
+                                    </div>
                                     <div class='ck-content'>{{ summary.content|raw }}</div>
                                     <div style="clear:both;"></div>
                                 </li>

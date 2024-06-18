@@ -25,15 +25,18 @@ nav.fixed {
     position: relative;
 }
 
-.nav-badge {
+.badge.novelty {
     position: absolute;
     top: 7px;
     right: 2px;
+    z-index: -1;
+    min-width: unset;
+}
+.novelty {
     background-color: var(--primary-color-darker);
     height: 15px;
     width: 15px;
     border-radius: 50%;
-    z-index: -1;
     font-size: 8px;
     line-height: 15px;
     color: var(--white-color);

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.nav-badge').forEach((element) => {
+    document.querySelectorAll('.badge.novelty').forEach((element) => {
         console.log('route', element.dataset.route)
         if (element.dataset.route !== undefined) {
             hasNews(element.dataset.route)
@@ -17,14 +17,14 @@ const hasNews = async(route) => {
         throw new Error('Something went wrong.');    
     })
     .then((json)=> {
+        
         if (json.hasNewItem) {
+            console.log('json', json)
             const element = document.querySelector(`[data-route="${route}"]`);
             element.classList.remove('hidden');
             if (element.parentElement.classList.contains('nav-sub')) {
-                element.closest('li.nav-bar-xs').querySelector('.nav-badge').classList.remove('hidden');
+                element.closest('li.nav-bar-xs').querySelector('.badge.novelty').classList.remove('hidden');
             }
-            console.log('json', json)
-            console.log('element', route)
         }
         
     });

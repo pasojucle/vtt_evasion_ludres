@@ -803,7 +803,7 @@ input[type="file"] {
 .required:not(.value .required, .check .required, .ballot .required, .radio-group .required, [type="radio"] + .required, .ts-wrapper.required)::after {
     content: ' *';
 }
-.badge {
+.badge:not(.novelty) {
     display: inline-block;
     border-radius: 50%;
     min-width: 45px;

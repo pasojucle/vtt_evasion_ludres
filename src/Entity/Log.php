@@ -17,13 +17,10 @@ class Log
     #[ORM\Column]
     private ?DateTimeImmutable $viewAt = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $route = null;
-
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(length: 50)]
     private ?string $entity = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?int $entityId = null;
 
     #[ORM\ManyToOne]
@@ -43,18 +40,6 @@ class Log
     public function setViewAt(\DateTimeImmutable $viewAt): static
     {
         $this->viewAt = $viewAt;
-
-        return $this;
-    }
-
-    public function getRoute(): ?string
-    {
-        return $this->route;
-    }
-
-    public function setRoute(?string $route): static
-    {
-        $this->route = $route;
 
         return $this;
     }

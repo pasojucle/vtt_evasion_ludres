@@ -16,7 +16,10 @@
                     <a href="{{ path('second_hand_show', {'secondHand': secondHand.id}) }}">
                         <div class="card-img" style="background-image:url({{ secondHand.pathName }}"></div>
                         <div class="card-body">
-                            {{ secondHand.name }}
+                            <div class="d-flex">
+                                <div>{{ secondHand.name }}</div>
+                                {% if secondHand.novelty %}<div class="ms-auto novelty">N</div>{% endif %}
+                            </div>
                             <p>{{ secondHand.price }}</p>
                         </div>
                     </a>

@@ -13,4 +13,6 @@ class SummaryDto
     public string $title = '';
 
     public string $content = '';
+
+    public bool $novelty = false;
 }

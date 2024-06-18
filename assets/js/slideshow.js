@@ -162,6 +162,7 @@ class SliderImage {
     top;
     loader;
     badge;
+    viewed;
     constructor(index, image, slideshow) {
         this.slideshow = slideshow
         this.index = index;
@@ -169,6 +170,7 @@ class SliderImage {
         this.id = image.id;
         this.novelty = image.novelty;
         this.directory = image.directory;
+        this.viewed = false;
     }
     getOrientation = () => {
         return (this.image.height < this.image.width) ? 'landscape' : 'portrait';
@@ -196,9 +198,6 @@ class SliderImage {
                 this.appendBadge();
             }
         }
-        if (position === 0) {
-            this.writeLog();
-        }
     }
     appendLabel = () => {
         const $label = document.createElement('div');
@@ -220,12 +219,14 @@ class SliderImage {
         this.imageEl.style.left = position * this.slideshow.slideWith + 'px';
         if (position === 0) {
             this.writeLog();
+            this.viewed = true;
         } else {
             if (this.badge !== undefined) {
                 this.badge.remove();
             }
-            console.log(this)
-            console.log('badge', this.badge)
+            if (this.viewed) {
+                this.novelty = false;
+            }
         }
     }
     writeLog = async() => {

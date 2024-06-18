@@ -104,7 +104,6 @@ class SlideshowImageRepository extends ServiceEntityRepository
             );
 
         return $this->createQueryBuilder('i')
-            ->join('i.directory', 'd')
             ->andWhere(
                 (new Expr())->notIn('i.id', $viewed->getDQL())
             )
@@ -112,7 +111,6 @@ class SlideshowImageRepository extends ServiceEntityRepository
                 new Parameter('user', $user),
                 new Parameter('entityName', 'SlideshowImage')
             ]))
-            ->orderBy('d.id', 'ASC')
             ->getQuery()
             ->getResult()
        ;

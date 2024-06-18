@@ -36,7 +36,7 @@
                         </span>
                     {% endif %}
                     {% if menu.badge is defined %}
-                        <span class="nav-badge hidden"{% if menu.badge is not null %} data-route="{{ menu.badge }}"{% endif %}>N</span>
+                        <span class="badge novelty hidden"{% if menu.badge is not null %} data-route="{{ menu.badge }}"{% endif %}>N</span>
                     {% endif %}
                 </div>
                 {% if menu.subMenus is not empty %}
@@ -55,7 +55,7 @@
                                         </a>
                                     {% endif %}
                                     {% if sub_menu.badge is defined %}
-                                        <span class="nav-badge hidden" data-route="{{ sub_menu.badge }}">N</span>
+                                        <span class="badge novelty hidden" data-route="{{ sub_menu.badge }}">N</span>
                                     {% endif %}
                                 </li>
                             {% endfor %}

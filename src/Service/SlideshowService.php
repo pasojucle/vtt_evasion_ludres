@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Repository\LogRepository;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -14,7 +13,6 @@ class SlideshowService
         private readonly ProjectDirService $projectDir,
         private readonly ParameterService $parameterService,
         private readonly FileService $fileService,
-        private readonly LogRepository $logRepository,
     ) {
     }
 

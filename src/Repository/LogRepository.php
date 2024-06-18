@@ -83,7 +83,7 @@ class LogRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findSlideShowimageViewedIds(User $user): array
+    private function findEntityViewedIds(User $user, string $entityName): array
     {
         return $this->createQueryBuilder('l')
             ->select('l.entityId')
@@ -93,9 +93,24 @@ class LogRepository extends ServiceEntityRepository
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('user', $user),
-                new Parameter('entityName', 'SlideshowImage')
+                new Parameter('entityName', $entityName)
             ]))
             ->getQuery()
             ->getSingleColumnResult();
+    }
+
+    public function findSlideShowimageViewedIds(User $user): array
+    {
+        return $this->findEntityViewedIds($user, 'SlideshowImage');
+    }
+
+    public function findSummaryViewedIds(User $user): array
+    {
+        return $this->findEntityViewedIds($user, 'Summary');
+    }
+
+    public function findSecondHandViewedIds(User $user): array
+    {
+        return $this->findEntityViewedIds($user, 'SecondHand');
     }
 }

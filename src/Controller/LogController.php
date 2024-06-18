@@ -21,7 +21,7 @@ class LogController extends AbstractController
         /** @var ?User $user */
         $user = $this->getUser();
         if ($user) {
-            $logService->writeByEntity('SlideshowImage', (int) $id, $user);
+            $logService->write('SlideshowImage', (int) $id, $user);
             return new JsonResponse(['codeError' => 0]);
         }
 

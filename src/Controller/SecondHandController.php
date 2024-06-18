@@ -11,6 +11,7 @@ use App\Entity\SecondHand;
 use App\Entity\User;
 use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
+use App\Repository\LogRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\LogService;
 use App\Service\MailerService;
@@ -39,23 +40,29 @@ class SecondHandController extends AbstractController
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
-        LogService $logService,
+        LogRepository $logRepository,
         Request $request,
     ): Response {
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $secondHandViewedIds = $logRepository->findSecondHandViewedIds($user);
         $query = $this->secondHandRepository->findSecondHandEnabledQuery();
         $secondHands = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
-        $logService->WriteByRoute('second_hand_list');
         return $this->render('second_hand/list.html.twig', [
-            'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
+            'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands, $secondHandViewedIds),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands),
         ]);
     }
 
-
     #[Route('/occasion/detail/{secondHand}', name: 'show', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_VIEW', 'secondHand')]
-    public function show(SecondHand $secondHand): Response
-    {
+    public function show(
+        LogService $logService,
+        SecondHand $secondHand
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $logService->write('SecondHand', $secondHand->getId(), $user);
         return $this->render('second_hand/show.html.twig', [
             'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
         ]);

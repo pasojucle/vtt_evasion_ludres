@@ -97,7 +97,7 @@ class SetSession
     private function writeLog(BikeRide $bikeRide, User $user): void
     {
         if ($survey = $bikeRide->getSurvey()) {
-            $this->logService->writeByEntity('Survey', $survey->getId(), $user);
+            $this->logService->write('Survey', $survey->getId(), $user);
         }
     }
 }

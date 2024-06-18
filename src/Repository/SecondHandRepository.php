@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Log;
 use App\Entity\SecondHand;
+use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -109,8 +111,6 @@ class SecondHandRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-
-
     public function findAllNotDeleted(): array
     {
         return $this->createQueryBuilder('s')
@@ -121,6 +121,33 @@ class SecondHandRepository extends ServiceEntityRepository
            ->orderBy('s.createdAt', 'DESC')
            ->getQuery()
            ->getResult()
+       ;
+    }
+
+
+    /**
+     * @return SecondHand[] Returns an array of SecondHand objects
+     */
+    public function findNotViewedByUser(User $user): array
+    {
+        $viewed = $this->getEntityManager()->createQueryBuilder()
+            ->select('log.entityId')
+            ->from(Log::class, 'log')
+            ->andWhere(
+                (new Expr())->eq('log.user', ':user'),
+                (new Expr())->eq('log.entity', ':entityName')
+            );
+
+        return $this->createQueryBuilder('s')
+            ->andWhere(
+                (new Expr())->notIn('s.id', $viewed->getDQL())
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', 'SecondHand')
+            ]))
+            ->getQuery()
+            ->getResult()
        ;
     }
 }

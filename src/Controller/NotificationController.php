@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\SlideshowService;
 use App\UseCase\Notification\GetList;
 use App\UseCase\Notification\GetNews;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
