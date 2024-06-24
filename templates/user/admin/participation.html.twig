@@ -6,7 +6,7 @@
     {% set licence = user.lastLicence %}
     <div class="wrapper">
         <div class="wrapper-title" {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
-            <h1>Participation - <span class="badge badge badge-info">{{ paginator.total }}</span></h1>
+            <h1>Participation - <span class="badge badge-info">{{ paginator.total }}</span></h1>
              <div class="tool-group">
             <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}" class="btn btn-ico" title="Retour à la liste des adhérents"><i class="fas fa-chevron-left"></i></a>
             <div class="dropdown">

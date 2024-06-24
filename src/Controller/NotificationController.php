@@ -20,17 +20,21 @@ class NotificationController extends AbstractController
     }
 
     #[Route('s', name: 'list', methods: ['GET'])]
-    public function list(GetList $showNotification): Response
+    public function list(GetList $showNotification): JsonResponse
     {
-        $modal = $showNotification->execute();
+        list($modalNotification, $notifications)  = $showNotification->execute();
 
-        if (null !== $modal) {
-            return $this->render('notification/show.modal.html.twig', [
-                'modal' => $modal,
-            ]);
-        }
-
-        return new Response('', 204);
+        return new JsonResponse([
+            'modal' => ($modalNotification) ? $this->renderView('notification/show.modal.html.twig', [
+                'modal' => $modalNotification,
+            ]): null,
+            'notifications' => [
+                'total' => count($notifications),
+                'list' => $this->renderView('notification/list.html.twig', [
+                    'notifications' => $notifications,
+                ])
+            ]
+        ]);
     }
 
     #[Route('/slideshow', name: 'slideshow', methods: ['GET'], options:['expose' => true])]

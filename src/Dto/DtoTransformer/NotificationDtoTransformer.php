@@ -9,10 +9,14 @@ use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
+use App\Form\LogType;
 use App\Service\MessageService;
 use App\Service\NotificationService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NotificationDtoTransformer
@@ -21,9 +25,10 @@ class NotificationDtoTransformer
     public ?string $notificationRegistrationInProgress;
 
     public function __construct(
-        private NotificationService $notificationService,
-        private UrlGeneratorInterface $router,
-        private MessageService $messageService,
+        private readonly NotificationService $notificationService,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly MessageService $messageService,
+        private readonly FormFactoryInterface $formFactory,
     ) {
         $this->notificationOrderInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
         $this->notificationRegistrationInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
@@ -35,41 +40,54 @@ class NotificationDtoTransformer
         $notificationDto->index = $this->notificationService->getIndex($notification);
         $notificationDto->title = $notification->getTitle();
         $notificationDto->content = $notification->getContent();
+        $notificationDto->form = $this->getForm($notification->getId())->createView();
+        $notificationDto->labelButton = 'J\'ai compris';
 
         return $notificationDto;
     }
 
-    public function fromSuvey(Survey $survey): NotificationDto
+    private function getForm(int $id): FormInterface
+    {
+        $data = [
+            'entityName' => 'Notification',
+            'entityId' => $id,
+        ];
+        return $this->formFactory->create(LogType::class, $data, [
+            'action' => $this->urlGenerator->generate('log_write'),
+        ]);
+    }
+
+    private function fromSuvey(Survey $survey): NotificationDto
     {
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($survey);
         $notificationDto->title = $survey->getTitle();
         $notificationDto->content = $survey->getContent();
-        $notificationDto->url = $this->router->generate('survey', ['survey' => $survey->getId()]);
+        $notificationDto->url = $this->urlGenerator->generate('survey', ['survey' => $survey->getId()]);
         $notificationDto->labelButton = 'Participer';
 
         return $notificationDto;
     }
 
-    public function fromOrderHeader(OrderHeader $orderHeader): NotificationDto
+    private function fromOrderHeader(OrderHeader $orderHeader): NotificationDto
     {
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($orderHeader);
         $notificationDto->title = 'Commande en cours';
         $notificationDto->content = $this->notificationOrderInProgress;
-        $notificationDto->url = $this->router->generate('order_edit');
+        $notificationDto->url = $this->urlGenerator->generate('order_edit');
         $notificationDto->labelButton = 'Valider ma commande';
 
         return $notificationDto;
     }
 
-    public function fromLicence(Licence $licence): NotificationDto
+    private function fromLicence(Licence $licence): NotificationDto
     {
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($licence);
         $notificationDto->title = 'Dossier d\'inscription en cours';
         $notificationDto->content = $this->notificationRegistrationInProgress;
-        $notificationDto->url = $this->router->generate('user_registration_form', ['step' => 1]);
+        $notificationDto->url = $this->urlGenerator->generate('user_registration_form', ['step' => 1]);
         $notificationDto->labelButton = 'Finaliser mon inscription';
 
         return $notificationDto;
@@ -82,7 +100,7 @@ class NotificationDtoTransformer
         $notificationDto->title = $data['title'];
         $notificationDto->content = $data['content'];
         if (array_key_exists('route', $data)) {
-            $notificationDto->url = $this->router->generate($data['route'], $data['routeParams']);
+            $notificationDto->url = $this->urlGenerator->generate($data['route'], $data['routeParams']);
             $notificationDto->labelButton = $data['labelBtn'];
         }
 

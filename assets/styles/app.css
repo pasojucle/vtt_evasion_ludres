@@ -33,7 +33,7 @@ nav.fixed {
     min-width: unset;
 }
 .novelty {
-    background-color: var(--primary-color-darker);
+    background-color: var(--primary-color);
     height: 15px;
     width: 15px;
     border-radius: 50%;
@@ -58,7 +58,7 @@ nav > ul> li > div.nav-bar-title > a:hover, nav > ul> li > div.nav-bar-title > a
     background-color: var(--primary-color);
     cursor: pointer;
 }
-nav > ul> li:hover  ul {
+nav > ul > li:hover  ul {
     display: block;
 }
 .header:not(.admin) > .logo {
@@ -83,7 +83,6 @@ nav:not(.admin) > a.logo img {
 }
 ul.dropdown-menu {
     display: none;
-    /* left: 0; */
     top: var(--nav-height);
     background-color: var(--white-color);
     min-width: 100%;
@@ -467,6 +466,9 @@ button[type="submit"] {
     }
     nav {
         text-align: left;
+    }
+    ul.dropdown-menu  {
+        position: unset;
     }
     .progress-container {
         display: none;

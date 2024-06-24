@@ -1,13 +1,10 @@
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
 
 document.addEventListener('DOMContentLoaded', () => {
+    const modal = buildModal();
+    document.querySelector('body').append(modal);
     document.querySelectorAll('a[data-toggle="modal"]').forEach((element) => {
         element.addEventListener('click', handleShowModal);
-    });
-    appenddModal().then(() => {
-        if (document.querySelector('#notification_list')) {
-            callShowModal('#notification_list');
-        }
     });
 });
 
@@ -18,17 +15,11 @@ const buildModal = () => {
     return modal;
 }
 
-const appenddModal = () => {
-    return new Promise((resolve, reject) => {
-        const modal = buildModal();
-        resolve(document.querySelector('body').append(modal));
-    });
-}
-
 const handleShowModal = (event) => {
     event.preventDefault();
-    var route = event.target.href;
-    const modalType = event.target.dataset.type;
+    const anchor = ( event.target.tagName === 'A') ? event.target : event.target.closest('a');
+    var route = anchor.href;
+    const modalType = anchor.dataset.type;
     showModal(route, modalType);
 }
 
@@ -38,15 +29,12 @@ const handleHideModal = () => {
     });
 }
 
-function callShowModal(target) {
-    const targetEl = document.querySelector(target)
-    var route = targetEl.href;
-    const modalType = targetEl.dataset.type
-    showModal(route, modalType);
-}
-
 const showModal = async(route, modalType) => {
-    await fetch(route)
+    await fetch(route, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+    })
     .then((response) => {
         if (response.status !== 500) {
             return response.text();
@@ -55,27 +43,37 @@ const showModal = async(route, modalType) => {
     })
     .then((text)=> {
         if (0 < text.length) {
-            openModal(text, modalType);
-            $('.js-datepicker').datepicker({
-                format: 'yyyy-mm-dd hh:ii',
-            });
-            initAddItemLink();
-            addDeleteLink();
-            handleHideModal();
+            buildContent(text, modalType);
         }
     });
 }
 
+export const buildContent = (text, modalType) => {
+    openModal(text, modalType);
+    $('.js-datepicker').datepicker({
+        format: 'yyyy-mm-dd hh:ii',
+    });
+    initAddItemLink();
+    addDeleteLink();
+    handleHideModal();
+    handleSumbit();
+}
+
 export const openModal = (text, modalType) => {
     const htmlElement = document.createRange().createContextualFragment(text);
-    console.log('htmlElement', text)
     buildContentModal(htmlElement).then(() => {
-        document.querySelector('.modal-header').classList.add('bg-'+modalType);
+        const modalHeader = document.querySelector('.modal-header');
+        if (modalHeader) {
+            modalHeader.classList.add('bg-'+modalType);
+        }
         document.querySelectorAll('.modal button:not(button[data-dismiss="modal"])').forEach((element) => {
             element.classList.add('btn-'+modalType);
         });
         setTimeout(() => {
-            document.querySelector('.modal-dialog').classList.add('modal-open');
+            const modalDialog = document.querySelector('.modal-dialog');
+            if (modalDialog) {
+                modalDialog.classList.add('modal-open');
+            }
         }, 10);
     })
 }
@@ -87,10 +85,32 @@ const buildContentModal = (htmlElement) => {
     });
 }
 
-export function closeModal() {
+export const closeModal = () => {
     document.querySelector('.modal-dialog').classList.remove('modal-open');
     const modal = buildModal();
     setTimeout(function () {
         document.querySelector('.modal').replaceWith(modal);
     }, 500);
+}
+
+const handleSumbit = () => {
+    document.querySelectorAll('button.btn.async[type="submit"]').forEach((element) => {
+        element.addEventListener('click', submitAsync);
+    });
+}
+
+const submitAsync = async(event) => {
+    event.preventDefault();
+    const form = event.target.closest('form');
+    const data = new FormData(form);
+    await fetch(form.action,{
+        method: 'POST',
+        body : data, 
+    })
+    .then((response) => response.json())
+    .then((json)=> {
+        if (parseInt(json.codeError) === 0) {
+            closeModal();
+        }
+    });
 }

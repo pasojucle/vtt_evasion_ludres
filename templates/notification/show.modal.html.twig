@@ -1,5 +1,10 @@
 {% extends 'base_modal.html.twig' %}
-{% block form %}{% set form = null%}{% endblock %}
+{% set form = modal.form %}
+{% if modal.form %}
+    {% set button_href = modal.form.vars.action %}
+    {% set button_text = modal.labelButton %}
+    {% set async = true %}
+{% endif %}
 {% block modal_title %}{{ modal.title }}{% endblock %}
 {% block body %}
     {{ modal.content|raw }}

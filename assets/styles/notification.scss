@@ -1,0 +1,91 @@
+.bell-notifications-container {
+    height: 100%;
+    width: 50px;
+    .bell-notifications {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        &:hover {
+            color: var(--primary-color);
+        }
+        .badge.notifications {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: 7px;
+            right: 2px;
+            z-index: -1;
+            min-width: unset;
+            background-color: var(--primary-color);
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            font-size: 10px;
+            color: var(--white-color);
+            z-index: 9;
+        }
+    }
+}
+.nav-bar .bell-notifications {
+    color: var(--white-color);
+}
+
+.dropdown-notifications.block.background-ligth {
+    width: 300px;
+    position: absolute;
+    top: var(--nav-height);
+    margin-top: unset;
+    right: -300px;
+    transition: right 1s ease;
+    z-index: 9999;
+    padding: 5px;
+    &.active {
+        right: 0px;
+    }
+
+    li.notification-body {
+        background-color: var(--white-color);
+        .notification-title {
+            background-color: var(--gray-400);
+            padding: 5px;
+            text-align: center;
+        }
+        .notification-text {
+            padding: 5px;
+        }
+        .notification-footer {
+            display: flex;
+            margin-bottom: 10px;
+            a {
+                margin: 0 auto;
+                &:hover {
+                    background-color: var(--primary-color-darker);
+                    color: var(--white-color);
+                }
+            }
+
+        }
+    }
+
+}
+
+@media screen and (max-width: 800px) {
+    .btn {
+        padding: initial;
+    }
+}
+
+@media screen and (max-width: 414px) {
+    .dropdown-notifications.block.background-ligth {
+        width: 100%;
+        right: -100%;
+        height: calc(100vh - var(--nav-height));
+        &.active {
+            position: fixed;
+        }
+    }
+}

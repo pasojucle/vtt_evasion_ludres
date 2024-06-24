@@ -15,16 +15,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class LogController extends AbstractController
 {
     #[Route('/write', name: 'write', methods: ['POST'], options:['expose' => true])]
-    public function edit(Request $request, LogService $logService): JsonResponse
+    public function write(Request $request, LogService $logService): JsonResponse
     {
-        $id = $request->request->get('slideshowImage');
+        $log = $request->request->all('log');
         /** @var ?User $user */
         $user = $this->getUser();
         if ($user) {
-            $logService->write('SlideshowImage', (int) $id, $user);
-            return new JsonResponse(['codeError' => 0]);
+            $logService->write($log['entityName'], (int) $log['entityId'], $user);
         }
 
-        return new JsonResponse(['codeError' => 1]);
+        return new JsonResponse(['codeError' => 0]);
     }
 }

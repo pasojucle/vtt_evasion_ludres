@@ -43,7 +43,7 @@ class BikeRideDto
 
     public BikeRideTypeDto $bikeRideType;
 
-    public ?SurveyDto $survey;
+    public ?SurveyDto $survey = null;
 
     public ?string $filename = null;
 

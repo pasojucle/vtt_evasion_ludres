@@ -2,13 +2,16 @@
 
 namespace App\Repository;
 
-use App\Entity\Notification;
 use DateTime;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\Log;
+use App\Dto\UserDto;
+use App\Entity\User;
+use App\Entity\Notification;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Notification|null find($id, $lockMode = null, $lockVersion = null)
@@ -28,8 +31,8 @@ class NotificationRepository extends ServiceEntityRepository
      */
     public function findAllDesc(): array
     {
-        return $this->createQueryBuilder('m')
-            ->orderBy('m.id', 'DESC')
+        return $this->createQueryBuilder('n')
+            ->orderBy('n.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;
@@ -38,34 +41,42 @@ class NotificationRepository extends ServiceEntityRepository
     /**
      * @return Notification[] Returns an array of FlashInfo objects
      */
-    public function findByAge(?int $age): array
-    {
+    public function findByUser(User $user, int $age): array
+    {        
+        $viewed = $this->getEntityManager()->createQueryBuilder()
+        ->select('log.entityId')
+        ->from(Log::class, 'log')
+        ->andWhere(
+            (new Expr())->eq('log.user', ':user'),
+            (new Expr())->eq('log.entity', ':entityName')
+        );
+
         $today = new DateTime();
-        $andX = (new Expr())->andX();
-        $andX->add((new Expr())->lte('m.startAt', ':today'));
-        $andX->add((new Expr())->gte('m.endAt', ':today'));
-        $andX->add((new Expr())->eq('m.isDisabled', ':disabled'));
-        $parameters = [
-            new Parameter('today', $today->format('Y-m-d H:i:s')),
-            new Parameter('disabled', false),
-        ];
-
-        if (null !== $age) {
-            $minOrX = (new Expr())->orX();
-            $minOrX->add((new Expr())->lte('m.minAge', ':age'));
-            $minOrX->add((new Expr())->isNull('m.minAge'));
-            $andX->add($minOrX);
-            $maxOrX = (new Expr())->orX();
-            $maxOrX->add((new Expr())->isNull('m.maxAge'));
-            $maxOrX->add((new Expr())->gte('m.maxAge', ':age'));
-            $andX->add($maxOrX);
-            $parameters[] = new Parameter('age', $age);
-        }
-
-        return $this->createQueryBuilder('m')
-            ->andWhere($andX)
-            ->setParameters(new ArrayCollection($parameters))
-            ->orderBy('m.id', 'DESC')
+         return $this->createQueryBuilder('n')
+            ->andWhere(
+                (new Expr())->lte('n.startAt', ':today'),
+                (new Expr())->gte('n.endAt', ':today'),
+                (new Expr())->eq('n.isDisabled', ':disabled'),
+                (new Expr())->eq('n.public', ':public'),
+                (new Expr())->orX(
+                    (new Expr())->lte('n.minAge', ':age'),
+                    (new Expr())->isNull('n.minAge')
+                ),
+                (new Expr())->orX(
+                    (new Expr())->isNull('n.maxAge'),
+                    (new Expr())->gte('n.maxAge', ':age')
+                ),
+                (new Expr())->notIn('n.id', $viewed->getDQL())
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('today', $today->format('Y-m-d H:i:s')),
+                new Parameter('disabled', false),
+                new Parameter('public', false),
+                new Parameter('age', $age),
+                new Parameter('user', $user),
+                new Parameter('entityName', 'Notification')
+            ]))
+            ->orderBy('n.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;
@@ -77,19 +88,19 @@ class NotificationRepository extends ServiceEntityRepository
     public function findPublic(): array
     {
         $today = new DateTime();
-        return $this->createQueryBuilder('m')
+        return $this->createQueryBuilder('n')
             ->andWhere(
-                (new Expr())->lte('m.startAt', ':today'),
-                (new Expr())->gte('m.endAt', ':today'),
-                (new Expr())->eq('m.isDisabled', ':disabled'),
-                (new Expr())->eq('m.public', ':public')
+                (new Expr())->lte('n.startAt', ':today'),
+                (new Expr())->gte('n.endAt', ':today'),
+                (new Expr())->eq('n.isDisabled', ':disabled'),
+                (new Expr())->eq('n.public', ':public')
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('today', $today->format('Y-m-d H:i:s')),
                 new Parameter('disabled', 0),
                 new Parameter('public', 1),
             ]))
-            ->orderBy('m.id', 'DESC')
+            ->orderBy('n.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;

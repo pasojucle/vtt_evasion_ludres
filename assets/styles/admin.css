@@ -129,7 +129,10 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
 .position-relative {
     position: relative;
 }
-
+.modal-content .ck.ck-content {
+    max-height: 350px;
+    font-size: small;
+}
 @media screen and (max-width: 800px) {
     main {
         display: block;

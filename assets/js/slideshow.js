@@ -55,7 +55,6 @@ class Slideshow extends HTMLDivElement {
         .then((response) => response.json())
         .then((json)=> {
             json.images.forEach((image, index) => {
-                console.log('image', image);
                 this.addImage(index, image);
             })
             this.init();
@@ -231,7 +230,9 @@ class SliderImage {
     }
     writeLog = async() => {
         const data = new FormData();
-        data.append('slideshowImage', this.id);
+        data.append('log[entityName]', 'SlideshowImage');
+        data.append('log[entityId]', this.id);
+        
         await fetch(Routing.generate('log_write'),{
             method: 'POST',
             body : data, 

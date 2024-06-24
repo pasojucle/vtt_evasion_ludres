@@ -12,6 +12,7 @@
 <div class="nav-bar">
     <a href="" class="btn btn-ico"></a>
     <img src="/logos/logo.jpg" alt="VTT EVASION LUDRES">
+    {% include 'common/notifications.html.twig' %}
 </div>
 <nav>
     <a class="logo" href="{{ path('home')}}">
@@ -66,20 +67,20 @@
         {% endfor %}
         {% set user = menu_service.user() %}
         {% if user.fullName is not null %}
-                <li class="nav-bar-xs">
-                    <div class="nav-bar-title">
-                        <a class="btn-logger"><i class="fas fa-user"></i> {{ user.fullName }}</a>
-                    </div>
-                    <div class="block-body">
-                        <ul class="dropdown-menu">
-                        {% for menu in user.menus %}
-                            <li>
-                                <a href="{{ path(menu.route) }}">{{ menu.label }}</a>
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </li>
+            <li class="nav-bar-xs">
+                <div class="nav-bar-title">
+                    <a class="btn-logger"><i class="fas fa-user"></i> {{ user.fullName }}</a>
+                </div>
+                <div class="block-body">
+                    <ul class="dropdown-menu">
+                    {% for menu in user.menus %}
+                        <li>
+                            <a href="{{ path(menu.route) }}">{{ menu.label }}</a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </li>
         {% endif %}
         {% if menu_service.displayCart %}
             <li class="nav-bar-xs">
@@ -88,7 +89,6 @@
                 </div>
             </li>
         {% endif %}
-
         {% if menu_service.accessAdmin %}
             <li class="nav-bar-xs">
                 <div class="nav-bar-title">
@@ -96,7 +96,6 @@
                 </div>
             </li>
         {% endif %}
-
         {% if app.user is not null %}
             {% if is_granted('IS_IMPERSONATOR') %}
                 <li class="nav-bar-xs">
@@ -119,4 +118,5 @@
             </li>
         {% endif %}
     </ul>
+    {% include 'common/notifications.html.twig' %}
 </nav>

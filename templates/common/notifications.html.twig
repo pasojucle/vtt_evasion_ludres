@@ -1,0 +1,8 @@
+<div class="bell-notifications-container">
+{% if app.user is not null %}
+    <div class="bell-notifications d-none">
+        <a class="btn-logger" title="Notifications"><i class="fa-solid fa-bell"></i></a>
+        <span class="badge notifications"></span>
+    </div>
+{% endif %}
+</div>
