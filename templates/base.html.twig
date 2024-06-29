@@ -22,17 +22,19 @@
     </head>
     <body {% if parameter_service.getParameterByName('TEST_MODE') %}class="testing"{% endif %}>
         {% block background %}{% endblock %}
-
         {% if not isAdmin %}
-            {% include 'common/header.html.twig' %}
+            {% include 'component/header.html.twig' %}
+            {% include 'navigation/front.html.twig' %}
+            {% include 'navigation/navbar.html.twig' %}
         {% endif %}
         <main{% if isAdmin %} class="admin"{% endif %}>
+
             {% if isAdmin %}
                 <div class="security" data-role="ROLE_USER"></div>
                 <div class="header">
                     <h1>Administration du site</h1>
                 </div>
-                {% include 'common/admin_nav.html.twig' %}
+                {% include 'navigation/admin.html.twig' %}
             {% endif %}
             <div class="notification">
                 <div class="flashes">
@@ -52,7 +54,7 @@
             </div>
             {% block body %}{% endblock %}
             {% if not isAdmin %}
-                {% include 'common/footer.html.twig' %}
+                {% include 'component/footer.html.twig' %}
             {% endif %}
         </main>
     </body>

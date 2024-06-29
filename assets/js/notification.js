@@ -1,7 +1,10 @@
-import { buildContent } from './modal.js'
+import { buildContent } from './modal.js';
+import { disableScroll, enableScroll } from './toggleScroll.js'
+import { hideNav} from './navigation.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.badge.novelty').forEach((element) => {
+    console.log('on load', document.documentElement.clientWidth, window.innerWidth, window.outerWidth);
+    document.querySelectorAll('.novelty').forEach((element) => {
         if (element.dataset.route !== undefined) {
             hasNews(element.dataset.route)
         }
@@ -46,13 +49,21 @@ const callShowModal = async(target) => {
                 element.classList.remove('d-none');
                 element.querySelector('.badge.notifications').textContent = json.notifications.total
             });
-            console.log('body width', document.querySelector('body').offsetWidth)
-            document.querySelector('.nav-bar').style.width = document.querySelector('body').offsetWidth+'px';
             const htmlElement = document.createRange().createContextualFragment(json.notifications.list);
-            document.querySelector('body').append(htmlElement)
+            document.querySelector('body').prepend(htmlElement)
+            setNavigationsTop();
             document.querySelector('div.dropdown-notifications .tools a').addEventListener('click', toggleNotifications);
         }
     });
+}
+
+const setNavigationsTop = () => {
+    let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+    console.log('vw', vw);
+    if (1024 < vw) {
+            const nav = document.querySelector('nav');
+        document.querySelector('div.dropdown-notifications').style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
+    }
 }
 
 const hasNews = async(route) => {
@@ -64,16 +75,31 @@ const hasNews = async(route) => {
         throw new Error('Something went wrong.');    
     })
     .then((json)=> {
+        console.log('json', json);
         if (json.hasNewItem) {
             const element = document.querySelector(`[data-route="${route}"]`);
             element.classList.remove('hidden');
-            if (element.parentElement.classList.contains('nav-sub')) {
-                element.closest('li.nav-bar-xs').querySelector('.badge.novelty').classList.remove('hidden');
+            if (element.parentElement.parentElement.parentElement.classList.contains('nav-sub')) {
+                element.closest('li.nav-bar-xs').querySelector('.novelty').classList.remove('hidden');
             }
         }
     });
 }
 
-const toggleNotifications = () => {
-    document.querySelector(('div.dropdown-notifications')).classList.toggle('active');
+const toggleNotifications = (event) => {
+    const notifications = document.querySelector(('div.dropdown-notifications'));
+    notifications.classList.toggle('active');
+    if (notifications.classList.contains('active')) {
+        disableScroll();
+        hideNav();
+        return;
+    }
+    enableScroll();
+}
+
+export const hideNotifications = () => {
+    const notifications = document.querySelector(('div.dropdown-notifications'))
+    if (notifications) {
+        notifications.classList.remove('active');
+    }
 }

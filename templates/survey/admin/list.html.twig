@@ -12,7 +12,7 @@
     </div>
     <div class="wrapper-body">
         <a href="{{ path('admin_survey_add') }}" class="btn btn-primary" title="Ajouter un survey"><i class="fas fa-plus"></i> Ajouter</a>
-        {% include 'common/pagination.html.twig' with {'margin': 'both'} %}
+        {% include 'component/pagination.html.twig' with {'margin': 'both'} %}
         <ul>
             {% for survey in surveys %}
                 <li class="list-dropdown">
@@ -45,7 +45,7 @@
                 </li>  
             {% endfor %}
         </ul>
-        {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
     </div>
 </div>
 

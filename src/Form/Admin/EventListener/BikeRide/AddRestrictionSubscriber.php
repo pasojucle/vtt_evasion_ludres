@@ -155,7 +155,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $levelFilter = [];
         if (array_key_exists('levelFilter', $data)) {
             $levelFilter = array_map(function ($id) {
-                return (int) $id;
+                return 1 === preg_match('#(\d+)#', $id) ? (int) $id : $id;
             }, $data['levelFilter']);
         }
         $users = [];

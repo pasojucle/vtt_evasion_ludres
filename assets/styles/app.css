@@ -21,15 +21,17 @@ nav.fixed {
     position: fixed;
 }
 
-.nav-sub {
+.nav-sub > a > div, .nav-bar-title > a > div {
     position: relative;
+    display: inline-block;
+    padding: 15px 10px;
 }
 
 .badge.novelty {
     position: absolute;
-    top: 7px;
-    right: 2px;
-    z-index: -1;
+    top: 8px;
+    right: 0;
+    /* z-index: -1; */
     min-width: unset;
 }
 .novelty {
@@ -44,10 +46,11 @@ nav.fixed {
 }
 
 nav > ul > li > div.nav-bar-title > a {
-    padding: 15px;
     display: block;
+    position: relative;
     color: var(--background-color);
 }
+
 nav > ul > li {
     display: inline-block;
     margin: 0 -4px;
@@ -95,9 +98,9 @@ ul.dropdown-menu {
 ul.dropdown-menu a {
     color: var(--background-color);
     display: inline-block;
-    padding: 10px;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
 }
 ul.dropdown-menu a:hover, ul.dropdown-menu a.active {
     background-color: var(--primary-color);
@@ -430,7 +433,7 @@ button[type="submit"] {
 }
 
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
     .wrapper-medium-width, .wrapper-small-width {
         padding: 5%;
     }
@@ -451,10 +454,11 @@ button[type="submit"] {
         height: 450px;
     }
     nav > ul > li > div.nav-bar-title > a {
-        padding: 15px;
-        display: block;
         color: var(--background-color);
         background-color: var(--light-color);
+    }
+    nav > ul > li > div.nav-bar-title > a.btn-logger {
+        display: block;
     }
     nav > ul > li > .nav-bar-title > a:hover, nav > ul> li > div.nav-bar-title > a.active {
         color: var(--white-color);

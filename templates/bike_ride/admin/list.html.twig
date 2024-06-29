@@ -17,7 +17,7 @@
                     {% endif %}
                 </div>
             </div>
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}    
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}    
             <ul>
                 {% for bikeRide in bikeRides %}                      
                     <li class="list-dropdown{% if not bikeRide.bikeRideType.isRegistrable %} light-separator{% endif %}">
@@ -69,7 +69,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}    
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}    
         </div>
     </div>
 {% endblock %}

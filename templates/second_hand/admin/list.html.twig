@@ -14,7 +14,7 @@
             {% endfor %}
         </nav>
         <div class="wrapper-body">
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul>
                 {% for second_hand in second_hands %}
                     <li class="list-dropdown">
@@ -38,7 +38,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 {% endblock %}

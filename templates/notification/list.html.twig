@@ -5,15 +5,17 @@
             <a class="btn btn-xs btn-default" title="Fermer"><i class="fa-solid fa-xmark"></i></a>
         </div>
     </div>
-    <ul class="dropdown-notifications">
-        {% for notification in notifications %}
-            <li class="notification-body">
-                <div class="notification-title">{{ notification.title }}</div>
-                <div class="notification-text">{{ notification.content|raw }}</div>
-                <div class="notification-footer">
-                    <a class="btn btn-secondary btn-xs" href="{{ notification.url }}">{{ notification.labelButton }}</a>
-                </div>
-            </li>
-        {% endfor %}
+    <ul>
+        {% if notifications is defined %}
+            {% for notification in notifications %}
+                <li class="notification-body">
+                    <div class="notification-title">{{ notification.title }}</div>
+                    <div class="notification-text">{{ notification.content|raw }}</div>
+                    <div class="notification-footer">
+                        <a class="btn btn-secondary btn-xs" href="{{ notification.url }}">{{ notification.labelButton }}</a>
+                    </div>
+                </li>
+            {% endfor %}
+        {% endif %}
     </ul>
 </div>

@@ -16,7 +16,7 @@
             </div>
         <div class="wrapper-body">
 
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
             <div class="bike-rides  reveal">
                 {% for bikeRide in bikeRides %}
                     {% if bikeRide.display %}
@@ -73,7 +73,7 @@
                     {% endif %}
                 {% endfor %}
             </div>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %} 
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %} 
         </div>
     </div>
 {% endblock %}

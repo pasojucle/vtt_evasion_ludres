@@ -133,7 +133,7 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     max-height: 350px;
     font-size: small;
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
     main {
         display: block;
         max-width: 100%;

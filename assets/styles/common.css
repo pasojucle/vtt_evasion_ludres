@@ -685,8 +685,8 @@ button[type=submit].btn.btn-primary:disabled {
     padding: 5% 20%;
     box-sizing: border-box;
 }
-.hidden , .form-group-inline.hidden, .d-none {
-    display: none;
+.hidden, .form-group-inline.hidden, .d-none {
+    display: none !important;
 }
 .ms-20 {
     margin-left: 20px;
@@ -1538,7 +1538,7 @@ iframe.youtube {
     color: var(--white-color);
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1024px) {
     .block.block-flash.background-color .block-title::after {
         box-sizing: border-box;
     }
@@ -1573,12 +1573,15 @@ iframe.youtube {
     }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
     body {
         width: 100%;
     }
     .xs-display {
         display: initial;
+    }
+    .md-display {
+        display: none;
     }
     .nav-bar {
         display: flex;
@@ -1590,8 +1593,17 @@ iframe.youtube {
         justify-content: space-between;
         z-index: 99;
     }
+    .admin .nav-bar {
+        display: block;
+        text-align: center;
+    }
     .nav-bar > * {
         vertical-align: middle;
+    }
+    .admin .nav-bar .btn {
+        margin-right: unset;
+        position: absolute;
+        left: 0;
     }
     .nav-bar .btn::before {
         content: '\f0c9';
@@ -1655,7 +1667,6 @@ iframe.youtube {
     nav:not(.paginator, nav.nav-tab).nav-active {
         left: 0px;
         position: fixed;
-
     }
     nav.nav-tab, nav.nav-tab a {
         display: block;
@@ -1791,6 +1802,10 @@ iframe.youtube {
     }
     .card-img {
         background-size: contain;
+    }
+    iframe.youtube {
+        width: 100%;
+        height: calc(100vw * 0.5);
     }
 }
 

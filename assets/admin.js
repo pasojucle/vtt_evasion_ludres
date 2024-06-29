@@ -26,6 +26,7 @@ import './styles/loader.scss';
 import './styles/bootstrap.scss';
 
 import './js/app.js';
+import './js/navigation.js';
 import './js/js-datepicker';
 import './js/form.js';
 import './js/input-file';

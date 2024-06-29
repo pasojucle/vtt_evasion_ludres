@@ -26,6 +26,7 @@ import './styles/reveal.css';
 import './styles/carrousel.css';
 import './styles/verticalStepProgress.css';
 import './js/app.js';
+import './js/navigation.js';
 import './js/carrousel';
 import './js/input-file';
 import './js/modal';

@@ -2,6 +2,7 @@
 import { handleCheckChange, formToggle } from './form.js';
 import { Form } from './formValidator.js';
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
+
 var formValidator;
 
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -18,21 +19,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
             $('ul.StepProgress').css('margin-top', marginTop+'px');
         });
     }
-    $( window ).scroll(function() {
-        if ($(window).scrollTop() > 150) {
-            $('nav:not(.paginator)').addClass('fixed');
-            $('nav:not(.paginator) img').removeClass('hidden');
-        } else {
-            $('nav:not(.paginator)').removeClass('fixed');
-            $('nav:not(.paginator) img').addClass('hidden');
-        }
-    });
+
     if ($('.sortable').length > 0) {
         buildSortable();
     }
 
     $(document).on('change', '.filters select, .filters .btn, .filters input', submitFom);
-    $(document).on('click', '.nav-bar .btn', toggleMenu);
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', 'button.form-modifier', formModifier);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
@@ -116,22 +108,6 @@ function submitFom() {
     $(this).closest('form').submit()
 }
 
-function toggleMenu(e) {
-    e.preventDefault();
-    $('nav').toggleClass('nav-active');
-    $('.nav-bar .btn').toggleClass('nav-hide');
-    if($('nav').hasClass('nav-active')) {
-        $('main').css('height', $('nav').height());
-    } else {
-        $('main').css('height', 'unset');
-    }
-    $('.block-body.down, .dropdown-toggle.down').each(function() {
-        $(this).removeClass('down').addClass('up');
-    });
-    $('.fa-angle-up').each(function() {
-        $(this).removeClass('fa-angle-up').addClass('fa-angle-down');
-    });
-}
 
 function buildSortable() {
     let error = false;

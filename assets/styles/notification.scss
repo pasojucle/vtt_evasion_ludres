@@ -1,6 +1,10 @@
 .bell-notifications-container {
+    position: absolute;
     height: 100%;
     width: 50px;
+    top: 0;
+    right: 0;
+    margin-right: 10px;
     .bell-notifications {
         height: 100%;
         width: 100%;
@@ -8,6 +12,9 @@
         align-items: center;
         justify-content: center;
         font-size: 24px;
+        &.d-none {
+            display: none;
+        }
         &:hover {
             color: var(--primary-color);
         }
@@ -16,7 +23,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            top: 7px;
+            top: 5px;
             right: 2px;
             z-index: -1;
             min-width: unset;
@@ -40,7 +47,7 @@
     top: var(--nav-height);
     margin-top: unset;
     right: -300px;
-    transition: right 1s ease;
+    transition: all 1s ease;
     z-index: 9999;
     padding: 5px;
     &.active {
@@ -73,19 +80,20 @@
 
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
     .btn {
         padding: initial;
     }
-}
-
-@media screen and (max-width: 414px) {
+    .bell-notifications-container {
+        position: initial;
+    }
     .dropdown-notifications.block.background-ligth {
         width: 100%;
-        right: -100%;
+        left: -100vw;
         height: calc(100vh - var(--nav-height));
         &.active {
             position: fixed;
+            left: 0;
         }
     }
 }

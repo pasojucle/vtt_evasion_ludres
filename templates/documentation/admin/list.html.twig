@@ -9,7 +9,7 @@
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_documentation_add') }}" class="btn btn-primary" title="Ajouter un documentation"><i class="fas fa-plus"></i> Ajouter une documentation</a>
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul class="sortable" data-route="admin_documentation_order" data-parameter="documentation">
                 {% for documentation in documentations %}     
                     <li class="ui-state-default col-list col-list-2btn" data-id="{{ documentation.id }}">
@@ -23,7 +23,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 {% endblock %}

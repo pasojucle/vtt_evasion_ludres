@@ -30,7 +30,7 @@
             </div>
             {{ form_end(form) }}
             {% endif %}
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul id="orders_container">
                 {% for order in orders %}
                     <li class="col-list col-1md-1sx-btn">
@@ -67,7 +67,7 @@
                 {% endfor %}
             </ul>
             {% if orders is empty %}Aucune commande{% endif %}
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 {% endblock %}
