@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\NotificationDtoTransformer;
+use App\Entity\User;
+use App\Service\NotificationService;
+use App\Service\UserService;
 use App\UseCase\Notification\GetList;
 use App\UseCase\Notification\GetNews;
+use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,18 +23,19 @@ class NotificationController extends AbstractController
 {
     public function __construct(
         private readonly GetNews $getNews,
+        private readonly UserService $userService,
     ) {
     }
 
     #[Route('s', name: 'list', methods: ['GET'])]
     public function list(GetList $showNotification): JsonResponse
     {
-        list($modalNotification, $notifications)  = $showNotification->execute();
+        list($modalNotification, $notifications) = $showNotification->execute();
 
         return new JsonResponse([
             'modal' => ($modalNotification) ? $this->renderView('notification/show.modal.html.twig', [
                 'modal' => $modalNotification,
-            ]): null,
+            ]) : null,
             'notifications' => [
                 'total' => count($notifications),
                 'list' => $this->renderView('notification/list.html.twig', [
@@ -40,7 +48,9 @@ class NotificationController extends AbstractController
     #[Route('/slideshow', name: 'slideshow', methods: ['GET'], options:['expose' => true])]
     public function slideshow(): JsonResponse
     {
-        $slideshowImages = $this->getNews->getSlideShowImages();
+        /** @var User $user */
+        $user = $this->getUser();
+        $slideshowImages = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSlideShowImages() : null;
 
         return new JsonResponse(['hasNewItem' => !empty($slideshowImages)]);
     }
@@ -48,7 +58,9 @@ class NotificationController extends AbstractController
     #[Route('/summary/list', name: 'summary_list', methods: ['GET'], options:['expose' => true])]
     public function summaryList(): Response
     {
-        $summaries = $this->getNews->getSummaries();
+        /** @var User $user */
+        $user = $this->getUser();
+        $summaries = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSummaries() : null;
 
         return new JsonResponse(['hasNewItem' => !empty($summaries)]);
     }
@@ -56,8 +68,35 @@ class NotificationController extends AbstractController
     #[Route('/notification/secondHand', name: 'second_hand', methods: ['GET'], options:['expose' => true])]
     public function secondHand(): Response
     {
-        $secondHands = $this->getNews->getSecondHands();
+        /** @var User $user */
+        $user = $this->getUser();
+        $secondHands = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSecondHands() : null;
 
         return new JsonResponse(['hasNewItem' => !empty($secondHands)]);
+    }
+
+
+
+    #[Route('/notification/show/{entityName}/{entityId}', name: 'show', methods: ['GET'], defaults:['entityId' => null])]
+    public function show(
+        EntityManagerInterface $entityManager,
+        NotificationService $notificationService,
+        NotificationDtoTransformer $notificationDtoTransformer,
+        string $entityName,
+        ?int $entityId
+    ): Response {
+        try {
+            $entity = new ReflectionClass(sprintf('App\Entity\%s', $entityName));
+        } catch (ReflectionException) {
+            $entity = null;
+        }
+        
+        $notification = ($entity)
+            ? $entityManager->getRepository($entity->getName())->find($entityId)
+            : $notificationService->getNewSeasonReRegistration();
+            
+        return $this->render('notification/show.modal.html.twig', [
+            'modal' => $notificationDtoTransformer->fromEntity($notification),
+        ]);
     }
 }

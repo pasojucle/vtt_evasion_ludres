@@ -102,7 +102,7 @@ class IdentityRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('i')
             ->andWhere(
-                (new Expr())->isNotNull('i.birthplace'),
+                (new Expr())->isNotNull('i.birthPlace'),
                 (new Expr())->isNull('i.birthCommune'),
             )
             ->getQuery()

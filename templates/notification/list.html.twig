@@ -1,4 +1,4 @@
-<div class="dropdown-notifications block background-ligth">
+<div class="dropdown-notifications block">
     <div class="block-title">
         <h2>Notifications</h2>
         <div class="tools">
@@ -9,10 +9,9 @@
         {% if notifications is defined %}
             {% for notification in notifications %}
                 <li class="notification-body">
-                    <div class="notification-title">{{ notification.title }}</div>
-                    <div class="notification-text">{{ notification.content|raw }}</div>
+                    <div class="notification-text">{{ notification.title}}</div>
                     <div class="notification-footer">
-                        <a class="btn btn-secondary btn-xs" href="{{ notification.url }}">{{ notification.labelButton }}</a>
+                        <a class="btn btn-secondary btn-xs" data-toggle="modal" data-type="primary" href="{{ notification.modalLink }}">Consulter</a>
                     </div>
                 </li>
             {% endfor %}

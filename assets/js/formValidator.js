@@ -68,7 +68,6 @@ export class Form {
     }
     disabledSubmit = () => {
         const warnings = this.fields.filter((field) => field.status === 'ALERT_WARNING' || field.isRequired() && !field.getValue());
-        console.log('warnings', warnings)
         this.submit.disabled = 0 < warnings.length
     }
 }

@@ -35,12 +35,10 @@ class LineChart {
         await fetch(Routing.generate(this.route, this.routeParams),)
         .then((response) => response.json())
         .then((json)=> {
-            console.log(json)
             json.membersPrecences.forEach((presences) => {
                 this.addLine(presences);
             });
             this.setFormat(json.format);
-            console.log('canvas', this);
             this.run();
         });
     }

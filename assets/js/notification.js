@@ -1,18 +1,15 @@
-import { buildContent } from './modal.js';
+import { initModal, buildContent } from './modal.js';
 import { disableScroll, enableScroll } from './toggleScroll.js'
 import { hideNav} from './navigation.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('on load', document.documentElement.clientWidth, window.innerWidth, window.outerWidth);
     document.querySelectorAll('.novelty').forEach((element) => {
         if (element.dataset.route !== undefined) {
             hasNews(element.dataset.route)
         }
     })
     modalBuilded().then(() => {
-        if (document.querySelector('#notification_list')) {
-            callShowModal('#notification_list');
-        }
+        setNotificationList();
     });
     document.querySelectorAll('.badge.notifications').forEach((element) => {
         element.parentElement.addEventListener('click', toggleNotifications);
@@ -25,41 +22,43 @@ const modalBuilded = () => {
     });
 }
 
-const callShowModal = async(target) => {
-    const targetEl = document.querySelector(target)
-    var route = targetEl.href;
-    const modalType = targetEl.dataset.type
-    await fetch(route, {
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-          },
-    })
-    .then((response) => {
-        if (response.status !== 500) {
-            return response.json();
-        }
-        throw new Error('Something went wrong.');    
-    })
-    .then((json)=> {
-        if (json.modal) {
-            buildContent(json.modal, modalType);
-        }
-        if (0 < json.notifications.total) {
-            document.querySelectorAll('.bell-notifications').forEach((element) => {
-                element.classList.remove('d-none');
-                element.querySelector('.badge.notifications').textContent = json.notifications.total
-            });
-            const htmlElement = document.createRange().createContextualFragment(json.notifications.list);
-            document.querySelector('body').prepend(htmlElement)
-            setNavigationsTop();
-            document.querySelector('div.dropdown-notifications .tools a').addEventListener('click', toggleNotifications);
-        }
-    });
+export const setNotificationList = async() => {
+    const notificationList = document.querySelector('#notification_list');
+    if (notificationList) {
+        var route = notificationList.href;
+        const modalType = notificationList.dataset.type
+        await fetch(route, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+        .then((response) => {
+            if (response.status !== 500) {
+                return response.json();
+            }
+            throw new Error('Something went wrong.');    
+        })
+        .then((json)=> {
+            if (json.modal) {
+                buildContent(json.modal, modalType);
+            }
+            if (0 < json.notifications.total) {
+                document.querySelectorAll('.bell-notifications').forEach((element) => {
+                    element.classList.remove('d-none');
+                    element.querySelector('.badge.notifications').textContent = json.notifications.total
+                });
+                const htmlElement = document.createRange().createContextualFragment(json.notifications.list);
+                document.querySelector('body').prepend(htmlElement)
+                setNavigationsTop();
+                document.querySelector('div.dropdown-notifications .tools a').addEventListener('click', toggleNotifications);
+                initModal();
+            }
+        });
+    }
 }
 
 const setNavigationsTop = () => {
     let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-    console.log('vw', vw);
     if (1024 < vw) {
             const nav = document.querySelector('nav');
         document.querySelector('div.dropdown-notifications').style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
@@ -75,7 +74,6 @@ const hasNews = async(route) => {
         throw new Error('Something went wrong.');    
     })
     .then((json)=> {
-        console.log('json', json);
         if (json.hasNewItem) {
             const element = document.querySelector(`[data-route="${route}"]`);
             element.classList.remove('hidden');

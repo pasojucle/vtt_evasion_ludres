@@ -51,7 +51,7 @@ class Identity
     private ?DateTimeInterface $birthDate = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $birthplace = null;
+    private ?string $birthPlace = null;
 
     #[Column(type: 'string', length: 14, nullable: true)]
     private ?string $phone = null;
@@ -127,14 +127,14 @@ class Identity
         return $this;
     }
 
-    public function getBirthplace(): ?string
+    public function getBirthPlace(): ?string
     {
-        return $this->birthplace;
+        return $this->birthPlace;
     }
 
-    public function setBirthplace(?string $birthplace): self
+    public function setBirthPlace(?string $birthPlace): self
     {
-        $this->birthplace = $birthplace;
+        $this->birthPlace = $birthPlace;
 
         return $this;
     }

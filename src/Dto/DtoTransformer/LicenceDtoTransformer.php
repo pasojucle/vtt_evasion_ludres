@@ -13,6 +13,7 @@ use App\Model\Currency;
 use App\Repository\HistoryRepository;
 use App\Repository\MembershipFeeAmountRepository;
 use App\Service\IndemnityService;
+use App\Service\LicenceService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
 use App\Service\SeasonService;
@@ -41,6 +42,7 @@ class LicenceDtoTransformer
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
         private IndemnityService $indemnityService,
         private ProjectDirService $projectDir,
+        private readonly LicenceService $licenceService
     ) {
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
     }
@@ -74,7 +76,7 @@ class LicenceDtoTransformer
             $licenceDto->amount = $this->getAmount($licence);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
             $licenceDto->licenceSwornCertifications = $this->getLicenceSwornCertifications($licence);
-            $licenceDto->isActive = $this->seasonService->getMinSeasonToTakePart() <= $licence->getSeason();
+            $licenceDto->isActive = $this->licenceService->isActive($licence);
             if ($licence->getAdditionalFamilyMember()) {
                 $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club';
             }

@@ -119,7 +119,6 @@ class AddContentSubscriber implements EventSubscriberInterface
                     'row_attr' => [
                         'class' => 'form-group-inline',
                     ],
-                    'disabled' => $isDiabled,
                 ])
                 ->add('restriction', ChoiceType::class, [
                     'expanded' => true,

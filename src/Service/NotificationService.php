@@ -18,8 +18,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class NotificationService
 {
     public function __construct(
-        private Security $security,
-        private RequestStack $requestStack
+        private readonly Security $security,
+        private readonly RequestStack $requestStack,
+        private readonly MessageService $messageService
     ) {
     }
 
@@ -53,5 +54,18 @@ class NotificationService
             'content' => $content,
         ];
         $session->set('notifications_to_show', json_encode($notifications));
+    }
+
+    public function getNewSeasonReRegistration(): array
+    {
+        $season = $this->requestStack->getSession()->get('currentSeason');
+        return [
+            'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
+            'title' => sprintf('Inscription à la saison %s', $season),
+            'content' => $this->messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
+            'route' => 'user_registration_form',
+            'routeParams' => ['step' => 1],
+            'labelBtn' => 'S\'incrire'
+        ];
     }
 }

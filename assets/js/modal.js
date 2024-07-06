@@ -1,12 +1,17 @@
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
+import { setNotificationList, hideNotifications } from './notification.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const modal = buildModal();
     document.querySelector('body').append(modal);
+    initModal();
+});
+
+export const initModal = () => {
     document.querySelectorAll('a[data-toggle="modal"]').forEach((element) => {
         element.addEventListener('click', handleShowModal);
     });
-});
+}
 
 const buildModal = () => {
     const modal = document.createElement('DIV');
@@ -20,6 +25,7 @@ const handleShowModal = (event) => {
     const anchor = ( event.target.tagName === 'A') ? event.target : event.target.closest('a');
     var route = anchor.href;
     const modalType = anchor.dataset.type;
+    hideNotifications();
     showModal(route, modalType);
 }
 
@@ -111,6 +117,7 @@ const submitAsync = async(event) => {
     .then((json)=> {
         if (parseInt(json.codeError) === 0) {
             closeModal();
+            setNotificationList();
         }
     });
 }

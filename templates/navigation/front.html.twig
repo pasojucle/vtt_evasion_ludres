@@ -34,12 +34,8 @@
                         <ul class="dropdown-menu">
                             {% for sub_menu in menu.subMenus %}
                                 <li class="nav-sub">
-                                    {% if sub_menu.class is defined %}
-                                        <a class="{{ sub_menu.class }}"
-                                            <div>{{ sub_menu.label }}</div>
-                                        </a>
-                                    {% else %}
-                                        <a href="{{ path(sub_menu.route) }}"
+
+                                        <a {% if sub_menu.class is defined %}class="{{ sub_menu.class }}"{% else %}href="{{ path(sub_menu.route) }}"{% endif %}
                                             {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
                                             <div class="position-relative">
                                                 {{ sub_menu.label }}
@@ -48,7 +44,7 @@
                                                 {% endif %}
                                             </div>
                                         </a>
-                                    {% endif %}
+
                                 </li>
                             {% endfor %}
                         </ul>

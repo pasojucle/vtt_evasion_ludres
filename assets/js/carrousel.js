@@ -29,7 +29,6 @@ const resizeObserver = new ResizeObserver(entries => {
 });
 
 if (document.querySelector('.wrapper-img.slider, .full-background')) {
-    console.log('resizeObserver');
     resizeObserver.observe(document.querySelector('.slider, .full-background'));
 }
 

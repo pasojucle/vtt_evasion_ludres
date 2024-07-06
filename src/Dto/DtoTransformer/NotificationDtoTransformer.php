@@ -14,6 +14,7 @@ use App\Service\MessageService;
 use App\Service\NotificationService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use ReflectionClass;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -42,6 +43,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $notification->getContent();
         $notificationDto->form = $this->getForm($notification->getId())->createView();
         $notificationDto->labelButton = 'J\'ai compris';
+        $notificationDto->modalLink = $this->getModalLink($notification);
 
         return $notificationDto;
     }
@@ -65,6 +67,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $survey->getContent();
         $notificationDto->url = $this->urlGenerator->generate('survey', ['survey' => $survey->getId()]);
         $notificationDto->labelButton = 'Participer';
+        $notificationDto->modalLink = $this->getModalLink($survey);
 
         return $notificationDto;
     }
@@ -77,6 +80,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $this->notificationOrderInProgress;
         $notificationDto->url = $this->urlGenerator->generate('order_edit');
         $notificationDto->labelButton = 'Valider ma commande';
+        $notificationDto->modalLink = $this->getModalLink($orderHeader);
 
         return $notificationDto;
     }
@@ -89,6 +93,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $this->notificationRegistrationInProgress;
         $notificationDto->url = $this->urlGenerator->generate('user_registration_form', ['step' => 1]);
         $notificationDto->labelButton = 'Finaliser mon inscription';
+        $notificationDto->modalLink = $this->getModalLink($licence);
 
         return $notificationDto;
     }
@@ -103,6 +108,7 @@ class NotificationDtoTransformer
             $notificationDto->url = $this->urlGenerator->generate($data['route'], $data['routeParams']);
             $notificationDto->labelButton = $data['labelBtn'];
         }
+        $notificationDto->modalLink = $this->getModalLink($data['index']);
 
         return $notificationDto;
     }
@@ -112,23 +118,31 @@ class NotificationDtoTransformer
         $notifications = [];
 
         foreach ($notificationEntities as $notificationEntity) {
-            if ($notificationEntity instanceof Notification) {
-                $notifications[] = $this->fromNotification($notificationEntity);
-            }
-            if ($notificationEntity instanceof Survey) {
-                $notifications[] = $this->fromSuvey($notificationEntity);
-            }
-            if ($notificationEntity instanceof OrderHeader) {
-                $notifications[] = $this->fromOrderHeader($notificationEntity);
-            }
-            if ($notificationEntity instanceof Licence) {
-                $notifications[] = $this->fromLicence($notificationEntity);
-            }
-            if (is_array($notificationEntity)) {
-                $notifications[] = $this->fromArray($notificationEntity);
-            }
+            $notifications[] = $this->fromEntity($notificationEntity);
         }
 
         return $notifications;
+    }
+
+    public function fromEntity(array|Survey|Notification|Licence|OrderHeader $entity): NotificationDto
+    {
+        return match (true) {
+            $entity instanceof Notification => $this->fromNotification($entity),
+            $entity instanceof Survey => $this->fromSuvey($entity),
+            $entity instanceof OrderHeader => $this->fromOrderHeader($entity),
+            $entity instanceof Licence => $this->fromLicence($entity),
+            default => $this->fromArray($entity)
+        };
+    }
+
+    private function getModalLink(string|Survey|Notification|Licence|OrderHeader $entity): string
+    {
+        $params = (is_string($entity))
+            ? ['entityName' => $entity]
+            : [
+                'entityName' => (new ReflectionClass($entity))->getShortName(),
+                'entityId' => $entity->getId(),
+            ];
+        return $this->urlGenerator->generate('notification_show', $params);
     }
 }

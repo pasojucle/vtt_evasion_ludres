@@ -41,7 +41,7 @@
     color: var(--white-color);
 }
 
-.dropdown-notifications.block.background-ligth {
+.dropdown-notifications {
     width: 300px;
     position: absolute;
     top: var(--nav-height);
@@ -49,35 +49,40 @@
     right: -300px;
     transition: all 1s ease;
     z-index: 9999;
-    padding: 5px;
+    padding: 8px;
+    background-color: var(--gray-400);
+    box-sizing: border-box;
     &.active {
         right: 0px;
     }
-
-    li.notification-body {
-        background-color: var(--white-color);
-        .notification-title {
-            background-color: var(--gray-400);
-            padding: 5px;
-            text-align: center;
-        }
-        .notification-text {
-            padding: 5px;
-        }
-        .notification-footer {
-            display: flex;
-            margin-bottom: 10px;
-            a {
-                margin: 0 auto;
-                &:hover {
-                    background-color: var(--primary-color-darker);
-                    color: var(--white-color);
-                }
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 8px; 
+        li.notification-body {
+            background-color: var(--white-color);
+            .notification-title {
+                background-color: var(--gray-400);
+                padding: 5px;
+                text-align: center;
             }
-
+            .notification-text {
+                padding: 5px;
+            }
+            .notification-footer {
+                display: flex;
+                margin-bottom: 10px;
+                a {
+                    margin: 0 auto;
+                    &:hover {
+                        background-color: var(--primary-color-darker);
+                        color: var(--white-color);
+                    }
+                }
+    
+            }
         }
     }
-
 }
 
 @media screen and (max-width: 1024px) {
@@ -87,7 +92,7 @@
     .bell-notifications-container {
         position: initial;
     }
-    .dropdown-notifications.block.background-ligth {
+    .dropdown-notifications.block {
         width: 100%;
         left: -100vw;
         height: calc(100vh - var(--nav-height));

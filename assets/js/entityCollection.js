@@ -37,8 +37,6 @@ const addFormToCollection = (e) => {
     const removeFormButton = document.createElement('button');
     removeFormButton.classList.add('btn', 'btn-xs', 'btn-danger', 'col-md-1');
     removeFormButton.innerHTML ='<i class="fas fa-times"></i>';
-    console.log('itemForm', itemForm)
-    console.log('itemForm', $(itemForm))
     $(itemForm).append(removeFormButton);
 
     removeFormButton.addEventListener('click', (e) => {

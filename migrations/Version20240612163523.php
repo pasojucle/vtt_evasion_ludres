@@ -27,6 +27,7 @@ final class Version20240612163523 extends AbstractMigration
         $this->addSql('UPDATE `second_hand` SET `valided_at`=`created_at` WHERE `valid` = 1');
         $this->addSql('ALTER TABLE second_hand DROP valid');
         $this->addSql('ALTER TABLE log DROP route, CHANGE entity entity VARCHAR(50) NOT NULL, CHANGE entity_id entity_id INT NOT NULL');
+        $this->addSql('ALTER TABLE identity CHANGE birthplace birth_place VARCHAR(100) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
@@ -39,5 +40,6 @@ final class Version20240612163523 extends AbstractMigration
         $this->addSql('UPDATE `second_hand` SET `valid`= 1 WHERE `valided_at IS NOT NULL');
         $this->addSql('ALTER TABLE second_hand DROP valided_at');
         $this->addSql('ALTER TABLE log ADD route VARCHAR(255) DEFAULT NULL, CHANGE entity entity VARCHAR(50) DEFAULT NULL, CHANGE entity_id entity_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE identity CHANGE birth_place birthplace VARCHAR(100) DEFAULT NULL');
     }
 }

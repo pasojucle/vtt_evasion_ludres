@@ -17,6 +17,7 @@ class UserService
         private EntityManagerInterface $entityManager,
         private SurveyResponseRepository $surveyResponseRepository,
         private OrderLineRepository $orderLineRepository,
+        private readonly LicenceService $licenceService,
     ) {
     }
 
@@ -50,5 +51,14 @@ class UserService
 
         $this->entityManager->remove($user);
         $this->entityManager->flush();
+    }
+
+    public function licenceIsActive(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+        $lastLicence = $user->getLastLicence();
+        return $this->licenceService->isActive($lastLicence);
     }
 }

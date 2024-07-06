@@ -15,6 +15,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
 use App\Service\MessageService;
+use App\Service\NotificationService;
 use App\Service\ParameterService;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -40,6 +41,7 @@ class GetList
         private readonly RouterInterface $router,
         private readonly ParameterService $parameterService,
         private readonly MessageService $messageService,
+        private readonly NotificationService $notificationService,
     ) {
         /** @var ?User $user */
         $user = $security->getUser();
@@ -49,31 +51,34 @@ class GetList
     public function execute(): array
     {
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
+        $notificationShowOn = (null !== $this->session->get('notification_showed'))
+        ? json_decode($this->session->get('notification_showed'), true)
+        : [];
         if (null === $this->user) {
-            return $this->getPublicNotifications();
+            return $this->getPublicNotifications($notificationShowOn);
         }
 
-        return $this->getUserNotifications();
+        return $this->getUserNotifications($notificationShowOn);
     }
 
-    private function getPublicNotifications(): array
+    private function getPublicNotifications(array $notificationShowOn): array
     {
-        return [$this->getPublicNotification(), []];
+        return [$this->getPublicNotification($notificationShowOn), []];
     }
 
-    private function getPublicNotification(): ?Notification
+    private function getPublicNotification(array $notificationShowOn): ?Notification
     {
-        $notificationShowOn = (null !== $this->session->get('notification_showed'))
-            ? json_decode($this->session->get('notification_showed'), true)
-            : [];
-
         $notifications = $this->notificationRepository->findPublic();
-        if (!empty($notifications)) {
-            $modalWidowSDto = $this->notificationDtoTransformer->fromEntities($notifications);
+        return $this->getNotification($notificationShowOn, $notifications);
+    }
 
-            foreach ($modalWidowSDto as $notification) {
-                if (!in_array($notification->index, $notificationShowOn)) {
-                    $notificationShowOn[] = $notification->index;
+    private function getNotification(array $notificationShowOn, array $notifications): ?Notification
+    {
+        if (!empty($notifications)) {
+            foreach ($notifications as $notification) {
+                $notificationIndex = $this->notificationService->getIndex($notification);
+                if (!in_array($notificationIndex, $notificationShowOn)) {
+                    $notificationShowOn[] = $notificationIndex;
                     $this->session->set('notification_showed', json_encode($notificationShowOn));
                     return $notification;
                 }
@@ -83,16 +88,16 @@ class GetList
         return null;
     }
 
-    private function getUserNotifications(): array
+    private function getUserNotifications(array $notificationShowOn): array
     {
         $this->userDto = $this->userDtoTransformer->fromEntity($this->user);
         if (!$this->userDto->lastLicence->isActive) {
-            return $this->getPublicNotifications();
+            return $this->getPublicNotifications($notificationShowOn);
         }
         
-        $modalNotifications = $this->getModalNotifications();
-        $modalNotification = array_shift($modalNotifications);
-        $notifications = $modalNotifications;
+        $notifications = $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
+        $modalNotification = $this->getNotification($notificationShowOn, $notifications);
+
         $this->addSurveys($notifications);
         // $this->addSurveysChanged();
         $this->addNewOrderToValidate($notifications);
@@ -105,40 +110,33 @@ class GetList
         ];
     }
 
-    private function getModalNotifications(): array
-    {
-        return $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
-    }
-
     private function addSurveys(array &$notifications): void
     {
         $surveys = $this->surveyRepository->findActiveAndWithoutResponse($this->user);
-        $notifications = array_merge($notifications, $surveys);
+        foreach ($surveys as $survey) {
+            if ('survey' !== $this->getReferer()['_route'] || $survey->getId() !== (int) $this->getReferer()['survey']) {
+                $notifications[] = $survey;
+            }
+        };
     }
 
     private function addRegistationInProgress(array &$notifications): void
     {
-        $search = [
-            $this->requestStack->getCurrentRequest()->getScheme(),
-            '://',
-            $this->requestStack->getCurrentRequest()->headers->get('host'),
-        ];
-        $referer = str_replace($search, '', $this->requestStack->getCurrentRequest()->headers->get('referer'));
-        try {
-            $route = $this->router->match($referer);
-        } catch (Exception) {
-            $route = null;
-        }
+        if (in_array($this->getReferer()['_route'], ['registration_form', 'user_registration_form'])) {
+            return;
+        };
 
-        if (Licence::STATUS_IN_PROCESSING === $this->userDto->lastLicence?->status && !str_contains($route['_route'], 'registration_form')) {
+        if (Licence::STATUS_IN_PROCESSING === $this->userDto->lastLicence?->status) {
             $notifications[] = $this->user->getLastLicence();
         }
     }
 
     private function addNewOrderToValidate(array &$notifications): void
     {
+        if (in_array($this->getReferer()['_route'], ['order_edit', 'products'])) {
+            return;
+        };
         $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($this->user);
-
         if (null !== $orderHeaderToValidate) {
             $notifications[] = $orderHeaderToValidate;
         }
@@ -146,16 +144,8 @@ class GetList
 
     private function addNewSeasonReRgistrationEnabled(array &$notifications): void
     {
-        $season = $this->session->get('currentSeason');
         if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && Licence::STATUS_WAITING_RENEW === $this->userDto->lastLicence->status) {
-            $notifications[] = [
-                'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
-                'title' => sprintf('Inscription à la saison %s', $season),
-                'content' => $this->messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
-                'route' => 'user_registration_form',
-                'routeParams' => ['step' => 1],
-                'labelBtn' => 'S\'incrire'
-            ];
+            $notifications[] = $this->notificationService->getNewSeasonReRegistration();
         }
     }
 
@@ -173,5 +163,22 @@ class GetList
                 'labelBtn' => 'Consulter'
             ];
         }
+    }
+
+    private function getReferer(): array
+    {
+        $search = [
+            $this->requestStack->getCurrentRequest()->getScheme(),
+            '://',
+            $this->requestStack->getCurrentRequest()->headers->get('host'),
+        ];
+        $referer = str_replace($search, '', $this->requestStack->getCurrentRequest()->headers->get('referer'));
+        try {
+            $referer = $this->router->match($referer);
+        } catch (Exception) {
+            return ['_route' => null];
+        }
+
+        return $referer;
     }
 }
