@@ -94,11 +94,15 @@ const updateIdentity = (event)  => {
 }
 
 const toggleBirthPlace = () => {
-    document.querySelectorAll('.birth-place').forEach((element) => {
-        element.classList.toggle('d-none');
-        element.querySelectorAll('input, select').forEach((field) => {
-            field.required = !field.required;
-        })
+    document.querySelectorAll('input[name$="[birthPlace]"], select[name$="[birthCommune]"]').forEach((element) => {
+        const parent = element.closest('.birth-place')
+        parent.classList.toggle('d-none');
+        let required = true;
+        if (parent.classList.contains('d-none')) {
+            element.value = null;
+            required = false;
+        }
+        element.required = required;
     })
     formValidator.validate();
 }

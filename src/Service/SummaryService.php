@@ -6,8 +6,8 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\LogRepository;
-use Symfony\Bundle\SecurityBundle\Security;
 use App\Repository\SummaryRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SummaryService
 {

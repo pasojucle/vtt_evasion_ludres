@@ -2,16 +2,16 @@
 
 namespace App\Repository;
 
-use DateTime;
-use App\Entity\Log;
 use App\Dto\UserDto;
-use App\Entity\User;
+use App\Entity\Log;
 use App\Entity\Notification;
+use App\Entity\User;
+use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Notification|null find($id, $lockMode = null, $lockVersion = null)
@@ -42,7 +42,7 @@ class NotificationRepository extends ServiceEntityRepository
      * @return Notification[] Returns an array of FlashInfo objects
      */
     public function findByUser(User $user, int $age): array
-    {        
+    {
         $viewed = $this->getEntityManager()->createQueryBuilder()
         ->select('log.entityId')
         ->from(Log::class, 'log')
@@ -52,7 +52,7 @@ class NotificationRepository extends ServiceEntityRepository
         );
 
         $today = new DateTime();
-         return $this->createQueryBuilder('n')
+        return $this->createQueryBuilder('n')
             ->andWhere(
                 (new Expr())->lte('n.startAt', ':today'),
                 (new Expr())->gte('n.endAt', ':today'),
