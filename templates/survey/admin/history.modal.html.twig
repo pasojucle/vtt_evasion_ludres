@@ -1,0 +1,12 @@
+{% extends 'base_modal.html.twig' %}
+{% set button_href = path('admin_survey_history_show', {'survey' : survey.id}) %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Notifier les changements du sondage{% endblock %}
+{% block body %}
+    <p>Le sondage {{ survey.title }} a été modifié alors que certain adhérents ont déja répondu.</p>
+    <p>Voulez vous leur notifier les changements ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Notifier les changements' %}
+    {{ parent() }}
+{% endblock %}

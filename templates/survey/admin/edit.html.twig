@@ -5,7 +5,10 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
- <div class="wrapper">
+{% if ask_show_history %}
+    <a class="d-none notification" data-toggle="modal" data-type="primary" href="{{ path('admin_survey_history_show', {'survey': survey.id}) }}"></a>
+{% endif %}    
+<div class="wrapper">
     {{ form_start(form) }}
         <div class="wrapper-title">
             <h1>{{ title }}</h1>

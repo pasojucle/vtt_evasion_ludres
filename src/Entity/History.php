@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\HistoryRepository;
 use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\HistoryRepository;
 
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
 class History
@@ -28,6 +29,9 @@ class History
 
     #[ORM\Column]
     private ?DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: Types::BOOLEAN, options:['default' => false])]
+    private ?bool $notify = false;
 
     public function getId(): ?int
     {
@@ -90,6 +94,18 @@ class History
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isNotify(): bool
+    {
+        return $this->notify;
+    }
+
+    public function setNotify(bool $notify): static
+    {
+        $this->notify = $notify;
 
         return $this;
     }

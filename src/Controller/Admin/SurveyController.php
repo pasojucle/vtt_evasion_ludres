@@ -19,7 +19,6 @@ use App\UseCase\Survey\GetSurvey;
 use App\UseCase\Survey\GetSurveyResults;
 use App\UseCase\Survey\SetSurvey;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -84,6 +83,7 @@ class SurveyController extends AbstractController
     #[IsGranted('SURVEY_EDIT', 'survey')]
     public function edit(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, ?Survey $survey): Response
     {
+        $showHistory = false;
         $getSurvey->execute($survey);
         $form = $this->createForm(SurveyType::class, $survey, [
             'display_disabled' => !$survey->getRespondents()->isEmpty(),
@@ -91,14 +91,16 @@ class SurveyController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $setSurvey->execute($form);
-
-            return $this->redirectToRoute('admin_surveys');
+            $showHistory = $setSurvey->execute($form);
+            if (!$showHistory) {
+                return $this->redirectToRoute('admin_surveys');
+            }
         }
 
         return $this->render('survey/admin/edit.html.twig', [
             'survey' => $this->surveyDtoTransformer->fromEntity($survey),
             'form' => $form->createView(),
+            'ask_show_history' => $showHistory,
         ]);
     }
 
@@ -185,9 +187,7 @@ class SurveyController extends AbstractController
     public function delete(Request $request, Survey $survey): Response
     {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_survey_disable',
-                [
+            'action' => $this->generateUrl('admin_survey_disable',[
                     'survey' => $survey->getId(),
                 ]
             ),
@@ -203,6 +203,33 @@ class SurveyController extends AbstractController
         }
 
         return $this->render('survey/admin/disable.modal.html.twig', [
+            'survey' => $survey,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/history/show/{survey}', name: 'admin_survey_history_show', methods: ['GET', 'POST'])]
+    #[IsGranted('SURVEY_EDIT', 'survey')]
+    public function adminshowSurveyHistory(
+        Request $request,
+        Survey $survey,
+    ): Response {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl('admin_survey_history_show',[
+                    'survey' => $survey->getId(),
+                ]
+            ),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($survey);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_surveys');
+        }
+
+        return $this->render('survey/admin/history.modal.html.twig', [
             'survey' => $survey,
             'form' => $form->createView(),
         ]);

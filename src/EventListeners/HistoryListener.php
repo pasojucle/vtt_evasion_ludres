@@ -9,7 +9,6 @@ use App\Entity\Health;
 use App\Entity\History;
 use App\Entity\Identity;
 use App\Entity\Licence;
-use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\User;
@@ -45,10 +44,10 @@ class HistoryListener
             $this->addRegistrationHistory($reflexionClass, $className, $entity, $changeSet);
         }
         if ($entity instanceof Survey) {
-            $this->addSurveyHistory($reflexionClass, $className, $entity, $changeSet);
+            $this->addSurveyHistory($className, $entity, $changeSet);
         }
         if ($entity instanceof SurveyIssue) {
-            $this->addSurveyIssueHistory($reflexionClass, $className, $entity, $changeSet);
+            $this->addSurveyIssueHistory($className, $entity, $changeSet);
         }
     }
 
@@ -64,13 +63,13 @@ class HistoryListener
         }
     }
 
-    private function addSurveyHistory(ReflectionClass $reflexionClass, string $className, Survey $entity, array $changeSet): void
+    private function addSurveyHistory(string $className, Survey $entity, array $changeSet): void
     {
         $history = $this->objectManager->getRepository(History::class)->findOneByEntity($className, $entity->getId());
         $this->addHistory($history, null, $className, $entity, $changeSet);
     }
 
-    private function addSurveyIssueHistory(ReflectionClass $reflexionClass, string $className, SurveyIssue $entity, array $changeSet): void
+    private function addSurveyIssueHistory(string $className, SurveyIssue $entity, array $changeSet): void
     {
         $history = $this->objectManager->getRepository(History::class)->findOneByEntity($className, $entity->getId());
         $this->addHistory($history, null, $className, $entity, $changeSet);
