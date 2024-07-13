@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\SurveyDtoTransformer;
 use App\Dto\DtoTransformer\SurveyResponseDtoTransformer;
+use App\Entity\History;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyFilterType;
 use App\Form\Admin\SurveyType;
@@ -46,12 +47,24 @@ class SurveyController extends AbstractController
         PaginatorDtoTransformer $paginatorDtoTransformer,
         SurveyRepository $surveyRepository
     ): Response {
+        $notifiableSurvey = null;
+        $referer = $request->headers->get('referer');
+        $refererPathInfo = Request::create($referer)->getPathInfo();
+        $routeInfos = $this->container->get('router')->match($refererPathInfo);
+        if (array_key_exists('survey', $routeInfos)) {
+            $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey((int) $routeInfos['survey']);
+            if ($histories) {
+                $notifiableSurvey = $routeInfos['survey'];
+            }
+        }
+ 
         $query = $surveyRepository->findAllDESCQuery();
         $surveys = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('survey/admin/list.html.twig', [
             'surveys' => $surveys,
             'paginator' => $paginatorDtoTransformer->fromEntities($surveys),
+            'notifiable_survey' => $notifiableSurvey,
         ]);
     }
 
@@ -91,10 +104,9 @@ class SurveyController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $showHistory = $setSurvey->execute($form);
-            if (!$showHistory) {
-                return $this->redirectToRoute('admin_surveys');
-            }
+            $setSurvey->execute($form);
+            
+            return $this->redirectToRoute('admin_surveys');
         }
 
         return $this->render('survey/admin/edit.html.twig', [
@@ -187,7 +199,9 @@ class SurveyController extends AbstractController
     public function delete(Request $request, Survey $survey): Response
     {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_survey_disable',[
+            'action' => $this->generateUrl(
+                'admin_survey_disable',
+                [
                     'survey' => $survey->getId(),
                 ]
             ),
@@ -208,14 +222,16 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/history/show/{survey}', name: 'admin_survey_history_show', methods: ['GET', 'POST'])]
+    #[Route('/history/notify/{survey}', name: 'admin_survey_history_notify', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
-    public function adminshowSurveyHistory(
+    public function adminNotifySurveyHistory(
         Request $request,
         Survey $survey,
-    ): Response {
+    ): jsonResponse|Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_survey_history_show',[
+            'action' => $this->generateUrl(
+                'admin_survey_history_notify',
+                [
                     'survey' => $survey->getId(),
                 ]
             ),
@@ -223,15 +239,21 @@ class SurveyController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($survey);
+            $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey($survey->getId());
+            /** @var History $history */
+            foreach ($histories as $history) {
+                $history->setNotify(true);
+            }
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_surveys');
         }
 
-        return $this->render('survey/admin/history.modal.html.twig', [
-            'survey' => $survey,
-            'form' => $form->createView(),
+        return new JsonResponse([
+            'modal' => $this->renderView('survey/admin/history.modal.html.twig', [
+                'survey' => $survey,
+                'form' => $form->createView(),
+            ]),
         ]);
     }
 }

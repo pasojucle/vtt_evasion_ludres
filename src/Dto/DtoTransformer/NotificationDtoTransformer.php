@@ -43,7 +43,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $notification->getContent();
         $notificationDto->form = $this->getForm($notification->getId())->createView();
         $notificationDto->labelButton = 'J\'ai compris';
-        $notificationDto->modalLink = $this->getModalLink($notification);
+        $notificationDto->modalLink = $this->getModalLinkFromEntity($notification);
 
         return $notificationDto;
     }
@@ -67,7 +67,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $survey->getContent();
         $notificationDto->url = $this->urlGenerator->generate('survey', ['survey' => $survey->getId()]);
         $notificationDto->labelButton = 'Participer';
-        $notificationDto->modalLink = $this->getModalLink($survey);
+        $notificationDto->modalLink = $this->getModalLinkFromEntity($survey);
 
         return $notificationDto;
     }
@@ -80,7 +80,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $this->notificationOrderInProgress;
         $notificationDto->url = $this->urlGenerator->generate('order_edit');
         $notificationDto->labelButton = 'Valider ma commande';
-        $notificationDto->modalLink = $this->getModalLink($orderHeader);
+        $notificationDto->modalLink = $this->getModalLinkFromEntity($orderHeader);
 
         return $notificationDto;
     }
@@ -93,7 +93,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $this->notificationRegistrationInProgress;
         $notificationDto->url = $this->urlGenerator->generate('user_registration_form', ['step' => 1]);
         $notificationDto->labelButton = 'Finaliser mon inscription';
-        $notificationDto->modalLink = $this->getModalLink($licence);
+        $notificationDto->modalLink = $this->getModalLinkFromEntity($licence);
 
         return $notificationDto;
     }
@@ -108,7 +108,9 @@ class NotificationDtoTransformer
             $notificationDto->url = $this->urlGenerator->generate($data['route'], $data['routeParams']);
             $notificationDto->labelButton = $data['labelBtn'];
         }
-        $notificationDto->modalLink = $this->getModalLink($data['index']);
+
+
+        $notificationDto->modalLink = $this->getModalLinkFromArray($data['index']);
 
         return $notificationDto;
     }
@@ -135,14 +137,21 @@ class NotificationDtoTransformer
         };
     }
 
-    private function getModalLink(string|Survey|Notification|Licence|OrderHeader $entity): string
+    private function getModalLinkFromEntity(string|Survey|Notification|Licence|OrderHeader $entity): string
     {
-        $params = (is_string($entity))
-            ? ['entityName' => $entity]
-            : [
-                'entityName' => (new ReflectionClass($entity))->getShortName(),
-                'entityId' => $entity->getId(),
-            ];
-        return $this->urlGenerator->generate('notification_show', $params);
+        return $this->urlGenerator->generate('notification_show', [
+            'entityName' => (new ReflectionClass($entity))->getShortName(),
+            'entityId' => $entity->getId(),
+        ]);
+    }
+
+    private function getModalLinkFromArray(string $index): string
+    {
+        list($entityName, $id) = (1 === preg_match('#^(\w+)_(\d+)$#', $index, $matches)) ? [$matches[1], $matches[2]] : $index;
+
+        return $this->urlGenerator->generate('notification_show', [
+            'entityName' => $entityName,
+            'entityId' => $id,
+        ]);
     }
 }

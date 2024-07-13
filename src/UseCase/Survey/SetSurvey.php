@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCase\Survey;
 
-use App\Entity\Survey;
 use App\Entity\History;
+use App\Entity\Survey;
 use App\Form\Admin\SurveyType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
@@ -17,7 +17,7 @@ class SetSurvey
     ) {
     }
 
-    public function execute(FormInterface $form, bool $persit = false): bool
+    public function execute(FormInterface $form, bool $persit = false): void
     {
         $survey = $form->getData();
 
@@ -33,15 +33,5 @@ class SetSurvey
         }
         
         $this->entityManager->flush();
-
-
-        return $this->showHistory($survey);
-    }
-
-    private function showHistory(Survey $survey): bool
-    {
-        $histories =  $this->entityManager->getRepository(History::class)->findNotifiableBySurvey($survey);
-        dump($histories);
-        return true;
     }
 }

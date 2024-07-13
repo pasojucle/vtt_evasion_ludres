@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\DtoTransformer\NotificationDtoTransformer;
+use App\Entity\Survey;
 use App\Entity\User;
 use App\Service\NotificationService;
 use App\Service\UserService;
@@ -88,13 +89,15 @@ class NotificationController extends AbstractController
         try {
             $entity = new ReflectionClass(sprintf('App\Entity\%s', $entityName));
         } catch (ReflectionException) {
-            $entity = null;
+            $entity = $entityName;
         }
-        
-        $notification = ($entity)
-            ? $entityManager->getRepository($entity->getName())->find($entityId)
-            : $notificationService->getNewSeasonReRegistration();
-            
+
+        $notification = match ($entity) {
+            'NEW_SEASON_RE_REGISTRATION_ENABLED' => $notificationService->getNewSeasonReRegistration(),
+            'SURVEY_CHANGED' => $notificationService->getSurveyChanged($entityManager->getRepository(Survey::class)->find($entityId)),
+            default => $entityManager->getRepository($entity->getName())->find($entityId)
+        };
+
         return $this->render('notification/show.modal.html.twig', [
             'modal' => $notificationDtoTransformer->fromEntity($notification),
         ]);

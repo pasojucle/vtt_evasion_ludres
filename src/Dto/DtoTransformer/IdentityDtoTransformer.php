@@ -143,7 +143,7 @@ class IdentityDtoTransformer
                 if (1 === preg_match('#name|firstName#', $property)) {
                     $identityDto->fullName = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->fullName);
                 }
-                dump($property);
+
                 $identityDto->$property = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->$property);
             }
         }

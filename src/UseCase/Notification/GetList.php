@@ -14,7 +14,6 @@ use App\Entity\User;
 use App\Repository\NotificationRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
-use App\Service\MessageService;
 use App\Service\NotificationService;
 use App\Service\ParameterService;
 use Exception;
@@ -40,7 +39,6 @@ class GetList
         private readonly UserDtoTransformer $userDtoTransformer,
         private readonly RouterInterface $router,
         private readonly ParameterService $parameterService,
-        private readonly MessageService $messageService,
         private readonly NotificationService $notificationService,
     ) {
         /** @var ?User $user */
@@ -99,7 +97,7 @@ class GetList
         $modalNotification = $this->getNotification($notificationShowOn, $notifications);
 
         $this->addSurveys($notifications);
-        // $this->addSurveysChanged();
+        $this->addSurveysChanged($notifications);
         $this->addNewOrderToValidate($notifications);
         $this->addRegistationInProgress($notifications);
         $this->addNewSeasonReRgistrationEnabled($notifications);
@@ -154,14 +152,7 @@ class GetList
         $surveysChanged = $this->surveyRepository->findActiveChangedUser($this->user);
         /** @var Survey $survey */
         foreach ($surveysChanged as $survey) {
-            $notifications[] = [
-                'index' => sprintf('SURVEY_CHANGED_%s', $survey->getId()),
-                'title' => sprintf('Modification du sondage %s', $survey->getTitle()),
-                'content' => str_replace('{{ sondage }}', $survey->getTitle(), $this->messageService->getMessageByName('SURVEY_CHANGED_MESSAGE')),
-                'route' => 'survey',
-                'routeParams' => ['survey' => $survey->getId()],
-                'labelBtn' => 'Consulter'
-            ];
+            $notifications[] = $this->notificationService->getSurveyChanged($survey);
         }
     }
 

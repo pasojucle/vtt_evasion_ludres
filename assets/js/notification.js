@@ -23,7 +23,7 @@ const modalBuilded = () => {
 }
 
 export const setNotificationList = async() => {
-    const notificationList = document.querySelector('#notification_list');
+    const notificationList = document.querySelector('a[data-toggle="notification"]');
     if (notificationList) {
         var route = notificationList.href;
         const modalType = notificationList.dataset.type
@@ -42,7 +42,7 @@ export const setNotificationList = async() => {
             if (json.modal) {
                 buildContent(json.modal, modalType);
             }
-            if (0 < json.notifications.total) {
+            if (json.notifications && 0 < json.notifications.total) {
                 document.querySelectorAll('.bell-notifications').forEach((element) => {
                     element.classList.remove('d-none');
                     element.querySelector('.badge.notifications').textContent = json.notifications.total

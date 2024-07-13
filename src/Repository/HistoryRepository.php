@@ -2,20 +2,20 @@
 
 namespace App\Repository;
 
-use App\Entity\Log;
-use App\Entity\User;
-use App\Entity\Survey;
-use DateTimeImmutable;
 use App\Entity\History;
+use App\Entity\Log;
 use App\Entity\Respondent;
+use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use Doctrine\ORM\Query\Expr;
+use App\Entity\User;
 use App\Service\SeasonService;
+use DateTimeImmutable;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<History>
@@ -152,21 +152,23 @@ class HistoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findNotifiableBySurvey(Survey $survey): array
+    public function findNotifiableBySurvey(int $surveyId): array
     {
         $surveyIssues = $this->getEntityManager()->createQueryBuilder()
             ->select('issue.id')
             ->from(SurveyIssue::class, 'issue')
+            ->join('issue.survey', 'issueSurvey')
             ->andWhere(
-                (new Expr())->eq('issue.survey', ':survey')
+                (new Expr())->eq('issueSurvey.id', ':surveyId')
             )
             ;
 
         $hasResponses = $this->getEntityManager()->createQueryBuilder()
             ->select((new Expr())->count('respondent.id'))
             ->from(Respondent::class, 'respondent')
+            ->join('respondent.survey', 'respondentSurvey')
             ->andWhere(
-                (new Expr())->eq('respondent.survey', ':survey')
+                (new Expr())->eq('respondentSurvey.id', ':surveyId')
             )
             ;
 
@@ -175,20 +177,19 @@ class HistoryRepository extends ServiceEntityRepository
                 (new Expr())->orx(
                     (new Expr())->andX(
                         (new Expr())->eq('h.entity', ':classNameSurvey'),
-                        (new Expr())->eq('h.entityId', ':entityId'),
+                        (new Expr())->eq('h.entityId', ':surveyId'),
                     ),
                     (new Expr())->andX(
                         (new Expr())->eq('h.entity', ':classNameSurveyIssue'),
                         (new Expr())->in('h.entityId', $surveyIssues->getDQL()),
                     )
                 ),
-                (new Expr())->gt( '('.$hasResponses->getDQL().')', ':noneResponse')
+                (new Expr())->gt('(' . $hasResponses->getDQL() . ')', ':noneResponse')
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('classNameSurvey', 'survey'),
                 new Parameter('classNameSurveyIssue', 'surveyIssue'),
-                new Parameter('survey', $survey),
-                new Parameter('entityId', $survey->getId()),
+                new Parameter('surveyId', $surveyId),
                 new Parameter('noneResponse', 0),
             ]))
             ->getQuery()

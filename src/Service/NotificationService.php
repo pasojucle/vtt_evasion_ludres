@@ -68,4 +68,16 @@ class NotificationService
             'labelBtn' => 'S\'incrire'
         ];
     }
+
+    public function getSurveyChanged(Survey $survey): array
+    {
+        return [
+            'index' => sprintf('SURVEY_CHANGED_%s', $survey->getId()),
+            'title' => sprintf('Modification du sondage %s', $survey->getTitle()),
+            'content' => str_replace('{{ sondage }}', $survey->getTitle(), $this->messageService->getMessageByName('SURVEY_CHANGED_MESSAGE')),
+            'route' => 'survey',
+            'routeParams' => ['survey' => $survey->getId()],
+            'labelBtn' => 'Consulter'
+        ];
+    }
 }
