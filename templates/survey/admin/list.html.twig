@@ -2,10 +2,7 @@
 
 {% block title %}Gestion des sondages{% endblock %}
 
-{% block body %}
-{% if notifiable_survey %}
-    <a class="d-none" data-toggle="notification" href="{{ path('admin_survey_history_notify', {'survey': notifiable_survey}) }}"></a>
-{% endif %}    
+{% block body %}  
  <div class="wrapper">
     <div class="wrapper-title">
         <h1>Sondage</h1>

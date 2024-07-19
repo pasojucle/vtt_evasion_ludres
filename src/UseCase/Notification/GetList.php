@@ -16,11 +16,10 @@ use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
 use App\Service\NotificationService;
 use App\Service\ParameterService;
-use Exception;
+use App\Service\RouterService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 class GetList
 {
@@ -28,6 +27,7 @@ class GetList
 
     private ?User $user;
     private UserDto $userDto;
+    private array $routeInfos;
 
     public function __construct(
         private readonly RequestStack $requestStack,
@@ -37,7 +37,7 @@ class GetList
         private readonly OrderHeaderRepository $orderHeaderRepository,
         private readonly NotificationDtoTransformer $notificationDtoTransformer,
         private readonly UserDtoTransformer $userDtoTransformer,
-        private readonly RouterInterface $router,
+        private readonly RouterService $routerService,
         private readonly ParameterService $parameterService,
         private readonly NotificationService $notificationService,
     ) {
@@ -49,35 +49,40 @@ class GetList
     public function execute(): array
     {
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
-        $notificationShowOn = (null !== $this->session->get('notification_showed'))
-        ? json_decode($this->session->get('notification_showed'), true)
-        : [];
-        if (null === $this->user) {
-            return $this->getPublicNotifications($notificationShowOn);
+        $this->routeInfos = $this->routerService->getRouteInfos();
+        
+        $notificationsConsumed = $this->notificationService->sessionToArray('notifications_consumed');
+        $notification = $this->fromReferer();
+        if ($notification) {
+            return [$this->notificationDtoTransformer->fromEntity($notification), []];
         }
 
-        return $this->getUserNotifications($notificationShowOn);
+        if (null === $this->user) {
+            return $this->getPublicNotifications($notificationsConsumed);
+        }
+
+        return $this->getUserNotifications($notification, $notificationsConsumed);
     }
 
-    private function getPublicNotifications(array $notificationShowOn): array
+    private function getPublicNotifications(array $notificationsConsumed): array
     {
-        return [$this->getPublicNotification($notificationShowOn), []];
+        return [$this->getPublicNotification($notificationsConsumed), []];
     }
 
-    private function getPublicNotification(array $notificationShowOn): ?Notification
+    private function getPublicNotification(array $notificationsConsumed): ?Notification
     {
         $notifications = $this->notificationRepository->findPublic();
-        return $this->getNotification($notificationShowOn, $notifications);
+        return $this->getNotification($notificationsConsumed, $notifications);
     }
 
-    private function getNotification(array $notificationShowOn, array $notifications): ?Notification
+    private function getNotification(array $notificationsConsumed, array $notifications): ?Notification
     {
         if (!empty($notifications)) {
             foreach ($notifications as $notification) {
                 $notificationIndex = $this->notificationService->getIndex($notification);
-                if (!in_array($notificationIndex, $notificationShowOn)) {
-                    $notificationShowOn[] = $notificationIndex;
-                    $this->session->set('notification_showed', json_encode($notificationShowOn));
+                if (!in_array($notificationIndex, $notificationsConsumed)) {
+                    $notificationsConsumed[] = $notificationIndex;
+                    $this->session->set('notifications_consumed', json_encode($notificationsConsumed));
                     return $notification;
                 }
             }
@@ -86,14 +91,20 @@ class GetList
         return null;
     }
 
-    private function getUserNotifications(array $notificationShowOn): array
+    private function getUserNotifications(?array $notification, array $notificationShowOn): array
     {
         $this->userDto = $this->userDtoTransformer->fromEntity($this->user);
         if (!$this->userDto->lastLicence->isActive) {
             return $this->getPublicNotifications($notificationShowOn);
         }
-        
-        $notifications = $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
+        $notifications = [];
+        if ($notification) {
+            $notifications[] = $notification;
+        }
+        $userNotifications = $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
+        if ($userNotifications) {
+            $notifications = array_merge($notifications, $userNotifications);
+        }
         $modalNotification = $this->getNotification($notificationShowOn, $notifications);
 
         $this->addSurveys($notifications);
@@ -112,7 +123,7 @@ class GetList
     {
         $surveys = $this->surveyRepository->findActiveAndWithoutResponse($this->user);
         foreach ($surveys as $survey) {
-            if ('survey' !== $this->getReferer()['_route'] || $survey->getId() !== (int) $this->getReferer()['survey']) {
+            if ('survey' !== $this->routeInfos['_route'] || $survey->getId() !== (int) $this->routeInfos['survey']) {
                 $notifications[] = $survey;
             }
         };
@@ -120,7 +131,7 @@ class GetList
 
     private function addRegistationInProgress(array &$notifications): void
     {
-        if (in_array($this->getReferer()['_route'], ['registration_form', 'user_registration_form'])) {
+        if (in_array($this->routeInfos['_route'], ['registration_form', 'user_registration_form'])) {
             return;
         };
 
@@ -131,7 +142,7 @@ class GetList
 
     private function addNewOrderToValidate(array &$notifications): void
     {
-        if (in_array($this->getReferer()['_route'], ['order_edit', 'products'])) {
+        if (in_array($this->routeInfos['_route'], ['order_edit', 'products'])) {
             return;
         };
         $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($this->user);
@@ -156,20 +167,18 @@ class GetList
         }
     }
 
-    private function getReferer(): array
+    private function fromReferer(): ?array
     {
-        $search = [
-            $this->requestStack->getCurrentRequest()->getScheme(),
-            '://',
-            $this->requestStack->getCurrentRequest()->headers->get('host'),
-        ];
-        $referer = str_replace($search, '', $this->requestStack->getCurrentRequest()->headers->get('referer'));
-        try {
-            $referer = $this->router->match($referer);
-        } catch (Exception) {
-            return ['_route' => null];
+        $refererNotification = $this->notificationService->sessionToArray('notification');
+        dump($refererNotification);
+        if (!$refererNotification) {
+            return null;
         }
-
-        return $referer;
+        $this->notificationService->clear();
+        return match ($refererNotification['entity']) {
+            'Survey' => $this->notificationService->getSurveyChanged($refererNotification['entityId']),
+            'Session' => $this->notificationService->getSessionRegistred($refererNotification['entityId']),
+            default => null,
+        };
     }
 }

@@ -27,8 +27,8 @@
             {% include 'navigation/front.html.twig' %}
             {% include 'navigation/navbar.html.twig' %}
         {% endif %}
+        <a href="{{ path('notification_list') }}" data-toggle="notification"></a>
         <main{% if isAdmin %} class="admin"{% endif %}>
-
             {% if isAdmin %}
                 <div class="security" data-role="ROLE_USER"></div>
                 <div class="header">

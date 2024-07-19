@@ -9,15 +9,12 @@ use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
-use App\Form\LogType;
+use App\Service\LogService;
 use App\Service\MessageService;
 use App\Service\NotificationService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use ReflectionClass;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NotificationDtoTransformer
@@ -29,7 +26,7 @@ class NotificationDtoTransformer
         private readonly NotificationService $notificationService,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MessageService $messageService,
-        private readonly FormFactoryInterface $formFactory,
+        private readonly LogService $logService,
     ) {
         $this->notificationOrderInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
         $this->notificationRegistrationInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
@@ -41,22 +38,14 @@ class NotificationDtoTransformer
         $notificationDto->index = $this->notificationService->getIndex($notification);
         $notificationDto->title = $notification->getTitle();
         $notificationDto->content = $notification->getContent();
-        $notificationDto->form = $this->getForm($notification->getId())->createView();
+        $notificationDto->form = $this->logService->getForm([
+            'entityName' => 'Notification',
+            'entityId' => $notification->getId(),
+        ])->createView();
         $notificationDto->labelButton = 'J\'ai compris';
         $notificationDto->modalLink = $this->getModalLinkFromEntity($notification);
 
         return $notificationDto;
-    }
-
-    private function getForm(int $id): FormInterface
-    {
-        $data = [
-            'entityName' => 'Notification',
-            'entityId' => $id,
-        ];
-        return $this->formFactory->create(LogType::class, $data, [
-            'action' => $this->urlGenerator->generate('log_write'),
-        ]);
     }
 
     private function fromSuvey(Survey $survey): NotificationDto
@@ -111,7 +100,7 @@ class NotificationDtoTransformer
 
 
         $notificationDto->modalLink = $this->getModalLinkFromArray($data['index']);
-
+        dump($notificationDto);
         return $notificationDto;
     }
 

@@ -45,26 +45,14 @@ class SurveyController extends AbstractController
         Request $request,
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
-        SurveyRepository $surveyRepository
+        SurveyRepository $surveyRepository,
     ): Response {
-        $notifiableSurvey = null;
-        $referer = $request->headers->get('referer');
-        $refererPathInfo = Request::create($referer)->getPathInfo();
-        $routeInfos = $this->container->get('router')->match($refererPathInfo);
-        if (array_key_exists('survey', $routeInfos)) {
-            $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey((int) $routeInfos['survey']);
-            if ($histories) {
-                $notifiableSurvey = $routeInfos['survey'];
-            }
-        }
- 
         $query = $surveyRepository->findAllDESCQuery();
         $surveys = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('survey/admin/list.html.twig', [
             'surveys' => $surveys,
             'paginator' => $paginatorDtoTransformer->fromEntities($surveys),
-            'notifiable_survey' => $notifiableSurvey,
         ]);
     }
 
@@ -96,7 +84,6 @@ class SurveyController extends AbstractController
     #[IsGranted('SURVEY_EDIT', 'survey')]
     public function edit(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, ?Survey $survey): Response
     {
-        $showHistory = false;
         $getSurvey->execute($survey);
         $form = $this->createForm(SurveyType::class, $survey, [
             'display_disabled' => !$survey->getRespondents()->isEmpty(),
@@ -112,7 +99,6 @@ class SurveyController extends AbstractController
         return $this->render('survey/admin/edit.html.twig', [
             'survey' => $this->surveyDtoTransformer->fromEntity($survey),
             'form' => $form->createView(),
-            'ask_show_history' => $showHistory,
         ]);
     }
 
@@ -212,7 +198,7 @@ class SurveyController extends AbstractController
             $survey->setDisabled(true);
             $this->entityManager->persist($survey);
             $this->entityManager->flush();
-
+ 
             return $this->redirectToRoute('admin_surveys');
         }
 
@@ -229,12 +215,9 @@ class SurveyController extends AbstractController
         Survey $survey,
     ): jsonResponse|Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_survey_history_notify',
-                [
-                    'survey' => $survey->getId(),
-                ]
-            ),
+            'action' => $this->generateUrl('admin_survey_history_notify', [
+                'survey' => $survey->getId(),
+            ]),
         ]);
 
         $form->handleRequest($request);

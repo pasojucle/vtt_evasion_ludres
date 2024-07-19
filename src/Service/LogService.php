@@ -6,15 +6,21 @@ namespace App\Service;
 
 use App\Entity\Log;
 use App\Entity\User;
+use App\Form\LogType;
 use App\Repository\LogRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class LogService
 {
     public function __construct(
         private readonly LogRepository $logRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -31,5 +37,12 @@ class LogService
 
         $log->setViewAt(new DateTimeImmutable());
         $this->entityManager->flush();
+    }
+
+    public function getForm(array $data = null): FormInterface
+    {
+        return $this->formFactory->create(LogType::class, $data, [
+            'action' => $this->urlGenerator->generate('log_write'),
+        ]);
     }
 }

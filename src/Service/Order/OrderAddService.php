@@ -9,10 +9,8 @@ use App\Entity\OrderLine;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
-use App\Service\NotificationService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Form;
 
@@ -24,7 +22,6 @@ class OrderAddService
         private EntityManagerInterface $entityManager,
         private OrderHeaderRepository $orderHeaderRepository,
         private Security $security,
-        private NotificationService $notificationService
     ) {
     }
 
@@ -42,7 +39,6 @@ class OrderAddService
         if ($form->isValid()) {
             $this->entityManager->persist($orderLine);
             $this->entityManager->flush();
-            $this->notificationService->addToNotificationShowed($orderHeader);
         }
     }
 

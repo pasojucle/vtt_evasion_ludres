@@ -12,6 +12,7 @@ use App\Entity\SurveyIssue;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
@@ -137,5 +138,59 @@ class SurveyRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findOneNotifiable(int $surveyId): ?Survey
+    {
+        $surveyIssues = $this->getEntityManager()->createQueryBuilder()
+            ->select('issue.id')
+            ->from(SurveyIssue::class, 'issue')
+            ->join('issue.survey', 'issueSurvey')
+            ->andWhere(
+                (new Expr())->eq('issueSurvey.id', ':surveyId')
+            )
+            ;
+
+        $histories = $this->getEntityManager()->createQueryBuilder()
+            ->select((new Expr())->count('history.id'))
+            ->from(History::class, 'history')
+            ->orWhere(
+                (new Expr())->andX(
+                    (new Expr())->eq('history.entity', ':classNameSurvey'),
+                    (new Expr())->eq('history.entityId', ':surveyId'),
+                ),
+                (new Expr())->andX(
+                    (new Expr())->eq('history.entity', ':classNameSurveyIssue'),
+                    (new Expr())->in('history.entityId', $surveyIssues->getDQL()),
+                )
+            );
+
+        $responses = $this->getEntityManager()->createQueryBuilder()
+            ->select((new Expr())->count('respondent.id'))
+            ->from(Respondent::class, 'respondent')
+            ->join('respondent.survey', 'respondentSurvey')
+            ->andWhere(
+                (new Expr())->eq('respondentSurvey.id', ':surveyId')
+            )
+            ;
+
+        try {
+            return $this->createQueryBuilder('s')
+                    ->andWhere(
+                        (new Expr())->eq('s.id', ':surveyId'),
+                        (new Expr())->gt('(' . $histories->getDQL() . ')', ':noneResponse'),
+                        (new Expr())->gt('(' . $responses->getDQL() . ')', ':noneResponse')
+                    )
+                    ->setParameters(new ArrayCollection([
+                        new Parameter('classNameSurvey', 'survey'),
+                        new Parameter('classNameSurveyIssue', 'surveyIssue'),
+                        new Parameter('surveyId', $surveyId),
+                        new Parameter('noneResponse', 0),
+                    ]))
+                    ->getQuery()
+                    ->getOneOrNullResult();
+        } catch (NonUniqueResultException) {
+            return null;
+        }
     }
 }

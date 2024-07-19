@@ -17,10 +17,13 @@ class LogController extends AbstractController
     #[Route('/write', name: 'write', methods: ['POST'], options:['expose' => true])]
     public function write(Request $request, LogService $logService): JsonResponse
     {
-        $log = $request->request->all('log');
         /** @var ?User $user */
         $user = $this->getUser();
-        if ($user) {
+        $form = $logService->getForm();
+
+        $form->handleRequest($request);
+        if ($user && $form->isSubmitted() && $form->isValid()) {
+            $log = $form->getData();
             $logService->write($log['entityName'], (int) $log['entityId'], $user);
         }
 

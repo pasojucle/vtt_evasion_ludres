@@ -10,6 +10,7 @@ class Slideshow extends HTMLDivElement {
     firstTime = 3;
     time = 6;
     slideWith;
+    formLog;
 
     constructor() {
         super();
@@ -20,6 +21,7 @@ class Slideshow extends HTMLDivElement {
         screen.orientation.addEventListener("change", (event) => {
             this.resize();
         });
+        this.formLog = document.querySelector('form[name="log"]');
     }
     init = () => {
         if (this.images.length > 0) {
@@ -229,8 +231,7 @@ class SliderImage {
         }
     }
     writeLog = async() => {
-        const data = new FormData();
-        data.append('log[entityName]', 'SlideshowImage');
+        const data = new FormData(this.slideshow.formLog);
         data.append('log[entityId]', this.id);
         
         await fetch(Routing.generate('log_write'),{

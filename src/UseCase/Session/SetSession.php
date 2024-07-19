@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Respondent;
 use App\Entity\Session;
@@ -22,7 +21,6 @@ class SetSession
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ConfirmationSession $confirmationSession,
-        private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
         private readonly NotificationService $notificationService,
         private readonly CacheService $cacheService,
         private readonly LogService $logService,
@@ -43,11 +41,7 @@ class SetSession
         $this->entityManager->flush();
         $this->writeLog($bikeRide, $user);
 
-        $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
-        $content = ($session->getAvailability())
-            ? '<p>Votre disponibilité à la sortie %s du %s a bien été prise en compte.</p><p> En cas de changement, il est impératif de se modifier sa disponibilité (voir dans Mon programme perso et faire "Modifier)"</p>'
-            : '<p>Votre inscription à la sortie %s du %s a bien été prise en compte.</p><p> Si vous ne pouvez plus participez pas à cette sortie, il est impératif de se désinsrire (voir dans Mon programme perso et faire "Se désinscrire)"</p>';
-        $this->notificationService->addToNotification('Inscription à une sortie', sprintf($content, $bikeRideDto->title, $bikeRideDto->period));
+        $this->notificationService->notify($session);
     }
 
     public function edit(FormInterface $form, Session $session): void

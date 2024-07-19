@@ -569,6 +569,7 @@ body {
     font-family: Noto sans,Lucida Sans Unicode,Lucida Sans,Geneva,sans-serif;
     font-size: 16px;
     user-select: none;
+    overflow-x: hidden;
 }
 main:not(.admin) {
     position: relative;
@@ -671,7 +672,7 @@ button[type=submit].btn.btn-primary:disabled {
     vertical-align: top;
 }
 .form-group-inline.full-width {
-    width: 100%;http://replay-video.blng.fr/
+    width: 100%;
 }
 .form-group f.orm-group-inline:not(:first-child) {
     margin-left: 50px;

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
+use App\Entity\Session;
 use App\Entity\Survey;
 use App\Entity\User;
-use DateTime;
-use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -20,40 +21,48 @@ class NotificationService
     public function __construct(
         private readonly Security $security,
         private readonly RequestStack $requestStack,
-        private readonly MessageService $messageService
+        private readonly MessageService $messageService,
+        private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function getIndex(Survey|OrderHeader|Notification|Licence|string $entity)
+    public function getIndex(Survey|OrderHeader|Notification|Licence|string|array $entity)
     {
         /** @var User $user */
         $user = $this->security->getUser();
         $id = (null !== $user) ? $user->getLicenceNumber() : 'PUBLIC_ACCESS';
-        return (is_string($entity))
-            ? $id . '-' . $entity
-            : $id . '-' . (new ReflectionClass($entity))->getShortName() . '-' . $entity->getId();
+        return match (true) {
+            is_string($entity) => sprintf('%s-%s', $id, $entity),
+            is_array($entity) => $entity['index'],
+            default => sprintf('%s-%s-%s', $id, (new ReflectionClass($entity))->getShortName(), $entity->getId())
+        };
     }
 
-    public function addToNotificationShowed(OrderHeader|Licence $entity): void
+    public function unNotify(OrderHeader|Licence $entity): void
     {
+        $name = 'notifications_consumed';
+        $notificationsConsumed = $this->sessionToArray($name);
+        $notificationsConsumed[] = $this->getIndex($entity);
         $session = $this->requestStack->getSession();
-        $notificationShowOn = $session->get('notification_showed');
-        $notificationShowOn = (null !== $notificationShowOn) ? json_decode($notificationShowOn) : [];
-        $notificationShowOn[] = $this->getIndex($entity);
-        $session->set('notification_showed', json_encode($notificationShowOn));
+        $session->set($name, json_encode($notificationsConsumed));
     }
 
-    public function addToNotification(string $title, string $content): void
+    public function notify(Session|Survey $entity): void
     {
         $session = $this->requestStack->getSession();
-        $notificationsToShowJson = $session->get('notifications_to_show');
-        $notifications = ($notificationsToShowJson) ? json_decode($notificationsToShowJson, true) : [];
-        $notifications[] = [
-            'index' => (string) (new DateTimeImmutable())->getTimestamp(),
-            'title' => $title,
-            'content' => $content,
+        $notification = [
+            'entity' => (new ReflectionClass($entity))->getShortName(),
+            'entityId' => $entity->getId(),
         ];
-        $session->set('notifications_to_show', json_encode($notifications));
+
+        $session->set('notification', json_encode($notification));
+    }
+
+    public function clear(): void
+    {
+        $session = $this->requestStack->getSession();
+        $session->remove('notification');
     }
 
     public function getNewSeasonReRegistration(): array
@@ -69,8 +78,12 @@ class NotificationService
         ];
     }
 
-    public function getSurveyChanged(Survey $survey): array
+    public function getSurveyChanged(Survey|int $survey): array
     {
+        if (is_int($survey)) {
+            $survey = $this->entityManager->getRepository(Survey::class)->find($survey);
+        }
+
         return [
             'index' => sprintf('SURVEY_CHANGED_%s', $survey->getId()),
             'title' => sprintf('Modification du sondage %s', $survey->getTitle()),
@@ -79,5 +92,30 @@ class NotificationService
             'routeParams' => ['survey' => $survey->getId()],
             'labelBtn' => 'Consulter'
         ];
+    }
+
+    public function getSessionRegistred(Session|int $session): array
+    {
+        if (is_int($session)) {
+            $session = $this->entityManager->getRepository(Session::class)->find($session);
+        }
+        $content = ($session->getAvailability())
+        ? '<p>Votre disponibilité à la sortie %s du %s a bien été prise en compte.</p><p> En cas de changement, il est impératif de se modifier sa disponibilité (voir dans Mon programme perso et faire "Modifier)"</p>'
+        : '<p>Votre inscription à la sortie %s du %s a bien été prise en compte.</p><p> Si vous ne pouvez plus participez pas à cette sortie, il est impératif de se désinsrire (voir dans Mon programme perso et faire "Se désinscrire)"</p>';
+
+        $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
+        return [
+            'index' => sprintf('Session_%s', $session->getId()),
+            'title' => 'Inscription à une sortie',
+            'content' => sprintf($content, $bikeRideDto->title, $bikeRideDto->period),
+
+        ];
+    }
+
+    public function sessionToArray(string $name): array
+    {
+        $session = $this->requestStack->getSession();
+        $value = $session->get($name);
+        return (null !== $value) ? json_decode($value, true) : [];
     }
 }
