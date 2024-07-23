@@ -6,6 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Form\HiddenClusterType;
@@ -76,7 +77,7 @@ class SessionType extends AbstractType
             $data = $event->getData();
 
             $bikeRide = $options['bikeRide'];
-            if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
+            if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
                 $form
                         ->add('cluster', EntityType::class, [
                             'label' => false,

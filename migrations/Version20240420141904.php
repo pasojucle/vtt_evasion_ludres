@@ -82,7 +82,7 @@ final class Version20240420141904 extends AbstractMigration
         foreach($bikeRideTypes as $bikeRideType) {
             $messageId = (str_contains($bikeRideType['name'], 'Réunion'))  ? 4 : 1;
             $this->addSql('INSERT INTO `bike_ride_type_message`(`bike_ride_type_id`, `message_id`) VALUES (:bikeRideTypeId, :messageId)', ['bikeRideTypeId' => $bikeRideType['id'], 'messageId' => $messageId]);
-            if (BikeRideType::REGISTRATION_SCHOOL === $bikeRideType['registration']) {
+            if (RegistrationEnum::SCHOOL === $bikeRideType['registration']) {
                 $this->addSql('INSERT INTO `bike_ride_type_message`(`bike_ride_type_id`, `message_id`) VALUES (:bikeRideTypeId, :messageId)', ['bikeRideTypeId' => $bikeRideType['id'], 'messageId' => 2]);
                 $this->addSql('INSERT INTO `bike_ride_type_message`(`bike_ride_type_id`, `message_id`) VALUES (:bikeRideTypeId, :messageId)', ['bikeRideTypeId' => $bikeRideType['id'], 'messageId' => 3]);
             }

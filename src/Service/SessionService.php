@@ -9,6 +9,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\User;
 use App\Repository\SessionRepository;
@@ -111,11 +112,11 @@ class SessionService
             }
         }
 
-        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->selectableClusterCount($bikeRide, $clusters)) {
+        if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->selectableClusterCount($bikeRide, $clusters)) {
             return $userCluster;
         }
 
-        if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
+        if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
             $clustersLevelAsUser = [];
             foreach ($bikeRide->getClusters() as $cluster) {
                 if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {

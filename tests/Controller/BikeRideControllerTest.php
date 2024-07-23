@@ -11,6 +11,7 @@ use App\Entity\Session;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Repository\LevelRepository;
+use App\Entity\Enum\RegistrationEnum;
 use App\Repository\SessionRepository;
 use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
@@ -93,11 +94,11 @@ class BikeRideControllerTest extends AbstractTestController
     {
         $this->client->request('GET', '/admin/sortie/groupe/1');
         $clusters = 0;
-        if (BikeRideType::REGISTRATION_SCHOOL === $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::SCHOOL === $bikeRideType->getRegistration()) {
             $levelRepository = static::getContainer()->get(LevelRepository::class);
             $clusters = count($levelRepository->findAllTypeMember());
         }
-        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::CLUSTERS === $bikeRideType->getRegistration()) {
             $clusters = $bikeRideType()->getClusters()->count();
         }
         if ($bikeRideType->isNeedFramers()) {

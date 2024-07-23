@@ -8,6 +8,7 @@ use App\Dto\ClusterDto;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
@@ -135,7 +136,7 @@ class ClusterDtoTransformer
     {
         $userOnSiteSessions = [];
         foreach ($sessionEntities as $session) {
-            if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
+            if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
                 $level = $session->getUser()->getLevel();
                 $levelType = (null !== $level) ? $level->getType() : Level::TYPE_SCHOOL_MEMBER;
                 if ($session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $levelType) {

@@ -7,6 +7,7 @@ namespace App\UseCase\BikeRide;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Entity\Enum\RegistrationEnum;
 use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -24,10 +25,10 @@ class CreateClusters
         if ($bikeRide->getBikeRideType()->isNeedFramers()) {
             $this->addFramer($bikeRide);
         }
-        if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
+        if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
             $this->addSchoolClusters($bikeRide);
         }
-        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration()) {
+        if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration()) {
             $this->addClusters($bikeRide);
         }
     }

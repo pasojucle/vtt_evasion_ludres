@@ -5,6 +5,7 @@ namespace App\Form\Admin\EventListener\BikeRide;
 use App\Entity\BikeRide;
 
 use App\Entity\BikeRideType as BikeRideKind;
+use App\Entity\Enum\RegistrationEnum;
 use App\Form\Admin\BikeRideType;
 use App\Form\Type\CkeditorType;
 use App\Repository\BikeRideTypeRepository;
@@ -73,7 +74,7 @@ class AddContentSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?BikeRideKind $bikeRideType, bool $registrationEnabled): void
     {
         $isDiabled = false;
-        if (BikeRideKind::REGISTRATION_NONE === (int) $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::NONE === $bikeRideType->getRegistration()) {
             $registrationEnabled = false;
             $isDiabled = true;
         }

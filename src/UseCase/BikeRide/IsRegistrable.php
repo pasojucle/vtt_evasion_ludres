@@ -6,6 +6,7 @@ namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\User;
 use DateInterval;
@@ -21,7 +22,7 @@ class IsRegistrable
     
     public function execute(BikeRide $bikeRide, ?User $user): bool
     {
-        if (!$user || !$this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) || BikeRideType::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration()) {
+        if (!$user || !$this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) || RegistrationEnum::NONE === $bikeRide->getBikeRideType()->getRegistration()) {
             return false;
         }
 

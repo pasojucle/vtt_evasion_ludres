@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\RegistrationEnum;
 use App\Repository\BikeRideTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideTypeRepository::class)]
@@ -51,8 +51,8 @@ class BikeRideType
     #[ORM\Column(type: 'json')]
     private array $clusters = [];
 
-    #[ORM\Column(type: 'integer', options: ['default' => self::REGISTRATION_NONE])]
-    private int $registration = self::REGISTRATION_NONE;
+    #[ORM\Column(type: 'Registration', options: ['default' => RegistrationEnum::NONE])]
+    private RegistrationEnum $registration = RegistrationEnum::NONE;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $needFramers = false;
@@ -215,12 +215,12 @@ class BikeRideType
         return $this;
     }
 
-    public function getRegistration(): ?int
+    public function getRegistration(): RegistrationEnum
     {
         return $this->registration;
     }
 
-    public function setRegistration(int $registration): self
+    public function setRegistration(RegistrationEnum $registration): self
     {
         $this->registration = $registration;
 

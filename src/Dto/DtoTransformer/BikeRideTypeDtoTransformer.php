@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRideType;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Message;
 
 class BikeRideTypeDtoTransformer
@@ -17,8 +18,8 @@ class BikeRideTypeDtoTransformer
         $bikeRideTypeDto->content = $bikeRideType->getContent();
         $bikeRideTypeDto->useLevels = $bikeRideType->isUseLevels();
         $bikeRideTypeDto->isShowMemberList = $bikeRideType->isShowMemberList();
-        $bikeRideTypeDto->isSchool = BikeRideType::REGISTRATION_SCHOOL === $bikeRideType->getRegistration();
-        $bikeRideTypeDto->isRegistrable = BikeRideType::REGISTRATION_NONE !== $bikeRideType->getRegistration();
+        $bikeRideTypeDto->isSchool = RegistrationEnum::SCHOOL === $bikeRideType->getRegistration();
+        $bikeRideTypeDto->isRegistrable = RegistrationEnum::NONE !== $bikeRideType->getRegistration();
         $bikeRideTypeDto->isNeedFramers = $bikeRideType->isNeedFramers();
         $bikeRideTypeDto->messages = $this->getMessages($bikeRideType);
 

@@ -6,6 +6,7 @@ namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\User;
 use DateTimeImmutable;
@@ -22,7 +23,7 @@ class IsWritableAvailability
     {
         $bikeRideType = $bikeRide->getBikeRideType();
 
-        if (BikeRideType::REGISTRATION_NONE === $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::NONE === $bikeRideType->getRegistration()) {
             return false;
         }
 

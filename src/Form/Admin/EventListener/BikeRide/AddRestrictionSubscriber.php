@@ -3,7 +3,7 @@
 namespace App\Form\Admin\EventListener\BikeRide;
 
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType as BikeRideKind;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\User;
 use App\Form\Admin\BikeRideType;
 use App\Form\Admin\UsersAutocompleteField;
@@ -72,7 +72,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
 
     private function modifier(FormInterface $form, BikeRide $bikeRide, ?int $restriction, array $levelFilter, array $userIds): void
     {
-        $disabled = BikeRideKind::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration();
+        $disabled = RegistrationEnum::NONE === $bikeRide->getBikeRideType()->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction;
         $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;

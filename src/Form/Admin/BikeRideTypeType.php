@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
-use App\Entity\Message;
+use App\Entity\Enum\RegistrationEnum;
 use App\Form\Type\CkeditorType;
+use App\Form\Type\MyEnumType;
 use App\Validator\NotEmptyArray;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -68,9 +67,9 @@ class BikeRideTypeType extends AbstractType
                     'data-switch-off' => 'Aucune d\'indemnité',
                 ],
             ])
-            ->add('registration', ChoiceType::class, [
+            ->add('registration', MyEnumType::class, [
                 'label' => 'Inscriptions',
-                'choices' => array_flip(BikeRideType::REGISTRATIONS),
+                'class' => RegistrationEnum::class,
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
@@ -137,8 +136,8 @@ class BikeRideTypeType extends AbstractType
                 ],
             ])
             ;
-        $formModifier = function (FormInterface $form, ?int $registration) {
-            if (BikeRideType::REGISTRATION_CLUSTERS === $registration) {
+        $formModifier = function (FormInterface $form, ?RegistrationEnum $registration) {
+            if (RegistrationEnum::CLUSTERS === $registration) {
                 $form->add('clusters', CollectionType::class, [
                     'label' => 'Groupes',
                     'entry_options' => [
