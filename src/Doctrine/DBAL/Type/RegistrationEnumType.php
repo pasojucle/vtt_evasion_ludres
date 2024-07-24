@@ -15,6 +15,6 @@ class RegistrationEnumType extends EnumType
 
     public function getName(): string
     {
-        return 'resolution_enum';
+        return 'registration_enum';
     }
 }

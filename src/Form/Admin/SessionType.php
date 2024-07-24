@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Licence;
-use App\Entity\User;
 use App\Form\HiddenClusterType;
 use App\Service\SeasonService;
 use App\Service\SessionService;

@@ -6,7 +6,6 @@ namespace App\UseCase\Cluster;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;

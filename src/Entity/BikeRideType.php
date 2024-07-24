@@ -11,17 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: BikeRideTypeRepository::class)]
 class BikeRideType
 {
-    public const REGISTRATION_NONE = 0;
-    public const REGISTRATION_SCHOOL = 1;
-    public const REGISTRATION_CLUSTERS = 2;
-
-    public const REGISTRATIONS = [
-        self::REGISTRATION_NONE => 'bike_ride_type.registration.none',
-        self::REGISTRATION_SCHOOL => 'bike_ride_type.registration.school',
-        self::REGISTRATION_CLUSTERS => 'bike_ride_type.registration.clusters',
-    ];
-
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
