@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
 use App\Dto\RegistrationProgressDto;
 use App\Entity\Address;
 use App\Entity\Approval;
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
@@ -245,11 +246,11 @@ class GetProgress
     private function createIdentitiesKinship(): Identity
     {
         foreach ([
-            Identity::TYPE_KINSHIP,
-            Identity::TYPE_SECOND_CONTACT,
+            IdentityKindEnum::KINSHIP,
+            IdentityKindEnum::SECOND_CONTACT,
         ] as $type) {
             $identity = new Identity();
-            $identity->setType($type);
+            $identity->setKind($type);
             $this->user->addIdentity($identity);
             $this->createAddress($identity);
             $this->entityManager->persist($identity);
@@ -298,7 +299,7 @@ class GetProgress
     private function removeKinship(): void
     {
         foreach ($this->user->getIdentities() as $identity) {
-            if (Identity::TYPE_MEMBER !== $identity->getType()) {
+            if (IdentityKindEnum::MEMBER !== $identity->getKind()) {
                 if ($identity->isEmpty()) {
                     $address = $identity->getAddress();
                     if (null !== $address) {

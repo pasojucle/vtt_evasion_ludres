@@ -10,6 +10,7 @@ doctrine:
         use_savepoints: true
         types:
             Registration: App\Doctrine\DBAL\Type\RegistrationEnumType
+            IdentityKind: App\Doctrine\DBAL\Type\IdentityKindEnumType
         mapping_types:
             enum: string
     orm:

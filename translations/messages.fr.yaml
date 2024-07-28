@@ -33,6 +33,10 @@ identity:
     mother: Mère
     guardianship: Réprésentant légal
     other: Autre
+  kind:
+    member: Adhérent
+    kinship: Responsable de l'enfant
+    second_contact: Second contact
 
 registration_step:
   type:

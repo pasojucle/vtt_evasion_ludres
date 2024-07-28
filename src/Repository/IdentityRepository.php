@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -52,11 +53,11 @@ class IdentityRepository extends ServiceEntityRepository
             return $this->createQueryBuilder('i')
                 ->andWhere(
                     (new Expr())->eq('i.user', ':user'),
-                    (new Expr())->eq('i.type', ':member')
+                    (new Expr())->eq('i.kind', ':member')
                 )
                 ->setParameters(new ArrayCollection([
                     new Parameter('user', $user),
-                    new Parameter('member', Identity::TYPE_MEMBER),
+                    new Parameter('member', IdentityKindEnum::MEMBER),
                 ]))
                 ->getQuery()
                 ->getOneOrNullResult()
@@ -71,11 +72,11 @@ class IdentityRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('i')
             ->andWhere(
                 (new Expr())->in('i.user', ':users'),
-                (new Expr())->eq('i.type', ':member')
+                (new Expr())->eq('i.kind', ':member')
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('users', $users),
-                new Parameter('member', Identity::TYPE_MEMBER),
+                new Parameter('member', IdentityKindEnum::MEMBER),
             ]))
             ->getQuery()
             ->getResult()
@@ -87,11 +88,11 @@ class IdentityRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('i')
             ->andWhere(
                 (new Expr())->eq('i.user', ':user'),
-                (new Expr())->neq('i.type', ':member')
+                (new Expr())->neq('i.kind', ':member')
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('user', $user),
-                new Parameter('member', Identity::TYPE_MEMBER),
+                new Parameter('member', IdentityKindEnum::MEMBER),
             ]))
             ->getQuery()
             ->getResult()

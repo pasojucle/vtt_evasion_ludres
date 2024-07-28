@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\IdentityDto;
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Repository\HistoryRepository;
 use App\Service\ProjectDirService;
@@ -69,7 +70,7 @@ class IdentityDtoTransformer
         $identities = [];
         /** @var Identity $identity */
         foreach ($identityEntities as $identity) {
-            $identities[$identity->getType()] = $this->fromEntity($identity, $histories);
+            $identities[$identity->getKind()->name] = $this->fromEntity($identity, $histories);
         }
         $this->setKinshipAddress($identities);
 
@@ -91,8 +92,8 @@ class IdentityDtoTransformer
 
     private function setKinshipAddress(array &$identities): void
     {
-        $kinships = [Identity::TYPE_KINSHIP, Identity::TYPE_SECOND_CONTACT];
-        $memberAddress = $identities[Identity::TYPE_MEMBER]->address;
+        $kinships = [IdentityKindEnum::KINSHIP->name, IdentityKindEnum::SECOND_CONTACT->name];
+        $memberAddress = $identities[IdentityKindEnum::MEMBER->name]->address;
         foreach ($kinships as $kinship) {
             if (array_key_exists($kinship, $identities) && null !== $identities[$kinship]) {
                 $identities[$kinship]->address = $memberAddress;

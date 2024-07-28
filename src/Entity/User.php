@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Licence;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -322,7 +323,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $criteria = Criteria::create()
             ->andWhere(
-                Criteria::expr()->eq('type', Identity::TYPE_MEMBER),
+                Criteria::expr()->eq('kind', IdentityKindEnum::MEMBER),
             )
         ;
 
@@ -333,7 +334,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $criteria = Criteria::create()
             ->andWhere(
-                Criteria::expr()->eq('type', Identity::TYPE_KINSHIP),
+                Criteria::expr()->eq('type', IdentityKindEnum::KINSHIP),
             )
         ;
 

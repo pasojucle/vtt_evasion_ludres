@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -39,16 +40,16 @@ class IdentityType extends AbstractType
             /**@var Identity $identity */
             $identity = $event->getData();
             $form = $event->getForm();
-            $type = $identity->getType();
-            $kinship = 1 < $type;
+            $kind = $identity->getKind();
+            $kinship = $kind !== IdentityKindEnum::MEMBER;
             $disabled = $this->haspreviousLicence($identity->getUser()) && !$identity->getKinship();
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
             $foreignBorn = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
             list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
 
-            $addressClass = (Identity::TYPE_MEMBER !== $type) ? ' identity-address' : '';
+            $addressClass = (IdentityKindEnum::MEMBER !== $kind) ? ' identity-address' : '';
             $addressRequired = 'required';
-            if (Identity::TYPE_MEMBER !== $type && !$identity->hasAddress()) {
+            if (IdentityKindEnum::MEMBER !== $kind && !$identity->hasAddress()) {
                 $addressRequired = '';
             }
 
@@ -64,7 +65,7 @@ class IdentityType extends AbstractType
                             new NotBlank(),
                             new UniqueMember()
                         ],
-                        'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
+                        'attr' => (IdentityKindEnum::MEMBER === $kind && !$disabled)
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                             ]
@@ -81,7 +82,7 @@ class IdentityType extends AbstractType
                             new NotBlank(),
                             new UniqueMember()
                         ],
-                        'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
+                        'attr' => (IdentityKindEnum::MEMBER === $kind && !$disabled)
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                                 'data-multiple-fields' => 1,
@@ -106,7 +107,7 @@ class IdentityType extends AbstractType
                         ],
                     ])
                     ->add('email', EmailType::class, [
-                        'label' => (Identity::TYPE_KINSHIP === $type && Licence::CATEGORY_MINOR === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
+                        'label' => (IdentityKindEnum::KINSHIP === $kind && Licence::CATEGORY_MINOR === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
                         'row_attr' => [
                             'class' => 'form-group-inline',
                         ],
@@ -125,7 +126,7 @@ class IdentityType extends AbstractType
 
                 ;
 
-                if (Identity::TYPE_SECOND_CONTACT !== $type) {
+                if (IdentityKindEnum::SECOND_CONTACT !== $kind) {
                     $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
                     $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
                     $form
@@ -200,7 +201,7 @@ class IdentityType extends AbstractType
 
                 if ($kinship) {
                     $kinshipChoices = Identity::KINSHIPS;
-                    if (Identity::TYPE_SECOND_CONTACT !== $type) {
+                    if (IdentityKindEnum::SECOND_CONTACT !== $kind) {
                         unset($kinshipChoices[Identity::KINSHIP_OTHER]);
                     }
                     $form

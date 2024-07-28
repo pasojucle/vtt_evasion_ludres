@@ -1,9 +1,6 @@
 {% if identity.children|length > 1 %}
-    {% if identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_KINSHIP') %}
-        <b>Responsable de l'enfant</b>
-    {% elseif identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_SECOND_CONTACT') %}
-        <b>Second contact</b>
-    {% endif %}
+    {% set kind = 'identity.kind.' ~ identity.vars.value.kind.value %}
+    <b>{{ kind|trans }}</b>
     {% if identity.kinship is defined %}
         <div class="form-group">{{ form_row(identity.kinship) }}</div>
     {% endif %}

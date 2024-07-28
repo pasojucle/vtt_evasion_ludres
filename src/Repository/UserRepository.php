@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BoardRole;
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
@@ -570,7 +571,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->eq('i.type', ':member'),
             )
             ->setParameter('levelType', Level::TYPE_FRAME)
-            ->setParameter('member', Identity::TYPE_MEMBER)
+            ->setParameter('member', IdentityKindEnum::MEMBER)
             ->orderBy('i.name', 'ASC')
             ;
     }
@@ -684,7 +685,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->notIn('u.id', $lastSeasonUsers->getDQL()),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('type', Identity::TYPE_MEMBER),
+                new Parameter('type', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
                 new Parameter('isFinal', true),
@@ -721,7 +722,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('type', Identity::TYPE_MEMBER),
+                new Parameter('type', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
                 new Parameter('isFinal', true),
@@ -759,7 +760,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('type', Identity::TYPE_MEMBER),
+                new Parameter('type', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
                 new Parameter('isFinal', true),

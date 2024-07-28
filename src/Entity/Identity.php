@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\IdentityKindEnum;
 use App\Repository\IdentityRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
@@ -16,12 +17,6 @@ use Doctrine\ORM\Mapping\ManyToOne;
 
 class Identity
 {
-    public const TYPE_MEMBER = 1;
-
-    public const TYPE_KINSHIP = 2;
-
-    public const TYPE_SECOND_CONTACT = 3;
-
     public const KINSHIP_FATHER = 1;
 
     public const KINSHIP_MOTHER = 2;
@@ -77,8 +72,8 @@ class Identity
     #[ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
     private $address;
 
-    #[Column(type: 'integer', options: ['default' => 1])]
-    private int $type = self::TYPE_MEMBER;
+    #[Column(type: 'IdentityKind', options: ['default' => IdentityKindEnum::MEMBER])]
+    private IdentityKindEnum $kind = IdentityKindEnum::MEMBER;
 
     #[ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
     private ?Commune $birthCommune = null;
@@ -245,14 +240,14 @@ class Identity
         return null === $this->name && null === $this->firstName;
     }
 
-    public function getType(): ?int
+    public function getKind(): IdentityKindEnum
     {
-        return $this->type;
+        return $this->kind;
     }
 
-    public function setType(int $type): self
+    public function setKind(IdentityKindEnum $kind): self
     {
-        $this->type = $type;
+        $this->kind = $kind;
 
         return $this;
     }

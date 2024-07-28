@@ -70,7 +70,22 @@ class UploadService
 
         list($outputWidth, $outputHeight) = $this->getOutputSize($originWidth, $originHeight, $orientation, $size);
 
-        $imageSrc = (IMAGETYPE_JPEG == $type) ? imagecreatefromjpeg($inputPath) : imagecreatefrompng($inputPath);
+        $imageSrc = (IMAGETYPE_JPEG === $type) ? imagecreatefromjpeg($inputPath) : imagecreatefrompng($inputPath);
+        // if (function_exists('exif_read_data')) {
+        //     $exif = exif_read_data($inputPath);
+        //     if($exif && array_key_exists('Orientation', $exif) && 1 !== $orientation = (int) $exif['Orientation']) {
+        //         $deg = match($orientation) {
+        //             3 => 180,
+        //             6 => 270,
+        //             8 => 90,
+        //             default => null
+        //         };
+        //         if ($deg) {
+        //             $rotate = imagerotate($imageSrc, $deg, 0);
+        //             $imageSrc = $rotate;
+        //         }
+        //     }
+        // }
         $imageBlack = imagecreatetruecolor($outputWidth, $outputHeight);
 
         imagecopyresampled($imageBlack, $imageSrc, 0, 0, 0, 0, $outputWidth, $outputHeight, $originWidth, $originHeight);
