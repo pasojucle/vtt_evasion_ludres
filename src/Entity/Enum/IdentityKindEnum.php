@@ -15,4 +15,9 @@ enum IdentityKindEnum: string
     case SECOND_CONTACT = 'second_contact';
 
     use EnumTrait;
+
+    public static function getTranslatePrefix(): string
+    {
+        return 'identity.kind';
+    }
 }

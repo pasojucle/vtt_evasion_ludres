@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\OrderDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderFilterType;
 use App\Repository\OrderHeaderRepository;
@@ -74,7 +75,7 @@ class OrderController extends AbstractController
     public function adminOrderValidate(
         Request $request,
         OrderHeader $orderHeader,
-        int $status
+        OrderStatusEnum $status
     ): Response {
         $filters = $request->getSession()->get('admin_orders_filters') ?? [];
         $request->query->set('p', $filters['p']);

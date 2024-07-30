@@ -28,10 +28,10 @@
                                         {{ order.amount }}
                                     </div>
                                     <div class="col-md-2 col-xs-4">
-                                        {{ constant('APP\\Entity\\OrderHeader::STATUS')[order.status]|trans }}
+                                        {{ order.status|enumTrans }}
                                     </div>
                                     <div class="col-md-3 col-xs-4">
-                                        {% if constant('APP\\Entity\\OrderHeader::STATUS_IN_PROGRESS') < order.status %}
+                                        {% if enum('APP\\Entity\\Enum\\OrderStatusEnum::IN_PROGRESS') != order.status %}
                                             <a href="{{ path('order',{'orderHeader': order.id}) }}" class="btn btn-primary btn-ico" title="Voir la commande"><i class="fas fa-eye"></i></a>
                                             <a href="{{ path('order_delete',{'orderHeader': order.id}) }}" class="btn btn-danger btn-ico" data-toggle="modal" data-type="danger" title="Annuler">
                                                 <i class="fas fa-times-circle"></i>

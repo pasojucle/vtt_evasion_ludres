@@ -100,7 +100,7 @@ class NotificationDtoTransformer
 
 
         $notificationDto->modalLink = $this->getModalLinkFromArray($data['index']);
-        dump($notificationDto);
+
         return $notificationDto;
     }
 

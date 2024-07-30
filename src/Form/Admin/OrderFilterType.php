@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\OrderHeader;
+use App\Entity\Enum\OrderStatusEnum;
+use App\Form\Type\OrderStatusEnumType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class OrderFilterType extends AbstractType
@@ -14,10 +14,10 @@ class OrderFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('status', ChoiceType::class, [
+            ->add('status', OrderStatusEnumType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
-                'choices' => array_flip(OrderHeader::STATUS),
+                'class' => OrderStatusEnum::class,
                 'attr' => [
                     'class' => 'btn',
                 ],

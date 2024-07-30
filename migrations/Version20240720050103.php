@@ -32,6 +32,15 @@ final class Version20240720050103 extends AbstractMigration
         $this->addSql('UPDATE identity SET kind = \'kinship\' WHERE type = 2');
         $this->addSql('UPDATE identity SET kind = \'second_contact\' WHERE type = 3');
         $this->addSql('ALTER TABLE identity DROP type');
+
+        $this->addSql('ALTER TABLE order_header ADD status_tmp  ENUM(\'in_progress\', \'ordered\', \'valided\', \'completed\', \'canceled\') NOT NULL COMMENT \'(DC2Type:order_status)\'');
+        $this->addSql('UPDATE order_header SET status_tmp = \'in_progress\' WHERE status = 1');
+        $this->addSql('UPDATE order_header SET status_tmp = \'ordered\' WHERE status = 2');
+        $this->addSql('UPDATE order_header SET status_tmp = \'valided\' WHERE status = 3');
+        $this->addSql('UPDATE order_header SET status_tmp = \'completed\' WHERE status = 4');
+        $this->addSql('UPDATE order_header SET status_tmp = \'canceled\' WHERE status = 9');
+        $this->addSql('ALTER TABLE order_header DROP status');
+        $this->addSql('ALTER TABLE order_header CHANGE status_tmp status ENUM(\'in_progress\', \'ordered\', \'valided\', \'completed\', \'canceled\') NOT NULL COMMENT \'(DC2Type:order_status\'');
     }
 
     public function down(Schema $schema): void
@@ -49,5 +58,14 @@ final class Version20240720050103 extends AbstractMigration
         $this->addSql('UPDATE identity SET type = 2 WHERE kind = \'kinship\'');
         $this->addSql('UPDATE identity SET type = 3 WHERE kind = \'second_contact\'');
         $this->addSql('ALTER TABLE identity DROP kind');
+
+        $this->addSql('ALTER TABLE order_header ADD status_tmp INT NOT NULL');
+        $this->addSql('UPDATE order_header SET status_tmp = 1 WHERE status = \'in_progress\'');
+        $this->addSql('UPDATE order_header SET status_tmp = 2 WHERE status = \'ordered\'');
+        $this->addSql('UPDATE order_header SET status_tmp = 3 WHERE status = \'valided\'');
+        $this->addSql('UPDATE order_header SET status_tmp = 4 WHERE status = \'completed\'');
+        $this->addSql('UPDATE order_header SET status_tmp = 9 WHERE status = \'canceled\'');
+        $this->addSql('ALTER TABLE order_header DROP status');
+        $this->addSql('ALTER TABLE order_header CHANGE status_tmp status INT NOT NULL');
     }
 }

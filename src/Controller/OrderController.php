@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\DtoTransformer\OrderDtoTransformer;
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Form\OrderType;
@@ -125,7 +126,7 @@ class OrderController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $orderHeader->setStatus(OrderHeader::STATUS_CANCELED);
+            $orderHeader->setStatus(OrderStatusEnum::CANCELED);
             $this->entityManager->persist($orderHeader);
             $this->entityManager->flush();
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use App\Entity\Product;
@@ -49,7 +50,7 @@ class OrderAddService
             $orderHeader = new OrderHeader();
             $orderHeader->setUser($this->user)
                 ->setCreatedAt(new DateTime())
-                ->setStatus(OrderHeader::STATUS_IN_PROGRESS)
+                ->setStatus(OrderStatusEnum::IN_PROGRESS)
                 ;
             $this->entityManager->persist($orderHeader);
         }

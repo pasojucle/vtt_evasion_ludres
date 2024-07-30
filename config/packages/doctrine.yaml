@@ -11,6 +11,7 @@ doctrine:
         types:
             Registration: App\Doctrine\DBAL\Type\RegistrationEnumType
             IdentityKind: App\Doctrine\DBAL\Type\IdentityKindEnumType
+            OrderStatus: App\Doctrine\DBAL\Type\OrderStatusEnumType
         mapping_types:
             enum: string
     orm:

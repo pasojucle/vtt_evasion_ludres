@@ -42,7 +42,7 @@ class SetSurvey
     private function notify(Survey $survey): void
     {
         $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey($survey->getId());
-        dump($histories);
+
         if ($histories) {
             $this->notificationService->notify($survey);
         }

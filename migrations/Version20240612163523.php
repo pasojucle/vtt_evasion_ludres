@@ -33,8 +33,8 @@ final class Version20240612163523 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE notification (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, content LONGTEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, start_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', end_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', min_age INT DEFAULT NULL, max_age INT DEFAULT NULL, is_disabled TINYINT(1) DEFAULT 0 NOT NULL, public TINYINT(1) DEFAULT 0 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
-        $this->addSql('INSERT INTO `notification`(`id`, `title`, `content`, `start_at`, `end_at`, `max_age`, `min_age`, `is_disabled`) SELECT `id`, `title`, `content`, `start_at`, `end_at`, `max_age`, `min_age`, `is_disabled` FROM `notification`');
+        $this->addSql('CREATE TABLE modal_window (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, content LONGTEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, start_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', end_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', min_age INT DEFAULT NULL, max_age INT DEFAULT NULL, is_disabled TINYINT(1) DEFAULT 0 NOT NULL, public TINYINT(1) DEFAULT 0 NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('INSERT INTO `modal_window`(`id`, `title`, `content`, `start_at`, `end_at`, `max_age`, `min_age`, `is_disabled`) SELECT `id`, `title`, `content`, `start_at`, `end_at`, `max_age`, `min_age`, `is_disabled` FROM `notification`');
         $this->addSql('DROP TABLE notification');
         $this->addSql('ALTER TABLE second_hand ADD valid TINYINT(1) DEFAULT 0 NOT NULL');
         $this->addSql('UPDATE `second_hand` SET `valid`= 1 WHERE `valided_at IS NOT NULL');

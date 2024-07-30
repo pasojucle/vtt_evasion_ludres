@@ -7,11 +7,13 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Entity\SecondHand;
 use App\Repository\BikeRideRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SecondHandRepository;
+use App\Service\EnumService;
 use App\Service\ParameterService;
 use App\UseCase\User\GetCurrentSeasonUsers;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -81,17 +83,17 @@ class DashboardController extends AbstractController
 
     #[Route('/orders', name: '_orders', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('PRODUCT_LIST')]
-    public function orders(Request $request, OrderHeaderRepository $orderHeaderRepository): Response
+    public function orders(Request $request, OrderHeaderRepository $orderHeaderRepository, EnumService $enumService): Response
     {
-        $filters = ['status' => OrderHeader::STATUS_ORDERED];
+        $filters = ['status' => OrderStatusEnum::ORDERED];
         $request->getSession()->set('admin_orders_filters', $filters);
         $ordersByType = [
-            OrderHeader::STATUS[OrderHeader::STATUS_ORDERED] => [],
-            OrderHeader::STATUS[OrderHeader::STATUS_VALIDED] => [],
+            $enumService->translate(OrderStatusEnum::ORDERED) => [],
+            $enumService->translate(OrderStatusEnum::VALIDED) => [],
         ];
         /** @var OrderHeader $order */
         foreach ($orderHeaderRepository->findOrdersQuery()->getQuery()->getResult() as $order) {
-            $type = OrderHeader::STATUS[$order->getStatus()];
+            $type = $enumService->translate($order->getStatus());
             if (in_array($type, array_keys($ordersByType))) {
                 $ordersByType[$type][] = $order;
             }

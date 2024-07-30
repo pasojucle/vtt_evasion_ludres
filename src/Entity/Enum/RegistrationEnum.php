@@ -13,4 +13,9 @@ enum RegistrationEnum: string
     case CLUSTERS = 'cluster';
 
     use EnumTrait;
+
+    public static function getTranslatePrefix(): string
+    {
+        return 'bike_ride_type.registration';
+    }
 }
