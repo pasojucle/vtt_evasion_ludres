@@ -28,7 +28,7 @@
                                         {{ order.amount }}
                                     </div>
                                     <div class="col-md-2 col-xs-4">
-                                        {{ order.status|enumTrans }}
+                                        {{ order.status|trans }}
                                     </div>
                                     <div class="col-md-3 col-xs-4">
                                         {% if enum('APP\\Entity\\Enum\\OrderStatusEnum::IN_PROGRESS') != order.status %}

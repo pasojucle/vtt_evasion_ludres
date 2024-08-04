@@ -30,5 +30,5 @@ class SessionDto
 
     public ?array $bikeRideMemeberList = null;
 
-    public ?string $bikeKind = null;
+    public ?string $practice = null;
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Enum\OrderStatusEnum;
-use App\Form\Type\OrderStatusEnumType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class OrderFilterType extends AbstractType
@@ -14,7 +14,7 @@ class OrderFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('status', OrderStatusEnumType::class, [
+            ->add('status', EnumType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
                 'class' => OrderStatusEnum::class,

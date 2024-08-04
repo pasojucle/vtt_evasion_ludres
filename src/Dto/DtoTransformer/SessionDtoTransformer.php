@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\SessionDto;
 use App\Entity\BikeRideType;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Model\Currency;
@@ -38,7 +39,7 @@ class SessionDtoTransformer
             $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
-            $sessionDto->bikeKind = ($session->getBikeKind()) ? $this->translator->trans(Session::BIKEKINDS[$session->getBikeKind()]) : null;
+            $sessionDto->practice = $session->getPractice()->trans($this->translator);
         }
 
         return $sessionDto;
@@ -53,7 +54,7 @@ class SessionDtoTransformer
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
             $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session->isPresent());
-            $sessionDto->bikeKind = ($session->getBikeKind()) ? $this->translator->trans(Session::BIKEKINDS[$session->getBikeKind()]) : null;
+            $sessionDto->practice = $session->getPractice()->trans($this->translator);
         }
 
         return $sessionDto;
@@ -69,20 +70,21 @@ class SessionDtoTransformer
         return $sessions;
     }
 
-    private function getAvailability(?int $availability): array
+    private function getAvailability(?AvailabilityEnum $availability): array
     {
         $availbilityClass = [
-            1 => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>', 'color' => 'success-color'],
-            2 => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 'color' => 'warning-color'],
-            3 => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
+            AvailabilityEnum::REGISTERED->name => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>', 'color' => 'success-color'],
+            AvailabilityEnum::AVAILABLE->name => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 'color' => 'warning-color'],
+            AvailabilityEnum::UNAVAILABLE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
         ];
 
         $availabilityView = [];
         if (null !== $availability) {
             $availabilityView = [
-                'class' => $availbilityClass[$availability],
-                'text' => Session::AVAILABILITIES[$availability],
-                'value' => $availability,
+                'class' => $availbilityClass[$availability->name],
+                'text' => $availability->value,
+                'value' => $availability->name,
+                'enum' => $availability
             ];
         }
 

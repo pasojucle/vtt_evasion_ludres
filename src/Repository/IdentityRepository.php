@@ -67,6 +67,26 @@ class IdentityRepository extends ServiceEntityRepository
         }
     }
 
+    public function findKinshipByUser(User $user): ?Identity
+    {
+        try {
+            return $this->createQueryBuilder('i')
+                ->andWhere(
+                    (new Expr())->eq('i.user', ':user'),
+                    (new Expr())->eq('i.kind', ':kinship')
+                )
+                ->setParameters(new ArrayCollection([
+                    new Parameter('user', $user),
+                    new Parameter('kinship', IdentityKindEnum::KINSHIP),
+                ]))
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
+
     public function findMembersByUsers(Paginator|array $users): array
     {
         return $this->createQueryBuilder('i')

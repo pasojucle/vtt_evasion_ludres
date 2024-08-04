@@ -30,6 +30,7 @@ class SetSession
     public function add(FormInterface $form, User $user, BikeRide $bikeRide): void
     {
         $session = $form->get('session')->getData();
+        dump($session);
         $user->addSession($session);
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
         if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {

@@ -91,7 +91,7 @@ class SessionService
         foreach ($clusters as $cluster) {
             for ($i = 0; $i < $maxCount; ++$i) {
                 $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))
-                    ? sprintf('%s <span class="badge badge-info small">%s</span>', $sessionsByCluster[$cluster][$i]->user->member->fullName, $sessionsByCluster[$cluster][$i]->bikeKind)
+                    ? sprintf('%s <span class="badge badge-info small">%s</span>', $sessionsByCluster[$cluster][$i]->user->member->fullName, $sessionsByCluster[$cluster][$i]->practice)
                     : '';
                 $rows[$i][] = $session;
             }

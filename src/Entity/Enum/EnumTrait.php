@@ -15,7 +15,7 @@ trait EnumTrait
 
         return array_map(static fn (UnitEnum $case) => $case->name, $cases);
     }
-
+    
     public static function getValues(): array
     {
         $cases = self::cases();

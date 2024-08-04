@@ -26,4 +26,6 @@ class BikeRideTypeDto
     public bool $isNeedFramers = false;
 
     public array|string $messages;
+
+    public bool $displayPractice = false;
 }

@@ -39,8 +39,8 @@
                             {% endfor %}
                         {% endif %}
                     </div>
-                    {% if form.session.bikeKind is defined %}
-                        {{ form_widget(form.session.bikeKind) }}
+                    {% if form.session.practice is defined %}
+                        {{ form_widget(form.session.practice) }}
                     {% endif %}
                     {% if form.responses is defined and bikeRide.survey %}
                         <div class="separator"></div>
@@ -70,7 +70,7 @@
                     {% if form.submit is defined %}
                         {{ form_widget(form.submit)}}
                     {% elseif is_already_registered %}
-                        <a href="{{ path('user_bike_rides') }}" class="btn btn-primary">Voir toutes mes sorties</a>
+                        <a href="{{ path('user_sessions') }}" class="btn btn-primary">Voir toutes mes sorties</a>
                     {% elseif is_end_testing %}
                         <a href="{{ path('user_registration_form', {'step': 1}) }}" class="btn btn-primary">S'inscrire</a>
                     {% endif %}

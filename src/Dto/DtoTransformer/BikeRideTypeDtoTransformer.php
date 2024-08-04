@@ -22,6 +22,7 @@ class BikeRideTypeDtoTransformer
         $bikeRideTypeDto->isRegistrable = RegistrationEnum::NONE !== $bikeRideType->getRegistration();
         $bikeRideTypeDto->isNeedFramers = $bikeRideType->isNeedFramers();
         $bikeRideTypeDto->messages = $this->getMessages($bikeRideType);
+        $bikeRideTypeDto->displayPractice = $bikeRideType->isDisplayBikeKind();
 
         return $bikeRideTypeDto;
     }

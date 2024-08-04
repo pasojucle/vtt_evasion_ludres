@@ -94,7 +94,7 @@ session:
     presence: précence
     absence: absence
     availability: précence, si besoin
-  bike_kind:
+  activity:
     vtt: VTT
     vttae: VTTAE
     roadbike: Vélo de route

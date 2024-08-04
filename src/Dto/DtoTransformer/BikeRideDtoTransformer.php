@@ -93,6 +93,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey(), $surveyHistories) : null;
             $bikeRideDto->period = $this->bikeRideService->getPeriod($bikeRide);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
+            $bikeRideDto->isMultiClusters = 1 < $bikeRide->getClusters()->count();
             if ($bikeRide->getMinAge()) {
                 $bikeRideDto->minAge = sprintf('A partir de %s ans', $bikeRide->getMinAge());
             }

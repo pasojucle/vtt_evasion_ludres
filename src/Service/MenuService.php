@@ -93,7 +93,7 @@ class MenuService
         $this->user = $this->menuAdminService->getMenusGranted([
             [
                 'label' => 'Mon programme perso',
-                'route' => 'user_bike_rides',
+                'route' => 'user_sessions',
                 'role' => 'BIKE_RIDE_LIST',
             ],
             [

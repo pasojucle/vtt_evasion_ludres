@@ -34,17 +34,15 @@
                         <ul class="dropdown-menu">
                             {% for sub_menu in menu.subMenus %}
                                 <li class="nav-sub">
-
-                                        <a {% if sub_menu.class is defined %}class="{{ sub_menu.class }}"{% else %}href="{{ path(sub_menu.route) }}"{% endif %}
-                                            {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
-                                            <div class="position-relative">
-                                                {{ sub_menu.label }}
-                                                {% if sub_menu.badge is defined %}
-                                                    <div class="badge novelty hidden" data-route="{{ sub_menu.badge }}">N</div>
-                                                {% endif %}
-                                            </div>
-                                        </a>
-
+                                    <a {% if sub_menu.class is defined %}class="{{ sub_menu.class }}"{% else %}href="{{ path(sub_menu.route) }}"{% endif %}
+                                        {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
+                                        <div class="position-relative">
+                                            {{ sub_menu.label }}
+                                            {% if sub_menu.badge is defined %}
+                                                <div class="badge novelty hidden" data-route="{{ sub_menu.badge }}">N</div>
+                                            {% endif %}
+                                        </div>
+                                    </a>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -63,7 +61,7 @@
                 <div class="block-body">
                     <ul class="dropdown-menu">
                     {% for menu in user.menus %}
-                        <li>
+                        <li class="nav-sub">
                             <a href="{{ path(menu.route) }}">
                                 <div class="position-relative">{{ menu.label }}</div>
                             </a>

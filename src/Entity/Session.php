@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\PracticeEnum;
 use App\Repository\SessionRepository;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: SessionRepository::class)]
+#[ORM\Entity(repositoryClass: SessionRepository::class)]
 class Session
 {
     public const AVAILABILITY_UNDEFINED = 0;
@@ -43,26 +40,26 @@ class Session
         self::BIKEKIND_WALKING => 'session.bike_kind.walking',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'sessions')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'sessions')]
+    #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[ManyToOne(targetEntity: Cluster::class, inversedBy: 'sessions')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Cluster::class, inversedBy: 'sessions')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Cluster $cluster = null;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $isPresent = false;
 
-    #[Column(type: 'integer', nullable: true)]
-    private ?int $availability = null;
+    #[ORM\Column(type: 'Availability', nullable: true)]
+    private ?AvailabilityEnum $availability = null;
 
-    #[Column(nullable: true)]
-    private ?int $bikeKind = null;
+    #[ORM\Column(type: 'Practice')]
+    private PracticeEnum $practice = PracticeEnum::VTT;
 
     public function getId(): ?int
     {
@@ -105,26 +102,26 @@ class Session
         return $this;
     }
 
-    public function getAvailability(): ?int
+    public function getAvailability(): ?AvailabilityEnum
     {
         return $this->availability;
     }
 
-    public function setAvailability(?int $availability): self
+    public function setAvailability(?AvailabilityEnum $availability): self
     {
         $this->availability = $availability;
 
         return $this;
     }
 
-    public function getBikeKind(): ?int
+    public function getPractice(): PracticeEnum
     {
-        return $this->bikeKind;
+        return $this->practice;
     }
 
-    public function setBikeKind(?int $bikeKind): static
+    public function setPractice(PracticeEnum $practice): static
     {
-        $this->bikeKind = $bikeKind;
+        $this->practice = $practice;
 
         return $this;
     }

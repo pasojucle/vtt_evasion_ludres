@@ -8,22 +8,19 @@ use App\Entity\Enum\EnumTrait;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-enum OrderStatusEnum: string implements TranslatableInterface
+enum AvailabilityEnum: string implements TranslatableInterface
 {
-    case IN_PROGRESS = 'in_progress';
+    case REGISTERED = 'registered';
 
-    case ORDERED = 'ordered';
+    case AVAILABLE = 'available';
 
-    case VALIDED = 'valided';
-
-    case COMPLETED = 'completed';
-
-    case CANCELED = 'canceled';
+    case UNAVAILABLE = 'unavailable';
 
     use EnumTrait;
 
+
     public function trans(TranslatorInterface $translator, string $locale = null): string
     {
-        return $translator->trans('order.' . $this->value, locale: $locale);
+        return $translator->trans('session.availability.' . $this->value, locale: $locale);
     }
 }

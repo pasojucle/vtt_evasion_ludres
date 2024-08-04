@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Identity;
 
 use App\Entity\User;
+use App\Repository\IdentityRepository;
 use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\UploadService;
@@ -16,6 +17,7 @@ class EditIdentity
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private IdentityRepository $identityRepository,
         private IdentityService $identityService,
         private UploadService $uploadService,
         private CommuneService $communeService
@@ -38,9 +40,9 @@ class EditIdentity
                 }
             }
         }
-
-        if ($user->getMemberIdentity()->getBirthCommune()) {
-            $this->communeService->addIfNotExists($user->getMemberIdentity()->getBirthCommune());
+        $member = $this->identityRepository->findMemberByUser($user);
+        if ($member->getBirthCommune()) {
+            $this->communeService->addIfNotExists($member->getBirthCommune());
         };
 
         $this->entityManager->flush();

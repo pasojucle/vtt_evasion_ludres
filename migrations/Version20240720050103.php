@@ -41,6 +41,18 @@ final class Version20240720050103 extends AbstractMigration
         $this->addSql('UPDATE order_header SET status_tmp = \'canceled\' WHERE status = 9');
         $this->addSql('ALTER TABLE order_header DROP status');
         $this->addSql('ALTER TABLE order_header CHANGE status_tmp status ENUM(\'in_progress\', \'ordered\', \'valided\', \'completed\', \'canceled\') NOT NULL COMMENT \'(DC2Type:order_status\'');
+    
+        $this->addSql('ALTER TABLE session ADD practice ENUM(\'vtt\', \'vttae\', \'roadbike\', \'gravel\', \'walking\') NOT NULL COMMENT \'(DC2Type:practice)\', ADD availability_tmp ENUM(\'registered\', \'available\', \'unavailable\') DEFAULT NULL COMMENT \'(DC2Type:availability)\'');
+        $this->addSql('UPDATE session SET practice = \'vtt\' WHERE bike_kind = 1');
+        $this->addSql('UPDATE session SET practice = \'vttae\' WHERE bike_kind = 2');
+        $this->addSql('UPDATE session SET practice = \'roadbike\' WHERE bike_kind = 3');
+        $this->addSql('UPDATE session SET practice = \'gravel\' WHERE bike_kind = 4');
+        $this->addSql('UPDATE session SET practice = \'walking\' WHERE bike_kind = 5');
+        $this->addSql('UPDATE session SET availability_tmp = \'registered\' WHERE availability = 1');
+        $this->addSql('UPDATE session SET availability_tmp = \'available\' WHERE availability = 2');
+        $this->addSql('UPDATE session SET availability_tmp = \'unavailable\' WHERE availability = 3');
+        $this->addSql('ALTER TABLE session DROP bike_kind, DROP availability');
+        $this->addSql('ALTER TABLE session CHANGE availability_tmp availability ENUM(\'registered\', \'available\', \'unavailable\') DEFAULT NULL COMMENT \'(DC2Type:availability)\'');
     }
 
     public function down(Schema $schema): void
@@ -67,5 +79,18 @@ final class Version20240720050103 extends AbstractMigration
         $this->addSql('UPDATE order_header SET status_tmp = 9 WHERE status = \'canceled\'');
         $this->addSql('ALTER TABLE order_header DROP status');
         $this->addSql('ALTER TABLE order_header CHANGE status_tmp status INT NOT NULL');
+
+        $this->addSql('ALTER TABLE session ADD bike_kind INT DEFAULT NULL, ADD availability_tmp INT DEFAULT NULL');
+        $this->addSql('UPDATE session SET bike_kind = 1 WHERE practice = \'vtt\'');
+        $this->addSql('UPDATE session SET bike_kind = 2 WHERE practice = \'vttae\'');
+        $this->addSql('UPDATE session SET bike_kind = 3 WHERE practice = \'roadbike\'');
+        $this->addSql('UPDATE session SET bike_kind = 4 WHERE practice = \'gravel\'');
+        $this->addSql('UPDATE session SET bike_kind = 5 WHERE practice = \'walking\'');
+        $this->addSql('UPDATE session SET availability_tmp = 1 WHERE availability = \'registered\'');
+        $this->addSql('UPDATE session SET availability_tmp = 2 WHERE availability = \'available\'');
+        $this->addSql('UPDATE session SET availability_tmp = 3 WHERE availability =\'unavailable\' ');
+        $this->addSql('ALTER TABLE session DROP bike_kind, DROP availability');
+        $this->addSql('ALTER TABLE session DROP practice, DROP availability');
+        $this->addSql('ALTER TABLE session CHANGE availability_tmp availability INT DEFAULT NULL');
     }
 }

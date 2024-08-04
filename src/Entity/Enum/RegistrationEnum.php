@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Entity\Enum;
 
 use App\Entity\Enum\EnumTrait;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-enum RegistrationEnum: string
+enum RegistrationEnum: string implements TranslatableInterface
 {
     case NONE = 'none';
     case SCHOOL = 'school';
@@ -14,8 +16,8 @@ enum RegistrationEnum: string
 
     use EnumTrait;
 
-    public static function getTranslatePrefix(): string
+    public function trans(TranslatorInterface $translator, string $locale = null): string
     {
-        return 'bike_ride_type.registration';
+        return $translator->trans('bike_ride_type.registration.' . $this->value, locale: $locale);
     }
 }

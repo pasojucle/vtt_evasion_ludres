@@ -32,6 +32,8 @@ class GetBikeRides
                 'availability' => $sessionDto->availability,
                 'sessionId' => $sessionDto->id,
                 'memberList' => $this->sessionService->getBikeRideMembers($session->getCluster()->getBikeRide()),
+                'practice' => $sessionDto->practice,
+                'cluster' => $sessionDto->cluster,
             ];
         }
 

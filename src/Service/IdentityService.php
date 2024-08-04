@@ -6,15 +6,15 @@ namespace App\Service;
 
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Repository\IdentityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class IdentityService
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private IdentityRepository $identityRepository,
+    ) {
     }
 
     public function setAddress(User $user)
@@ -34,7 +34,7 @@ class IdentityService
     {
         $licence = $user->getLastLicence();
         return (Licence::CATEGORY_MINOR === $licence?->getCategory())
-        ? $user->getKinshipIdentity()
-        : $user->getMemberIdentity();
+        ? $this->identityRepository->findKinshipByUser($user)
+        : $this->identityRepository->findMemberByUser($user);
     }
 }

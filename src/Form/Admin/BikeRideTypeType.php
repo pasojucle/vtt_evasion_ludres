@@ -7,11 +7,11 @@ namespace App\Form\Admin;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
 use App\Form\Type\CkeditorType;
-use App\Form\Type\RegistrationEnumType;
 use App\Validator\NotEmptyArray;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -67,7 +67,7 @@ class BikeRideTypeType extends AbstractType
                     'data-switch-off' => 'Aucune d\'indemnité',
                 ],
             ])
-            ->add('registration', RegistrationEnumType::class, [
+            ->add('registration', EnumType::class, [
                 'label' => 'Inscriptions',
                 'class' => RegistrationEnum::class,
                 'row_attr' => [

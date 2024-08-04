@@ -24,12 +24,12 @@ nav.fixed {
 .nav-sub > a > div, .nav-bar-title > a > div {
     position: relative;
     display: inline-block;
-    padding: 15px 10px;
+    padding: 12px;
 }
 
 .badge.novelty {
     position: absolute;
-    top: 8px;
+    top: 6px;
     right: 0;
     /* z-index: -1; */
     min-width: unset;

@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Repository\IdentityRepository;
 use DateTime;
 use DateTimeInterface;
 
@@ -13,11 +14,12 @@ class LicenceService
 {
     public function __construct(
         private readonly SeasonService $seasonService,
+        private readonly IdentityRepository $identityRepository,
     ) {
     }
     public function getCategory(User $user): int
     {
-        return $this->getCategoryByBirthDate($user->getMemberIdentity()->getBirthDate());
+        return $this->getCategoryByBirthDate($this->identityRepository->findMemberByUser($user)->getBirthDate());
     }
 
     public function getCategoryByBirthDate(DateTimeInterface $birthDate): int

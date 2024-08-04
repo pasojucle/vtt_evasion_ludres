@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Entity\Enum;
 
 use App\Entity\Enum\EnumTrait;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-enum IdentityKindEnum: string
+enum IdentityKindEnum: string implements TranslatableInterface
 {
     case MEMBER = 'member';
 
@@ -16,8 +18,8 @@ enum IdentityKindEnum: string
 
     use EnumTrait;
 
-    public static function getTranslatePrefix(): string
+    public function trans(TranslatorInterface $translator, string $locale = null): string
     {
-        return 'identity.kind';
+        return $translator->trans('identity.kind.' . $this->value, locale: $locale);
     }
 }

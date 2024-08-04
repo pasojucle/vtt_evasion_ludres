@@ -70,7 +70,7 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $user->getMemberIdentity();
+            $member = $this->identityRepository->findMemberByUser($user);
         }
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
@@ -86,7 +86,7 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $user->getMemberIdentity();
+            $member = $this->identityRepository->findMemberByUser($user);
         }
         $userDto->id = $user->getId();
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $histories);
@@ -125,7 +125,9 @@ class UserDtoTransformer
     private function getMainEmail(array $identitiesByType, int $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::KINSHIP->name] : $identitiesByType[IdentityKindEnum::MEMBER->name];
+            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+                ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
+                : $identitiesByType[IdentityKindEnum::MEMBER->name];
             return $identity?->email;
         }
 
@@ -135,7 +137,9 @@ class UserDtoTransformer
     private function getMainFullName(array $identitiesByType, int $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::KINSHIP->name] : $identitiesByType[IdentityKindEnum::MEMBER->name];
+            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+                ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
+                : $identitiesByType[IdentityKindEnum::MEMBER->name];
             return $identity?->fullName;
         }
 
@@ -147,7 +151,9 @@ class UserDtoTransformer
         $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
         $lastLicence = $this->getLastLicence($userEntity, null);
         if (!empty($identitiesByType)) {
-            return (Licence::CATEGORY_MINOR === $lastLicence->category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::KINSHIP->name] : $identitiesByType[IdentityKindEnum::MEMBER->name];
+            return (Licence::CATEGORY_MINOR === $lastLicence->category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+            ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
+            : $identitiesByType[IdentityKindEnum::MEMBER->name];
         }
 
         return null;
@@ -159,7 +165,7 @@ class UserDtoTransformer
         /** @var IdentityDto $mainIdentity */
         $mainIdentity = $this->getMainIdentity($userEntity);
         
-        $userDto->member = $this->identityDtoTransformer->headerFromEntity($userEntity->getMemberIdentity());
+        $userDto->member = $this->identityDtoTransformer->headerFromEntity($this->identityRepository->findMemberByUser($userEntity));
         $userDto->mainEmail = $mainIdentity->email;
         $userDto->mainFullName = $mainIdentity->fullName;
         $userDto->licenceNumber = $userEntity->getLicenceNumber();

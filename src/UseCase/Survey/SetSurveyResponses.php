@@ -142,7 +142,7 @@ class SetSurveyResponses
     public function getRedirect(Survey $survey): array
     {
         return ($survey->getBikeRide())
-        ? ['route' => 'user_bike_rides', 'text' => 'Mon programme perso']
+        ? ['route' => 'user_sessions', 'text' => 'Mon programme perso']
         : ['route' => 'user_surveys', 'text' => 'Mes sondages'];
     }
 }
