@@ -194,12 +194,12 @@ class SessionRepository extends ServiceEntityRepository
         $orX = (new Expr())->orX();
         if (!empty($levels)) {
             $orX->add((new Expr())->in('u.level', ':levels'));
-            $parameters['levels'] = $levels;
+            $parameters[] = new Parameter('levels', $levels);
         }
 
         if (!empty($types)) {
             $orX->add((new Expr())->in('l.type', ':types'));
-            $parameters['types'] = $types;
+            $parameters[] = new Parameter('types', $types);
         }
 
         if ($isBoardmember) {

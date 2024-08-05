@@ -46,12 +46,12 @@
                         </div>
                         <div>
                             {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum::ORDERED') %}
-                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::VALIDED').name})}}" title="Valider">
+                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::VALIDED').value})}}" title="Valider">
                                     <div><i class="fas fa-check"></i> Valider</div>
                                 </a>
                             {% endif %}
                             {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum::VALIDED') %}
-                                <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::COMPLETED').name})}}" title="Cloturer">
+                                <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::COMPLETED').value})}}" title="Cloturer">
                                     <div><i class="fas fa-check"></i> Cloturer</div>
                                 </a>
                             {% endif %}
