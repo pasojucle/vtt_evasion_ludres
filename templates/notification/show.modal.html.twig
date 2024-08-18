@@ -15,5 +15,8 @@
         {% set anchor_text = modal.labelButton %}
         {% set url = modal.url %}
     {% endif %}
+    {% if modal.toggle is not null %}
+        {% set toggle = modal.toggle %}
+    {% endif %}
     {{ parent() }}
 {% endblock %}

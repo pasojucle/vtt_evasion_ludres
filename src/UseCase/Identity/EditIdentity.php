@@ -40,7 +40,7 @@ class EditIdentity
                 }
             }
         }
-        $member = $this->identityRepository->findMemberByUser($user);
+        $member = $this->identityRepository->findOneMemberByUser($user);
         if ($member->getBirthCommune()) {
             $this->communeService->addIfNotExists($member->getBirthCommune());
         };

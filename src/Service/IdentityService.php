@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
 use App\Repository\IdentityRepository;
@@ -17,7 +18,7 @@ class IdentityService
     ) {
     }
 
-    public function setAddress(User $user)
+    public function setAddress(User $user): void
     {
         foreach ($user->getIdentities() as $identity) {
             if (null !== $identity->getKinShip()) {
@@ -30,11 +31,16 @@ class IdentityService
         }
     }
 
-    public function getMainContact(User $user)
+    public function getMainContact(User $user): Identity
     {
         $licence = $user->getLastLicence();
         return (Licence::CATEGORY_MINOR === $licence?->getCategory())
-        ? $this->identityRepository->findKinshipByUser($user)
-        : $this->identityRepository->findMemberByUser($user);
+        ? $this->identityRepository->findOneKinshipByUser($user)
+        : $this->identityRepository->findOneMemberByUser($user);
+    }
+
+    public function getMember(User $user): Identity
+    {
+        return $this->identityRepository->findOneMemberByUser($user);
     }
 }

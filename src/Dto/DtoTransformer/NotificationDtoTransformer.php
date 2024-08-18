@@ -97,9 +97,14 @@ class NotificationDtoTransformer
             $notificationDto->url = $this->urlGenerator->generate($data['route'], $data['routeParams']);
             $notificationDto->labelButton = $data['labelBtn'];
         }
-
-
-        $notificationDto->modalLink = $this->getModalLinkFromArray($data['index']);
+        if (array_key_exists('modalLink', $data)) {
+            $notificationDto->modalLink = $data['modalLink'];
+        }
+        if (array_key_exists('toggle', $data)) {
+            $notificationDto->toggle = $data['toggle'];
+            $notificationDto->url = $data['url'];
+            $notificationDto->labelButton = $data['labelBtn'];
+        }
 
         return $notificationDto;
     }
@@ -131,16 +136,6 @@ class NotificationDtoTransformer
         return $this->urlGenerator->generate('notification_show', [
             'entityName' => (new ReflectionClass($entity))->getShortName(),
             'entityId' => $entity->getId(),
-        ]);
-    }
-
-    private function getModalLinkFromArray(string $index): string
-    {
-        list($entityName, $id) = (1 === preg_match('#^(\w+)_(\d+)$#', $index, $matches)) ? [$matches[1], $matches[2]] : $index;
-
-        return $this->urlGenerator->generate('notification_show', [
-            'entityName' => $entityName,
-            'entityId' => $id,
         ]);
     }
 }

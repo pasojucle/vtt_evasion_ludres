@@ -1,5 +1,5 @@
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
-import { setNotificationList, hideNotifications } from './notification.js'
+import { setNotificationList, hideNotifications, handleShowNotifications } from './notification.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const modal = buildModal();
@@ -63,6 +63,7 @@ export const buildContent = (text, modalType) => {
     addDeleteLink();
     handleHideModal();
     handleSumbit();
+    handleShowNotifications();
 }
 
 export const openModal = (text, modalType) => {

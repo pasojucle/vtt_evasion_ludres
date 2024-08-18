@@ -9,6 +9,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\Licence;
 use App\Entity\Notification;
+use App\Entity\OrderHeader;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
@@ -61,7 +62,7 @@ class GetList
             return $this->getPublicNotifications($notificationsConsumed);
         }
 
-        return $this->getUserNotifications($notification, $notificationsConsumed);
+        return $this->getUserNotifications($notificationsConsumed);
     }
 
     private function getPublicNotifications(array $notificationsConsumed): array
@@ -75,7 +76,7 @@ class GetList
         return $this->getNotification($notificationsConsumed, $notifications);
     }
 
-    private function getNotification(array $notificationsConsumed, array $notifications): ?Notification
+    private function getNotification(array $notificationsConsumed, array $notifications): null|array|Survey|Notification|Licence|OrderHeader
     {
         if (!empty($notifications)) {
             foreach ($notifications as $notification) {
@@ -91,30 +92,34 @@ class GetList
         return null;
     }
 
-    private function getUserNotifications(?array $notification, array $notificationShowOn): array
+    private function getUserNotifications(array $notificationShowOn): array
     {
+        if (str_contains($this->routeInfos['_route'], 'admin')) {
+            return [null, []];
+        }
+
         $this->userDto = $this->userDtoTransformer->fromEntity($this->user);
         if (!$this->userDto->lastLicence->isActive) {
             return $this->getPublicNotifications($notificationShowOn);
         }
         $notifications = [];
-        if ($notification) {
-            $notifications[] = $notification;
-        }
-        $userNotifications = $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
-        if ($userNotifications) {
-            $notifications = array_merge($notifications, $userNotifications);
-        }
-        $modalNotification = $this->getNotification($notificationShowOn, $notifications);
-
         $this->addSurveys($notifications);
         $this->addSurveysChanged($notifications);
         $this->addNewOrderToValidate($notifications);
         $this->addRegistationInProgress($notifications);
         $this->addNewSeasonReRgistrationEnabled($notifications);
 
+        $modalNotifications = $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
+        if (empty($modalNotifications) && empty($notificationShowOn)) {
+            $total = count($notifications);
+            $modalNotifications[] = (1 < $total)
+                ? $this->notificationService->getPendingNotifications($total)
+                : array_shift($notifications);
+        }
+        $modalNotification = $this->getNotification($notificationShowOn, $modalNotifications);
+
         return [
-            ($modalNotification) ? $this->notificationDtoTransformer->fromNotification($modalNotification) : null,
+            ($modalNotification) ? $this->notificationDtoTransformer->fromEntity($modalNotification) : null,
             $this->notificationDtoTransformer->fromEntities($notifications)
         ];
     }

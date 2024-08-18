@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NotificationService
 {
@@ -24,6 +25,7 @@ class NotificationService
         private readonly MessageService $messageService,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -90,7 +92,8 @@ class NotificationService
             'content' => str_replace('{{ sondage }}', $survey->getTitle(), $this->messageService->getMessageByName('SURVEY_CHANGED_MESSAGE')),
             'route' => 'survey',
             'routeParams' => ['survey' => $survey->getId()],
-            'labelBtn' => 'Consulter'
+            'labelBtn' => 'Consulter',
+            'modalLink' => $this->getModalLink('Survey', $survey->getId()),
         ];
     }
 
@@ -108,7 +111,7 @@ class NotificationService
             'index' => sprintf('Session_%s', $session->getId()),
             'title' => 'Inscription à une sortie',
             'content' => sprintf($content, $bikeRideDto->title, $bikeRideDto->period),
-
+            'modalLink' => $this->getModalLink('Session', $session->getId()),
         ];
     }
 
@@ -117,5 +120,26 @@ class NotificationService
         $session = $this->requestStack->getSession();
         $value = $session->get($name);
         return (null !== $value) ? json_decode($value, true) : [];
+    }
+
+    public function getPendingNotifications(int $total): array
+    {
+        return [
+            'index' => 'pending',
+            'title' => 'Notifications en attentes',
+            'content' => sprintf('Vous avez %d notifications en attente de traitement', $total),
+            'url' => '#',
+            'labelBtn' => 'Voir Les notifications',
+            'toggle' => 'notifications',
+        ];
+    }
+
+
+    private function getModalLink(string $entityName, int $id): string
+    {
+        return $this->urlGenerator->generate('notification_show', [
+            'entityName' => $entityName,
+            'entityId' => $id,
+        ]);
     }
 }

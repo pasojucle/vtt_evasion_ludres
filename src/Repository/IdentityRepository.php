@@ -47,7 +47,7 @@ class IdentityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findMemberByUser(User $user): ?Identity
+    public function findOneMemberByUser(User $user): ?Identity
     {
         try {
             return $this->createQueryBuilder('i')
@@ -67,7 +67,7 @@ class IdentityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findKinshipByUser(User $user): ?Identity
+    public function findOneKinshipByUser(User $user): ?Identity
     {
         try {
             return $this->createQueryBuilder('i')
@@ -103,7 +103,7 @@ class IdentityRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findKinShipsByUser(User $user): array
+    public function findOneKinShipsByUser(User $user): array
     {
         return $this->createQueryBuilder('i')
             ->andWhere(

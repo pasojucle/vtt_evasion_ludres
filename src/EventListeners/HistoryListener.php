@@ -53,6 +53,10 @@ class HistoryListener
 
     private function addRegistrationHistory(ReflectionClass $reflexionClass, string $className, Address|Health|Identity|Licence $entity, array $changeSet): void
     {
+        $this->checkPhone($changeSet);
+        if (empty($changeSet)) {
+            return;
+        }
         $user = ($reflexionClass->hasMethod('getUser'))
         ? $entity->getUser()
         : $entity->getIdentities()->first()->getUser();
@@ -60,6 +64,19 @@ class HistoryListener
             $seasonPeriod = $this->seasonService->getCurrentSeasonPeriod();
             $history = $this->objectManager->getRepository(History::class)->findOneByRegistrationEntity($user, $className, $entity->getId(), $seasonPeriod['startAt']);
             $this->addHistory($history, $user, $className, $entity, $changeSet);
+        }
+    }
+
+    private function checkPhone(array &$changeSet): void
+    {
+        $keys = ['phone', 'mobile', 'emergencyPhone'];
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $changeSet)) {
+                list($old, $new) = $changeSet[$key];
+                if ($old === str_replace(' ', '', $new)) {
+                    unset($changeSet[$key]);
+                }
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-import { initModal, buildContent } from './modal.js';
+import { initModal, buildContent, closeModal } from './modal.js';
 import { disableScroll, enableScroll } from './toggleScroll.js'
 import { hideNav} from './navigation.js'
 
@@ -84,7 +84,7 @@ const hasNews = async(route) => {
     });
 }
 
-const toggleNotifications = (event) => {
+const toggleNotifications = () => {
     const notifications = document.querySelector(('div.dropdown-notifications'));
     notifications.classList.toggle('active');
     if (notifications.classList.contains('active')) {
@@ -95,9 +95,23 @@ const toggleNotifications = (event) => {
     enableScroll();
 }
 
+const toggleNotificationsFromModal = (event) => {
+    event.preventDefault();
+    toggleNotifications();
+    closeModal();
+}
+
 export const hideNotifications = () => {
     const notifications = document.querySelector(('div.dropdown-notifications'))
     if (notifications) {
         notifications.classList.remove('active');
+    }
+}
+
+export const handleShowNotifications = () => {
+    const anchor = document.querySelector('.modal a[data-toggle="notifications"]')
+    console.log(anchor);
+    if (anchor) {
+        anchor.addEventListener('click', toggleNotificationsFromModal)
     }
 }

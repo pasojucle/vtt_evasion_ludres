@@ -58,7 +58,7 @@ class EditRegistration
             $selfAuthenticating = true;
         }
 
-        if (null !== $user->getMemberIdentity()->getBirthDate()) {
+        if (null !== $this->identityService->getMember($user)->getBirthDate()) {
             $category = $this->licenceService->getCategory($user);
             $user->getSeasonLicence($season)->setCategory($category);
             if (Licence::CATEGORY_MINOR === $category) {

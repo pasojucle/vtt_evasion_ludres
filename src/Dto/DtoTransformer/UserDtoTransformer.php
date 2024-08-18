@@ -70,7 +70,7 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $this->identityRepository->findMemberByUser($user);
+            $member = $this->identityRepository->findOneMemberByUser($user);
         }
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
@@ -86,7 +86,7 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $this->identityRepository->findMemberByUser($user);
+            $member = $this->identityRepository->findOneMemberByUser($user);
         }
         $userDto->id = $user->getId();
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $histories);
@@ -165,7 +165,7 @@ class UserDtoTransformer
         /** @var IdentityDto $mainIdentity */
         $mainIdentity = $this->getMainIdentity($userEntity);
         
-        $userDto->member = $this->identityDtoTransformer->headerFromEntity($this->identityRepository->findMemberByUser($userEntity));
+        $userDto->member = $this->identityDtoTransformer->headerFromEntity($this->identityRepository->findOneMemberByUser($userEntity));
         $userDto->mainEmail = $mainIdentity->email;
         $userDto->mainFullName = $mainIdentity->fullName;
         $userDto->licenceNumber = $userEntity->getLicenceNumber();

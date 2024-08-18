@@ -28,7 +28,9 @@
                         </button>
                     {% endif %}
                     {% if url is defined %}
-                        <a href="{{ url }}" class="btn btn-primary">{{ anchor_text|raw }}</a>
+                        <a href="{{ url }}" class="btn btn-primary" {% if toggle is defined %}data-toggle="{{ toggle }}"{% endif %}>
+                            {{ anchor_text|raw }}
+                        </a>
                     {% endif %}
                 </div>
             {% endblock %}

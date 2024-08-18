@@ -19,7 +19,7 @@ class LicenceService
     }
     public function getCategory(User $user): int
     {
-        return $this->getCategoryByBirthDate($this->identityRepository->findMemberByUser($user)->getBirthDate());
+        return $this->getCategoryByBirthDate($this->identityRepository->findOneMemberByUser($user)->getBirthDate());
     }
 
     public function getCategoryByBirthDate(DateTimeInterface $birthDate): int

@@ -21,4 +21,6 @@ class NotificationDto
     public ?string $labelButton = null;
 
     public ?FormView $form = null;
+
+    public ?string $toggle = null;
 }
