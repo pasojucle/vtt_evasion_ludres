@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Identity;
-use App\Entity\Licence;
+use Error;
 use App\Entity\User;
+use App\Entity\Licence;
+use App\Entity\Identity;
+use App\Entity\Enum\IdentityKindEnum;
 use App\Repository\IdentityRepository;
+
 use Doctrine\ORM\EntityManagerInterface;
+use function PHPUnit\Framework\throwException;
 
 class IdentityService
 {
@@ -35,12 +39,7 @@ class IdentityService
     {
         $licence = $user->getLastLicence();
         return (Licence::CATEGORY_MINOR === $licence?->getCategory())
-        ? $this->identityRepository->findOneKinshipByUser($user)
-        : $this->identityRepository->findOneMemberByUser($user);
-    }
-
-    public function getMember(User $user): Identity
-    {
-        return $this->identityRepository->findOneMemberByUser($user);
+        ? $user->getKinshipIdentity()
+        : $user->getMemberIdentity();
     }
 }

@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Licence;
-use App\Entity\User;
-use App\Repository\IdentityRepository;
 use DateTime;
+use App\Entity\User;
 use DateTimeInterface;
+use App\Entity\Licence;
+use App\Service\IdentityService;
+use App\Repository\IdentityRepository;
 
 class LicenceService
 {
     public function __construct(
         private readonly SeasonService $seasonService,
-        private readonly IdentityRepository $identityRepository,
+        private readonly IdentityService $identityService,
     ) {
     }
     public function getCategory(User $user): int
     {
-        return $this->getCategoryByBirthDate($this->identityRepository->findOneMemberByUser($user)->getBirthDate());
+        return $this->getCategoryByBirthDate($user->getMemberIdentity()->getBirthDate());
     }
 
     public function getCategoryByBirthDate(DateTimeInterface $birthDate): int

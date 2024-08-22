@@ -318,6 +318,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return null;
     }
+
+    public function getMemberIdentity(): Identity|false
+    {
+        $criteria = Criteria::create()
+            ->andWhere(
+                Criteria::expr()->eq('kind', IdentityKindEnum::MEMBER),
+            )
+        ;
+
+        return $this->identities->matching($criteria)->first();
+    }
+
     
     public function getHealth(): ?Health
     {
