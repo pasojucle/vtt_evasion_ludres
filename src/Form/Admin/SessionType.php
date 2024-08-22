@@ -39,6 +39,7 @@ class SessionType extends AbstractType
                 'label' => false,
                 'multiple' => false,
                 'choices' => $this->getSeasonChoices(),
+                'autocomplete' => true,
                 'attr' => [
                     'class' => 'form-modifier',
                     'data-modifier' => 'admin_session_add',
