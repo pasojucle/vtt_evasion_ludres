@@ -27,6 +27,7 @@ class GetCurrentSeasonUsers
         $season = $this->request->getSession()->get('currentSeason');
 
         $licencesBySeason = [];
+        $licencesBySeason[$season] = [];
         /** @var Licence $licence */
         foreach ($this->licenceRepository->findAllByLastSeason() as $licence) {
             $licencesBySeason[$licence->getSeason()][$licence->getUser()->getId()] = $licence;

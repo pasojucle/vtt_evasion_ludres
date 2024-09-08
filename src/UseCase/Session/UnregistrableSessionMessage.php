@@ -42,7 +42,12 @@ class UnregistrableSessionMessage
             return 'Inscription impossible';
         }
 
-        if (!$this->checkSeasonLicence($userDto)) {
+        $currentSeason = $this->seasonService->getCurrentSeason();
+        if (! $this->registrationIsComplete($userDto, $currentSeason)) {
+            return 'Vous avez un dossier d\'inscription non finalisé. Vous terminer et valider votre inscription pour vous inscrir à une sortie';
+        }
+
+        if (!$this->checkSeasonLicence($userDto, $currentSeason)) {
             return $this->replaceKeywordsService->replace($userDto, $this->messageService->getMessageByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'));
         }
 
@@ -57,11 +62,10 @@ class UnregistrableSessionMessage
         return null;
     }
 
-    private function checkSeasonLicence(UserDto $user): bool
+    private function checkSeasonLicence(UserDto $user, int $currentSeason): bool
     {
         $requirementSeasonLicenceAtParam = $this->parameterService->getParameterByName('REQUIREMENT_SEASON_LICENCE_AT');
         $seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
-        $currentSeason = $this->seasonService->getCurrentSeason();
 
         $requirementSeasonLicenceAtParam['year'] = ($seasonStartAt['month'] <= $requirementSeasonLicenceAtParam['month']
             && $seasonStartAt['day'] <= $requirementSeasonLicenceAtParam['day'])
@@ -74,6 +78,15 @@ class UnregistrableSessionMessage
                 ? Licence::STATUS_WAITING_VALIDATE <= $user->lastLicence->status
                 : false;
         }
+        return true;
+    }
+
+    private function registrationIsComplete(UserDto $user, int $currentSeason): bool
+    {
+        if ($currentSeason === $user->lastLicence->season && Licence::STATUS_IN_PROCESSING === $user->lastLicence->status) {
+            return false;
+        }
+
         return true;
     }
 }

@@ -330,6 +330,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->identities->matching($criteria)->first();
     }
 
+    public function getKinshipIdentity(): Identity|false
+    {
+        $criteria = Criteria::create()
+            ->andWhere(
+                Criteria::expr()->eq('kind', IdentityKindEnum::KINSHIP),
+            )
+        ;
+
+        return $this->identities->matching($criteria)->first();
+    }
     
     public function getHealth(): ?Health
     {

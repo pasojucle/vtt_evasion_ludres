@@ -136,11 +136,13 @@ class ContentController extends AbstractController
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
-        $data = null;
-        if (null !== $user) {
-            $mainContact = $identityService->getMainContact($user);
-            $data = ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()];
-        }
+        $mainContact = (null !== $user)
+            ? $identityService->getMainContact($user)
+            : null;
+        
+        $data = ($mainContact) 
+            ? ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()]
+            : null;
 
         $form = $this->createForm(ContactType::class, $data);
         $form->handleRequest($request);

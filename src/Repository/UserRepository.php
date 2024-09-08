@@ -102,10 +102,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     private function addCriteriaWithNoSession(QueryBuilder $qb, int $bikeRideId): QueryBuilder
     {
         $usersWithSession = $this->getEntityManager()->createQueryBuilder()
-            ->select('user.id')
+            ->select('userwithsession.id')
             ->from(Session::class, 'session')
             ->join('session.cluster', 'cluster')
-            ->join('session.user', 'user')
+            ->join('session.user', 'userwithsession')
             ->join('cluster.bikeRide', 'bikeRide')
             ->andWhere(
                 (new Expr())->eq('bikeRide.id', ':bikeRideId')
@@ -363,14 +363,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaTestinInProgress(QueryBuilder &$qb, int $season): void
     {
-        $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
-        ->select('user')
-        ->from(User::class, 'user')
-        ->join('user.sessions', 'sessions')
-        ->groupBy('sessions.user')
-        ->andHaving(
-            $qb->expr()->lt($qb->expr()->count('sessions.id'), 3)
-        );
+        $usersWithSessions = $this->_em->createQueryBuilder()
+            ->select('userinprogress.id')
+            ->from(Session::class, 'sessionsinprogress')
+            ->join('sessionsinprogress.user', 'userinprogress')
+            ->groupBy('userinprogress.id')
+            ->andHaving(
+                $qb->expr()->lt($qb->expr()->count('sessionsinprogress.id'), 3)
+            );
 
         $qb
             ->leftjoin('u.sessions', 's')
@@ -380,7 +380,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $qb->expr()->gte('li.status', ':statusInprogress'),
                 $qb->expr()->orX(
                     $qb->expr()->isNull('s'),
-                    $qb->expr()->in('u', $usersWithSessions->getDQL())
+                    $qb->expr()->in('u.id', $usersWithSessions->getDQL())
                 )
             )
             ->setParameter('final', false)
