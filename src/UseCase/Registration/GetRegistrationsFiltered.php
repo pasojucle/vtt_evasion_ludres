@@ -36,6 +36,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
             'licence.status.new' => Licence::STATUS_NEW,
             'licence.status.renew' => Licence::STATUS_RENEW,
             'licence.status.waiting_renew' => Licence::STATUS_WAITING_RENEW,
+            'licence.status.in_processing' => Licence::STATUS_IN_PROCESSING,
         ];
     }
 

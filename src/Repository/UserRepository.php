@@ -389,6 +389,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
+    private function addCriteriaInProcessing(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->leftjoin('u.sessions', 's')
+            ->andWhere(
+                $qb->expr()->eq('li.final', ':final'),
+                $qb->expr()->eq('li.season', ':season'),
+                $qb->expr()->eq('li.status', ':statusInprocessing'),
+            )
+            ->setParameter('final', false)
+            ->setParameter('season', $season)
+            ->setParameter('statusInprocessing', Licence::STATUS_IN_PROCESSING)
+        ;
+    }
+
     private function addCriteriaTestinComplete(QueryBuilder &$qb, int $season): void
     {
         $qb
@@ -515,6 +530,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     Licence::STATUS_NEW => $this->addCriteriaNew($qb, $currentSeason),
                     Licence::STATUS_RENEW => $this->addCriteriaRenew($qb, $currentSeason),
                     Licence::STATUS_WAITING_RENEW => $this->addCriteriaWaitingRenew($qb, $currentSeason),
+                    Licence::STATUS_IN_PROCESSING => $this->addCriteriaInProcessing($qb, $currentSeason),
                     default => $this->addCriteriaRegistrationBySeason($qb, $currentSeason),
                 };
             }
