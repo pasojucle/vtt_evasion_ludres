@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Error;
+use Exception;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
-use Exception;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\File;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class MailerService
 {
@@ -58,13 +59,16 @@ class MailerService
             $content = $this->replaceKeywords->replace($user, $content, RegistrationStep::RENDER_FILE, $additionalParams);
         }
 
+        $error = [
+            'success' => false,
+            'message' => 'Adresse mail manquante ou erronnée',
+        ];
         try {
             $email = new Address($userEmail);
-        } catch (Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Adresse mail manquante ou erronnée',
-            ];
+        } catch (Exception) {
+            return $error;
+        } catch (Error) {
+            return $error;
         }
 
         $email = (new TemplatedEmail())
