@@ -11,6 +11,7 @@ use App\Entity\LicenceSwornCertification;
 use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\HistoryRepository;
+use App\Repository\LicenceRepository;
 use App\Repository\MembershipFeeAmountRepository;
 use App\Service\IndemnityService;
 use App\Service\LicenceService;
@@ -42,7 +43,8 @@ class LicenceDtoTransformer
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
         private IndemnityService $indemnityService,
         private ProjectDirService $projectDir,
-        private readonly LicenceService $licenceService
+        private readonly LicenceService $licenceService,
+        private readonly LicenceRepository $licenceRepository,
     ) {
         $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
     }
@@ -73,7 +75,7 @@ class LicenceDtoTransformer
             $licenceDto->isVae = $this->isVae($licence->isVae());
             $licenceDto->toValidate = $this->getToValidate($licence->getStatus());
             $licenceDto->isSeasonLicence = $licence->getSeason() === $currentSeason;
-            $licenceDto->amount = $this->getAmount($licence);
+            $licenceDto->amount = $this->getAmount($licence, $currentSeason);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
             $licenceDto->licenceSwornCertifications = $this->getLicenceSwornCertifications($licence);
             $licenceDto->isActive = $this->licenceService->isActive($licence);
@@ -172,7 +174,7 @@ class LicenceDtoTransformer
         }
     }
 
-    private function getAmount(Licence $licence): array
+    private function getAmount(Licence $licence, $currentSeason): array
     {
         $membershipFeeAmount = 0;
         $amount = null;
@@ -181,7 +183,7 @@ class LicenceDtoTransformer
         if ($licence->isFinal()) {
             /** @var User $user */
             $user = $licence->getUser();
-            $isNewMember = $this->isNewMember($user);
+            $isNewMember = $this->isNewMember($user, $currentSeason);
             $membershipFee = (null !== $licence->getCoverage() && null !== $licence->getAdditionalFamilyMember())
                 ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), $isNewMember, $licence->getAdditionalFamilyMember())
                 : null;
@@ -219,9 +221,11 @@ class LicenceDtoTransformer
         ];
     }
 
-    private function isNewMember(User $user): bool
-    {
-        return 2 > $user->getLicences()->count();
+    private function isNewMember(User $user, $currentSeason): bool
+    {        
+        $previousLicence = $this->licenceRepository->findOneByUserAndLastSeason($user);
+
+        return !$previousLicence || $currentSeason - 1 !== $previousLicence->getSeason() || !$previousLicence->isFinal() || Licence::STATUS_VALID > $previousLicence->getStatus();
     }
 
     private function getStatus(Licence $licence, int $currentSeason): int

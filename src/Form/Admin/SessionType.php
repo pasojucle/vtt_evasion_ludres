@@ -118,6 +118,7 @@ class SessionType extends AbstractType
         $seasonChoices = $this->seasonService->getSeasons();
 
         $seasonChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;
+        $seasonChoices['licence.status.in_processing'] = Licence::STATUS_IN_PROCESSING;
 
         return $seasonChoices;
     }

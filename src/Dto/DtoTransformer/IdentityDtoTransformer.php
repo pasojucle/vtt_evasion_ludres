@@ -95,7 +95,7 @@ class IdentityDtoTransformer
         $kinships = [IdentityKindEnum::KINSHIP->name, IdentityKindEnum::SECOND_CONTACT->name];
         $memberAddress = $identities[IdentityKindEnum::MEMBER->name]->address;
         foreach ($kinships as $kinship) {
-            if (array_key_exists($kinship, $identities) && null !== $identities[$kinship]) {
+            if (array_key_exists($kinship, $identities) && null === $identities[$kinship]->address) {
                 $identities[$kinship]->address = $memberAddress;
             }
         }
@@ -144,7 +144,9 @@ class IdentityDtoTransformer
                 if (1 === preg_match('#name|firstName#', $property)) {
                     $identityDto->fullName = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->fullName);
                 }
-
+                if ('address' === $property) {
+                    continue;
+                }
                 $identityDto->$property = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->$property);
             }
         }

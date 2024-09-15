@@ -14,7 +14,7 @@
         <div class="wrapper-body">
             <div class="block background-ligth">
                 <div class="block-body">
-                    <p class="alert-warning">{{ warning|raw }}</p>
+                    <div class="alert-warning">{{ warning|raw }}</div>
                     {% if user_id is defined %}
                         <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_id }) }}">Télécharger le dossier d'inscription</a>
                     {% endif %}

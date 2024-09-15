@@ -48,6 +48,7 @@ class UserDtoTransformer
         $userDto->secondKinship = (array_key_exists(IdentityKindEnum::SECOND_CONTACT->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::SECOND_CONTACT->name] : null;
         $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->prevLicence = $this->getPrevLicence($user);
+        $userDto->hasAlreadyBeenRegistered = $this->hasAlreadyBeenRegistered($user);
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
@@ -78,6 +79,8 @@ class UserDtoTransformer
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->seasons = $this->getSeasons($user->getLicences());
+        $sessionsTotal = $user->getSessions()->count();
+        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
 
         return $userDto;
     }
@@ -208,6 +211,14 @@ class UserDtoTransformer
             return null;
         }
         return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($user));
+    }
+
+    private function hasAlreadyBeenRegistered(User $user): bool
+    {
+        if (!$user->getId()) {
+            return false;
+        }
+        return !empty($this->licenceRepository->findByUserAndPeriod($user, 5));
     }
 
     private function getPermissions(User $user): ?string

@@ -49,6 +49,26 @@ class LicenceRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByUserAndPeriod(User $user, int $totalSeasons): array
+    {
+        return $this->createQueryBuilder('li')
+            ->andWhere(
+                (new Expr())->eq('li.user', ':user'),
+                (new Expr())->eq('li.status', ':status'),
+                (new Expr())->eq('li.final', ':isFinal'),
+                (new Expr())->gte('li.season', ':deadline'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('status', Licence::STATUS_VALID),
+                new Parameter('isFinal', true),
+                new Parameter('deadline', $this->request->getSession()->get('currentSeason') - ($totalSeasons + 1))
+            ]))
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     public function findAllByLastSeason(): array
     {
         $season = $this->request->getSession()->get('currentSeason');
