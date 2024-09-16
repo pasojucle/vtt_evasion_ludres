@@ -76,17 +76,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (isset($filters['status']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['status'], $matches)) {
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
-            if (isset($filters['season']) && is_string($filters['season']) && 1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches)) {
-                $this->addCriteriaBySeason($qb, (int) $matches[1]);
+            if (array_key_exists('season', $filters)) {
+
+                $season = (1 === (bool) preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches))
+                    ? (int) $matches[1]
+                    : $filters['season'];
+                match($season) {
+                    $this->seasonService::MIN_SEASON_TO_TAKE_PART => $this->addCriteriaGteSeason($qb),
+                    Licence::STATUS_IN_PROCESSING => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isFinalLicence),
+                    Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isFinalLicence), 
+                    default => $this->addCriteriaBySeason($qb, $season),
+                    
+                };
             }
-            if (array_key_exists('season', $filters) && $this->seasonService::MIN_SEASON_TO_TAKE_PART === $filters['season']) {
-                $this->addCriteriaGteSeason($qb);
-            }
-            if (array_key_exists('season', $filters) && Licence::STATUS_TESTING_IN_PROGRESS === $filters['season']) {
-                $currentSeason = $this->seasonService->getCurrentSeason();
-                $this->addCriteriaTestinInProgress($qb, $currentSeason);
-                $isFinalLicence = false;
-            }
+
             if (isset($filters['bikeRide'])) {
                 $this->addCriteriaWithNoSession($qb, (int) $filters['bikeRide']);
             }
@@ -97,6 +100,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         return $this->orderByASC($qb);
+    }
+
+    private function addCriteriaByLicenceStatus(QueryBuilder $qb, string $criteria, bool &$isFinalLicence): void
+    {
+        $currentSeason = $this->seasonService->getCurrentSeason();
+        $isFinalLicence = false;
+        $this->$$criteria($qb, $currentSeason);
     }
 
     private function addCriteriaWithNoSession(QueryBuilder $qb, int $bikeRideId): QueryBuilder
@@ -363,7 +373,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaTestinInProgress(QueryBuilder &$qb, int $season): void
     {
-        $usersWithSessions = $this->_em->createQueryBuilder()
+        $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
             ->select('userinprogress.id')
             ->from(Session::class, 'sessionsinprogress')
             ->join('sessionsinprogress.user', 'userinprogress')
