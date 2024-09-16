@@ -92,7 +92,7 @@ class GetList
         return null;
     }
 
-    private function getUserNotifications(array $notificationShowOn): array
+    private function getUserNotifications(array $notificationsConsumed): array
     {
         if (str_contains($this->routeInfos['_route'], 'admin')) {
             return [null, []];
@@ -100,7 +100,7 @@ class GetList
 
         $this->userDto = $this->userDtoTransformer->fromEntity($this->user);
         if (!$this->userDto->lastLicence->isActive) {
-            return $this->getPublicNotifications($notificationShowOn);
+            return $this->getPublicNotifications($notificationsConsumed);
         }
         $notifications = [];
         $this->addSurveys($notifications);
@@ -110,13 +110,16 @@ class GetList
         $this->addNewSeasonReRgistrationEnabled($notifications);
 
         $modalNotifications = $this->notificationRepository->findByUser($this->user, $this->userDto->member->age);
-        if (empty($modalNotifications) && empty($notificationShowOn)) {
+        if (empty($modalNotifications) && empty($notificationsConsumed)) {
             $total = count($notifications);
-            $modalNotifications[] = (1 < $total)
+            $notification = (1 < $total)
                 ? $this->notificationService->getPendingNotifications($total)
                 : array_shift($notifications);
+            if ($notification) {
+                $modalNotifications[] = $notification;
+            }
         }
-        $modalNotification = $this->getNotification($notificationShowOn, $modalNotifications);
+        $modalNotification = $this->getNotification($notificationsConsumed, $modalNotifications);
 
         return [
             ($modalNotification) ? $this->notificationDtoTransformer->fromEntity($modalNotification) : null,
