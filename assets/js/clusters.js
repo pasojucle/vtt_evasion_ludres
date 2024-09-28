@@ -1,4 +1,5 @@
-import { openModal, closeModal } from './modal.js'
+import { openModal, closeModal } from './modal.js';
+import Routing from 'fos-router';
 
 document.addEventListener("DOMContentLoaded", (event) => {
     getClusters()
@@ -96,13 +97,14 @@ class Cluster {
 }
 
 class Attendance {
-    
     constructor(cluster, btnEl) {
         this.cluster = cluster;
         this.element = btnEl;
         this.session = btnEl.dataset.session;
         this.btnLight = {'btn':'btn-light', 'icon': 'fa-check'};
         this.btnSuccess = {'btn':'btn-success', 'icon': 'fa-check-circle'};
+        this.btnDanger = {'btn':'btn-danger', 'icon': 'fa-question-circle'};
+        this.btnInitial = (parseInt(btnEl.dataset.mustProvideRegistration) === 1) ? this.btnDanger : this.btnLight;
 
         this.addEventListener();
     }
@@ -112,7 +114,7 @@ class Attendance {
     adminSessionPresent = (event) => {
         event.preventDefault();
         this.btnEl = (event.tagName === 'A') ? event.target : event.target.closest('a');
-        this.btnClass = this.btnEl.classList.contains('btn-success') ? this.btnSuccess : this.btnLight;
+        this.btnClass = this.btnEl.classList.contains('btn-success') ? this.btnSuccess : this.btnInitial;
         this.iconEl = this.btnEl.querySelector('i');
         this.toggleSessionPresent()
         const data = new FormData();
@@ -126,7 +128,7 @@ class Attendance {
         .catch(() => this.toggleSessionPresent())
     }
     toggleSessionPresent = () => {
-        this.newBtnClass = [this.btnSuccess, this.btnLight].find(el => el !== this.btnClass);
+        this.newBtnClass = [this.btnSuccess, this.btnInitial].find(el => el !== this.btnClass);
         this.element.classList.remove(this.btnClass.btn);
         this.element.classList.add(this.newBtnClass.btn);
 

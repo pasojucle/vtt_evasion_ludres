@@ -36,11 +36,12 @@
     </div>
     {% if not cluster.isComplete %}
         {% if not session.userIsOnSite %}
-            <a href="{{ path('admin_session_present') }}" data-session="{{ session.id }}"
-            class="btn {%if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Absent">
-            <i class="{%if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-check{% endif %}"></i></a>
+            <a href="{{ path('admin_session_present') }}" data-session="{{ session.id }}" data-must-provide-registration="{{ user.mustProvideRegistration }}"
+            class="btn {% if user.mustProvideRegistration %}btn-danger{% else %}btn-light{% endif %} admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Absent">
+            <i class="{% if user.mustProvideRegistration %}fas fa-question-circle{% else %}fas fa-check{% endif %}"></i></a>
         {% else %}
-            <a href="{{ path('admin_session_present') }}" data-session="{{ session.id }}" class="btn btn-success admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Présent"><i class="fas fa-check-circle"></i></a>
+            <a href="{{ path('admin_session_present') }}" data-session="{{ session.id }}" data-must-provide-registration="{{ user.mustProvideRegistration }}"
+            class="btn btn-success admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Présent"><i class="fas fa-check-circle"></i></a>
         {% endif %}
     {% else %}
         {% if session.userIsOnSite %}
