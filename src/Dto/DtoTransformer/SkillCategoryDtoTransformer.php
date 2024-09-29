@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Dto\DtoTransformer;
+
+
+use App\Dto\SkillCategoryDto;
+use App\Entity\SkillCategory;
+
+class SkillCategoryDtoTransformer
+{
+    public function fromEntity(?SkillCategory $category): SkillCategoryDto
+    {
+        $categoryDto = new SkillCategoryDto();
+        if ($category) {
+            $categoryDto->id = $category->getId();
+            $categoryDto->name = $category->getName();
+        }
+
+        return $categoryDto;
+    }
+
+    public function fromEntities(array $skillEntities): array
+    {
+        $skills = [];
+        foreach ($skillEntities as $skillEntity) {
+            $skills[] = $this->fromEntity($skillEntity);
+        }
+
+        return $skills;
+    }
+}

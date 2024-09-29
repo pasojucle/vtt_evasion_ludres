@@ -35,7 +35,7 @@ const handleHideModal = () => {
     });
 }
 
-const showModal = async(route, modalType) => {
+export const showModal = async(route, modalType) => {
     await fetch(route, {
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -68,7 +68,10 @@ export const buildContent = (text, modalType) => {
 
 export const openModal = (text, modalType) => {
     const htmlElement = document.createRange().createContextualFragment(text);
+        console.log(htmlElement)
     buildContentModal(htmlElement).then(() => {
+        const modal = document.querySelector('.modal');
+        console.log('modal', modal);
         const modalHeader = document.querySelector('.modal-header');
         if (modalHeader) {
             modalHeader.classList.add('bg-'+modalType);
@@ -88,6 +91,7 @@ export const openModal = (text, modalType) => {
 const buildContentModal = (htmlElement) => {
     return new Promise((resolve, reject) => {
         const modal = document.querySelector('.modal');
+        console.log('modal', modal);
         resolve(modal.replaceWith(htmlElement));
     });
 }

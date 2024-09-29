@@ -1,4 +1,5 @@
 const { async } = require("regenerator-runtime");
+import Routing from 'fos-router';
 
 export class Form {
     formData;

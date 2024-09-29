@@ -1,4 +1,5 @@
 import '../styles/slideshow.scss';
+import Routing from 'fos-router';
 
 class Slideshow extends HTMLDivElement {
     images = [];

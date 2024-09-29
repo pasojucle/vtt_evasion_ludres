@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compétences{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <div class="wrapper-title">
+        <h1>Gestion des compétences</h1>
+        <div class="tool-group">
+            <a href="{{ path('admin_users', {'filtered': 1}) }}"
+                class="btn btn-ico" title="Retour à la liste des adhérents">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+    </div>
+    <div class="wrapper-body">
+        <div {{ vue_component('SelectFilter', {'className': 'skill_category'}) }}></div>
+        {# <a href="{{ path('admin_level_edit') }}" class="btn btn-primary" title="Ajouter un niveau"><i class="fas fa-plus"></i> Ajouter un niveau</a> #}
+        <ul class="list-group" {{ vue_component('Skill') }}>
+            
+        </ul>
+    </div>
+</div>
+{% endblock %}

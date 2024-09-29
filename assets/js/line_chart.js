@@ -1,3 +1,5 @@
+import Routing from 'fos-router';
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.line-chart').forEach(canvas => {
         new LineChart(canvas);

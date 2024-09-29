@@ -33,16 +33,16 @@ final class Version20240720050103 extends AbstractMigration
         $this->addSql('UPDATE identity SET kind = \'second_contact\' WHERE type = 3');
         $this->addSql('ALTER TABLE identity DROP type');
 
-        $this->addSql('ALTER TABLE order_header ADD status_tmp  ENUM(\'in_progress\', \'ordered\', \'valided\', \'completed\', \'canceled\') NOT NULL COMMENT \'(DC2Type:order_status)\'');
+        $this->addSql('ALTER TABLE order_header ADD status_tmp  ENUM(\'in_progress\', \'ordered\', \'valided\', \'completed\', \'canceled\') NOT NULL COMMENT \'(DC2Type:OrderStatus)\'');
         $this->addSql('UPDATE order_header SET status_tmp = \'in_progress\' WHERE status = 1');
         $this->addSql('UPDATE order_header SET status_tmp = \'ordered\' WHERE status = 2');
         $this->addSql('UPDATE order_header SET status_tmp = \'valided\' WHERE status = 3');
         $this->addSql('UPDATE order_header SET status_tmp = \'completed\' WHERE status = 4');
         $this->addSql('UPDATE order_header SET status_tmp = \'canceled\' WHERE status = 9');
         $this->addSql('ALTER TABLE order_header DROP status');
-        $this->addSql('ALTER TABLE order_header CHANGE status_tmp status ENUM(\'in_progress\', \'ordered\', \'valided\', \'completed\', \'canceled\') NOT NULL COMMENT \'(DC2Type:order_status\'');
+        $this->addSql('ALTER TABLE order_header CHANGE status_tmp status ENUM(\'in_progress\', \'ordered\', \'valided\', \'completed\', \'canceled\') NOT NULL COMMENT \'(DC2Type:OrderStatus\'');
     
-        $this->addSql('ALTER TABLE session ADD practice ENUM(\'vtt\', \'vttae\', \'roadbike\', \'gravel\', \'walking\') NOT NULL COMMENT \'(DC2Type:practice)\', ADD availability_tmp ENUM(\'registered\', \'available\', \'unavailable\') DEFAULT NULL COMMENT \'(DC2Type:availability)\'');
+        $this->addSql('ALTER TABLE session ADD practice ENUM(\'vtt\', \'vttae\', \'roadbike\', \'gravel\', \'walking\') NOT NULL COMMENT \'(DC2Type:Practice)\', ADD availability_tmp ENUM(\'registered\', \'available\', \'unavailable\') DEFAULT NULL COMMENT \'(DC2Type:Availability)\'');
         $this->addSql('UPDATE session SET practice = \'vtt\' WHERE bike_kind = 1');
         $this->addSql('UPDATE session SET practice = \'vttae\' WHERE bike_kind = 2');
         $this->addSql('UPDATE session SET practice = \'roadbike\' WHERE bike_kind = 3');
@@ -52,7 +52,7 @@ final class Version20240720050103 extends AbstractMigration
         $this->addSql('UPDATE session SET availability_tmp = \'available\' WHERE availability = 2');
         $this->addSql('UPDATE session SET availability_tmp = \'unavailable\' WHERE availability = 3');
         $this->addSql('ALTER TABLE session DROP bike_kind, DROP availability');
-        $this->addSql('ALTER TABLE session CHANGE availability_tmp availability ENUM(\'registered\', \'available\', \'unavailable\') DEFAULT NULL COMMENT \'(DC2Type:availability)\'');
+        $this->addSql('ALTER TABLE session CHANGE availability_tmp availability ENUM(\'registered\', \'available\', \'unavailable\') DEFAULT NULL COMMENT \'(DC2Type:Availability)\'');
     }
 
     public function down(Schema $schema): void

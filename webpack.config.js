@@ -1,6 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
 const { CKEditorTranslationsPlugin } = require( '@ckeditor/ckeditor5-dev-translations' );
 const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
+const FosRouting = require('fos-router/webpack/FosRouting');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -77,13 +78,14 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
     .autoProvideVariables({
-        moment : 'moment'
+        moment : 'moment',
     })
     .addPlugin( new CKEditorTranslationsPlugin( {
         // See https://ckeditor.com/docs/ckeditor5/latest/features/ui-language.html
         language: 'fr',
         addMainLanguageTranslationsToAllAssets: true,
     } ) )
+    .addPlugin(new FosRouting())
     // Use raw-loader for CKEditor 5 SVG files.
     .addRule( {
         test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,

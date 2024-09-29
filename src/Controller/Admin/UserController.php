@@ -49,6 +49,7 @@ class UserController extends AbstractController
             'parameters' => $this->entityManager->getRepository(Parameter::class)->findByParameterGroupName('USER'),
             'routes' => [
                 ['name' => 'admin_levels', 'label' => 'Niveaux'],
+                ['name' => 'admin_skill_list', 'label' => 'Compétences'],
                 ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
             ],
             'messages' => $messageService->getMessagesBySectionName('USER'),

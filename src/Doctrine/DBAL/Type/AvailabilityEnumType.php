@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Doctrine\DBAL\Type;
 
 use App\Entity\Enum\AvailabilityEnum;
-use App\Entity\Enum\PracticeEnum;
+
 
 class AvailabilityEnumType extends EnumType
 {

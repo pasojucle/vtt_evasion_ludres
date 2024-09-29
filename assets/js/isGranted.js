@@ -1,21 +1,25 @@
+import Routing from 'fos-router';
+
 document.addEventListener("DOMContentLoaded", function(event) {
     const securityEl = document.querySelector('.security');
     if (securityEl) {
+        let hidden;
+        let visibilityChange;
         if (document.hidden !== undefined) { // Opera 12.10 and Firefox 18 and later support
-        hidden = "hidden";
-        visibilityChange = "visibilitychange";
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
         } else if (document.mozHidden !== undefined) {
-        hidden = "mozHidden";
-        visibilityChange = "mozvisibilitychange";
+            hidden = "mozHidden";
+            visibilityChange = "mozvisibilitychange";
         } else if (document.msHidden !== undefined) {
-        hidden = "msHidden";
-        visibilityChange = "msvisibilitychange";
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
         } else if (document.webkitHidden !== undefined) {
-        hidden = "webkitHidden";
-        visibilityChange = "webkitvisibilitychange";
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
         } else if (document.oHidden !== undefined) {
-        hidden = "oHidden";
-        visibilityChange = "ovisibilitychange";
+            hidden = "oHidden";
+            visibilityChange = "ovisibilitychange";
         }
 
         document.addEventListener(visibilityChange, function(event) {
