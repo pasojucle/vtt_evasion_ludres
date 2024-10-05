@@ -50,6 +50,7 @@ class UserController extends AbstractController
             'routes' => [
                 ['name' => 'admin_levels', 'label' => 'Niveaux'],
                 ['name' => 'admin_skill_list', 'label' => 'Compétences'],
+                ['name' => 'admin_skill_category_list', 'label' => 'Catégories de compétences'],
                 ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
             ],
             'messages' => $messageService->getMessagesBySectionName('USER'),

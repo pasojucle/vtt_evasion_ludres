@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compétences{% endblock %}
+{% block title %}Catégories de compétences{% endblock %}
 
 {% block body %}
 <div class="wrapper">
     <div class="wrapper-title">
-        <h1>Gestion des compétences</h1>
+        <h1>Gestion des catégories de compétences</h1>
         <div class="tool-group">
             <a href="{{ path('admin_users', {'filtered': 1}) }}"
                 class="btn btn-ico" title="Retour à la liste des adhérents">
@@ -15,7 +15,7 @@
     </div>
     <div class="wrapper-body">
         <div {{ vue_component('SelectFilter', {'className': 'skill_category'}) }}></div>
-        <ul class="list-group" {{ vue_component('Skill') }}>
+        <div {{ vue_component('SkillCategory') }}>
             <div class="loader-container">
                 <div class="loader"></div>
             </div>
