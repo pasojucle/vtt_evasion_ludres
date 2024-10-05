@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Entity\Licence;
-use App\Entity\Notification;
-use App\Entity\OrderHeader;
-use App\Entity\Session;
-use App\Entity\Survey;
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
+use App\Entity\Survey;
+use App\Entity\Licence;
+use App\Entity\Session;
+use App\Entity\OrderHeader;
+use App\Entity\Notification;
+use App\Entity\RegistrationStep;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -26,6 +27,7 @@ class NotificationService
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ReplaceKeywordsService $replaceKeywordsService,
     ) {
     }
 
@@ -102,15 +104,17 @@ class NotificationService
         if (is_int($session)) {
             $session = $this->entityManager->getRepository(Session::class)->find($session);
         }
-        $content = ($session->getAvailability())
-        ? '<p>Votre disponibilité à la sortie %s du %s a bien été prise en compte.</p><p> En cas de changement, il est impératif de se modifier sa disponibilité (voir dans Mon programme perso et faire "Modifier)"</p>'
-        : '<p>Votre inscription à la sortie %s du %s a bien été prise en compte.</p><p> Si vous ne pouvez plus participez pas à cette sortie, il est impératif de se désinsrire (voir dans Mon programme perso et faire "Se désinscrire)"</p>';
-
+        $messageName = ($session->getAvailability()) ? 'NEW_SESSION_FRAMER' : 'NEW_SESSION_MEMBER';
+        $content = $this->messageService->getMessageByName($messageName);
         $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
+        $additionalParams = [
+            '{{ rando }}' => sprintf('%s du %s', $bikeRideDto->title, $bikeRideDto->period),
+        ];
+
         return [
             'index' => sprintf('Session_%s', $session->getId()),
             'title' => 'Inscription à une sortie',
-            'content' => sprintf($content, $bikeRideDto->title, $bikeRideDto->period),
+            'content' => $this->replaceKeywordsService->replaceWhithParams($content, $additionalParams),
             'modalLink' => $this->getModalLink('Session', $session->getId()),
         ];
     }

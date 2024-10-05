@@ -38,6 +38,11 @@ class ReplaceKeywordsService
         return $content;
     }
 
+    public function replaceWhithParams(string $content, array $parrams) {
+        $keyWords = $this->getKeyWords($content);
+        return str_replace($keyWords, $parrams, $content);
+    }
+
     private function createPageBreak(string $content): string
     {
         $pages = preg_split('#{{ saut_page }}#', $content);
