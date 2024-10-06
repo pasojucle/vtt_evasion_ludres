@@ -8,14 +8,14 @@ use App\Dto\SkillDto;
 use App\Entity\Skill;
 use App\Service\LevelService;
 
-class SkillDtoTransformer
+class SkillDtoTransformer implements DtoTransformerInterface
 {
     public function __construct(
         private readonly LevelService $levelService,
     ) {
     }
 
-    public function fromEntity(?Skill $skill): SkillDto
+    public function fromEntity($skill): SkillDto
     {
         $skillDto = new SkillDto();
         if ($skill) {

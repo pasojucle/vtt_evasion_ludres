@@ -1,0 +1,7 @@
+{% if message is defined %}
+    <div>{{ message|raw }}</div>
+{% endif %}
+{% for field in form %}
+    <div>{{ form_row(field) }}</div>
+{% endfor %}
+{{ form_rest(form) }}

@@ -1,4 +1,6 @@
 <template>
+    <a class="btn btn-primary" v-bind:href="path('add')" @click.prevent="handle($event)" title="Ajouter"> Ajouter</a>
+
     <li class="list-group-item" v-for="skill in store.listFiltered('skill', 'category.id')" :key="skill.id">
         <div v-html="skill.content"></div>
         <div class="dropdown">
@@ -20,7 +22,7 @@
 
 <script>
 
-import { store } from './store.js'
+import { store } from './store.js';
 
 import Routing from 'fos-router';
 import Edit from './Edit.vue';
@@ -38,8 +40,9 @@ export default {
         Edit
     },
     methods: {
-        path(action, skill) {
-            return Routing.generate(`api_skill_${action}`, {'id': skill.id});
+        path(action, skill = null) {
+            const params = (skill) ? {'id': skill.id} : null;
+            return Routing.generate(`api_skill_${action}`, params);
         },
         async handle(event) {
             this.route = event.target.href;

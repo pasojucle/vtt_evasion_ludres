@@ -1,5 +1,6 @@
 import { openModal, closeModal } from './modal.js';
 import Routing from 'fos-router';
+import { checkStatus, isJsonResponse } from './fetch.js'
 
 document.addEventListener("DOMContentLoaded", (event) => {
     getClusters()
@@ -146,19 +147,4 @@ class Attendance {
         }
         totalEl.textContent = total;
     }
-}
-
-const checkStatus = (response) => {
-    if(response.status !== 500) {
-         return response;    
-    }
-    throw new Error('Something went wrong.');    
-}
-
-const isJsonResponse = (response) => {
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-         return response;    
-    }
-    throw new Error('Something went wrong.');    
 }

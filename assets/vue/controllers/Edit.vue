@@ -1,6 +1,6 @@
 <template>
-    <div class="modal" :class="{ 'fade': edit}" tabindex="-1" role="dialog">           
-        <div class="modal-dialog" :class="{ 'modal-open': edit, size: size}" role="document">
+    <div class="modal" :class="{'fade': edit}" tabindex="-1" role="dialog">           
+        <div class="modal-dialog" :class="{ 'modal-open': edit, size: size }" role="document">
             <div v-if="loaded" class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" @click="hide" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -10,7 +10,7 @@
                     <div v-html="form.elements" class="modal-body"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" @click="hide">Annuler</button>
-                        <button type="submit" class="btn btn-primary">{{ form.submit }}</button>
+                        <button type="submit" class="btn" :class="theme">{{ form.submit }}</button>
                     </div>
                 </form>
             </div>
@@ -21,6 +21,7 @@
 <script>
 
 import { store } from './store.js'
+import { checkStatus, isJsonResponse } from './../../js/fetch.js'
 
 export default {
     props: {
@@ -35,6 +36,7 @@ export default {
         return {
             title: null,
             content: null,
+            theme: null,
             form: {},
             loaded: false,
             store,
@@ -44,15 +46,13 @@ export default {
     methods: {
         async onLoad() {           
             await fetch(this.route)
-            .then((response) => {
-                if (response.status !== 500) {
-                    return response.json();
-                }
-                throw new Error('Something went wrong.');    
-            })
+            .then(checkStatus)
+            .then(isJsonResponse)
+            .then((response) => response.json())
             .then((json)=> {
                 this.form = json.form;
                 this.title = json.title;
+                this.theme = json.theme;
                 this.loaded = true;
             });
         },
@@ -62,16 +62,13 @@ export default {
                 method: 'POST',
                 body : new FormData(form),
             })
-            .then((response) => {
-                if (response.status !== 500) {
-                    return response.json();
-                }
-                throw new Error('Something went wrong.');    
-            })
+            .then(checkStatus)
+            .then(isJsonResponse)
+            .then((response) => response.json())
             .then((json)=> {
                 if (json.success) {
                     store.update(json.data);
-                   this.hide(); 
+                    this.hide(); 
                 }
                 if (json.form) {
                     this.form = json.form;

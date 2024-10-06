@@ -8,9 +8,9 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\SkillCategoryDto;
 use App\Entity\SkillCategory;
 
-class SkillCategoryDtoTransformer
+class SkillCategoryDtoTransformer implements DtoTransformerInterface
 {
-    public function fromEntity(?SkillCategory $category): SkillCategoryDto
+    public function fromEntity($category): SkillCategoryDto
     {
         $categoryDto = new SkillCategoryDto();
         if ($category) {
