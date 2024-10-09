@@ -7,9 +7,23 @@
             <img src="./logos/ffvelo-logo-square-150x150.png" alt="ffvelo"  style="height:50px; width: 50px">
         </div>
         <div style="margin-top: 30px">
-            <h2>Cde {{ order.id }} du {{ order.createdAt }} : {{ order.user.member.name }} {{ order.user.member.firstName }}</h2>
+            <h2>Cde {{ order.id }} du {{ order.createdAt }}</h2>
             <br>
-
+            <table class="table-fixed minimize">
+                <tr>
+                    <td></td>
+                    <td class="align-left" colspan="3"><b>{{ order.user.member.fullName }}</b></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="align-left" colspan="3">{{ order.user.member.address.street }} - {{ order.user.member.address.postalCode }} {{ order.user.member.address.town }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="align-left" colspan="3">{{ order.user.member.phone }} - {{ order.user.mainEmail }}</td>
+                </tr>
+            </table>
+            <br>
             <table class="table-fixed">
                 <tr>
                     <th class="align-top" style="height: 60px"></th>
@@ -47,6 +61,6 @@
         <div style="margin-top: 50px">{{ message|raw }}</div>
         <footer>
             <p>VTT EVASION LUDRES - Bureau des Associations - Hôtel de Ville - BP 90072 - 54710 LUDRES</p>
-            <p> 06 27 22 97 01 - contact@vttevasionludres.fr</p>
+            <p>contact@vttevasionludres.fr</p>
         </footer>
 {% endblock %}
