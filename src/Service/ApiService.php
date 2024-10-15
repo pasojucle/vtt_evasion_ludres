@@ -6,12 +6,14 @@ namespace App\Service;
 
 use ReflectionClass;
 use Twig\Environment;
+use function Symfony\Component\String\u;
 use Symfony\Component\Form\FormInterface;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Dto\DtoTransformer\DtoTransformerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use function Symfony\Component\String\u;
+use Doctrine\ORM\PersistentCollection;
 
 class ApiService
 {
@@ -23,7 +25,7 @@ class ApiService
         
     }
 
-    public function renderModal(FormInterface $form, string $title, string $submit, ?string $message = null): JsonResponse
+    public function renderModal(FormInterface $form, string $title, string $submit, ?string $message = null, ?array $components = null): JsonResponse
     {
         return new JsonResponse([
             'form' => [
@@ -31,6 +33,7 @@ class ApiService
                 'elements' => $this->twig->render('component/modal.html.twig',[
                     'form' => $form->createView(),
                     'message' => $message,
+                    'components' => $components,
                 ]),
                 'submit' => $submit,
             ],
@@ -39,7 +42,7 @@ class ApiService
         ]);
     }
 
-    public function createForm(Request $request, string $type, object $entity): FormInterface
+    public function createForm(Request $request, string $type, ?object $entity): FormInterface
     {
         return $this->formFactory->create($type, $entity, [
             'action' => $request->getRequestUri(),
@@ -52,10 +55,19 @@ class ApiService
             'success' => true, 
             'data' => [
                 'deleted' => $isDeleted,
-                'entity' => U((new ReflectionClass($entity))->getShortName())->snake(),
+                'entity' => ($entity instanceof PersistentCollection) 
+                    ? $this->getNameFromCollection($entity)
+                    : U((new ReflectionClass($entity))->getShortName())->snake(),
                 'value' => $transformer->fromEntity($entity),
                 'sort' => $sort,
             ],
         ]);
+    }
+
+    private function getNameFromCollection(PersistentCollection $collection): string
+    {
+        /** @var AssociationMapping&ToManyAssociationMapping $mapping */
+        $mapping = $collection->getMapping();
+        return $mapping->joinTable->name;
     }
 }

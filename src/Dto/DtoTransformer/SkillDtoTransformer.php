@@ -7,6 +7,7 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\SkillDto;
 use App\Entity\Skill;
 use App\Service\LevelService;
+use Doctrine\Common\Collections\Collection;
 
 class SkillDtoTransformer implements DtoTransformerInterface
 {
@@ -28,7 +29,7 @@ class SkillDtoTransformer implements DtoTransformerInterface
         return $skillDto;
     }
 
-    public function fromEntities(array $skillEntities): array
+    public function fromEntities(array|Collection $skillEntities): array
     {
         $skills = [];
         foreach ($skillEntities as $skillEntity) {
@@ -49,6 +50,7 @@ class SkillDtoTransformer implements DtoTransformerInterface
     private function GetLevel(Skill $skill): array
     {
         return [
+            'id' => $skill->getLevel()->getId(),
             'title' => $skill->getLevel()->getTitle(),
             'color' => $this->levelService->getColors($skill->getLevel()->getColor())
         ];

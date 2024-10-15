@@ -16,7 +16,7 @@ use App\Dto\DtoTransformer\SkillCategoryDtoTransformer;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route(path: '/api/SkillCategory', name: 'api_skill_category_')]
+#[Route(path: '/api/skillCategory', name: 'api_skill_category_')]
 class SkillCategoryController extends AbstractController
 {
     public function __construct(

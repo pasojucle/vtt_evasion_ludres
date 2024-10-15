@@ -7,8 +7,10 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\LevelDto;
 use App\Entity\Level;
 use App\Service\LevelService;
+use Doctrine\Common\Collections\Collection;
+use App\Dto\DtoTransformer\DtoTransformerInterface;
 
-class LevelDtoTransformer
+class LevelDtoTransformer implements DtoTransformerInterface
 {
     public function __construct(
         private readonly LevelService $levelService
@@ -17,10 +19,11 @@ class LevelDtoTransformer
         
     }
 
-    public function fromEntity(?Level $level): LevelDto
+    public function fromEntity($level): LevelDto
     {
         $levelDto = new LevelDto();
         if ($level) {
+            $levelDto->id = $level->getId();
             $levelDto->title = $level->getTitle();
             $levelDto->type = $level->getType();
             $levelDto->entity = $level;
@@ -29,5 +32,16 @@ class LevelDtoTransformer
         }
 
         return $levelDto;
+    }
+
+
+    public function fromEntities(array|Collection $levelEntities): array
+    {
+        $levels = [];
+        foreach ($levelEntities as $levelEntity) {
+            $levels[] = $this->fromEntity($levelEntity);
+        }
+
+        return $levels;
     }
 }

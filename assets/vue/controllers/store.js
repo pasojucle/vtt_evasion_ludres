@@ -3,14 +3,8 @@ import Routing from 'fos-router';
 
 
 export const store = reactive({
-  list: {
-    'skill': [],
-    'skillCategory': [],
-  },
-  filter: {
-    needle: null,
-    checked: false
-  },
+  list: {},
+  filter: {},
   async getList(entity, params = {}) {
     await fetch(Routing.generate(`api_${entity}_list`, params), {
       method: "GET", 
@@ -36,33 +30,42 @@ export const store = reactive({
         this.update(object);
     });
   },
-  update(object) {
-    if (undefined !== this.list[object.entity]) {
-      const index = this.list[object.entity].findIndex(item => {
-        return (object.value.id === item.id)
+  update(data) {
+    console.log('update', data)
+    if (undefined !== this.list[data.entity]) {
+      const index = this.list[data.entity].findIndex(item => {
+        return (data.value.id === item.id)
       })
-      if (-1 !== index) {
-        this.updateList(object.value, object.entity, index);
-        this.list[object.entity].sort(this[object.sort]);
-        return;
+      console.log('index', index, data.value);
+      switch(true) {
+        case -1 === index:
+          console.log('add')
+          this.list[data.entity].push(data.value);
+          break;
+        case data.deleted:
+          console.log('delete')
+          this.list[data.entity].splice(index, 1);
+          break;
+        default:
+          console.log('update')
+          this.list[data.entity].splice(index, 1, data.value)
       }
-      this.list[object.entity].push(object.value);
-      this.list[object.entity].sort(this[object.sort]);
+
+      this.list[data.entity].sort(this[data.sort]);
     }
     console.log('update list', this.list)
   },
-  updateList(data, entity, index) {
-    if (-1 < index) {
-      this.list[entity].splice(index, 1, data);
-      return;
-    }
-    this.list[entity].push(data);
-  },
-  listFindById(entity, entityId) {
-    console.log('listFindById', entityId, this.list[entity])
-    return this.list[entity].find(({id}) => id === parseInt(entityId));
-  },
   listFiltered(entity, fields = null) {
+    let list = this.list[entity];
+    Object.entries(this.filter).forEach(([name, value]) => {
+      if (undefined !== value) {
+        list = ('name' === name) 
+          ? list.filter(item => this.resolve(name, item) === value)
+          : list.filter(item => this.resolve(name, item).id === value);
+      }
+    })
+
+    return list;
     if (null === this.filter.needle || '' === this.filter.needle) {
       return this.list[entity];
     }
@@ -74,8 +77,36 @@ export const store = reactive({
     return this.list[entity].filter(item => item.name.toLowerCase().includes(this.filter.needle.toLowerCase()));
   },
   resolve(path, obj) {
+    console.log(path);
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
     }, obj || self)
-}
+  },
+  nameASC(a, b) {
+    const nameA = a.name.toUpperCase();
+    const nameB = b.name.toUpperCase();
+  
+    return nameA.localeCompare(nameB);
+  },
+  idASC(a, b) {
+    const nameA = a.id;
+    const nameB = b.id;
+  
+    return nameA - nameB;
+  },
+  toSring(entity) {
+    let string;
+    switch(true) {
+        case undefined !== entity.title:
+            string = entity.title;
+            break;
+        case undefined !== entity.content:
+            const htmlElement = document.createRange().createContextualFragment(entity.content);
+            string = htmlElement.firstChild.innerText;
+            break;
+        default:
+            string = entity.name;
+    }
+    return string;
+  }
 })

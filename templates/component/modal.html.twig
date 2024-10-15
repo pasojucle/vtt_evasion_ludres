@@ -1,6 +1,9 @@
 {% if message is defined %}
     <div>{{ message|raw }}</div>
 {% endif %}
+{% for component in components %}
+    <div {{ vue_component(component.name, component.params) }}></div>
+{% endfor %}
 {% for field in form %}
     <div>{{ form_row(field) }}</div>
 {% endfor %}

@@ -102,6 +102,11 @@ class MenuService
                 'role' => 'ROLE_USER',
             ],
             [
+                'label' => 'Mon carnet de progression',
+                'route' => 'user_account',
+                'role' => 'ROLE_USER',
+            ],
+            [
                 'label' => 'Mes commandes',
                 'route' => 'user_orders',
                 'role' => 'PRODUCT_LIST',

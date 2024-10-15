@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evaluations{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <div class="wrapper-title">
+        <h1>Evaluations du groupe {{ cluster.title }}</h1>
+        <div class="tool-group">
+            <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': cluster.bikeRide.id}) }}"
+                class="btn btn-ico" title="Retour à la rando">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+    </div>
+    <div class="wrapper-body">
+        {# <div {{ vue_component('SelectFilter', {'className': 'cluster_skill'}) }}></div> #}
+        <ul class="list-group" {{ vue_component('ClusterSkill', {'cluster': cluster.id}) }}>
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+        </ul>
+    </div>
+</div>
+{% endblock %}

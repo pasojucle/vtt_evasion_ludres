@@ -8,53 +8,54 @@ use App\Repository\ClusterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: ClusterRepository::class)]
+#[ORM\Entity(repositoryClass: ClusterRepository::class)]
 class Cluster
 {
     public const SCHOOL_MAX_MEMBERS = 6;
 
     public const CLUSTER_FRAME = 'Encadrement';
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private string $title = '';
 
-    #[OneToMany(targetEntity: Session::class, mappedBy: 'cluster')]
+    #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'cluster')]
     private Collection $sessions;
 
-    #[ManyToOne(targetEntity: BikeRide::class, inversedBy: 'clusters')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: BikeRide::class, inversedBy: 'clusters')]
+    #[ORM\JoinColumn(nullable: false)]
     private BikeRide $bikeRide;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $maxUsers;
 
-    #[ManyToOne(targetEntity: Level::class, inversedBy: 'clusters')]
+    #[ORM\ManyToOne(targetEntity: Level::class, inversedBy: 'clusters')]
     private ?Level $level = null;
 
-    #[Column(type: 'string', length: 25, nullable: true)]
+    #[ORM\Column(type: 'string', length: 25, nullable: true)]
     private ?string $role;
 
-    #[Column(type: 'boolean', options: ['default' => false])]
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $isComplete = false;
 
-    #[Column(type: Types::INTEGER, nullable: true)]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $position = null;
+
+    /**
+     * @var Collection<int, Skill>
+     */
+    #[ORM\ManyToMany(targetEntity: Skill::class)]
+    private Collection $skills;
 
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
+        $this->skills = new ArrayCollection();
     }
 
     public function __toString()
@@ -177,6 +178,30 @@ class Cluster
     public function setPosition(?int $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Skill>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skill $skill): static
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skill $skill): static
+    {
+        $this->skills->removeElement($skill);
 
         return $this;
     }

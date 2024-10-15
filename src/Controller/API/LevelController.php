@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Controller\API;
 
-use App\Entity\Skill;
+use App\Entity\Level;
 use App\Service\ApiService;
-use App\Form\Admin\SkillType;
-use App\Repository\SkillRepository;
+use App\Form\Admin\LevelType;
+use App\Repository\LevelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Dto\DtoTransformer\SkillDtoTransformer;
+use App\Dto\DtoTransformer\LevelDtoTransformer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route(path: '/api/skill', name: 'api_skill_')]
-class SkillController extends AbstractController
+#[Route(path: '/api/level', name: 'api_level_')]
+class LevelController extends AbstractController
 {
     public function __construct(
-        private readonly SkillDtoTransformer $transformer,
+        private readonly LevelDtoTransformer $transformer,
         private readonly EntityManagerInterface $entityManager,
         private readonly ApiService $api,
     )
@@ -30,54 +30,54 @@ class SkillController extends AbstractController
     }
 
     #[Route(path: '/list', name: 'list', methods: ['GET'], options: ['expose' => true])]
-    public function list(SkillRepository $skillRepository): JsonResponse
+    public function list(LevelRepository $levelRepository): JsonResponse
     {
         return new JsonResponse([
-            'list' => $this->transformer->fromEntities($skillRepository->findAllOrdered()),
+            'list' => $this->transformer->fromEntities($levelRepository->findAllTypeMember()),
         ]);
     }
 
     #[Route(path: '/add', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function add(Request $request): JsonResponse
     {
-        $skill = new Skill();
-        $form = $this->api->createForm($request, SkillType::class, $skill);
+        $level = new Level();
+        $form = $this->api->createForm($request, LevelType::class, $level);
         $form->handleRequest($request);
         if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($skill);
+            $this->entityManager->persist($level);
             $this->entityManager->flush();
-            return $this->api->responseForm($skill, $this->transformer, 'idASC');
+            return $this->api->responseForm($level, $this->transformer, 'idASC');
         }
         
         return $this->api->renderModal($form,'Ajouter la compétence', 'Enregistrer');
     }
 
     #[Route(path: '/edit/{id}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
-    public function edit(Request $request, Skill $skill): JsonResponse|Response
+    public function edit(Request $request, Level $level): JsonResponse|Response
     {
-        $form = $this->api->createForm($request, SkillType::class, $skill);
+        $form = $this->api->createForm($request, LevelType::class, $level);
         $form->handleRequest($request);
         if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
-            return $this->api->responseForm($skill, $this->transformer, 'idASC');
+            return $this->api->responseForm($level, $this->transformer, 'idASC');
         }
         
         return $this->api->renderModal($form, 'Mofifier la compétence', 'Enregistrer');
     }
 
     #[Route(path: '/delete/{id}', name: 'delete', methods: ['GET', 'POST'], options: ['expose' => true])]
-    public function delete(Request $request, Skill $skill): JsonResponse
+    public function delete(Request $request, Level $level): JsonResponse
     {
-        $form = $this->api->createForm($request, FormType::class, $skill);
+        $form = $this->api->createForm($request, FormType::class, $level);
         $form->handleRequest($request);
         if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
-            $response = $this->api->responseForm($skill, $this->transformer, 'idASC', true);
-            $this->entityManager->remove($skill);
+            $response = $this->api->responseForm($level, $this->transformer, 'idASC', true);
+            $this->entityManager->remove($level);
             $this->entityManager->flush();
             return $response;
         }
         
-        $message = sprintf('<p>Etes vous certain de supprimer la compétence ? %s</p>', $skill->getContent());
+        $message = sprintf('<p>Etes vous certain de supprimer la compétence ? %s</p>', $level->getContent());
         return $this->api->renderModal($form, 'Supprimer la compétence', 'Supprimer', $message);
     }
 }

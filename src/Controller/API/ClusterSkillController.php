@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\API;
 
 use App\Entity\Skill;
+use App\Entity\Cluster;
 use App\Service\ApiService;
 use App\Form\Admin\SkillType;
 use App\Repository\SkillRepository;
@@ -13,12 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Dto\DtoTransformer\SkillDtoTransformer;
+use App\Form\Admin\SkillFilterType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route(path: '/api/skill', name: 'api_skill_')]
-class SkillController extends AbstractController
+#[Route(path: '/api/cluster_skill', name: 'api_cluster_skill_')]
+class ClusterSkillController extends AbstractController
 {
     public function __construct(
         private readonly SkillDtoTransformer $transformer,
@@ -29,19 +31,20 @@ class SkillController extends AbstractController
         
     }
 
-    #[Route(path: '/list', name: 'list', methods: ['GET'], options: ['expose' => true])]
-    public function list(SkillRepository $skillRepository): JsonResponse
+    #[Route(path: '/list/{cluster}', name: 'list', methods: ['GET'], options: ['expose' => true])]
+    public function list(Cluster $cluster): JsonResponse
     {
+        dump($cluster->getSkills()->count());
         return new JsonResponse([
-            'list' => $this->transformer->fromEntities($skillRepository->findAllOrdered()),
+            'list' => $this->transformer->fromEntities($cluster->getSkills()),
         ]);
     }
 
-    #[Route(path: '/add', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
-    public function add(Request $request): JsonResponse
+    #[Route(path: '/add/{cluster}', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
+    public function add(Request $request, Cluster $cluster): JsonResponse
     {
         $skill = new Skill();
-        $form = $this->api->createForm($request, SkillType::class, $skill);
+        $form = $this->api->createForm($request, FormType::class, null);
         $form->handleRequest($request);
         if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($skill);
@@ -49,10 +52,16 @@ class SkillController extends AbstractController
             return $this->api->responseForm($skill, $this->transformer, 'idASC');
         }
         
-        return $this->api->renderModal($form,'Ajouter la compétence', 'Enregistrer');
+        $components = [
+            [
+                'name' => 'SkillFilter',
+                'params' => [],
+            ]
+        ];
+        return $this->api->renderModal($form,'Ajouter une compétence', 'Ajouter', null, $components);
     }
 
-    #[Route(path: '/edit/{id}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[Route(path: '/edit/{cluster}/{skill}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function edit(Request $request, Skill $skill): JsonResponse|Response
     {
         $form = $this->api->createForm($request, SkillType::class, $skill);

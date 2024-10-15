@@ -6,6 +6,7 @@ namespace App\Doctrine\DBAL\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use UnitEnum;
 
 abstract class EnumType extends Type
 {
@@ -43,6 +44,11 @@ abstract class EnumType extends Type
 
     public function convertToDatabaseValue($enum, AbstractPlatform $platform): ?string
     {
-        return $enum?->value;
+
+        if ($enum instanceof UnitEnum) {
+            return $enum?->value;
+        }
+        
+        return $enum;
     }
 }

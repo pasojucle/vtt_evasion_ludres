@@ -14,7 +14,10 @@
         </div>
     </div>
     <div class="wrapper-body">
-        <div {{ vue_component('SelectFilter', {'className': 'skill_category'}) }}></div>
+        <div class="row">
+            <div class="col-md-6 form-group" {{ vue_component('SelectFilter', {'className': 'skill_category', 'field': 'category', 'placeholder': "Séléctionner une catégorie"}) }} ></div>
+            <div class="col-md-6 form-group" {{ vue_component('SelectFilter', {'className': 'level', 'field': 'level', 'placeholder': "Séléctionner un niveau"}) }}></div>
+        </div>
         <ul class="list-group" {{ vue_component('Skill') }}>
             <div class="loader-container">
                 <div class="loader"></div>
@@ -23,3 +26,4 @@
     </div>
 </div>
 {% endblock %}
+
