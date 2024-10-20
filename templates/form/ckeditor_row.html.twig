@@ -1,10 +1,10 @@
 {% block ckeditor_row %}
     <div {% if form.vars.row_attr.class is defined %}class="{{ form.vars.row_attr.class }}"{% endif %}>
         <div {{ vue_component('Ckeditor',{
-            'form_id': form.vars.id,
-            'form_label': form.vars.label, 
+            'id': form.vars.id,
+            'label': form.vars.label, 
             'initial_value': form.vars.value, 
-            'form_name': form.vars.full_name, 
+            'name': form.vars.full_name, 
             'upload_url': form.vars.upload_url,
             'toolbar': form.vars.toolbar,
         }) }}></div>

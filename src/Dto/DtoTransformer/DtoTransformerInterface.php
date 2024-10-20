@@ -8,5 +8,5 @@ interface DtoTransformerInterface
 {
     public function fromEntity(?object $entity);
 
-    public function fromEntities(array $entities);
+    public function fromEntities(iterable $entities);
 }

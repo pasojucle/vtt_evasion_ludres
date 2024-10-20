@@ -2,7 +2,7 @@
     <a class="btn btn-primary" v-bind:href="path('add')" @click.prevent="handle($event)" title="Ajouter"> Ajouter</a>
 
     <ul class="list-group">
-        <li class="list-group-item" v-for="category in store.listFiltered('skill_category', 'id')" :key="category.id">
+        <li class="list-group-item" v-for="category in store.listFiltered('skill_category')" :key="category.id">
             <div>{{ category.name }}</div>
             <div class="dropdown">
                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>

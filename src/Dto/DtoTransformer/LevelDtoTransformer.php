@@ -35,7 +35,7 @@ class LevelDtoTransformer implements DtoTransformerInterface
     }
 
 
-    public function fromEntities(array|Collection $levelEntities): array
+    public function fromEntities(iterable $levelEntities): array
     {
         $levels = [];
         foreach ($levelEntities as $levelEntity) {

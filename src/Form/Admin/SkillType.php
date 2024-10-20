@@ -5,10 +5,10 @@ namespace App\Form\Admin;
 use App\Entity\Level;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
-use Symfony\Component\Form\AbstractType;
 use App\Form\Type\CkeditorType;
+use App\Form\Type\VueChoiceType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SkillType extends AbstractType
@@ -20,23 +20,22 @@ class SkillType extends AbstractType
                 'label' => 'Descriptif',
                 'config_name' => 'base',
                 'row_attr' => [
-                    'class' => 'form-group',
+                    'class' => 'col-md-12',
                 ],
             ])
-            ->add('category', EntityType::class, [
+            ->add('category', VueChoiceType::class, [
                 'label' => 'Catégorie',
                 'class' => SkillCategory::class,
                 'choice_label' => 'name',
                 'row_attr' => [
-                    'class' => 'form-group',
+                    'class' => 'col-md-12',
                 ],
             ])
-            ->add('level', EntityType::class, [
-                'label' => 'Niveaux',
+            ->add('level', VueChoiceType::class, [
+                'label' => 'Niveau',
                 'class' => Level::class,
-                'choice_label' => 'title',
                 'row_attr' => [
-                    'class' => 'form-group',
+                    'class' => 'col-md-12',
                 ],
             ])
         ;

@@ -9,7 +9,6 @@ use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Form\Admin\ClusterType;
-use App\Form\Admin\SkillFilterType;
 use App\Service\CacheService;
 use App\UseCase\Cluster\ExportCluster;
 use App\UseCase\Cluster\GetUsersOffSite;

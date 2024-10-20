@@ -19,6 +19,7 @@ class SkillDtoTransformer implements DtoTransformerInterface
     public function fromEntity($skill): SkillDto
     {
         $skillDto = new SkillDto();
+        dump($skill);
         if ($skill) {
             $skillDto->id = $skill->getId();
             $skillDto->content = $skill->getContent();
@@ -29,7 +30,7 @@ class SkillDtoTransformer implements DtoTransformerInterface
         return $skillDto;
     }
 
-    public function fromEntities(array|Collection $skillEntities): array
+    public function fromEntities(iterable $skillEntities): array
     {
         $skills = [];
         foreach ($skillEntities as $skillEntity) {

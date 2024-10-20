@@ -12,7 +12,7 @@ export const store = reactive({
     .then(response => response.json())
     .then(data => {
         this.list[entity] = data.list;
-        console.log('list', this.list[entity])
+        console.log('list', entity, this.list[entity])
     });
   },
   async edit(entity, params = {}) {
@@ -55,8 +55,20 @@ export const store = reactive({
     }
     console.log('update list', this.list)
   },
-  listFiltered(entity, fields = null) {
+  listFiltered(entity, excluded = null) {
     let list = this.list[entity];
+    console.log('list', list);
+    
+    console.log('excluded', excluded);
+    if (excluded) {
+      console.log('excluded', this.list[excluded]);
+      for(let i in list) {
+        const result = this.list[excluded].find((itemExcluded) => itemExcluded.id === list[i].id)
+        console.log('result', result);
+        list[i]['disabled'] = undefined !== result;
+      };
+    }
+
     Object.entries(this.filter).forEach(([name, value]) => {
       if (undefined !== value) {
         list = ('name' === name) 

@@ -21,7 +21,7 @@ class SkillCategoryDtoTransformer implements DtoTransformerInterface
         return $categoryDto;
     }
 
-    public function fromEntities(array $skillEntities): array
+    public function fromEntities(iterable $skillEntities): array
     {
         $skills = [];
         foreach ($skillEntities as $skillEntity) {

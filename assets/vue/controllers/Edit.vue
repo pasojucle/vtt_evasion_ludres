@@ -54,10 +54,14 @@ export default {
                 this.title = json.title;
                 this.theme = json.theme;
                 this.loaded = true;
+                console.log('children', this.form.children)
             });
         },
         async onSubmit(event) {
             const form = event.target;
+            Array.from(form.elements).forEach((element) => {
+                console.log(element.name, element.value)
+            })
             await fetch(form.action, {
                 method: 'POST',
                 body : new FormData(form),
@@ -66,6 +70,7 @@ export default {
             .then(isJsonResponse)
             .then((response) => response.json())
             .then((json)=> {
+                console.log('response', json)
                 if (json.success) {
                     store.update(json.data);
                     this.hide(); 
@@ -87,6 +92,10 @@ export default {
         if (this.edit && this.route && !this.loaded) {
             this.onLoad();
         }
+    },
+    created() {
+        console.log('Edit.vue')
+        
     },
 }
 </script>

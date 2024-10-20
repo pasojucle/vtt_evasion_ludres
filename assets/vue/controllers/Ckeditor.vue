@@ -1,9 +1,9 @@
 <template>
     <div id="ckeditor-app">
-        <label for="{{ formId }}" class="form-label">{{ form_label }}</label>
+        <label for="{{ formId }}" class="form-label">{{ label }}</label>
         <div style="position: relative;">
             <ckeditor :editor="editor" v-model="editorData" @ready="onReady" @input="onChange" :config="editorConfig"></ckeditor>
-            <textarea style="position: absolute; top: 20px; left: 20px; opacity: 0;" :id="form_id" :name="form_name" required :value="editorData"></textarea>
+            <textarea style="position: absolute; top: 20px; left: 20px; opacity: 0;" :id="id" :name="name" required :value="editorData"></textarea>
         </div>
     </div>
 </template>
@@ -30,17 +30,17 @@
             ckeditor: CKEditor.component,
         },
         props: {
-            form_id: String,
-            form_label: String,
-            form_name: String,
-            initial_value: String,
+            id: String,
+            label: String,
+            name: String,
+            value: String,
             upload_url: String,
             toolbar: Array,
         },
         data() {
             return {
                 editor: ClassicEditor,
-                editorData: this.initial_value,
+                editorData: this.value,
                 id: this.formId,
                 editorConfig: {
                     plugins: [

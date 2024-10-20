@@ -1,18 +1,13 @@
 <template>
     <a class="btn btn-primary" v-bind:href="path('add')" @click.prevent="handle($event)" title="Ajouter"> Ajouter</a>
 
-    <li class="list-group-item" v-for="skill in store.listFiltered('cluster_skill')" :key="skill.id">
+    <li class="list-group-item" v-for="skill in store.list['cluster_skill']" :key="skill.id">
         <div v-html="skill.content"></div>
         <div class="dropdown">
             <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
             <div class="dropdown-menu" data-target="dropdown-tools">
                 <ul class="dropdown-body">
-                    <!-- <li>
-                        <a class="dropdown-item" v-bind:href="path('edit', skill)" @click.prevent="handle($event)" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" v-bind:href="path('delete', skill)" @click.prevent="handle($event)" title="Supprimer" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
-                    </li> -->
+                    <li><a class="dropdown-item" v-bind:href="path('delete', skill)" @click.prevent="handle($event)" title="Supprimer" data-type="danger"><i class="fas fa-times"></i> Supprimer</a></li>
                     <li><a href="" class="dropdown-item" title="Évaluations"><i class="fa-solid fa-graduation-cap"></i> Évaluer</a></li>
                 </ul>
             </div>
@@ -47,7 +42,7 @@ export default {
         path(action, skill = null) {
             const params = {'cluster': this.cluster};
             if (skill) {
-                $params['skill'] = skill.id;
+                params['skill'] = skill.id;
             }
             return Routing.generate(`api_cluster_skill_${action}`, params);
         },

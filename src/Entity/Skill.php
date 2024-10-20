@@ -38,6 +38,11 @@ class Skill
         $this->users = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->content;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

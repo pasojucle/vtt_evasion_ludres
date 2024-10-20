@@ -1,10 +1,13 @@
 {% if message is defined %}
     <div>{{ message|raw }}</div>
 {% endif %}
-{% for component in components %}
-    <div {{ vue_component(component.name, component.params) }}></div>
-{% endfor %}
-{% for field in form %}
-    <div>{{ form_row(field) }}</div>
-{% endfor %}
-{{ form_rest(form) }}
+<div class="row">
+    {% for component in components %}
+        <div class="form-group {% if component.row_attr is not empty %}{{ component.row_attr.class}}{% endif %}" {{ vue_component(component.name, component.props) }}></div>
+    {% endfor %}
+    {# {% for field in form %}
+        <div>{{ form_row(field) }}</div>
+    {% endfor %} #}
+</div>
+
+{# {{ form_rest(form) }} #}

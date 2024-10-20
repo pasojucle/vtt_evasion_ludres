@@ -49,7 +49,7 @@ class SkillController extends AbstractController
             return $this->api->responseForm($skill, $this->transformer, 'idASC');
         }
         
-        return $this->api->renderModal($form,'Ajouter la compétence', 'Enregistrer');
+        return $this->api->renderModal($form,'Ajouter la compétence', 'Enregistrer', null, true);
     }
 
     #[Route(path: '/edit/{id}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
@@ -78,6 +78,6 @@ class SkillController extends AbstractController
         }
         
         $message = sprintf('<p>Etes vous certain de supprimer la compétence ? %s</p>', $skill->getContent());
-        return $this->api->renderModal($form, 'Supprimer la compétence', 'Supprimer', $message);
+        return $this->api->renderModal($form, 'Supprimer la compétence', 'Supprimer', $message, true);
     }
 }
