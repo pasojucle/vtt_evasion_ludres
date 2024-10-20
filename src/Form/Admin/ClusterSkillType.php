@@ -32,7 +32,7 @@ class ClusterSkillType extends AbstractType
                 'label' => 'Niveau',
                 'class' => Level::class,
                 'placeholder' => 'Séléctionner un niveau',
-                'field' => 'category',
+                'field' => 'level',
                 'mapped' => false,
                 'required' => false,
                 'row_attr' => [

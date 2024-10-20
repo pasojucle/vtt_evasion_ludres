@@ -60,6 +60,9 @@ export default {
         async onSubmit(event) {
             const form = event.target;
             Array.from(form.elements).forEach((element) => {
+                if ('-1' === element.value) {
+                    element.value = null;
+                }
                 console.log(element.name, element.value)
             })
             await fetch(form.action, {

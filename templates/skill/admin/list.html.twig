@@ -15,8 +15,8 @@
     </div>
     <div class="wrapper-body">
         <div class="row">
-            <div class="col-md-6 form-group" {{ vue_component('SelectFilter', {'className': 'skill_category', 'field': 'category', 'placeholder': "Séléctionner une catégorie"}) }} ></div>
-            <div class="col-md-6 form-group" {{ vue_component('SelectFilter', {'className': 'level', 'field': 'level', 'placeholder': "Séléctionner un niveau"}) }}></div>
+            <div class="col-md-6 form-group" {{ vue_component('ChoiceFilterType', {'className': 'skill_category', 'field': 'category', 'placeholder': "Séléctionner une catégorie"}) }} ></div>
+            <div class="col-md-6 form-group" {{ vue_component('ChoiceFilterType', {'className': 'level', 'field': 'level', 'placeholder': "Séléctionner un niveau"}) }}></div>
         </div>
         <ul class="list-group" {{ vue_component('Skill') }}>
             <div class="loader-container">
