@@ -16,7 +16,9 @@ class ApprovalDtoTransformer
     {
         $approvalDto = new ApprovalDto();
         if ($approval) {
+            $approvalDto->id = $approval->getId();
             $approvalDto->name = u(str_replace('approval.', '', User::APPROVALS[$approval->getType()]))->camel()->toString();
+            $approvalDto->fullName = User::APPROVALS[$approval->getType()];
             $approvalDto->value = $approval->getValue();
             $approvalDto->toString = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
             $approvalDto->toHtml = $this->toHtml($approval->getType(), $approval->getValue());

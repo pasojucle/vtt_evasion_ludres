@@ -141,6 +141,23 @@
                     </ul>
                 </div>
             </div>
+            <div class="block background-ligth">
+                <div class="block-title">
+                    <h2>Autorisations</h2>
+                </div>
+                <div class="block-body">
+                    <ul>
+                        {% for approval in user.approvals %}
+                            <li style="position: relative">
+                                <div><b>{{ approval.toHtml.message }}</b></div>
+                                <div style="position: absolute; right: 0; top: 0;">
+                                    <a href="{{ path('admin_approval_edit', {'approval': approval.id}) }}" class="btn" style="padding: unset; font-size: 20px" title="Modifier"><i class="fas fa-edit"></i></a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
             {% if licence.isFinal and user.health is not empty %}
                 <div class="block background-ligth">
                 <div class="block-title">
