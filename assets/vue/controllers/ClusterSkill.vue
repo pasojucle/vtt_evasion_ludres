@@ -7,8 +7,8 @@
             <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
             <div class="dropdown-menu" data-target="dropdown-tools">
                 <ul class="dropdown-body">
+                    <li><a class="dropdown-item" v-bind:href="path('eval', skill)" @click.prevent="handle($event)" title="Évaluations"><i class="fa-solid fa-graduation-cap"></i> Évaluer</a></li>
                     <li><a class="dropdown-item" v-bind:href="path('delete', skill)" @click.prevent="handle($event)" title="Supprimer" data-type="danger"><i class="fas fa-times"></i> Supprimer</a></li>
-                    <li><a href="" class="dropdown-item" title="Évaluations"><i class="fa-solid fa-graduation-cap"></i> Évaluer</a></li>
                 </ul>
             </div>
         </div>
@@ -53,7 +53,7 @@ export default {
     },
     created() {
         this.store.getList('cluster_skill', {'cluster': this.cluster});
-        console.log
+
     },
 }
 </script>

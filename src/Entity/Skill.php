@@ -28,14 +28,21 @@ class Skill
     private ?Level $level = null;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, Cluster>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'skills')]
-    private Collection $users;
+    #[ORM\ManyToMany(targetEntity: Cluster::class, mappedBy: 'skills')]
+    private Collection $clusters;
+
+    /**
+     * @var Collection<int, UserSkill>
+     */
+    #[ORM\OneToMany(targetEntity: UserSkill::class, mappedBy: 'skill')]
+    private Collection $userSkills;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->clusters = new ArrayCollection();
+        $this->userSkills = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -85,27 +92,57 @@ class Skill
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Cluster>
      */
-    public function getUsers(): Collection
+    public function getClusters(): Collection
     {
-        return $this->users;
+        return $this->clusters;
     }
 
-    public function addUser(User $user): static
+    public function addCluster(Cluster $cluster): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addSkill($this);
+        if (!$this->clusters->contains($cluster)) {
+            $this->clusters->add($cluster);
+            $cluster->addSkill($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeCluster(Cluster $cluster): static
     {
-        if ($this->users->removeElement($user)) {
-            $user->removeSkill($this);
+        if ($this->clusters->removeElement($cluster)) {
+            $cluster->removeSkill($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSkill>
+     */
+    public function getUserSkills(): Collection
+    {
+        return $this->userSkills;
+    }
+
+    public function addUserSkill(UserSkill $userSkill): static
+    {
+        if (!$this->userSkills->contains($userSkill)) {
+            $this->userSkills->add($userSkill);
+            $userSkill->setSkill($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSkill(UserSkill $userSkill): static
+    {
+        if ($this->userSkills->removeElement($userSkill)) {
+            // set the owning side to null (unless already changed)
+            if ($userSkill->getSkill() === $this) {
+                $userSkill->setSkill(null);
+            }
         }
 
         return $this;

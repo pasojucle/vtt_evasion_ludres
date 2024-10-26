@@ -14,6 +14,7 @@ doctrine:
             OrderStatus: App\Doctrine\DBAL\Type\OrderStatusEnumType
             Practice: App\Doctrine\DBAL\Type\PracticeEnumType
             Availability: App\Doctrine\DBAL\Type\AvailabilityEnumType
+            Evaluation: App\Doctrine\DBAL\Type\EvaluationEnumType
         mapping_types:
             enum: string
     orm:

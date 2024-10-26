@@ -130,10 +130,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?array $permissions = null;
 
     /**
-     * @var Collection<int, Skill>
+     * @var Collection<int, UserSkill>
      */
-    #[ORM\ManyToMany(targetEntity: Skill::class, inversedBy: 'users')]
-    private Collection $skills;
+    #[ORM\OneToMany(targetEntity: UserSkill::class, mappedBy: 'user')]
+    private Collection $userSkills;
 
     public function __construct()
     {
@@ -148,7 +148,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->bikeRides = new ArrayCollection();
         $this->registrationChanges = new ArrayCollection();
         $this->secondHands = new ArrayCollection();
-        $this->skills = new ArrayCollection();
+        $this->userSkills = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -767,25 +767,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Skill>
+     * @return Collection<int, UserSkill>
      */
-    public function getSkills(): Collection
+    public function getUserSkills(): Collection
     {
-        return $this->skills;
+        return $this->userSkills;
     }
 
-    public function addSkill(Skill $skill): static
+    public function addUserSkill(UserSkill $userSkill): static
     {
-        if (!$this->skills->contains($skill)) {
-            $this->skills->add($skill);
+        if (!$this->userSkills->contains($userSkill)) {
+            $this->userSkills->add($userSkill);
+            $userSkill->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeSkill(Skill $skill): static
+    public function removeUserSkill(UserSkill $userSkill): static
     {
-        $this->skills->removeElement($skill);
+        if ($this->userSkills->removeElement($userSkill)) {
+            // set the owning side to null (unless already changed)
+            if ($userSkill->getUser() === $this) {
+                $userSkill->setUser(null);
+            }
+        }
 
         return $this;
     }

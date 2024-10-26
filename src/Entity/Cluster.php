@@ -49,8 +49,9 @@ class Cluster
     /**
      * @var Collection<int, Skill>
      */
-    #[ORM\ManyToMany(targetEntity: Skill::class)]
+    #[ORM\ManyToMany(targetEntity: Skill::class, inversedBy: 'clusters')]
     private Collection $skills;
+
 
     public function __construct()
     {

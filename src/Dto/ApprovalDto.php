@@ -6,7 +6,7 @@ namespace App\Dto;
 
 class ApprovalDto
 {
-    public int $id;
+    public ?int $id = null;
     
     public string $name = '';
     

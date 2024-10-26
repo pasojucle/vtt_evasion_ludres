@@ -643,6 +643,11 @@ main:not(.admin) {
     opacity: 0.7;
 }
 
+.form-group.text-label > input:disabled {
+    background: unset;
+    opacity: unset;
+}
+
 button[type=submit].btn.btn-primary:disabled {
     background: var(--gray-color);
     border: 1px solid var(--gray-color);

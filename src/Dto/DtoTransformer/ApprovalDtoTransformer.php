@@ -23,7 +23,8 @@ class ApprovalDtoTransformer
             $approvalDto->toString = ($approval->getValue()) ? 'autorise' : 'n\'autorise pas';
             $approvalDto->toHtml = $this->toHtml($approval->getType(), $approval->getValue());
         }
-
+        dump($approval->getId());
+dump($approvalDto);
         return $approvalDto;
     }
 
@@ -31,6 +32,7 @@ class ApprovalDtoTransformer
     {
         $approvals = [];
         foreach ($approvalEntities as $approvalEntity) {
+            dump($approvalEntity);
             $approval = $this->fromEntity($approvalEntity);
             $approvals[$approval->name] = $approval;
         }

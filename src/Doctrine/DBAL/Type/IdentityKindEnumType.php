@@ -15,6 +15,6 @@ class IdentityKindEnumType extends EnumType
 
     public function getName(): string
     {
-        return 'identity_kind_enum';
+        return 'IdentityKind';
     }
 }

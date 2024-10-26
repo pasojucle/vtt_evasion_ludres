@@ -3,11 +3,18 @@
 {% endif %}
 <div class="row">
     {% for component in components %}
-        <div class="form-group {% if component.row_attr is not empty %}{{ component.row_attr.class}}{% endif %}" {{ vue_component(component.name, component.props) }}></div>
+        {% if component.name == 'CollectionType' %}
+            {# <div id="{{ component.id }}" class="col-md-12"> #}
+                {% for child in component.children %}
+                    {# <div class="row"> #}
+                        {% for child_component in child %}
+                            <div class="form-group {% if child_component.row_attr is not empty %}{{ child_component.row_attr.class}}{% endif %}" {{ vue_component(child_component.name, child_component.props) }}></div>
+                        {% endfor %}
+                    {# </div> #}
+                {% endfor %}
+            {# </div>       #}
+        {% else %}
+            <div class="form-group {% if component.row_attr is not empty %}{{ component.row_attr.class}}{% endif %}" {{ vue_component(component.name, component.props) }}></div>
+        {% endif %}
     {% endfor %}
-    {# {% for field in form %}
-        <div>{{ form_row(field) }}</div>
-    {% endfor %} #}
 </div>
-
-{# {{ form_rest(form) }} #}

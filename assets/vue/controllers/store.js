@@ -57,7 +57,7 @@ export const store = reactive({
   },
   listFiltered(entity, excluded = null) {
     let list = this.list[entity];
-    console.log('list', list);
+    console.log('list', entity, list);
     
     console.log('excluded', excluded);
     if (excluded) {
@@ -70,7 +70,7 @@ export const store = reactive({
     }
 
     Object.entries(this.filter).forEach(([name, value]) => {
-      if (undefined !== value) {
+      if (-1 !== value) {
         list = ('name' === name) 
           ? list.filter(item => this.resolve(name, item) === value)
           : list.filter(item => this.resolve(name, item).id === value);

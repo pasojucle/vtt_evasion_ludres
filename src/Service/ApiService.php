@@ -6,20 +6,33 @@ namespace App\Service;
 
 use ReflectionClass;
 use Twig\Environment;
+use Symfony\Component\Form\FormView;
+use Doctrine\ORM\PersistentCollection;
 use function Symfony\Component\String\u;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Dto\DtoTransformer\DtoTransformerInterface;
-use Doctrine\ORM\PersistentCollection;
-
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ApiService
 {
+    private const COMPONENT_PROP_KEYS = [
+        'vueChoiceFilter' => ['name' => 'ChoiceFilterType', 'keys' => ['className', 'field', 'placeholder']], 
+        'vueChoiceFiltered' => ['name' => 'ChoiceFilteredType', 'keys' => ['className', 'exclude']], 
+        'vueChoice' => ['name' => 'ChoiceType', 'keys' => ['className', 'value']],
+        'ckeditor' => ['name' => 'Ckeditor', 'keys' => ['upload_url', 'toolbar', 'value']],
+        'vueText' => ['name' => 'TextType', 'keys' => ['value', 'disabled']],
+        'collection' => ['name' => 'CollectionType', 'keys' => []],
+        'vueRadio' => ['name' => 'RadioType', 'keys' => ['value', 'choices']],
+        'hidden' => ['name' => 'hiddenType', 'keys' => ['value']],
+    ];
+
     public function __construct(
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
+        private readonly TranslatorInterface $translator,
     )
     {
         
@@ -44,8 +57,8 @@ class ApiService
     public function getComponents(FormInterface $form,): array
     {
         $components = [];
-        foreach($form->createView()->getIterator() as $name => $child) {
-            if ($component = $this->getComponent($child->vars)) {
+        foreach($form->createView()->getIterator() as $child) {
+            if ($component = $this->getComponent($child)) {
                 $components[] = $component;
             };
         }
@@ -53,7 +66,52 @@ class ApiService
         return $components;
     }
 
-    private function getComponent(array $vars): ?array
+    private function getComponent(FormView $form): ?array
+    {
+        
+        $blockPrefix = $this->getBlockPrefix($form);
+        dump($blockPrefix);
+        $children = [];
+        if ('collection' === $blockPrefix) {
+            foreach($form->children as $entryKey => $entry) {
+                foreach($entry->children as $entryChild) {
+                    dump($entryKey);
+                    if ($entryChildBlocPrefix = $this->getBlockPrefix($entryChild)) {
+                        $children[$entry->vars['name']][] = [
+                            'name' => $this->getComponentName($entryChildBlocPrefix),
+                            'props' => $this->getProps($entryChild->vars, $entryChildBlocPrefix, $entryKey),
+                            'row_attr' => $entryChild->vars['row_attr'],
+                        ];
+                    }
+                }
+            }
+        }
+
+        if ($blockPrefix) {
+            $props = $this->getProps($form->vars, $blockPrefix);
+            return [
+                'id' => $form->vars['id'],
+                'name' => $this->getComponentName($blockPrefix),
+                'props' => $props,
+                'row_attr' => $form->vars['row_attr'],
+                'children' => $children,
+            ];
+        }
+        return null;
+    }
+
+    private function getBlockPrefix(FormView $form): ?string
+    {
+        $blockPrefixes = array_intersect($form->vars['block_prefixes'], array_keys(self::COMPONENT_PROP_KEYS));
+        return ($blockPrefixes) ? $blockPrefixes[array_key_first($blockPrefixes)] : null;
+    }
+
+    private function getComponentName(string $blockPrefixe): string
+    {
+        return ucfirst(self::COMPONENT_PROP_KEYS[$blockPrefixe]['name']);
+    } 
+
+    private function getProps(array $vars, string $blockPrefix, ?int $entryKey = null): array
     {
         $props = [
             'id' => $vars['id'],
@@ -61,25 +119,31 @@ class ApiService
             'name' => $vars['full_name'],
             'required' => $vars['required'],
         ];
-
-        $componentPropKeys = [
-            'vueChoiceFilter' => ['name' => 'choiceFilterType', 'keys' => ['className', 'field', 'placeholder']], 
-            'vueChoiceFiltered' => ['name' => 'choiceFilteredType', 'keys' => ['className', 'exclude']], 
-            'vueChoice' => ['name' => 'choiceType', 'keys' => ['className', 'value']],
-            'ckeditor' => ['name' => 'ckeditor', 'keys' => ['upload_url', 'toolbar', 'value']],
-            'vueText' => ['name' => 'textType', 'keys' => ['value']],
-            'hidden' => ['name' => 'hiddenType', 'keys' => ['value']],
-        ];
-        dump($vars);
-        $names = array_intersect($vars['block_prefixes'], array_keys($componentPropKeys));
-        $name = ($names) ? $names[array_key_first($names)] : null;
-        if ($name) {
-            foreach($componentPropKeys[$name]['keys'] as $key) {
-                $props[$key] = ('className' === $key) ? U($vars[$key])->snake() : $vars[$key];
-            }
-            return ['name' => ucfirst($componentPropKeys[$name]['name']), 'props' => $props, 'row_attr' => $vars['row_attr']];
+        foreach(self::COMPONENT_PROP_KEYS[$blockPrefix]['keys'] as $key) {
+            $props[$key] = match($key) {
+                'className' => U($vars[$key])->snake(),
+                'choices' => $this->enumChoicesToArray($vars[$key], $entryKey),
+                default => $vars[$key],
+            };
         }
-        return null;
+        return $props;
+    }
+
+    private function enumChoicesToArray(array $enumChoices, int $entryKey): array
+    {
+        $choices = [];
+        foreach($enumChoices as $choice) {
+            $enum = $choice->data;
+            $choices[] = [
+                'id' => sprintf('%s_%s', $enum->name, $entryKey),
+                'name' => $enum->name,
+                'value' => $enum->value,
+                'label' => ucfirst($enum->trans($this->translator)),
+                'color' => $enum->color(),
+            ];
+        }
+
+        return $choices;
     }
 
     public function createForm(Request $request, string $type, ?object $entity): FormInterface

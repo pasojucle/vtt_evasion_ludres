@@ -15,6 +15,6 @@ class OrderStatusEnumType extends EnumType
 
     public function getName(): string
     {
-        return 'order_status_enum';
+        return 'OrderStatus';
     }
 }

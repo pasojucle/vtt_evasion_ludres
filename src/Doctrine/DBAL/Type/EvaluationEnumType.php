@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Doctrine\DBAL\Type;
 
-use App\Entity\Enum\PracticeEnum;
+use App\Entity\Enum\EvaluationEnum;
 
-class PracticeEnumType extends EnumType
+class EvaluationEnumType extends EnumType
 {
     protected function getEnum(): string
     {
-        return PracticeEnum::class;
+        return EvaluationEnum::class;
     }
 
     public function getName(): string
     {
-        return 'Practice';
+        return 'Evaluation';
     }
 }

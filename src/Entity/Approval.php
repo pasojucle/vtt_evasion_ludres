@@ -31,7 +31,7 @@ class Approval
 
     public function getId(): ?int
     {
-        return $this->id = null;
+        return $this->id;
     }
 
     public function getType(): ?int

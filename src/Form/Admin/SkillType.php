@@ -16,13 +16,6 @@ class SkillType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('content', CKEditorType::class, [
-                'label' => 'Descriptif',
-                'config_name' => 'base',
-                'row_attr' => [
-                    'class' => 'col-md-12',
-                ],
-            ])
             ->add('category', VueChoiceType::class, [
                 'label' => 'Catégorie',
                 'class' => SkillCategory::class,
@@ -34,6 +27,13 @@ class SkillType extends AbstractType
             ->add('level', VueChoiceType::class, [
                 'label' => 'Niveau',
                 'class' => Level::class,
+                'row_attr' => [
+                    'class' => 'col-md-12',
+                ],
+            ])
+            ->add('content', CKEditorType::class, [
+                'label' => 'Descriptif',
+                'config_name' => 'base',
                 'row_attr' => [
                     'class' => 'col-md-12',
                 ],
