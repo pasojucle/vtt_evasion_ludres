@@ -38,7 +38,7 @@ class ApiService
         
     }
 
-    public function renderModal(?FormInterface $form, string $title, string $submit, ?string $message = null): JsonResponse
+    public function renderModal(?FormInterface $form, string $title, string $submit, string $theme = 'primary', ?string $message = null): JsonResponse
     {
         return new JsonResponse([
             'form' => [
@@ -49,7 +49,7 @@ class ApiService
                 ]),
                 'submit' => $submit,
             ],
-            'theme' => sprintf('btn-%s', ($message) ? 'danger' : 'primary'),
+            'theme' => sprintf('btn-%s', $theme),
             'title' => $title,
         ]);
     }
@@ -62,7 +62,7 @@ class ApiService
                 $components[] = $component;
             };
         }
-        dump($components);
+
         return $components;
     }
 
@@ -70,12 +70,10 @@ class ApiService
     {
         
         $blockPrefix = $this->getBlockPrefix($form);
-        dump($blockPrefix);
         $children = [];
         if ('collection' === $blockPrefix) {
             foreach($form->children as $entryKey => $entry) {
                 foreach($entry->children as $entryChild) {
-                    dump($entryKey);
                     if ($entryChildBlocPrefix = $this->getBlockPrefix($entryChild)) {
                         $children[$entry->vars['name']][] = [
                             'name' => $this->getComponentName($entryChildBlocPrefix),

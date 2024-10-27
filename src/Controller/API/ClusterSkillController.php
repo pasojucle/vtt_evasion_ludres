@@ -5,20 +5,18 @@ declare(strict_types=1);
 namespace App\Controller\API;
 
 use App\Entity\Skill;
+use DateTimeImmutable;
 use App\Entity\Cluster;
 use App\Entity\UserSkill;
 use App\Service\ApiService;
-use App\Form\Admin\SkillType;
 use App\Form\Admin\ClusterSkillType;
 use App\Repository\UserSkillRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\UseCase\Skill\GetUserSkillCluster;
+use App\Form\Admin\UserSkillCollectionType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Dto\DtoTransformer\SkillDtoTransformer;
-use App\Form\Admin\UserSkillCollectionType;
-use App\Form\Admin\UserSkillType;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,6 +28,7 @@ class ClusterSkillController extends AbstractController
         private readonly SkillDtoTransformer $transformer,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserSkillRepository $userSkillRepository,
+        private readonly GetUserSkillCluster $getUserSkillCluster,
         private readonly ApiService $api,
     )
     {
@@ -39,52 +38,31 @@ class ClusterSkillController extends AbstractController
     #[Route(path: '/list/{cluster}', name: 'list', methods: ['GET'], options: ['expose' => true])]
     public function list(Cluster $cluster): JsonResponse
     {
-        dump($cluster->getSkills()->count());
         return new JsonResponse([
             'list' => $this->transformer->fromEntities($cluster->getSkills()),
         ]);
     }
 
-    #[Route(path: '/eval/{cluster}/{skill}', name: 'eval', methods: ['GET'], options: ['expose' => true])]
+    #[Route(path: '/eval/{cluster}/{skill}', name: 'eval', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function eval(Request $request, Cluster $cluster, Skill $skill): JsonResponse
     {
-        dump($cluster->getSessions());
+        $form = $this->createForm(UserSkillCollectionType::class, $this->getUserSkillCluster->execute($cluster, $skill), [
+            'action' => $request->getUri(),
+        ]);
 
-        $userSkills = [];
-        /** @var UserSkill $userSkill */
-        foreach($this->userSkillRepository->findByClusterAndSkill($cluster, $skill) as $userSkill) {
-            $userSkills[$userSkill->getUser()->getId()] = $userSkill;
-        }
-
-
-        $clusterUserSkill = [];
-        /** @var Session $session */
-        foreach($cluster->getSessions() as $session) {
-            if ($session->isPresent()) {
-                $user = $session->getUser();
-
-                $clusterUserSkill[] = (array_key_exists($user->getId(), $userSkills))
-                    ? $userSkills[$user->getId()]
-                    : (new UserSkill())->setUser($user)->setSkill($skill); 
-            }
-        }
-
-        $form = $this->createForm(UserSkillCollectionType::class, ['collection' => new ArrayCollection($clusterUserSkill)]);
-
-        dump($clusterUserSkill);
-        dump($form);
-        
         $form->handleRequest($request);
         if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $skill = $this->entityManager->getRepository(Skill::class)->find($data['skill']);
-            $cluster->addSkill($skill);
+            /** @var UserSkill $userSkill */
+            foreach($data['userSkills'] as $userSkill) {
+                $userSkill->setEvaluateAt(new DateTimeImmutable());
+            }
             $this->entityManager->flush();
 
             return $this->api->responseForm($skill, $this->transformer, 'idASC', false, 'cluster_skill');
         }
 
-        return $this->api->renderModal($form, 'Evaluer', 'Enregistrer');
+        return $this->api->renderModal($form, 'Evaluer', 'Enregistrer', 'primary', $skill->getContent());
     }
 
     #[Route(path: '/add/{cluster}', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]

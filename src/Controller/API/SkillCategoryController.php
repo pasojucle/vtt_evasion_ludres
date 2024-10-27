@@ -77,6 +77,6 @@ class SkillCategoryController extends AbstractController
         }
         
         $message = sprintf('Etes vous certain de supprimer la catégorie %s?', $category->getName());
-        return $this->api->renderModal($form,'Supprimer la catégorie', 'Supprimer', $message);
+        return $this->api->renderModal($form,'Supprimer la catégorie', 'Supprimer', 'danger', $message);
     }
 }

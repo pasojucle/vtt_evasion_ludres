@@ -103,7 +103,7 @@ class MenuService
             ],
             [
                 'label' => 'Mon carnet de progression',
-                'route' => 'user_account',
+                'route' => 'user_skill_list',
                 'role' => 'ROLE_USER',
             ],
             [

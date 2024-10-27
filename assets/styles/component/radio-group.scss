@@ -1,9 +1,9 @@
 .radio-group-vue {
     display: inline-block;
-    margin: 10px 0;
+    margin: 3px;
     position: relative;
     .label {
-        padding: 5px 10px 5px 5px;
+        padding: 3px;
         display: block;
         text-align: left;
         color: var(--gray-color);
@@ -15,9 +15,8 @@
         border: 2px solid var(--light-color-darker);
         background-color: var(--white-color);
     }
-    input:checked ~ label {
-        content: '';
-        background-color: var(--background-color);
-        border-color: var(--background-color);
+    input[type="radio"] {
+        position: absolute;
+        visibility: hidden;
     }
 }

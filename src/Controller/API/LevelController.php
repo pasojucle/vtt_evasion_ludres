@@ -78,6 +78,6 @@ class LevelController extends AbstractController
         }
         
         $message = sprintf('<p>Etes vous certain de supprimer la compétence ? %s</p>', $level->getContent());
-        return $this->api->renderModal($form, 'Supprimer la compétence', 'Supprimer', $message);
+        return $this->api->renderModal($form, 'Supprimer la compétence', 'Supprimer', 'danger', $message);
     }
 }

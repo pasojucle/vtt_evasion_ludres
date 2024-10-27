@@ -22,8 +22,7 @@ class UserSkillType extends AbstractType
             /** @var User $user */
             $user = $event->getData()->getUser();
             $member = $user->getMemberIdentity();
-            dump($member);
-
+  
         $event->getForm()
             ->add('member', TextType::class, [
                 'mapped' => false,

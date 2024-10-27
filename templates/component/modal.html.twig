@@ -1,18 +1,18 @@
 {% if message is defined %}
-    <div>{{ message|raw }}</div>
+    <div class="mb-20">{{ message|raw }}</div>
 {% endif %}
 <div class="row">
     {% for component in components %}
         {% if component.name == 'CollectionType' %}
-            {# <div id="{{ component.id }}" class="col-md-12"> #}
+            <div id="{{ component.id }}" class="col-md-12">
                 {% for child in component.children %}
-                    {# <div class="row"> #}
+                    <div class="row form-group form-group-collection">
                         {% for child_component in child %}
-                            <div class="form-group {% if child_component.row_attr is not empty %}{{ child_component.row_attr.class}}{% endif %}" {{ vue_component(child_component.name, child_component.props) }}></div>
+                            <div class="{% if child_component.row_attr is not empty %}{{ child_component.row_attr.class}}{% endif %}" {{ vue_component(child_component.name, child_component.props) }}></div>
                         {% endfor %}
-                    {# </div> #}
+                    </div>
                 {% endfor %}
-            {# </div>       #}
+            </div>      
         {% else %}
             <div class="form-group {% if component.row_attr is not empty %}{{ component.row_attr.class}}{% endif %}" {{ vue_component(component.name, component.props) }}></div>
         {% endif %}
