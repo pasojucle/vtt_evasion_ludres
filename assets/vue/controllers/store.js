@@ -56,15 +56,11 @@ export const store = reactive({
     console.log('update list', this.list)
   },
   listFiltered(entity, excluded = null) {
-    let list = this.list[entity];
-    console.log('list', entity, list);
-    
-    console.log('excluded', excluded);
+    let list = this.list[entity];    
     if (excluded) {
-      console.log('excluded', this.list[excluded.entity]);
+      excluded = JSON.parse(excluded);
       for(let i in list) {
         const result = this.list[excluded.entity].find((itemExcluded) => {console.log('resolve', this.resolve(excluded.field, itemExcluded), list[i].id); return parseInt(this.resolve(excluded.field, itemExcluded)) === list[i].id})
-        console.log('result', result);
         list[i]['disabled'] = undefined !== result;
       };
     }

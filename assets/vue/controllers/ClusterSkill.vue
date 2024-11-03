@@ -53,7 +53,6 @@ export default {
     },
     created() {
         this.store.getList('cluster_skill', {'cluster': this.cluster});
-
     },
 }
 </script>
