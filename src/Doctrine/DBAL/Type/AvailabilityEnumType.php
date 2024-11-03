@@ -6,7 +6,6 @@ namespace App\Doctrine\DBAL\Type;
 
 use App\Entity\Enum\AvailabilityEnum;
 
-
 class AvailabilityEnumType extends EnumType
 {
     protected function getEnum(): string

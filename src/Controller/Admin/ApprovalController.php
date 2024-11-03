@@ -6,15 +6,15 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\ApprovalDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\User;
 use App\Entity\Approval;
+use App\Entity\User;
 use App\Form\ApprovalType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/autorisation/', name: 'admin_approval_')]
 class ApprovalController extends AbstractController
@@ -23,9 +23,7 @@ class ApprovalController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly UserDtoTransformer $userDtoTransformer,
         private readonly ApprovalDtoTransformer $approvalDtoTransformer,
-    )
-    {
-        
+    ) {
     }
 
     #[Route('edit/{approval}', name: 'edit', methods: ['GET', 'POST'])]
@@ -53,5 +51,4 @@ class ApprovalController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
 }

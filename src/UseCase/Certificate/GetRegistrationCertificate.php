@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\UseCase\Certificate;
 
-use App\Dto\UserDto;
-use App\Entity\User;
-use Twig\Environment;
-use App\Entity\Licence;
-use App\Service\PdfService;
-use App\Service\StringService;
-use App\Service\MessageService;
-use App\Entity\RegistrationStep;
-use App\Service\ReplaceKeywordsService;
-use Symfony\Component\HttpFoundation\Request;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\UserDto;
+use App\Entity\Licence;
+use App\Entity\RegistrationStep;
+use App\Entity\User;
+use App\Service\MessageService;
+use App\Service\PdfService;
+use App\Service\ReplaceKeywordsService;
+use App\Service\StringService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Twig\Environment;
 
 class GetRegistrationCertificate
 {

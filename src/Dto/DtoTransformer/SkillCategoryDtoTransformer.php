@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-
 use App\Dto\SkillCategoryDto;
 use App\Entity\SkillCategory;
 

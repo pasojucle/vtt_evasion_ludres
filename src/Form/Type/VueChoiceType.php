@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Form\Type;
 
 use ReflectionClass;
-use Symfony\Component\Form\FormView;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\FormView;
 
 class VueChoiceType extends AbstractType
 {

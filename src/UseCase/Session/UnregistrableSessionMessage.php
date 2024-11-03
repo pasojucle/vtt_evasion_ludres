@@ -43,7 +43,7 @@ class UnregistrableSessionMessage
         }
 
         $currentSeason = $this->seasonService->getCurrentSeason();
-        if (! $this->registrationIsComplete($userDto, $currentSeason)) {
+        if (!$this->registrationIsComplete($userDto, $currentSeason)) {
             return 'Vous avez un dossier d\'inscription non finalisé. Vous terminer et valider votre inscription pour vous inscrir à une sortie';
         }
 

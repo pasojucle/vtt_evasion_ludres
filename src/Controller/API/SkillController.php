@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\API;
 
+use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Entity\Skill;
-use App\Service\ApiService;
 use App\Form\Admin\SkillType;
 use App\Repository\SkillRepository;
+use App\Service\ApiService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Dto\DtoTransformer\SkillDtoTransformer;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route(path: '/api/skill', name: 'api_skill_')]
 class SkillController extends AbstractController
@@ -24,9 +24,7 @@ class SkillController extends AbstractController
         private readonly SkillDtoTransformer $transformer,
         private readonly EntityManagerInterface $entityManager,
         private readonly ApiService $api,
-    )
-    {
-        
+    ) {
     }
 
     #[Route(path: '/list', name: 'list', methods: ['GET'], options: ['expose' => true])]
@@ -43,13 +41,13 @@ class SkillController extends AbstractController
         $skill = new Skill();
         $form = $this->api->createForm($request, SkillType::class, $skill);
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($skill);
             $this->entityManager->flush();
             return $this->api->responseForm($skill, $this->transformer, 'idASC');
         }
         
-        return $this->api->renderModal($form,'Ajouter la compétence', 'Enregistrer');
+        return $this->api->renderModal($form, 'Ajouter la compétence', 'Enregistrer');
     }
 
     #[Route(path: '/edit/{id}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
@@ -57,7 +55,7 @@ class SkillController extends AbstractController
     {
         $form = $this->api->createForm($request, SkillType::class, $skill);
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             return $this->api->responseForm($skill, $this->transformer, 'idASC');
         }
@@ -70,7 +68,7 @@ class SkillController extends AbstractController
     {
         $form = $this->api->createForm($request, FormType::class, $skill);
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $response = $this->api->responseForm($skill, $this->transformer, 'idASC', true);
             $this->entityManager->remove($skill);
             $this->entityManager->flush();

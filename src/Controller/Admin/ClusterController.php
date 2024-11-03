@@ -154,7 +154,6 @@ class ClusterController extends AbstractController
         Cluster $cluster,
         bool $filtered
     ): Response {
-
         return $this->render('cluster/admin/skill_list.html.twig', [
             'cluster' => $cluster,
         ]);

@@ -222,7 +222,7 @@ class LicenceDtoTransformer
     }
 
     private function isNewMember(User $user, $currentSeason): bool
-    {        
+    {
         $previousLicence = $this->licenceRepository->findOneByUserAndLastSeason($user);
 
         return !$previousLicence || $currentSeason - 1 !== $previousLicence->getSeason() || !$previousLicence->isFinal() || Licence::STATUS_VALID > $previousLicence->getStatus();

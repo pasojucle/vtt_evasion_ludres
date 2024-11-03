@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Doctrine\DBAL\Type;
 
+use BackedEnum;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
-use UnitEnum;
 
 abstract class EnumType extends Type
 {
@@ -44,9 +44,8 @@ abstract class EnumType extends Type
 
     public function convertToDatabaseValue($enum, AbstractPlatform $platform): ?string
     {
-
-        if ($enum instanceof UnitEnum) {
-            return $enum?->value;
+        if ($enum instanceof BackedEnum) {
+            return $enum->value;
         }
         
         return $enum;

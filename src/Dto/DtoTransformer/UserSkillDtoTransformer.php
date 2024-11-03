@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-
-use App\Entity\Skill;
 use App\Dto\UserSkillDto;
-use App\Service\LevelService;
 use App\Entity\Enum\EvaluationEnum;
+use App\Entity\Skill;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserSkillDtoTransformer implements DtoTransformerInterface
 {
     public function __construct(
-        private readonly LevelService $levelService,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -41,7 +38,6 @@ class UserSkillDtoTransformer implements DtoTransformerInterface
 
     private function getSkill(Skill $skill): array
     {
-
         return [
             'content' => $skill->getContent(),
             'category' => $skill->getCategory()->getName(),

@@ -140,7 +140,7 @@ class ContentController extends AbstractController
             ? $identityService->getMainContact($user)
             : null;
         
-        $data = ($mainContact) 
+        $data = ($mainContact)
             ? ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()]
             : null;
 

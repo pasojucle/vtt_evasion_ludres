@@ -11,5 +11,4 @@ class UserSkillDto
     public ?array $evaluation = null;
 
     public ?string $evaluateAt = null;
-
 }

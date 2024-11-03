@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Error;
-use App\Entity\User;
-use App\Entity\Licence;
 use App\Entity\Identity;
-use App\Entity\Enum\IdentityKindEnum;
-use App\Repository\IdentityRepository;
-
+use App\Entity\Licence;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use function PHPUnit\Framework\throwException;
+use Error;
 
 class IdentityService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private IdentityRepository $identityRepository,
     ) {
     }
 

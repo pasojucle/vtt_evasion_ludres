@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Error;
-use Exception;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Part\File;
-use Symfony\Component\Mime\Part\DataPart;
+use Error;
+use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\File;
 
 class MailerService
 {

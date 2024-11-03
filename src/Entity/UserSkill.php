@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use DateTimeImmutable;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Enum\EvaluationEnum;
 use App\Repository\UserSkillRepository;
-use Doctrine\Common\Collections\Collection;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserSkillRepository::class)]
 class UserSkill

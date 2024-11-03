@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Form\Type;
 
 use ReflectionClass;
-use Symfony\Component\Form\FormView;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VueChoiceFilterType extends AbstractType
@@ -27,7 +27,7 @@ class VueChoiceFilterType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['className'] =  (new ReflectionClass($options['class']))->getShortName();
+        $view->vars['className'] = (new ReflectionClass($options['class']))->getShortName();
         $view->vars['field'] = $options['field'];
     }
 

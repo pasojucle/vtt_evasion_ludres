@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use App\Dto\DtoTransformer\DtoTransformerInterface;
 use App\Dto\LevelDto;
 use App\Entity\Level;
 use App\Service\LevelService;
 use Doctrine\Common\Collections\Collection;
-use App\Dto\DtoTransformer\DtoTransformerInterface;
 
 class LevelDtoTransformer implements DtoTransformerInterface
 {
     public function __construct(
         private readonly LevelService $levelService
-    )
-    {
-        
+    ) {
     }
 
     public function fromEntity($level): LevelDto

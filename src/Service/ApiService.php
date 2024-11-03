@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use ReflectionClass;
-use Twig\Environment;
-use Symfony\Component\Form\FormView;
-use Doctrine\ORM\PersistentCollection;
-use function Symfony\Component\String\u;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Dto\DtoTransformer\DtoTransformerInterface;
+use Doctrine\ORM\PersistentCollection;
+use ReflectionClass;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
+use function Symfony\Component\String\u;
 
 class ApiService
 {
     private const COMPONENT_PROP_KEYS = [
-        'vueChoiceFilter' => ['name' => 'ChoiceFilterType', 'keys' => ['className', 'field', 'placeholder']], 
-        'vueChoiceFiltered' => ['name' => 'ChoiceFilteredType', 'keys' => ['className', 'exclude']], 
+        'vueChoiceFilter' => ['name' => 'ChoiceFilterType', 'keys' => ['className', 'field', 'placeholder']],
+        'vueChoiceFiltered' => ['name' => 'ChoiceFilteredType', 'keys' => ['className', 'exclude']],
         'vueChoice' => ['name' => 'ChoiceType', 'keys' => ['className', 'value']],
         'ckeditor' => ['name' => 'Ckeditor', 'keys' => ['upload_url', 'toolbar', 'value']],
         'vueText' => ['name' => 'TextType', 'keys' => ['value', 'disabled']],
@@ -33,9 +33,7 @@ class ApiService
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly TranslatorInterface $translator,
-    )
-    {
-        
+    ) {
     }
 
     public function renderModal(FormInterface $form, string $title, string $submit, string $theme = 'primary', ?string $message = null): JsonResponse
@@ -43,7 +41,7 @@ class ApiService
         return new JsonResponse([
             'form' => [
                 'action' => $form->getConfig()->getAction(),
-                'elements' => $this->twig->render('component/modal.html.twig',[
+                'elements' => $this->twig->render('component/modal.html.twig', [
                     'message' => $message,
                     'components' => $this->getComponents($form),
                 ]),
@@ -54,10 +52,10 @@ class ApiService
         ]);
     }
 
-    public function getComponents(FormInterface $form,): array
+    public function getComponents(FormInterface $form): array
     {
         $components = [];
-        foreach($form->createView()->getIterator() as $child) {
+        foreach ($form->createView()->getIterator() as $child) {
             $blockPrefix = $this->getBlockPrefix($child);
             if ($component = $this->getComponent($child, $blockPrefix, $this->getChildren($child, $blockPrefix))) {
                 $components[] = $component;
@@ -68,7 +66,7 @@ class ApiService
     }
 
     public function getComponent(FormView $form, string $blockPrefix, array $children = []): ?array
-    {       
+    {
         if ($blockPrefix) {
             $props = $this->getProps($form->vars, $blockPrefix);
             return [
@@ -86,8 +84,8 @@ class ApiService
     {
         $children = [];
         if ('collection' === $blockPrefix) {
-            foreach($form->children as $entryKey => $entry) {
-                foreach($entry->children as $entryChild) {
+            foreach ($form->children as $entryKey => $entry) {
+                foreach ($entry->children as $entryChild) {
                     if ($entryChildBlocPrefix = $this->getBlockPrefix($entryChild)) {
                         $children[$entry->vars['name']][] = [
                             'name' => $this->getComponentName($entryChildBlocPrefix),
@@ -111,7 +109,7 @@ class ApiService
     public function getComponentName(string $blockPrefixe): string
     {
         return ucfirst(self::COMPONENT_PROP_KEYS[$blockPrefixe]['name']);
-    } 
+    }
 
     public function getProps(array $vars, string $blockPrefix, ?int $entryKey = null): array
     {
@@ -121,8 +119,8 @@ class ApiService
             'name' => $vars['full_name'],
             'required' => $vars['required'],
         ];
-        foreach(self::COMPONENT_PROP_KEYS[$blockPrefix]['keys'] as $key) {
-            $props[$key] = match($key) {
+        foreach (self::COMPONENT_PROP_KEYS[$blockPrefix]['keys'] as $key) {
+            $props[$key] = match ($key) {
                 'className' => U($vars[$key])->snake(),
                 'choices' => $this->enumChoicesToArray($vars[$key], $entryKey),
                 default => $vars[$key],
@@ -134,7 +132,7 @@ class ApiService
     private function enumChoicesToArray(array $enumChoices, int $entryKey): array
     {
         $choices = [];
-        foreach($enumChoices as $choice) {
+        foreach ($enumChoices as $choice) {
             $enum = $choice->data;
             $choices[] = [
                 'id' => sprintf('%s_%s', $enum->name, $entryKey),
@@ -157,23 +155,13 @@ class ApiService
     public function responseForm(object $entity, DtoTransformerInterface $transformer, string $sort = 'nameASC', bool $isDeleted = false, ?string $className = null): JsonResponse
     {
         return new JsonResponse([
-            'success' => true, 
+            'success' => true,
             'data' => [
                 'deleted' => $isDeleted,
                 'entity' => $className ?? U((new ReflectionClass($entity))->getShortName())->snake(),
-                // 'entity' => ($entity instanceof PersistentCollection) 
-                //     ? $this->getNameFromCollection($entity)
-                //     : U((new ReflectionClass($entity))->getShortName())->snake(),
                 'value' => $transformer->fromEntity($entity),
                 'sort' => $sort,
             ],
         ]);
-    }
-
-    private function getNameFromCollection(PersistentCollection $collection): string
-    {
-        /** @var AssociationMapping&ToManyAssociationMapping $mapping */
-        $mapping = $collection->getMapping();
-        return $mapping->joinTable->name;
     }
 }

@@ -38,7 +38,8 @@ class ReplaceKeywordsService
         return $content;
     }
 
-    public function replaceWhithParams(string $content, array $parrams) {
+    public function replaceWhithParams(string $content, array $parrams)
+    {
         $keyWords = $this->getKeyWords($content);
         return str_replace($keyWords, $parrams, $content);
     }

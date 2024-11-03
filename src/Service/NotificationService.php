@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\User;
-use ReflectionClass;
-use App\Entity\Survey;
-use App\Entity\Licence;
-use App\Entity\Session;
-use App\Entity\OrderHeader;
-use App\Entity\Notification;
-use App\Entity\RegistrationStep;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Entity\Licence;
+use App\Entity\Notification;
+use App\Entity\OrderHeader;
+use App\Entity\RegistrationStep;
+use App\Entity\Session;
+use App\Entity\Survey;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

@@ -14,7 +14,7 @@ class SessionDto
 
     public ?BikeRideDto $bikeRide;
 
-    public ?UserDto $user;
+    public null|array|UserDto $user;
 
     public ?bool $userIsOnSite = false;
 

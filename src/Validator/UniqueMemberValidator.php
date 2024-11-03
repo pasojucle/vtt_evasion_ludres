@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
+use App\Entity\User;
 use App\Repository\IdentityRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Constraint;

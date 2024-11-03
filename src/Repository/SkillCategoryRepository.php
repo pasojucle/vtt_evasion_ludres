@@ -16,15 +16,15 @@ class SkillCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, SkillCategory::class);
     }
 
-       /**
-        * @return SkillCategory[] Returns an array of SkillCategory objects
-        */
-       public function findAllOrdered(): array
-       {
-           return $this->createQueryBuilder('sc')
+    /**
+     * @return SkillCategory[] Returns an array of SkillCategory objects
+     */
+    public function findAllOrdered(): array
+    {
+        return $this->createQueryBuilder('sc')
                ->orderBy('sc.name', 'ASC')
                ->getQuery()
                ->getResult()
            ;
-       }
+    }
 }

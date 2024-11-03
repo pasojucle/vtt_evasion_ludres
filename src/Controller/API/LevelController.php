@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\API;
 
+use App\Dto\DtoTransformer\LevelDtoTransformer;
 use App\Entity\Level;
-use App\Service\ApiService;
 use App\Form\Admin\LevelType;
 use App\Repository\LevelRepository;
+use App\Service\ApiService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Dto\DtoTransformer\LevelDtoTransformer;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route(path: '/api/level', name: 'api_level_')]
 class LevelController extends AbstractController
@@ -24,9 +24,7 @@ class LevelController extends AbstractController
         private readonly LevelDtoTransformer $transformer,
         private readonly EntityManagerInterface $entityManager,
         private readonly ApiService $api,
-    )
-    {
-        
+    ) {
     }
 
     #[Route(path: '/list', name: 'list', methods: ['GET'], options: ['expose' => true])]
@@ -43,13 +41,13 @@ class LevelController extends AbstractController
         $level = new Level();
         $form = $this->api->createForm($request, LevelType::class, $level);
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($level);
             $this->entityManager->flush();
             return $this->api->responseForm($level, $this->transformer, 'idASC');
         }
         
-        return $this->api->renderModal($form,'Ajouter la compétence', 'Enregistrer');
+        return $this->api->renderModal($form, 'Ajouter la compétence', 'Enregistrer');
     }
 
     #[Route(path: '/edit/{id}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
@@ -57,7 +55,7 @@ class LevelController extends AbstractController
     {
         $form = $this->api->createForm($request, LevelType::class, $level);
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             return $this->api->responseForm($level, $this->transformer, 'idASC');
         }
@@ -70,7 +68,7 @@ class LevelController extends AbstractController
     {
         $form = $this->api->createForm($request, FormType::class, $level);
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $response = $this->api->responseForm($level, $this->transformer, 'idASC', true);
             $this->entityManager->remove($level);
             $this->entityManager->flush();

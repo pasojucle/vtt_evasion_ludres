@@ -2,16 +2,16 @@
 
 namespace App\Security\Voter;
 
-use App\Dto\UserDto;
-use App\Entity\User;
-use App\Entity\Health;
-use App\Entity\Licence;
-use App\Entity\Approval;
-use App\Entity\Identity;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Dto\UserDto;
+use App\Entity\Approval;
+use App\Entity\Health;
+use App\Entity\Identity;
+use App\Entity\Licence;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class UserVoter extends Voter
 {

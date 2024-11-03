@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller\API;
 
-use App\Entity\User;
-use App\Entity\Skill;
-use App\Service\ApiService;
-use App\Form\Admin\UserSkillType;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Form\Admin\UserSkillCollectionType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Dto\DtoTransformer\UserSkillDtoTransformer;
+use App\Entity\Skill;
+use App\Entity\User;
 use App\Entity\UserSkill;
 use App\Form\Admin\SkillAddType;
+use App\Form\Admin\UserSkillCollectionType;
+use App\Form\Admin\UserSkillType;
+use App\Service\ApiService;
 use App\Service\UserSkillService;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/api/user_skill', name: 'api_user_skill_')]
 class UserSkillController extends AbstractController
@@ -28,12 +28,10 @@ class UserSkillController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly ApiService $api,
         private readonly UserSkillService $userSkillService,
-    )
-    {
-        
+    ) {
     }
 
-    #[Route(path: '/list/{user}', name: 'list', methods: ['GET'],requirements:['user' => '\d+'], options: ['expose' => true])]
+    #[Route(path: '/list/{user}', name: 'list', methods: ['GET'], requirements:['user' => '\d+'], options: ['expose' => true])]
     public function list(User $user): JsonResponse
     {
         return new JsonResponse([
@@ -44,7 +42,6 @@ class UserSkillController extends AbstractController
     #[Route(path: '/list/edit/{user}', name: 'list_edit', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function listEdit(User $user): JsonResponse
     {
-
         return $this->userSkillService->getList($user);
     }
 
@@ -56,13 +53,13 @@ class UserSkillController extends AbstractController
         ]);
         
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $userSkill = $form->getData();
             $userSkill->setEvaluateAt(new DateTimeImmutable());
             $this->entityManager->flush();
 
             return new JsonResponse([
-                'success' => true, 
+                'success' => true,
                 'data' => [
                     'deleted' => false,
                     'entity' => 'user_skill_edit',
@@ -72,7 +69,7 @@ class UserSkillController extends AbstractController
             ]);
         }
 
-        return $this->userSkillService->render($form);
+        return new JsonResponse(['success' => false, ]);
     }
 
     #[Route(path: '/add/{user}', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
@@ -83,7 +80,7 @@ class UserSkillController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $skill = $this->entityManager->getRepository(Skill::class)->find($data['skill']);
             $userSkill = new UserSkill();
@@ -98,7 +95,7 @@ class UserSkillController extends AbstractController
             ]);
 
             return new JsonResponse([
-                'success' => true, 
+                'success' => true,
                 'data' => [
                     'deleted' => false,
                     'entity' => 'user_skill_edit',

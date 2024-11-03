@@ -2,17 +2,17 @@
 
 namespace App\Form\Admin;
 
-use App\Entity\UserSkill;
-use App\Form\HiddenUserType;
-use App\Form\HiddenSkillType;
 use App\Entity\Enum\EvaluationEnum;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use App\Entity\UserSkill;
+use App\Form\HiddenSkillType;
+use App\Form\HiddenUserType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserSkillType extends AbstractType
 {

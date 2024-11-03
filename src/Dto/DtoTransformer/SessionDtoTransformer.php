@@ -63,9 +63,9 @@ class SessionDtoTransformer
     public function evalFromEntity(Session $session): SessionDto
     {
         $sessionDto = new SessionDto();
-            $sessionDto->id = $session->getId();
-            $member = $session->getUser()->getMemberIdentity();
-            $sessionDto->user = ['id' => $session->getUser()->getId(), 'fullName' => sprintf('%s %s', $member->getname(), $member->getFirstName())];
+        $sessionDto->id = $session->getId();
+        $member = $session->getUser()->getMemberIdentity();
+        $sessionDto->user = ['id' => $session->getUser()->getId(), 'fullName' => sprintf('%s %s', $member->getname(), $member->getFirstName())];
 
 
         return $sessionDto;

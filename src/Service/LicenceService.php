@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTime;
-use App\Entity\User;
-use DateTimeInterface;
 use App\Entity\Licence;
-use App\Service\IdentityService;
-use App\Repository\IdentityRepository;
+use App\Entity\User;
+use DateTime;
+use DateTimeInterface;
 
 class LicenceService
 {
     public function __construct(
         private readonly SeasonService $seasonService,
-        private readonly IdentityService $identityService,
     ) {
     }
     public function getCategory(User $user): int
