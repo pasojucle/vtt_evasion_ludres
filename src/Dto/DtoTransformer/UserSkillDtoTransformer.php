@@ -41,7 +41,7 @@ class UserSkillDtoTransformer implements DtoTransformerInterface
 
     private function getSkill(Skill $skill): array
     {
-        dump($skill);
+
         return [
             'content' => $skill->getContent(),
             'category' => $skill->getCategory()->getName(),

@@ -1,6 +1,6 @@
 <template>
     <div className="radio-group-vue" v-for="choice in choices" :key="choice.value">
-        <input type="radio" :name="name" :id="choice.id" :value="choice.value" v-model="picked">
+        <input type="radio" :name="name" :id="choice.id" :value="choice.value" v-model="picked" @click="onClick">
         <label className="label" :for="choice.id" :style="{'background-color': getBackground(choice)}">{{ choice.label }}</label>
     </div>
 </template>
@@ -13,7 +13,11 @@ export default {
         name: String,
         value: String,
         choices: Array,
+        submitOnClick: Boolean,
     },
+    emits: [
+        'update:submit',
+    ],
     data() {
         return {
             picked: null,
@@ -25,6 +29,10 @@ export default {
                 return  choice.color;
             }
             return 'unset';
+        },
+        onClick(event) {
+            console.log('onClick', event.target)
+            this.$emit('update:submit', event.target);
         }
     },
     created() {

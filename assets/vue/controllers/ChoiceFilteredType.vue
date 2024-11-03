@@ -12,7 +12,6 @@ export default {
     props: {
         className: String,
         exclude: String,
-        
     },
     data() {
         return {

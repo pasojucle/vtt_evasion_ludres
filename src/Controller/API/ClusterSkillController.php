@@ -9,7 +9,6 @@ use DateTimeImmutable;
 use App\Entity\Cluster;
 use App\Entity\UserSkill;
 use App\Service\ApiService;
-use App\Form\Admin\ClusterSkillType;
 use App\Repository\UserSkillRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\UseCase\Skill\GetUserSkillCluster;
@@ -17,6 +16,8 @@ use App\Form\Admin\UserSkillCollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Dto\DtoTransformer\SkillDtoTransformer;
+use App\Form\Admin\SkillAddType;
+use App\Form\Admin\UserSkillType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,6 +49,7 @@ class ClusterSkillController extends AbstractController
     {
         $form = $this->createForm(UserSkillCollectionType::class, $this->getUserSkillCluster->execute($cluster, $skill), [
             'action' => $request->getUri(),
+            'text_type' => UserSkillType::BY_USERS,
         ]);
 
         $form->handleRequest($request);
@@ -68,7 +70,9 @@ class ClusterSkillController extends AbstractController
     #[Route(path: '/add/{cluster}', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function add(Request $request, Cluster $cluster): JsonResponse
     {
-        $form = $this->api->createForm($request, ClusterSkillType::class, null);
+        $form = $this->api->createForm($request, SkillAddType::class, null, [
+            'exclude' => ['entity' => 'cluster_skill', 'field' => 'id'],
+        ]);
 
         $form->handleRequest($request);
         if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {

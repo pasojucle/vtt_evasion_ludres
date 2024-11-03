@@ -28,7 +28,7 @@ class VueChoiceFilteredType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['className'] = (new ReflectionClass($options['class']))->getShortName();
-        $view->vars['exclude'] = $options['exclude'];
+        $view->vars['exclude'] = json_encode($options['exclude']);
     }
 
 

@@ -1,0 +1,9 @@
+
+                {% for child in component.children %}
+                    <div class="row form-group form-group-collection">
+                        {% for child_component in child %}
+                            <div class="{% if child_component.row_attr is not empty %}{{ child_component.row_attr.class}}{% endif %}" {{ vue_component(child_component.name, child_component.props) }}></div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+

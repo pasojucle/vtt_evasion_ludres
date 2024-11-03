@@ -11,8 +11,9 @@ use App\Form\Type\VueChoiceFilterType;
 use App\Form\Type\VueChoiceFilteredType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ClusterSkillType extends AbstractType
+class SkillAddType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -42,11 +43,18 @@ class ClusterSkillType extends AbstractType
             ->add('skill', VueChoiceFilteredType::class, [
                 'label' => 'Compétences',
                 'class' => Skill::class,
-                'exclude' => 'cluster_skill',
+                'exclude' => $options['exclude'],
                 'row_attr' => [
                     'class' => 'col-md-12',
                 ],
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'exclude' => null,
+        ]);
     }
 }

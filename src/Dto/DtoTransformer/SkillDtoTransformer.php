@@ -7,7 +7,6 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\SkillDto;
 use App\Entity\Skill;
 use App\Service\LevelService;
-use Doctrine\Common\Collections\Collection;
 
 class SkillDtoTransformer implements DtoTransformerInterface
 {
@@ -19,7 +18,6 @@ class SkillDtoTransformer implements DtoTransformerInterface
     public function fromEntity($skill): SkillDto
     {
         $skillDto = new SkillDto();
-        dump($skill);
         if ($skill) {
             $skillDto->id = $skill->getId();
             $skillDto->content = $skill->getContent();

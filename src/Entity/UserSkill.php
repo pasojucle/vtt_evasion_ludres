@@ -18,7 +18,7 @@ class UserSkill
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $evaluateAt = null;
+    private ?DateTimeImmutable $evaluateAt = null;
 
     #[ORM\Column(type: 'Evaluation')]
     private EvaluationEnum $evaluation = EvaluationEnum::UNACQUIRED;
@@ -34,7 +34,7 @@ class UserSkill
         return $this->id;
     }
 
-    public function getEvaluateAt(): DateTimeImmutable
+    public function getEvaluateAt(): ?DateTimeImmutable
     {
         return $this->evaluateAt;
     }

@@ -22,6 +22,9 @@
             <li><a class="dropdown-item" href="{{ path('admin_session_delete', {'session' : session.id}) }}" title="Supprimer"><i class="fas fa-times"></i> Supprimer de la sortie</a></li>
         {% endif %}
       {% endif %}
+      {% if is_granted('USER_LIST') %}
+        <li><a class="dropdown-item" href="{{ path('admin_user_skill_edit', {'user': user.id}) }}"><i class="fa-solid fa-graduation-cap"></i> Compétences</a></li>
+      {% endif %}
       {% if is_granted('ROLE_ADMIN') %}
         <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.id}) }}"><i class="fas fa-chart-line"></i> Participation</a></li>
         <li><a class="dropdown-item" href="{{ path('admin_user_certificate', {'user': user.id}) }}"><i class="fas fa-file-contract"></i> Attestation d'inscription CE</a></li>

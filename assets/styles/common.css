@@ -648,6 +648,7 @@ main:not(.admin) {
     opacity: unset;
     border: unset;
     color: unset;
+    width: 100%;
 }
 
 button[type=submit].btn.btn-primary:disabled {

@@ -6,16 +6,18 @@ namespace App\Controller\API;
 
 use App\Entity\User;
 use App\Entity\Skill;
-use App\Entity\Cluster;
 use App\Service\ApiService;
-use App\Form\Admin\ClusterSkillType;
+use App\Form\Admin\UserSkillType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\Admin\UserSkillCollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Dto\DtoTransformer\SkillDtoTransformer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Dto\DtoTransformer\UserSkillDtoTransformer;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use App\Entity\UserSkill;
+use App\Form\Admin\SkillAddType;
+use App\Service\UserSkillService;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route(path: '/api/user_skill', name: 'api_user_skill_')]
@@ -23,14 +25,15 @@ class UserSkillController extends AbstractController
 {
     public function __construct(
         private readonly UserSkillDtoTransformer $transformer,
-        // private readonly EntityManagerInterface $entityManager,
-        // private readonly ApiService $api,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ApiService $api,
+        private readonly UserSkillService $userSkillService,
     )
     {
         
     }
 
-    #[Route(path: '/list/{user}', name: 'list', methods: ['GET'], options: ['expose' => true])]
+    #[Route(path: '/list/{user}', name: 'list', methods: ['GET'],requirements:['user' => '\d+'], options: ['expose' => true])]
     public function list(User $user): JsonResponse
     {
         return new JsonResponse([
@@ -38,38 +41,73 @@ class UserSkillController extends AbstractController
         ]);
     }
 
-    // #[Route(path: '/edit/{user}/{', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
-    // public function add(Request $request, Cluster $cluster): JsonResponse
-    // {
-    //     $form = $this->api->createForm($request, ClusterSkillType::class, null);
+    #[Route(path: '/list/edit/{user}', name: 'list_edit', methods: ['GET', 'POST'], options: ['expose' => true])]
+    public function listEdit(User $user): JsonResponse
+    {
 
-    //     $form->handleRequest($request);
-    //     if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
-    //         $data = $form->getData();
-    //         $skill = $this->entityManager->getRepository(Skill::class)->find($data['skill']);
-    //         $cluster->addSkill($skill);
-    //         $this->entityManager->flush();
+        return $this->userSkillService->getList($user);
+    }
 
-    //         return $this->api->responseForm($skill, $this->transformer, 'idASC', false, 'cluster_skill');
-    //     }
-
-    //     return $this->api->renderModal($form, 'Mofifier la compétence', 'Enregistrer');
-
-    // }
-
-    // #[Route(path: '/edit/{cluster}/{skill}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
-    // public function delete(Request $request, Cluster $cluster, Skill $skill): JsonResponse
-    // {
-    //     $form = $this->api->createForm($request, FormType::class, $skill);
-    //     $form->handleRequest($request);
-    //     if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
-    //         $response = $this->api->responseForm($skill, $this->transformer, 'idASC', true, 'cluster_skill');
-    //         $cluster->removeSkill($skill);
-    //         $this->entityManager->flush();
-    //         return $response;
-    //     }
+    #[Route(path: '/edit/{userSkill}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
+    public function edit(Request $request, UserSkill $userSkill): JsonResponse
+    {
+        $form = $this->api->createForm($request, UserSkillType::class, $userSkill, [
+            'text_type' => UserSkillType::BY_SKILLS,
+        ]);
         
-    //     $message = sprintf('<p>Etes vous certain de supprimer la compétence ? %s</p>', $skill->getContent());
-    //     return $this->api->renderModal($form, 'Supprimer la compétence', 'Supprimer', 'danger', $message);
-    // }
+        $form->handleRequest($request);
+        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $userSkill = $form->getData();
+            $userSkill->setEvaluateAt(new DateTimeImmutable());
+            $this->entityManager->flush();
+
+            return new JsonResponse([
+                'success' => true, 
+                'data' => [
+                    'deleted' => false,
+                    'entity' => 'user_skill_edit',
+                    'value' => $this->userSkillService->getUserSkill($form->createView()),
+                    'sort' => 'idASC',
+                ],
+            ]);
+        }
+
+        return $this->userSkillService->render($form);
+    }
+
+    #[Route(path: '/add/{user}', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
+    public function add(Request $request, User $user): JsonResponse
+    {
+        $form = $this->api->createForm($request, SkillAddType::class, null, [
+            'exclude' => ['entity' => 'user_skill_edit', 'field' => 'skill.value'],
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->getMethod('post') && $form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $skill = $this->entityManager->getRepository(Skill::class)->find($data['skill']);
+            $userSkill = new UserSkill();
+            $userSkill->setUser($user)
+                ->setSkill($skill);
+            $this->entityManager->persist($userSkill);
+            $this->entityManager->flush();
+
+            $form = $this->createForm(UserSkillType::class, $userSkill, [
+                'text_type' => UserSkillType::BY_SKILLS,
+                'action' => $this->generateUrl('api_user_skill_edit', ['userSkill' => $userSkill->getId()])
+            ]);
+
+            return new JsonResponse([
+                'success' => true, 
+                'data' => [
+                    'deleted' => false,
+                    'entity' => 'user_skill_edit',
+                    'value' => $this->userSkillService->getUserSkill($form->createView()),
+                    'sort' => 'idASC',
+                ],
+            ]);
+        }
+
+        return $this->api->renderModal($form, 'Ajouter une compétence', 'Enregistrer');
+    }
 }

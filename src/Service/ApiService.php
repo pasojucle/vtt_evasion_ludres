@@ -38,7 +38,7 @@ class ApiService
         
     }
 
-    public function renderModal(?FormInterface $form, string $title, string $submit, string $theme = 'primary', ?string $message = null): JsonResponse
+    public function renderModal(FormInterface $form, string $title, string $submit, string $theme = 'primary', ?string $message = null): JsonResponse
     {
         return new JsonResponse([
             'form' => [
@@ -58,7 +58,8 @@ class ApiService
     {
         $components = [];
         foreach($form->createView()->getIterator() as $child) {
-            if ($component = $this->getComponent($child)) {
+            $blockPrefix = $this->getBlockPrefix($child);
+            if ($component = $this->getComponent($child, $blockPrefix, $this->getChildren($child, $blockPrefix))) {
                 $components[] = $component;
             };
         }
@@ -66,10 +67,23 @@ class ApiService
         return $components;
     }
 
-    private function getComponent(FormView $form): ?array
+    public function getComponent(FormView $form, string $blockPrefix, array $children = []): ?array
+    {       
+        if ($blockPrefix) {
+            $props = $this->getProps($form->vars, $blockPrefix);
+            return [
+                'id' => $form->vars['id'],
+                'name' => $this->getComponentName($blockPrefix),
+                'props' => $props,
+                'row_attr' => $form->vars['row_attr'],
+                'children' => $children,
+            ];
+        }
+        return null;
+    }
+
+    private function getChildren(FormView $form, string $blockPrefix): array
     {
-        
-        $blockPrefix = $this->getBlockPrefix($form);
         $children = [];
         if ('collection' === $blockPrefix) {
             foreach($form->children as $entryKey => $entry) {
@@ -85,31 +99,21 @@ class ApiService
             }
         }
 
-        if ($blockPrefix) {
-            $props = $this->getProps($form->vars, $blockPrefix);
-            return [
-                'id' => $form->vars['id'],
-                'name' => $this->getComponentName($blockPrefix),
-                'props' => $props,
-                'row_attr' => $form->vars['row_attr'],
-                'children' => $children,
-            ];
-        }
-        return null;
+        return $children;
     }
 
-    private function getBlockPrefix(FormView $form): ?string
+    public function getBlockPrefix(FormView $form): ?string
     {
         $blockPrefixes = array_intersect($form->vars['block_prefixes'], array_keys(self::COMPONENT_PROP_KEYS));
         return ($blockPrefixes) ? $blockPrefixes[array_key_first($blockPrefixes)] : null;
     }
 
-    private function getComponentName(string $blockPrefixe): string
+    public function getComponentName(string $blockPrefixe): string
     {
         return ucfirst(self::COMPONENT_PROP_KEYS[$blockPrefixe]['name']);
     } 
 
-    private function getProps(array $vars, string $blockPrefix, ?int $entryKey = null): array
+    public function getProps(array $vars, string $blockPrefix, ?int $entryKey = null): array
     {
         $props = [
             'id' => $vars['id'],
@@ -144,11 +148,10 @@ class ApiService
         return $choices;
     }
 
-    public function createForm(Request $request, string $type, ?object $entity): FormInterface
+    public function createForm(Request $request, string $type, null|array|object $entity, array $params = []): FormInterface
     {
-        return $this->formFactory->create($type, $entity, [
-            'action' => $request->getRequestUri(),
-        ]);
+        $params['action'] = $request->getRequestUri();
+        return $this->formFactory->create($type, $entity, $params);
     }
 
     public function responseForm(object $entity, DtoTransformerInterface $transformer, string $sort = 'nameASC', bool $isDeleted = false, ?string $className = null): JsonResponse
