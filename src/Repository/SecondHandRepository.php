@@ -141,11 +141,13 @@ class SecondHandRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->andWhere(
                 (new Expr())->notIn('s.id', $viewed->getDQL()),
-                (new Expr())->isNotNull('s.validedAt')
+                (new Expr())->isNotNull('s.validedAt'),
+                (new Expr())->eq('s.disabled', ':disabled'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('user', $user),
-                new Parameter('entityName', 'SecondHand')
+                new Parameter('entityName', 'SecondHand'),
+                new Parameter('disabled', false),
             ]))
             ->getQuery()
             ->getResult()
