@@ -36,6 +36,7 @@
             value: String,
             upload_url: String,
             toolbar: Array,
+            environment: String,
         },
         data() {
             return {
@@ -122,7 +123,9 @@
         },
         methods: {
             onReady(editor) {
-                CKEditorInspector.attach(editor);
+                if (this.environment === 'dev') {
+                    CKEditorInspector.attach(editor);
+                }
             },
             onChange(data) {
                 console.log('onChange', data);
