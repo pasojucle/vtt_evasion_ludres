@@ -71,7 +71,7 @@ class CategoryController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $category->setDeleted(true);
             $this->categoryRepository->save($category, true);
 

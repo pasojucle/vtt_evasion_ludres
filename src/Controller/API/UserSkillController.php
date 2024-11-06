@@ -80,7 +80,7 @@ class UserSkillController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $skill = $this->entityManager->getRepository(Skill::class)->find($data['skill']);
             $userSkill = new UserSkill();

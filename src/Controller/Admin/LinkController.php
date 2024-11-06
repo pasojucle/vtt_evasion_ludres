@@ -117,7 +117,7 @@ class LinkController extends AbstractController
         $position = $link->getPosition();
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($link);
             $this->entityManager->flush();
 

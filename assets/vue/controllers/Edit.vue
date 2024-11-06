@@ -70,7 +70,8 @@ export default {
             })
             .then(checkStatus)
             // .then(isJsonResponse)
-            .then((response) => response.json())
+            .then((response) => {
+                console.log('response', response); return response.json()})
             .then((json)=> {
                 console.log('response', json)
                 if (json.success) {

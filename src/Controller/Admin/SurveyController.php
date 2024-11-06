@@ -68,7 +68,7 @@ class SurveyController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $setSurvey->execute($form, true);
 
             return $this->redirectToRoute('admin_surveys');
@@ -90,7 +90,7 @@ class SurveyController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $setSurvey->execute($form);
             
             return $this->redirectToRoute('admin_surveys');
@@ -194,7 +194,7 @@ class SurveyController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $survey->setDisabled(true);
             $this->entityManager->persist($survey);
             $this->entityManager->flush();
@@ -221,7 +221,7 @@ class SurveyController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey($survey->getId());
             /** @var History $history */
             foreach ($histories as $history) {

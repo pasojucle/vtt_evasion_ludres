@@ -125,7 +125,7 @@ class OrderController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $orderHeader->setStatus(OrderStatusEnum::CANCELED);
             $this->entityManager->persist($orderHeader);
             $this->entityManager->flush();

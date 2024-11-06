@@ -40,7 +40,7 @@ class SkillCategoryController extends AbstractController
         $category = new SkillCategory();
         $form = $this->api->createForm($request, SkillCategoryType::class, $category);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($category);
             $this->entityManager->flush();
             return $this->api->responseForm($category, $this->transformer);
@@ -54,7 +54,7 @@ class SkillCategoryController extends AbstractController
     {
         $form = $this->api->createForm($request, SkillCategoryType::class, $category);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             return $this->api->responseForm($category, $this->transformer);
         }
@@ -67,7 +67,7 @@ class SkillCategoryController extends AbstractController
     {
         $form = $this->api->createForm($request, FormType::class, $category);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $response = $this->api->responseForm($category, $this->transformer, 'nameASC', true);
             $this->entityManager->remove($category);
             $this->entityManager->flush();

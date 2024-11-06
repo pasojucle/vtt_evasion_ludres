@@ -149,7 +149,7 @@ class MessageController extends AbstractController
         ]);
         $section = $message->getSection();
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($message);
             $this->entityManager->flush();
 

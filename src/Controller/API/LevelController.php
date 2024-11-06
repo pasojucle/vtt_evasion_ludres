@@ -41,7 +41,7 @@ class LevelController extends AbstractController
         $level = new Level();
         $form = $this->api->createForm($request, LevelType::class, $level);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($level);
             $this->entityManager->flush();
             return $this->api->responseForm($level, $this->transformer, 'idASC');
@@ -55,7 +55,7 @@ class LevelController extends AbstractController
     {
         $form = $this->api->createForm($request, LevelType::class, $level);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             return $this->api->responseForm($level, $this->transformer, 'idASC');
         }
@@ -68,7 +68,7 @@ class LevelController extends AbstractController
     {
         $form = $this->api->createForm($request, FormType::class, $level);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $response = $this->api->responseForm($level, $this->transformer, 'idASC', true);
             $this->entityManager->remove($level);
             $this->entityManager->flush();

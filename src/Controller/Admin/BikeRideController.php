@@ -192,7 +192,7 @@ class BikeRideController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $bikeRide->setDeleted(true);
             $this->entityManager->flush();
 

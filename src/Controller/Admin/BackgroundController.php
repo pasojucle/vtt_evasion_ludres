@@ -81,7 +81,7 @@ class BackgroundController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($background);
             $this->entityManager->flush();
 

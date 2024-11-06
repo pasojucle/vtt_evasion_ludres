@@ -150,7 +150,7 @@ class SecondHandController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->secondHandRepository->remove($secondHand, true);
 
             return $this->redirectToRoute('second_hand_user_list');
@@ -190,7 +190,7 @@ class SecondHandController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             /** @var ?User $buyer */
             $buyer = $this->getUser();
             $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);

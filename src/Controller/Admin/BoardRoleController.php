@@ -85,7 +85,7 @@ class BoardRoleController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $userRepository->removeBoardRole($boardRole);
             $this->entityManager->remove($boardRole);
             $this->entityManager->flush();

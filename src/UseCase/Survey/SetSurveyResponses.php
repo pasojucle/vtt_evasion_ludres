@@ -87,7 +87,7 @@ class SetSurveyResponses
             'surveyResponses' => $this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey),
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             if (!empty($data['surveyResponses'])) {
                 foreach ($data['surveyResponses'] as $response) {
@@ -114,7 +114,7 @@ class SetSurveyResponses
             'surveyResponses' => $this->newSurveyResponses($survey),
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             foreach ($data['surveyResponses'] as $response) {
                 if (!$survey->isAnonymous()) {

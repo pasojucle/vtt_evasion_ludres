@@ -41,7 +41,7 @@ class SkillController extends AbstractController
         $skill = new Skill();
         $form = $this->api->createForm($request, SkillType::class, $skill);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($skill);
             $this->entityManager->flush();
             return $this->api->responseForm($skill, $this->transformer, 'idASC');
@@ -55,7 +55,7 @@ class SkillController extends AbstractController
     {
         $form = $this->api->createForm($request, SkillType::class, $skill);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             return $this->api->responseForm($skill, $this->transformer, 'idASC');
         }
@@ -68,7 +68,7 @@ class SkillController extends AbstractController
     {
         $form = $this->api->createForm($request, FormType::class, $skill);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $response = $this->api->responseForm($skill, $this->transformer, 'idASC', true);
             $this->entityManager->remove($skill);
             $this->entityManager->flush();

@@ -106,7 +106,7 @@ class RegistrationStepController extends AbstractController
         $group = $registrationStep->getRegistrationStepGroup();
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->registrationStepRepository->remove($registrationStep, true);
 
             $registrationSteps = $this->registrationStepRepository->findByGroup($group);

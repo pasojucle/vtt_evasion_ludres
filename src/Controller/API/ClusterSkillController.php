@@ -49,7 +49,7 @@ class ClusterSkillController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             /** @var UserSkill $userSkill */
             foreach ($data['userSkills'] as $userSkill) {
@@ -71,7 +71,7 @@ class ClusterSkillController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $skill = $this->entityManager->getRepository(Skill::class)->find($data['skill']);
             $cluster->addSkill($skill);
@@ -88,7 +88,7 @@ class ClusterSkillController extends AbstractController
     {
         $form = $this->api->createForm($request, FormType::class, $skill);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $response = $this->api->responseForm($skill, $this->transformer, 'idASC', true, 'cluster_skill');
             $cluster->removeSkill($skill);
             $this->entityManager->flush();

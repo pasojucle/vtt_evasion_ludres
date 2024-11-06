@@ -115,7 +115,7 @@ class SecondHandController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->secondHandRepository->remove($secondHand, true);
 
             return $this->redirectToRoute('admin_second_hand_list', [

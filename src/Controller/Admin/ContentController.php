@@ -197,7 +197,7 @@ class ContentController extends AbstractController
         $isFlash = $content->IsFlash();
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($content);
             $this->entityManager->flush();
 

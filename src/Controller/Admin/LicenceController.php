@@ -41,7 +41,7 @@ class LicenceController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             foreach ($licence->getLicenceSwornCertifications() as $licenceSwornCertification) {
                 $this->entityManager->remove($licenceSwornCertification);
             }
