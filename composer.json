@@ -53,7 +53,7 @@
         "symfony/ux-vue": "^2.16",
         "symfony/validator": "7.1.*",
         "symfony/web-link": "7.1.*",
-        "symfony/webpack-encore-bundle": "^2.0",
+        "symfony/webpack-encore-bundle": "^2.2",
         "symfony/yaml": "7.1.*",
         "symfonycasts/reset-password-bundle": "^1.9",
         "twig/cssinliner-extra": "^3.3",
