@@ -25,7 +25,7 @@ class Cluster {
     getSessions = () => {
         fetch(this.route)
         .then(checkStatus)
-        .then(isJsonResponse)
+        // .then(isJsonResponse)
         .then((response) => response.json())
         .then((json) => {
             if (parseInt(json.codeError) === 0) {
@@ -65,7 +65,7 @@ class Cluster {
         event.preventDefault();
         const route = Routing.generate('admin_cluster_complete', {'cluster': this.entityId});
         fetch(route)
-        .then(isJsonResponse)
+        // .then(isJsonResponse)
         .then((response) => response.json())
         .then((json)=> {
             if (json.html) {
@@ -88,7 +88,7 @@ class Cluster {
             method: 'POST',
             body : data,
         })
-        .then(isJsonResponse)
+        // .then(isJsonResponse)
         .then((response) => response.json())
         .then((json)=> {
             this.replaceCluster(json.html);

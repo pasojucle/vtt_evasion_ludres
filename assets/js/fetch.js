@@ -7,7 +7,6 @@ export const checkStatus = (response) => {
 
 export const isJsonResponse = (response) => {
     const contentType = response.headers.get("content-type");
-    console.log('contentType', response.headers.get("content-type"));
     if (contentType && contentType.indexOf("application/json") !== -1) {
          return response;    
     }

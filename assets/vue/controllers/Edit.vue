@@ -47,7 +47,7 @@ export default {
         async onLoad() {           
             await fetch(this.route)
             .then(checkStatus)
-            .then(isJsonResponse)
+            // .then(isJsonResponse)
             .then((response) => response.json())
             .then((json)=> {
                 this.form = json.form;
@@ -69,7 +69,7 @@ export default {
                 body : new FormData(form),
             })
             .then(checkStatus)
-            .then(isJsonResponse)
+            // .then(isJsonResponse)
             .then((response) => response.json())
             .then((json)=> {
                 console.log('response', json)

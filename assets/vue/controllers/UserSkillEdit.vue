@@ -74,7 +74,7 @@ export default {
                 body : new FormData(form),
             })
             .then(checkStatus)
-            .then(isJsonResponse)
+            // .then(isJsonResponse)
             .then((response) => response.json())
             .then((json)=> {
                 console.log('response', json)
