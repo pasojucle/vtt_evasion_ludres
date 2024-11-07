@@ -21,7 +21,7 @@ class UserSkillService
     ) {
     }
 
-    public function getList(User $user): JsonResponse
+    public function getList(User $user): array
     {
         $userSkills = [];
         foreach ($user->getUserSkills() as $userSkill) {
@@ -32,7 +32,7 @@ class UserSkillService
             $userSkills[] = $this->getUserSkill($form->createView());
         }
 
-        return new JsonResponse(['list' => $userSkills]);
+        return $userSkills;
     }
 
     // public function render(FormInterface $form): JsonResponse

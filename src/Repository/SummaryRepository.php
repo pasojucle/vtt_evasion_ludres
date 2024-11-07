@@ -35,7 +35,6 @@ class SummaryRepository extends ServiceEntityRepository
     public function findLatestDesc(?DateTimeImmutable $viewAt = null): array
     {
         $bikeRideLatest = $this->getBikeRideLatest();
-        // dump($bikeRideLatest->getQuery()->getResult());
 
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->in('br.id', ':bikeRideLatest'));

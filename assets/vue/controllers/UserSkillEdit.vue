@@ -46,15 +46,6 @@ export default {
         }
     }, 
     methods: {
-        async getList() {
-            await fetch(Routing.generate('api_user_skill_list_edit', {'user': this.user}), {
-                method: "GET", 
-            })
-            .then(response => response.json())
-            .then(data => {
-                this.store.list[this.entity] = data.list;
-            });
-        },
         getProps(components, componentName, propName = null) {
             if (!components) {
                 return null;
@@ -74,7 +65,7 @@ export default {
                 body : new FormData(form),
             })
             .then(checkStatus)
-            // .then(isJsonResponse)
+            .then(isJsonResponse)
             .then((response) => response.json())
             .then((json)=> {
                 console.log('response', json)
@@ -90,7 +81,7 @@ export default {
         },
     },
     created() {
-        this.getList();
+        this.store.getList(this.entity, {'user': this.user}, 'api_user_skill_list_edit');
     },
 }
 </script>

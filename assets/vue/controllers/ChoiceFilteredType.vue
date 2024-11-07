@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             store,
-            select: undefined,
+            selected: undefined,
         }
     },
     created() {

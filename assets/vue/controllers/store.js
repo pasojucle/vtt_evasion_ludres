@@ -1,17 +1,22 @@
 import { reactive } from 'vue'
 import Routing from 'fos-router';
+import { checkStatus, isJsonResponse } from './../../js/fetch.js'
 
 
 export const store = reactive({
   list: {},
   filter: {},
-  async getList(entity, params = {}) {
-    await fetch(Routing.generate(`api_${entity}_list`, params), {
+  async getList(entity, params = {}, route = null) {
+    if (!route) {
+      route = `api_${entity}_list`;
+    }
+    await fetch(Routing.generate(route, params), {
       method: "GET", 
     })
-    .then(response => response.json())
-    .then(data => {
-        this.list[entity] = data.list;
+    .then(response => {console.log('response', route, response); return response.json()})
+    .then(json => {
+        console.log('json',entity, json)
+        this.list[entity] = json.list;
         console.log('list', entity, this.list[entity])
     });
   },
@@ -115,5 +120,5 @@ export const store = reactive({
             string = entity.name;
     }
     return string;
-  }
+  },
 })

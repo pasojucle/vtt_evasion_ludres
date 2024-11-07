@@ -39,10 +39,12 @@ class UserSkillController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/list/edit/{user}', name: 'list_edit', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[Route(path: '/list_edit/{user}', name: 'list_edit', methods: ['GET', 'POST'], options: ['expose' => true])]
     public function listEdit(User $user): JsonResponse
     {
-        return $this->userSkillService->getList($user);
+        return new JsonResponse([
+            'list' => $this->userSkillService->getList($user),
+        ]);
     }
 
     #[Route(path: '/edit/{userSkill}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]

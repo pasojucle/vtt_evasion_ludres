@@ -47,14 +47,13 @@ export default {
         async onLoad() {           
             await fetch(this.route)
             .then(checkStatus)
-            // .then(isJsonResponse)
+            .then(isJsonResponse)
             .then((response) => response.json())
             .then((json)=> {
                 this.form = json.form;
                 this.title = json.title;
                 this.theme = json.theme;
                 this.loaded = true;
-                console.log('children', this.form.children)
             });
         },
         async onSubmit(event) {
@@ -69,9 +68,8 @@ export default {
                 body : new FormData(form),
             })
             .then(checkStatus)
-            // .then(isJsonResponse)
-            .then((response) => {
-                console.log('response', response); return response.json()})
+            .then(isJsonResponse)
+            .then((response) => response.json())
             .then((json)=> {
                 console.log('response', json)
                 if (json.success) {
@@ -98,7 +96,6 @@ export default {
     },
     created() {
         console.log('Edit.vue')
-        
     },
 }
 </script>
