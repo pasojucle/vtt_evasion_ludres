@@ -3,15 +3,15 @@
 namespace App\Form\Type;
 
 use App\Kernel;
-use Symfony\Component\Form\FormView;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CkeditorType extends AbstractType
