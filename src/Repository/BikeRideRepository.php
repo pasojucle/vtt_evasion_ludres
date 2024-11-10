@@ -99,23 +99,21 @@ class BikeRideRepository extends ServiceEntityRepository
     public function findLike(string $query): array
     {
         $params = [];
-        if (1 === preg_match('#^(\d{2})\/(\d{1,2})#', $query)) {
-            $today = new DateTime();
-            $query = $query . '/' . $today->format('y');
-        }
-        $startAt = DateTimeImmutable::createFromFormat('d/m/y', $query);
         $orX = (new Expr())->orX();
         $orX->add((new Expr())->like('br.title', ':title'));
         $params[] = new Parameter('title', '%' . $query . '%');
-        if ($startAt) {
+        if (1 === preg_match('#^(\d{1,2})\/(\d{1,2})(?:[\/]{0,1})(\d{0,2})#', $query, $matches)) {
+            list($all, $day, $month, $year) = $matches;
+            $startAt = (empty($year))
+                ? DateTimeImmutable::createFromFormat('m-d', sprintf('%s-%s', $month, $day))
+                : DateTimeImmutable::createFromFormat('y-m-d', sprintf('%s-%s-%s', $year, $month, $day));
             $orX->add((new Expr())->eq('br.startAt', ':query'));
             $params[] = new Parameter('query', $startAt->setTime(0, 0, 0));
         }
-        $params['deleted'] = 0;
-
+        $params['deleted'] = new Parameter('deleted', false);
         return $this->createQueryBuilder('br')
-            ->andWhere($orX)
             ->andWhere(
+                $orX,
                 (new Expr())->eq('br.deleted', ':deleted'),
                 (new Expr())->notIn('br', $this->getBikeRideWithSurvey()),
             )

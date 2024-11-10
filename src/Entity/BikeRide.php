@@ -114,7 +114,7 @@ class BikeRide
 
     public function __toString(): string
     {
-        return $this->title;
+        return sprintf('%s - %s', $this->startAt->format('d/m/y'), $this->title);
     }
 
     public function getId(): ?int

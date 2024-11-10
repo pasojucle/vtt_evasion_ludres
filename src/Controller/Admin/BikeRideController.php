@@ -213,4 +213,23 @@ class BikeRideController extends AbstractController
     ): JsonResponse {
         return new JsonResponse($getEmailMembers->execute($bikeRide));
     }
+
+    #[Route('/autocomplete', name: 'admin_bike_ride_autocomplete', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_LIST')]
+    public function autocomplete(
+        Request $request,
+        BikeRideRepository $bikeRideRepository,
+    ): JsonResponse {
+        $query = $request->query->get('query');
+        $results = [];
+        $bikeRides = ($query) ? $bikeRideRepository->findLike($query) : $bikeRideRepository->findAllDESC();
+        foreach ($bikeRides as $bikeRide) {
+            $results[] = [
+                'value' => $bikeRide->getId(),
+                'text' => $bikeRide->__toString(),
+            ];
+        }
+
+        return new JsonResponse(['results' => $results]);
+    }
 }

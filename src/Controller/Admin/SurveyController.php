@@ -64,7 +64,7 @@ class SurveyController extends AbstractController
         $getSurvey->execute($survey);
 
         $form = $this->createForm(SurveyType::class, $survey, [
-            'display_disabled' => !$survey->getRespondents()->isEmpty(),
+            'display_disabled' => false,
         ]);
         $form->handleRequest($request);
 
@@ -80,11 +80,10 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/edite/{survey}', name: 'admin_survey_edit', methods: ['GET', 'POST'], defaults:['survey' => null])]
+    #[Route('/edite/{survey}', name: 'admin_survey_edit', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
-    public function edit(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, ?Survey $survey): Response
+    public function edit(Request $request, SetSurvey $setSurvey, Survey $survey): Response
     {
-        $getSurvey->execute($survey);
         $form = $this->createForm(SurveyType::class, $survey, [
             'display_disabled' => !$survey->getRespondents()->isEmpty(),
         ]);
@@ -98,6 +97,29 @@ class SurveyController extends AbstractController
 
         return $this->render('survey/admin/edit.html.twig', [
             'survey' => $this->surveyDtoTransformer->fromEntity($survey),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/copy/{survey}', name: 'admin_survey_copy', methods: ['GET', 'POST'])]
+    #[IsGranted('SURVEY_EDIT', 'survey')]
+    public function copy(Request $request, GetSurvey $getSurvey, SetSurvey $setSurvey, Survey $survey): Response
+    {
+        $copy = $getSurvey->copy($survey);
+        $form = $this->createForm(SurveyType::class, $copy, [
+            'display_disabled' => false,
+        ]);
+        
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $setSurvey->execute($form);
+            
+            return $this->redirectToRoute('admin_surveys');
+        }
+
+        return $this->render('survey/admin/edit.html.twig', [
+            'survey' => $this->surveyDtoTransformer->fromEntity($copy),
             'form' => $form->createView(),
         ]);
     }

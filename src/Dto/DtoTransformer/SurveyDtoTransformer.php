@@ -18,6 +18,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\UnitOfWork;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SurveyDtoTransformer
 {
@@ -26,6 +27,7 @@ class SurveyDtoTransformer
         private readonly Security $security,
         private readonly BikeRideService $bikeRideService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly RequestStacK $request,
     ) {
     }
 
@@ -45,7 +47,7 @@ class SurveyDtoTransformer
             }
             /** @var ?User $user */
             $user = $this->security->getUser();
-            if ($user) {
+            if ('survey' === $this->request->getCurrentRequest()->attributes->get('_route') && $user) {
                 $surveyDto->responses = $this->getResponsesByUser->execute($survey, $user);
             }
             $surveyDto->bikeRide = $this->getBikeRide($survey);

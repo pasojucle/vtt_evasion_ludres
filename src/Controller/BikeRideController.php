@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\User;
-use App\Repository\ContentRepository;
 use App\UseCase\BikeRide\GetSchedule;
-use App\UseCase\User\GetBikeRides;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

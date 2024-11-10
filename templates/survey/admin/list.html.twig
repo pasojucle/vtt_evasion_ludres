@@ -30,6 +30,9 @@
                             <li>
                                 <a class="dropdown-item" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i> Exporter</a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('admin_survey_copy', {'survey': survey.id})}}" title="Dupliquer"><i class="fa-solid fa-clone"></i> Dupliquer</a>
+                            </li>
                             {% if not survey.isDisabled %}
                                 <li>
                                     <a class="dropdown-item" href="{{ path('admin_survey_edit', {'survey': survey.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
