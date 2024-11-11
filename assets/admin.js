@@ -1,3 +1,7 @@
+import './bootstrap.js';
+import { registerVueControllerComponents } from '@symfony/ux-vue';
+
+registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -16,12 +20,14 @@ import './styles/dropdown.scss';
 import './styles/switch-button.css';
 import './styles/radio.css';
 import './styles/component/checkbox.scss';
+import './styles/component/radio-group.scss';
 import './styles/health.scss';
 import './styles/list-group.scss';
 import './styles/loader.scss';
 import './styles/bootstrap.scss';
 
 import './js/app.js';
+import './js/navigation.js';
 import './js/js-datepicker';
 import './js/form.js';
 import './js/input-file';
@@ -31,7 +37,6 @@ import './js/switch';
 import './js/dropdown.js';
 import './js/js-datepicker.js';
 import './js/input-file.js';
-import './js/select2/i18n/fr.js';
 import './js/clipboard.js';
 import './js/line_chart.js';
 import './js/dashboard.js';

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Parameter;
+use App\Form\Type\CkeditorType;
 use App\Service\ReplaceKeywordsService;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -47,7 +47,7 @@ class ParameterType extends AbstractType
                     case Parameter::TYPE_HTML:
                         $classType = CKEditorType::class;
                         $fieldOptions = [
-                            'config_name' => 'full_config',
+                            'config_name' => 'base',
                         ];
                         break;
                     case Parameter::TYPE_ARRAY:

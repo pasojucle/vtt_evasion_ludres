@@ -124,7 +124,6 @@ class UserType extends AbstractType
                     'entry_type' => ApprovalType::class,
                     'entry_options' => [
                         'label' => false,
-                        'current' => $options['current'],
                         'block_prefix' => 'customcheck',
                     ],
                 ])

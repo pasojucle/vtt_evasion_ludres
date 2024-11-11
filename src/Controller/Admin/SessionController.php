@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Form\Admin\SessionType;
@@ -118,7 +119,7 @@ class SessionController extends AbstractController
                 $userSession->setUser($user)
                     ->setCluster($userCluster);
                 if ($bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
-                    $userSession->setAvailability(Session::AVAILABILITY_REGISTERED);
+                    $userSession->setAvailability(AvailabilityEnum::REGISTERED);
                 }
                 $user->addSession($userSession);
                 $this->entityManager->persist($userSession);

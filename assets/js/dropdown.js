@@ -20,8 +20,6 @@ function toggleDropdown(event) {
 }
 
 function hideDropdown() {
-    console.log('hideDropdown');
-
     document.querySelectorAll('.dropdown .dropdown-menu.active, button.dropdown-toggle.active').forEach((element) => {
         element.classList.remove('active');
         element.classList.remove('active-top');

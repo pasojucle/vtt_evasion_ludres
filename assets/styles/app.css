@@ -21,11 +21,36 @@ nav.fixed {
     position: fixed;
 }
 
+.nav-sub > a > div, .nav-bar-title > a > div {
+    position: relative;
+    display: inline-block;
+    padding: 12px;
+}
+
+.badge.novelty {
+    position: absolute;
+    top: 6px;
+    right: 0;
+    /* z-index: -1; */
+    min-width: unset;
+}
+.novelty {
+    background-color: var(--primary-color);
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    font-size: 8px;
+    line-height: 15px;
+    color: var(--white-color);
+    text-align: center;
+}
+
 nav > ul > li > div.nav-bar-title > a {
-    padding: 15px;
     display: block;
+    position: relative;
     color: var(--background-color);
 }
+
 nav > ul > li {
     display: inline-block;
     margin: 0 -4px;
@@ -36,7 +61,7 @@ nav > ul> li > div.nav-bar-title > a:hover, nav > ul> li > div.nav-bar-title > a
     background-color: var(--primary-color);
     cursor: pointer;
 }
-nav > ul> li:hover  ul {
+nav > ul > li:hover  ul {
     display: block;
 }
 .header:not(.admin) > .logo {
@@ -61,7 +86,6 @@ nav:not(.admin) > a.logo img {
 }
 ul.dropdown-menu {
     display: none;
-    /* left: 0; */
     top: var(--nav-height);
     background-color: var(--white-color);
     min-width: 100%;
@@ -74,9 +98,9 @@ ul.dropdown-menu {
 ul.dropdown-menu a {
     color: var(--background-color);
     display: inline-block;
-    padding: 10px;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
 }
 ul.dropdown-menu a:hover, ul.dropdown-menu a.active {
     background-color: var(--primary-color);
@@ -409,7 +433,7 @@ button[type="submit"] {
 }
 
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
     .wrapper-medium-width, .wrapper-small-width {
         padding: 5%;
     }
@@ -430,10 +454,11 @@ button[type="submit"] {
         height: 450px;
     }
     nav > ul > li > div.nav-bar-title > a {
-        padding: 15px;
-        display: block;
         color: var(--background-color);
         background-color: var(--light-color);
+    }
+    nav > ul > li > div.nav-bar-title > a.btn-logger {
+        display: block;
     }
     nav > ul > li > .nav-bar-title > a:hover, nav > ul> li > div.nav-bar-title > a.active {
         color: var(--white-color);
@@ -445,6 +470,9 @@ button[type="submit"] {
     }
     nav {
         text-align: left;
+    }
+    ul.dropdown-menu  {
+        position: unset;
     }
     .progress-container {
         display: none;

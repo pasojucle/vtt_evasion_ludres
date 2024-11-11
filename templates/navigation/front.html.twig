@@ -1,0 +1,121 @@
+{% set menus = menu_service.menus() %}
+<nav class="navbar">
+    <a class="logo" href="{{ path('home')}}">
+        <img class="hidden" src="/logos/logo.png" alt="vtt évasion ludres">
+    </a>
+    <ul>
+        <li class="nav-bar-xs xs-display">
+            <div class="nav-bar-title">
+                <a href="{{ path('home') }}" title="Accueil">
+                    <div class="position-relative">Accueil</div>
+                </a>
+            </div>
+        </li>
+        {% for menu in menus %}
+            <li class="nav-bar-xs" data-toggle="block-body">
+                <div class="nav-bar-title">
+                    <a {% if menu.route is not null %}href="{{ path(menu.route) }}" {% endif %}
+                        {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
+                        <div class="position-relative">
+                            {{ menu.label }}
+                            {% if menu.badge is defined %}
+                                <div class="badge novelty hidden"{% if menu.badge is not null %} data-route="{{ menu.badge }}"{% endif %}>N</div>
+                            {% endif %}  
+                        </div>
+                    </a>
+                    {% if menu.subMenus is not empty %}
+                        <span class="tools">
+                            <a href="" class="btn btn-ico" data-action="toggle-down"><i class="fas fa-angle-down"></i></a>
+                        </span>
+                    {% endif %}
+                </div>
+                {% if menu.subMenus is not empty %}
+                    <div class="dropdown-toggle up" data-target="block-body">
+                        <ul class="dropdown-menu">
+                            {% for sub_menu in menu.subMenus %}
+                                <li class="nav-sub">
+                                    <a {% if sub_menu.class is defined %}class="{{ sub_menu.class }}"{% else %}href="{{ path(sub_menu.route) }}"{% endif %}
+                                        {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
+                                        <div class="position-relative">
+                                            {{ sub_menu.label }}
+                                            {% if sub_menu.badge is defined %}
+                                                <div class="badge novelty hidden" data-route="{{ sub_menu.badge }}">N</div>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </li>
+        {% endfor %}
+        {% set user = menu_service.user() %}
+        {% if user.fullName is not null %}
+            <li class="nav-bar-xs">
+                <div class="nav-bar-title">
+                    <a class="btn-logger">
+                        <div class="position-relative"><i class="fas fa-user"></i> {{ user.fullName }}</div>
+                    </a>
+                </div>
+                <div class="block-body">
+                    <ul class="dropdown-menu">
+                    {% for menu in user.menus %}
+                        <li class="nav-sub">
+                            <a href="{{ path(menu.route) }}">
+                                <div class="position-relative">{{ menu.label }}</div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </li>
+        {% endif %}
+        {% if menu_service.displayCart %}
+            <li class="nav-bar-xs">
+                <div class="nav-bar-title">
+                    <a class="btn-logger" href="{{ path('order_edit') }}" title="Mon panier">
+                        <div class="position-relative"><i class="fas fa-shopping-cart"></i> <span class="xs-display">Mon panier</span></div>
+                    </a>
+                </div>
+            </li>
+        {% endif %}
+        {% if menu_service.accessAdmin %}
+            <li class="nav-bar-xs">
+                <div class="nav-bar-title">
+                    <a class="btn-logger" href="{{ path('admin_home') }}" title="Admin">
+                        <div class="position-relative">admin</div>
+                    </a>
+                </div>
+            </li>
+        {% endif %}
+        {% if app.user is not null %}
+            {% if is_granted('IS_IMPERSONATOR') %}
+                <li class="nav-bar-xs">
+                    <div class="nav-bar-title">
+                    <a  class="btn-logger" href="{{ impersonation_exit_path(path('admin_users') ) }}">
+                        <div class="position-relative"><i class="fas fa-exchange-alt"></i></div>
+                    </a>
+                    </div>
+                </li>
+            {% else %}
+                <li class="nav-bar-xs">
+                    <div class="nav-bar-title">
+                    <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-toggle="modal" data-type="primary">
+                        <div class="position-relative"><i class="fas fa-power-off"></i> <span class="xs-display">Se connecter</span></div>
+                    </a>
+                    </div>
+                </li>
+            {% endif %}
+        {% else %}
+            <li class="nav-bar-xs">
+                <div class="nav-bar-title">
+                <a class="btn-logger" href="{{ path('app_login') }}" title="Se connecter">
+                    <div class="position-relative"><i class="fas fa-sign-in-alt"></i> <span class="xs-display">Se connecter</span></div>
+                </a>
+                </div>
+            </li>
+        {% endif %}
+    </ul>
+    {% include 'navigation/notifications.html.twig' with {'dimention': 'md'} %}
+</nav>

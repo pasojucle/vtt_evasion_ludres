@@ -6,9 +6,9 @@ namespace App\Form\Admin;
 
 use App\Entity\Product;
 use App\Entity\Size;
+use App\Form\Type\CkeditorType;
 use App\Validator\NotEmptyFile;
 use Doctrine\ORM\EntityRepository;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -32,7 +32,7 @@ class ProductType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Détail (optionnel)',
-                'config_name' => 'minimum_config',
+                'config_name' => 'base',
                 'required' => false,
             ])
             ->add('pictureFile', FileType::class, [

@@ -13,7 +13,6 @@
         <title>{% block title %}{% endblock %}</title>
         {% block stylesheets %}
             <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-            <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
             {% if isAdmin %}
                 {{ encore_entry_link_tags('admin', null, 'mainConfig') }}
             {% else %}
@@ -23,17 +22,19 @@
     </head>
     <body {% if parameter_service.getParameterByName('TEST_MODE') %}class="testing"{% endif %}>
         {% block background %}{% endblock %}
-
         {% if not isAdmin %}
-            {% include 'common/header.html.twig' %}
+            {% include 'component/header.html.twig' %}
+            {% include 'navigation/front.html.twig' %}
+            {% include 'navigation/navbar.html.twig' %}
         {% endif %}
+        <a href="{{ path('notification_list') }}" data-toggle="notification"></a>
         <main{% if isAdmin %} class="admin"{% endif %}>
             {% if isAdmin %}
                 <div class="security" data-role="ROLE_USER"></div>
                 <div class="header">
                     <h1>Administration du site</h1>
                 </div>
-                {% include 'common/admin_nav.html.twig' %}
+                {% include 'navigation/admin.html.twig' %}
             {% endif %}
             <div class="notification">
                 <div class="flashes">
@@ -53,21 +54,17 @@
             </div>
             {% block body %}{% endblock %}
             {% if not isAdmin %}
-                {% include 'common/footer.html.twig' %}
+                {% include 'component/footer.html.twig' %}
             {% endif %}
         </main>
     </body>
     {% block javascripts %}
-        <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-        <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
         <script
             src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="https://kit.fontawesome.com/c6257eb348.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="/bundles/tetranzselect2entity/js/select2entity.js"></script>
         {% if isAdmin %}
             {{ encore_entry_script_tags('admin', null, 'mainConfig') }}
         {% else %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\IdentityKindEnum;
 use App\Repository\IdentityRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
@@ -16,12 +17,6 @@ use Doctrine\ORM\Mapping\ManyToOne;
 
 class Identity
 {
-    public const TYPE_MEMBER = 1;
-
-    public const TYPE_KINSHIP = 2;
-
-    public const TYPE_SECOND_CONTACT = 3;
-
     public const KINSHIP_FATHER = 1;
 
     public const KINSHIP_MOTHER = 2;
@@ -51,7 +46,7 @@ class Identity
     private ?DateTimeInterface $birthDate = null;
 
     #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $birthplace = null;
+    private ?string $birthPlace = null;
 
     #[Column(type: 'string', length: 14, nullable: true)]
     private ?string $phone = null;
@@ -77,11 +72,8 @@ class Identity
     #[ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
     private $address;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
-    private ?string $birthDepartment = null;
-
-    #[Column(type: 'integer', options: ['default' => 1])]
-    private int $type = self::TYPE_MEMBER;
+    #[Column(type: 'IdentityKind', options: ['default' => IdentityKindEnum::MEMBER])]
+    private IdentityKindEnum $kind = IdentityKindEnum::MEMBER;
 
     #[ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
     private ?Commune $birthCommune = null;
@@ -130,14 +122,14 @@ class Identity
         return $this;
     }
 
-    public function getBirthplace(): ?string
+    public function getBirthPlace(): ?string
     {
-        return $this->birthplace;
+        return $this->birthPlace;
     }
 
-    public function setBirthplace(?string $birthplace): self
+    public function setBirthPlace(?string $birthPlace): self
     {
-        $this->birthplace = $birthplace;
+        $this->birthPlace = $birthPlace;
 
         return $this;
     }
@@ -248,35 +240,21 @@ class Identity
         return null === $this->name && null === $this->firstName;
     }
 
-    public function getBirthDepartment(): ?string
+    public function getKind(): IdentityKindEnum
     {
-        return $this->birthDepartment;
+        return $this->kind;
     }
 
-    public function setBirthDepartment(?string $birthDepartment): self
+    public function setKind(IdentityKindEnum $kind): self
     {
-        $this->birthDepartment = $birthDepartment;
-
-        return $this;
-    }
-
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
-
-    public function setType(int $type): self
-    {
-        $this->type = $type;
+        $this->kind = $kind;
 
         return $this;
     }
 
     public function getBirthCommune(): ?Commune
     {
-        return ($this->birthCommune)
-            ? $this->birthCommune
-            : (($this->birthplace) ? (new Commune())->setName($this->birthplace) : null);
+        return $this->birthCommune;
     }
 
     public function setBirthCommune(?Commune $birthCommune): self

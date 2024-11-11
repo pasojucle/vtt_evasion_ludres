@@ -10,6 +10,8 @@ class LevelDto
 {
     public ?Level $entity;
 
+    public ?int $id = null;
+
     public ?string $title = null;
 
     public ?int $type = null;

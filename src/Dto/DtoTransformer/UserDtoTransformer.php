@@ -7,6 +7,7 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -42,11 +43,12 @@ class UserDtoTransformer
 
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
-        $userDto->member = (array_key_exists(Identity::TYPE_MEMBER, $identitiesByType)) ? $identitiesByType[Identity::TYPE_MEMBER] : null;
-        $userDto->kinship = (array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : null;
-        $userDto->secondKinship = (array_key_exists(Identity::TYPE_SECOND_CONTACT, $identitiesByType)) ? $identitiesByType[Identity::TYPE_SECOND_CONTACT] : null;
+        $userDto->member = (array_key_exists(IdentityKindEnum::MEMBER->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::MEMBER->name] : null;
+        $userDto->kinship = (array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::KINSHIP->name] : null;
+        $userDto->secondKinship = (array_key_exists(IdentityKindEnum::SECOND_CONTACT->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::SECOND_CONTACT->name] : null;
         $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->prevLicence = $this->getPrevLicence($user);
+        $userDto->hasAlreadyBeenRegistered = $this->hasAlreadyBeenRegistered($user);
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
@@ -69,7 +71,7 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $user->getMemberIdentity();
+            $member = $this->identityRepository->findOneMemberByUser($user);
         }
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
@@ -77,6 +79,8 @@ class UserDtoTransformer
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->seasons = $this->getSeasons($user->getLicences());
+        $sessionsTotal = $user->getSessions()->count();
+        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
 
         return $userDto;
     }
@@ -85,7 +89,7 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $user->getMemberIdentity();
+            $member = $this->identityRepository->findOneMemberByUser($user);
         }
         $userDto->id = $user->getId();
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $histories);
@@ -124,7 +128,9 @@ class UserDtoTransformer
     private function getMainEmail(array $identitiesByType, int $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
+            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+                ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
+                : $identitiesByType[IdentityKindEnum::MEMBER->name];
             return $identity?->email;
         }
 
@@ -134,7 +140,9 @@ class UserDtoTransformer
     private function getMainFullName(array $identitiesByType, int $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
+            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+                ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
+                : $identitiesByType[IdentityKindEnum::MEMBER->name];
             return $identity?->fullName;
         }
 
@@ -146,7 +154,9 @@ class UserDtoTransformer
         $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
         $lastLicence = $this->getLastLicence($userEntity, null);
         if (!empty($identitiesByType)) {
-            return (Licence::CATEGORY_MINOR === $lastLicence->category && array_key_exists(Identity::TYPE_KINSHIP, $identitiesByType)) ? $identitiesByType[Identity::TYPE_KINSHIP] : $identitiesByType[Identity::TYPE_MEMBER];
+            return (Licence::CATEGORY_MINOR === $lastLicence->category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+            ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
+            : $identitiesByType[IdentityKindEnum::MEMBER->name];
         }
 
         return null;
@@ -158,9 +168,10 @@ class UserDtoTransformer
         /** @var IdentityDto $mainIdentity */
         $mainIdentity = $this->getMainIdentity($userEntity);
         
-        $userDto->member = $this->identityDtoTransformer->headerFromEntity($userEntity->getMemberIdentity());
+        $userDto->member = $this->identityDtoTransformer->headerFromEntity($this->identityRepository->findOneMemberByUser($userEntity));
         $userDto->mainEmail = $mainIdentity->email;
         $userDto->mainFullName = $mainIdentity->fullName;
+        $userDto->licenceNumber = $userEntity->getLicenceNumber();
         return $userDto;
     }
     
@@ -200,6 +211,14 @@ class UserDtoTransformer
             return null;
         }
         return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($user));
+    }
+
+    private function hasAlreadyBeenRegistered(User $user): bool
+    {
+        if (!$user->getId()) {
+            return false;
+        }
+        return !empty($this->licenceRepository->findByUserAndPeriod($user, 5));
     }
 
     private function getPermissions(User $user): ?string

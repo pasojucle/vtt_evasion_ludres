@@ -24,6 +24,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
@@ -117,8 +118,13 @@ class UserController extends AbstractController
 
 
     #[Route('/unique/member/{name}/{firstName}', name: 'unique_member', methods: ['POST', 'GET'], options:['expose' => true])]
-    public function uniqueMember(Request $request, IdentityRepository $identityRepository, string $name, string $firstName): Response
-    {
+    public function uniqueMember(
+        Request $request,
+        IdentityRepository $identityRepository,
+        AuthenticationUtils $authenticationUtils,
+        string $name,
+        string $firstName
+    ): Response {
         $name = trim(urldecode($name));
         $firstName = trim(urldecode($firstName));
         /** @var Identity $identity */
@@ -130,7 +136,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             if ($identity) {
-                $request->getSession()->set(Security::LAST_USERNAME, $identity->getUser()->getLicenceNumber());
+                $request->getSession()->set($authenticationUtils->getLastUsername(), $identity->getUser()->getLicenceNumber());
             }
             return $this->redirectToRoute('user_account');
         }

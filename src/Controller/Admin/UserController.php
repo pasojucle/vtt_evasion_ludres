@@ -49,6 +49,8 @@ class UserController extends AbstractController
             'parameters' => $this->entityManager->getRepository(Parameter::class)->findByParameterGroupName('USER'),
             'routes' => [
                 ['name' => 'admin_levels', 'label' => 'Niveaux'],
+                ['name' => 'admin_skill_list', 'label' => 'Compétences'],
+                ['name' => 'admin_skill_category_list', 'label' => 'Catégories de compétences'],
                 ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
             ],
             'messages' => $messageService->getMessagesBySectionName('USER'),
@@ -185,58 +187,53 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/adherent/choices', name: 'member_choices', methods: ['GET'])]
+    #[Route('/adherent/autocomplete', name: 'member_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
-    public function memberChoices(
+    public function memberAutocomplete(
         GetMembersFiltered $getMembersFiltered,
         Request $request
     ): JsonResponse {
-        $query = $request->query->get('q');
-
-        $filtersQuery = $request->query->get('filters');
-        $filters = ($filtersQuery) ? json_decode($filtersQuery, true) : [];
-
-        return new JsonResponse($getMembersFiltered->choices($filters, $query));
+        return new JsonResponse(['results' => $getMembersFiltered->choices($request->query->all())]);
     }
 
-    #[Route('/encadrant/choices', name: 'framer_choices', methods: ['GET'])]
+    #[Route('/encadrant/autocomplete', name: 'framer_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
-    public function framerChoices(
+    public function framerAutocomplete(
         GetFramersFiltered $getFramersFiltered,
         Request $request
     ): JsonResponse {
-        $query = $request->query->get('q');
+        $query = $request->query->get('query');
         
         $filtersQuery = $request->query->get('filters');
         $filters = ($filtersQuery) ? json_decode($filtersQuery, true) : [];
 
-        return new JsonResponse($getFramersFiltered->choices($filters, $query));
+        return new JsonResponse(['results' => $getFramersFiltered->choices($filters, $query)]);
     }
 
     
-    #[Route('/all/user/choices', name: 'all_user_choices', methods: ['GET'])]
+    #[Route('/all/user/autocomplete', name: 'all_user_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
-    public function allUserChoices(
+    public function allUserAutocomplete(
         Request $request,
         UserRepository $userRepository,
     ): JsonResponse {
-        $query = $request->query->get('q');
+        $query = $request->query->get('query');
         $users = (null !== $query)
             ? $userRepository->findByNumberLicenceOrFullName($query)
             : $userRepository->findAllAsc();
-        $response = [];
+        $results = [];
         foreach ($users as $user) {
             $text = $user->getLicenceNumber();
             if (null !== $user->GetFirstIdentity()) {
-                $text .= ' ' . $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
+                $text .= ' ' . $user->__toString();
             }
-            $response[] = [
-                'id' => $user->getId(),
+            $results[] = [
+                'value' => $user->getId(),
                 'text' => $text,
             ];
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse(['results' => $results]);
     }
 
     #[Route('/synthese/saison/{filtered}/{tab}', name: 'overview_season', defaults:['filtered' => false, 'tab' => GetOverviewSeason::TAB_NEW_REGISTRATIONS], methods: ['GET', 'POST'])]

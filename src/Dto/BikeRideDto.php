@@ -43,7 +43,7 @@ class BikeRideDto
 
     public BikeRideTypeDto $bikeRideType;
 
-    public ?SurveyDto $survey;
+    public ?SurveyDto $survey = null;
 
     public ?string $filename = null;
 
@@ -54,4 +54,6 @@ class BikeRideDto
     public bool $isEditable = false;
 
     public ?string $minAge = null;
+
+    public bool $isMultiClusters = false;
 }

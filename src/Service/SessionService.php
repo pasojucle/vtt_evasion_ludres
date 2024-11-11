@@ -7,8 +7,8 @@ namespace App\Service;
 use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\User;
 use App\Repository\SessionRepository;
@@ -91,7 +91,7 @@ class SessionService
         foreach ($clusters as $cluster) {
             for ($i = 0; $i < $maxCount; ++$i) {
                 $session = (array_key_exists($cluster, $sessionsByCluster) && array_key_exists($i, $sessionsByCluster[$cluster]))
-                    ? sprintf('%s <span class="badge badge-info small">%s</span>', $sessionsByCluster[$cluster][$i]->user->member->fullName, $sessionsByCluster[$cluster][$i]->bikeKind)
+                    ? sprintf('%s <span class="badge badge-info small">%s</span>', $sessionsByCluster[$cluster][$i]->user->member->fullName, $sessionsByCluster[$cluster][$i]->practice)
                     : '';
                 $rows[$i][] = $session;
             }
@@ -111,11 +111,11 @@ class SessionService
             }
         }
 
-        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->selectableClusterCount($bikeRide, $clusters)) {
+        if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->selectableClusterCount($bikeRide, $clusters)) {
             return $userCluster;
         }
 
-        if (BikeRideType::REGISTRATION_SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
+        if (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration()) {
             $clustersLevelAsUser = [];
             foreach ($bikeRide->getClusters() as $cluster) {
                 if (null !== $cluster->getLevel() && $cluster->getLevel() === $user->getLevel()) {
@@ -163,7 +163,7 @@ class SessionService
         }
     }
 
-    public function getSeasonInterval(int $season): array
+    public function getSeasonPeriod(int $season): array
     {
         $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
         $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));

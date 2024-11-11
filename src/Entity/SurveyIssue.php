@@ -32,7 +32,7 @@ class SurveyIssue
 
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
-    private int $id;
+    private ?int $id = null;
 
     #[ManyToOne(targetEntity: Survey::class, inversedBy: 'surveyIssues')]
     #[JoinColumn(name: 'survey_id', referencedColumnName: 'id', nullable: true)]

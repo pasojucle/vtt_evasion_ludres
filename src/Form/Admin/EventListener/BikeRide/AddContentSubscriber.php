@@ -5,9 +5,10 @@ namespace App\Form\Admin\EventListener\BikeRide;
 use App\Entity\BikeRide;
 
 use App\Entity\BikeRideType as BikeRideKind;
+use App\Entity\Enum\RegistrationEnum;
 use App\Form\Admin\BikeRideType;
+use App\Form\Type\CkeditorType;
 use App\Repository\BikeRideTypeRepository;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,8 +22,9 @@ use Symfony\Component\Form\FormInterface;
 
 class AddContentSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private BikeRideTypeRepository $bikeRideTypeRepository)
-    {
+    public function __construct(
+        private BikeRideTypeRepository $bikeRideTypeRepository,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -56,7 +58,7 @@ class AddContentSubscriber implements EventSubscriberInterface
         $registrationEnabled = (array_key_exists('registrationEnabled', $data) ? $data['registrationEnabled'] : true);
         $bikeRideType = $this->bikeRideTypeRepository->find($bikeRideTypeId);
 
-        if (array_key_exists('bikeRideTypeChanged', $data) && 1 === (int)$data['bikeRideTypeChanged']) {
+        if ($bikeRideType && array_key_exists('bikeRideTypeChanged', $data) && 1 === (int)$data['bikeRideTypeChanged']) {
             $data['content'] = $bikeRideType->getContent();
             $data['title'] = $bikeRideType->getName();
             $data['closingDuration'] = $bikeRideType->getClosingDuration() ?? 0;
@@ -72,89 +74,88 @@ class AddContentSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?BikeRideKind $bikeRideType, bool $registrationEnabled): void
     {
         $isDiabled = false;
-        if (BikeRideKind::REGISTRATION_NONE === (int) $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::NONE === $bikeRideType->getRegistration()) {
             $registrationEnabled = false;
             $isDiabled = true;
         }
         $form
-            ->add('title', TextType::class, [
-                'label' => 'Titre',
-                'empty_data' => BikeRide::DEFAULT_TITLE,
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
-            ])
-            ->add('content', CKEditorType::class, [
-                'label' => 'Détail (optionnel)',
-                'config_name' => 'minimum_config',
-                'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group',
-                ],
-            ])
-            ->add('endAt', DateTimeType::class, [
-                'input' => 'datetime_immutable',
-                'label' => 'Date de fin (optionnel)',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => 'off',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-                'required' => false,
-                'disabled' => $isDiabled,
-            ])
-            ->add('closingDuration', IntegerType::class, [
-                'label' => 'Fin d\'inscription (nbr de jours avant)',
-                'required' => false,
-                'attr' => [
-                    'min' => 0,
-                    'max' => 90,
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-                'disabled' => $isDiabled,
-            ])
-            ->add('restriction', ChoiceType::class, [
-                'expanded' => true,
-                'multiple' => false,
-                'choices' => [
-                    'Accessible à tous les membres' => BikeRideType::NO_RESTRICTION,
-                    'Limiter à des participants' => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
-                    'Imposer une tranche d\'âge' => BikeRideType::RESTRICTION_TO_RANGE_AGE,
-                ],
-                'choice_attr' => function () {
-                    return [
-                        'data-modifier' => 'bikeRideRestriction',
-                        'class' => 'form-modifier',
-                        ];
-                },
-                'disabled' => $isDiabled,
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => [
-                    'class' => 'btn btn-primary float-right',
-                ],
-            ])
-            ->add('registrationEnabled', CheckboxType::class, [
-                'block_prefix' => 'switch',
-                'required' => false,
-                'data' => $registrationEnabled,
-                'disabled' => $isDiabled,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-                'attr' => [
-                    'data-switch-on' => 'Les inscriptions et desinscriptions sont activées',
-                    'data-switch-off' => 'Les inscriptions et desinscriptions sont bloquées',
-                ],
-            ]);
+                ->add('title', TextType::class, [
+                    'label' => 'Titre',
+                    'empty_data' => BikeRide::DEFAULT_TITLE,
+                    'row_attr' => [
+                        'class' => 'form-group',
+                    ],
+                ])
+                ->add('content', CkeditorType::class, [
+                    'label' => 'Détail (optionnel)',
+                    'config_name' => 'full',
+                    'required' => false,
+                    'row_attr' => [
+                        'class' => 'form-group',
+                    ],
+                ])
+                ->add('endAt', DateTimeType::class, [
+                    'input' => 'datetime_immutable',
+                    'label' => 'Date de fin (optionnel)',
+                    'widget' => 'single_text',
+                    'html5' => false,
+                    'format' => 'dd/MM/yyyy',
+                    'attr' => [
+                        'class' => 'js-datepicker',
+                        'autocomplete' => 'off',
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'required' => false,
+                    'disabled' => $isDiabled,
+                ])
+                ->add('closingDuration', IntegerType::class, [
+                    'label' => 'Fin d\'inscription (nbr de jours avant)',
+                    'required' => false,
+                    'attr' => [
+                        'min' => 0,
+                        'max' => 90,
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                ])
+                ->add('restriction', ChoiceType::class, [
+                    'expanded' => true,
+                    'multiple' => false,
+                    'choices' => [
+                        'Accessible à tous les membres' => BikeRideType::NO_RESTRICTION,
+                        'Limiter à des participants' => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
+                        'Imposer une tranche d\'âge' => BikeRideType::RESTRICTION_TO_RANGE_AGE,
+                    ],
+                    'choice_attr' => function () {
+                        return [
+                            'data-modifier' => 'bikeRideRestriction',
+                            'class' => 'form-modifier',
+                         ];
+                    },
+                    'disabled' => $isDiabled,
+                ])
+                ->add('registrationEnabled', CheckboxType::class, [
+                    'block_prefix' => 'switch',
+                    'required' => false,
+                    'data' => $registrationEnabled,
+                    'disabled' => $isDiabled,
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'attr' => [
+                        'data-switch-on' => 'Les inscriptions et desinscriptions sont activées',
+                        'data-switch-off' => 'Les inscriptions et desinscriptions sont bloquées',
+                    ],
+                ])
+                ->add('save', SubmitType::class, [
+                    'label' => 'Enregistrer',
+                    'attr' => [
+                        'class' => 'btn btn-primary float-right',
+                    ],
+                ]);
     }
 
     private function setRestriction(BikeRide &$bikeRide): void

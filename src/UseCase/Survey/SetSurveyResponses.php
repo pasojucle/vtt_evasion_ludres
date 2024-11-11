@@ -14,7 +14,6 @@ use App\Repository\SurveyResponseRepository;
 use App\Service\SurveyService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -22,7 +21,6 @@ class SetSurveyResponses
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly Security $security,
         private readonly SurveyResponseRepository $surveyResponseRepository,
         private readonly RespondentRepository $respondentRepository,
         private readonly FormFactoryInterface $formFactory,
@@ -30,10 +28,8 @@ class SetSurveyResponses
     ) {
     }
 
-    public function execute(Request $request, Survey $survey)
+    public function execute(Request $request, Survey $survey, User $user)
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
         $respondent = null;
         $now = new DateTime();
         $message = $this->validate($survey, $now);
@@ -41,10 +37,9 @@ class SetSurveyResponses
             return [null, null, null, $message, $this->getRedirect($survey)];
         }
         $respondent = $this->respondentRepository->findOneBySurveyAndUser($survey, $user);
-        $histories = ($respondent?->isSurveyChanged()) ? $this->surveyService->getHistory($survey) : null;
 
         if ($respondent) {
-            $this->surveyChangesViewed($respondent);
+            $histories = $this->surveyService->getHistory($survey, $user);
             return $this->editResponses($request, $survey, $respondent, $user, $message, $histories);
         }
 
@@ -86,21 +81,13 @@ class SetSurveyResponses
         return $surveyResponses;
     }
 
-    private function surveyChangesViewed(Respondent $respondent): void
-    {
-        if ($respondent->isSurveyChanged()) {
-            $respondent->setSurveyChanged(false);
-            $this->entityManager->flush();
-        }
-    }
-
     private function editResponses(Request $request, Survey $survey, Respondent $respondent, User $user, ?array $message, ?array $histories): array
     {
         $form = $this->formFactory->create(SurveyResponsesType::class, [
             'surveyResponses' => $this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey),
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             if (!empty($data['surveyResponses'])) {
                 foreach ($data['surveyResponses'] as $response) {
@@ -127,7 +114,7 @@ class SetSurveyResponses
             'surveyResponses' => $this->newSurveyResponses($survey),
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             foreach ($data['surveyResponses'] as $response) {
                 if (!$survey->isAnonymous()) {
@@ -155,7 +142,7 @@ class SetSurveyResponses
     public function getRedirect(Survey $survey): array
     {
         return ($survey->getBikeRide())
-        ? ['route' => 'user_bike_rides', 'text' => 'Mon programme perso']
+        ? ['route' => 'user_sessions', 'text' => 'Mon programme perso']
         : ['route' => 'user_surveys', 'text' => 'Mes sondages'];
     }
 }

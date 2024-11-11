@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Cluster;
+use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\PracticeEnum;
 use App\Entity\Session;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -24,9 +26,9 @@ class SessionEditType extends AbstractType
 
             if (true === $options['is_writable_availability']) {
                 $form
-                    ->add('availability', ChoiceType::class, [
+                    ->add('availability', EnumType::class, [
                         'label' => false,
-                        'choices' => array_flip(Session::AVAILABILITIES),
+                        'class' => AvailabilityEnum::class,
                         'expanded' => true,
                         'multiple' => false,
                         'block_prefix' => 'customcheck',
@@ -50,9 +52,9 @@ class SessionEditType extends AbstractType
             
             if (true === $options['display_bike_kind']) {
                 $form
-                    ->add('bikeKind', ChoiceType::class, [
+                    ->add('practice', EnumType::class, [
                         'label' => 'Type de vélo',
-                        'choices' => array_flip(Session::BIKEKINDS),
+                        'class' => PracticeEnum::class,
                         'expanded' => true,
                         'multiple' => false,
                         'block_prefix' => 'customcheck',

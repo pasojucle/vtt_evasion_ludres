@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Entity\Enum\OrderStatusEnum;
+
 class OrderDto
 {
     public ?int $id;
@@ -12,7 +14,7 @@ class OrderDto
 
     public array $orderLines;
 
-    public ?int $status;
+    public OrderStatusEnum $status;
 
     public ?string $statusToString = '';
 

@@ -112,6 +112,11 @@ class BikeRide
         $this->summaries = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return sprintf('%s - %s', $this->startAt->format('d/m/y'), $this->title);
+    }
+
     public function getId(): ?int
     {
         return $this->id;

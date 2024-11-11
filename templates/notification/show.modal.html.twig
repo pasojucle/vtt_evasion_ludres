@@ -1,0 +1,22 @@
+{% extends 'base_modal.html.twig' %}
+{% set form = modal.form %}
+{% if modal.form %}
+    {% set button_href = modal.form.vars.action %}
+    {% set button_text = modal.labelButton %}
+    {% set async = true %}
+{% endif %}
+{% block modal_title %}{{ modal.title }}{% endblock %}
+{% block body %}
+    {{ modal.content|raw }}
+{% endblock %}
+{% block footer %}
+    {% set button_close = 'Fermer' %}
+    {% if modal.url is not null %}
+        {% set anchor_text = modal.labelButton %}
+        {% set url = modal.url %}
+    {% endif %}
+    {% if modal.toggle is not null %}
+        {% set toggle = modal.toggle %}
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

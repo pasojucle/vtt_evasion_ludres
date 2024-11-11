@@ -9,7 +9,7 @@ use App\Dto\UserDto;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
-use App\Service\ParameterService;
+use App\Service\MessageService;
 use App\Service\PdfService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\StringService;
@@ -23,7 +23,7 @@ class GetRegistrationCertificate
         private PdfService $pdfService,
         private StringService $stringService,
         private Environment $twig,
-        private ParameterService $parameterService,
+        private MessageService $messageService,
         private ParameterBagInterface $parameterBag,
         private ReplaceKeywordsService $replaceKeywordsService,
         private UserDtoTransformer $userDtoTransformer,
@@ -49,9 +49,9 @@ class GetRegistrationCertificate
     private function getContent(UserDto $user)
     {
         if (Licence::CATEGORY_ADULT === $user->lastLicence->category) {
-            $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_ADULT');
+            $content = $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_ADULT');
         } else {
-            $content = $this->parameterService->getParameterByName('REGISTRATION_CERTIFICATE_SCHOOL');
+            $content = $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_SCHOOL');
         }
 
         return $this->replaceKeywordsService->replace($user, $content, RegistrationStep::RENDER_FILE);

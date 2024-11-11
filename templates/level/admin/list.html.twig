@@ -4,48 +4,48 @@
 
 {% block body %}
  <div class="wrapper">
-        <div class="wrapper-title">
-            <h1>Gestion des niveaux</h1>
-            <div class="tool-group">
-                <a href="{{ path('admin_users', {'filtered': 1}) }}"
-                    class="btn btn-ico" title="Retour à la liste des adhérents">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-            </div>
-        </div>
-        <nav  class="nav-tab">
-            {% for type, label in constant('App\\Entity\\Level::TYPES') %}
-                <a href="{{ path('admin_levels', {'type': type} )}}"{% if type == current_type %} class="active"{% endif %}>{{ label|trans}}</a>
-            {% endfor %}
-        </nav>
-        <div class="wrapper-body">
-            <a href="{{ path('admin_level_edit') }}" class="btn btn-primary" title="Ajouter un niveau"><i class="fas fa-plus"></i> Ajouter un niveau</a>
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
-            <ul class="list-group sortable" data-route="admin_level_order" data-parameter="level">
-                {% for level in levels %}     
-                    <li class="list-group-item {% if not level.isProtected %}ui-state-default {% endif %}col-list col-list-2btn" {% if not level.isProtected %}data-id="{{ level.id }}"{% endif %}>
-                        <div>{{ level.title }}</div>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <div class="dropdown">
-                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                                <div class="dropdown-menu" data-target="dropdown-tools">
-                                    <ul class="dropdown-body">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ path('admin_level_edit', {'level': level.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
-                                        </li>
-                                        {% if not level.isProtected %}
-                                            <li>
-                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+    <div class="wrapper-title">
+        <h1>Gestion des niveaux</h1>
+        <div class="tool-group">
+            <a href="{{ path('admin_users', {'filtered': 1}) }}"
+                class="btn btn-ico" title="Retour à la liste des adhérents">
+                <i class="fas fa-chevron-left"></i>
+            </a>
         </div>
     </div>
+    <nav  class="nav-tab">
+        {% for type, label in constant('App\\Entity\\Level::TYPES') %}
+            <a href="{{ path('admin_levels', {'type': type} )}}"{% if type == current_type %} class="active"{% endif %}>{{ label|trans}}</a>
+        {% endfor %}
+    </nav>
+    <div class="wrapper-body">
+        <a href="{{ path('admin_level_edit') }}" class="btn btn-primary" title="Ajouter un niveau"><i class="fas fa-plus"></i> Ajouter un niveau</a>
+        {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
+        <ul class="list-group sortable" data-route="admin_level_order" data-parameter="level">
+            {% for level in levels %}     
+                <li class="list-group-item {% if not level.isProtected %}ui-state-default {% endif %}col-list col-list-2btn" {% if not level.isProtected %}data-id="{{ level.id }}"{% endif %}>
+                    <div>{{ level.title }}</div>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                            <div class="dropdown-menu" data-target="dropdown-tools">
+                                <ul class="dropdown-body">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('admin_level_edit', {'level': level.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                    </li>
+                                    {% if not level.isProtected %}
+                                        <li>
+                                        <a class="dropdown-item modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+    </div>
+</div>
 {% endblock %}

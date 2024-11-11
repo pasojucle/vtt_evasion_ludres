@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Error;
 
 class IdentityService
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+    ) {
     }
 
-    public function setAddress(User $user)
+    public function setAddress(User $user): void
     {
         foreach ($user->getIdentities() as $identity) {
             if (null !== $identity->getKinShip()) {
@@ -30,7 +30,7 @@ class IdentityService
         }
     }
 
-    public function getMainContact(User $user)
+    public function getMainContact(User $user): Identity
     {
         $licence = $user->getLastLicence();
         return (Licence::CATEGORY_MINOR === $licence?->getCategory())

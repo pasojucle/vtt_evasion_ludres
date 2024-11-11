@@ -17,7 +17,7 @@ class Approval
 {
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
-    private int $id;
+    private ?int $id = null;
 
     #[Column(type: 'integer')]
     private int $type;

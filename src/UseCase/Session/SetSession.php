@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\Session;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Respondent;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Service\CacheService;
-use App\Service\ModalWindowService;
+use App\Service\LogService;
+use App\Service\NotificationService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
@@ -19,11 +19,11 @@ use Symfony\Component\Form\FormInterface;
 class SetSession
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ConfirmationSession $confirmationSession,
-        private BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private ModalWindowService $modalWindowService,
-        private CacheService $cacheService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ConfirmationSession $confirmationSession,
+        private readonly NotificationService $notificationService,
+        private readonly CacheService $cacheService,
+        private readonly LogService $logService,
     ) {
     }
 
@@ -39,18 +39,17 @@ class SetSession
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->entityManager->persist($session);
         $this->entityManager->flush();
+        $this->writeLog($bikeRide, $user);
 
-        $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
-        $content = ($session->getAvailability())
-            ? '<p>Votre disponibilité à la sortie %s du %s a bien été prise en compte.</p><p> En cas de changement, il est impératif de se modifier sa disponibilité (voir dans Mon programme perso et faire "Modifier)"</p>'
-            : '<p>Votre inscription à la sortie %s du %s a bien été prise en compte.</p><p> Si vous ne pouvez plus participez pas à cette sortie, il est impératif de se désinsrire (voir dans Mon programme perso et faire "Se désinscrire)"</p>';
-        $this->modalWindowService->addToModalWindow('Inscription à une sortie', sprintf($content, $bikeRideDto->title, $bikeRideDto->period));
+        $this->notificationService->notify($session);
     }
 
     public function edit(FormInterface $form, Session $session): void
     {
         $session = $form->get('session')->getData();
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
+        $bikeRide = $session->getCluster()->getBikeRide();
+        $user = $session->getUser();
         if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
             $entityState = UnitOfWork::STATE_MANAGED;
@@ -62,12 +61,13 @@ class SetSession
                 }
             }
             if (UnitOfWork::STATE_MANAGED < $entityState) {
-                $this->addSurveyResponses($surveyResponses, $session->getUser(), $session->getCluster()->getBikeRide());
+                $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
             }
         }
         $this->entityManager->flush();
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->confirmationSession->execute($session);
+        $this->writeLog($bikeRide, $user);
     }
 
     private function addSurveyResponses(array $surveyResponses, User $user, BikeRide $bikeRide): void
@@ -86,5 +86,12 @@ class SetSession
             ->setCreatedAt($now)
         ;
         $this->entityManager->persist($respondent);
+    }
+
+    private function writeLog(BikeRide $bikeRide, User $user): void
+    {
+        if ($survey = $bikeRide->getSurvey()) {
+            $this->logService->write('Survey', $survey->getId(), $user);
+        }
     }
 }

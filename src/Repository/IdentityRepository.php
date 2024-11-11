@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -45,18 +47,38 @@ class IdentityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findMemberByUser(User $user): ?Identity
+    public function findOneMemberByUser(User $user): ?Identity
     {
         try {
             return $this->createQueryBuilder('i')
                 ->andWhere(
                     (new Expr())->eq('i.user', ':user'),
-                    (new Expr())->eq('i.type', ':member')
+                    (new Expr())->eq('i.kind', ':member')
                 )
-                ->setParameters([
-                    'user' => $user,
-                    'member' => Identity::TYPE_MEMBER,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('user', $user),
+                    new Parameter('member', IdentityKindEnum::MEMBER),
+                ]))
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
+
+    public function findOneKinshipByUser(User $user): ?Identity
+    {
+        try {
+            return $this->createQueryBuilder('i')
+                ->andWhere(
+                    (new Expr())->eq('i.user', ':user'),
+                    (new Expr())->eq('i.kind', ':kinship')
+                )
+                ->setParameters(new ArrayCollection([
+                    new Parameter('user', $user),
+                    new Parameter('kinship', IdentityKindEnum::KINSHIP),
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult()
             ;
@@ -70,28 +92,28 @@ class IdentityRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('i')
             ->andWhere(
                 (new Expr())->in('i.user', ':users'),
-                (new Expr())->eq('i.type', ':member')
+                (new Expr())->eq('i.kind', ':member')
             )
-            ->setParameters([
-                'users' => $users,
-                'member' => Identity::TYPE_MEMBER,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('users', $users),
+                new Parameter('member', IdentityKindEnum::MEMBER),
+            ]))
             ->getQuery()
             ->getResult()
         ;
     }
 
-    public function findKinShipsByUser(User $user): array
+    public function findOneKinShipsByUser(User $user): array
     {
         return $this->createQueryBuilder('i')
             ->andWhere(
                 (new Expr())->eq('i.user', ':user'),
-                (new Expr())->neq('i.type', ':member')
+                (new Expr())->neq('i.kind', ':member')
             )
-            ->setParameters([
-                'user' => $user,
-                'member' => Identity::TYPE_MEMBER,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('member', IdentityKindEnum::MEMBER),
+            ]))
             ->getQuery()
             ->getResult()
     ;
@@ -101,7 +123,7 @@ class IdentityRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('i')
             ->andWhere(
-                (new Expr())->isNotNull('i.birthplace'),
+                (new Expr())->isNotNull('i.birthPlace'),
                 (new Expr())->isNull('i.birthCommune'),
             )
             ->getQuery()

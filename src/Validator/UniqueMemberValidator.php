@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
+use App\Entity\User;
 use App\Repository\IdentityRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -14,7 +15,7 @@ class UniqueMemberValidator extends ConstraintValidator
 {
     public function __construct(
         private IdentityRepository $identityRepository,
-        private RequestStack $requestStack
+        private Security $security,
     ) {
     }
 
@@ -24,11 +25,10 @@ class UniqueMemberValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, UniqueMember::class);
         }
 
-        $sesssion = $this->requestStack->getSession();
+        /** @var User $user */
+        $user = $this->security->getUser();
 
-        $userId = ($sesssion->has('registration_user_id')) ? $sesssion->get('registration_user_id') : null;
-
-        if (null === $value || '' === $value || null !== $userId) {
+        if (null === $value || '' === $value || null !== $user) {
             return;
         }
 

@@ -4,24 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Licence;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
-use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[Entity(repositoryClass: UserRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const APPROVAL_RIGHT_TO_THE_IMAGE = 1;
@@ -49,7 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::PERMISSION_USER => 'permission.user',
         self::PERMISSION_PRODUCT => 'permission.product',
         self::PERMISSION_SURVEY => 'permission.survey',
-        self::PERMISSION_MODAL_WINDOW => 'permission.modal_window',
+        self::PERMISSION_MODAL_WINDOW => 'permission.notification',
         self::PERMISSION_SECOND_HAND => 'permission.second_hand',
         self::PERMISSION_DOCUMENTATION => 'permission.documentation',
         self::PERMISSION_SLIDESHOW => 'permission.slideshow',
@@ -57,84 +50,90 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::PERMISSION_SUMMARY => 'permission.summary',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
 
-    #[Column(type: 'string', length: 25, unique: true)]
+    #[ORM\Column(type: 'string', length: 25, unique: true)]
     private string $licenceNumber = '';
 
-    #[Column(type: 'json')]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[Column(type: 'string')]
+    #[ORM\Column(type: 'string')]
     private string $password;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $active = true;
 
     /**
      * @var ArrayCollection <Identity>
      */
-    #[OneToMany(targetEntity: Identity::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Identity::class, mappedBy: 'user')]
     private Collection $identities;
 
-    #[OneToOne(targetEntity: Health::class, inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: Health::class, inversedBy: 'user', cascade: ['persist', 'remove'])]
 
-    // #[OneToOne(targetEntity: Health::class, cascade: ['persist', 'remove'])]
+    // #[ORM\OneToOne(targetEntity: Health::class, cascade: ['persist', 'remove'])]
     private ?Health $health;
 
-    #[OneToMany(targetEntity: Approval::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Approval::class, mappedBy: 'user')]
     private $approvals;
 
-    #[OneToMany(targetEntity: Licence::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Licence::class, mappedBy: 'user')]
     private Collection $licences;
 
     /**
      * @var ArrayCollection <Session>
      */
-    #[OneToMany(targetEntity: Session::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'user')]
     private Collection $sessions;
 
-    #[ManyToOne(targetEntity: Level::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(targetEntity: Level::class, inversedBy: 'users')]
     private ?Level $level = null;
 
-    #[Column(type: 'boolean', options:['default' => false])]
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
     private $passwordMustBeChanged = false;
 
-    #[OneToMany(targetEntity: OrderHeader::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: OrderHeader::class, mappedBy: 'user')]
     private Collection $orderHeaders;
 
-    #[OneToMany(mappedBy: 'user', targetEntity: Respondent::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Respondent::class)]
     private Collection $respondents;
 
-    #[ManyToMany(targetEntity: Survey::class, mappedBy: 'members')]
+    #[ORM\ManyToMany(targetEntity: Survey::class, mappedBy: 'members')]
     private Collection $surveys;
 
-    #[Column(type: 'boolean', options:['default' => false])]
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $loginSend = false;
 
-    #[Column(type: 'boolean', options:['default' => false])]
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
     private $protected = false;
 
-    #[ManyToMany(targetEntity: BikeRide::class, mappedBy: 'users', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: BikeRide::class, mappedBy: 'users', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     private Collection $bikeRides;
 
-    #[ManyToOne(inversedBy: 'users')]
+    #[ORM\ManyToOne(inversedBy: 'users')]
     private ?BoardRole $boardRole = null;
 
-    #[OneToMany(mappedBy: 'user', targetEntity: History::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: History::class)]
     private Collection $registrationChanges;
 
-    #[OneToMany(mappedBy: 'user', targetEntity: SecondHand::class)]
-    #[OrderBy(['createdAt' => 'DESC'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: SecondHand::class)]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $secondHands;
 
-    #[Column(type: 'json', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private ?array $permissions = null;
+
+    /**
+     * @var Collection<int, UserSkill>
+     */
+    #[ORM\OneToMany(targetEntity: UserSkill::class, mappedBy: 'user')]
+    private Collection $userSkills;
 
     public function __construct()
     {
@@ -149,6 +148,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->bikeRides = new ArrayCollection();
         $this->registrationChanges = new ArrayCollection();
         $this->secondHands = new ArrayCollection();
+        $this->userSkills = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->GetFirstIdentity()->getName() . ' ' . $this->GetFirstIdentity()->getFirstName();
     }
 
     public function getId(): ?int
@@ -317,7 +322,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $criteria = Criteria::create()
             ->andWhere(
-                Criteria::expr()->eq('type', Identity::TYPE_MEMBER),
+                Criteria::expr()->eq('kind', IdentityKindEnum::MEMBER),
             )
         ;
 
@@ -328,14 +333,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $criteria = Criteria::create()
             ->andWhere(
-                Criteria::expr()->eq('type', Identity::TYPE_KINSHIP),
+                Criteria::expr()->eq('kind', IdentityKindEnum::KINSHIP),
             )
         ;
 
         return $this->identities->matching($criteria)->first();
     }
     
-
     public function getHealth(): ?Health
     {
         return $this->health;
@@ -758,6 +762,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPermissions(?array $permissions): static
     {
         $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSkill>
+     */
+    public function getUserSkills(): Collection
+    {
+        return $this->userSkills;
+    }
+
+    public function addUserSkill(UserSkill $userSkill): static
+    {
+        if (!$this->userSkills->contains($userSkill)) {
+            $this->userSkills->add($userSkill);
+            $userSkill->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSkill(UserSkill $userSkill): static
+    {
+        if ($this->userSkills->removeElement($userSkill)) {
+            // set the owning side to null (unless already changed)
+            if ($userSkill->getUser() === $this) {
+                $userSkill->setUser(null);
+            }
+        }
 
         return $this;
     }

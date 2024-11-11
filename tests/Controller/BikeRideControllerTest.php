@@ -10,23 +10,21 @@ use App\Entity\User;
 use App\Entity\Session;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
-use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
+use App\Entity\Enum\RegistrationEnum;
 use App\Repository\SessionRepository;
 use App\Repository\BikeRideRepository;
 use App\Repository\BikeRideTypeRepository;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Controller\AbstractTestController;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
-class BikeRideControllerTest extends WebTestCase
+
+class BikeRideControllerTest extends AbstractTestController
 {
-    private KernelBrowser $client;
-    private UserRepository $userRepository;
-    public function testAdminList()
+    public function testAdminBikeRide()
     {
-        $this->client = static::createClient([], ['REMOTE_ADDR' => '11.11.11.11']);
+        $this->init();
         $this->cleanDataBase();
         $this->testAdminSchedule();
         $bikeRideType = $this->testAdminAddBikeRide(2);
@@ -52,20 +50,13 @@ class BikeRideControllerTest extends WebTestCase
         $connection->executeQuery("SET FOREIGN_KEY_CHECKS=1;");
     }
 
-    private function loginAdmin(): void
-    {
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $testAdmin = $this->userRepository->findOneByLicenceNumber('624758');
-        $this->client->loginUser($testAdmin);
-    }
-
     private function testAdminSchedule(): void
     {
-        $this->client->request('GET', '/admin/calendrier');
         $this->loginAdmin();
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
+        $this->client->request('GET', '/admin/calendrier');
         $this->assertSelectorTextContains('.wrapper h1', 'Programme des sorties');
     }
 
@@ -77,14 +68,20 @@ class BikeRideControllerTest extends WebTestCase
         $bikeRideType = $bikeRideTypeRepository->find($bikeRideTypeId);
         $startAt = (new DateTime());
         $startAt->add(new DateInterval(sprintf('P%dD', 7 - $startAt->format('w'))));
-        $this->client->submitForm('Enregistrer', [
-            'bike_ride[bikeRideType]' => $bikeRideTypeId,
-            'bike_ride[title]' => $bikeRideType->getName(),
-            'bike_ride[content]' => $bikeRideType->getContent(),
-            'bike_ride[startAt]' => $startAt->format('d/m/Y'),
-            'bike_ride[displayDuration]' => 8,
-            'bike_ride[closingDuration]' => $bikeRideType->getClosingDuration() ?? 0,
-        ]);
+        $closingDuration = $bikeRideType->getClosingDuration() ?? 0;
+
+        $form = $this->client->getCrawler()->selectButton('Enregistrer')->form();
+
+        $this->addAutocompleteField($form, 'bike_ride[content]'); 
+
+        $form['bike_ride[bikeRideType]'] = (string) $bikeRideTypeId;
+        $form['bike_ride[title]'] = $bikeRideType->getName();
+        $form['bike_ride[content]'] = $bikeRideType->getContent();
+        $form['bike_ride[startAt]'] = $startAt->format('d/m/Y');
+        $form['bike_ride[displayDuration]'] = '8';
+        $form['bike_ride[closingDuration]'] = (string) $closingDuration;
+
+        $this->client->submit($form);
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
@@ -97,11 +94,11 @@ class BikeRideControllerTest extends WebTestCase
     {
         $this->client->request('GET', '/admin/sortie/groupe/1');
         $clusters = 0;
-        if (BikeRideType::REGISTRATION_SCHOOL === $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::SCHOOL === $bikeRideType->getRegistration()) {
             $levelRepository = static::getContainer()->get(LevelRepository::class);
             $clusters = count($levelRepository->findAllTypeMember());
         }
-        if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRideType->getRegistration()) {
+        if (RegistrationEnum::CLUSTERS === $bikeRideType->getRegistration()) {
             $clusters = $bikeRideType()->getClusters()->count();
         }
         if ($bikeRideType->isNeedFramers()) {

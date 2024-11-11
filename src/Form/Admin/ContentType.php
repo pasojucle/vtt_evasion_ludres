@@ -6,8 +6,8 @@ namespace App\Form\Admin;
 
 use App\Entity\Content;
 use App\Form\Type\BackgroundsType;
+use App\Form\Type\CkeditorType;
 use App\Repository\ContentRepository;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -55,7 +55,7 @@ class ContentType extends AbstractType
                 $form
                     ->add('content', CKEditorType::class, [
                         'label' => 'Contenu',
-                        'config_name' => 'full_config',
+                        'config_name' => 'full',
                         'required' => false,
                     ]);
             }

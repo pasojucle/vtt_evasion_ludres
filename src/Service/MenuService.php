@@ -33,6 +33,7 @@ class MenuService
                 'pattern' => '/club/',
                 'subMenus' => $this->setSubMenusStatus($this->getClubSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
+                'badge' => null,
             ],
             [
                 'label' => 'L\'école VTT',
@@ -68,6 +69,7 @@ class MenuService
                 'pattern' => '/second_hand/',
                 'subMenus' => [],
                 'role' => 'SECOND_HAND_LIST',
+                'badge' => 'notification_second_hand',
             ],
             [
                 'label' => 'Liens',
@@ -91,12 +93,17 @@ class MenuService
         $this->user = $this->menuAdminService->getMenusGranted([
             [
                 'label' => 'Mon programme perso',
-                'route' => 'user_bike_rides',
+                'route' => 'user_sessions',
                 'role' => 'BIKE_RIDE_LIST',
             ],
             [
                 'label' => 'Mes infos',
                 'route' => 'user_account',
+                'role' => 'ROLE_USER',
+            ],
+            [
+                'label' => 'Mon carnet de progression',
+                'route' => 'user_skill_list',
                 'role' => 'ROLE_USER',
             ],
             [
@@ -137,12 +144,14 @@ class MenuService
                 'route' => 'club_slideshow',
                 'pattern' => '/club_slideshow/',
                 'role' => 'SLIDESHOW_LIST',
+                'badge' => 'notification_slideshow',
             ],
             [
                 'label' => 'Actualités',
                 'route' => 'club_summary',
                 'pattern' => '/club_summary/',
                 'role' => 'SUMMARY_LIST',
+                'badge' => 'notification_summary_list',
             ],
         ];
     }

@@ -27,22 +27,25 @@ class GetCurrentSeasonUsers
         $season = $this->request->getSession()->get('currentSeason');
 
         $licencesBySeason = [];
+        $licencesBySeason[$season] = [];
         /** @var Licence $licence */
         foreach ($this->licenceRepository->findAllByLastSeason() as $licence) {
             $licencesBySeason[$licence->getSeason()][$licence->getUser()->getId()] = $licence;
         }
         $usersByType = [self::MEMBER => [], self::TESTING => [], self::REGISTRATION => [], self::RE_REGISTRATION => []];
-        /** @var Licence $licence */
-        foreach ($licencesBySeason[$season] as $licence) {
-            $type = ($licence->isFinal())
-                ? $this->getFinalType($licence, $licencesBySeason[$season - 1])
-                : self::TESTING;
-            if ($type) {
-                $usersByType[$type][] = $licence;
+        if (array_key_exists($season, $licencesBySeason)) {
+            /** @var Licence $licence */
+            foreach ($licencesBySeason[$season] as $licence) {
+                $type = ($licence->isFinal())
+                    ? $this->getFinalType($licence, $licencesBySeason[$season - 1])
+                    : self::TESTING;
+                if ($type) {
+                    $usersByType[$type][] = $licence;
+                }
             }
+            ksort($usersByType);
         }
-        ksort($usersByType);
-        
+
         return $usersByType;
     }
 

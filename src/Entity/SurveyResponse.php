@@ -36,7 +36,7 @@ class SurveyResponse
     private $surveyIssue;
 
     #[Column(type: 'text', nullable: true)]
-    private ?string $value;
+    private ?string $value = null;
 
     #[Column(type: 'string', length: 23)]
     private string $uuid;

@@ -9,14 +9,13 @@
     {{ form_start(form) }}
         <div class="wrapper-title">
             <h1>{{ title }}</h1>
-            {% set route = (content is not null) ? content.route : 'home' %}
             <span class="tool-group">
                 {% include 'component/dropdown_settings.html.twig' %}
-                {% if route == 'home' %}
+                {% if content.route == 'home' %}
                     {% set isFlash = (content is not null) ? content.isFlash|number_format : 0 %}
                     <a href="{{ path('admin_home_contents', {'route': route, 'isFlash': isFlash}) }}" class="btn btn-ico" title="Retour à la gestion de la page d'accueil"><i class="fas fa-chevron-left"></i></a>
                 {% else %}
-                    <a href="{{ path('admin_contents', {'route': route}) }}" class="btn btn-ico" title="Retour à la liste des contenus"><i class="fas fa-chevron-left"></i></a>
+                    <a href="{{ path('admin_contents', {'route': content.route}) }}" class="btn btn-ico" title="Retour à la liste des contenus"><i class="fas fa-chevron-left"></i></a>
                 {% endif %}
             </span>
         </div> 

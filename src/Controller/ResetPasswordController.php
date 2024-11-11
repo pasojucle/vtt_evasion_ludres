@@ -18,6 +18,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -35,9 +36,9 @@ class ResetPasswordController extends AbstractController
     }
 
     #[Route('/mot-de-passe/oublie', name: 'app_forgot_password_request', methods: ['GET', 'POST'])]
-    public function request(Request $request, MailerInterface $mailer): Response
+    public function request(Request $request, MailerInterface $mailer, AuthenticationUtils $authenticationUtils): Response
     {
-        $form = $this->createForm(ResetPasswordRequestFormType::class, ['licenceNumber' => $request->getSession()->get(Security::LAST_USERNAME)]);
+        $form = $this->createForm(ResetPasswordRequestFormType::class, ['licenceNumber' => $request->getSession()->get($authenticationUtils->getLastUsername())]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

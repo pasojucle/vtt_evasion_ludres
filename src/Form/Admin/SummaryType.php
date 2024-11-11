@@ -3,7 +3,7 @@
 namespace App\Form\Admin;
 
 use App\Entity\Summary;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use App\Form\Type\CkeditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,8 +23,8 @@ class SummaryType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Détail',
-                'config_name' => 'full_config',
-                'required' => false,
+                'config_name' => 'full',
+                'required' => true,
                 'row_attr' => [
                     'class' => 'form-group',
                 ],

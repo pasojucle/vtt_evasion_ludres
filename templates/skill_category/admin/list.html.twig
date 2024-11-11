@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catégories de compétences{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <div class="wrapper-title">
+        <h1>Gestion des catégories de compétences</h1>
+        <div class="tool-group">
+            <a href="{{ path('admin_users', {'filtered': 1}) }}"
+                class="btn btn-ico" title="Retour à la liste des adhérents">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+    </div>
+    <div class="wrapper-body">
+        <div {{ vue_component('SkillCategory') }}>
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+        </ul>
+    </div>
+</div>
+{% endblock %}

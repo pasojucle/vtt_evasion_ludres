@@ -16,18 +16,19 @@ use Symfony\Component\HttpFoundation\File\File;
 class ContentDtoTransformer
 {
     public function __construct(
-        private ProjectDirService $projectDirService
+        private ProjectDirService $projectDirService,
     ) {
     }
 
     public function fromEntity(?Content $content): ContentDto
     {
         $contentDto = new ContentDto();
+
         if ($content) {
             $contentDto->id = $content->getId();
-            $contentDto->title = $content->getTitle();
             $contentDto->route = $content->getRoute();
             $contentDto->routeName = ($content->getRoute()) ? sprintf('content.route.%s', $content->getRoute()) : 'content.route.home';
+            $contentDto->title = ($content->getTitle()) ? $content->getTitle() : $contentDto->routeName;
             $contentDto->isFlash = $content->IsFlash();
             $contentDto->content = $content->getContent();
             $contentDto->fileName = $this->getPath($content->getFileName());

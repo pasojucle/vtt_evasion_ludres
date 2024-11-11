@@ -1,3 +1,5 @@
+import { registerVueControllerComponents } from '@symfony/ux-vue';
+import './bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -17,16 +19,20 @@ import './styles/health.scss';
 import './styles/loader.scss';
 import './styles/listInfoGrid.scss';
 import './styles/bootstrap.scss';
-
+import './styles/ck-content-styles.scss';
+import './styles/notification.scss';
 import './styles/reveal.css';
 import './styles/carrousel.css';
 import './styles/verticalStepProgress.css';
+
 import './js/app.js';
+import './js/navigation.js';
 import './js/carrousel';
 import './js/input-file';
 import './js/modal';
 import './js/reveal.js';
-import './js/select2/i18n/fr.js';
 import './js/js-datepicker.js';
-import './js/form.js'
-import './js/slideshow.js'
+import './js/form.js';
+import './js/slideshow.js';
+import './js/notification.js';
+registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));

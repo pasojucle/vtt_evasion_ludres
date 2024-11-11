@@ -10,6 +10,7 @@ use App\Dto\DtoTransformer\DocumentationDtoTransformer;
 use App\Dto\DtoTransformer\SummaryDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Link;
+use App\Entity\SlideshowImage;
 use App\Entity\User;
 use App\Form\ContactType;
 use App\Repository\BikeRideRepository;
@@ -17,15 +18,16 @@ use App\Repository\ContentRepository;
 use App\Repository\DocumentationRepository;
 use App\Repository\LevelRepository;
 use App\Repository\LinkRepository;
+use App\Repository\LogRepository;
+use App\Repository\SlideshowImageRepository;
 use App\Repository\SummaryRepository;
 use App\Service\IdentityService;
+use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
-use App\Service\ParameterService;
 use App\Service\ProjectDirService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +38,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ContentController extends AbstractController
 {
     public function __construct(
-        private ContentRepository $contentRepository,
+        private readonly ContentRepository $contentRepository,
+        private readonly LogService $logService,
+        private readonly LogRepository $logRepository,
     ) {
     }
 
@@ -132,11 +136,13 @@ class ContentController extends AbstractController
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
-        $data = null;
-        if (null !== $user) {
-            $mainContact = $identityService->getMainContact($user);
-            $data = ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()];
-        }
+        $mainContact = (null !== $user)
+            ? $identityService->getMainContact($user)
+            : null;
+        
+        $data = ($mainContact)
+            ? ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()]
+            : null;
 
         $form = $this->createForm(ContactType::class, $data);
         $form->handleRequest($request);
@@ -215,28 +221,31 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
-    public function slideshow(): Response
+    public function slideshow(LogService $logService): Response
     {
-        return $this->render('content/slideshow.html.twig');
+        $form = $logService->getForm(['entityName' => 'SlideshowImage']);
+        return $this->render('content/slideshow.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
 
     #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
     public function slideshowImages(
-        ProjectDirService $projectDir
+        SlideshowImageRepository $slideshowImageRepository,
     ): JsonResponse {
         $images = [];
-        $finder = new Finder();
-        $finder->files()
-            ->in($projectDir->path('slideshow'))
-            ->name(['*.jpg', '*.png', '*.jpeg'])
-            ->depth('<= 1')
-            ->sortByChangedTime()
-            ->reverseSorting();
-
-        /** @var SplFileInfo $file */
-        foreach ($finder as $file) {
-            $images[] = $this->generateUrl('slideshow_image', ['filename' => $file->getFilename()]);
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $slideShowimageViewedIds = $this->logRepository->findSlideShowimageViewedIds($user);
+        /** @var SlideshowImage $image */
+        foreach ($slideshowImageRepository->findAll() as $image) {
+            $images[] = [
+                'url' => $this->generateUrl('slideshow_image', ['filename' => $image->getFilename()]),
+                'directory' => $image->getDirectory()->getName(),
+                'id' => $image->getId(),
+                'novelty' => !in_array($image->getId(), $slideShowimageViewedIds),
+            ];
         }
 
         return new JsonResponse(['images' => $images]);
@@ -263,8 +272,16 @@ class ContentController extends AbstractController
         SummaryRepository $summaryRepository,
         SummaryDtoTransformer $summaryDtoTransformer,
     ): Response {
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $summaryViewedIds = $this->logRepository->findSummaryViewedIds($user);
+        $summaries = $summaryRepository->findLatestDesc();
+        foreach ($summaries as $summary) {
+            $this->logService->write('Summary', $summary->getId(), $user);
+        }
+        
         return $this->render('content/summary.html.twig', [
-            'summaries_by_bike_rides' => $summaryDtoTransformer->fromEntities($summaryRepository->findLatestDesc()),
+            'summaries_by_bike_rides' => $summaryDtoTransformer->fromEntities($summaries, $summaryViewedIds),
         ]);
     }
 }

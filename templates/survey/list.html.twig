@@ -33,7 +33,7 @@
                                                 <a href="{{ path('survey', {'survey': survey.id}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Modifier</a>
                                             </div>
                                             <div class="info-dropdown grid-info"  data-target="survey-content">
-                                                <p>{{ survey.content|raw }}</p>
+                                                <p class='ck-content'>{{ survey.content|raw }}</p>
                                                 <ul class="mt-10">
                                                     {% for response in user_survey.responses %}
                                                     <li class="list">

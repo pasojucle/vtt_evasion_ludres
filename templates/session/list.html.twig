@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Mon compte'} %}
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper wrapper-medium-width">
+        <div class="wrapper-title">
+            <h1>Mon compte</h1>
+        </div>
+        <div class="wrapper-body">
+            <div class="block background-white">
+                <div class="block-title">
+                    <h2>Mon programme perso</h2>
+                </div>
+                <div class="block-body">
+                    <ul>
+                        {% for session in sessions %}
+                            <li>
+                                <div class="background-ligth list-info-grid mb-20" data-toggle="bike-ride-content">
+                                    <div class="grid-content">
+                                        <h2>{{ session.bikeRide.period }}</h2>
+                                        <b>{{ session.bikeRide.title }}</b>
+                                        {% if session.availability is not empty %}
+                                            <p class="{{ session.availability.class.color }}">{{ session.availability.class.icon|raw }} {{ session.availability.enum|trans }}</p>
+                                        {% endif %}
+                                        {% if session.bikeRide.bikeRideType.displayPractice %}
+                                            <p class="badge badge-info small">{{ session.practice|trans }}</p>
+                                        {% endif %}
+                                        {% if not session.bikeRide.bikeRideType.isSchool and session.bikeRide.isMultiClusters %}
+                                            <p> {{ session.cluster }}</p>
+                                        {% endif %}
+                                        <p  class='ck-content'>{{ session.bikeRide.content|raw }}</p>
+                                        {% if session.bikeRide.survey is not null or session.bikeRide.bikeRideType.isShowMemberList %}
+                                            <div title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i> Info complémentaires</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="grid-btn">
+                                        {% if session.availability is empty %}
+                                            <a href="{{ path('session_delete',{'session': session.sessionId}) }}" class="btn btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
+                                        {% else %}
+                                            <a href="{{ path('session_availability_edit',{'session': session.sessionId}) }}" class="btn btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                        {% endif %}
+                                    </div>
+                                    {% if session.bikeRide.survey is not null or session.bikeRide.bikeRideType.isShowMemberList %}
+                                        <div class="info-dropdown grid-info" data-target="bike-ride-content">
+                                            {% if session.bikeRide.survey is not null %}
+                                                <p class='ck-content'>{{ session.bikeRide.survey.content|raw }}</p>
+                                                <ul class="mt-10">
+                                                    {% for response in session.bikeRide.survey.responses %}
+                                                    <li class="list">
+                                                        <span class="fst-italic">{{ response.issue }} : </span>
+                                                        <span>{{ response.value }}</span>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% if bikeRide.availability is empty %}
+                                                    <a href="{{ path('survey',{'survey': session.bikeRide.survey.id}) }}" class="btn btn-xs btn-primary" title="Modifier les réponses au sondage"><i class="fas fa-pencil-alt"></i> Modifier les réponses au sondage</a>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if session.bikeRide.bikeRideType.isShowMemberList %}
+                                                {% include 'session/registered_list.html.twig' with {'sessions': session.memberList} %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                        {% if sessions is empty %}
+                            <p>Vous n'êtes inscrit à aucune rando</p>
+                            {% if not user.lastLicence.isFinal and user.testingBikeRides < 1 %}
+                                <p>Pour valider votre inscription, vous devez obligatoirement vous inscrire à une sortie ou à une séance de l'école VTT</p>
+                            {% endif %}
+                            <br>
+                            <a href="{{ path('schedule', {'period':'prochainement'}) }}" class="btn btn-primary"><i class="fas fa-chevron-circle-right"></i> Voir le programme</a>
+                        {% endif %}
+                    </ul> 
+                </div>  
+            </div>
+        </div>
+    </div>
+{% endblock %}

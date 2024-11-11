@@ -1,4 +1,7 @@
 const Encore = require('@symfony/webpack-encore');
+const { CKEditorTranslationsPlugin } = require( '@ckeditor/ckeditor5-dev-translations' );
+const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
+const FosRouting = require('fos-router/webpack/FosRouting');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -26,6 +29,10 @@ Encore
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
+
+    .enableVueLoader(() => {}, { runtimeCompilerBuild: false })
+    // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
+    .enableStimulusBridge('./assets/controllers.json')
 
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
@@ -58,6 +65,7 @@ Encore
     // enables Sass/SCSS support
     .enableSassLoader()
 
+
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
 
@@ -71,8 +79,38 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
     .autoProvideVariables({
-        moment : 'moment'
+        moment : 'moment',
     })
+    .addPlugin( new CKEditorTranslationsPlugin( {
+        // See https://ckeditor.com/docs/ckeditor5/latest/features/ui-language.html
+        language: 'fr',
+        addMainLanguageTranslationsToAllAssets: true,
+    } ) )
+    .addPlugin(new FosRouting())
+    // Use raw-loader for CKEditor 5 SVG files.
+    .addRule( {
+        test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+        loader: 'raw-loader'
+    } )
+
+    // Configure other image loaders to exclude CKEditor 5 SVG files.
+    .configureLoaderRule( 'images', loader => {
+        loader.exclude = /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/;
+    } )
+
+    // Configure PostCSS loader.
+    .addLoader({
+        test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+        loader: 'postcss-loader',
+        options: {
+            postcssOptions: styles.getPostCssConfig( {
+                themeImporter: {
+                    themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
+                },
+                minify: true
+            } )
+        }
+    } )
 ;
 
 const mainConfig = Encore.getWebpackConfig();

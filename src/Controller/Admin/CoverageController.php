@@ -87,16 +87,12 @@ class CoverageController extends AbstractController
         return new JsonResponse($getCoveragesFiltered->emailsToClipboard($request));
     }
 
-    #[Route('/choices', name: '_choices', methods: ['GET'])]
+    #[Route('/autocomplete', name: '_autocomplete', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
-    public function memberChoices(
+    public function memberAutocomplete(
         GetCoveragesFiltered $getCoveragesFiltered,
         Request $request
     ): JsonResponse {
-        $query = $request->query->get('q');
-
-        $filters = json_decode($request->query->get('filters'), true);
-
-        return new JsonResponse($getCoveragesFiltered->choices($filters, $query));
+        return new JsonResponse(['results' => $getCoveragesFiltered->choices($request->query->all())]);
     }
 }

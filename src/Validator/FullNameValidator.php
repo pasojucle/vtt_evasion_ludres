@@ -17,6 +17,10 @@ class FullNameValidator extends ConstraintValidator
         }
         $data = $this->context->getRoot()->getData();
 
+        if (null === $value || '' === $value) {
+            return;
+        }
+
         if (strtolower($value) === strtolower($data['name'])) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation()

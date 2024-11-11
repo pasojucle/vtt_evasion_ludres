@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\OrderDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderFilterType;
 use App\Repository\OrderHeaderRepository;
@@ -41,7 +42,7 @@ class OrderController extends AbstractController
         bool $filtered
     ): Response {
         $filters = ($filtered) ? $request->getSession()->get('admin_orders_filters') ?? [] : [];
-        $filters['p'] = $request->query->get('p');
+        $filters['p'] = $request->query->get('p') ?? 1;
 
         $form = $this->createForm(OrderFilterType::class, $filters);
         $form->handleRequest($request);
@@ -69,12 +70,12 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['GET'])]
+    #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['GET'], requirements:['status' => OrderStatusEnum::VALIDED->value . '|' . OrderStatusEnum::COMPLETED->value])]
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function adminOrderValidate(
         Request $request,
         OrderHeader $orderHeader,
-        int $status
+        OrderStatusEnum $status
     ): Response {
         $filters = $request->getSession()->get('admin_orders_filters') ?? [];
         $request->query->set('p', $filters['p']);

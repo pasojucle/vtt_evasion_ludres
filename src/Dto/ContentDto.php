@@ -10,7 +10,7 @@ class ContentDto
 
     public ?string $title = null;
 
-    public ?string $route = null;
+    public string $route = 'home';
 
     public string $routeName = 'content.route.home';
 

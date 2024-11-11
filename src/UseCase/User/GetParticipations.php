@@ -89,7 +89,7 @@ class GetParticipations
             }
             return $filters;
         }
-        $period = $this->seasonService->getCurrentSeasonInterval();
+        $period = $this->seasonService->getCurrentSeasonPeriod();
         return  [
             'startAt' => $period['startAt'],
             'endAt' => $period['endAt'],

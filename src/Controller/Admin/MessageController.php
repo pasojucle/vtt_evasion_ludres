@@ -149,7 +149,7 @@ class MessageController extends AbstractController
         ]);
         $section = $message->getSection();
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($message);
             $this->entityManager->flush();
 
@@ -169,15 +169,15 @@ class MessageController extends AbstractController
         Request $request,
     ): JsonResponse {
         $query = $request->query->get('q');
-        $response = [];
+        $results = [];
         $messages = $this->messageRepository->findBySectionNameAndQuery('BIKE_RIDE_TYPE', $query);
         foreach ($messages as $message) {
-            $response[] = [
-                'id' => $message->getId(),
+            $results[] = [
+                'value' => $message->getId(),
                 'text' => $message->__toString(),
             ];
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse(['results' => $results]);
     }
 }

@@ -73,4 +73,17 @@ class LevelService
 
         return $levels;
     }
+
+    public function getColors(?string $color): ?array
+    {
+        if ($color) {
+            $background = $color;
+            list($r, $g, $b) = sscanf($background, '#%02x%02x%02x');
+            $color = (0.3 * $r + 0.59 * $g + 0.11 * $b > 200) ? '#000' : '#fff';
+
+            return ['color' => $color, 'background' => $background];
+        }
+
+        return null;
+    }
 }

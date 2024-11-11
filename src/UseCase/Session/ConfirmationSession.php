@@ -6,6 +6,7 @@ namespace App\UseCase\Session;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Session;
 use App\Service\MailerService;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -42,16 +43,16 @@ class ConfirmationSession
         $this->mailerService->sendMailToMember($user, $subject, $content, null, $additionalParams);
     }
 
-    private function availabilityToString(?int $availability): ?string
+    private function availabilityToString(?AvailabilityEnum $availability): ?string
     {
         if ($availability) {
             $availabilities = [
-                Session::AVAILABILITY_REGISTERED => 'session.availability_status.presence',
-                Session::AVAILABILITY_AVAILABLE => 'session.availability_status.availability',
-                Session::AVAILABILITY_UNAVAILABLE => 'session.availability_status.absence'
+                AvailabilityEnum::REGISTERED->name => 'session.availability_status.presence',
+                AvailabilityEnum::AVAILABLE->name => 'session.availability_status.availability',
+                AvailabilityEnum::UNAVAILABLE->name => 'session.availability_status.absence'
             ];
             
-            return $this->translator->trans($availabilities[$availability]);
+            return $this->translator->trans($availabilities[$availability->name]);
         }
 
         return null;

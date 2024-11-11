@@ -11,7 +11,9 @@ use App\Entity\SecondHand;
 use App\Entity\User;
 use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
+use App\Repository\LogRepository;
 use App\Repository\SecondHandRepository;
+use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
@@ -38,21 +40,29 @@ class SecondHandController extends AbstractController
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
+        LogRepository $logRepository,
         Request $request,
     ): Response {
-        $query = $this->secondHandRepository->findSecondHandEnabled();
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $secondHandViewedIds = $logRepository->findSecondHandViewedIds($user);
+        $query = $this->secondHandRepository->findSecondHandEnabledQuery();
         $secondHands = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('second_hand/list.html.twig', [
-            'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands),
+            'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands, $secondHandViewedIds),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands),
         ]);
     }
 
-
     #[Route('/occasion/detail/{secondHand}', name: 'show', methods: ['GET'])]
     #[IsGranted('SECOND_HAND_VIEW', 'secondHand')]
-    public function show(SecondHand $secondHand): Response
-    {
+    public function show(
+        LogService $logService,
+        SecondHand $secondHand
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $logService->write('SecondHand', $secondHand->getId(), $user);
         return $this->render('second_hand/show.html.twig', [
             'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
         ]);
@@ -140,7 +150,7 @@ class SecondHandController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->secondHandRepository->remove($secondHand, true);
 
             return $this->redirectToRoute('second_hand_user_list');
@@ -180,7 +190,7 @@ class SecondHandController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             /** @var ?User $buyer */
             $buyer = $this->getUser();
             $buyerDto = $userDtoTransformer->identifiersFromEntity($buyer);

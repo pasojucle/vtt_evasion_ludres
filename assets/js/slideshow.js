@@ -1,4 +1,5 @@
 import '../styles/slideshow.scss';
+import Routing from 'fos-router';
 
 class Slideshow extends HTMLDivElement {
     images = [];
@@ -10,6 +11,7 @@ class Slideshow extends HTMLDivElement {
     firstTime = 3;
     time = 6;
     slideWith;
+    formLog;
 
     constructor() {
         super();
@@ -20,6 +22,7 @@ class Slideshow extends HTMLDivElement {
         screen.orientation.addEventListener("change", (event) => {
             this.resize();
         });
+        this.formLog = document.querySelector('form[name="log"]');
     }
     init = () => {
         if (this.images.length > 0) {
@@ -54,14 +57,14 @@ class Slideshow extends HTMLDivElement {
         await fetch(Routing.generate('slideshow_images'),)
         .then((response) => response.json())
         .then((json)=> {
-            json.images.forEach((url, index) => {
-                this.addImage(index, url);
+            json.images.forEach((image, index) => {
+                this.addImage(index, image);
             })
             this.init();
         });
     }
-    addImage = (index, url) => {
-        this.images.push(new SliderImage(index, url, this)) 
+    addImage = (index, image) => {
+        this.images.push(new SliderImage(index, image, this)) 
     }
     find = (index) => {
         const image = this.images.find((image) => image.index === index);
@@ -146,6 +149,7 @@ class Slideshow extends HTMLDivElement {
             this.find(this.rightIndex).slide(1);
         }
     }
+    
 }
 
 window.customElements.define('my-slideshow', Slideshow, { extends: "div"});
@@ -159,10 +163,16 @@ class SliderImage {
     width;
     top;
     loader;
-    constructor(index, url, slideshow) {
+    badge;
+    viewed;
+    constructor(index, image, slideshow) {
         this.slideshow = slideshow
         this.index = index;
-        this.url = url;
+        this.url = image.url;
+        this.id = image.id;
+        this.novelty = image.novelty;
+        this.directory = image.directory;
+        this.viewed = false;
     }
     getOrientation = () => {
         return (this.image.height < this.image.width) ? 'landscape' : 'portrait';
@@ -181,16 +191,53 @@ class SliderImage {
         } else {
             this.slideshow.frameEl.append(this.imageEl);
         }
+        this.appendLabel();
         
         this.image.onload = () => {
             if (this.image.complete) {
                 this.image.classList.add(this.getOrientation());
                 this.loader.replaceWith(this.image);
+                this.appendBadge();
             }
         }
     }
+    appendLabel = () => {
+        const $label = document.createElement('div');
+        $label.classList.add('label');
+        $label.textContent = `${this.directory} - ${this.index + 1} / ${this.slideshow.images.length}`;
+        this.imageEl.append($label);
+    }
+    appendBadge = () => {
+        if (this.novelty) {
+            this.badge = document.createElement('div');
+            this.badge.classList.add('novelty');
+            this.badge.textContent = 'N';
+            this.badge.style.left = (this.imageEl.offsetWidth - this.image.offsetWidth) / 2 + 20 +'px';
+            this.badge.style.top = (this.imageEl.offsetHeight - this.image.offsetHeight) / 2 + 20 +'px';
+            this.imageEl.append(this.badge);
+        }
+    }
     slide(position) {
-        console.log(this.imageEl, this.slideshow.slideWith)
         this.imageEl.style.left = position * this.slideshow.slideWith + 'px';
+        if (position === 0) {
+            this.writeLog();
+            this.viewed = true;
+        } else {
+            if (this.badge !== undefined) {
+                this.badge.remove();
+            }
+            if (this.viewed) {
+                this.novelty = false;
+            }
+        }
+    }
+    writeLog = async() => {
+        const data = new FormData(this.slideshow.formLog);
+        data.append('log[entityId]', this.id);
+        
+        await fetch(Routing.generate('log_write'),{
+            method: 'POST',
+            body : data, 
+        });
     }
 }

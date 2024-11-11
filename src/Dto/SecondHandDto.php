@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Model\Currency;
-
 class SecondHandDto
 {
     public ?int $id = null;
@@ -31,4 +29,6 @@ class SecondHandDto
     public bool $disabled = false;
 
     public string $status = '';
+
+    public bool $novelty = false;
 }

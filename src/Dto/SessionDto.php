@@ -14,7 +14,7 @@ class SessionDto
 
     public ?BikeRideDto $bikeRide;
 
-    public ?UserDto $user;
+    public null|array|UserDto $user;
 
     public ?bool $userIsOnSite = false;
 
@@ -30,5 +30,5 @@ class SessionDto
 
     public ?array $bikeRideMemeberList = null;
 
-    public ?string $bikeKind = null;
+    public ?string $practice = null;
 }

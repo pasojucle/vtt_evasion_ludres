@@ -10,9 +10,9 @@ use Symfony\Component\Finder\SplFileInfo;
 class SlideshowService
 {
     public function __construct(
-        private ProjectDirService $projectDir,
-        private ParameterService $parameterService,
-        private FileService $fileService,
+        private readonly ProjectDirService $projectDir,
+        private readonly ParameterService $parameterService,
+        private readonly FileService $fileService,
     ) {
     }
 

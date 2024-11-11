@@ -16,6 +16,7 @@ use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
 use App\UseCase\User\GetFramersFiltered;
 use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -191,7 +192,7 @@ class BikeRideController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $bikeRide->setDeleted(true);
             $this->entityManager->flush();
 
@@ -211,5 +212,24 @@ class BikeRideController extends AbstractController
         BikeRide $bikeRide
     ): JsonResponse {
         return new JsonResponse($getEmailMembers->execute($bikeRide));
+    }
+
+    #[Route('/autocomplete', name: 'admin_bike_ride_autocomplete', methods: ['GET'])]
+    #[IsGranted('BIKE_RIDE_LIST')]
+    public function autocomplete(
+        Request $request,
+        BikeRideRepository $bikeRideRepository,
+    ): JsonResponse {
+        $query = $request->query->get('query');
+        $results = [];
+        $bikeRides = ($query) ? $bikeRideRepository->findLike($query) : $bikeRideRepository->findAllDESC();
+        foreach ($bikeRides as $bikeRide) {
+            $results[] = [
+                'value' => $bikeRide->getId(),
+                'text' => $bikeRide->__toString(),
+            ];
+        }
+
+        return new JsonResponse(['results' => $results]);
     }
 }

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\UseCase\BikeRide;
 
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType;
+use App\Entity\Enum\RegistrationEnum;
+use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\User;
+use App\Repository\IdentityRepository;
 use DateInterval;
 use DateTime;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -15,13 +17,14 @@ use Symfony\Bundle\SecurityBundle\Security;
 class IsRegistrable
 {
     public function __construct(
-        private readonly Security $security
+        private readonly Security $security,
+        private readonly IdentityRepository $identityRepository,
     ) {
     }
     
     public function execute(BikeRide $bikeRide, ?User $user): bool
     {
-        if (!$user || !$this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) || BikeRideType::REGISTRATION_NONE === $bikeRide->getBikeRideType()->getRegistration()) {
+        if (!$user || !$this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) || RegistrationEnum::NONE === $bikeRide->getBikeRideType()->getRegistration()) {
             return false;
         }
 
@@ -30,11 +33,12 @@ class IsRegistrable
             return false;
         }
         
-        if (!$user->getMemberIdentity()) {
+        $member = $this->identityRepository->findOneMemberByUser($user);
+        if (!$member) {
             return false;
         }
 
-        if ($bikeRide->getMinAge() && $bikeRide->getMaxAge() && !$this->canParticipateByAge($bikeRide, $user)) {
+        if ($bikeRide->getMinAge() && $bikeRide->getMaxAge() && !$this->canParticipateByAge($bikeRide, $user, $member)) {
             return false;
         }
 
@@ -52,13 +56,13 @@ class IsRegistrable
         return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
     }
 
-    private function canParticipateByAge(BikeRide $bikeRide, User $user): bool
+    private function canParticipateByAge(BikeRide $bikeRide, User $user, Identity $member): bool
     {
         if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_FRAME === $user->getLevel()->getType()) {
             return true;
         }
 
-        $memberAge = (int) $bikeRide->getStartAt()->diff($user->getMemberIdentity()->getBirthDate())->format('%Y');
+        $memberAge = (int) $bikeRide->getStartAt()->diff($member->getBirthDate())->format('%Y');
         if ($memberAge < $bikeRide->getMinAge() || $bikeRide->getMaxAge() < $memberAge) {
             return false;
         }

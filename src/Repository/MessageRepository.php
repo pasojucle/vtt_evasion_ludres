@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Message;
 use App\Entity\ParameterGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -42,16 +44,16 @@ class MessageRepository extends ServiceEntityRepository
     {
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->eq('pg.name', ':sectionName'));
-        $parameters = ['sectionName' => $sectionName];
+        $parameters = [new Parameter('sectionName', $sectionName)];
 
         if ($query) {
             $andX->add((new Expr())->LIKE('m.name', ':query'));
-            $parameters['query'] = sprintf('%%%s%%', $query);
+            $parameters[] = new Parameter('query', sprintf('%%%s%%', $query));
         }
         return $this->createQueryBuilder('m')
             ->join('m.section', 'pg')
             ->andWhere($andX)
-            ->setParameters($parameters)
+            ->setParameters(new ArrayCollection($parameters))
             ->getQuery()
             ->getResult()
         ;

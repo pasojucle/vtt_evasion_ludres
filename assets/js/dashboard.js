@@ -1,8 +1,8 @@
 import '../styles/dashboard.scss';
+import Routing from 'fos-router';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.dashboard-item[data-route]').forEach(element => {
-        console.log(element.dataset.route);
         fetchData(element)
     });
 }, false);

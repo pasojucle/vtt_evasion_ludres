@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Licence;
-use App\Entity\User;
 use App\Form\HiddenClusterType;
 use App\Service\SeasonService;
 use App\Service\SessionService;
@@ -21,13 +20,16 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class SessionType extends AbstractType
 {
-    public function __construct(private SeasonService $seasonService, private SessionService $sessionService)
-    {
+    public function __construct(
+        private readonly SeasonService $seasonService,
+        private readonly SessionService $sessionService,
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -37,8 +39,9 @@ class SessionType extends AbstractType
                 'label' => false,
                 'multiple' => false,
                 'choices' => $this->getSeasonChoices(),
+                'autocomplete' => true,
                 'attr' => [
-                    'class' => 'customSelect2 form-modifier',
+                    'class' => 'form-modifier',
                     'data-modifier' => 'admin_session_add',
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionnez une saison',
@@ -59,27 +62,8 @@ class SessionType extends AbstractType
             $filters = $options['filters'];
             $filters['season'] = $season;
             $form
-                ->add('user', Select2EntityType::class, [
-                    'multiple' => false,
-                    'remote_route' => 'admin_member_choices',
-                    'class' => User::class,
-                    'primary_key' => 'id',
-                    'text_property' => 'fullName',
-                    'minimum_input_length' => 0,
-                    'page_limit' => 10,
-                    'allow_clear' => true,
-                    'delay' => 250,
-                    'cache' => true,
-                    'cache_timeout' => 60000,
-                    // if 'cache' is true
-                    'language' => 'fr',
-                    'placeholder' => 'Saisissez un nom et prénom',
-                    'width' => '100%',
-                    'label' => 'Participant',
-                    'required' => true,
-                    'remote_params' => [
-                        'filters' => json_encode($filters),
-                    ],
+                ->add('user', UserAutocompleteField::class, [
+                    'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $filters),
                     'constraints' => [
                         new NotBlank(),
                         new SessionUniqueMember(),
@@ -92,7 +76,7 @@ class SessionType extends AbstractType
             $data = $event->getData();
 
             $bikeRide = $options['bikeRide'];
-            if (BikeRideType::REGISTRATION_CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
+            if (RegistrationEnum::CLUSTERS === $bikeRide->getBikeRideType()->getRegistration() && 1 < $this->sessionService->selectableClusterCount($bikeRide, $bikeRide->getClusters())) {
                 $form
                         ->add('cluster', EntityType::class, [
                             'label' => false,
@@ -134,6 +118,7 @@ class SessionType extends AbstractType
         $seasonChoices = $this->seasonService->getSeasons();
 
         $seasonChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;
+        $seasonChoices['licence.status.in_processing'] = Licence::STATUS_IN_PROCESSING;
 
         return $seasonChoices;
     }

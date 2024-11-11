@@ -1,5 +1,5 @@
 twig:
-    default_path: '%kernel.project_dir%/templates'
+    file_name_pattern: '*.twig'
     form_themes:
         - 'form/custom_check_widget.html.twig'
         - 'form/custom_simple_check_row.html.twig'
@@ -10,8 +10,8 @@ twig:
         - 'form/custom_month_and_hour_row.html.twig'
         - 'form/custom_thumbnail_row.html.twig'
         - 'form/money_widget.html.twig'
-        - '@TetranzSelect2Entity/Form/fields.html.twig'
-        - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
+        - 'form/checkbox_row.html.twig'
+        - 'form/ckeditor_row.html.twig'
 
     globals:
         menu_service: '@App\Service\MenuService'

@@ -19,7 +19,7 @@
         grid-area: info;
     }
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
     .list-info-grid {
         grid-template-areas: "content"
                         "info"

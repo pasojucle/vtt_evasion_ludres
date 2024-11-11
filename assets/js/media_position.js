@@ -70,7 +70,6 @@ class MediaPosition {
         this.run();
     }
     run() {
-        console.log('this', this);
         this.mouseEvents();
         self = this;
         this.interval = setInterval(function() {
@@ -166,7 +165,6 @@ class Zone {
         } else {
             this.defaultPositions();
         }
-        console.log('zone', this);
     }
     StartDraggable(mouseX, mouseY) {
         this.startX = mouseX - this.positionX ;
@@ -211,7 +209,6 @@ class Zone {
     }
     setPositions() {
         this.inputselector.value = JSON.stringify({'positionX': this.positionX / this.mediaPosition.ratio, 'positionY': this.positionY / this.mediaPosition.ratio});
-        console.log(this.inputselector.value);
     }
     defaultPositions() {
         this.positionX = ( this.mediaPosition.display.width - this.width) / 2;

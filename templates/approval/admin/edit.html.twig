@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.member.fullName }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+            <div class="wrapper-title" {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}"{% endif %}>
+                <h1>{{ user.member.fullName }}</h1>
+                <span class="tools">
+                    <a href="{{ referer is defined ? referer : path('admin_user', {'user': user.id}) }}"
+                        class="btn  btn-ico" title="Retour à la fiche de l'adhérents">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </span>
+            </div>
+            {{ form_start(form) }}
+
+            <div class="wrapper-body">
+                <h2>{{ approval.fullName|trans }}</h2>
+                <div class="form-group">
+                    {% for  child in form.value.children %}
+                        <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
+                            {{ form_widget(child)}}
+                            {{ form_label(child)}}
+                        </div>
+                    {% endfor %}
+                    {{ form_widget(form.type) }}
+                </div>
+            </div>
+            <div class="wrapper-footer">
+                {{ form_errors(form) }}
+                <button class="btn btn-primary" type="submit">Modifier</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

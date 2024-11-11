@@ -2,26 +2,15 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\RegistrationEnum;
 use App\Repository\BikeRideTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideTypeRepository::class)]
 class BikeRideType
 {
-    public const REGISTRATION_NONE = 0;
-    public const REGISTRATION_SCHOOL = 1;
-    public const REGISTRATION_CLUSTERS = 2;
-
-    public const REGISTRATIONS = [
-        self::REGISTRATION_NONE => 'bike_ride_type.registration.none',
-        self::REGISTRATION_SCHOOL => 'bike_ride_type.registration.school',
-        self::REGISTRATION_CLUSTERS => 'bike_ride_type.registration.clusters',
-    ];
-
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -51,8 +40,8 @@ class BikeRideType
     #[ORM\Column(type: 'json')]
     private array $clusters = [];
 
-    #[ORM\Column(type: 'integer', options: ['default' => self::REGISTRATION_NONE])]
-    private int $registration = self::REGISTRATION_NONE;
+    #[ORM\Column(type: 'Registration', options: ['default' => RegistrationEnum::NONE])]
+    private RegistrationEnum $registration = RegistrationEnum::NONE;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $needFramers = false;
@@ -71,6 +60,11 @@ class BikeRideType
         $this->bikeRides = new ArrayCollection();
         $this->indemnities = new ArrayCollection();
         $this->messages = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 
     public function getId(): ?int
@@ -210,12 +204,12 @@ class BikeRideType
         return $this;
     }
 
-    public function getRegistration(): ?int
+    public function getRegistration(): RegistrationEnum
     {
         return $this->registration;
     }
 
-    public function setRegistration(int $registration): self
+    public function setRegistration(RegistrationEnum $registration): self
     {
         $this->registration = $registration;
 

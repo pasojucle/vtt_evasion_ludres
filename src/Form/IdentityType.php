@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Commune;
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Form\Admin\CommuneAutocompleteField;
 use App\Validator\BirthDate;
 use App\Validator\Phone;
 use App\Validator\SchoolTestingRegistration;
@@ -30,7 +31,6 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 
 class IdentityType extends AbstractType
 {
@@ -40,14 +40,16 @@ class IdentityType extends AbstractType
             /**@var Identity $identity */
             $identity = $event->getData();
             $form = $event->getForm();
-            $type = $identity->getType();
-            $kinship = 1 < $type;
+            $kind = $identity->getKind();
+            $kinship = $kind !== IdentityKindEnum::MEMBER;
             $disabled = $this->haspreviousLicence($identity->getUser()) && !$identity->getKinship();
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
+            $foreignBorn = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
+            list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
 
-            $addressClass = (Identity::TYPE_MEMBER !== $type) ? ' identity-address' : '';
+            $addressClass = (IdentityKindEnum::MEMBER !== $kind) ? ' identity-address' : '';
             $addressRequired = 'required';
-            if (Identity::TYPE_MEMBER !== $type && !$identity->hasAddress()) {
+            if (IdentityKindEnum::MEMBER !== $kind && !$identity->hasAddress()) {
                 $addressRequired = '';
             }
 
@@ -63,7 +65,7 @@ class IdentityType extends AbstractType
                             new NotBlank(),
                             new UniqueMember()
                         ],
-                        'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
+                        'attr' => (IdentityKindEnum::MEMBER === $kind && !$disabled)
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                             ]
@@ -80,7 +82,7 @@ class IdentityType extends AbstractType
                             new NotBlank(),
                             new UniqueMember()
                         ],
-                        'attr' => (Identity::TYPE_MEMBER === $type && !$disabled)
+                        'attr' => (IdentityKindEnum::MEMBER === $kind && !$disabled)
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                                 'data-multiple-fields' => 1,
@@ -105,7 +107,7 @@ class IdentityType extends AbstractType
                         ],
                     ])
                     ->add('email', EmailType::class, [
-                        'label' => (Identity::TYPE_KINSHIP === $type && Licence::CATEGORY_MINOR === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
+                        'label' => (IdentityKindEnum::KINSHIP === $kind && Licence::CATEGORY_MINOR === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
                         'row_attr' => [
                             'class' => 'form-group-inline',
                         ],
@@ -124,7 +126,7 @@ class IdentityType extends AbstractType
 
                 ;
 
-                if (Identity::TYPE_SECOND_CONTACT !== $type) {
+                if (IdentityKindEnum::SECOND_CONTACT !== $kind) {
                     $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
                     $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
                     $form
@@ -199,7 +201,7 @@ class IdentityType extends AbstractType
 
                 if ($kinship) {
                     $kinshipChoices = Identity::KINSHIPS;
-                    if (Identity::TYPE_SECOND_CONTACT !== $type) {
+                    if (IdentityKindEnum::SECOND_CONTACT !== $kind) {
                         unset($kinshipChoices[Identity::KINSHIP_OTHER]);
                     }
                     $form
@@ -227,35 +229,37 @@ class IdentityType extends AbstractType
                     ;
                 } else {
                     $form
-                        ->add('birthCommune', Select2EntityType::class, [
-                            'label' => 'Lieu et <b>département</b> de naissance<br><small>(Pour l\'étranger, saisissez la ville et le pays)</small>',
-                            'label_html' => true,
-                            'class' => Commune::class,
-                            'multiple' => false,
-                            'remote_route' => 'geo_department',
-                            'primary_key' => 'id',
-                            'text_property' => 'name',
-                            'minimum_input_length' => 1,
-                            'page_limit' => 10,
-                            'allow_clear' => true,
-                            'allow_add' => [
-                                'enabled' => true,
-                                'new_tag_text' => ' (Hors France)',
-                                'tag_separators' => '[";"]',
-                            ],
-                            'delay' => 250,
-                            'cache' => false,
-                            'language' => 'fr',
-                            'placeholder' => 'Rechercher une commune (sans espace)',
-                            'width' => '100%',
+                        ->add('birthCommune', CommuneAutocompleteField::class, [
+                            'label' => 'Lieu de naissance',
                             'row_attr' => [
-                                'class' => 'form-group search',
+                                'class' => $birthCommuneClass,
                             ],
                             'attr' => [
-                                'class' => 'commune-search',
-                                'data-constraint' => 'app-NotEmpty',
+                                'data-constraint' => '',
                             ],
-                            'required' => true,
+                            'required' => !$foreignBorn,
+                        ])
+                        ->add('birthPlace', TextType::class, [
+                            'label' => 'Lieu et pays de naissance',
+                            'row_attr' => [
+                                'class' => $birthPlaceClass,
+                            ],
+                            'attr' => [
+                                'data-constraint' => '',
+                            ],
+                            'required' => $foreignBorn,
+                        ])
+                        ->add('foreignBorn', CheckboxType::class, [
+                            'label' => 'Je suis né à l\'étranger',
+                            'mapped' => false,
+                            'required' => false,
+                            'row_attr' => [
+                                'class' => 'form-group-inline',
+                            ],
+                            'attr' => [
+                                'class' => 'foreign-born',
+                            ],
+                            'data' => $foreignBorn,
                         ])
                         ->add('pictureFile', FileType::class, [
                             'label' => 'Photo d\'itentité',
@@ -302,5 +306,15 @@ class IdentityType extends AbstractType
     private function haspreviousLicence(?User $user): bool
     {
         return true === $user->getLastLicence()?->isFinal();
+    }
+
+    private function getBirthPlaceClasses(bool $foreignBorn): array
+    {
+        $birthPlaceClasses = ['form-group-inline birth-place', 'form-group-inline birth-place d-none'];
+        if ($foreignBorn) {
+            return array_reverse($birthPlaceClasses);
+        };
+
+        return $birthPlaceClasses;
     }
 }

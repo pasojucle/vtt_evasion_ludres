@@ -9,7 +9,9 @@ use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -105,7 +107,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
 
     public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
     {
-        $issues = $this->_em->createQueryBuilder()
+        $issues = $this->getEntityManager()->createQueryBuilder()
         ->select('(issue)')
         ->from(SurveyIssue::class, 'issue')
         ->where(
@@ -118,10 +120,10 @@ class SurveyResponseRepository extends ServiceEntityRepository
             (new Expr())->eq('r.user', ':user'),
             (new Expr())->in('r.surveyIssue', $issues->getDQL())
         )
-        ->setParameters([
-            'user' => $user,
-            'survey' => $survey,
-        ])
+        ->setParameters(new ArrayCollection([
+            new Parameter('user', $user),
+            new Parameter('survey', $survey),
+        ]))
         ->getQuery()
         ->getResult()
     ;
@@ -129,7 +131,7 @@ class SurveyResponseRepository extends ServiceEntityRepository
 
     public function findResponsesByUserAndSurvey(User $user, Survey $survey): array
     {
-        $issues = $this->_em->createQueryBuilder()
+        $issues = $this->getEntityManager()->createQueryBuilder()
         ->select('(issue)')
         ->from(SurveyIssue::class, 'issue')
         ->where(
@@ -141,10 +143,10 @@ class SurveyResponseRepository extends ServiceEntityRepository
             (new Expr())->eq('r.user', ':user'),
             (new Expr())->in('r.surveyIssue', $issues->getDQL())
         )
-        ->setParameters([
-            'user' => $user,
-            'survey' => $survey,
-        ])
+        ->setParameters(new ArrayCollection([
+            new Parameter('user', $user),
+            new Parameter('survey', $survey),
+        ]))
         ->getQuery()
         ->getResult()
     ;

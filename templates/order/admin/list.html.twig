@@ -30,7 +30,7 @@
             </div>
             {{ form_end(form) }}
             {% endif %}
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul id="orders_container">
                 {% for order in orders %}
                     <li class="col-list col-1md-1sx-btn">
@@ -40,24 +40,24 @@
                                     <div class="col-md-3 col-xs-12">{{ order.createdAt }}</div>
                                     <div class="col-md-4 col-xs-12">{{ order.user.member.fullName }}</div>
                                     <div class="col-md-2 col-xs-12">{{ order.amount }}</div>
-                                    <div class="col-md-3 col-xs-12">{{ constant('App\\Entity\\OrderHeader::STATUS')[order.status]|trans }}</div>
+                                    <div class="col-md-3 col-xs-12">{{ order.status|trans }}</div>
                                 </div>
                             </a>
                         </div>
                         <div>
-                            {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_ORDERED') %}
-                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_VALIDED')})}}" title="Valider">
+                            {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum::ORDERED') %}
+                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::VALIDED').value})}}" title="Valider">
                                     <div><i class="fas fa-check"></i> Valider</div>
                                 </a>
                             {% endif %}
-                            {% if order.status == constant('App\\Entity\\OrderHeader::STATUS_VALIDED') %}
-                                <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': constant('App\\Entity\\OrderHeader::STATUS_COMPLETED')})}}" title="Cloturer">
+                            {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum::VALIDED') %}
+                                <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::COMPLETED').value})}}" title="Cloturer">
                                     <div><i class="fas fa-check"></i> Cloturer</div>
                                 </a>
                             {% endif %}
                         </div>
                         <div>
-                            {% if order.status < constant('App\\Entity\\OrderHeader::STATUS_COMPLETED') %}
+                            {% if order.status < enum('App\\Entity\\Enum\\OrderStatusEnum::COMPLETED') %}
                                 <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
                                     <i class="fas fa-times"></i>
                                 </a>
@@ -67,7 +67,7 @@
                 {% endfor %}
             </ul>
             {% if orders is empty %}Aucune commande{% endif %}
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 {% endblock %}

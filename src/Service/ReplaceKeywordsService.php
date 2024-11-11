@@ -38,6 +38,12 @@ class ReplaceKeywordsService
         return $content;
     }
 
+    public function replaceWhithParams(string $content, array $parrams)
+    {
+        $keyWords = $this->getKeyWords($content);
+        return str_replace($keyWords, $parrams, $content);
+    }
+
     private function createPageBreak(string $content): string
     {
         $pages = preg_split('#{{ saut_page }}#', $content);
@@ -103,7 +109,7 @@ class ReplaceKeywordsService
                 '{{ lieu_naissance }}' => $this->getDtoProperty($user->member, 'birthPlace'),
                 '{{ saison }}' => $licence?->shortSeason,
                 '{{ full_saison }}' => $licence?->fullSeason,
-                '{{ numero_licence' => $this->getDtoProperty($user, 'licenceNumber'),
+                '{{ numero_licence }}' => $this->getDtoProperty($user, 'licenceNumber'),
                 '{{ cotisation }}' => $licence?->amount['str'],
                 '{{ date }}' => $licence?->createdAt,
                 '{{ prenom_nom_parent }}' => $kinship?->fullName,

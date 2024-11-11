@@ -1,71 +1,128 @@
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
+import { setNotificationList, hideNotifications, handleShowNotifications } from './notification.js'
 
-$(function () {
-    $('body').append('<div class="modal" tabindex="-1"></div>');
-    $(document).on('click', 'a[data-toggle="modal"]', handleShowModal);
-    $(document).on('click', 'button.close[data-dismiss="modal"]', closeModal);
-
-    console.log('modal window', document.querySelector('#modal_window_show'));
-    if (document.querySelector('#modal_window_show')) {
-        callShowModal('#modal_window_show');
-    }
-
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = buildModal();
+    document.querySelector('body').append(modal);
+    initModal();
 });
 
-function handleShowModal(event) {
+export const initModal = () => {
+    document.querySelectorAll('a[data-toggle="modal"]').forEach((element) => {
+        element.addEventListener('click', handleShowModal);
+    });
+}
+
+const buildModal = () => {
+    const modal = document.createElement('DIV');
+    modal.classList.add('modal');
+    modal.setAttribute('tabindex', '-1')
+    return modal;
+}
+
+const handleShowModal = (event) => {
     event.preventDefault();
-    var route = $(this).attr("href");
-    const modalType = $(this).data("type")
+    const anchor = ( event.target.tagName === 'A') ? event.target : event.target.closest('a');
+    var route = anchor.href;
+    const modalType = anchor.dataset.type;
+    hideNotifications();
     showModal(route, modalType);
 }
 
-function callShowModal(target) {
-    var route = $(target).attr("href");
-    const modalType = $(target).data("type")
-    showModal(route, modalType);
+const handleHideModal = () => {
+    document.querySelectorAll('button.close[data-dismiss="modal"]').forEach((element) => {
+        element.addEventListener('click', closeModal);
+    });
 }
 
-function showModal(route, modalType) {
-    $.ajax({
-        url: route,
-        type: "get",
-        success: function (html, textStatus, xhr) {
-            if (204 !== xhr.status) {
-                openModal(html, modalType);
-                $('.js-datepicker').datepicker({
-                    format: 'yyyy-mm-dd hh:ii',
-                });
-                initAddItemLink();
-                addDeleteLink();
-                setTimeout(function () {
-                    //$('.modal-dialog').transition({ top: 100px });
-                    $('.modal-dialog').addClass('modal-open');
-                }, 100);
-            }
+export const showModal = async(route, modalType) => {
+    await fetch(route, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+    })
+    .then((response) => {
+        if (response.status !== 500) {
+            return response.text();
+        }
+        throw new Error('Something went wrong.');    
+    })
+    .then((text)=> {
+        if (0 < text.length) {
+            buildContent(text, modalType);
         }
     });
 }
 
-export function openModal(text, modalType) {
-    $('.modal').replaceWith($(text));
-    $('.modal').find('.modal-header').addClass('bg-'+modalType);
-    $('.modal').find('button:not(button[data-dismiss="modal"])').addClass('btn-'+modalType);
-    // const htmlElement = document.createRange().createContextualFragment(text);
-    // document.querySelector('.modal').replaceWith(htmlElement);
-    // document.querySelector('.modal .modal-header').classList.add('bg-'+modalType);
-    // document.querySelectorAll('.modal button:not(button[data-dismiss="modal"])').forEach((element) => {
-    //     element.classList.add('btn-'+modalType);
-    // })
-    setTimeout(function () {
-        document.querySelector('.modal .modal-dialog').classList.add('modal-open');
-    }, 100);
+export const buildContent = (text, modalType) => {
+    openModal(text, modalType);
+    $('.js-datepicker').datepicker({
+        format: 'yyyy-mm-dd hh:ii',
+    });
+    initAddItemLink();
+    addDeleteLink();
+    handleHideModal();
+    handleSumbit();
+    handleShowNotifications();
 }
 
-export function closeModal() {
-    $('.modal-dialog').removeClass('modal-open');
-    let html = document.createElement("div");
-    $(html).addClass('modal').attr('tabindex', -1);
+export const openModal = (text, modalType) => {
+    const htmlElement = document.createRange().createContextualFragment(text);
+        console.log(htmlElement)
+    buildContentModal(htmlElement).then(() => {
+        const modal = document.querySelector('.modal');
+        console.log('modal', modal);
+        const modalHeader = document.querySelector('.modal-header');
+        if (modalHeader) {
+            modalHeader.classList.add('bg-'+modalType);
+        }
+        document.querySelectorAll('.modal button:not(button[data-dismiss="modal"])').forEach((element) => {
+            element.classList.add('btn-'+modalType);
+        });
+        setTimeout(() => {
+            const modalDialog = document.querySelector('.modal-dialog');
+            if (modalDialog) {
+                modalDialog.classList.add('modal-open');
+            }
+        }, 10);
+    })
+}
+
+const buildContentModal = (htmlElement) => {
+    return new Promise((resolve, reject) => {
+        const modal = document.querySelector('.modal');
+        console.log('modal', modal);
+        resolve(modal.replaceWith(htmlElement));
+    });
+}
+
+export const closeModal = () => {
+    document.querySelector('.modal-dialog').classList.remove('modal-open');
+    const modal = buildModal();
     setTimeout(function () {
-        $('.modal').replaceWith($(html));
+        document.querySelector('.modal').replaceWith(modal);
     }, 500);
+}
+
+const handleSumbit = () => {
+    document.querySelectorAll('button.btn.async[type="submit"]').forEach((element) => {
+        element.addEventListener('click', submitAsync);
+    });
+}
+
+const submitAsync = async(event) => {
+    event.preventDefault();
+    const form = event.target.closest('form');
+    const data = new FormData(form);
+    await fetch(form.action,{
+        method: 'POST',
+        body : data, 
+    })
+    .then((response) => response.json())
+    .then((json)=> {
+        if (parseInt(json.codeError) === 0) {
+            closeModal();
+            setNotificationList();
+        }
+    });
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Service\MailerService;
 use DateTime;
@@ -34,7 +35,7 @@ class OrderValidateService
         $orderHeader = $form->getData();
 
         $orderHeader->setCreatedAt(new DateTime())
-            ->setStatus(OrderHeader::STATUS_ORDERED)
+            ->setStatus(OrderStatusEnum::ORDERED)
         ;
         $this->entityManager->persist($orderHeader);
         $this->entityManager->flush();

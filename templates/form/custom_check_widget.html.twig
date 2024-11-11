@@ -5,7 +5,7 @@
             {{ form_widget(form.type) }}
         {% elseif form.vars.name in ['coverage', 'type'] %}
             {% set children = form.children  %}
-        {% elseif form.vars.name in ['cluster', 'bikeKind'] %}
+        {% elseif form.vars.name in ['cluster', 'practice'] %}
             {% set children = form %}
         {% endif %}    
         {% if form.vars.label is not null %}

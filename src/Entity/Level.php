@@ -7,13 +7,9 @@ namespace App\Entity;
 use App\Repository\LevelRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: LevelRepository::class)]
+#[ORM\Entity(repositoryClass: LevelRepository::class)]
 class Level
 {
     public const TYPE_SCHOOL_MEMBER = 1;
@@ -34,48 +30,55 @@ class Level
         self::TYPE_ADULT_MEMBER => 'level.type.adult_member',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50)]
     private string $title;
 
-    #[Column(type: 'text')]
+    #[ORM\Column(type: 'text')]
     private string $content;
 
-    #[OneToMany(targetEntity: User::class, mappedBy: 'level')]
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'level')]
     private Collection $users;
 
-    #[Column(type: 'string', length: 7, nullable: true)]
+    #[ORM\Column(type: 'string', length: 7, nullable: true)]
     private ?string $color;
 
-    #[OneToMany(targetEntity: Cluster::class, mappedBy: 'level')]
+    #[ORM\OneToMany(targetEntity: Cluster::class, mappedBy: 'level')]
     private Collection $clusters;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $type;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $isProtected = false;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $isDeleted = false;
 
-    #[OneToMany(mappedBy: 'level', targetEntity: Indemnity::class)]
+    #[ORM\OneToMany(mappedBy: 'level', targetEntity: Indemnity::class)]
     private $indemnities;
 
-    #[Column(type: 'boolean', options: ['default' => false])]
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $accompanyingCertificat = false;
+
+    /**
+     * @var Collection<int, Skill>
+     */
+    #[ORM\OneToMany(targetEntity: Skill::class, mappedBy: 'level')]
+    private Collection $skills;
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->clusters = new ArrayCollection();
         $this->indemnities = new ArrayCollection();
+        $this->skills = new ArrayCollection();
     }
 
     public function __toString()
@@ -270,6 +273,36 @@ class Level
     public function setAccompanyingCertificat(bool $accompanyingCertificat): self
     {
         $this->accompanyingCertificat = $accompanyingCertificat;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Skill>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skill $skill): static
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+            $skill->setLevel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skill $skill): static
+    {
+        if ($this->skills->removeElement($skill)) {
+            // set the owning side to null (unless already changed)
+            if ($skill->getLevel() === $this) {
+                $skill->setLevel(null);
+            }
+        }
 
         return $this;
     }

@@ -10,8 +10,10 @@ use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -80,8 +82,10 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->gte('br.startAt', ':today'),
                 (new Expr())->eq('br.deleted', ':deleted'),
             )
-            ->setParameter('today', $today)
-            ->setParameter('deleted', 0)
+            ->setParameters(new ArrayCollection([
+                new Parameter('today', $today),
+                new Parameter('deleted', 0)
+            ]))
             ->orderBy('br.startAt', 'ASC')
             ->andHaving("DATE_SUB(br.startAt, br.displayDuration, 'DAY') <= :today")
             ->getQuery()
@@ -94,27 +98,26 @@ class BikeRideRepository extends ServiceEntityRepository
      */
     public function findLike(string $query): array
     {
-        if (1 === preg_match('#^(\d{2})\/(\d{1,2})#', $query)) {
-            $today = new DateTime();
-            $query = $query . '/' . $today->format('y');
-        }
-        $startAt = DateTimeImmutable::createFromFormat('d/m/y', $query);
+        $params = [];
         $orX = (new Expr())->orX();
         $orX->add((new Expr())->like('br.title', ':title'));
-        $params['title'] = '%' . $query . '%';
-        if ($startAt) {
+        $params[] = new Parameter('title', '%' . $query . '%');
+        if (1 === preg_match('#^(\d{1,2})\/(\d{1,2})(?:[\/]{0,1})(\d{0,2})#', $query, $matches)) {
+            list($all, $day, $month, $year) = $matches;
+            $startAt = (empty($year))
+                ? DateTimeImmutable::createFromFormat('m-d', sprintf('%s-%s', $month, $day))
+                : DateTimeImmutable::createFromFormat('y-m-d', sprintf('%s-%s-%s', $year, $month, $day));
             $orX->add((new Expr())->eq('br.startAt', ':query'));
-            $params['query'] = $startAt->setTime(0, 0, 0);
+            $params[] = new Parameter('query', $startAt->setTime(0, 0, 0));
         }
-        $params['deleted'] = 0;
-
+        $params['deleted'] = new Parameter('deleted', false);
         return $this->createQueryBuilder('br')
-            ->andWhere($orX)
             ->andWhere(
+                $orX,
                 (new Expr())->eq('br.deleted', ':deleted'),
                 (new Expr())->notIn('br', $this->getBikeRideWithSurvey()),
             )
-            ->setParameters($params)
+            ->setParameters(new ArrayCollection($params))
             ->orderBy('br.startAt', 'DESC')
             ->getQuery()
             ->getResult()
@@ -140,7 +143,7 @@ class BikeRideRepository extends ServiceEntityRepository
 
     private function getBikeRideWithSurvey(): string
     {
-        return $this->_em->createQueryBuilder()
+        return $this->getEntityManager()->createQueryBuilder()
             ->select('(s.bikeRide)')
             ->from(Survey::class, 's')
             ->where(
@@ -157,12 +160,14 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->gte('br.startAt', ':start'),
                 (new Expr())->lte('br.startAt', ':end'),
                 (new Expr())->gt('brt.registration', ':registration'),
+                (new Expr())->eq('br.deleted', ':deleted'),
             )
-            ->setParameters([
-                'start' => (new DateTimeImmutable())->setTime(0, 0, 0),
-                'end' => (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59),
-                'registration' => 0,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('start', (new DateTimeImmutable())->setTime(0, 0, 0)),
+                new Parameter('end', (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59)),
+                new Parameter('registration', 0),
+                new Parameter('deleted', false),
+            ]))
             ->orderBy('br.startAt')
             ->getQuery()
             ->getResult()

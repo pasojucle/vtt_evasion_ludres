@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\OrderStatusEnum;
 use App\Repository\OrderHeaderRepository;
-use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,24 +20,6 @@ use Doctrine\ORM\Mapping\OneToMany;
 #[Entity(repositoryClass: OrderHeaderRepository::class)]
 class OrderHeader
 {
-    public const STATUS_IN_PROGRESS = 1;
-
-    public const STATUS_ORDERED = 2;
-
-    public const STATUS_VALIDED = 3;
-
-    public const STATUS_COMPLETED = 4;
-
-    public const STATUS_CANCELED = 9;
-
-    public const STATUS = [
-        self::STATUS_IN_PROGRESS => 'order.in_progress',
-        self::STATUS_ORDERED => 'order.ordered',
-        self::STATUS_VALIDED => 'order.valided',
-        self::STATUS_COMPLETED => 'order.completed',
-        self::STATUS_CANCELED => 'order.canceled',
-    ];
-
     #[Column(type: 'integer')]
     #[Id, GeneratedValue(strategy: 'AUTO')]
     private int $id;
@@ -49,8 +31,8 @@ class OrderHeader
     #[JoinColumn(nullable: false)]
     private User $user;
 
-    #[Column(type: 'integer')]
-    private int $status;
+    #[Column(type: 'OrderStatus')]
+    private OrderStatusEnum $status = OrderStatusEnum::IN_PROGRESS;
 
     #[Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
@@ -107,12 +89,12 @@ class OrderHeader
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getStatus(): OrderStatusEnum
     {
         return $this->status;
     }
 
-    public function setStatus(int $status): self
+    public function setStatus(OrderStatusEnum $status): self
     {
         $this->status = $status;
 

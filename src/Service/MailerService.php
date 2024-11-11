@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
+use Error;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -58,13 +59,16 @@ class MailerService
             $content = $this->replaceKeywords->replace($user, $content, RegistrationStep::RENDER_FILE, $additionalParams);
         }
 
+        $error = [
+            'success' => false,
+            'message' => 'Adresse mail manquante ou erronnée',
+        ];
         try {
             $email = new Address($userEmail);
-        } catch (Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Adresse mail manquante ou erronnée',
-            ];
+        } catch (Exception) {
+            return $error;
+        } catch (Error) {
+            return $error;
         }
 
         $email = (new TemplatedEmail())

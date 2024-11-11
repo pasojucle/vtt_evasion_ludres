@@ -2,6 +2,8 @@
 import { handleCheckChange, formToggle } from './form.js';
 import { Form } from './formValidator.js';
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
+import Routing from 'fos-router';
+
 var formValidator;
 
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -18,26 +20,16 @@ document.addEventListener("DOMContentLoaded", (event) => {
             $('ul.StepProgress').css('margin-top', marginTop+'px');
         });
     }
-    $( window ).scroll(function() {
-        if ($(window).scrollTop() > 150) {
-            $('nav:not(.paginator)').addClass('fixed');
-            $('nav:not(.paginator) img').removeClass('hidden');
-        } else {
-            $('nav:not(.paginator)').removeClass('fixed');
-            $('nav:not(.paginator) img').addClass('hidden');
-        }
-    });
+
     if ($('.sortable').length > 0) {
         buildSortable();
     }
 
-    $(document).on('change', '.filters .customSelect2, .filters select, .filters .btn, .filters input', submitFom);
-    $(document).on('click', '.nav-bar .btn', toggleMenu);
+    $(document).on('change', '.filters select, .filters .btn, .filters input', submitFom);
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', 'button.form-modifier', formModifier);
     $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
     $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
-    $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
     $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
 
     if (window.matchMedia("(min-width: 800px)").matches) {
@@ -49,15 +41,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     addDeleteLink();
 
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
-
-    if ($('.customSelect2').length > 0) {
-        $('.customSelect2').select2();
-    }
     
-    $(document).on('customSelect2:open', (event) => {
-        const id = event.target.id;
-        document.querySelector('.select2-search__field[aria-controls="customSelect2-'+id+'-results"]').focus();
-    });
     $(document).on('click', '#user_search_submit', confirmDeleteUser)
     if (document.querySelector('select#bike_ride_bikeRideType')){
         document.querySelector('select#bike_ride_bikeRideType').addEventListener('change', handleChangeBikeRideType)
@@ -75,6 +59,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.querySelectorAll('.identity-other-address').forEach((element) => {
         element.addEventListener('change', updateIdentity);
     })
+
+    document.querySelectorAll('.foreign-born').forEach((element) => {
+        element.addEventListener('click', toggleBirthPlace);
+    })
 });
 
 function confirmDeleteUser(e) {
@@ -84,20 +72,17 @@ function confirmDeleteUser(e) {
     let route = Routing.generate('admin_tool_confirm_delete_user', {'user': user});
     let anchor = $('<a class="modal-trigger" href="'+route+'" data-toggle="modal" data-type="danger"></a>');
     form.append(anchor);
-    console.log('anchor', anchor);
     anchor.click();
 }
 
 const updateIdentity = (event)  => {
     const container = document.getElementById(event.target.dataset.modifier);
-    console.log('container', event.target.dataset.modifier, container)
     container.querySelectorAll('.address-group').forEach((element) => {
         element.classList.toggle('hidden');
     });
     const elements = container.querySelectorAll('.address-group input, .address-group select');
     if (event.target.checked) {
         elements.forEach((element) => {
-            console.log('element', element)
             element.required = true;
         });
     } else {
@@ -109,26 +94,24 @@ const updateIdentity = (event)  => {
     formValidator.validate();
 }
 
+const toggleBirthPlace = () => {
+    document.querySelectorAll('input[name$="[birthPlace]"], select[name$="[birthCommune]"]').forEach((element) => {
+        const parent = element.closest('.birth-place')
+        parent.classList.toggle('d-none');
+        let required = true;
+        if (parent.classList.contains('d-none')) {
+            element.value = null;
+            required = false;
+        }
+        element.required = required;
+    })
+    formValidator.validate();
+}
+
 function submitFom() {
     $(this).closest('form').submit()
 }
 
-function toggleMenu(e) {
-    e.preventDefault();
-    $('nav').toggleClass('nav-active');
-    $('.nav-bar .btn').toggleClass('nav-hide');
-    if($('nav').hasClass('nav-active')) {
-        $('main').css('height', $('nav').height());
-    } else {
-        $('main').css('height', 'unset');
-    }
-    $('.block-body.down, .dropdown-toggle.down').each(function() {
-        $(this).removeClass('down').addClass('up');
-    });
-    $('.fa-angle-up').each(function() {
-        $(this).removeClass('fa-angle-up').addClass('fa-angle-down');
-    });
-}
 
 function buildSortable() {
     let error = false;
@@ -178,11 +161,6 @@ function formModifier(event) {
     const target = event.target.dataset.modifier;
     const addToFetch = event.target.dataset.addToFetch;
     const data = new FormData(form, event.submitter);
-    // for(let entry of data) {
-    //     if (entry[0].endsWith('[_token]')) {
-    //         data.set(entry[0], '');
-    //     }
-    // }
     data.append(`${form.name}[handler]`, event.target.name)
     if (event.target.type === 'button') {
         data.append(event.target.name, 1)
@@ -201,8 +179,6 @@ function formModifier(event) {
         const htmlElement = document.createRange().createContextualFragment(text);
         const targetEl = document.getElementById(target);
         targetEl.replaceWith(htmlElement.getElementById(target));
-        $('.select2entity').select2entity();
-        $('.customSelect2').select2();
         $('.js-datepicker').datepicker({
             format: 'yyyy-mm-dd hh:ii',
         });
@@ -212,9 +188,6 @@ function formModifier(event) {
         });
     });
 }
-
-
-
 
 function setOrderLineQuantity(e) {
     e.preventDefault();
@@ -254,34 +227,11 @@ function anchorAsynchronous(e) {
       });
 }
 
-function submitAsynchronous(e) {
-    e.preventDefault();
-    console.log('submitAsynchronous');
-    const form = $(this).closest('form');
-    let selector = 'form[name="'+form.attr('name')+'"]';
-    let data = {};
-    data[$(this).attr('name')] = $(this).val();
-    $('.select2entity.submit-asynchronous').off('change', submitAsynchronous);
-    $.ajax({
-        url : form.attr('action'),
-        type: form.attr('method'),
-        data : form.serialize(),
-        success: function(html) {
-            $(selector).replaceWith($(html).find(selector));
-            $('.select2entity').select2entity();
-            $('.select2entity.submit-asynchronous').on('change', submitAsynchronous);
-        }
-      });
-}
-
 function toggleDown(e) {
     e.preventDefault();
     const icon = $(this).find('i');
     const block = $(this).closest('[data-toggle]');
-    console.log('block', block);
-    console.log('selecteur', '.block-body, *[data-target="'+block.data('toggle')+'"]');
     const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
-    console.log('blockBody', blockBody);
     blockBody.toggleClass('down').toggleClass('up');
     $('.down[data-target="'+block.data('toggle')+'"]').each(function() {
         if (!$(this).is(blockBody)) {
@@ -299,7 +249,6 @@ function toggleDown(e) {
     const cookieValue =  (block.hasClass('nav-group') && blockBody.hasClass('down')) ? block.data('group') : null;
     // document.cookie = "admin_menu_actived = "+cookieValue;
     setCookie('admin_menu_actived', cookieValue, 30);
-    console.log(document.cookie);
 }
 function setCookie(cName, cValue, expDays) {
     let date = new Date();

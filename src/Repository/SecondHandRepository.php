@@ -2,10 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Log;
 use App\Entity\SecondHand;
+use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -46,39 +50,49 @@ class SecondHandRepository extends ServiceEntityRepository
     {
         $andX = (new Expr())->andX();
         $andX->add((new Expr())->eq('s.deleted', ':deleted'));
-        $andX->add((new Expr())->eq('s.valid', ':valid'));
-        
+        $criteria = (false === $valid) ? 'isNull' : 'isNotNull';
+        $andX->add((new Expr())->$criteria('s.validedAt'));
         $parameters = [
-            'deleted' => false,
-            'valid' => true,
+            new Parameter('deleted', false),
         ];
 
-        if (null !== $valid) {
-            $parameters['valid'] = $valid;
-        }
         return $this->createQueryBuilder('s')
            ->andWhere($andX)
-           ->setParameters($parameters)
+           ->setParameters(new ArrayCollection($parameters))
            ->orderBy('s.createdAt', 'DESC')
        ;
     }
 
-    public function findSecondHandEnabled(): QueryBuilder
+    public function findSecondHandEnabledQuery(?DateTimeImmutable $viewAt = null): QueryBuilder
     {
+        $andX = (new Expr())->andX();
+        $andX->add((new Expr())->eq('s.deleted', ':deleted'));
+        $andX->add((new Expr())->isNotNull('s.validedAt'));
+        $andX->add((new Expr())->eq('s.disabled', ':disabled'));
+        $parameters = [
+            new Parameter('deleted', false),
+            new Parameter('disabled', false),
+        ];
+
+        if ($viewAt) {
+            $andX->add((new Expr())->gt('s.createdAt', ':viewAt'));
+            $parameters[] = new Parameter('viewAt', $viewAt);
+        }
+
         return $this->createQueryBuilder('s')
-           ->andWhere(
-               (new Expr())->eq('s.deleted', ':deleted'),
-               (new Expr())->eq('s.valid', ':valid'),
-               (new Expr())->eq('s.disabled', ':disabled')
-           )
-           ->setParameters([
-                'deleted' => false,
-                'valid' => true,
-                'disabled' => false,
-            ])
+           ->andWhere($andX)
+           ->setParameters(new ArrayCollection($parameters))
            ->orderBy('s.createdAt', 'DESC')
        ;
     }
+
+    public function findSecondHandEnabled(?DateTimeImmutable $viewAt): array
+    {
+        return $this->findSecondHandEnabledQuery($viewAt)
+            ->getQuery()
+            ->getResult();
+    }
+
 
     public function findOutOfPeriod(DateTimeImmutable $deadline): array
     {
@@ -88,16 +102,14 @@ class SecondHandRepository extends ServiceEntityRepository
                 (new Expr())->eq('sh.disabled', ':disabled'),
                 (new Expr())->eq('sh.deleted', ':deleted'),
             )
-            ->setParameters([
-                'deadline' => $deadline,
-                'disabled' => false,
-                'deleted' => false,
-            ])
+            ->setParameters(new ArrayCollection([
+                new Parameter('deadline', $deadline),
+                new Parameter('disabled', false),
+                new Parameter('deleted', false),
+            ]))
             ->getQuery()
             ->getResult();
     }
-
-
 
     public function findAllNotDeleted(): array
     {
@@ -109,6 +121,36 @@ class SecondHandRepository extends ServiceEntityRepository
            ->orderBy('s.createdAt', 'DESC')
            ->getQuery()
            ->getResult()
+       ;
+    }
+
+
+    /**
+     * @return SecondHand[] Returns an array of SecondHand objects
+     */
+    public function findNotViewedByUser(User $user): array
+    {
+        $viewed = $this->getEntityManager()->createQueryBuilder()
+            ->select('log.entityId')
+            ->from(Log::class, 'log')
+            ->andWhere(
+                (new Expr())->eq('log.user', ':user'),
+                (new Expr())->eq('log.entity', ':entityName')
+            );
+
+        return $this->createQueryBuilder('s')
+            ->andWhere(
+                (new Expr())->notIn('s.id', $viewed->getDQL()),
+                (new Expr())->isNotNull('s.validedAt'),
+                (new Expr())->eq('s.disabled', ':disabled'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', 'SecondHand'),
+                new Parameter('disabled', false),
+            ]))
+            ->getQuery()
+            ->getResult()
        ;
     }
 }

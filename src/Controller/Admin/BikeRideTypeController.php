@@ -6,10 +6,10 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BikeRideType;
+use App\Entity\Enum\RegistrationEnum;
 use App\Form\Admin\BikeRideTypeType;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\MessageRepository;
-use App\Service\MessageService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,7 +61,7 @@ class BikeRideTypeController extends AbstractController
         
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $bikeRideType = $form->getData();
-            if (BikeRideType::REGISTRATION_CLUSTERS !== $bikeRideType->getRegistration()) {
+            if (RegistrationEnum::CLUSTERS !== $bikeRideType->getRegistration()) {
                 $bikeRideType->setClusters([]);
             }
 
@@ -96,7 +96,7 @@ class BikeRideTypeController extends AbstractController
         
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $bikeRideType = $form->getData();
-            if (BikeRideType::REGISTRATION_CLUSTERS !== $bikeRideType->getRegistration()) {
+            if (RegistrationEnum::CLUSTERS !== $bikeRideType->getRegistration()) {
                 $bikeRideType->setClusters([]);
             }
 

@@ -60,6 +60,12 @@
                 {% endfor %}
             </div>
         </div>
+        {% if bikeRide.survey %}
+            <div class="d-flex mx-20">
+                <div><a class="btn btn-xs btn-primary" href="{{ path('admin_survey', {'survey': bikeRide.survey.id})}}"><i class="fa-solid fa-up-right-from-square"></i></a></div>
+                <div class="ms-20">Sondage lié : {{ bikeRide.survey.title }}</div>
+            </div>
+        {% endif %}
         <div class="wrapper-footer">
             {{ form_row(form.save) }}
         </div>

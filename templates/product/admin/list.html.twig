@@ -14,7 +14,7 @@
                 <span class="tools">
                     <a href="{{ path('admin_product_add') }}" class="btn btn-primary" title="Ajouter un produit"><i class="fas fa-plus"></i> Ajouter</a>
                 </span>
-                {% include 'common/pagination.html.twig' with {'margin': 'both'} %}
+                {% include 'component/pagination.html.twig' with {'margin': 'both'} %}
                 <ul>
                     {% for product in products %}
                         <li class="col-list col-list-2btn">
@@ -26,7 +26,7 @@
                         </li>
                     {% endfor %}
                 </ul>
-                {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+                {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
             </div>
         </div>
     </div>

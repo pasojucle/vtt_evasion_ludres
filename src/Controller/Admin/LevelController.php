@@ -92,7 +92,7 @@ class LevelController extends AbstractController
         $type = $level->getType();
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $level->setIsDeleted(true);
             $this->entityManager->flush();
 

@@ -146,4 +146,16 @@ class ClusterController extends AbstractController
             'bikeRide' => $bikeRide->getId(),
         ]);
     }
+
+    #[Route('/admin/groupe/evaluations/{cluster}/{filtered}', name: 'admin_cluster_evaluations', defaults: ['filtered' => false], methods: ['GET', 'POST'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
+    public function adminClusterEvaluations(
+        Request $request,
+        Cluster $cluster,
+        bool $filtered
+    ): Response {
+        return $this->render('cluster/admin/skill_list.html.twig', [
+            'cluster' => $cluster,
+        ]);
+    }
 }

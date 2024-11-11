@@ -18,7 +18,7 @@
         </div>
         {% include('user/admin/filters.html.twig') %}
         <div class="wrapper-body">
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %} 
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
             <ul>
                 {% for user in users %}
                     <li class="col-list col-1md-btn">
@@ -44,7 +44,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 {% endblock %}

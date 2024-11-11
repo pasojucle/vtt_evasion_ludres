@@ -4,19 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\Repository\UserRepository;
 use App\Service\ProjectDirService;
 use App\Repository\CategoryRepository;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class SecondHandControllerTest extends WebTestCase
+class SecondHandControllerTest extends AbstractTestController
 {
-    private KernelBrowser $client;
-    private UserRepository $userRepository;
-    public function testAdminList()
+    public function testAdminSecondHand()
     {
-        $this->client = static::createClient([], ['REMOTE_ADDR' => '11.11.11.11']);
+        $this->init();
         $this->cleanDataBase();
         $this->testSecondHandList();
         $this->testAddSecondHand();
@@ -38,19 +33,10 @@ class SecondHandControllerTest extends WebTestCase
 
     private function loginUser(): void
     {
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
         $users = $this->userRepository->findAllMemberByCurrentSeason();
         $user = $users[rand(0, count($users) - 1)];
         $this->client->loginUser($user);
     }
-
-    private function loginAdmin(): void
-    {
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $testAdmin = $this->userRepository->findOneByLicenceNumber('624758');
-        $this->client->loginUser($testAdmin);
-    }
-
 
     private function testSecondHandList(): void
     {
@@ -85,9 +71,9 @@ class SecondHandControllerTest extends WebTestCase
 
     private function testValidateSecondHand():void
     {
-        $this->client->request('GET', '/logout');
-        $this->client->request('GET', '/admin/');
+        $this->logOut();
         $this->loginAdmin();
+        $this->client->request('GET', '/admin/');
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
@@ -101,7 +87,6 @@ class SecondHandControllerTest extends WebTestCase
 
     private function testContactSeller():void
     {
-        $this->client->request('GET', '/logout');
         $this->client->request('GET', '/login');
         $this->loginUser();
         $this->client->request('GET', '/occasions');

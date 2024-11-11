@@ -2,7 +2,7 @@
     <div class="modal-dialog{% if app.request.attributes.get('_route') == 'flash_info_show'%} modal-xl{% endif %}" role="document">
         <div class="modal-content">
             {% block form %}{% endblock %}
-            {% if form is defined %}
+            {% if form is defined and form is not null %}
                 {{ form_start(form, {'action': (button_href is defined) ?  button_href : form.vars.action})}}
             {% endif %}
             <div class="modal-header">
@@ -23,16 +23,18 @@
                     {% if button_text is defined or button_href is defined %}
                         <button 
                         {% if button_href is defined %} href="{{ button_href }}"{% endif %}
-                        type="submit" class="btn">
+                        type="submit" class="btn btn-primary{% if async is defined %} async{% endif %}">
                         {% if button_text is defined %}{{ button_text|raw }}{% endif %}
                         </button>
                     {% endif %}
                     {% if url is defined %}
-                        <a href="{{ url }}" class="btn btn-primary">{{ anchor_text|raw }}</a>
+                        <a href="{{ url }}" class="btn btn-primary" {% if toggle is defined %}data-toggle="{{ toggle }}"{% endif %}>
+                            {{ anchor_text|raw }}
+                        </a>
                     {% endif %}
                 </div>
             {% endblock %}
-            {% if form is defined %}
+            {% if form is defined and form is not null %}
                 {{ form_end(form)}}
             {% endif %}
         </div><!-- /.modal-content -->

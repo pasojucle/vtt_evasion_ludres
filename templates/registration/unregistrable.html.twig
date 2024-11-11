@@ -14,14 +14,14 @@
         <div class="wrapper-body">
             <div class="block background-ligth">
                 <div class="block-body">
-                    <p class="alert-warning">{{ warning|raw }}</p>
+                    <div class="alert-warning">{{ warning|raw }}</div>
                     {% if user_id is defined %}
                         <a class="btn btn-primary btn-xxl" href="{{ path('registration_file', {'user': user_id }) }}">Télécharger le dossier d'inscription</a>
                     {% endif %}
                 </div>
                  <div class="block-footer">
                     <a class="btn btn-secondary float-right" href="{{ path('user_change_infos') }}">Modifier une information</a>
-                    <a href="{{ path('user_bike_rides') }}" class="btn btn-secondary float-right">Voir mon compte</a>
+                    <a href="{{ path('user_sessions') }}" class="btn btn-secondary float-right">Voir mon compte</a>
                 </div>
             </div>
         </div>

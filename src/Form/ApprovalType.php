@@ -33,7 +33,6 @@ class ApprovalType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Approval::class,
-            'current' => null,
         ]);
     }
 }

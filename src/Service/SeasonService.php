@@ -39,7 +39,7 @@ class SeasonService
             : (int) $today->format('Y') - 1;
     }
     
-    public function getSeasonInterval(int $season): array
+    public function getSeasonPeriod(int $season): array
     {
         $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
         $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
@@ -52,9 +52,9 @@ class SeasonService
         return $interval;
     }
 
-    public function getCurrentSeasonInterval(): array
+    public function getCurrentSeasonPeriod(): array
     {
-        return $this->getSeasonInterval($this->getCurrentSeason());
+        return $this->getSeasonPeriod($this->getCurrentSeason());
     }
 
     public function getSeasons(): array

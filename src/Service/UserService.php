@@ -17,6 +17,7 @@ class UserService
         private EntityManagerInterface $entityManager,
         private SurveyResponseRepository $surveyResponseRepository,
         private OrderLineRepository $orderLineRepository,
+        private readonly LicenceService $licenceService,
     ) {
     }
 
@@ -25,21 +26,22 @@ class UserService
         $allData = [
             [
                 'entity' => $user,
-                'methods' => ['getSessions', 'getLicences', 'getApprovals', 'getIdentities', 'getOrderHeaders', 'getRespondents', 'getSurveys'],
+                'methods' => ['getSessions', 'getLicences', 'getApprovals', 'getIdentities', 'getOrderHeaders', 'getRespondents'],
             ],
         ];
         foreach ($allData as $data) {
             foreach ($data['methods'] as $method) {
-                if (!$data['entity']->{$method}()->isEmpty()) {
-                    foreach ($data['entity']->{$method}() as $entity) {
-                        if ($entity instanceof OrderHeader) {
-                            $this->orderLineRepository->deleteByOrderHeader($entity);
+                foreach ($data['entity']->{$method}() as $entity) {
+                    if ($entity instanceof OrderHeader) {
+                        $this->orderLineRepository->deleteByOrderHeader($entity);
+                    }
+                    if ($entity instanceof Licence) {
+                        foreach ($entity->getLicenceSwornCertifications() as $swornCertification) {
+                            $entity->removeLicenceSwornCertification($swornCertification);
+                            $this->entityManager->remove($swornCertification);
                         }
-                        if ($entity instanceof Licence) {
-                            foreach ($entity->getLicenceSwornCertifications() as $swornCertification) {
-                                $entity->removeLicenceSwornCertification($swornCertification);
-                            }
-                        }
+                    }
+                    if ($entity) {
                         $this->entityManager->remove($entity);
                     }
                 }
@@ -49,5 +51,14 @@ class UserService
 
         $this->entityManager->remove($user);
         $this->entityManager->flush();
+    }
+
+    public function licenceIsActive(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+        $lastLicence = $user->getLastLicence();
+        return $this->licenceService->isActive($lastLicence);
     }
 }

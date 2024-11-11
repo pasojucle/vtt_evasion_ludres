@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\User;
+use App\Form\Admin\UserAutocompleteField;
 use App\Service\LevelService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -12,51 +12,28 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserFilterType extends AbstractType
 {
     public function __construct(
-        private LevelService $levelService
+        private LevelService $levelService,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('user', Select2EntityType::class, [
-                'multiple' => false,
-                'remote_route' => $options['remote_route'],
-                'class' => User::class,
-                'primary_key' => 'id',
-                'text_property' => 'fullName',
-                'minimum_input_length' => 0,
-                'page_limit' => 10,
-                'allow_clear' => true,
-                'delay' => 250,
-                'cache' => true,
-                'cache_timeout' => 60000,
-                'language' => 'fr',
-                'placeholder' => 'Saisissez un nom et prénom',
-                'width' => '100%',
-                'label' => 'Participant',
-                'remote_params' => [
-                    'filters' => json_encode($options['filters']),
-                ],
+            ->add('user', UserAutocompleteField::class, [
+                'autocomplete_url' => $this->urlGenerator->generate($options['remote_route'], $options['filters'])
             ])
             ->add('levels', ChoiceType::class, [
                 'label' => false,
                 'multiple' => true,
                 'choices' => $this->levelService->getLevelChoices(),
-                'attr' => [
-                    'class' => 'customSelect2',
-                    'data-width' => '100%',
-                    'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
-                    'data-maximum-selection-length' => 4,
-                    'data-language' => 'fr',
-                    'data-allow-clear' => true,
-                ],
                 'required' => false,
+                'autocomplete' => true,
             ])
             ;
 
@@ -69,14 +46,8 @@ class UserFilterType extends AbstractType
                         'label' => false,
                         'multiple' => false,
                         'choices' => $options['status_choices'],
-                        'attr' => [
-                            'class' => 'customSelect2',
-                            'data-width' => '100%',
-                            'data-placeholder' => $options['status_placeholder'],
-                            'data-language' => 'fr',
-                            'data-allow-clear' => true,
-                        ],
-                        'required' => false,
+                        'autocomplete' => true,
+                        'required' => $options['status_is_require'],
                     ])
                 ;
             }
@@ -87,6 +58,7 @@ class UserFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'status_choices' => [],
+            'status_is_require' => false,
             'status_placeholder' => '',
             'filters' => [],
             'remote_route' => '',

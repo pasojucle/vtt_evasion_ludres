@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\UseCase\Survey;
 
+use App\Entity\History;
 use App\Entity\Survey;
 use App\Form\Admin\SurveyType;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 
 class SetSurvey
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private NotificationService $notificationService,
     ) {
     }
 
@@ -32,5 +35,16 @@ class SetSurvey
         }
         
         $this->entityManager->flush();
+
+        $this->notify($survey);
+    }
+
+    private function notify(Survey $survey): void
+    {
+        $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey($survey->getId());
+
+        if ($histories) {
+            $this->notificationService->notify($survey);
+        }
     }
 }

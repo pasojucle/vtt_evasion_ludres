@@ -15,7 +15,7 @@
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_board_role_edit') }}" class="btn btn-primary" title="Ajouter un role"><i class="fas fa-plus"></i> Ajouter un role</a>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
             <ul class="list-group sortable" data-route="admin_board_role_order" data-parameter="boardRole">
                 {% for boardRole in boardRoles %}     
                     <li class="list-group-item ui-state-default col-list col-list-2btn" data-id="{{ boardRole.id }}">
@@ -37,7 +37,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 </div>

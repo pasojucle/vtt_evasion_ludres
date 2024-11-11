@@ -2,11 +2,11 @@
 
 namespace App\Form\Admin\EventListener\Survey;
 
-use App\Entity\BikeRide;
 use App\Entity\Survey;
 use App\Entity\User;
+use App\Form\Admin\BikeRideAutocompleteField;
 use App\Form\Admin\SurveyType;
-use App\Form\Transformer\BikeRideTransformer;
+use App\Form\Admin\UsersAutocompleteField;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
@@ -15,12 +15,15 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AddRestrictionSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private LevelService $levelService, private UserRepository $userRepository)
-    {
+    public function __construct(
+        private readonly LevelService $levelService,
+        private readonly UserRepository $userRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
     }
     public static function getSubscribedEvents(): array
     {
@@ -69,78 +72,47 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter, ?array $memberIds): void
     {
         $options = $form->getConfig()->getOptions();
-        $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction || $options['display_disabled'];
+        $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
         $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction || $options['display_disabled'];
 
         if (!$disabledBikeRide) {
             $form
-            ->add('bikeRide', Select2EntityType::class, [
-                'multiple' => false,
-                'remote_route' => 'admin_bike_ride_choices',
-                'class' => BikeRide::class,
-                'primary_key' => 'id',
-                'transformer' => BikeRideTransformer::class,
-                'minimum_input_length' => 0,
-                'page_limit' => 10,
-                'allow_clear' => true,
-                'delay' => 250,
-                'cache' => true,
-                'cache_timeout' => 60000,
-                'language' => 'fr',
-                'placeholder' => 'Sélectionnez une sortie',
-                'width' => '100%',
-                'label' => false,
+            ->add('bikeRide', BikeRideAutocompleteField::class, [
+                'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
                 'required' => true,
+                'disabled' => $disabledBikeRide,
             ]);
         }
         if (!$disabledMembers) {
             $form
-                ->add('members', Select2EntityType::class, [
-                    'multiple' => true,
-                    'remote_route' => 'admin_member_choices',
-                    'class' => User::class,
-                    'primary_key' => 'id',
-                    'text_property' => 'fullName',
-                    'minimum_input_length' => 0,
-                    'page_limit' => 10,
-                    'allow_clear' => true,
-                    'delay' => 250,
-                    'cache' => true,
-                    'cache_timeout' => 60000,
-                    'language' => 'fr',
-                    'placeholder' => 'Sélectionnez les adhérents',
-                    'width' => '100%',
-                    'label' => false,
-                    'remote_params' => [
-                        'filters' => json_encode($options['filters']),
-                    ],
-                    'required' => true,
-                    'attr' => [
-                        'data-modifier' => 'bikeRideRestriction',
-                        'class' => 'form-modifier',
-                        'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
-                        'data-add-to-fetch' => 'memberIds',
-                        'data-disabled' => $disabledBikeRide,
-                    ],
-                ])
-                ->add('levelFilter', ChoiceType::class, [
-                    'label' => false,
-                    'multiple' => true,
-                    'choices' => $this->levelService->getLevelChoices(),
-                    'attr' => [
-                        'data-modifier' => 'surveyRestriction',
-                        'class' => 'customSelect2 form-modifier',
-                        'data-width' => '100%',
-                        'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
-                        'data-maximum-selection-length' => 4,
-                        'data-language' => 'fr',
-                        'data-allow-clear' => true,
-                        'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
-                        'data-add-to-fetch' => 'levels',
-                    ],
-                    'required' => false,
-                ])
-                ;
+            ->add('members', UsersAutocompleteField::class, [
+                'autocomplete_url' => $this->urlGenerator->generate('admin_member_autocomplete', $options['filters']),
+                'required' => true,
+                'disabled' => $disabledMembers,
+                'attr' => [
+                    'data-modifier' => 'surveyRestriction',
+                    'class' => 'form-modifier',
+                    'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
+                    'data-add-to-fetch' => 'memberIds',
+                ],
+            ])
+            ->add('levelFilter', ChoiceType::class, [
+                'label' => false,
+                'multiple' => true,
+                'choices' => $this->levelService->getLevelChoices(),
+                'autocomplete' => true,
+                'attr' => [
+                    'data-modifier' => 'surveyRestriction',
+                    'class' => 'form-modifier',
+                    'data-width' => '100%',
+                    'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
+                    'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',
+                    'data-add-to-fetch' => 'levels',
+                ],
+                'required' => false,
+                'disabled' => $disabledMembers,
+            ])
+            ;
         }
     }
 

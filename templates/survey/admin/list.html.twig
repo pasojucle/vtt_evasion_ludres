@@ -2,9 +2,8 @@
 
 {% block title %}Gestion des sondages{% endblock %}
 
-{% block body %}
+{% block body %}  
  <div class="wrapper">
-
     <div class="wrapper-title">
         <h1>Sondage</h1>
         <span class="tools">
@@ -12,7 +11,7 @@
     </div>
     <div class="wrapper-body">
         <a href="{{ path('admin_survey_add') }}" class="btn btn-primary" title="Ajouter un survey"><i class="fas fa-plus"></i> Ajouter</a>
-        {% include 'common/pagination.html.twig' with {'margin': 'both'} %}
+        {% include 'component/pagination.html.twig' with {'margin': 'both'} %}
         <ul>
             {% for survey in surveys %}
                 <li class="list-dropdown">
@@ -31,6 +30,9 @@
                             <li>
                                 <a class="dropdown-item" href="{{ path('admin_survey_export', {'survey': survey.id})}}" title="Exporter"><i class="fas fa-file-download"></i> Exporter</a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('admin_survey_copy', {'survey': survey.id})}}" title="Dupliquer"><i class="fa-solid fa-clone"></i> Dupliquer</a>
+                            </li>
                             {% if not survey.isDisabled %}
                                 <li>
                                     <a class="dropdown-item" href="{{ path('admin_survey_edit', {'survey': survey.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
@@ -45,7 +47,7 @@
                 </li>  
             {% endfor %}
         </ul>
-        {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
     </div>
 </div>
 

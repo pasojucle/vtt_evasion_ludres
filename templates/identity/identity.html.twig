@@ -1,25 +1,14 @@
 {% if identity.children|length > 1 %}
-    {% if identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_KINSHIP') %}
-        <b>Responsable de l'enfant</b>
-    {% elseif identity.vars.value.type == constant('App\\Entity\\Identity::TYPE_SECOND_CONTACT') %}
-        <b>Second contact</b>
-    {% endif %}
+    {% set kind = 'identity.kind.' ~ identity.vars.value.kind.value %}
+    <b>{{ kind|trans }}</b>
     {% if identity.kinship is defined %}
         <div class="form-group">{{ form_row(identity.kinship) }}</div>
     {% endif %}
     {% set first_block %}
-        <div class="form-group">
-            {{ form_row(identity.name) }}
-            {{ form_row(identity.firstName) }}
-        </div>
+        {{ form_row(identity.name) }}
+        {{ form_row(identity.firstName) }}
         {% if identity.birthDate is defined %}
-        <div class="form-group">
             {{ form_row(identity.birthDate)}}
-            {% if identity.birthCommune is defined %}
-                {{ form_row(identity.birthCommune) }}
-                {# {{ form_row(identity.birthDepartment) }} #}
-            {% endif %}
-        </div>
         {% endif %}
     {% endset %}
     {% if identity.pictureFile is defined %}
@@ -36,6 +25,13 @@
     {% else %}
         {{ first_block }}
     {% endif %}
+        <div class="form-row">
+            {% if identity.birthCommune is defined %}
+                {{ form_row(identity.birthCommune) }}
+                {{ form_row(identity.birthPlace) }}
+                {{ form_row(identity.foreignBorn) }}
+            {% endif %}
+        </div>
     <div class="form-group">
         {{ form_row(identity.mobile) }}
         {% if identity.phone is defined %}

@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compétences{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <div class="wrapper-title">
+        <h1>Gestion des compétences</h1>
+        <div class="tool-group">
+            <a href="{{ path('admin_users', {'filtered': 1}) }}"
+                class="btn btn-ico" title="Retour à la liste des adhérents">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+    </div>
+    <div class="wrapper-body">
+        <div class="row">
+            <div class="col-md-6 form-group" {{ vue_component('ChoiceFilterType', {'className': 'skill_category', 'field': 'category', 'placeholder': "Séléctionner une catégorie"}) }} ></div>
+            <div class="col-md-6 form-group" {{ vue_component('ChoiceFilterType', {'className': 'level', 'field': 'level', 'placeholder': "Séléctionner un niveau"}) }}></div>
+        </div>
+        <ul class="list-group" {{ vue_component('Skill') }}>
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+

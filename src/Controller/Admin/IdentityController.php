@@ -29,10 +29,10 @@ class IdentityController extends AbstractController
     ): Response {
         $licence = $user->getLastLicence();
         if (!$isKinship) {
-            $identity = $identityRepository->findMemberByUser($user);
+            $identity = $identityRepository->findOneMemberByUser($user);
             $identities = [$identity];
         } else {
-            $identities = $identityRepository->findKinShipsByUser($user);
+            $identities = $identityRepository->findOneKinShipsByUser($user);
         }
         $form = $this->createForm(IdentitiesType::class, ['identities' => $identities], [
             'category' => $licence->getCategory(),

@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service\Order;
 
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Repository\OrderHeaderRepository;
-use App\Service\ModalWindowService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Form;
 
@@ -24,7 +23,6 @@ class OrderAddService
         private EntityManagerInterface $entityManager,
         private OrderHeaderRepository $orderHeaderRepository,
         private Security $security,
-        private ModalWindowService $modalWindowService
     ) {
     }
 
@@ -42,7 +40,6 @@ class OrderAddService
         if ($form->isValid()) {
             $this->entityManager->persist($orderLine);
             $this->entityManager->flush();
-            $this->modalWindowService->addToModalWindowShowed($orderHeader);
         }
     }
 
@@ -53,7 +50,7 @@ class OrderAddService
             $orderHeader = new OrderHeader();
             $orderHeader->setUser($this->user)
                 ->setCreatedAt(new DateTime())
-                ->setStatus(OrderHeader::STATUS_IN_PROGRESS)
+                ->setStatus(OrderStatusEnum::IN_PROGRESS)
                 ;
             $this->entityManager->persist($orderHeader);
         }

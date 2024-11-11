@@ -102,16 +102,16 @@ class GetFramersFiltered
 
         $framers = $this->addUserAvailability($users, $filters);
 
-        $response = [];
+        $results = [];
 
         foreach ($framers as $framer) {
-            $response[] = [
-                'id' => $framer['user']->getId(),
+            $results[] = [
+                'value' => $framer['user']->getId(),
                 'text' => $framer['user']->GetFirstIdentity()->getName() . ' ' . $framer['user']->GetFirstIdentity()->getFirstName(),
             ];
         }
 
-        return $response;
+        return $results;
     }
 
     private function createForm(array $filters): FormInterface

@@ -79,7 +79,7 @@ class BikeRideDtoTransformer
         return $bikeRideDto;
     }
 
-    public function getHeaderFromEntity(?BikeRide $bikeRide): BikeRideDto
+    public function getHeaderFromEntity(?BikeRide $bikeRide, ?array $surveyHistories = null): BikeRideDto
     {
         $bikeRideDto = new BikeRideDto();
         if ($bikeRide) {
@@ -90,9 +90,10 @@ class BikeRideDtoTransformer
             $bikeRideDto->endAt = $bikeRide->getEndAt();
             $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
             $bikeRideDto->content = $bikeRide->getContent();
-            $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
+            $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey(), $surveyHistories) : null;
             $bikeRideDto->period = $this->bikeRideService->getPeriod($bikeRide);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
+            $bikeRideDto->isMultiClusters = 1 < $bikeRide->getClusters()->count();
             if ($bikeRide->getMinAge()) {
                 $bikeRideDto->minAge = sprintf('A partir de %s ans', $bikeRide->getMinAge());
             }

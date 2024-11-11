@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin/actualite', name: 'admin_summary_')]
+#[Route('/admin/actualite/', name: 'admin_summary_')]
 class SummaryController extends AbstractController
 {
     public function __construct(

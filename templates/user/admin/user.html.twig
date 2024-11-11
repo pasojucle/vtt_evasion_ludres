@@ -90,10 +90,17 @@
                     <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
                     {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
-                        <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
-                                class="btn" title="Modifier">
-                                <i class="fas fa-edit"></i> 
-                            </a>
+                            {% if user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER') %}
+                                <a href="{{ path('admin_user_skill_edit', {'user': user.id}) }}"
+                                    class="btn" title="Modifier">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                            {% else %}
+                                <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
+                                    class="btn" title="Modifier">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                            {% endif %}
                         </div>
                     {% endif %}
                 </div>
@@ -138,6 +145,23 @@
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
                         {% endif %}
                         <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="block background-ligth">
+                <div class="block-title">
+                    <h2>Authorisations</h2>
+                </div>
+                <div class="block-body">
+                    <ul>
+                        {% for approval in user.approvals %}
+                            <li style="position: relative">
+                                <div><b>{{ approval.toHtml.message }}</b></div>
+                                <div style="position: absolute; right: 0; top: 0;">
+                                    <a href="{{ path('admin_approval_edit', {'approval': approval.id}) }}" class="btn" style="padding: unset; font-size: 20px" title="Modifier"><i class="fas fa-edit"></i></a>
+                                </div>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

@@ -15,19 +15,20 @@ class SummaryDtoTransformer
     ) {
     }
 
-    public function fromEntity(?Summary $summary): SummaryDto
+    public function fromEntity(?Summary $summary, bool $novelty = false): SummaryDto
     {
         $summaryDto = new SummaryDto();
         if ($summary) {
             $summaryDto->createdAt = $summary->getCreatedAt()->format('d/m/Y');
             $summaryDto->title = $summary->getTitle();
             $summaryDto->content = $summary->getContent();
+            $summaryDto->novelty = $novelty;
         }
 
         return $summaryDto;
     }
 
-    public function fromEntities(array $summaries): array
+    public function fromEntities(array $summaries, array $summaryViewedIds = []): array
     {
         $summariesByBikeRide = [];
         /** @var Summary $summary */
@@ -40,7 +41,7 @@ class SummaryDtoTransformer
                     'startAt' => $bikeRide->getStartAt(),
                 ];
             }
-            $summariesByBikeRide[$bikeRide->getId()]['summaries'][] = $this->fromEntity($summary);
+            $summariesByBikeRide[$bikeRide->getId()]['summaries'][] = $this->fromEntity($summary, !in_array($summary->getId(), $summaryViewedIds));
         }
 
         $this->sortBikeRidesDesc($summariesByBikeRide);

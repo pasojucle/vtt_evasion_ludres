@@ -29,7 +29,7 @@ class OrderDtoTransformer
             $orderDto->createdAt = $createdAt->format('d/m/Y');
             $orderDto->user = $this->userDtoTransformer->fromEntity($orderHeader->getUser());
             $orderDto->status = $orderHeader->getStatus();
-            $orderDto->statusToString = $this->translator->trans(OrderHeader::STATUS[$orderDto->status]);
+            $orderDto->statusToString = $this->translator->trans(sprintf('order.%s', $orderHeader->getStatus()->value));
             $orderDto->orderLines = $this->orderLineDtoTransformer->fromEntities($orderHeader->getOrderLines(), $orderDto->user, $form?->all()['orderLines']);
             $orderDto->amount = $this->getAmount($orderDto->orderLines);
         }

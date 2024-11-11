@@ -6,10 +6,11 @@ namespace App\Repository;
 
 use App\Entity\Licence;
 use App\Entity\User;
-use App\Service\SeasonService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -35,17 +36,37 @@ class LicenceRepository extends ServiceEntityRepository
                     (new Expr())->eq('li.status', ':status'),
                     (new Expr())->eq('li.season', ':lastSeason'),
                 )
-                ->setParameters([
-                    'user' => $user,
-                    'status' => Licence::STATUS_VALID,
-                    'lastSeason' => $this->request->getSession()->get('currentSeason') - 1
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('user', $user),
+                    new Parameter('status', Licence::STATUS_VALID),
+                    new Parameter('lastSeason', $this->request->getSession()->get('currentSeason') - 1)
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult()
                 ;
         } catch (NonUniqueResultException) {
             return null;
         }
+    }
+
+    public function findByUserAndPeriod(User $user, int $totalSeasons): array
+    {
+        return $this->createQueryBuilder('li')
+            ->andWhere(
+                (new Expr())->eq('li.user', ':user'),
+                (new Expr())->eq('li.status', ':status'),
+                (new Expr())->eq('li.final', ':isFinal'),
+                (new Expr())->gte('li.season', ':deadline'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('status', Licence::STATUS_VALID),
+                new Parameter('isFinal', true),
+                new Parameter('deadline', $this->request->getSession()->get('currentSeason') - ($totalSeasons + 1))
+            ]))
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     public function findAllByLastSeason(): array
@@ -56,9 +77,7 @@ class LicenceRepository extends ServiceEntityRepository
             ->andWhere(
                 (new Expr())->gte('li.season', ':lastSeason')
             )
-            ->setParameters([
-                'lastSeason' => $season - 1,
-            ])
+            ->setParameter('lastSeason', $season - 1)
             ->getQuery()
             ->getResult()
         ;

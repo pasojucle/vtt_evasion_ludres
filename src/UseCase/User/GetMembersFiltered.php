@@ -15,9 +15,11 @@ class GetMembersFiltered extends GetUsersFiltered
 
     public string $filterName = 'admin_users_filters';
 
-    public string $remoteRoute = 'admin_member_choices';
+    public string $remoteRoute = 'admin_member_autocomplete';
 
     public string $exportFilename = 'export_adherents.csv';
+
+    public bool $statusIsRequire = false;
 
     public function getQuery(array $filters): QueryBuilder
     {

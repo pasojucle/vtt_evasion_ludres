@@ -11,8 +11,6 @@ use App\Form\Admin\ContentType;
 use App\Form\Admin\HomeBackgroundsType;
 use App\Repository\ContentRepository;
 use App\Repository\MessageRepository;
-use App\Repository\ParameterRepository;
-use App\Service\MessageService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Service\ProjectDirService;
@@ -40,10 +38,11 @@ class ContentController extends AbstractController
     ];
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private OrderByService $orderByService,
-        private ContentRepository $contentRepository,
-        private PaginatorDtoTransformer $paginatorDtoTransformer,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly OrderByService $orderByService,
+        private readonly ContentRepository $contentRepository,
+        private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
+        private readonly ContentDtoTransformer $contentDtoTransformer,
     ) {
     }
 
@@ -90,7 +89,7 @@ class ContentController extends AbstractController
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('content/admin/list.html.twig', [
-            'contents' => $contents,
+            'contents' => $this->contentDtoTransformer->fromEntities($contents)->contents,
             'paginator' => $this->paginatorDtoTransformer->fromEntities($contents, ['route' => $route, 'isFlash' => $isFlash]),
             'current_route' => $route,
             'is_flash' => $isFlash,
@@ -102,7 +101,6 @@ class ContentController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function adminHomeContentEdit(
         Request $request,
-        ContentDtoTransformer $contentDtoTransformer,
         UploadService $uploadService,
         ?Content $content
     ): Response {
@@ -136,7 +134,7 @@ class ContentController extends AbstractController
         }
 
         return $this->render('content/admin/edit.html.twig', [
-            'content' => $contentDtoTransformer->fromEntity($content),
+            'content' => $this->contentDtoTransformer->fromEntity($content),
             'form' => $form->createView(),
         ]);
     }
@@ -199,7 +197,7 @@ class ContentController extends AbstractController
         $isFlash = $content->IsFlash();
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($content);
             $this->entityManager->flush();
 

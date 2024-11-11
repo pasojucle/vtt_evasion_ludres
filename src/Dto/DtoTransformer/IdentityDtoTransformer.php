@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\IdentityDto;
+use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
 use App\Repository\HistoryRepository;
 use App\Service\ProjectDirService;
@@ -69,7 +70,7 @@ class IdentityDtoTransformer
         $identities = [];
         /** @var Identity $identity */
         foreach ($identityEntities as $identity) {
-            $identities[$identity->getType()] = $this->fromEntity($identity, $histories);
+            $identities[$identity->getKind()->name] = $this->fromEntity($identity, $histories);
         }
         $this->setKinshipAddress($identities);
 
@@ -91,10 +92,10 @@ class IdentityDtoTransformer
 
     private function setKinshipAddress(array &$identities): void
     {
-        $kinships = [Identity::TYPE_KINSHIP, Identity::TYPE_SECOND_CONTACT];
-        $memberAddress = $identities[Identity::TYPE_MEMBER]->address;
+        $kinships = [IdentityKindEnum::KINSHIP->name, IdentityKindEnum::SECOND_CONTACT->name];
+        $memberAddress = $identities[IdentityKindEnum::MEMBER->name]->address;
         foreach ($kinships as $kinship) {
-            if (array_key_exists($kinship, $identities) && null !== $identities[$kinship]) {
+            if (array_key_exists($kinship, $identities) && null === $identities[$kinship]->address) {
                 $identities[$kinship]->address = $memberAddress;
             }
         }
@@ -115,7 +116,7 @@ class IdentityDtoTransformer
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
     }
 
-    private function getBirthplace(Identity $identity): string
+    private function getBirthplace(Identity $identity): ?string
     {
         $birthCommune = $identity->getBirthCommune();
         
@@ -125,7 +126,7 @@ class IdentityDtoTransformer
                 : $birthCommune->getName();
         }
 
-        return $identity->getBirthPlace() . ' (' . $identity->getBirthDepartment() . ')';
+        return $identity->getBirthPlace();
     }
 
     private function getDecoratedChanges(array $histories, IdentityDto &$identityDto): void
@@ -143,7 +144,9 @@ class IdentityDtoTransformer
                 if (1 === preg_match('#name|firstName#', $property)) {
                     $identityDto->fullName = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->fullName);
                 }
-                
+                if ('address' === $property) {
+                    continue;
+                }
                 $identityDto->$property = sprintf('<ins style="background-color:#ccffcc">%s</ins>', $identityDto->$property);
             }
         }

@@ -50,7 +50,7 @@ class MembershipFeeController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('post') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $amount = $form->getData();
             $this->entityManager->persist($amount);
             $this->entityManager->flush();

@@ -8,8 +8,10 @@ use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -33,10 +35,10 @@ class RespondentRepository extends ServiceEntityRepository
                     (new Expr())->eq('v.survey', ':survey'),
                     (new Expr())->eq('v.user', ':user'),
                 )
-                ->setParameters([
-                    'survey' => $survey,
-                    'user' => $user,
-                ])
+                ->setParameters(new ArrayCollection([
+                    new Parameter('survey', $survey),
+                    new Parameter('user', $user),
+                ]))
                 ->getQuery()
                 ->getOneOrNullResult()
             ;
@@ -55,9 +57,7 @@ class RespondentRepository extends ServiceEntityRepository
                 (new Expr())->lte('v.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('v.endAt', 'CURRENT_DATE()'),
             )
-            ->setParameters([
-                'user' => $user,
-            ])
+            ->setParameter('user', $user)
             ->getQuery()
             ->getResult()
         ;
@@ -72,10 +72,10 @@ class RespondentRepository extends ServiceEntityRepository
             (new Expr())->eq('r.user', ':user'),
             (new Expr())->in('r.survey', ':survey')
         )
-        ->setParameters([
-            'user' => $user,
-            'survey' => $survey,
-        ])
+        ->setParameters(new ArrayCollection([
+            new Parameter('user', $user),
+            new Parameter('survey', $survey),
+        ]))
         ->getQuery()
         ->getResult()
     ;

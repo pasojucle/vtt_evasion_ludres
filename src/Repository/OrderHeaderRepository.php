@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -42,7 +43,7 @@ class OrderHeaderRepository extends ServiceEntityRepository
                 (new Expr())->neq('oh.status', ':statusCanceled'),
                 (new Expr())->eq('oh.user', ':user'),
             )
-            ->setParameter('statusCanceled', OrderHeader::STATUS_CANCELED)
+            ->setParameter('statusCanceled', OrderStatusEnum::CANCELED)
             ->setParameter('user', $user)
             ->orderBy('oh.createdAt', 'DESC')
         ;
@@ -55,7 +56,7 @@ class OrderHeaderRepository extends ServiceEntityRepository
                 (new Expr())->eq('oh.status', ':status'),
                 (new Expr())->eq('oh.user', ':user'),
             )
-            ->setParameter('status', OrderHeader::STATUS_IN_PROGRESS)
+            ->setParameter('status', OrderStatusEnum::IN_PROGRESS)
             ->setParameter('user', $user);
     }
 

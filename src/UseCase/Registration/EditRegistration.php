@@ -12,7 +12,6 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Security\SelfAuthentication;
-use App\Service\CommuneService;
 use App\Service\IdentityService;
 use App\Service\LicenceService;
 use App\Service\MailerService;
@@ -40,7 +39,6 @@ class EditRegistration
         private MailerService $mailerService,
         private LicenceService $licenceService,
         private StringService $stringService,
-        private CommuneService $communeService,
         private GetRegistrationFile $getRegistrationFile,
         private MessageService $messageService,
         private SelfAuthentication $selfAuthentication,
@@ -59,10 +57,6 @@ class EditRegistration
             $this->registerNewUser($user, $form);
             $selfAuthenticating = true;
         }
-
-        if ($user->getMemberIdentity()->getBirthCommune()) {
-            $this->communeService->addIfNotExists($user->getMemberIdentity()->getBirthCommune());
-        };
 
         if (null !== $user->getMemberIdentity()->getBirthDate()) {
             $category = $this->licenceService->getCategory($user);
@@ -132,7 +126,7 @@ class EditRegistration
     private function UploadFile(Request $request, User $user): void
     {
         $requestFile = $request->files->get('user');
-        if (null !== $requestFile && array_key_exists('identities', $requestFile) && null !== $requestFile['identities'][0]['pictureFile']) {
+        if (null !== $requestFile && array_key_exists('identities', $requestFile) && !empty($requestFile['identities']) && null !== $requestFile['identities'][0]['pictureFile']) {
             $pictureFile = $requestFile['identities'][0]['pictureFile'];
             $newFilename = $this->uploadService->uploadFile($pictureFile);
             if (null !== $newFilename) {

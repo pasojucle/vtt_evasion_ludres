@@ -14,6 +14,7 @@ use App\Form\SessionType;
 use App\Repository\SessionRepository;
 use App\Repository\SurveyResponseRepository;
 use App\Service\SessionService;
+use App\Service\SurveyService;
 use App\UseCase\BikeRide\CreateClusters;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use Doctrine\Common\Collections\Collection;
@@ -33,7 +34,8 @@ class GetFormSession
         private readonly SessionService $sessionService,
         private readonly IsWritableAvailability $isWritableAvailability,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private readonly SurveyResponseRepository $surveyResponseRepository
+        private readonly SurveyResponseRepository $surveyResponseRepository,
+        private readonly SurveyService $surveyService,
     ) {
     }
 
@@ -60,11 +62,13 @@ class GetFormSession
         $clusters = $this->getBikeRideClusters($bikeRide);
         $isWritableAvailability = true;
         $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
-        $surveyResponses = $this->surveyResponseRepository->findResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey());
 
+        $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyResponseRepository->findResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey()) : null;
+
+        $surveyHistories = ($surveyResponses) ? $this->surveyService->getHistory($bikeRide->getSurvey(), $session->getUser()) : null;
         $form = $this->getForm($session, $bikeRide, $clusters, $isWritableAvailability, $surveyResponses);
 
-        $this->setParams($form, $bikeRide, $sessions);
+        $this->setParams($form, $bikeRide, $sessions, $surveyHistories);
 
         return $form;
     }
@@ -135,11 +139,11 @@ class GetFormSession
         ]);
     }
 
-    private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions): void
+    private function setParams(FormInterface $form, BikeRide $bikeRide, array $sessions, ?array $surveyHistories = null): void
     {
         $this->params = [
             'form' => $form->createView(),
-            'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
+            'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($bikeRide, $surveyHistories),
             'sessions' => $sessions,
         ];
     }

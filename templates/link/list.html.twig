@@ -23,7 +23,7 @@
                         {% if link.content is not null %} <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i></span>{% endif %}
                         </h3>
                     </div>
-                    <div class="card-body card-dropdown"  data-target="card-body"><p>{{ link.content|raw }}</p></div>
+                    <div class="card-body card-dropdown"  data-target="card-body"><p class='ck-content'>{{ link.content|raw }}</p></div>
                 </a>
             </div>
             {% endfor %}

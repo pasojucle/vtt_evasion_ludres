@@ -14,7 +14,7 @@
                 {{ form_row(form.section) }}
                 {{ form_end(form) }}
             </div>
-            {% include 'common/pagination.html.twig' with {'margin': 'bottom'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul>
                 {% for message in messages %}     
                     <li class="list-dropdown">
@@ -39,7 +39,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% include 'common/pagination.html.twig' with {'margin': 'top'} %}
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
         </div>
     </div>
 {% endblock %}
