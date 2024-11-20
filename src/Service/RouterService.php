@@ -19,13 +19,17 @@ class RouterService
 
     public function getRouteInfos(): array
     {
+        $routeInfos = ['_route' => null];
         $referer = $this->requestStack->getCurrentRequest()->headers->get('referer');
-        $refererPathInfo = Request::create($referer)->getPathInfo();
-        try {
-            $routeInfos = $this->router->match($refererPathInfo);
-        } catch (Exception) {
-            $routeInfos = ['_route' => null];
+        if ($referer) {
+            $refererPathInfo = Request::create($referer)->getPathInfo();
+            try {
+                $routeInfos = $this->router->match($refererPathInfo);
+            } catch (Exception) {
+                
+            }
         }
+        
         return $routeInfos;
     }
 }
