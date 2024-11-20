@@ -231,11 +231,12 @@ class ContentController extends AbstractController
 
 
     #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
+    #[IsGranted('ROLE_USER')]
     public function slideshowImages(
         SlideshowImageRepository $slideshowImageRepository,
     ): JsonResponse {
         $images = [];
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->getUser();
         $slideShowimageViewedIds = $this->logRepository->findSlideShowimageViewedIds($user);
         /** @var SlideshowImage $image */
@@ -252,6 +253,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/image/{filename}', name: 'slideshow_image', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function slideshowImage(
         ProjectDirService $projectDir,
         string $filename,
@@ -268,11 +270,12 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/actualites', name: 'club_summary', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function summary(
         SummaryRepository $summaryRepository,
         SummaryDtoTransformer $summaryDtoTransformer,
     ): Response {
-        /** @var ?User $user */
+        /** @var User $user */
         $user = $this->getUser();
         $summaryViewedIds = $this->logRepository->findSummaryViewedIds($user);
         $summaries = $summaryRepository->findLatestDesc();
