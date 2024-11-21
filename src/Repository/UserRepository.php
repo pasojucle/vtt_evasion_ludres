@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\Entity\BoardRole;
 use App\Entity\Enum\IdentityKindEnum;
-use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
@@ -188,6 +187,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->expr()->eq('u', ':user')
         )
         ->setParameter('user', $user)
+        ;
+    }
+
+    private function addCriteriaByAvaylability(QueryBuilder &$qb, array $filters): void
+    {
+        $qb->leftJoin('s.cluster', 'c')
+            ->leftJoin('c.bikeRide', 'b');
+        $qb->andWhere(
+            $qb->expr()->eq('b.id', ':bikeRide'),
+            $qb->expr()->eq('s.availability', ':availability'),
+        )
+        ->setParameter('bikeRide', $filters['bikeRideId'])
+        ->setParameter('availability', (int) $filters['availability'])
         ;
     }
 
@@ -581,12 +593,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->join('u.identities', 'i');
 
         if (!empty($filters)) {
-            if (null !== $filters['query']) {
+            if (array_key_exists('query', $filters) && null !== $filters['query']) {
                 $this->addCriteriaByName($qb, $filters['query']);
             }
             if (!empty($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
+            // if (array_key_exists('bikeRideId', $filters) && !empty($filters['availability'])) {
+            //     $this->addCriteriaByAvaylability($qb, $filters);
+            // }
         }
 
         return $qb
@@ -599,6 +614,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->orderBy('i.name', 'ASC')
             ;
     }
+
+
+
 
     public function findByNumberLicenceOrFullName(string $query): array
     {

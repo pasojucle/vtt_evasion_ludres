@@ -50,7 +50,6 @@ class UserController extends AbstractController
             'routes' => [
                 ['name' => 'admin_levels', 'label' => 'Niveaux'],
                 ['name' => 'admin_skill_list', 'label' => 'Compétences'],
-                ['name' => 'admin_skill_category_list', 'label' => 'Catégories de compétences'],
                 ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
             ],
             'messages' => $messageService->getMessagesBySectionName('USER'),
@@ -202,12 +201,11 @@ class UserController extends AbstractController
         GetFramersFiltered $getFramersFiltered,
         Request $request
     ): JsonResponse {
-        $query = $request->query->get('query');
-        
-        $filtersQuery = $request->query->get('filters');
-        $filters = ($filtersQuery) ? json_decode($filtersQuery, true) : [];
-
-        return new JsonResponse(['results' => $getFramersFiltered->choices($filters, $query)]);
+        $filters['fullName'] = $request->query->get('q');
+        $filters['bikeRideId'] = (int) $request->query->get('bikeRideId');
+        $filters['availability'] = $request->query->get('availability');
+    
+        return new JsonResponse(['results' => $getFramersFiltered->choices($filters)]);
     }
 
     

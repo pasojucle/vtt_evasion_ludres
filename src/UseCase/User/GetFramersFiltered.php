@@ -91,9 +91,8 @@ class GetFramersFiltered
         return $userWithAvailability;
     }
 
-    public function choices(array $filters, ?string $fullName): array
+    public function choices(array $filters): array
     {
-        $filters['fullName'] = $fullName;
         $filters['user'] = null;
 
         $query = $this->userRepository->findFramers($filters);

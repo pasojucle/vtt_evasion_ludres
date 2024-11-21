@@ -14,6 +14,13 @@ class SkillController extends AbstractController
     #[Route(path: '/list', name: 'list', methods: ['GET'])]
     public function list(): Response
     {
-        return $this->render('skill/admin/list.html.twig');
+        return $this->render('skill/admin/list.html.twig', [
+            'settings' => [
+                'parameters' => [],
+                'routes' => [
+                    ['name' => 'admin_skill_category_list', 'label' => 'Catégories'],
+                ],
+            ],
+        ]);
     }
 }

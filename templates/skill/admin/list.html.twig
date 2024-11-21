@@ -7,6 +7,7 @@
     <div class="wrapper-title">
         <h1>Gestion des compétences</h1>
         <div class="tool-group">
+            {% include 'component/dropdown_settings.html.twig' %}
             <a href="{{ path('admin_users', {'filtered': 1}) }}"
                 class="btn btn-ico" title="Retour à la liste des adhérents">
                 <i class="fas fa-chevron-left"></i>

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Session;
-use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,7 +23,7 @@ class FramerFilterType extends AbstractType
         $builder
             ->add('user', UserAutocompleteField::class, [
                 'multiple' => false,
-                'remote_route' => $this->urlGenerator->generate('admin_framer_autocomplete', $options['filters']),
+                'autocomplete_url' => $this->urlGenerator->generate('admin_framer_autocomplete', $options['filters']),
             ])
             ->add('availability', ChoiceType::class, [
                 'label' => false,
