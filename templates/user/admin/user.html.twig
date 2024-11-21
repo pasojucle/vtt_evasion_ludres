@@ -90,17 +90,17 @@
                     <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
                     {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
-                            {% if user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER') %}
+                            {# {% if user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER') %}
                                 <a href="{{ path('admin_user_skill_edit', {'user': user.id}) }}"
                                     class="btn" title="Modifier">
                                     <i class="fas fa-edit"></i> 
                                 </a>
-                            {% else %}
+                            {% else %} #}
                                 <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
                                     class="btn" title="Modifier">
                                     <i class="fas fa-edit"></i> 
                                 </a>
-                            {% endif %}
+                            {# {% endif %} #}
                         </div>
                     {% endif %}
                 </div>
