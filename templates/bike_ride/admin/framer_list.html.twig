@@ -31,7 +31,7 @@
                                 <div class="col-md-4 col-xs-12">{{ framer.user.member.fullName }}</div>
                                 <div class="col-md-4 col-xs-12"> {{ framer.user.level.title }}</div>
                                 <div class="col-md-1 col-xs-3 {{ framer.availability.class.badge}}"></div>
-                                <div class="col-md-3 col-xs-9">{{framer.availability.text|trans }}</div>
+                                <div class="col-md-3 col-xs-9">{{framer.availability.text }}</div>
                             </div>
                         </a> 
                         {% include 'user/admin/dropdown.html.twig' with {'user': framer.user} %}

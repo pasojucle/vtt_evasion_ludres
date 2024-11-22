@@ -93,9 +93,9 @@ class SessionDtoTransformer
         if (null !== $availability) {
             $availabilityView = [
                 'class' => $availbilityClass[$availability->name],
-                'text' => $availability->value,
+                'text' => $availability->trans($this->translator),
                 'value' => $availability->name,
-                'enum' => $availability
+                'enum' => $availability,
             ];
         }
 

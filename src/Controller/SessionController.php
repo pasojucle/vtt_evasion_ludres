@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Entity\Session;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
+use App\Entity\Session;
+use App\Entity\User;
+use App\Repository\ContentRepository;
+use App\Repository\RespondentRepository;
+use App\Repository\SurveyResponseRepository;
 use App\Service\CacheService;
 use App\Service\MessageService;
 use App\Service\SessionService;
-use App\UseCase\User\GetBikeRides;
-use App\UseCase\Session\SetSession;
-use App\Repository\ContentRepository;
 use App\UseCase\Session\GetFormSession;
-use App\Repository\RespondentRepository;
+use App\UseCase\Session\SetSession;
+use App\UseCase\Session\UnregistrableSessionMessage;
+use App\UseCase\User\GetBikeRides;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\SurveyResponseRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\FormFactoryInterface;
-use App\UseCase\Session\UnregistrableSessionMessage;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {

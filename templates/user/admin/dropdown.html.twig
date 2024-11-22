@@ -6,7 +6,7 @@
     <ul class="dropdown-body">
       {% if session is defined %}
         {% if session.availability is not empty %}
-          <li class="info">{{ session.availability.class.icon|raw }} {{ session.availability.text|trans }}</li>
+          <li class="info">{{ session.availability.class.icon|raw }} {{ session.availability.text }}</li>
         {% endif %}
         {% if user.approvals.goingHomeAlone is defined %}
           <li class="info ">{{ user.approvals.goingHomeAlone.toHtml.class.icon|raw }} {{ user.approvals.goingHomeAlone.toHtml.message }}</li>

@@ -15,18 +15,20 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GetFramersFiltered
 {
     private const FILTER_NAME = 'admin_framer_filters';
 
     public function __construct(
-        private FormFactoryInterface $formFactory,
-        private UrlGeneratorInterface $urlGenerator,
-        private UserDtoTransformer $userDtoTransformer,
-        private UserRepository $userRepository,
-        private SessionRepository $sessionRepository,
-        private SessionDtoTransformer $sessionDtoTransformer
+        private readonly FormFactoryInterface $formFactory,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UserDtoTransformer $userDtoTransformer,
+        private readonly UserRepository $userRepository,
+        private readonly SessionRepository $sessionRepository,
+        private readonly SessionDtoTransformer $sessionDtoTransformer,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -75,7 +77,7 @@ class GetFramersFiltered
                 ? $sessionsByUser[$userId]->availability
                 : [
                     'class' => ['badge' => 'person person-rays', 'icon' => '<i class="fa-solid fa-person-rays"></i>'],
-                    'text' => 'session.availability.undefined',
+                    'text' => $this->translator->trans('session.availability.undefined'),
                     'value' => 0,
                 ];
 
@@ -83,7 +85,6 @@ class GetFramersFiltered
                 $userWithAvailability[] = [
                     'user' => $user,
                     'availability' => $availability,
-
                 ];
             }
         }

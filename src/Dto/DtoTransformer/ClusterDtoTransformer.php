@@ -8,6 +8,7 @@ use App\Dto\ClusterDto;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Cluster;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Session;
@@ -95,6 +96,7 @@ class ClusterDtoTransformer
     private function getSessions(Collection $sessionEntities, bool $fromEntities): array
     {
         $sessions = [];
+        /** @var Session $session */
         foreach ($sessionEntities as $session) {
             $sessions[] = [
                 'user' => ($fromEntities)
@@ -114,7 +116,7 @@ class ClusterDtoTransformer
 
         /** @var Session $session */
         foreach ($sessionEntities as $session) {
-            if (Session::AVAILABILITY_UNAVAILABLE !== $session->getAvailability()) {
+            if (in_array($session->getAvailability(), [null, AvailabilityEnum::AVAILABLE, AvailabilityEnum::REGISTERED])) {
                 $sortedSessions[] = $this->sessionDtoTransformer->fromEntity($session);
             }
         }
