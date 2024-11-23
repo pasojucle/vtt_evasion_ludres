@@ -9,11 +9,11 @@ use App\Entity\Identity;
 
 class IdentityDto
 {
-    public ?string $name;
+    public ?string $name = null;
 
-    public ?string $firstName;
+    public ?string $firstName = null;
 
-    public ?string $fullName;
+    public ?string $fullName = null;
 
     public ?string $birthDate;
 
