@@ -39,7 +39,7 @@ class ConfirmationSession
                 '{{ bikeRideTitleAndPeriod }}' => sprintf('%s du %s', $bikeRide->title, $bikeRide->period),
                 '{{ disponibilite }}' => $this->availabilityToString($session->getAvailability()),
             ];
-            
+
         $this->mailerService->sendMailToMember($user, $subject, $content, null, $additionalParams);
     }
 
@@ -51,6 +51,7 @@ class ConfirmationSession
                 AvailabilityEnum::AVAILABLE->name => 'session.availability_status.availability',
                 AvailabilityEnum::UNAVAILABLE->name => 'session.availability_status.absence'
             ];
+            dump($availabilities, $availability);
             
             return $this->translator->trans($availabilities[$availability->name]);
         }

@@ -14,16 +14,16 @@ class Session
 {
     public const AVAILABILITY_UNDEFINED = 0;
 
-    public const AVAILABILITY_REGISTERED = 1;
+    public const AVAILABILITY_REGISTERED = AvailabilityEnum::REGISTERED;
 
-    public const AVAILABILITY_AVAILABLE = 2;
+    public const AVAILABILITY_AVAILABLE = AvailabilityEnum::AVAILABLE;
 
-    public const AVAILABILITY_UNAVAILABLE = 3;
+    public const AVAILABILITY_UNAVAILABLE = AvailabilityEnum::UNAVAILABLE;
 
     public const AVAILABILITIES = [
-        self::AVAILABILITY_REGISTERED => 'session.availability.registered',
-        self::AVAILABILITY_AVAILABLE => 'session.availability.available',
-        self::AVAILABILITY_UNAVAILABLE => 'session.availability.unavailable',
+        self::AVAILABILITY_REGISTERED->value => 'session.availability.registered',
+        self::AVAILABILITY_AVAILABLE->value => 'session.availability.available',
+        self::AVAILABILITY_UNAVAILABLE->value => 'session.availability.unavailable',
     ];
 
     public const BIKEKIND_VTT = 1;

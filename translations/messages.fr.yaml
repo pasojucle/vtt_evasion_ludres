@@ -93,7 +93,7 @@ session:
   availability_status:
     presence: précence
     absence: absence
-    availability: précence, si besoin
+    availability: disponibilité, si besoin
   activity:
     vtt: VTT
     vttae: VTTAE

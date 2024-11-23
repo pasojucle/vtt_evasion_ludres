@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\BikeRide;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Form\Admin\FramerFilterType;
 use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
@@ -36,21 +37,16 @@ class GetFramersFiltered
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $bikeRide, $filtered);
-
         $form = $this->createForm($filters);
         $form->handleRequest($request);
-
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $filtered = true;
             $request->query->set('p', 1);
             $form = $this->createForm($filters);
         }
-
         $session->set(self::FILTER_NAME, $filters);
-
         $users = $this->userRepository->findFramers($filters)->getQuery()->getResult();
-
         $this->setRedirect($request, $bikeRide);
 
         return [
@@ -68,7 +64,6 @@ class GetFramersFiltered
             $sessionsByUser[$session->user->id] = $session;
         }
 
-
         $userWithAvailability = [];
         foreach ($users as $user) {
             $userId = ($user instanceof UserDto) ? $user->id : $user->getId();
@@ -81,7 +76,7 @@ class GetFramersFiltered
                     'value' => 0,
                 ];
 
-            if (null === $filters['availability'] || $filters['availability'] === $availability['value']) {
+            if ($this->availabilityIsInCriteria($filters['availability'], $availability)) {
                 $userWithAvailability[] = [
                     'user' => $user,
                     'availability' => $availability,
@@ -90,6 +85,20 @@ class GetFramersFiltered
         }
 
         return $userWithAvailability;
+    }
+
+    private function availabilityIsInCriteria(null|int|string $filter, array $availability)
+    {
+        if (null === $filter) {
+            return true;
+        }
+        if ($filter === $availability['value']) {
+            return true;
+        }
+        if (is_string($filter) && array_key_exists('enum', $availability) && AvailabilityEnum::tryFrom($filter) === $availability['enum']) {
+            return true;
+        }
+        return false;
     }
 
     public function choices(array $filters): array

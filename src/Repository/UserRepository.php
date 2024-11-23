@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BoardRole;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
@@ -187,19 +188,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->expr()->eq('u', ':user')
         )
         ->setParameter('user', $user)
-        ;
-    }
-
-    private function addCriteriaByAvaylability(QueryBuilder &$qb, array $filters): void
-    {
-        $qb->leftJoin('s.cluster', 'c')
-            ->leftJoin('c.bikeRide', 'b');
-        $qb->andWhere(
-            $qb->expr()->eq('b.id', ':bikeRide'),
-            $qb->expr()->eq('s.availability', ':availability'),
-        )
-        ->setParameter('bikeRide', $filters['bikeRideId'])
-        ->setParameter('availability', (int) $filters['availability'])
         ;
     }
 
@@ -599,9 +587,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (!empty($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
-            // if (array_key_exists('bikeRideId', $filters) && !empty($filters['availability'])) {
-            //     $this->addCriteriaByAvaylability($qb, $filters);
-            // }
         }
 
         return $qb
