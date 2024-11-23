@@ -42,11 +42,12 @@ const toggleNav =(event) => {
 
 const closeDropdown = () => {
     document.querySelectorAll('.block-body.down, .dropdown-toggle.down').forEach((element) => {
-        element.classList.remove(('down')).add('up')
+        console.log('element', element)
+        element.classList.replace('down', 'up')
     })
 
     document.querySelectorAll('.fa-angle-up').forEach((element) => {
-        element.classList.remove('fa-angle-up').add('fa-angle-down');
+        element.classList.replace('fa-angle-up', 'fa-angle-down');
     });
 }
 
