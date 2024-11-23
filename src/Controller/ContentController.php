@@ -26,6 +26,7 @@ use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ProjectDirService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -65,6 +66,19 @@ class ContentController extends AbstractController
             'bikeRides' => $bikeRideDtoTransformer->fromEntities($bikeRides),
             'home_contents' => $contentDtoTransformer->fromEntities($homeContents)->homeContents,
         ]);
+    }
+
+    #[Route('/', name: 'home_post', methods: ['POST'])]
+    public function homePost(
+        Request $request
+    ): Response {
+        $content = $request->getContent();
+
+        if ($content && is_string($content)) {
+            throw new Exception(sprintf('Home page with post: %s', $content));
+        }
+        
+        return new Response(null, Response::HTTP_NOT_FOUND);
     }
 
     #[Route('/club', name: 'club_overview', methods: ['GET'])]
