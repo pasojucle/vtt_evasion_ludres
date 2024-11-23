@@ -6,15 +6,17 @@ namespace App\UseCase\Parameter;
 
 use App\Repository\ParameterRepository;
 use App\Service\ParameterService;
+use App\Service\SeasonService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DisabledNewSeasonReRegistration
 {
     public function __construct(
-        private ParameterService $parameterService,
-        private ParameterRepository $parameterRepository,
-        private EntityManagerInterface $entityManager,
+        private readonly ParameterService $parameterService,
+        private readonly ParameterRepository $parameterRepository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SeasonService $seasonService,
     ) {
     }
 
@@ -26,9 +28,9 @@ class DisabledNewSeasonReRegistration
         }
         $seasonStart = $this->parameterService->getParameterByName('SEASON_START_AT');
         $today = new DateTimeImmutable();
-        $seasonStartAt = new DateTimeImmutable(sprintf('%s-%s-%s', $today->format('Y'), $seasonStart['month'], $seasonStart['day']));
-        
-        if ($seasonStartAt <= $today) {
+        $season = $this->seasonService->getCurrentSeason();
+
+        if ($season <= $today->format('Y') && $seasonStart['month'] <= $today->format('m') && $today->format('d') <= $seasonStart['day']) {
             $newSeasonReRegistration->setValue('0');
             $this->entityManager->flush();
             return  ['codeError' => 0,  'message' => 'New season re-registration is now desabled'];

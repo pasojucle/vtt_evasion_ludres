@@ -26,7 +26,6 @@ class RouterService
             try {
                 $routeInfos = $this->router->match($refererPathInfo);
             } catch (Exception) {
-                
             }
         }
         
