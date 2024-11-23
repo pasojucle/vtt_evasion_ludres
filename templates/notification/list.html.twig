@@ -11,7 +11,11 @@
                 <li class="notification-body">
                     <div class="notification-text">{{ notification.title}}</div>
                     <div class="notification-footer">
-                        <a class="btn btn-secondary btn-xs" data-toggle="modal" data-type="primary" href="{{ notification.modalLink }}">Consulter</a>
+                        {% if notification.modalLink %}
+                            <a class="btn btn-secondary btn-xs" data-toggle="modal" data-type="primary" href="{{ notification.modalLink }}">Consulter</a>
+                        {% else %}
+                            <a class="btn btn-secondary btn-xs" data-type="primary" href="{{ notification.url }}">Consulter</a>
+                        {% endif %}
                     </div>
                 </li>
             {% endfor %}
