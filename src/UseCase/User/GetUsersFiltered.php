@@ -10,12 +10,16 @@ use App\Form\Admin\UserFilterType;
 use App\Repository\UserRepository;
 use App\Service\PaginatorService;
 use App\Service\SeasonService;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use PhpParser\Node\Expr\Cast\Object_;
+use ReflectionClass;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class GetUsersFiltered
@@ -28,13 +32,14 @@ abstract class GetUsersFiltered
     public bool $statusIsRequire;
 
     public function __construct(
-        private PaginatorService $paginator,
+        private readonly PaginatorService $paginator,
         protected SeasonService $seasonService,
-        private FormFactoryInterface $formFactory,
-        private UrlGeneratorInterface $urlGenerator,
-        private UserDtoTransformer $userDtoTransformer,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UserDtoTransformer $userDtoTransformer,
         protected UserRepository $userRepository,
-        private PaginatorDtoTransformer $paginatorDtoTransformer
+        private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -55,7 +60,7 @@ abstract class GetUsersFiltered
             $request->query->set('p', 1);
             $form = $this->createForm($filters);
         }
-        $session->set($this->filterName, $filters);
+        $session->set($this->filterName, $this->filtersToSession($filters));
         $query = $this->getQuery($filters);
 
         $this->setRedirect($request);
@@ -146,8 +151,38 @@ abstract class GetUsersFiltered
     private function getFilters(Request $request, bool $filtered): array
     {
         return ($filtered && null !== $request->getSession()->get($this->filterName))
-            ? $request->getSession()->get($this->filterName)
+            ? $this->sessionToFilters($request->getSession()->get($this->filterName))
             : $this->getDefaultFilters();
+    }
+
+    private function filtersToSession(array $filters): array
+    {
+        $fitersToSession = [];
+        foreach ($filters as $name => $value) {
+            if (is_object($value)) {
+                $reflexionClass = new ReflectionClass($value);
+                $value = [
+                    'id' => $value->getId(),
+                    'entity' => $reflexionClass->getName(),
+                ];
+            }
+            $fitersToSession[$name] = $value;
+        }
+
+        return $fitersToSession;
+    }
+
+    private function sessionToFilters(array $session): array
+    {
+        $sessionToFilters = [];
+        foreach ($session as $name => $value) {
+            if (is_array($value) && array_key_exists('entity', $value)) {
+                $value = $this->entityManager->getRepository($value['entity'])->find($value['id']);
+            }
+            $sessionToFilters[$name] = $value;
+        }
+
+        return $sessionToFilters;
     }
 
     public function getDefaultFilters(): array
