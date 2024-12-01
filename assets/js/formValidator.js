@@ -1,16 +1,17 @@
 const { async } = require("regenerator-runtime");
 import Routing from 'fos-router';
+import { showModal } from './modal';
 
 export class Form {
     formData;
     fields = [];
     dynamicFields = [];
     fieldBlurred;
+    alertRemote;
     constructor(form) {
         this.element = form;
         this.submit = document.querySelector('button[type="submit"]');
         this.addFields(form);
-        
         this.validate();
     }
     addFields(form) {
@@ -21,7 +22,7 @@ export class Form {
         })
     }
     validate = async() => {
-        if (0 <this.fields.length) {
+        if (0 < this.fields.length) {
             this.formData = new FormData();
             const lastFieldFilled = this.fields.findLastIndex((field) => !field.isEmpty());
             this.fields.forEach((field, index) => {
@@ -42,6 +43,9 @@ export class Form {
             items.forEach((item) => {
                 this.formData.append(`validator[${field.id}][value][${item.baseName.shortName}]`, item.getValue());
             });
+        } else if(field.extraParam) {
+            this.formData.append(`validator[${field.id}][value][${field.baseName.shortName}]`, field.getValue());
+            this.formData.append(`validator[${field.id}][value][${field.extraParam.name}]`, field.extraParam.value);
         } else {
             this.formData.append(`validator[${field.id}][value]`, field.getValue());
         }
@@ -53,15 +57,18 @@ export class Form {
         })
         .then((response) => response.json())
         .then((json)=> {
+            this.alertRemote = null;
             json.constraintsValidator.forEach((validator) => {
-                let field = this.fields.find((field) => field.id === validator.id);
+                let field = this.findById(validator.id);
                 if (field && validator.filled) {
                     field.setMessageError(validator.html);
                 }
-                field = this.fields.find((field) => field.id === validator.id);
                 field.setStatus(validator.status);
                 field.refreshDynamicField();
             })
+            if (json.alert) {
+                this.callErrorRoute(json.alert.id)
+            }
         });
     }
     getFieldsByContraint = (field) => {
@@ -71,12 +78,32 @@ export class Form {
         const warnings = this.fields.filter((field) => field.status === 'ALERT_WARNING' || field.isRequired() && !field.getValue());
         this.submit.disabled = 0 < warnings.length
     }
+    callErrorRoute = (id) => {
+        const alertField = this.findById(id);
+        this.alertRemote = id;
+        const params = {};
+        this.fields.filter((field) => field.constraint === alertField.constraint).forEach((field) => {
+            params[field.baseName.shortName] = field.getValue();
+        })
+        showModal(encodeURI(Routing.generate(alertField.alertRoute, params)), 'danger');
+    }
+    findById = (id) => {
+        return this.fields.find((field) => field.id === id)
+    }
+    addEventListenerChange = (targeEl) => {
+        const fieldEl = targeEl.querySelector('[data-constraint]');
+        const field = (fieldEl) ? this.findById(fieldEl.id) : null;
+        if (field) {
+            field.getFieldEl().addEventListener('input', field.handleChange);
+        }
+    }
 }
 
 class Field {
     status;
     dynamicFieldId;
     relatedFieldId;
+    extraParam;
     constructor(form, field) {
         this.form = form;
         this.id = field.id;
@@ -86,21 +113,19 @@ class Field {
         this.constraint = this.getConstraint(field.dataset.constraint);
         this.multipleFields = field.dataset.multipleFields;
         this.isPhoneNumber = field.classList.contains('phone-number');
-        this.errorRoute = field.dataset.errorRoute;
+        this.alertRoute = field.dataset.alertRoute;
         this.addRelations(field.dataset.modifier);
+        this.addExtraParam(field.dataset.extraParamName, field.dataset.extraValue)
         this.addEventListener();
     }
     addEventListener() {
         const element = this.getFieldEl();
-
-        if (element.tagName === 'INPUT' && !element.classList.contains('js-datepicker')) {
-            element.addEventListener('keyup', this.handleChange);
-            element.addEventListener('blur', this.handleChange);
+        if (element.tagName === 'INPUT' && ['text', 'password'].includes(element.type)) {
+            element.addEventListener('input', this.handleChange);
         } else {
             element.addEventListener('change', this.handleChange);
         }
-        
-        element.addEventListener('focus', this.handleChange)
+        element.addEventListener('focus', this.handleFocus);
         if (this.isPhoneNumber) {
             this.formatPhoneNumber(element);
             element.addEventListener('keydown', (event) => {this.formatPhoneNumber(event.target)})
@@ -112,7 +137,11 @@ class Field {
             this.dynamicFieldId = getBaseName(dynamicField.id)['shortName'];
             dynamicField.relatedFieldId = this.id;
         }
-        
+    }
+    addExtraParam = (name, value) => {
+        if (name) {
+            this.extraParam = {'name': name, 'value': value}
+        }
     }
     formatPhoneNumber = (target) => {
         if (target.value) {
@@ -148,6 +177,11 @@ class Field {
     isRequired = () => {
         return Number(this.getFieldEl().required);
     }
+    handleFocus = (event) => {
+        if (event.target.id === this.form.alertRemote) {
+            event.target.value = '';
+        }
+    }
     handleChange = (event) => {
         this.value = event.target.value;
         this.form.validate();
@@ -173,21 +207,17 @@ class Field {
         const fieldEl = this.getFieldEl();
         if (status === 'SUCCESS') {
             fieldEl.parentElement.classList.remove('alert-warning');
-            fieldEl.parentElement.classList.add('success');
+            fieldEl.parentElement.classList.add('success'); 
         } else if (status === 'ALERT_WARNING') {
             fieldEl.parentElement.classList.add('alert-warning');
             fieldEl.parentElement.classList.remove('success');
-            if (!this.isEmpty() && this.errorRoute) {
-               this.callErrorRoute();
-            }
         } else {
             fieldEl.parentElement.classList.remove('alert-warning', 'success');
         }
     }
     refreshDynamicField = () => {
         if (this.dynamicFieldId) {
-            const dynamicField = this.form.fields.find((field) => field.id === this.dynamicFieldId);
-            dynamicField.getFieldEl().addEventListener('change', dynamicField.handleChange);
+            const dynamicField = this.form.findById(this.dynamicFieldId);
             if (this.status === 'ALERT_WARNING') {
                 dynamicField.getFieldEl().value = null;
                 const errorEl = dynamicField.getErrorEl();
@@ -196,18 +226,6 @@ class Field {
                 }
             }
         }
-    }
-    callErrorRoute = () => {
-        const params = {};
-        this.form.fields.filter((field) => field.constraint === this.constraint).forEach((field) => {
-            params[field.baseName.shortName] = field.getValue();
-        })
-        const anchor = document.createElement('A');
-        anchor.href = encodeURI(Routing.generate(this.errorRoute, params));
-        anchor.dataset.toggle = 'modal';
-        anchor.dataset.type = 'danger'
-        this.form.element.append(anchor);
-        anchor.click();
     }
 }
 

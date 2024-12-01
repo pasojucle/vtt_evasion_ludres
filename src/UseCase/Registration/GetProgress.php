@@ -24,7 +24,6 @@ use App\Service\LicenceService;
 use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetProgress
@@ -43,7 +42,6 @@ class GetProgress
         private EntityManagerInterface $entityManager,
         private HealthService $healthService,
         private LicenceService $licenceService,
-        private RequestStack $requestStack,
     ) {
         $this->season = $this->seasonService->getCurrentSeason();
     }
@@ -62,10 +60,6 @@ class GetProgress
             throw new NotFoundHttpException('The registration step does not exist');
         }
         $progress = $this->registrationProgressDtoTransformer->fromEntities($steps, $step, $this->user, $this->season);
-        
-        if (UserType::FORM_REGISTRATION_FILE === $progress->current->form) {
-            $this->requestStack->getSession()->remove('registration_user_id');
-        }
 
         return $progress;
     }

@@ -1,4 +1,7 @@
 {% if identity.children|length > 1 %}
+    {% if identity.isTesting is defined %}
+        <div class="form-group">{{ form_row(identity.isTesting) }}</div>
+    {% endif %}
     {% set kind = 'identity.kind.' ~ identity.vars.value.kind.value %}
     <b>{{ kind|trans }}</b>
     {% if identity.kinship is defined %}

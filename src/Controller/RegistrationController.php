@@ -100,7 +100,7 @@ class RegistrationController extends AbstractController
 
         $form = $progress->current->formObject;
 
-        $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration($progress->user);
+        $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration();
 
         if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress->current->form && !$progress->user->licenceNumber) {
             $message = str_replace(['<p>', '</p>'], '', html_entity_decode($schoolTestingRegistration['message']));
@@ -212,5 +212,18 @@ class RegistrationController extends AbstractController
         return $this->render('registration/unregistrable.html.twig', [
             'warning' => $messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_DISABLED_MESSAGE'),
          ]);
+    }
+
+    #[Route('/inscription/school/testing/disabled', name: 'registration_scholl_testing_disabled', methods: ['GET'], options:['expose' => true])]
+    public function schollTestingDisabled(
+        ParameterService $parameterService,
+    ): Response {
+        return $this->render('component/alert.modal.html.twig', [
+            'form' => null,
+            'title' => 'Inscription école vtt',
+            'message' => $parameterService->getSchoolTestingRegistration()['message'],
+            'url' => 'contact',
+            'anchor_text' => 'Nous contacter',
+        ]);
     }
 }

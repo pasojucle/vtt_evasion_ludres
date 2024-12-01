@@ -9,6 +9,7 @@ use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Service\ParameterService;
 use App\Validator\SchoolTestingRegistration;
+use DateTime;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -28,20 +29,36 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, SchoolTestingRegistration::class);
         }
 
-        $identity = $this->context->getObject()?->getParent()->getData();
-        $user = $identity->getUser();
-        if (!$identity->getBirthDate()) {
-            return;
-        }
-        $category = $this->licenceService->getCategoryByBirthDate($identity->getBirthDate());
-  
-        if ('schoolTestingRegistration' !== $this->context->getObject()?->getName() || Licence::CATEGORY_MINOR !== $category) {
+        if (is_string($value) && 1 === intval($value)) {
             return;
         }
 
-        $schoolTestingRegistration = $this->parameterService->getSchoolTestingRegistration($this->userDtoTransformer->fromEntity($user));
+        $birthDate = null;
+        $licenceNumber = null;
+        if (is_array($value) && array_key_exists('isTesting', $value) && (bool) $value['isTesting']) {
+            $birthDate = DateTime::createFromFormat('Y-m-d', $value['birthDate']);
+        }
 
-        if (!$schoolTestingRegistration['value'] && !$user->getLicenceNumber()) {
+        if (!$birthDate) {
+            $identity = $this->context->getObject()?->getParent()->getData();
+            $birthDate = $identity?->getBirthDate();
+            $licenceNumber = $identity?->getUser()->getLicenceNumber();
+            if ('schoolTestingRegistration' !== $this->context->getObject()?->getName()) {
+                return;
+            }
+        }
+
+        if (!$birthDate) {
+            return;
+        }
+
+        $category = $this->licenceService->getCategoryByBirthDate($birthDate);
+        if (Licence::CATEGORY_MINOR !== $category) {
+            return;
+        }
+
+        $schoolTestingRegistration = $this->parameterService->getSchoolTestingRegistration();
+        if (!$schoolTestingRegistration['value'] && !$licenceNumber) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ message }}', strip_tags(html_entity_decode($schoolTestingRegistration['message'])))
                 ->addViolation()

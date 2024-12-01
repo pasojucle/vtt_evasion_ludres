@@ -18,7 +18,7 @@ use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -46,12 +46,9 @@ class IdentityType extends AbstractType
             $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
             $foreignBorn = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
             list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
-
-            $addressClass = (IdentityKindEnum::MEMBER !== $kind) ? ' identity-address' : '';
-            $addressRequired = 'required';
-            if (IdentityKindEnum::MEMBER !== $kind && !$identity->hasAddress()) {
-                $addressRequired = '';
-            }
+            $isTesting = (!$kinship) ? (int) empty($identity->getUser()->getLicenceNumber()) : 0;
+            $addressClass = ($kinship) ? ' identity-address' : '';
+            $addressRequired = ($kinship && !$identity->hasAddress()) ? '' : 'required';
 
             if ($options['is_kinship'] === $kinship) {
                 $form
@@ -86,7 +83,7 @@ class IdentityType extends AbstractType
                             ? [
                                 'data-constraint' => 'app-UniqueMember',
                                 'data-multiple-fields' => 1,
-                                'data-error-route' => 'unique_member',
+                                'data-alert-route' => 'unique_member',
                                 'autocomplete' => 'off',
                             ]
                             : ['data-constraint' => '', 'autocomplete' => 'off', ],
@@ -123,7 +120,6 @@ class IdentityType extends AbstractType
                         'row_class' => $addressClass,
                         'required' => $addressRequired,
                     ])
-
                 ;
 
                 if (IdentityKindEnum::SECOND_CONTACT !== $kind) {
@@ -145,18 +141,23 @@ class IdentityType extends AbstractType
                                 'class' => 'phone-number',
                             ],
                         ])
-                        ->add('birthDate', DateTimeType::class, [
+                        ->add('birthDate', DateType::class, [
                             'label' => 'Date de naissance',
-                            'widget' => 'single_text',
-                            'html5' => false,
-                            'format' => 'dd/MM/yyyy',
+                            // 'widget' => 'single_text',
+                            // 'html5' => false,
+                            // 'format' => 'dd/MM/yyyy',
                             'attr' => [
-                                'class' => 'js-datepicker',
+                                // 'class' => 'js-datepicker',
+                                'nin' => $dateMin->format('Y-m-d'),
+                                'max' => $dateMax->format('Y-m-d'),
                                 'data-max-date' => $dateMax->format('Y-m-d'),
                                 'data-min-date' => $dateMin->format('Y-m-d'),
                                 'data-year-range' => $dateMin->format('Y') . ':' . $dateMax->format('Y'),
                                 'autocomplete' => 'off',
-                                'data-constraint' => 'app-BirthDate',
+                                'data-constraint' => 'app-BirthDate;app-SchoolTestingRegistration',
+                                'data-extra-param-name' => 'isTesting',
+                                'data-extra-value' => $isTesting,
+                                'data-alert-route' => 'registration_scholl_testing_disabled',
                             ],
                             'row_attr' => [
                                 'class' => $row_class,
@@ -286,7 +287,8 @@ class IdentityType extends AbstractType
                             'constraints' => [
                                 new SchoolTestingRegistration(),
                             ],
-                        ]);
+                        ])
+                        ;
                     ;
                 }
             }

@@ -23,10 +23,17 @@ class BirthDateValidator extends ConstraintValidator
         $maxLimit = new DateTime();
         $maxLimit->sub(new DateInterval('P5Y'));
 
+        if (is_array($value) && array_key_exists('birthDate', $value)) {
+            $value = $value['birthDate'];
+        }
+
         if (null === $value || '' === $value) {
             return;
         }
-        if (!($minLimit < $value && $value < $maxLimit)) {
+
+        $birthDate = (is_string($value)) ? DateTime::createFromFormat('Y-m-d', $value) : $value;
+  
+        if (!($minLimit < $birthDate && $birthDate < $maxLimit)) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation()
             ;

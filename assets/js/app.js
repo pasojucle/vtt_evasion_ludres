@@ -186,6 +186,9 @@ function formModifier(event) {
         targetEl.querySelectorAll('.form-modifier').forEach((element) => {
             element.addEventListener('change', formModifier);
         });
+        if (formValidator) {
+            formValidator.addEventListenerChange(targetEl);
+        }
     });
 }
 

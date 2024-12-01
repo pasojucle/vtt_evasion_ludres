@@ -87,7 +87,6 @@ class EditRegistration
 
         $this->entityManager->flush();
 
-        $session->set('registration_user_id', $user->getId());
         if ($selfAuthenticating) {
             $this->selfAuthentication->authenticate($user);
         }

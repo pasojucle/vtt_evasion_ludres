@@ -49,7 +49,7 @@ class GetAccompanyingAdultCertificate
     {
         $content = $this->parameterService->getParameterByName('ACCOMPANYING_ADULT_CERTIFICATE');
 
-        return $this->replaceKeywordsService->replace($user, $content, RegistrationStep::RENDER_FILE);
+        return $this->replaceKeywordsService->replace($content, $user, RegistrationStep::RENDER_FILE);
     }
 
     private function makePdf(string $content): string

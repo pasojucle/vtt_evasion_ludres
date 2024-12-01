@@ -9,6 +9,7 @@ use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
+use App\Entity\User;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -21,7 +22,7 @@ class ReplaceKeywordsService
     ) {
     }
 
-    public function replace(UserDto $user, ?string $content, int $render = RegistrationStep::RENDER_VIEW, array $additionalParams = []): null|string|array
+    public function replace(?string $content, ?UserDto $user = null, int $render = RegistrationStep::RENDER_VIEW, array $additionalParams = []): null|string|array
     {
         if (null !== $content) {
             if (RegistrationStep::RENDER_FILE === $render) {
@@ -91,16 +92,15 @@ class ReplaceKeywordsService
         return [];
     }
 
-    private function getReplace(array $keyWords, UserDto $user, int $render, array $additionalParams): array
+    private function getReplace(array $keyWords, ?UserDto $user, int $render, array $additionalParams): array
     {
         $replace = [];
-        /** @var ?LicenceDto $licence */
-        $licence = $this->getDtoProperty($user, 'lastLicence');
-        /** @var ?IdentityDto $kinship */
-        $kinship = $this->getDtoProperty($user, 'kinship');
-        /** @var ?HealthDto $health */
-        $health = $this->getDtoProperty($user, 'health');
-
+        /**
+        *   @var ?LicenceDto $licence
+        *   @var ?IdentityDto $kinship
+        *   @var ?HealthDto $health
+        */
+        list($licence, $kinship, $health) = $this->getUserRelations($user);
         foreach ($keyWords as $keyWord) {
             $replace[] = match ($keyWord) {
                 '{{ prenom_nom }}' => $user->member->fullName,
@@ -133,6 +133,16 @@ class ReplaceKeywordsService
 
         return $replace;
     }
+
+    private function getUserRelations(?UserDto $user): array
+    {
+        if (!$user) {
+            return [null, null, null];
+        }
+
+        return [$this->getDtoProperty($user, 'lastLicence'), $this->getDtoProperty($user, 'kinship'), $this->getDtoProperty($user, 'health'), ];
+    }
+
 
     private function getAddress(?IdentityDto $identity): string
     {

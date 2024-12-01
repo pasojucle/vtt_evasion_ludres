@@ -13,10 +13,8 @@ use App\Repository\ContentRepository;
 use App\Repository\IdentityRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
-use App\Service\ParameterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -116,7 +114,6 @@ class UserController extends AbstractController
         ]);
     }
 
-
     #[Route('/unique/member/{name}/{firstName}', name: 'unique_member', methods: ['POST', 'GET'], options:['expose' => true])]
     public function uniqueMember(
         Request $request,
@@ -141,10 +138,11 @@ class UserController extends AbstractController
             return $this->redirectToRoute('user_account');
         }
         
-        return $this->render('user/unique_member.modal.html.twig', [
-            'name' => $name,
-            'first_name' => $firstName,
+        return $this->render('component/alert.modal.html.twig', [
             'form' => $form->createView(),
+            'title' => 'Compte existant',
+            'message' => sprintf('Le compte %s %s exite déjà', $name, $firstName),
+            'button_text' => '<i class="fas fa-sign-in-alt"></i> Se connecter',
         ]);
     }
 }

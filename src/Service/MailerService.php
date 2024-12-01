@@ -56,7 +56,7 @@ class MailerService
         }
 
         if ($user instanceof UserDto) {
-            $content = $this->replaceKeywords->replace($user, $content, RegistrationStep::RENDER_FILE, $additionalParams);
+            $content = $this->replaceKeywords->replace($content, $user, RegistrationStep::RENDER_FILE, $additionalParams);
         }
 
         $error = [

@@ -1,0 +1,12 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}{{ title }}{% endblock %}
+{% block body %}
+    <div class="alert alert-danger">{{ message|raw }}</div>
+{% endblock %}
+{% block footer %}
+    {% if cancel is defined %}
+        {% set cancel_route = path(cancel) %}
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

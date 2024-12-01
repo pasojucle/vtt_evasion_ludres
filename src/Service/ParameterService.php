@@ -42,11 +42,11 @@ class ParameterService
         return $parameters;
     }
 
-    public function getSchoolTestingRegistration(UserDto $user): array
+    public function getSchoolTestingRegistration(): array
     {
         $value = $this->getParameterByName('SCHOOL_TESTING_REGISTRATION');
         $message = $this->messageService->getMessageByName('SCHOOL_TESTING_REGISTRATION_MESSAGE');
-        $message = $this->replaceKeywordsService->replace($user, $message);
+        $message = $this->replaceKeywordsService->replace($message);
 
         return [
             'value' => $value,

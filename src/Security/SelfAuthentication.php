@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
-use Symfony\Component\Security\Http\SecurityEvents;
 
 class SelfAuthentication
 {
@@ -37,5 +36,6 @@ class SelfAuthentication
         $logoutEvent = new LogoutEvent($this->requestStack->getCurrentRequest(), $this->tokenStorage->getToken());
         $this->eventDispatcher->dispatch($logoutEvent);
         $this->tokenStorage->setToken(null);
+        $this->requestStack->getSession()->remove('user_fullName');
     }
 }

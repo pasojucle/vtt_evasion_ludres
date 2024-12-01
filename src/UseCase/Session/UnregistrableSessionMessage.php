@@ -48,7 +48,7 @@ class UnregistrableSessionMessage
         }
 
         if (!$this->checkSeasonLicence($userDto, $currentSeason)) {
-            return $this->replaceKeywordsService->replace($userDto, $this->messageService->getMessageByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'));
+            return $this->replaceKeywordsService->replace($this->messageService->getMessageByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'), $userDto);
         }
 
         if (null !== $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {

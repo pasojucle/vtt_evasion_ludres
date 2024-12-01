@@ -17,7 +17,7 @@ class FullNameValidator extends ConstraintValidator
         }
         $data = $this->context->getRoot()->getData();
 
-        if (null === $value || '' === $value) {
+        if (null === $value || '' === $value || null === $data['name']) {
             return;
         }
 

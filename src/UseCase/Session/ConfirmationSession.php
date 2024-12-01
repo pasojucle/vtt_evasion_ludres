@@ -51,7 +51,6 @@ class ConfirmationSession
                 AvailabilityEnum::AVAILABLE->name => 'session.availability_status.availability',
                 AvailabilityEnum::UNAVAILABLE->name => 'session.availability_status.absence'
             ];
-            dump($availabilities, $availability);
             
             return $this->translator->trans($availabilities[$availability->name]);
         }

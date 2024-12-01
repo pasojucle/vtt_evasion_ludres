@@ -102,16 +102,16 @@ body > script {display: none !important;}
 
 /*styles*/
 @keyframes flash {
-    0% {opacity:0;}
-	20% {opacity:1;}
-    80% {opacity:1;}
-  100% {opacity:0;}
+    0% {opacity:0; visibility: hidden;}
+	20% {opacity:1; visibility: visible;}
+    80% {opacity:1; visibility: visible;}
+  100% {opacity:0; visibility: hidden;}
 }
 @-webkit-keyframes flash {
-    0% {opacity:0;}
-	20% {opacity:1;}
-    80% {opacity:1;}
-  100% {opacity:0;}
+    0% {opacity:0; visibility: hidden;}
+	20% {opacity:1; visibility: visible;}
+    80% {opacity:1; visibility: visible;}
+  100% {opacity:0; visibility: hidden;}
 }
 
 :root {
@@ -548,6 +548,7 @@ nav > ul > li > div.nav-bar-title > a.btn-logger {
     max-width: 100%;
     color: var(--white-color);
     opacity: 0;
+    visibility: hidden;
     font-size: 18px;
     -webkit-animation: flash 10s;
     animation: flash 10s;

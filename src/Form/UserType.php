@@ -159,6 +159,7 @@ class UserType extends AbstractType
                         'attr' => [
                             'data-constraint' => 'app-Password',
                             'data-multiple-fields' => 1,
+                            'autocomplete' => 'new-password',
                         ],
                     ],
                     'required' => true,

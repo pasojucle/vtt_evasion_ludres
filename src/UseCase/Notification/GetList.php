@@ -94,7 +94,7 @@ class GetList
 
     private function getUserNotifications(array $notificationsConsumed): array
     {
-        if (str_contains($this->routeInfos['_route'], 'admin')) {
+        if ($this->routeInfos['_route'] && str_contains($this->routeInfos['_route'], 'admin')) {
             return [null, []];
         }
 

@@ -96,7 +96,7 @@ class RegistrationStepDtoTransformer
 
     private function getContent(UserDto $userDto, int $render, ?string $content): null|string|array
     {
-        return $this->replaceKeywordsService->replace($userDto, $content, $render);
+        return $this->replaceKeywordsService->replace($content, $userDto, $render);
     }
 
     private function getOverviewTemplate(int $form): ?string

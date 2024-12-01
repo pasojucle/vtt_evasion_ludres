@@ -54,7 +54,7 @@ class GetRegistrationCertificate
             $content = $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_SCHOOL');
         }
 
-        return $this->replaceKeywordsService->replace($user, $content, RegistrationStep::RENDER_FILE);
+        return $this->replaceKeywordsService->replace($content, $user, RegistrationStep::RENDER_FILE);
     }
     
     private function makePdf(string $content): string
