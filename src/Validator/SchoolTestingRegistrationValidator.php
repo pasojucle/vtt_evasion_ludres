@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
+
 use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Service\ParameterService;
@@ -18,7 +18,6 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
 {
     public function __construct(
         private ParameterService $parameterService,
-        private UserDtoTransformer $userDtoTransformer,
         private LicenceService $licenceService
     ) {
     }

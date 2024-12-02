@@ -578,7 +578,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQueryBuilder('u')
             ->leftJoin('u.sessions', 's')
             ->leftJoin('u.level', 'l')
-            ->join('u.identities', 'i');
+            ->join('u.identities', 'i')
+            ->join('u.licences', 'li');
 
         if (!empty($filters)) {
             if (array_key_exists('query', $filters) && null !== $filters['query']) {
@@ -588,6 +589,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
         }
+
+        $this->addCriteriaGteSeason($qb);
 
         return $qb
             ->andWhere(
@@ -599,9 +602,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->orderBy('i.name', 'ASC')
             ;
     }
-
-
-
 
     public function findByNumberLicenceOrFullName(string $query): array
     {
