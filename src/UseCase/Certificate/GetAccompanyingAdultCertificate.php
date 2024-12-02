@@ -8,7 +8,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
-use App\Service\ParameterService;
+use App\Service\MessageService;
 use App\Service\PdfService;
 use App\Service\ReplaceKeywordsService;
 use App\Service\StringService;
@@ -24,7 +24,7 @@ class GetAccompanyingAdultCertificate
         private StringService $stringService,
         private ReplaceKeywordsService $replaceKeywordsService,
         private Environment $twig,
-        private ParameterService $parameterService,
+        private MessageService $messageService,
         private ParameterBagInterface $parameterBag
     ) {
     }
@@ -47,7 +47,7 @@ class GetAccompanyingAdultCertificate
 
     private function getContent(UserDto $user)
     {
-        $content = $this->parameterService->getParameterByName('ACCOMPANYING_ADULT_CERTIFICATE');
+        $content = $this->messageService->getMessageByName('ACCOMPANYING_ADULT_CERTIFICATE');
 
         return $this->replaceKeywordsService->replace($content, $user, RegistrationStep::RENDER_FILE);
     }
