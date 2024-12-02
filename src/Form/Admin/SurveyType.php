@@ -20,7 +20,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -82,70 +81,65 @@ class SurveyType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('restriction', ChoiceType::class, [
-                'expanded' => true,
-                'multiple' => false,
-                'choices' => [
-                    'Afficher le sondage à tous les adhérents' => self::DISPLAY_ALL_MEMBERS,
-                    'Afficher le sondage à l\'inscription à une sortie' => self::DISPLAY_BIKE_RIDE,
-                    'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_MEMBER_LIST,
-                ],
-                'choice_attr' => function () {
-                    return [
-                        'data-modifier' => 'surveyRestriction',
-                        'class' => 'form-modifier',
-                     ];
-                },
-                'disabled' => $options['display_disabled'],
-            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'btn btn-primary float-right',
                 ],
             ])
+            ->add('surveyIssues', CollectionType::class, [
+                'label' => false,
+                'entry_type' => SurveyIssueType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'attr' => [
+                        'class' => ($options['display_disabled']) ? 'row form-group-collection not-deleted' : 'row form-group-collection',
+                    ],
+                ],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            ->add('isAnonymous', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'attr' => [
+                    'data-switch-on' => 'Mode anonyme activé',
+                    'data-switch-off' => 'Activer le mode anonyme',
+                ],
+                'required' => false,
+                'disabled' => $options['display_disabled'],
+            ])
         ;
 
-        $formModifier = function (FormInterface $form, array $options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            $form = $event->getForm();
+            /** @var Survey $survey */
+            $survey = $event->getData();
             $form
-                ->add('surveyIssues', CollectionType::class, [
-                    'label' => false,
-                    'entry_type' => SurveyIssueType::class,
-                    'entry_options' => [
-                        'label' => false,
-                        'attr' => [
-                            'class' => ($options['display_disabled']) ? 'row form-group-collection not-deleted' : 'row form-group-collection',
-                        ],
+                ->add('restriction', ChoiceType::class, [
+                    'expanded' => true,
+                    'multiple' => false,
+                    'choices' => [
+                        'Afficher le sondage à tous les adhérents' => self::DISPLAY_ALL_MEMBERS,
+                        'Afficher le sondage à l\'inscription à une sortie' => self::DISPLAY_BIKE_RIDE,
+                        'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_MEMBER_LIST,
                     ],
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'by_reference' => false,
-                ])
-                ->add('isAnonymous', CheckboxType::class, [
-                    'block_prefix' => 'switch',
-                    'attr' => [
-                        'data-switch-on' => 'Mode anonyme activé',
-                        'data-switch-off' => 'Activer le mode anonyme',
-                    ],
-                    'required' => false,
+                    'choice_attr' => function () {
+                        return [
+                            'data-modifier' => 'surveyRestriction',
+                            'class' => 'form-modifier',
+                        ];
+                    },
+                    'data' => match (true) {
+                        null !== $survey->getBikeRide() => self::DISPLAY_BIKE_RIDE,
+                        !$survey->getMembers()->isEmpty() => self::DISPLAY_MEMBER_LIST,
+                        default => self::DISPLAY_ALL_MEMBERS,
+                    },
                     'disabled' => $options['display_disabled'],
                 ]);
-        };
-
-        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->urlGenerator));
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options, $formModifier) {
-            $form = $event->getForm();
-
-            $formModifier($form, $options);
         });
 
-        $builder->get('restriction')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($options, $formModifier) {
-                $formModifier($event->getForm()->getParent(), $options);
-            }
-        );
+        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->urlGenerator));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

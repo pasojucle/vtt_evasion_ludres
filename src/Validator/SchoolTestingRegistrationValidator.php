@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
-
 use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Service\ParameterService;
