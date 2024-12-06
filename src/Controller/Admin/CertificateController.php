@@ -39,7 +39,7 @@ class CertificateController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            list($content, $filename) = $getRegistrationCertificate->execute($request, $user, utf8_encode($data['content']));
+            list($content, $filename) = $getRegistrationCertificate->execute($request, $user, mb_convert_encoding($data['content'], 'UTF-8'));
             $filename = base64_encode($this->parameterBag->get('data_directory_path') . $filename);
         }
 
@@ -67,7 +67,7 @@ class CertificateController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            list($content, $filename) = $getAccompanyingAdultCertificate->execute($request, $user, utf8_encode($data['content']));
+            list($content, $filename) = $getAccompanyingAdultCertificate->execute($request, $user, mb_convert_encoding($data['content'], 'UTF-8'));
             $filename = base64_encode($this->parameterBag->get('data_directory_path') . $filename);
         }
 
