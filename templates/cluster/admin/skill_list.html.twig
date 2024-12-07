@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="wrapper-body">
-        <ul class="list-group" {{ vue_component('ClusterSkill', {'cluster': cluster.id}) }}>
+        <ul class="list-group" {{ vue_component('ClusterSkill', {'cluster': cluster.id, 'canEdit': canEdit}) }}>
             <div class="loader-container">
                 <div class="loader"></div>
             </div>

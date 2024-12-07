@@ -1,9 +1,9 @@
 <template>
-    <a class="btn btn-primary" v-bind:href="path('add')" @click.prevent="handle($event)" title="Ajouter"> Ajouter</a>
+    <a v-if="canEdit" class="btn btn-primary" v-bind:href="path('add')" @click.prevent="handle($event)" title="Ajouter"> Ajouter</a>
 
     <li class="list-group-item" v-for="skill in store.list['cluster_skill']" :key="skill.id">
         <div v-html="skill.content"></div>
-        <div class="dropdown">
+        <div v-if="canEdit" class="dropdown">
             <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
             <div class="dropdown-menu" data-target="dropdown-tools">
                 <ul class="dropdown-body">
@@ -27,6 +27,7 @@ import Edit from './Edit.vue';
 export default {
     props: {
         cluster: Number,
+        canEdit: Boolean,
     },
     data() {
         return {

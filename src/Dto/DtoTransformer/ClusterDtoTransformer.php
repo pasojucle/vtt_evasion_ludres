@@ -53,6 +53,7 @@ class ClusterDtoTransformer
             $clusterDto->memberSessions = $this->clusterService->getMemberSessions($cluster);
             $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities);
             $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
+            $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
 
             $clusterCache->set($clusterDto);
             $clusterCache->expiresAfter(DateInterval::createFromDateString('1 hour'));
@@ -83,6 +84,7 @@ class ClusterDtoTransformer
     public function headerFromBikeRide(BikeRide $bikeRide): array
     {
         $clusters = [];
+        /** @var Cluster $clusterEntity */
         foreach ($bikeRide->getClusters() as $clusterEntity) {
             $clusterDto = new ClusterDto();
             $clusterDto->id = $clusterEntity->getId();

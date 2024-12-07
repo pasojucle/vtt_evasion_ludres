@@ -41,4 +41,24 @@ class UserSkillRepository extends ServiceEntityRepository
                ->getResult()
            ;
     }
+
+    /**
+     * @return UserSkill[] Returns an array of UserSkill objects
+     */
+    public function findByUsers(array $users): array
+    {
+        return $this->createQueryBuilder('us')
+            ->join('us.user', 'u')
+            ->join('us.skill', 's')
+            ->join('s.category', 'c')
+            ->andWhere(
+                (new Expr())->in('u.id', ':users'),
+            )
+            ->setParameter('users', $users)
+            ->orderBy('u.id', 'ASC')
+            ->addOrderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

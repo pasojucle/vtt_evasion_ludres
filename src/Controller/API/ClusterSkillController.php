@@ -12,6 +12,7 @@ use App\Form\Admin\SkillAddType;
 use App\Form\Admin\UserSkillCollectionType;
 use App\Form\Admin\UserSkillType;
 use App\Service\ApiService;
+use App\Service\CacheService;
 use App\UseCase\Skill\GetUserSkillCluster;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/api/cluster_skill', name: 'api_cluster_skill_')]
 class ClusterSkillController extends AbstractController
@@ -29,10 +31,12 @@ class ClusterSkillController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly GetUserSkillCluster $getUserSkillCluster,
         private readonly ApiService $api,
+        private readonly CacheService $cacheService,
     ) {
     }
 
     #[Route(path: '/list/{cluster}', name: 'list', methods: ['GET'], options: ['expose' => true])]
+    #[IsGranted('BIKE_RIDE_LIST')]
     public function list(Cluster $cluster): JsonResponse
     {
         return new JsonResponse([
@@ -41,6 +45,7 @@ class ClusterSkillController extends AbstractController
     }
 
     #[Route(path: '/eval/{cluster}/{skill}', name: 'eval', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function eval(Request $request, Cluster $cluster, Skill $skill): JsonResponse
     {
         $form = $this->createForm(UserSkillCollectionType::class, $this->getUserSkillCluster->execute($cluster, $skill), [
@@ -64,6 +69,7 @@ class ClusterSkillController extends AbstractController
     }
 
     #[Route(path: '/add/{cluster}', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function add(Request $request, Cluster $cluster): JsonResponse
     {
         $form = $this->api->createForm($request, SkillAddType::class, null, [
@@ -76,6 +82,7 @@ class ClusterSkillController extends AbstractController
             $skill = $this->entityManager->getRepository(Skill::class)->find($data['skill']);
             $cluster->addSkill($skill);
             $this->entityManager->flush();
+            $this->cacheService->deleteCacheIndex($cluster);
 
             return $this->api->responseForm($skill, $this->transformer, 'idASC', false, 'cluster_skill');
         }
@@ -84,6 +91,7 @@ class ClusterSkillController extends AbstractController
     }
 
     #[Route(path: '/delete/{cluster}/{skill}', name: 'delete', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
     public function delete(Request $request, Cluster $cluster, Skill $skill): JsonResponse
     {
         $form = $this->api->createForm($request, FormType::class, $skill);
@@ -92,6 +100,8 @@ class ClusterSkillController extends AbstractController
             $response = $this->api->responseForm($skill, $this->transformer, 'idASC', true, 'cluster_skill');
             $cluster->removeSkill($skill);
             $this->entityManager->flush();
+            $this->cacheService->deleteCacheIndex($cluster);
+
             return $response;
         }
         

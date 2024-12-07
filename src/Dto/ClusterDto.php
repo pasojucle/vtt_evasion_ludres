@@ -30,4 +30,6 @@ class ClusterDto
     public ?bool $isComplete;
 
     public int $usersOnSiteCount;
+
+    public bool $hasSkills = false;
 }

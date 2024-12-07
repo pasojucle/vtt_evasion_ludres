@@ -1,16 +1,24 @@
 <div id="cluster-{{ cluster.id }}" data-route="{{ path('admin_cluster_show', {'cluster': cluster.id })}}" class="cluster-container mb-20">
     <div class="cluster-title">
-        <h2>{{ cluster.title }} - <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span></h2>
-            {% if bikeRide.isEditable %}
+        <h2>{{ cluster.title }} - 
+            <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span>
+            {% dump(cluster) %}
+            {% if cluster.hasSkills %}
+                <span class="badge badge-info"><i class="fa-solid fa-graduation-cap"></i></span>
+            {% endif %}
+        </h2>
+            {% if bikeRide.isEditable or cluster.hasSkills %}
             <div class="dropdown">
                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                 <div class="dropdown-menu" data-target="dropdown-tools">
                     <ul class="dropdown-body">
-                        <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.id, 'cluster': cluster.id}) }}" class="dropdown-item" title="Renomer"><i class="fa-solid fa-pen-to-square"></i> Renommer</a></li>
+                        {% if bikeRide.isEditable %}
+                            <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.id, 'cluster': cluster.id}) }}" class="dropdown-item" title="Renomer"><i class="fa-solid fa-pen-to-square"></i> Renommer</a></li>
+                        {% endif %}
                         {% if bikeRide.bikeRideType.useLevels %}
                             <li><a href="{{ path('admin_cluster_evaluations', {'cluster': cluster.id}) }}" class="dropdown-item" title="Évaluations"><i class="fa-solid fa-graduation-cap"></i> Évaluation</a></li>
                         {% endif %}
-                        {% if 0 == cluster.sessions|length %}
+                        {% if 0 == cluster.sessions|length and bikeRide.isEditable %}
                             <li><a href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" class="dropdown-item" title="Supprimer"><i class="fa-solid fa-circle-xmark"></i> Supprimer</a></li>
                         {% endif %}
                     </ul>
