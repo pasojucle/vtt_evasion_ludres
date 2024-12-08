@@ -57,7 +57,7 @@
                                                     </li>
                                                     {% endfor %}
                                                 </ul>
-                                                {% if bikeRide.availability is empty %}
+                                                {% if session.bikeRide.survey %}
                                                     <a href="{{ path('survey',{'survey': session.bikeRide.survey.id}) }}" class="btn btn-xs btn-primary" title="Modifier les réponses au sondage"><i class="fas fa-pencil-alt"></i> Modifier les réponses au sondage</a>
                                                 {% endif %}
                                             {% endif %}

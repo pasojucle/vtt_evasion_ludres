@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\User;
+use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -287,6 +289,40 @@ class SessionRepository extends ServiceEntityRepository
             ->setParameters(new ArrayCollection([
                 new Parameter('user', $user),
                 new Parameter('start', $today->setTime(0, 0, 0)),
+            ]))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findFramerAvailability(): array
+    {
+        $bikeRides = $this->getEntityManager()->createQueryBuilder()
+            ->select('bikeRide.id')
+            ->from(BikeRide::class, 'bikeRide')
+            ->join('bikeRide.bikeRideType', 'brt')
+            ->andWhere(
+                (new Expr())->gte('bikeRide.startAt', ':start'),
+                (new Expr())->lte('bikeRide.startAt', ':end'),
+                (new Expr())->eq('bikeRide.deleted', ':deleted'),
+                (new Expr())->gt('brt.registration', ':registration'),
+                (new Expr())->eq('brt.needFramers', ':needFramers'),
+            )
+        ;
+
+        return $this->createQueryBuilder('s')
+            ->join('s.cluster', 'c')
+            ->join('c.bikeRide', 'br')
+            ->andWhere(
+                (new Expr())->eq('s.availability', ':avaylability'),
+                (new Expr())->in('br.id', $bikeRides->getDql()),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('start', (new DateTimeImmutable())->setTime(0, 0, 0)),
+                new Parameter('end', (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59)),
+                new Parameter('registration', 0),
+                new Parameter('deleted', false),
+                new Parameter('needFramers', true),
+                new Parameter('avaylability', AvailabilityEnum::AVAILABLE),
             ]))
             ->getQuery()
             ->getResult();
