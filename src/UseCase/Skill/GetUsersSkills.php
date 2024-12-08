@@ -67,7 +67,7 @@ class GetUsersSkills
     private function getExportContent(array $usersSkills): string
     {
         $content = [];
-        $row = ['date d\évaluation', 'compétence', 'évaluation'];
+        $row = ['date d\'évaluation', 'compétence', 'évaluation'];
         $content[] = implode(',', $row);
 
         $prevUserId = null;
@@ -80,11 +80,11 @@ class GetUsersSkills
             if ($prevUserId !== $userId) {
                 $prevUserId = $userId;
                 $userDto = $this->userDtoTransformer->fromEntity($userSkill->getUser());
-                $row = [$userDto->licenceNumber, $userDto->member->fullName];
-                $content[] = implode('-', $row);
+                $content[] = '';
+                $content[] = sprintf('%s - %s', $userDto->licenceNumber, $userDto->member->fullName);
             }
             $userSkillDto = $this->userSkillDtoTransformer->fromEntity($userSkill);
-            $row = [$userSkillDto->evaluateAt, sprintf('"%s"', $userSkillDto->skill['content']), $userSkillDto->evaluation['value']];
+            $row = [$userSkillDto->evaluateAt, sprintf('"%s"', strip_tags($userSkillDto->skill['content'])), $userSkillDto->evaluation['value']];
             $content[] = implode(',', $row);
         }
 
