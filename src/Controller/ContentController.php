@@ -230,9 +230,9 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
-    public function slideshow(LogService $logService): Response
+    public function slideshow(): Response
     {
-        $form = $logService->getForm(['entityName' => 'SlideshowImage']);
+        $form = $this->logService->getForm(['entityName' => 'SlideshowImage']);
         return $this->render('content/slideshow.html.twig', [
             'form' => $form->createView(),
         ]);

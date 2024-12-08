@@ -67,7 +67,7 @@ class SlideshowImageRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('i')
             ->join('i.directory', 'd')
-            ->orderBy('d.id', 'ASC')
+            ->orderBy('d.id', 'DESC')
             ->getQuery()
             ->getResult()
        ;
@@ -103,13 +103,24 @@ class SlideshowImageRepository extends ServiceEntityRepository
                 (new Expr())->eq('log.entity', ':entityName')
             );
 
+        $latestView = $this->getEntityManager()->createQueryBuilder()
+            ->select((new Expr())->max('logMax.viewAt'))
+            ->from(Log::class, 'logMax')
+            ->andWhere(
+                (new Expr())->eq('logMax.user', ':user'),
+                (new Expr())->eq('logMax.entity', ':entityName'),
+                (new Expr())->lt('logMax.viewAt', ':today'),
+            );
+
         return $this->createQueryBuilder('i')
             ->andWhere(
-                (new Expr())->notIn('i.id', $viewed->getDQL())
+                (new Expr())->notIn('i.id', $viewed->getDQL()),
+                (new Expr())->gt('i.createdAt', (new Expr())->any($latestView->getDQL())),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('user', $user),
-                new Parameter('entityName', 'SlideshowImage')
+                new Parameter('entityName', 'SlideshowImage'),
+                new Parameter('today', (new DateTime())->setTime(0, 0, 0)),
             ]))
             ->getQuery()
             ->getResult()
