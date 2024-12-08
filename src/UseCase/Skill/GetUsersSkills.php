@@ -28,7 +28,6 @@ class GetUsersSkills
     public function export(): Response
     {
         $usersSkills = $this->getUsersSkills();
-        dump($usersSkills);
 
         $content = $this->getExportContent($usersSkills);
 

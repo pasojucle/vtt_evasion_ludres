@@ -2,7 +2,6 @@
     <div class="cluster-title">
         <h2>{{ cluster.title }} - 
             <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span>
-            {% dump(cluster) %}
             {% if cluster.hasSkills %}
                 <span class="badge badge-info"><i class="fa-solid fa-graduation-cap"></i></span>
             {% endif %}
