@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Skill;
 
 use App\Entity\Cluster;
+use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\Skill;
 use App\Entity\User;
@@ -28,9 +29,8 @@ class GetUserSkillCluster
         $clusterUserSkill = [];
         /** @var Session $session */
         foreach ($cluster->getSessions() as $session) {
-            if ($session->isPresent()) {
-                $user = $session->getUser();
-
+            $user = $session->getUser();
+            if ($session->isPresent() && Level::TYPE_SCHOOL_MEMBER === $user->getLevel()->getType()) {
                 $clusterUserSkill[] = (array_key_exists($user->getId(), $userSkills))
                     ? $userSkills[$user->getId()]
                     : $this->getNewUserSkill($user, $skill);
