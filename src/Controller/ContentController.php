@@ -69,15 +69,10 @@ class ContentController extends AbstractController
     }
 
     #[Route('/', name: 'home_post', methods: ['POST'])]
-    public function homePost(
-        Request $request
-    ): Response {
-        $content = $request->getContent();
-
-        if ($content && is_string($content)) {
-            throw new Exception(sprintf('Home page with post: %s', $content));
-        }
-        
+    #[Route('/reglement', name: 'rules_post', methods: ['POST'])]
+    #[Route('/notifications', name: 'notification_list_post', methods: ['POST'])]
+    public function noRoutePost(): Response
+    {
         return new Response(null, Response::HTTP_NOT_FOUND);
     }
 
