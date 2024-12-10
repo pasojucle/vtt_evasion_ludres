@@ -52,7 +52,7 @@ class NotificationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $slideshowImages = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSlideShowImages() : null;
-        dump($slideshowImages);
+
         return new JsonResponse(['hasNewItem' => !empty($slideshowImages)]);
     }
 
