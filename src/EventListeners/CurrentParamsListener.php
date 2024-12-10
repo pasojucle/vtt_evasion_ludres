@@ -17,7 +17,7 @@ class CurrentParamsListener
     ) {
     }
 
-    public function onKernelRequest()
+    public function onKernelRequest(): void
     {
         $currentSeason = $this->seasonService->getCurrentSeason();
         $this->requestStack->getSession()->set('currentSeason', $currentSeason);

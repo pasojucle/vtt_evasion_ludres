@@ -2,8 +2,6 @@
 
 namespace App\EventListeners;
 
-// use App\Dto\DtoTransformer\UserDtoTransformer;
-
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

@@ -27,7 +27,7 @@ class MaintenanceListener
         $this->ipAuthorized = $maintenance['ipAuthorized'];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         // This will get the value of our maintenance parameter
         $maintenance = $this->maintenanceMode;

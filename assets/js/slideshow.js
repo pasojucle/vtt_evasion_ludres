@@ -16,6 +16,7 @@ class Slideshow extends HTMLDivElement {
     constructor() {
         super();
         this.frameEl = this.querySelector('.frame');
+        this.latestView = this.dataset.latestView;
         this.addImages();
         this.resize();
         this.slideWith = this.offsetWidth;
@@ -54,7 +55,7 @@ class Slideshow extends HTMLDivElement {
         this.toogglePosition();
     }
     addImages = async() => {
-        await fetch(Routing.generate('slideshow_images'),)
+        await fetch(Routing.generate('slideshow_images', {'latestView' : this.latestView}),)
         .then((response) => response.json())
         .then((json)=> {
             json.images.forEach((image, index) => {
@@ -213,7 +214,11 @@ class SliderImage {
             this.badge.classList.add('novelty');
             this.badge.textContent = 'N';
             this.badge.style.left = (this.imageEl.offsetWidth - this.image.offsetWidth) / 2 + 20 +'px';
-            this.badge.style.top = (this.imageEl.offsetHeight - this.image.offsetHeight) / 2 + 20 +'px';
+            let top = (this.imageEl.offsetHeight - this.image.offsetHeight) / 2 + 20;
+            if (top < 20) {
+                top = 20;
+            }
+            this.badge.style.top = top +'px';
             this.imageEl.append(this.badge);
         }
     }

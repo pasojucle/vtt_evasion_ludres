@@ -103,8 +103,10 @@ class SlideshowImageRepository extends ServiceEntityRepository
                 (new Expr())->eq('log.entity', ':entityName')
             );
 
+        $defaultIfNull = sprintf('COALESCE(%s, \'2020-01-01\')', (new Expr())->max('logMax.viewAt'));
         $latestView = $this->getEntityManager()->createQueryBuilder()
-            ->select((new Expr())->max('logMax.viewAt'))
+        // ->select((new Expr())->max('logMax.viewAt'))
+            ->select($defaultIfNull)
             ->from(Log::class, 'logMax')
             ->andWhere(
                 (new Expr())->eq('logMax.user', ':user'),
@@ -120,7 +122,7 @@ class SlideshowImageRepository extends ServiceEntityRepository
             ->setParameters(new ArrayCollection([
                 new Parameter('user', $user),
                 new Parameter('entityName', 'SlideshowImage'),
-                new Parameter('today', (new DateTime())->setTime(0, 0, 0)),
+                new Parameter('today', (new DateTime())),
             ]))
             ->getQuery()
             ->getResult()

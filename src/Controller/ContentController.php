@@ -26,6 +26,7 @@ use App\Service\LogService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ProjectDirService;
+use DateTimeImmutable;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
@@ -232,29 +233,34 @@ class ContentController extends AbstractController
     #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
     public function slideshow(): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $form = $this->logService->getForm(['entityName' => 'SlideshowImage']);
+        $latestView = $this->logRepository->findLatestView($user, 'SlideshowImage');
         return $this->render('content/slideshow.html.twig', [
             'form' => $form->createView(),
+            'latestView' => ($latestView) ? (new DateTimeImmutable($latestView))->getTimestamp() : 1577836800,
         ]);
     }
 
-
-    #[Route('/club/images', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
+    #[Route('/club/images/{latestView}', name: 'slideshow_images', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('ROLE_USER')]
     public function slideshowImages(
         SlideshowImageRepository $slideshowImageRepository,
+        int $latestView,
     ): JsonResponse {
         $images = [];
         /** @var User $user */
         $user = $this->getUser();
         $slideShowimageViewedIds = $this->logRepository->findSlideShowimageViewedIds($user);
+        $latestView = (new DateTimeImmutable())->setTimestamp($latestView);
         /** @var SlideshowImage $image */
         foreach ($slideshowImageRepository->findAll() as $image) {
             $images[] = [
                 'url' => $this->generateUrl('slideshow_image', ['filename' => $image->getFilename()]),
                 'directory' => $image->getDirectory()->getName(),
                 'id' => $image->getId(),
-                'novelty' => !in_array($image->getId(), $slideShowimageViewedIds),
+                'novelty' => $latestView < $image->getCreatedAt() && !in_array($image->getId(), $slideShowimageViewedIds),
             ];
         }
 

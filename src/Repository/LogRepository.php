@@ -113,4 +113,22 @@ class LogRepository extends ServiceEntityRepository
     {
         return $this->findEntityViewedIds($user, 'SecondHand');
     }
+
+    public function findLatestView(User $user, string $entity)
+    {
+        return $this->createQueryBuilder('l')
+            ->select((new Expr())->max('l.viewAt'))
+            ->andWhere(
+                (new Expr())->eq('l.user', ':user'),
+                (new Expr())->eq('l.entity', ':entityName'),
+                (new Expr())->lt('l.viewAt', ':today'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', $entity),
+                new Parameter('today', (new DateTimeImmutable())),
+            ]))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

@@ -52,7 +52,7 @@ class NotificationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $slideshowImages = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSlideShowImages() : null;
-
+        dump($slideshowImages);
         return new JsonResponse(['hasNewItem' => !empty($slideshowImages)]);
     }
 
@@ -75,8 +75,6 @@ class NotificationController extends AbstractController
 
         return new JsonResponse(['hasNewItem' => !empty($secondHands)]);
     }
-
-
 
     #[Route('/notification/show/{entityName}/{entityId}', name: 'show', methods: ['GET'], defaults:['entityId' => null])]
     public function show(
