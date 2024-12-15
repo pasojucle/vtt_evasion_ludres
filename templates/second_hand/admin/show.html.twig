@@ -14,8 +14,10 @@
         </div>
         <div class="wrapper-body">
             <div class="row row-align-top">
-                <div class="col-md-5 col-xs-12"> 
-                    <img class="second-hand" src="{{ second_hand.pathName }}" alt="{{ second_hand.filename }}">  
+                <div class="col-md-5 col-xs-12">
+                    {% for image in second_hand.images %}
+                        <img class="second-hand mb-20" src="{{ image.path }}" alt="{{ image.filename }}">
+                    {% endfor %}
                 </div>
                 <div class="col-md-1 "></div>
                 <div class="col-md-6 col-xs-12">

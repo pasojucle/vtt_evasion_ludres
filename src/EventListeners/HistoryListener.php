@@ -73,7 +73,7 @@ class HistoryListener
         foreach ($keys as $key) {
             if (array_key_exists($key, $changeSet)) {
                 list($old, $new) = $changeSet[$key];
-                if ($old === str_replace(' ', '', $new)) {
+                if ($new && $old === str_replace(' ', '', $new)) {
                     unset($changeSet[$key]);
                 }
             }

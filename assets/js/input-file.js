@@ -1,38 +1,46 @@
-$(document).ready(function(){
-    $(document).on('change', 'input[type="file"].input-file', previewFile);
-    $(document).on('click', '.input-file-button', getFile);
+document.addEventListener("DOMContentLoaded", (event) => {
+    document.querySelectorAll('input[type="file"].input-file').forEach((element) => {
+        element.addEventListener('change', previewFile);
+    })
+    document.querySelectorAll('.input-file-button').forEach((element) => {
+        element.addEventListener('click', getFile);
+    })
 });
 
-function previewFile() {
-    const previews = $(this).parent().parent().find('img, canvas, object');
-    const [file] = this.files;
+export const previewFile = (event) => {
+    const previews = event.currentTarget.parentElement.parentElement.querySelectorAll('img, canvas, object');
+    const [file] = event.currentTarget.files;
     if (file) {
         const image = URL.createObjectURL(file);
-        previews.each(function() {
-            this.classList.add('hidden');
-            if (this instanceof HTMLImageElement && file.type.includes('image')) {
-                this.src = image;
-                this.classList.remove('hidden');
+        previews.forEach((element) => {
+            event.currentTarget.classList.add('hidden');
+            if (element instanceof HTMLImageElement && file.type.includes('image')) {
+                element.src = image;
+                element.classList.remove('hidden');
             }
-            if (this instanceof HTMLCanvasElement && file.type.includes('image')) {
-                this.dataset.src =  image;
-                this.classList.remove('hidden');
+            if (element instanceof HTMLCanvasElement && file.type.includes('image')) {
+                element.dataset.src = image;
+                element.classList.remove('hidden');
             }
-            if (this instanceof HTMLObjectElement && 'application/pdf' === file.type) {
-                this.classList.remove('hidden');
-                this.data =  image;
+            if (element instanceof HTMLObjectElement && 'application/pdf' === file.type) {
+                element.classList.remove('hidden');
+                element.data = image;
             }
         });
     }
 }
 
-function getFile(e) {
-    e.preventDefault();
-    const $inputFile = $('input[type="file"]');
-    $inputFile.click();
-    $inputFile.on('change',  function(event) {
-        let filename = event.target.value.split('\\').pop();
-        $('#filename').text(filename);
-    });
+const getFile = (event) => {
+    event.preventDefault();
+    const formGroupFile = event.currentTarget.closest('.form-group-file');
+    const inputFile = formGroupFile.querySelector('input[type="file"].input-file');
+    if (inputFile) {
+        inputFile.click();
+        inputFile.addEventListener('change', (event) => {
+            let filename = event.currentTarget.value.split('\\').pop();
+            formGroupFile.querySelector('#filename').textContent = filename;
+        });
+    }
+
     return false;
 }

@@ -50,21 +50,21 @@
             </div>
 
             <b>{{ form_label(form.surveyIssues) }}</b>
-                <ul id="{{ form.surveyIssues.vars.name }}" class="collection_container"
-                data-index="{{ form.surveyIssues|length > 0 ? form.surveyIssues|last.vars.name + 1 : 0 }}" 
-                data-prototype="{{ form_widget(form.surveyIssues.vars.prototype)|e('html_attr') }}">
-                    {% for item in form.surveyIssues %}
-                        <li>{{ form_widget(item) }}</li>
-                    {% endfor %}
-                </ul>
-                <div>
-                    {% if survey.isEditable %}
-                        <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.surveyIssues.vars.name }}">
-                        <i class="fas fa-plus-circle"></i> Ajouter une question
-                        </button>            
-                    {% endif %}
-                </div>
+            <ul id="{{ form.surveyIssues.vars.name }}" class="collection_container"
+            data-index="{{ form.surveyIssues|length > 0 ? form.surveyIssues|last.vars.name + 1 : 0 }}" 
+            data-prototype="{{ form_widget(form.surveyIssues.vars.prototype)|e('html_attr') }}">
+                {% for item in form.surveyIssues %}
+                    <li>{{ form_widget(item) }}</li>
+                {% endfor %}
+            </ul>
+            <div>
+                {% if survey.isEditable %}
+                    <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.surveyIssues.vars.name }}">
+                    <i class="fas fa-plus-circle"></i> Ajouter une question
+                    </button>            
+                {% endif %}
             </div>
+        </div>
         <div class="wrapper-footer">
             {{ form_widget(form.save) }}
         </div>

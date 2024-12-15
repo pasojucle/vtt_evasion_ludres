@@ -4,18 +4,18 @@ namespace App\Form;
 
 use App\Entity\Category;
 use App\Entity\SecondHand;
+use App\Form\SecondHandImageType;
 use App\Repository\CategoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 
 class SecondHandType extends AbstractType
 {
@@ -48,28 +48,15 @@ class SecondHandType extends AbstractType
                     'class' => 'second-hand',
                 ],
             ])
-            ->add('filename', FileType::class, [
-                'label' => 'Télecharger une photo ',
-                'mapped' => false,
-                'required' => false,
-                'block_prefix' => 'custom_file',
-                'attr' => [
-                    'accept' => '.bmp,.jpeg,.jpg,.png',
+            ->add('images', CollectionType::class, [
+                'label' => false,
+                'entry_type' => SecondHandImageType::class,
+                'entry_options' => [
+                    'label' => false,
                 ],
-                'row_attr' => [
-                    'class' => 'second-hand',
-                ],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2048k',
-                        'mimeTypes' => [
-                            'image/bmp',
-                            'image/jpeg',
-                            'image/png',
-                        ],
-                        'mimeTypesMessage' => 'Format image bmp, jpeg, png ou pdf autorisé',
-                    ]),
-                ],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
             ])
             ->add('category', EntityType::class, [
                 'label' => 'Categorie',

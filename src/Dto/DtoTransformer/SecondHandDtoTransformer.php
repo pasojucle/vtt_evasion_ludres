@@ -6,8 +6,10 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\SecondHandDto;
 use App\Entity\SecondHand;
+use App\Entity\SecondHandImage;
 use App\Model\Currency;
 use App\Service\ProjectDirService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -32,7 +34,7 @@ class SecondHandDtoTransformer
             $secondHandDto->id = $secondHand->getId();
             $secondHandDto->name = $secondHand->getName();
             $secondHandDto->content = $secondHand->getContent();
-            $secondHandDto->filename = $secondHand->getFilename();
+            $secondHandDto->images = $this->getImages($secondHand->getImages());
             $secondHandDto->user = $this->userDtoTransformer->fromEntity($secondHand->getUser());
             $secondHandDto->price = (new Currency($secondHand->getPrice()))->__toString();
             $secondHandDto->category = $secondHand->getCategory()->getName();
@@ -42,7 +44,7 @@ class SecondHandDtoTransformer
             $secondHandDto->status = $this->getStatus($secondHand);
             $secondHandDto->novelty = $novelty;
         }
-        $secondHandDto->pathName = $this->getPath($secondHand?->getFilename());
+        $secondHandDto->pathName = $this->getPath($secondHandDto->images);
 
         return $secondHandDto;
     }
@@ -79,12 +81,26 @@ class SecondHandDtoTransformer
         return (null !== $secondHand->getValidedAt()) ? 'Validée' : 'Non Validée';
     }
 
-    private function getPath(?string $filename): string
+    private function getPath(array $images): string
     {
-        if (!empty($filename)) {
-            return $this->projectDirService->dir('', 'second_hands', $filename);
+        if (!empty($images)) {
+            return $images[array_key_first($images)]['path'];
         }
 
         return $this->projectDirService->dir('', 'camera.jpg');
+    }
+
+    private function getImages(Collection $imageEntities): array
+    {
+        $images = [];
+        /** @var SecondHandImage $image */
+        foreach ($imageEntities as $image) {
+            $images[$image->getId()] = [
+                'path' => $this->projectDirService->dir('', 'second_hands', $image->getFilename()),
+                'filename' => $image->getFilename()
+            ];
+        }
+
+        return $images;
     }
 }

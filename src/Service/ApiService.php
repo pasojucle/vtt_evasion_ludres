@@ -65,7 +65,7 @@ class ApiService
         return $components;
     }
 
-    public function getComponent(FormView $form, string $blockPrefix, array $children = []): ?array
+    public function getComponent(FormView $form, ?string $blockPrefix, array $children = []): ?array
     {
         if ($blockPrefix) {
             $props = $this->getProps($form->vars, $blockPrefix);

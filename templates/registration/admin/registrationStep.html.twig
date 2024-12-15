@@ -25,15 +25,14 @@
                 </div>
                 <div class="col-md-2"></div>
                 <div class="col-md-4">
-                    <div class="form-group">
-                        
+                    <div class="form-group form-group-file">
                         <div class="form-group"  data-ratio="1.41">
                             <object class="sizing" width="100%" type="application/pdf" data="{{ registrationStep.pdfRelativePath }}">
                                 <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
                             </object>
                         </div>
-                                           {{ registrationStep.pdfFilename }}
-                    {{ form_row(form.pdfFile) }}
+                        <p id="filename">{{ registrationStep.pdfFilename }}</p>
+                        {{ form_row(form.pdfFile) }}
                     </div>
                 </div>
             </div>

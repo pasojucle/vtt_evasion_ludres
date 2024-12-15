@@ -14,7 +14,7 @@ class SecondHandDto
 
     public ?string $price = null;
 
-    public string $filename = '';
+    public array $images = [];
 
     public string $pathName = '';
 

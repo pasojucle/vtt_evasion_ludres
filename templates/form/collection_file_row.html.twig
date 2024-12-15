@@ -1,0 +1,7 @@
+{% block collection_file_row %}
+    <div class="form-group form-group-file form-group-collection">
+        <img class="second-hand" src="{{ form.vars.attr['data-path'] }}" alt="{{ form.vars.attr['data-filename'] }}"> 
+        {{ form_widget(form, {'attr':{'class': 'input-file'}}) }}   
+        {{ form_errors(form) }} 
+    </div>
+{% endblock %}

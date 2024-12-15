@@ -7,6 +7,7 @@ twig:
         - 'form/custom_switch_row.html.twig'
         - 'form/custom_switch_permission.html.twig'
         - 'form/custom_file_row.html.twig'
+        - 'form/collection_file_row.html.twig'
         - 'form/custom_month_and_hour_row.html.twig'
         - 'form/custom_thumbnail_row.html.twig'
         - 'form/money_widget.html.twig'

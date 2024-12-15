@@ -13,6 +13,7 @@ use App\Repository\SecondHandRepository;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
 use App\Service\UploadService;
+use App\UseCase\SecondHand\EditSecondHand;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -72,26 +73,18 @@ class SecondHandController extends AbstractController
     public function edit(
         Request $request,
         ?SecondHand $secondHand,
-        UploadService $uploadService,
+        EditSecondHand $editSecondHand,
     ): Response {
         $form = $this->createForm(SecondHandType::class, $secondHand, [
             'action' => $this->generateUrl('admin_second_hand_edit', [
                 'secondHand' => $secondHand?->getId(),
-            ])
+            ]),
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $secondHand = $form->getData();
-            $secondHand->setUser($this->getUser())
-                ->setCreatedAt(new DateTimeImmutable())
-                ->setDeleted(false)
-            ;
-            $files = $request->files->all('second_hand');
-            $file = $files['filename'];
-            if ($file) {
-                $secondHand->setFilename($uploadService->uploadFile($file, 'second_hands_directory_path'));
-            }
-    
+            
+            $editSecondHand->saveImages($secondHand, $request);
             $this->secondHandRepository->save($secondHand, true);
             return $this->redirectToRoute('admin_second_hand_list');
         }

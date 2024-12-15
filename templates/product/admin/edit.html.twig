@@ -16,8 +16,9 @@
             <div class="wrapper-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="form-group">
+                        <div class="form-group form-group-file">
                             <img class="user-picture" src="{{ product.pathName }}" alt="{{ product.filename }}"> 
+                            <p id="filename">{{ product.filename }}</p>
                             {{ form_row(form.pictureFile) }}
                         </div>
                     </div>

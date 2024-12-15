@@ -24,7 +24,7 @@ class EditSecondHand
         private Security $security,
         private UploadService $uploadService,
         private SecondHandRepository $secondHandRepository,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
     public function execute(FormInterface $form, Request $request): void
@@ -33,7 +33,7 @@ class EditSecondHand
         /** @var User $user */
         $user = $this->security->getUser();
         $this->setData($secondHand, $user);
-        $this->saveFile($secondHand, $request);
+        $this->saveImages($secondHand, $request);
         $this->secondHandRepository->save($secondHand, true);
         $this->sendEmail($secondHand, $user);
     }
@@ -48,12 +48,22 @@ class EditSecondHand
         ;
     }
 
-    private function saveFile(SecondHand $secondHand, Request $request): void
+    public function saveImages(SecondHand $secondHand, Request $request): void
     {
-        $files = $request->files->all('second_hand');
-        if (array_key_exists('filename', $files) && $file = $files['filename']) {
-            $secondHand->setFilename($this->uploadService->uploadFile($file, 'second_hands_directory_path'));
+        $imagesAdded = [];
+        foreach ($secondHand->getImages() as $image) {
+            if (!$image->getFilename()) {
+                $imagesAdded[] = $image;
+            }
         }
+
+        $files = $request->files->all('second_hand');
+        foreach ($files['images'] as $file) {
+            if ($file['uploadFile']) {
+                $image = array_shift($imagesAdded);
+                $image->setFilename($this->uploadService->uploadFile($file['uploadFile'], 'second_hands_directory_path'));
+            }
+        };
     }
 
     private function sendEmail(SecondHand $secondHand, User $user): void

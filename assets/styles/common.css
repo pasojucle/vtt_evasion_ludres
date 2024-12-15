@@ -588,6 +588,14 @@ main:not(.admin) {
 .form-group-collection {
     margin-bottom: 5px;
 }
+.form-group.form-group-file.form-group-collection {
+    position: relative;
+}.form-group-collection.form-group-file button.btn.btn-xs.btn-danger {
+    position: absolute;
+    min-height: unset;
+    top: 10px;
+    right: 10px;
+}
 .form-group > input:not([type="radio"]),
 .form-group-inline > input:not([type="checkbox"]), 
 .form-group-inline > select, 
@@ -652,7 +660,7 @@ main:not(.admin) {
     width: 100%;
 }
 
-button[type=submit].btn.btn-primary:disabled {
+button[type=submit].btn.btn-primary:disabled, button.add-item-file:disabled {
     background: var(--gray-color);
     border: 1px solid var(--gray-color);
     opacity: 0.7;
@@ -808,7 +816,7 @@ button[type=submit].btn.btn-primary:disabled {
 }
 
 input[type="file"] {
-    opacity: 0;
+    visibility: hidden;
 }
 .required:not(.value .required, .check .required, .ballot .required, .radio-group .required, [type="radio"] + .required, .ts-wrapper.required)::after {
     content: ' *';

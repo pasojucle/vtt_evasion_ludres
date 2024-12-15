@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\SecondHandRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,9 +22,6 @@ class SecondHand
 
     #[ORM\Column(type: Types::TEXT)]
     private string $content = '';
-
-    #[ORM\Column(length: 255)]
-    private string $filename = '';
 
     #[ORM\Column(type: 'integer')]
     private int $price = 0;
@@ -46,6 +45,18 @@ class SecondHand
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $validedAt = null;
+
+    /**
+     * @var Collection<int, SecondHandImage>
+     */
+    #[ORM\OneToMany(targetEntity: SecondHandImage::class, mappedBy: 'secondHand', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $images;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -72,18 +83,6 @@ class SecondHand
     public function setContent(string $content): static
     {
         $this->content = $content;
-
-        return $this;
-    }
-
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
-
-    public function setFilename(string $filename): static
-    {
-        $this->filename = $filename;
 
         return $this;
     }
@@ -168,6 +167,36 @@ class SecondHand
     public function setValidedAt(?\DateTimeImmutable $validedAt): static
     {
         $this->validedAt = $validedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SecondHandImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(SecondHandImage $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setSecondHand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(SecondHandImage $image): static
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getSecondHand() === $this) {
+                $image->setSecondHand(null);
+            }
+        }
 
         return $this;
     }

@@ -4,13 +4,13 @@
       "js": [
         "/build/main_build/runtime.88b030a1.js",
         "/build/main_build/417.4427e67c.js",
-        "/build/main_build/905.118b8866.js",
-        "/build/main_build/app.5044e132.js"
+        "/build/main_build/427.3bf495bc.js",
+        "/build/main_build/app.0010aa2b.js"
       ],
       "css": [
         "/build/main_build/417.9f5a562e.css",
-        "/build/main_build/905.26aa0ba6.css",
-        "/build/main_build/app.a6b86af5.css"
+        "/build/main_build/427.cc741ef3.css",
+        "/build/main_build/app.17a92197.css"
       ]
     },
     "admin": {
@@ -18,12 +18,12 @@
         "/build/main_build/runtime.88b030a1.js",
         "/build/main_build/417.4427e67c.js",
         "/build/main_build/799.b7d4a926.js",
-        "/build/main_build/905.118b8866.js",
-        "/build/main_build/admin.476ef175.js"
+        "/build/main_build/427.3bf495bc.js",
+        "/build/main_build/admin.ccbdc677.js"
       ],
       "css": [
         "/build/main_build/417.9f5a562e.css",
-        "/build/main_build/905.26aa0ba6.css",
+        "/build/main_build/427.cc741ef3.css",
         "/build/main_build/admin.ae1ea87c.css"
       ]
     },

@@ -67,7 +67,7 @@ class MenuService
                 'label' => 'Occasions',
                 'route' => 'second_hand_list',
                 'pattern' => '/second_hand/',
-                'subMenus' => [],
+                'subMenus' => $this->getSecondHandSubMenus(),
                 'role' => 'SECOND_HAND_LIST',
                 'badge' => 'notification_second_hand',
             ],
@@ -130,6 +130,7 @@ class MenuService
             'menus' => ($fullName) ? $this->user : [],
         ];
     }
+
     public function getClubSubMenu(): array
     {
         return [
@@ -212,6 +213,18 @@ class MenuService
                 'route' => 'registration_tuto',
                 'pattern' => '/registration_tuto/',
                 'role' => 'PUBLIC_ACCESS',
+            ],
+        ];
+    }
+
+    public function getSecondHandSubMenus(): array
+    {
+        return [
+            [
+                'label' => 'Déposer une annonce',
+                'route' => 'second_hand_add',
+                'pattern' => '/second_hand_add/',
+                'role' => 'SECOND_HAND_LIST',
             ],
         ];
     }

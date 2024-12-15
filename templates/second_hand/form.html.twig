@@ -13,10 +13,18 @@
             {{ form_row(form.price) }}
         </div>
         <div class="form-group-inline">
-            <div class="row flex-column">
-                <img class="second-hand" src="{{ second_hand.pathName }}" alt="{{ second_hand.filename }}"> 
-                {{ form_row(form.filename) }}
-            </div>       
+            <ul id="{{ form.images.vars.name }}" class="collection_container"
+            data-index="{{ form.images|length > 0 ? form.images|last.vars.name + 1 : 0 }}" 
+            data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
+                {% for item in form.images %}
+                    {{ form_row(item) }}
+                {% endfor %}
+            </ul>
+            <div>
+                <button type="button" class="btn btn-secondary add-item-file" data-collection-holder-class="{{ form.images.vars.name }}">
+                    <i class="fa-solid fa-file-arrow-up"></i> Ajouter une photo
+                </button>            
+            </div>
         </div>
         <div class="wrapper-footer">
             {{ form_widget(form.save) }}
