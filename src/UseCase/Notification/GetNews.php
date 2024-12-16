@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Repository\SecondHandRepository;
 use App\Repository\SlideshowImageRepository;
 use App\Repository\SummaryRepository;
+use App\Repository\UserSkillRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class GetNews
@@ -17,6 +18,7 @@ class GetNews
         private readonly SummaryRepository $summaryRepository,
         private readonly SlideshowImageRepository $slideshowImageRepository,
         private readonly SecondHandRepository $secondHandRepository,
+        private readonly UserSkillRepository $userSkillRepository,
     ) {
     }
 
@@ -36,6 +38,16 @@ class GetNews
         $user = $this->security->getUser();
         if ($user) {
             return $this->summaryRepository->findNotViewedByUser($user);
+        }
+        return [];
+    }
+
+    public function getUserSkill(): array
+    {
+        /** @var ?User $user */
+        $user = $this->security->getUser();
+        if ($user) {
+            return $this->userSkillRepository->findNotViewedByUser($user);
         }
         return [];
     }

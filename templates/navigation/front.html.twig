@@ -63,7 +63,11 @@
                     {% for menu in user.menus %}
                         <li class="nav-sub">
                             <a href="{{ path(menu.route) }}">
-                                <div class="position-relative">{{ menu.label }}</div>
+                                <div class="position-relative">{{ menu.label }}
+                                    {% if menu.badge is defined %}
+                                        <div class="badge novelty hidden" data-route="{{ menu.badge }}">N</div>
+                                    {% endif %}
+                                </div>
                             </a>
                         </li>
                     {% endfor %}

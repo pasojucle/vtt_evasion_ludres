@@ -66,7 +66,17 @@ class NotificationController extends AbstractController
         return new JsonResponse(['hasNewItem' => !empty($summaries)]);
     }
 
-    #[Route('/notification/secondHand', name: 'second_hand', methods: ['GET'], options:['expose' => true])]
+    #[Route('/user/skill/list', name: 'user_skill_list', methods: ['GET'], options:['expose' => true])]
+    public function userSkillList(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $userSkills = ($this->userService->licenceIsActive($user)) ? $this->getNews->getUserSkill() : null;
+
+        return new JsonResponse(['hasNewItem' => !empty($userSkills)]);
+    }
+
+    #[Route('/secondHand', name: 'second_hand', methods: ['GET'], options:['expose' => true])]
     public function secondHand(): Response
     {
         /** @var User $user */
@@ -76,7 +86,7 @@ class NotificationController extends AbstractController
         return new JsonResponse(['hasNewItem' => !empty($secondHands)]);
     }
 
-    #[Route('/notification/show/{entityName}/{entityId}', name: 'show', methods: ['GET'], defaults:['entityId' => null])]
+    #[Route('/show/{entityName}/{entityId}', name: 'show', methods: ['GET'], defaults:['entityId' => null])]
     public function show(
         EntityManagerInterface $entityManager,
         NotificationService $notificationService,

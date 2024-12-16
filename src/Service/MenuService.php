@@ -105,6 +105,7 @@ class MenuService
                 'label' => 'Mon carnet de progression',
                 'route' => 'user_skill_list',
                 'role' => 'ROLE_USER',
+                'badge' => 'notification_user_skill_list',
             ],
             [
                 'label' => 'Mes commandes',

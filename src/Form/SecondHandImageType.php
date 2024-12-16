@@ -4,22 +4,20 @@ namespace App\Form;
 
 use App\Entity\SecondHandImage;
 use App\Service\ProjectDirService;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class SecondHandImageType extends AbstractType
 {
     public function __construct(
-        private readonly ProjectDirService $projectDir, 
-    )
-    {
-        
+        private readonly ProjectDirService $projectDir,
+    ) {
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -57,7 +55,7 @@ class SecondHandImageType extends AbstractType
                     ],
                 ])
             ;
-        }); 
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

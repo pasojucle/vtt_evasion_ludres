@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Cluster;
+use App\Entity\Log;
 use App\Entity\Skill;
+use App\Entity\User;
 use App\Entity\UserSkill;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -60,5 +62,33 @@ class UserSkillRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+
+    /**
+     * @return UserSkill[] Returns an array of UserSkill objects
+     */
+    public function findNotViewedByUser(User $user): array
+    {
+        $viewed = $this->getEntityManager()->createQueryBuilder()
+            ->select('log.entityId')
+            ->from(Log::class, 'log')
+            ->andWhere(
+                (new Expr())->eq('log.user', ':user'),
+                (new Expr())->eq('log.entity', ':entityName')
+            );
+
+        return $this->createQueryBuilder('us')
+            ->andWhere(
+                (new Expr())->notIn('us.id', $viewed->getDQL()),
+                (new Expr())->in('us.user', ':user')
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', 'UserSkill'),
+            ]))
+            ->getQuery()
+            ->getResult()
+       ;
     }
 }
