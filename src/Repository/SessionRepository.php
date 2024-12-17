@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\User;
@@ -317,9 +318,9 @@ class SessionRepository extends ServiceEntityRepository
                 (new Expr())->in('br.id', $bikeRides->getDql()),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('start', (new DateTimeImmutable())->setTime(0, 0, 0)),
-                new Parameter('end', (new DateTimeImmutable())->add((new DateInterval('P7D')))->setTime(23, 59, 59)),
-                new Parameter('registration', 0),
+                new Parameter('start', (new DateTimeImmutable())->add((new DateInterval('P1D')))->setTime(0, 0, 0)),
+                new Parameter('end', (new DateTimeImmutable())->add((new DateInterval('P1D')))->setTime(23, 59, 59)),
+                new Parameter('registration', RegistrationEnum::NONE),
                 new Parameter('deleted', false),
                 new Parameter('needFramers', true),
                 new Parameter('avaylability', AvailabilityEnum::AVAILABLE),

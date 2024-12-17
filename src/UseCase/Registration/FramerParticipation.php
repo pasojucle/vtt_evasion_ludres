@@ -27,22 +27,20 @@ class FramerParticipation
 
     public function execute(): array
     {
-        if (5 === (int) (new DateTime())-> format('N')) {
-            $sessions = $this->sessionRepository->findFramerAvailability();
-            if (!empty($sessions)) {
-                $message = $this->messageService->getMessageByName('CONFIRM_FRAMER_PARTICIPATION_EMAIL');
-                $subject = sprintf('Confirmation à votre participation à la sortie de l\'école VTT');
+        $sessions = $this->sessionRepository->findFramerAvailability();
+        if (!empty($sessions)) {
+            $message = $this->messageService->getMessageByName('CONFIRM_FRAMER_PARTICIPATION_EMAIL');
+            $subject = sprintf('Confirmation à votre participation à la sortie de l\'école VTT');
 
-                /** @var Session $session */
-                foreach ($sessions as $session) {
-                    $user = $this->userDtoTransformer->fromEntity($session->getUser());
-                    $bikeRideDto = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
-                    $params = [
-                        '{{ rando }}' => sprintf('%s du %s', $bikeRideDto->title, $bikeRideDto->period),
-                        '{{ lien_modifier_disponibilite }}' => $this->urlGenerator->generate('session_availability_edit', ['session' => $session->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-                    ];
-                    $this->mailerService->sendMailToMember($user, $subject, $message, null, $params);
-                }
+            /** @var Session $session */
+            foreach ($sessions as $session) {
+                $user = $this->userDtoTransformer->fromEntity($session->getUser());
+                $bikeRideDto = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
+                $params = [
+                    '{{ rando }}' => sprintf('%s du %s', $bikeRideDto->title, $bikeRideDto->period),
+                    '{{ lien_modifier_disponibilite }}' => $this->urlGenerator->generate('session_availability_edit', ['session' => $session->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+                ];
+                $this->mailerService->sendMailToMember($user, $subject, $message, null, $params);
             }
         }
 
