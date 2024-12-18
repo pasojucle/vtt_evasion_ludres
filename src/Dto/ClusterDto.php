@@ -32,4 +32,6 @@ class ClusterDto
     public int $usersOnSiteCount;
 
     public bool $hasSkills = false;
+
+    public bool $isEditable = false;
 }

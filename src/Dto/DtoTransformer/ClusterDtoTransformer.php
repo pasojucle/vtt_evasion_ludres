@@ -6,7 +6,6 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\ClusterDto;
 use App\Entity\BikeRide;
-use App\Entity\BikeRideType;
 use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\RegistrationEnum;
@@ -18,6 +17,7 @@ use App\Service\ClusterService;
 use DateInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class ClusterDtoTransformer
 {
@@ -28,6 +28,7 @@ class ClusterDtoTransformer
         private ClusterService $clusterService,
         private UserDtoTransformer $userDtoTransformer,
         private SessionRepository $sessionRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -54,13 +55,15 @@ class ClusterDtoTransformer
             $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities);
             $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
             $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
-
             $clusterCache->set($clusterDto);
             $clusterCache->expiresAfter(DateInterval::createFromDateString('1 hour'));
             $cachePool->save($clusterCache);
         }
 
-        return $clusterCache->get();
+        $clusterDto = $clusterCache->get();
+        $clusterDto->isEditable = $this->security->isGranted('CLUSTER_EDIT', $cluster);
+
+        return $clusterDto;
     }
     
     public function fromBikeRide(BikeRide $bikeRide): array

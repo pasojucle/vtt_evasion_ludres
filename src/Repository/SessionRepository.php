@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
@@ -44,6 +45,24 @@ class SessionRepository extends ServiceEntityRepository
                 (new Expr())->eq('s.user', ':user'),
             )
             ->setParameter('clusers', $clusers)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException) {
+            return null;
+        }
+    }
+
+    public function findOneByUserAndCluster(User $user, Cluster $cluser): ?Session
+    {
+        try {
+            return $this->createQueryBuilder('s')
+            ->andWhere(
+                (new Expr())->eq('s.cluster', ':cluser'),
+                (new Expr())->eq('s.user', ':user'),
+            )
+            ->setParameter('cluser', $cluser)
             ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult()

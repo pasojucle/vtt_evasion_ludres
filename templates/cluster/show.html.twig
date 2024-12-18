@@ -31,7 +31,7 @@
                 {% include 'session/admin/list.html.twig' with {'user': session.user} %}
             {% endfor %}
         </ul>
-        {% if cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
+        {% if cluster.isEditable and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
             <div>
                 {% if not cluster.isComplete %}
                     <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if not bikeRide.isEditable %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" >
