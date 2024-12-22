@@ -16,6 +16,8 @@ class NotificationDto
 
     public ?string $url = null;
 
+    public ?string $target = null;
+
     public ?string $modalLink = null;
 
     public ?string $labelButton = null;

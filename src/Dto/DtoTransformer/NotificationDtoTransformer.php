@@ -95,17 +95,22 @@ class NotificationDtoTransformer
         $notificationDto->content = $data['content'];
         if (array_key_exists('route', $data)) {
             $notificationDto->url = $this->urlGenerator->generate($data['route'], $data['routeParams']);
-            $notificationDto->labelButton = $data['labelBtn'];
         }
         if (array_key_exists('modalLink', $data)) {
             $notificationDto->modalLink = $data['modalLink'];
         }
         if (array_key_exists('toggle', $data)) {
             $notificationDto->toggle = $data['toggle'];
+        }
+        if (array_key_exists('url', $data)) {
             $notificationDto->url = $data['url'];
-            $notificationDto->labelButton = $data['labelBtn'];
+            $notificationDto->target = $data['target'];
         }
 
+        if (array_key_exists('labelBtn', $data)) {
+            $notificationDto->labelButton = $data['labelBtn'];
+        }
+        
         return $notificationDto;
     }
 

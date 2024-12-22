@@ -2,6 +2,7 @@
 import { handleCheckChange, formToggle } from './form.js';
 import { Form } from './formValidator.js';
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
+import { initInputFile } from './input-file';
 import Routing from 'fos-router';
 
 var formValidator;
@@ -178,11 +179,13 @@ function formModifier(event) {
     .then((text)=> {
         const htmlElement = document.createRange().createContextualFragment(text);
         const targetEl = document.getElementById(target);
+        console.log('target', target, htmlElement.getElementById(target))
         targetEl.replaceWith(htmlElement.getElementById(target));
         $('.js-datepicker').datepicker({
             format: 'yyyy-mm-dd hh:ii',
         });
         initAddItemLink();
+        initInputFile();
         targetEl.querySelectorAll('.form-modifier').forEach((element) => {
             element.addEventListener('change', formModifier);
         });

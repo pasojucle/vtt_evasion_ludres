@@ -7,7 +7,14 @@ framework:
     annotations: false
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session:
+        # ID of the service used for session storage
+        # NULL means that Symfony uses PHP default session mechanism
+        handler_id: null
+        # improves the security of the cookies used for sessions
+        cookie_secure: auto
+        cookie_samesite: lax
+        storage_factory_id: session.storage.factory.native
 
     #esi: true
     #fragments: true

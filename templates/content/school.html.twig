@@ -36,7 +36,11 @@
                     <ul class="list-outside">
                         {% for documentation in documentations %}
                             <li>
-                                <a href="{{ documentation.source }}" target="_blank">{{ documentation.name }}</a>
+                                {% if documentation.link %}
+                                    <a class="outside-link" data-toggle="modal" href="{{ documentation.link }}" target="_blank">{{ documentation.name }}</a>
+                                {% else %}
+                                    <a href="{{ documentation.source }}" target="_blank">{{ documentation.name }}</a>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>

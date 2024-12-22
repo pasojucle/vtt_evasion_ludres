@@ -32,7 +32,6 @@ final class Version20241208084259 extends AbstractMigration
         foreach ($this->getMessages() as $message) {
             $this->addSql('DELETE FROM `message` WHERE `name` = :name', $message);
         }
-
     }
 
     private function getMessages(): array

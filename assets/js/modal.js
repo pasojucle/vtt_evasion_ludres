@@ -64,6 +64,7 @@ export const buildContent = (text, modalType) => {
     handleHideModal();
     handleSumbit();
     handleShowNotifications();
+    handleBlankLink();
 }
 
 export const openModal = (text, modalType) => {
@@ -122,4 +123,10 @@ const submitAsync = async(event) => {
             setNotificationList();
         }
     });
+}
+
+const handleBlankLink = () => {
+    document.querySelectorAll('a[target="_blank"]').forEach((element) => {
+        element.addEventListener('click', closeModal)
+    })
 }

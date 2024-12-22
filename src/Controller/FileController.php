@@ -21,6 +21,7 @@ class FileController extends AbstractController
         string $filename
     ): Response {
         $filename = base64_decode($filename);
+        dump($filename);
 
         if (file_exists($filename)) {
             return new BinaryFileResponse($filename);

@@ -9,6 +9,7 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Documentation;
 use App\Form\Admin\DocumentationType;
 use App\Repository\DocumentationRepository;
+use App\Service\MessageService;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\UseCase\Documentation\EditDocumentation;
@@ -36,6 +37,7 @@ class DocumentationController extends AbstractController
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
+        MessageService $messageService,
         Request $request,
     ): Response {
         $query = $this->documentationRepository->findDocumentationQuery();
@@ -44,6 +46,9 @@ class DocumentationController extends AbstractController
         return $this->render('documentation/admin/list.html.twig', [
             'documentations' => $documentations,
             'paginator' => $paginatorDtoTransformer->fromEntities($documentations),
+            'settings' => [
+                'messages' => $messageService->getMessagesBySectionName('DOCUMENTATION'),
+            ],
         ]);
     }
 

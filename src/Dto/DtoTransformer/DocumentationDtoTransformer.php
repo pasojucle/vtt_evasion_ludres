@@ -30,6 +30,7 @@ class DocumentationDtoTransformer
             $documentationDto->filename = $fileName;
             $documentationDto->source = $this->getSource($filePath);
             $documentationDto->mimeType = $this->getMimeType($filePath);
+            $documentationDto->link = $this->getLink($documentation);
         }
 
         return $documentationDto;
@@ -49,6 +50,13 @@ class DocumentationDtoTransformer
     {
         return ($filePath)
         ? $this->router->generate('get_file', ['filename' => base64_encode($filePath)])
+        : null;
+    }
+
+    private function getLink(?Documentation $documentation): ?string
+    {
+        return ($documentation)
+        ? $this->router->generate('notification_outside_link', ['documentation' => $documentation->getId()])
         : null;
     }
 

@@ -17,4 +17,6 @@ class DocumentationDto
     public ?string $source = null;
 
     public ?string $mimeType = null;
+
+    public ?string $link = null;
 }

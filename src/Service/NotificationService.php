@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Entity\Documentation;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
@@ -145,5 +146,17 @@ class NotificationService
             'entityName' => $entityName,
             'entityId' => $id,
         ]);
+    }
+
+    public function getDocumentation(Documentation $documentation): array
+    {
+        return [
+            'index' => sprintf('documentation-%s', $documentation->getId()),
+            'title' => $documentation->getName(),
+            'content' => $this->messageService->getMessageByName('DOCUMENTATION_LINK_WARNING_MESSAGE'),
+            'labelBtn' => 'Consulter',
+            'url' => $documentation->getLink(),
+            'target' => '_blank',
+        ];
     }
 }

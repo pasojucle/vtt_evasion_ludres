@@ -13,8 +13,8 @@ class Documentation
     #[ORM\Column]
     private int $id;
 
-    #[ORM\Column(length: 255)]
-    private string $name = '';
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = '';
 
     #[ORM\Column]
     private ?int $orderBy = null;
@@ -22,17 +22,20 @@ class Documentation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filename = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $link = null;
+
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -59,6 +62,18 @@ class Documentation
     public function setFilename(?string $filename): self
     {
         $this->filename = $filename;
+
+        return $this;
+    }
+
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+
+    public function setLink(?string $link): static
+    {
+        $this->link = $link;
 
         return $this;
     }
