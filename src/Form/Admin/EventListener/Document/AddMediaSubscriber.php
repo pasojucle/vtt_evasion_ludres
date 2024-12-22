@@ -75,7 +75,7 @@ class AddMediaSubscriber implements EventSubscriberInterface
                     ],
                     'constraints' => [
                         new File([
-                            'maxSize' => '8196k',
+                            'maxSize' => '500M',
                             'mimeTypes' => [
                                 'image/bmp',
                                 'image/jpeg',
