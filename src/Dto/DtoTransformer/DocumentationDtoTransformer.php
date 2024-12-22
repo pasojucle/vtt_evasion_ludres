@@ -9,6 +9,7 @@ use App\Entity\Documentation;
 use App\Service\ProjectDirService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use ReflectionProperty;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DocumentationDtoTransformer
@@ -25,7 +26,7 @@ class DocumentationDtoTransformer
         $filePath = ($documentation?->getFilename()) ? $this->projectDirService->path('documentation', $fileName) : null;
 
         $documentationDto = new DocumentationDto();
-        if ($documentation) {
+        if ((new ReflectionProperty($documentation, 'id'))->isInitialized($documentation)) {
             $documentationDto->name = $documentation->getName();
             $documentationDto->filename = $fileName;
             $documentationDto->source = $this->getSource($filePath);
