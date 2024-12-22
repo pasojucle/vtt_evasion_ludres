@@ -179,7 +179,6 @@ function formModifier(event) {
     .then((text)=> {
         const htmlElement = document.createRange().createContextualFragment(text);
         const targetEl = document.getElementById(target);
-        console.log('target', target, htmlElement.getElementById(target))
         targetEl.replaceWith(htmlElement.getElementById(target));
         $('.js-datepicker').datepicker({
             format: 'yyyy-mm-dd hh:ii',

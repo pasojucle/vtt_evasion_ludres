@@ -56,7 +56,7 @@ class DocumentationDtoTransformer
 
     private function getLink(?Documentation $documentation): ?string
     {
-        return ($documentation)
+        return ($documentation->getLink())
         ? $this->router->generate('notification_outside_link', ['documentation' => $documentation->getId()])
         : null;
     }
