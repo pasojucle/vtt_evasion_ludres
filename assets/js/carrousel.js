@@ -82,8 +82,6 @@ class Carrousel extends HTMLDivElement {
                 this.slide();
                 this.interval = window.setInterval(() => {this.nextPicture(); this.slide();}, this.time * 1000);
             }, this.firstTime * 1000);
-
-            
         }
     }
     stop() {
@@ -162,6 +160,7 @@ class SliderPicture {
     slide() {
         if (this.carrousel.type === 'slider') {
             this.picture.style.left = '0px';
+            this.picture.classList.remove('rewind');
         }
         this.picture.classList.remove('loaded');
         this.picture.classList.add('playing');
@@ -169,12 +168,13 @@ class SliderPicture {
     back() {
         this.picture.classList.remove('playing');
         this.picture.classList.add('back');
-        if (this.carrousel.type === 'slider') {
-            setTimeout(() => {this.picture.style.left = this.width + 'px';}, 2 * 1000);
-        }
         setTimeout(() => {
+            if (this.carrousel.type === 'slider') {
+                this.picture.style.left = this.width + 'px';
+                this.picture.classList.add('rewind');
+            }
             this.picture.classList.remove('back');
             this.picture.classList.add('loaded');
-        }, 3 * 1000);
+        }, 2* 1000);
     }
 }
