@@ -1,5 +1,5 @@
-import { registerVueControllerComponents } from '@symfony/ux-vue';
 import './bootstrap.js';
+import { registerVueControllerComponents } from '@symfony/ux-vue';
 /*
  * Welcome to your app's main JavaScript file!
  *
