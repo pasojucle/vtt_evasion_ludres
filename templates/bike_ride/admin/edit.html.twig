@@ -51,10 +51,11 @@
                         </div>
                     {% endif %}
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_RANGE_AGE') %}
-                        <div class="form-group radio-group">
-                            <div class="input-group">De {{ form_widget(form.minAge) }} jusqu'à {{ form_widget(form.maxAge) }} ans</div>
-                            {{ form_errors(form.maxAge) }}
-                        
+                        <div class="form-group">
+                            {{ form_row(form.minAge) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.maxAge) }}
                         </div>
                     {% endif %}
                 {% endfor %}

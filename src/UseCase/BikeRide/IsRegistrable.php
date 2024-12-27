@@ -38,7 +38,7 @@ class IsRegistrable
             return false;
         }
 
-        if ($bikeRide->getMinAge() && $bikeRide->getMaxAge() && !$this->canParticipateByAge($bikeRide, $user, $member)) {
+        if ($bikeRide->getMinAge() && !$this->canParticipateByAge($bikeRide, $user, $member)) {
             return false;
         }
 
@@ -63,7 +63,7 @@ class IsRegistrable
         }
 
         $memberAge = (int) $bikeRide->getStartAt()->diff($member->getBirthDate())->format('%Y');
-        if ($memberAge < $bikeRide->getMinAge() || $bikeRide->getMaxAge() < $memberAge) {
+        if ($memberAge < $bikeRide->getMinAge() || ($bikeRide->getMaxAge() ?? 99) < $memberAge) {
             return false;
         }
 

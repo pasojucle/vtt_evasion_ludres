@@ -216,9 +216,12 @@ class BikeRideDtoTransformer
 
     private function getRangeAge(BikeRide $bikeRide): ?string
     {
-        if ($bikeRide->getMinAge() && $bikeRide->getMaxAge()) {
+        if (!$bikeRide->getMinAge()) {
+            return null;
+        }
+        if ($bikeRide->getMaxAge()) {
             return sprintf('De %d jusqu\'à %d ans', $bikeRide->getMinAge(), $bikeRide->getMaxAge());
         }
-        return null;
+        return sprintf('A partir de %d ans', $bikeRide->getMinAge());
     }
 }

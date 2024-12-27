@@ -112,21 +112,23 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 'disabled' => $disabledUsers,
             ])
             ->add('minAge', IntegerType::class, [
-                'label' => false,
+                'label' => 'Âge minimum',
                 'attr' => [
                     'min' => 5,
                     'max' => 90,
                 ],
+                'row_attr' => ['class' => 'form-group-inline', ],
                 'required' => !$disabledMinAge,
                 'disabled' => $disabledMinAge,
             ])
             ->add('maxAge', IntegerType::class, [
-                'label' => false,
+                'label' => 'Âge maximum',
                 'attr' => [
                     'min' => 5,
                     'max' => 90,
                 ],
-                'required' => !$disabledMinAge,
+                'row_attr' => ['class' => 'form-group-inline', ],
+                'required' => false,
                 'disabled' => $disabledMinAge,
                 'constraints' => [new RangeAge()]
             ])
