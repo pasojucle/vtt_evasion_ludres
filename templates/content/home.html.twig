@@ -43,17 +43,19 @@
                         <div class="block-body">
                             <ul>
                                 {% for bikeRide in bikeRides %}
-                                    <li>
-                                        <a href="{{ path('schedule', {'period': 'prochainement'}) }}">
-                                            <h2>
-                                                {{ bikeRide.period }}
-                                            </h2>
-                                            <p>{{ bikeRide.title }}</p>
-                                            {% if bikeRide.filename is not null %}
-                                                <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}">            
-                                            {% endif %}
-                                        </a>
-                                    </li>
+                                    {% if bikeRide.display %}
+                                        <li>
+                                            <a href="{{ path('schedule', {'period': 'prochainement'}) }}">
+                                                <h2>
+                                                    {{ bikeRide.period }}
+                                                </h2>
+                                                <p>{{ bikeRide.title }}</p>
+                                                {% if bikeRide.filename is not null %}
+                                                    <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}">            
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ul>
                         </div>
