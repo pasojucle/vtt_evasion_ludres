@@ -11,8 +11,8 @@
                 }
             }
         },
-        "@symfony/ux-vue": {
-            "vue": {
+        "@symfony/ux-react": {
+            "react": {
                 "enabled": true,
                 "fetch": "eager"
             }
