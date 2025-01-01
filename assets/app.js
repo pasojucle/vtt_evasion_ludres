@@ -1,5 +1,7 @@
+
 import './bootstrap.js';
-import { registerVueControllerComponents } from '@symfony/ux-vue';
+import { registerReactControllerComponents } from '@symfony/ux-react';
+registerReactControllerComponents(require.context('./react/controllers', true, /\.(j|t)sx?$/));
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -39,4 +41,4 @@ import './js/slideshow.js';
 import './js/notification.js';
 import './js/extraToggle.js';
 import './js/wrapper-youtube.js';
-registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
+registerReactControllerComponents(require.context('./react/controllers', true, /\.(j|t)sx?$/));
