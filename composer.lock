@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6eb74e201260fcbe504e375f1aa3dd26",
+    "content-hash": "96bc7c736b034391bbdad96d03398a88",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -8445,17 +8445,17 @@
             "time": "2024-12-05T14:25:02+00:00"
         },
         {
-            "name": "symfony/ux-vue",
+            "name": "symfony/ux-react",
             "version": "v2.22.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/ux-vue.git",
-                "reference": "d96995ea2214591114c7f76e807ae0ce34b439a5"
+                "url": "https://github.com/symfony/ux-react.git",
+                "reference": "9ca27a52c536994f48005ee70e2208d0769b2ae8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-vue/zipball/d96995ea2214591114c7f76e807ae0ce34b439a5",
-                "reference": "d96995ea2214591114c7f76e807ae0ce34b439a5",
+                "url": "https://api.github.com/repos/symfony/ux-react/zipball/9ca27a52c536994f48005ee70e2208d0769b2ae8",
+                "reference": "9ca27a52c536994f48005ee70e2208d0769b2ae8",
                 "shasum": ""
             },
             "require": {
@@ -8479,7 +8479,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Symfony\\UX\\Vue\\": "src/"
+                    "Symfony\\UX\\React\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -8492,21 +8492,17 @@
                     "email": "galopintitouan@gmail.com"
                 },
                 {
-                    "name": "Thibault Richard",
-                    "email": "thibault.richard62@gmail.com"
-                },
-                {
                     "name": "Symfony Community",
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Integration of Vue.js in Symfony",
+            "description": "Integration of React in Symfony",
             "homepage": "https://symfony.com",
             "keywords": [
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-vue/tree/v2.22.1"
+                "source": "https://github.com/symfony/ux-react/tree/v2.22.1"
             },
             "funding": [
                 {
