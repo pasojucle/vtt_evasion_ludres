@@ -10,6 +10,7 @@ use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
+use App\Service\BikeRideService;
 use App\Service\LogService;
 use App\Service\MessageService;
 use App\Service\NotificationService;
@@ -28,6 +29,7 @@ class NotificationDtoTransformer
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly MessageService $messageService,
         private readonly LogService $logService,
+        private readonly BikeRideService $bikeRideService,
     ) {
         $this->notificationOrderInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
         $this->notificationRegistrationInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
@@ -93,7 +95,7 @@ class NotificationDtoTransformer
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($bikeRide);
         $notificationDto->title = 'Nouvelle activité';
-        $notificationDto->content = $bikeRide->getContent();
+        $notificationDto->content = sprintf('%s - %s', $bikeRide->getTitle(), $this->bikeRideService->getPeriod($bikeRide));
         $notificationDto->url = $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]);
         $notificationDto->labelButton = 'Participer';
         $notificationDto->modalLink = $this->getModalLinkFromEntity($bikeRide);
