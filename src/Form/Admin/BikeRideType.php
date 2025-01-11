@@ -131,7 +131,7 @@ class BikeRideType extends AbstractType
                 ],
                 'attr' => [
                     'data-switch-off' => 'Pas de notification',
-                    'data-switch-on' => 'Afficher une une pop up pour notifier l\'événement',
+                    'data-switch-on' => 'Afficher une une pop up pour notifier l\'activité',
                 ],
             ])
             
