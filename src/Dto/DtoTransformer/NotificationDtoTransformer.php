@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\NotificationDto;
+use App\Entity\BikeRide;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
@@ -87,6 +88,19 @@ class NotificationDtoTransformer
         return $notificationDto;
     }
 
+    private function fromBikeRide(BikeRide $bikeRide): NotificationDto
+    {
+        $notificationDto = new NotificationDto();
+        $notificationDto->index = $this->notificationService->getIndex($bikeRide);
+        $notificationDto->title = 'Nouvelle activité';
+        $notificationDto->content = $bikeRide->getContent();
+        $notificationDto->url = $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]);
+        $notificationDto->labelButton = 'Participer';
+        $notificationDto->modalLink = $this->getModalLinkFromEntity($bikeRide);
+
+        return $notificationDto;
+    }
+
     public function fromArray(array $data): NotificationDto
     {
         $notificationDto = new NotificationDto();
@@ -125,18 +139,19 @@ class NotificationDtoTransformer
         return $notifications;
     }
 
-    public function fromEntity(array|Survey|Notification|Licence|OrderHeader $entity): NotificationDto
+    public function fromEntity(array|Survey|Notification|Licence|OrderHeader|BikeRide $entity): NotificationDto
     {
         return match (true) {
             $entity instanceof Notification => $this->fromNotification($entity),
             $entity instanceof Survey => $this->fromSuvey($entity),
             $entity instanceof OrderHeader => $this->fromOrderHeader($entity),
             $entity instanceof Licence => $this->fromLicence($entity),
+            $entity instanceof BikeRide => $this->fromBikeRide($entity),
             default => $this->fromArray($entity)
         };
     }
 
-    private function getModalLinkFromEntity(string|Survey|Notification|Licence|OrderHeader $entity): string
+    private function getModalLinkFromEntity(string|Survey|Notification|Licence|OrderHeader|BikeRide $entity): string
     {
         return $this->urlGenerator->generate('notification_show', [
             'entityName' => (new ReflectionClass($entity))->getShortName(),

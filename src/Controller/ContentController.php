@@ -231,6 +231,7 @@ class ContentController extends AbstractController
     }
 
     #[Route('/club/diaporama', name: 'club_slideshow', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function slideshow(): Response
     {
         /** @var User $user */

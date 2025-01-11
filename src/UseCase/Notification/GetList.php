@@ -7,11 +7,13 @@ namespace App\UseCase\Notification;
 use App\Dto\DtoTransformer\NotificationDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
+use App\Entity\BikeRide;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
 use App\Entity\Survey;
 use App\Entity\User;
+use App\Repository\BikeRideRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SurveyRepository;
@@ -35,6 +37,7 @@ class GetList
         protected Security $security,
         private readonly NotificationRepository $notificationRepository,
         private readonly SurveyRepository $surveyRepository,
+        private readonly BikeRideRepository $bikeRideRepository,
         private readonly OrderHeaderRepository $orderHeaderRepository,
         private readonly NotificationDtoTransformer $notificationDtoTransformer,
         private readonly UserDtoTransformer $userDtoTransformer,
@@ -76,7 +79,7 @@ class GetList
         return $this->getNotification($notificationsConsumed, $notifications);
     }
 
-    private function getNotification(array $notificationsConsumed, array $notifications): null|array|Survey|Notification|Licence|OrderHeader
+    private function getNotification(array $notificationsConsumed, array $notifications): null|array|Survey|Notification|Licence|OrderHeader|BikeRide
     {
         if (!empty($notifications)) {
             foreach ($notifications as $notification) {
@@ -103,6 +106,7 @@ class GetList
             return $this->getPublicNotifications($notificationsConsumed);
         }
         $notifications = [];
+        $this->addBikeRide($notifications);
         $this->addSurveys($notifications);
         $this->addSurveysChanged($notifications);
         $this->addNewOrderToValidate($notifications);
@@ -134,6 +138,15 @@ class GetList
             if ('survey' !== $this->routeInfos['_route'] || $survey->getId() !== (int) $this->routeInfos['survey']) {
                 $notifications[] = $survey;
             }
+        };
+    }
+
+    private function addBikeRide(array &$notifications): void
+    {
+        $bikeRides = $this->bikeRideRepository->findNotifiable($this->user);
+        dump($bikeRides);
+        foreach ($bikeRides as $bikeRide) {
+            $notifications[] = $bikeRide;
         };
     }
 

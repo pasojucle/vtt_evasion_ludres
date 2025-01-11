@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Entity\BikeRide;
 use App\Entity\Documentation;
 use App\Entity\Licence;
 use App\Entity\Notification;
@@ -32,7 +33,7 @@ class NotificationService
     ) {
     }
 
-    public function getIndex(Survey|OrderHeader|Notification|Licence|string|array $entity)
+    public function getIndex(Survey|OrderHeader|Notification|Licence|BikeRide|string|array $entity)
     {
         /** @var User $user */
         $user = $this->security->getUser();

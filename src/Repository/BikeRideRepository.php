@@ -6,7 +6,9 @@ namespace App\Repository;
 
 use App\Entity\BikeRide;
 use App\Entity\Enum\RegistrationEnum;
+use App\Entity\Session;
 use App\Entity\Survey;
+use App\Entity\User;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -169,6 +171,51 @@ class BikeRideRepository extends ServiceEntityRepository
                 new Parameter('deleted', false),
             ]))
             ->orderBy('br.startAt')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findNotifiable(User $user): array
+    {
+        $today = (new DateTimeImmutable())->setTime(23, 59, 00);
+        $memberAge = (int) $today->diff($user->getFirstIdentity()->getBirthDate())->format('%Y');
+
+        $bikeRides = $this->getEntityManager()->createQueryBuilder()
+            ->select('bikeRide.id')
+            ->from(Session::class, 's')
+            ->join('s.cluster', 'c')
+            ->join('c.bikeRide', 'bikeRide')
+            ->andWhere(
+                (new Expr())->eq('s.user', ':user'),
+            );
+
+        return $this->createQueryBuilder('br')
+            ->leftJoin('br.users', 'u')
+            ->andWhere(
+                (new Expr())->eq('br.notify', ':notify'),
+                (new Expr())->orX(
+                    (new Expr())->eq('u', ':user'),
+                    (new Expr())->isNull('u'),
+                ),
+                (new Expr())->orX(
+                    (new Expr())->lte('br.minAge', ':age'),
+                    (new Expr())->isNull('br.minAge'),
+                ),
+                (new Expr())->orX(
+                    (new Expr())->gte('br.maxAge', ':age'),
+                    (new Expr())->isNull('br.maxAge'),
+                ),
+                (new Expr())->notIn('br.id', $bikeRides->getDql())
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('today', $today),
+                new Parameter('notify', true),
+                new Parameter('user', $user),
+                new Parameter('age', $memberAge),
+
+            ]))
+            ->andHaving("DATE_SUB(br.startAt, br.displayDuration, 'DAY') <= :today")
             ->getQuery()
             ->getResult()
         ;

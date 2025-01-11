@@ -141,7 +141,10 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $this->clearUsers($data, $bikeRide);
         }
         if (BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction) {
-            $data['minAge'] = '';
+            $data['minAge'] = null;
+            $data['maxAge'] = null;
+            $bikeRide->setMinAge(null)
+                ->setMaxAge(null);
         }
         if (array_key_exists('users', $data)) {
             foreach ($data['users'] as $user) {

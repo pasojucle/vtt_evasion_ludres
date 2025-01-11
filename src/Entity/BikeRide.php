@@ -104,6 +104,9 @@ class BikeRide
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $summaries;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $notify = false;
+
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
@@ -411,6 +414,18 @@ class BikeRide
                 $summary->setBikeRide(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isNotify(): ?bool
+    {
+        return $this->notify;
+    }
+
+    public function setNotify(bool $notify): static
+    {
+        $this->notify = $notify;
 
         return $this;
     }
