@@ -25,6 +25,8 @@ import './styles/health.scss';
 import './styles/list-group.scss';
 import './styles/loader.scss';
 import './styles/bootstrap.scss';
+import './styles/component/autocompleteFilter.scss';
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import './js/app.js';
 import './js/navigation.js';

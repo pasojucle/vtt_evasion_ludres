@@ -3,6 +3,7 @@
     "app": {
       "js": [
 <<<<<<< HEAD
+<<<<<<< HEAD
         "/build/main_build/runtime.85c9f900.js",
         "/build/main_build/688.7c55c327.js",
         "/build/main_build/427.154cb76f.js",
@@ -20,10 +21,16 @@
         "/build/main_build/230.420ee49b.js",
         "/build/main_build/679.42286af6.js",
         "/build/main_build/app.31791e52.js"
+=======
+        "/build/main_build/runtime.2fdb6fa9.js",
+        "/build/main_build/218.0c2143d5.js",
+        "/build/main_build/679.b30201e0.js",
+        "/build/main_build/app.b400691a.js"
+>>>>>>> 57b74508 (skill list #274)
       ],
       "css": [
-        "/build/main_build/230.d51b8d97.css",
-        "/build/main_build/679.cc741ef3.css",
+        "/build/main_build/218.d51b8d97.css",
+        "/build/main_build/679.ca2d41b0.css",
         "/build/main_build/app.fe91ef95.css"
 >>>>>>> 37d35ea7 (Remplacement de ckeditor en react #274)
 >>>>>>> 9ea4eef8 (Remplacement de ckeditor en react #274)
@@ -31,6 +38,7 @@
     },
     "admin": {
       "js": [
+<<<<<<< HEAD
 <<<<<<< HEAD
         "/build/main_build/runtime.85c9f900.js",
         "/build/main_build/688.7c55c327.js",
@@ -54,11 +62,24 @@
         "/build/main_build/679.cc741ef3.css",
         "/build/main_build/admin.ae1ea87c.css"
 >>>>>>> 37d35ea7 (Remplacement de ckeditor en react #274)
+=======
+        "/build/main_build/runtime.2fdb6fa9.js",
+        "/build/main_build/218.0c2143d5.js",
+        "/build/main_build/935.2a37ff27.js",
+        "/build/main_build/679.b30201e0.js",
+        "/build/main_build/admin.dc5cd775.js"
+      ],
+      "css": [
+        "/build/main_build/218.d51b8d97.css",
+        "/build/main_build/935.8930152f.css",
+        "/build/main_build/679.ca2d41b0.css",
+        "/build/main_build/admin.63578e21.css"
+>>>>>>> 57b74508 (skill list #274)
       ]
     },
     "wiki": {
       "js": [
-        "/build/main_build/runtime.d097867b.js",
+        "/build/main_build/runtime.2fdb6fa9.js",
         "/build/main_build/661.97789c83.js",
 <<<<<<< HEAD
         "/build/main_build/wiki.c9c91028.js"

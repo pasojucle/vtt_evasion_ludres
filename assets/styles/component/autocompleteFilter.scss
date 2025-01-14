@@ -1,0 +1,59 @@
+.autocomplete-filter {
+    $af-font-size: 13px;
+    .af-wrapper {
+      position: relative;
+      background-color: var(--bs-body-bg);
+      border-radius: var(--bs-border-radius);
+      border: var(--bs-border-width) solid var(--bs-border-color);
+      font-size: $af-font-size;
+      .af-control {
+        display: flex;
+        align-items: center;
+        padding:  0.5rem;
+        flex-direction: row;
+        box-sizing: border-box;
+        overflow: hidden;
+        width: 100%;
+        z-index: 1;
+        .af-content {
+          margin-right: 0.2rem;
+          box-sizing: border-box;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .af-btn {
+          padding: unset;
+          font-size: $af-font-size;
+        }
+        input {
+          border: unset;
+          min-width: 10px;
+          flex: 1 1 10px;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+      .af-dropdown {
+        position: absolute;
+        top: calc(100% + 3px);
+        z-index: 999;
+        background-color: var(--gray-200);
+        width: 100%;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        border-radius: var(--bs-border-radius);
+        font-size: 16px;
+        max-height: 250px;
+        box-sizing: border-box;
+        overflow: auto;
+        .af-option {
+          padding: 5px 8px;
+          &:hover, &.active {
+            background-color: var(--gray-400);
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
