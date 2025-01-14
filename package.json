@@ -46,9 +46,10 @@
         "@ckeditor/ckeditor5-theme-lark": "^43.2.0",
         "@ckeditor/ckeditor5-undo": "^43.2.0",
         "@ckeditor/ckeditor5-upload": "^43.2.0",
-        "@ckeditor/ckeditor5-vue": "^5.1.0",
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3",
+        "bootstrap-icons": "^1.11.3",
+        "ckeditor5": "^43.2.0",
         "ckeditor5-package-generator": "^2.1.1",
         "moment": "^2.29.4"
     }

@@ -1,3 +1,10 @@
+:root {
+    --bs-body-bg: #fff;
+    --bs-border-radius: 0.375rem;
+    --bs-border-width: 1px;
+    --bs-border-color: #dee2e6;
+}
+
 .d-flex {
     display: flex;
     &.align-items-center {
@@ -17,7 +24,6 @@
         gap: 0.5rem;
     }
 }
-
 
 .ms-auto {
     margin-left: auto;
