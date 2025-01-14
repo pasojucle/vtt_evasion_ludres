@@ -117,6 +117,7 @@
     --bs-form-invalid-color: #dc3545;
     --bs-form-invalid-border-color: #dc3545;
 }
+
 .d-flex {
     display: flex;
     &.align-items-center {
@@ -136,7 +137,6 @@
         gap: 0.5rem;
     }
 }
-
 
 .ms-auto {
     margin-left: auto;
