@@ -1,26 +1,19 @@
-import Reactt, { useState, useEffect }  from 'react';
-import Routing from 'fos-router';
-import {toString} from '../../js/utils'
+import React, { useState, useEffect }  from 'react';
+import {toString, getList} from '../../js/utils'
 
-export default function ChoiceType({id, name, className, initialValue, label}) {
+export default function ChoiceType({id, name, className, value, label}) {
     const [list, setList] = useState([]);
-    const [value, setValue] = useState(initialValue);
+    const [selectedValue, setSelectedValue] = useState(value);
 
     useEffect(() => {
-        fetch(Routing.generate(`api_${className}_list`), {
-            method: "GET", 
-        })
-        .then(response => response.json())
-        .then(json => {
-            console.log('json', json)
-            setList(json.list);
-        });
+        const list = getList(`api_${className}_list`)
+            .then((list) => setList(list))
     }, [])
 
     return (
         <div className='form-group'>
             <label htmlFor={id}>{label }</label>
-            <select value={value} onChange={(event) => setValue(event.target.value)} className="form-control form-control-sm" name={name} id={id}>
+            <select value={selectedValue} onChange={(event) => setSelectedValue(event.target.value)} className="form-control form-control-sm" name={name} id={id}>
                 {list.map((entity) => 
                     <option key={entity.id} value={entity.id} >{toString(entity)}</option>
                 )}
