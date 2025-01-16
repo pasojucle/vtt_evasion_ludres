@@ -1,36 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import {getList} from '../../js/utils'
+import Routing from 'fos-router';
 import AutocompleteFilter from '../components/AutocompleteFilter';
 import Edit from '../components/Edit';
 
-export default function SkillList() {
+export default function ClusterSkillList({cluster, canEdit}) {
 
     const [category, setCategory] = useState(null);
     const [clearCategory, setClearCategory] = useState(false);
     const [level, setLevel] = useState(null);
     const [clearLevel, setClearLevel] = useState(false);
-    const [skillList, setSkillList] = useState([]);
+    const [clusterSkillList, setClusterSkillList] = useState([]);
 
     const [edit, setEdit] = useState(false);
     const [route, setRoute] = useState(null);
 
     useEffect(() => {
-        const list = getList('api_skill_list')
-            .then((list) => setSkillList(list))
+        console.log('cluster', cluster)
+        fetch(Routing.generate('api_cluster_skill_list', {'cluster': cluster}), {
+            method: "GET", 
+        })
+        .then(response => response.json())
+        .then(json => {
+            console.log('json', json)
+            setClusterSkillList(json.list);
+        });
     }, [])
 
     const handleAdd = () => {
-        setRoute(Routing.generate('api_skill_add'));
+        setRoute(Routing.generate('api_cluster_skill_add', {'cluster': cluster}));
         setEdit(true);
     }
 
-    const handleEdit = (id) => {
-        setRoute(Routing.generate('api_skill_edit', {'id': id}));
+    const handleEval = (id) => {
+        setRoute(Routing.generate('api_skill_eval', {'cluster': cluster, 'skill': id}));
         setEdit(true);
     }
 
     const handleDelete = (id) => {
-        setRoute(Routing.generate('api_skill_delete', {'id': id}));
+        setRoute(Routing.generate('api_skill_delete', {'cluster': cluster, 'skill': id}));
         setEdit(true);
     }
 
@@ -68,11 +75,6 @@ export default function SkillList() {
         return list.filter((item) => item.level.id === level)
     }
 
-    const listFiltered = () => {
-        const list = categoryFilter(skillList);
-        return levelFilter(list);
-    }
-
     const createMarkup = (plainText) => {
         return {__html: plainText};
     }
@@ -96,19 +98,15 @@ export default function SkillList() {
               console.log('update')
               list.splice(index, 1, data.value)
           }
-        setSkillList(list);
+        setClusterSkillList(list);
     }
 
     return (
         <div>
-            <div className="row">
-                <AutocompleteFilter entity="skill_category" pararms={[]} value={category} label="Catégorie" placeholder="Toutes les catégories" handleChange={handleChangeCategory} isClear={clearCategory} handleClear={handleChangeClearCategory} className="col-md-6 form-group"/>
-                <AutocompleteFilter entity="level" pararms={[]} value={level} label="Niveau" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-6 form-group"/>
-            </div>
             <a className="btn btn-primary" onClick={handleAdd} title="Ajouter"> Ajouter</a>
 
             <ul>
-                {listFiltered().map((skill) => 
+                {clusterSkillList.map((skill) => 
                     <li className="list-group-item" key={skill.id}>
                         <div dangerouslySetInnerHTML={createMarkup(skill.content)} />
                         <div className="dropdown">
@@ -116,7 +114,7 @@ export default function SkillList() {
                             <div className="dropdown-menu" data-target="dropdown-tools">
                                 <ul className="dropdown-body">
                                     <li>
-                                        <a className="dropdown-item" onClick={() => handleEdit(skill.id)} title="Modifier"><i className="fas fa-pencil-alt"></i> Modifier</a>
+                                        <a className="dropdown-item" onClick={() => handleEval(skill.id)} title="Évaluations"><i className="fa-solid fa-graduation-cap"></i> Évaluations</a>
                                     </li>
                                     <li>
                                         <a className="dropdown-item" onClick={() => handleDelete(skill.id)} title="Supprimer" data-type="danger"><i className="fas fa-times"></i> Supprimer</a>

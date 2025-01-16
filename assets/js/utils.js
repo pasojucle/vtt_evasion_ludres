@@ -1,3 +1,5 @@
+import Routing from 'fos-router';
+
 export const toString = (entity) => {
     let string;
     switch(true) {
@@ -12,4 +14,12 @@ export const toString = (entity) => {
             string = entity.name;
     }
     return string;
+  }
+
+  export const getList = async(route, params={}) => {
+    const promise = await fetch(Routing.generate(route, params));
+
+    const result = await promise.json();
+
+    return result.list;
   }

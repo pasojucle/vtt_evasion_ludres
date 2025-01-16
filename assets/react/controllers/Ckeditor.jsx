@@ -20,9 +20,8 @@ import 'ckeditor5/ckeditor5.css';
 function App({id, label, name, value, upload_url, toolbar, environment}) {
 
     const editorRef = useRef();
-    const [ isMounted, setMounted ] = useState( false );
 
-    const [ editorData, setEditorData ] = useState( false );
+    const [ editorData, setEditorData ] = useState( value );
 
     return (
         <div id="ckeditor-app">
@@ -114,6 +113,7 @@ function App({id, label, name, value, upload_url, toolbar, environment}) {
                     }
                 }}
                 onChange={() => {
+                    console.log('on change ckeditor', editorRef.current?.getData())
                     setEditorData(editorRef.current?.getData())
                 }}
             />
