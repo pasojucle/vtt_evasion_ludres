@@ -24,7 +24,7 @@
         }
         .af-btn {
           padding: unset;
-          font-size: $af-font-size;
+          font-size: 16px;
         }
         input {
           border: unset;
@@ -43,7 +43,7 @@
         width: 100%;
         border: var(--bs-border-width) solid var(--bs-border-color);
         border-radius: var(--bs-border-radius);
-        font-size: 16px;
+        font-size: $af-font-size;
         max-height: 250px;
         box-sizing: border-box;
         overflow: auto;

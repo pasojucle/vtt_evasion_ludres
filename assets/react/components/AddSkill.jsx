@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { checkStatus, isJsonResponse } from './../../js/fetch.js'
 import { formElement } from '../utils.js';
+import AutocompleteFilter from '../components/AutocompleteFilterType';
 
-export default function Edit({edit, size, route, handleEditChange, update}) {
+export default function AddSkill({edit, size, route, handleEditChange, update, mainList}) {
 
     const [title, setTitle] = useState('');
     const [theme, setTheme] = useState(null);
     const [form, setForm] = useState({});
     const [loaded, setLoaded] = useState(false);
+    const [category, setCategory] = useState(null);
+    const [clearCategory, setClearCategory] = useState(false);
+    const [level, setLevel] = useState(null);
+    const [clearLevel, setClearLevel] = useState(false);
     
     useEffect(() => {
         
@@ -66,6 +71,30 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
         }, 500);
     }
 
+
+    const handleChangeCategory = (value) => {
+        setCategory(value)
+    }
+
+    const handleChangeClearCategory = (value) => {
+        setClearCategory(value)
+    }
+
+    const handleChangeLevel = (value) => {
+        setLevel(value)
+    }
+
+    const handleChangeClearLevel = (value) => {
+        setClearLevel(value)
+    }
+
+    const filters = () => {
+        return {
+            'category': category,
+            'level': level,
+        }
+    }
+
     const ModalContent = () => {
         console.log('loaded', form)
         load();
@@ -77,10 +106,14 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
                         <h4 className="modal-title">{ title }</h4>
                     </div>
                     <form action={form.action} onSubmit={(event) => onSubmit(event)}>
-                        <div className="modal-body">
+            <div className="modal-body">
+                            <div className="row">
+                                <AutocompleteFilter entityName="skill_category" pararms={[]} value={category} label="Catégorie" placeholder="Toutes les catégories" handleChange={handleChangeCategory} isClear={clearCategory} handleClear={handleChangeClearCategory} className="col-md-6 form-group"/>
+                                <AutocompleteFilter entityName="level" pararms={[]} value={level} label="Niveau" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-6 form-group"/>
+                            </div>
                             <div className="row">
                                 {form.components.map((component, key) => 
-                                    formElement(component, key)
+                                    formElement(component, key, filters(), mainList)
                                 )}
                             </div>
                         </div>
