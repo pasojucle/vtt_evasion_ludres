@@ -144,7 +144,6 @@ class GetList
     private function addBikeRide(array &$notifications): void
     {
         $bikeRides = $this->bikeRideRepository->findNotifiable($this->user);
-        dump($bikeRides);
         foreach ($bikeRides as $bikeRide) {
             $notifications[] = $bikeRide;
         };

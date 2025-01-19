@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Routing from 'fos-router';
-import {toString} from '../../js/utils'
+import { toString, getList } from '../utils'
 
-export default function AutocompleteFilter({entity, params, value,  label, className, placeholder, handleChange, isClear= false, handleClear}) {
+
+export default function AutocompleteFilter({entityName, params, value,  label, className, placeholder, handleChange, isClear= false, handleClear}) {
 
     const [textFilter, setTextFilter] = useState('');
     const [focused, setFocused] = useState(false);
@@ -10,14 +11,9 @@ export default function AutocompleteFilter({entity, params, value,  label, class
     const [list, setList] = useState([]);
 
     useEffect(() => {
-        fetch(Routing.generate(`api_${entity}_list`, params), {
-        method: "GET", 
-        })
-        .then(response => response.json())
-        .then(json => {
-            console.log('json',entity, json)
-            setList(json.list);
-        });
+        const list = getList(`api_${entityName}_list`, params)
+        .then((list) => setList(list))
+
     }, [])
 
     const input = (event) => {
@@ -34,7 +30,7 @@ export default function AutocompleteFilter({entity, params, value,  label, class
     const clear = () => {
         setTextFilter('');
         handleClear(true);
-        handleChange(0);
+        handleChange(null);
     }
 
     const handleKeyDown = (event) => {
@@ -64,7 +60,7 @@ export default function AutocompleteFilter({entity, params, value,  label, class
     }
 
     const displayControlContent = () => {
-        return '' !== value && null !== value && !isClear;
+        return null !== value && !isClear;
     }
 
     const ControlContent = () => {

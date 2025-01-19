@@ -2,35 +2,35 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/main_build/runtime.2fdb6fa9.js",
-        "/build/main_build/218.0c2143d5.js",
-        "/build/main_build/679.aff2521e.js",
-        "/build/main_build/app.b400691a.js"
+        "/build/main_build/runtime.5ad829b3.js",
+        "/build/main_build/470.24654711.js",
+        "/build/main_build/679.1ca3c427.js",
+        "/build/main_build/app.755fff0d.js"
       ],
       "css": [
-        "/build/main_build/218.d51b8d97.css",
+        "/build/main_build/470.d51b8d97.css",
         "/build/main_build/679.ca2d41b0.css",
         "/build/main_build/app.fe91ef95.css"
       ]
     },
     "admin": {
       "js": [
-        "/build/main_build/runtime.2fdb6fa9.js",
-        "/build/main_build/218.0c2143d5.js",
-        "/build/main_build/935.2a37ff27.js",
-        "/build/main_build/679.aff2521e.js",
-        "/build/main_build/admin.dc5cd775.js"
+        "/build/main_build/runtime.5ad829b3.js",
+        "/build/main_build/470.24654711.js",
+        "/build/main_build/545.70cff37b.js",
+        "/build/main_build/679.1ca3c427.js",
+        "/build/main_build/admin.1a3fb949.js"
       ],
       "css": [
-        "/build/main_build/218.d51b8d97.css",
-        "/build/main_build/935.8930152f.css",
+        "/build/main_build/470.d51b8d97.css",
+        "/build/main_build/545.8930152f.css",
         "/build/main_build/679.ca2d41b0.css",
-        "/build/main_build/admin.63578e21.css"
+        "/build/main_build/admin.cd4c06a5.css"
       ]
     },
     "wiki": {
       "js": [
-        "/build/main_build/runtime.2fdb6fa9.js",
+        "/build/main_build/runtime.5ad829b3.js",
         "/build/main_build/661.97789c83.js",
         "/build/main_build/wiki.60610978.js"
       ],

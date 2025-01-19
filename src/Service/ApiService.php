@@ -19,9 +19,9 @@ use function Symfony\Component\String\u;
 class ApiService
 {
     private const COMPONENT_PROP_KEYS = [
-        'vueChoiceFilter' => ['name' => 'ChoiceFilterType', 'keys' => ['className', 'field', 'placeholder']],
-        'vueChoiceFiltered' => ['name' => 'ChoiceFilteredType', 'keys' => ['className', 'exclude']],
-        'vueChoice' => ['name' => 'ChoiceType', 'keys' => ['className', 'value']],
+        'reactAutocompleteFilter' => ['name' => 'AutocompleteFilterType', 'keys' => ['entityName', 'field', 'placeholder']],
+        'reactChoiceFiltered' => ['name' => 'ChoiceFilteredType', 'keys' => ['entityName', 'selectedValues']],
+        'reactChoice' => ['name' => 'ChoiceType', 'keys' => ['entityName', 'value']],
         'ckeditor' => ['name' => 'Ckeditor', 'keys' => ['upload_url', 'toolbar', 'value']],
         'vueText' => ['name' => 'TextType', 'keys' => ['value', 'disabled']],
         'collection' => ['name' => 'CollectionType', 'keys' => []],
@@ -41,10 +41,9 @@ class ApiService
         return new JsonResponse([
             'form' => [
                 'action' => $form->getConfig()->getAction(),
-                'elements' => $this->twig->render('component/modal.html.twig', [
-                    'message' => $message,
-                    'components' => $this->getComponents($form),
-                ]),
+                'message' => $message,
+                'components' => $this->getComponents($form),
+
                 'submit' => $submit,
             ],
             'theme' => sprintf('btn-%s', $theme),
@@ -121,7 +120,7 @@ class ApiService
         ];
         foreach (self::COMPONENT_PROP_KEYS[$blockPrefix]['keys'] as $key) {
             $props[$key] = match ($key) {
-                'className' => U($vars[$key])->snake(),
+                'entityName' => U($vars[$key])->snake(),
                 'choices' => $this->enumChoicesToArray($vars[$key], $entryKey),
                 default => $vars[$key],
             };
@@ -152,13 +151,13 @@ class ApiService
         return $this->formFactory->create($type, $entity, $params);
     }
 
-    public function responseForm(object $entity, DtoTransformerInterface $transformer, string $sort = 'nameASC', bool $isDeleted = false, ?string $className = null): JsonResponse
+    public function responseForm(object $entity, DtoTransformerInterface $transformer, string $sort = 'nameASC', bool $isDeleted = false, ?string $entityName = null): JsonResponse
     {
         return new JsonResponse([
             'success' => true,
             'data' => [
                 'deleted' => $isDeleted,
-                'entity' => $className ?? U((new ReflectionClass($entity))->getShortName())->snake(),
+                'entity' => $entityName ?? U((new ReflectionClass($entity))->getShortName())->snake(),
                 'value' => $transformer->fromEntity($entity),
                 'sort' => $sort,
             ],
