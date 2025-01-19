@@ -6,7 +6,7 @@ use App\Entity\Level;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
 use App\Form\Type\CkeditorType;
-use App\Form\Type\VueChoiceType;
+use App\Form\Type\ReactChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,7 +16,7 @@ class SkillType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('category', VueChoiceType::class, [
+            ->add('category', ReactChoiceType::class, [
                 'label' => 'Catégorie',
                 'class' => SkillCategory::class,
                 'choice_label' => 'name',
@@ -24,7 +24,7 @@ class SkillType extends AbstractType
                     'class' => 'col-md-12',
                 ],
             ])
-            ->add('level', VueChoiceType::class, [
+            ->add('level', ReactChoiceType::class, [
                 'label' => 'Niveau',
                 'class' => Level::class,
                 'row_attr' => [

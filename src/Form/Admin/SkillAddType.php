@@ -7,9 +7,10 @@ namespace App\Form\Admin;
 use App\Entity\Level;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
-use App\Form\Type\VueChoiceFilteredType;
-use App\Form\Type\VueChoiceFilterType;
+use App\Form\Type\ReactAutocompleteType;
 use Symfony\Component\Form\AbstractType;
+use App\Form\Type\ReactChoiceFilteredType;
+use App\Form\Type\ReactAutocompleteFilterType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,7 +19,7 @@ class SkillAddType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('skillCategory', VueChoiceFilterType::class, [
+            ->add('skillCategory', ReactAutocompleteFilterType::class, [
                 'label' => 'Categorie',
                 'class' => SkillCategory::class,
                 'placeholder' => 'Séléctionner une catégorie',
@@ -29,7 +30,7 @@ class SkillAddType extends AbstractType
                     'class' => 'col-md-6',
                 ],
             ])
-            ->add('level', VueChoiceFilterType::class, [
+            ->add('level', ReactAutocompleteFilterType::class, [
                 'label' => 'Niveau',
                 'class' => Level::class,
                 'placeholder' => 'Séléctionner un niveau',
@@ -40,10 +41,10 @@ class SkillAddType extends AbstractType
                     'class' => 'col-md-6',
                 ],
             ])
-            ->add('skill', VueChoiceFilteredType::class, [
+            ->add('skill', ReactChoiceFilteredType::class, [
                 'label' => 'Compétences',
                 'class' => Skill::class,
-                'exclude' => $options['exclude'],
+                'selected_values' => $options['selected_values'],
                 'row_attr' => [
                     'class' => 'col-md-12',
                 ],
@@ -54,7 +55,7 @@ class SkillAddType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'exclude' => null,
+            'selected_values' => null,
         ]);
     }
 }
