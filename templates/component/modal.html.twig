@@ -14,7 +14,6 @@
                 {% endfor %}
             </div>      
         {% else %}
-            {% dump(component.name) %}
             <div class="form-group {% if component.row_attr is not empty %}{{ component.row_attr.class}}{% endif %}" {{ react_component(component.name, component.props) }}></div>
         {% endif %}
     {% endfor %}

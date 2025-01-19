@@ -1,29 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Routing from 'fos-router';
-import AutocompleteFilter from '../components/AutocompleteFilter';
-import Edit from '../components/Edit';
+import AddSkill from '../components/AddSkill';
+
+import { getList } from '../utils';
 
 export default function ClusterSkillList({cluster, canEdit}) {
 
-    const [category, setCategory] = useState(null);
-    const [clearCategory, setClearCategory] = useState(false);
-    const [level, setLevel] = useState(null);
-    const [clearLevel, setClearLevel] = useState(false);
     const [clusterSkillList, setClusterSkillList] = useState([]);
 
     const [edit, setEdit] = useState(false);
     const [route, setRoute] = useState(null);
 
     useEffect(() => {
-        console.log('cluster', cluster)
-        fetch(Routing.generate('api_cluster_skill_list', {'cluster': cluster}), {
-            method: "GET", 
-        })
-        .then(response => response.json())
-        .then(json => {
-            console.log('json', json)
-            setClusterSkillList(json.list);
-        });
+        const list = getList('api_cluster_skill_list', {'cluster': cluster})
+            .then((list) => setClusterSkillList(list))
     }, [])
 
     const handleAdd = () => {
@@ -41,63 +31,33 @@ export default function ClusterSkillList({cluster, canEdit}) {
         setEdit(true);
     }
 
-    const handleChangeCategory = (value) => {
-        setCategory(value)
-    }
-
-    const handleChangeClearCategory = (value) => {
-        setClearCategory(value)
-    }
-
-    const handleChangeLevel = (value) => {
-        setLevel(value)
-    }
-
-    const handleChangeClearLevel = (value) => {
-        setClearLevel(value)
-    }
-
     const handleEditChange = (value) => {
         setEdit(value)
     }
-
-    const categoryFilter = (list) => {
-        if (!category) {
-            return list;
-        }
-        return list.filter((item) => item.category.id === category)
-    }
-
-    const levelFilter = (list) => {
-        if (!level) {
-            return list;
-        }
-        return list.filter((item) => item.level.id === level)
-    }
-
+    
     const createMarkup = (plainText) => {
         return {__html: plainText};
     }
 
     const updateList = (data) => {
-        const list = skillList;
+        const list = clusterSkillList;
         const index = list.findIndex(item => {
             return (data.value.id === item.id)
-          })
-          console.log('index', index, data.value);
-          switch(true) {
-            case -1 === index:
-              console.log('add')
-              list.push(data.value);
-              break;
-            case data.deleted:
-              console.log('delete')
-              list.splice(index, 1);
-              break;
-            default:
-              console.log('update')
-              list.splice(index, 1, data.value)
-          }
+        })
+        console.log('index', index, data.value);
+            switch(true) {
+                case -1 === index:
+                    console.log('add')
+                    list.push(data.value);
+                    break;
+                case data.deleted:
+                    console.log('delete')
+                    list.splice(index, 1);
+                    break;
+                default:
+                    console.log('update')
+                    list.splice(index, 1, data.value)
+            }
         setClusterSkillList(list);
     }
 
@@ -125,7 +85,7 @@ export default function ClusterSkillList({cluster, canEdit}) {
                     </li>
                 )}
             </ul>
-            <Edit edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={updateList} />
+            <AddSkill edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={updateList} mainList={clusterSkillList} />
         </div>
     )
 

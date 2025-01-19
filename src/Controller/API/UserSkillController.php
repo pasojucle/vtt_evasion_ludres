@@ -78,7 +78,7 @@ class UserSkillController extends AbstractController
     public function add(Request $request, User $user): JsonResponse
     {
         $form = $this->api->createForm($request, SkillAddType::class, null, [
-            'exclude' => ['entity' => 'user_skill_edit', 'field' => 'skill.value'],
+            'selected_values' => ['entity' => 'user_skill_edit', 'field' => 'skill.value'],
         ]);
 
         $form->handleRequest($request);

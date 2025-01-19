@@ -73,7 +73,7 @@ class ClusterSkillController extends AbstractController
     public function add(Request $request, Cluster $cluster): JsonResponse
     {
         $form = $this->api->createForm($request, SkillAddType::class, null, [
-            'exclude' => ['entity' => 'cluster_skill', 'field' => 'id'],
+            'selected_values' => ['entity' => 'cluster_skill', 'field' => 'id'],
         ]);
 
         $form->handleRequest($request);

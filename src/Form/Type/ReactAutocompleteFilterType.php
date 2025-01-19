@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class VueChoiceFilteredType extends AbstractType
+class ReactAutocompleteFilterType extends AbstractType
 {
     public function getParent(): string
     {
@@ -21,19 +21,18 @@ class VueChoiceFilteredType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
-            'exclude',
+            'field',
         ]);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['className'] = (new ReflectionClass($options['class']))->getShortName();
-        $view->vars['exclude'] = json_encode($options['exclude']);
+        $view->vars['entityName'] = (new ReflectionClass($options['class']))->getShortName();
+        $view->vars['field'] = $options['field'];
     }
-
 
     public function getBlockPrefix(): string
     {
-        return 'vueChoiceFiltered';
+        return 'reactAutocompleteFilter';
     }
 }
