@@ -32,7 +32,7 @@ class UserSkillType extends AbstractType
                 ->add($name, TextType::class, [
                     'mapped' => false,
                     'disabled' => true,
-                    'block_prefix' => 'vueText',
+                    'block_prefix' => 'reactText',
                     'data' => $content,
                     'row_attr' => [
                         'class' => 'col-md-6 text-label',
@@ -40,7 +40,7 @@ class UserSkillType extends AbstractType
                 ])
                 ->add('evaluation', EnumType::class, [
                     'class' => EvaluationEnum::class,
-                    'block_prefix' => 'vueRadio',
+                    'block_prefix' => 'reactRadio',
                     'row_attr' => [
                         'class' => 'col-md-6',
                     ],
