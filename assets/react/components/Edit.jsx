@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { checkStatus, isJsonResponse } from './../../js/fetch.js'
 import { formElement } from '../utils.js';
+import TextRaw from './TextRaw.jsx';
 
 export default function Edit({edit, size, route, handleEditChange, update}) {
 
     const [title, setTitle] = useState('');
     const [theme, setTheme] = useState(null);
     const [form, setForm] = useState({});
-    const [loaded, setLoaded] = useState(false);
+    const [loaded, setLoaded] = useState(false)
     
     useEffect(() => {
         
@@ -66,6 +67,12 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
         }, 500);
     }
 
+    const Message = () => {
+        console.log('form message', form.message)
+        if (form.message) {
+            return <TextRaw textHtml={form.message} />
+        }
+    }
     const ModalContent = () => {
         console.log('loaded', form)
         load();
@@ -79,6 +86,7 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
                     <form action={form.action} onSubmit={(event) => onSubmit(event)}>
                         <div className="modal-body">
                             <div className="row">
+                                <Message/>
                                 {form.components.map((component, key) => 
                                     formElement(component, key)
                                 )}

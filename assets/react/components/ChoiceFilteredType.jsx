@@ -1,7 +1,7 @@
 import React, { useState, useEffect }  from 'react';
 import {toString, getList, getListFiltered} from '../utils'
 
-export default function ChoiceFilteredType({id, name, entityName, label, filters, mainList}) {
+export default function ChoiceFilteredType({id, name, entityName, label, filters, mainList, className}) {
     const [list, setList] = useState([]);
     const [selectedValue, setSelectedValue] = useState('');
 
@@ -15,7 +15,7 @@ export default function ChoiceFilteredType({id, name, entityName, label, filters
     }
 
     return (
-        <div className='form-group'>
+        <div className={className}>
             <label htmlFor={id}>{label }</label>
             <select value={selectedValue} onChange={(event) => setSelectedValue(event.target.value)} className="form-control form-control-sm" name={name} id={id}>
                 {listFiltered().map((entity) => 

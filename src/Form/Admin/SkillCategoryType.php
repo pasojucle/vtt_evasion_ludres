@@ -15,7 +15,7 @@ class SkillCategoryType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'block_prefix' => 'vueText',
+                'block_prefix' => 'reactText',
                 'row_attr' => [
                     'class' => 'col-md-12',
                 ],
