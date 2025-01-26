@@ -113,7 +113,6 @@ function App({id, label, name, value, upload_url, toolbar, environment, classNam
                         }
                     }}
                     onChange={() => {
-                        console.log('on change ckeditor', editorRef.current?.getData())
                         setEditorData(editorRef.current?.getData())
                     }}
                 />

@@ -26,6 +26,8 @@ import './styles/notification.scss';
 import './styles/reveal.css';
 import './styles/carrousel.css';
 import './styles/verticalStepProgress.css';
+import './styles/component/autocompleteFilter.scss';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import './js/app.js';
 import './js/navigation.js';

@@ -1,13 +1,12 @@
 import React from 'react';
 
-export default function TextRaw({textHtml}) {
+export default function TextRaw({textHtml, className=''}) {
 
     const createMarkup = () => {
-        console.log('createMarkup', textHtml)
         return {__html: textHtml};
     }
 
     return (
-        <div dangerouslySetInnerHTML={createMarkup()} />
+        <div className={className} dangerouslySetInnerHTML={createMarkup()} />
     )
 }

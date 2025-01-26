@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getList } from '../utils'
+import { getList, updateList } from '../utils'
 import AutocompleteFilter from '../components/AutocompleteFilterType';
 import TextRaw from '../components/TextRaw.jsx';
 import Edit from '../components/Edit';
@@ -75,26 +75,8 @@ export default function SkillList() {
         return levelFilter(list);
     }
 
-    const updateList = (data) => {
-        const list = skillList;
-        const index = list.findIndex(item => {
-            return (data.value.id === item.id)
-          })
-          console.log('index', index, data.value);
-          switch(true) {
-            case -1 === index:
-              console.log('add')
-              list.push(data.value);
-              break;
-            case data.deleted:
-              console.log('delete')
-              list.splice(index, 1);
-              break;
-            default:
-              console.log('update')
-              list.splice(index, 1, data.value)
-          }
-        setSkillList(list);
+    const update = (data) => {
+        setSkillList(updateList(skillList, data));
     }
 
     return (
@@ -105,7 +87,7 @@ export default function SkillList() {
             </div>
             <a className="btn btn-primary" onClick={handleAdd} title="Ajouter"> Ajouter</a>
 
-            <ul>
+            <ul className='list-group'>
                 {listFiltered().map((skill) => 
                     <li className="list-group-item" key={skill.id}>
                         <TextRaw textHtml={skill.content} />
@@ -125,7 +107,7 @@ export default function SkillList() {
                     </li>
                 )}
             </ul>
-            <Edit edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={updateList} />
+            <Edit edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={update} />
         </div>
     )
 
