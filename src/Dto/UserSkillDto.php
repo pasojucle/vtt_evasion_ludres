@@ -6,6 +6,8 @@ namespace App\Dto;
 
 class UserSkillDto
 {
+    public int $id;
+    
     public ?array $skill = null;
 
     public ?array $evaluation = null;

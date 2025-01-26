@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { checkStatus, isJsonResponse } from './../../js/fetch.js'
 import { formElement } from '../utils.js';
 import TextRaw from './TextRaw.jsx';
@@ -9,21 +9,14 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
     const [theme, setTheme] = useState(null);
     const [form, setForm] = useState({});
     const [loaded, setLoaded] = useState(false)
-    
-    useEffect(() => {
-        
-        
-    }, [])
 
     const load = () => {
-        console.log('useEffect', edit, route, loaded)
         if (edit && route && !loaded) {
             fetch(route)
                 .then(checkStatus)
                 .then(isJsonResponse)
                 .then((response) => response.json())
                 .then((json)=> {
-                    console.log('fetch edit', json)
                     setForm(json.form);
                     setTitle(json.title);
                     setTheme(json.theme);
@@ -35,7 +28,6 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
     const onSubmit = (event) => {
         event.preventDefault();
         const form = event.target;
-        console.log('submit', form)
         Array.from(form.elements).forEach((element) => {
             if ('-1' === element.value) {
                 element.value = null;
@@ -49,7 +41,6 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
         .then(isJsonResponse)
         .then((response) => response.json())
         .then((json)=> {
-            console.log('response', json)
             if (json.success) {
                 update(json.data)
                 hide(); 
@@ -68,13 +59,11 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
     }
 
     const Message = () => {
-        console.log('form message', form.message)
         if (form.message) {
             return <TextRaw textHtml={form.message} />
         }
     }
     const ModalContent = () => {
-        console.log('loaded', form)
         load();
         if (loaded) {
             return (

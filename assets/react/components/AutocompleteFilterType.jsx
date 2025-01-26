@@ -56,7 +56,7 @@ export default function AutocompleteFilter({entityName, params, value,  label, c
         if ('' === textFilter) {
             return list;
         }
-        return list.filter((item) => item.name.toLowerCase().includes(textFilter))
+        return list.filter((item) => toString(item).toLowerCase().includes(textFilter))
     }
 
     const displayControlContent = () => {
