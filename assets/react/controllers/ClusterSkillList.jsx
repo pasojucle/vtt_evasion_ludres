@@ -3,7 +3,7 @@ import Routing from 'fos-router';
 import Edit from '../components/Edit';
 import AddSkill from '../components/AddSkill';
 
-import { getList } from '../utils';
+import { getList, updateList } from '../utils';
 
 export default function ClusterSkillList({cluster, canEdit}) {
 
@@ -46,33 +46,15 @@ export default function ClusterSkillList({cluster, canEdit}) {
         return {__html: plainText};
     }
 
-    const updateList = (data) => {
-        const list = clusterSkillList;
-        const index = list.findIndex(item => {
-            return (data.value.id === item.id)
-        })
-        console.log('index', index, data.value);
-            switch(true) {
-                case -1 === index:
-                    console.log('add')
-                    list.push(data.value);
-                    break;
-                case data.deleted:
-                    console.log('delete')
-                    list.splice(index, 1);
-                    break;
-                default:
-                    console.log('update')
-                    list.splice(index, 1, data.value)
-            }
-        setClusterSkillList(list);
+    const update = (data) => {
+        setClusterSkillList(updateList(clusterSkillList, data));
     }
 
     return (
         <div>
             <a className="btn btn-primary" onClick={handleAdd} title="Ajouter"> Ajouter</a>
 
-            <ul>
+            <ul className='list-group'>
                 {clusterSkillList.map((skill) => 
                     <li className="list-group-item" key={skill.id}>
                         <div dangerouslySetInnerHTML={createMarkup(skill.content)} />
@@ -92,8 +74,8 @@ export default function ClusterSkillList({cluster, canEdit}) {
                     </li>
                 )}
             </ul>
-            <Edit edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={updateList}/>
-            <AddSkill edit={add} route={route} size="lg" handleEditChange={handleAddChange} update={updateList} mainList={clusterSkillList} />
+            <Edit edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={update}/>
+            <AddSkill edit={add} route={route} size="lg" handleEditChange={handleAddChange} update={update} mainList={clusterSkillList} />
         </div>
     )
 }
