@@ -105,7 +105,7 @@ class ClusterSkillController extends AbstractController
             return $response;
         }
         
-        $message = sprintf('<p>Etes vous certain de supprimer la compétence ? %s</p>', $skill->getContent());
-        return $this->api->renderModal($form, 'Supprimer la compétence', 'Supprimer', $message);
+        $message = sprintf('<p>Etes vous certain de supprimer la compétence ?</p>  %s', $skill->getContent());
+        return $this->api->renderModal(form: $form, title: 'Supprimer la compétence', submit: 'Supprimer', message: $message);
     }
 }

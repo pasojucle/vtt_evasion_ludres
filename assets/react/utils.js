@@ -3,6 +3,9 @@ import ChoiceType from './components/ChoiceType.jsx';
 import ChoiceFilteredType from './components/ChoiceFilteredType.jsx';
 import Ckeditor from './controllers/Ckeditor.jsx';
 import HiddenType from './components/HiddenType.jsx'
+import CollectionType from './components/CollectionType.jsx';
+import RadioType from './components/RadioType.jsx';
+import TextType from './components/TextType.jsx';
 
 export const toString = (entity) => {
     let string;
@@ -34,36 +37,39 @@ export const getList = async(route, params={}) => {
     return result.list;
 }
 
-export const formElement = (component, key, filters={}, mainList=[]) => {
+export const formElement = (component, key, isCollection, filters={}, mainList=[]) => {
     console.log('component', component)
-    let className = 'form-group';
-    if (component.row_attr) {
-        className = `${className} ${component.row_attr.class}`
+    const className = [];
+    if (!isCollection) {
+        className.push('form-group');
     }
+    if (component.row_attr) {
+        className.push(component.row_attr.class);
+    }
+    const classNameStr = className.join(' ');
     switch (component.name) {
         case 'HiddenType':
-            return (<HiddenType key={key} id={component.props.id} name={component.props.name} value={component.props.value}/>)
+            return <HiddenType key={key} id={component.props.id} name={component.props.name} value={component.props.value}/>
             break;
         case 'ChoiceType':
-            return (
-                <div key={key} className={className}>
-                    <ChoiceType id={component.props.id} name={component.props.name} entityName={component.props.entityName} value={component.props.value} label={component.props.label} />
-                </div>
-                )
+            return <ChoiceType key={key} className={classNameStr} id={component.props.id} name={component.props.name} entityName={component.props.entityName} value={component.props.value} label={component.props.label} />
             break;
         case 'Ckeditor':
-            return (
-                <div key={key} className={className}>
-                    <Ckeditor id={component.props.id} name={component.props.name} value={component.props.value} label={component.props.label} upload_url={component.props.upload_url} toolbar={component.props.toolbar} environment={component.props.environment} />
-                </div>
-                )
+            return <Ckeditor key={key} className={classNameStr} id={component.props.id} name={component.props.name} value={component.props.value} label={component.props.label} upload_url={component.props.upload_url} toolbar={component.props.toolbar} environment={component.props.environment} />
             break;
         case 'ChoiceFilteredType':
-            return (
-                <div key={key} className={className}>
-                    <ChoiceFilteredType id={component.props.id} name={component.props.name} value={component.props.value} label={component.props.label} entityName={component.props.entityName} filters={filters} mainList={mainList}/>
-                </div>
-                )
+            console.log('choiceFiltered', className)
+            return <ChoiceFilteredType key={key} className={classNameStr} id={component.props.id} name={component.props.name} value={component.props.value} label={component.props.label} entityName={component.props.entityName} filters={filters} mainList={mainList}/>
+            break;
+        case 'RadioType':
+                return <RadioType key={key} className={classNameStr} id={component.props.id} name={component.props.name} value={component.props.value} label={component.props.label} choices={component.props.choices}/>
+            break;
+        case 'CollectionType':
+            return  <CollectionType key={key} className={classNameStr} id={component.props.id} children={component.children}/>
+    
+            break;
+        case 'TextType':
+            return <TextType key={key} className={classNameStr} id={component.props.id} name={component.props.name} value={component.props.value} disabled={component.props.disabled}/>
             break;
     }
 

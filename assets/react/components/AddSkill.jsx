@@ -113,7 +113,7 @@ export default function AddSkill({edit, size, route, handleEditChange, update, m
                             </div>
                             <div className="row">
                                 {form.components.map((component, key) => 
-                                    formElement(component, key, filters(), mainList)
+                                    formElement(component, key, false, filters(), mainList)
                                 )}
                             </div>
                         </div>

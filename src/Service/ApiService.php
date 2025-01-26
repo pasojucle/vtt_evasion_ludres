@@ -23,9 +23,9 @@ class ApiService
         'reactChoiceFiltered' => ['name' => 'ChoiceFilteredType', 'keys' => ['entityName', 'selectedValues']],
         'reactChoice' => ['name' => 'ChoiceType', 'keys' => ['entityName', 'value']],
         'ckeditor' => ['name' => 'Ckeditor', 'keys' => ['upload_url', 'toolbar', 'value']],
-        'vueText' => ['name' => 'TextType', 'keys' => ['value', 'disabled']],
+        'reactText' => ['name' => 'TextType', 'keys' => ['value', 'disabled']],
         'collection' => ['name' => 'CollectionType', 'keys' => []],
-        'vueRadio' => ['name' => 'RadioType', 'keys' => ['value', 'choices']],
+        'reactRadio' => ['name' => 'RadioType', 'keys' => ['value', 'choices']],
         'hidden' => ['name' => 'hiddenType', 'keys' => ['value']],
     ];
 

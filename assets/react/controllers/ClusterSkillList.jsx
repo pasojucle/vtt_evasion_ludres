@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Routing from 'fos-router';
+import Edit from '../components/Edit';
 import AddSkill from '../components/AddSkill';
 
 import { getList } from '../utils';
@@ -9,6 +10,7 @@ export default function ClusterSkillList({cluster, canEdit}) {
     const [clusterSkillList, setClusterSkillList] = useState([]);
 
     const [edit, setEdit] = useState(false);
+    const [add, setAdd] = useState(false);
     const [route, setRoute] = useState(null);
 
     useEffect(() => {
@@ -18,21 +20,26 @@ export default function ClusterSkillList({cluster, canEdit}) {
 
     const handleAdd = () => {
         setRoute(Routing.generate('api_cluster_skill_add', {'cluster': cluster}));
-        setEdit(true);
+        setAdd(true);
     }
 
     const handleEval = (id) => {
-        setRoute(Routing.generate('api_skill_eval', {'cluster': cluster, 'skill': id}));
+        setRoute(Routing.generate('api_cluster_skill_eval', {'cluster': cluster, 'skill': id}));
         setEdit(true);
+        set
     }
 
     const handleDelete = (id) => {
-        setRoute(Routing.generate('api_skill_delete', {'cluster': cluster, 'skill': id}));
+        setRoute(Routing.generate('api_cluster_skill_delete', {'cluster': cluster, 'skill': id}));
         setEdit(true);
     }
 
     const handleEditChange = (value) => {
         setEdit(value)
+    }
+
+    const handleAddChange = (value) => {
+        setAdd(value)
     }
     
     const createMarkup = (plainText) => {
@@ -85,9 +92,9 @@ export default function ClusterSkillList({cluster, canEdit}) {
                     </li>
                 )}
             </ul>
-            <AddSkill edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={updateList} mainList={clusterSkillList} />
+            <Edit edit={edit} route={route} size="lg" handleEditChange={handleEditChange} update={updateList}/>
+            <AddSkill edit={add} route={route} size="lg" handleEditChange={handleAddChange} update={updateList} mainList={clusterSkillList} />
         </div>
     )
-
 }
 
