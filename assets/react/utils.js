@@ -38,7 +38,6 @@ export const getList = async(route, params={}) => {
 }
 
 export const formElement = (component, key, isCollection, filters={}, mainList=[]) => {
-    console.log('component', component)
     const className = [];
     if (!isCollection) {
         className.push('form-group');
@@ -58,7 +57,6 @@ export const formElement = (component, key, isCollection, filters={}, mainList=[
             return <Ckeditor key={key} className={classNameStr} id={component.props.id} name={component.props.name} value={component.props.value} label={component.props.label} upload_url={component.props.upload_url} toolbar={component.props.toolbar} environment={component.props.environment} />
             break;
         case 'ChoiceFilteredType':
-            console.log('choiceFiltered', className)
             return <ChoiceFilteredType key={key} className={classNameStr} id={component.props.id} name={component.props.name} value={component.props.value} label={component.props.label} entityName={component.props.entityName} filters={filters} mainList={mainList}/>
             break;
         case 'RadioType':
@@ -90,4 +88,21 @@ export const getListFiltered = (list, filters, mainList) => {
     })
 
     return list;
+}
+
+export const updateList = (list, data) => {
+    const index = list.findIndex(item => {
+        return (data.value.id === item.id)
+    })
+    switch(true) {
+        case -1 === index:
+            list.push(data.value);
+            break;
+        case data.deleted:
+            list.splice(index, 1);
+            break;
+        default:
+            list.splice(index, 1, data.value)
+    }
+    return list
 }

@@ -14,11 +14,11 @@
         </div>
     </div>
     <div class="wrapper-body">
-        <ul class="list-group" {{ react_component('ClusterSkillList', {'cluster': cluster.id, 'canEdit': canEdit}) }}>
+        <div {{ react_component('ClusterSkillList', {'cluster': cluster.id, 'canEdit': canEdit}) }}>
             <div class="loader-container">
                 <div class="loader"></div>
             </div>
-        </ul>
+        </div>
     </div>
 </div>
 {% endblock %}
