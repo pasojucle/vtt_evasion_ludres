@@ -18,7 +18,10 @@ class UserSkillCollectionType extends AbstractType
                 'entry_options' => [
                     'text_type' => $options['text_type'],
                 ],
-                'block_prefix' => 'vueCollection',
+                'block_prefix' => 'ReactCollection',
+                'row_attr' => [
+                    'class' => 'col-md-12',
+                ]
             ])
         ;
     }

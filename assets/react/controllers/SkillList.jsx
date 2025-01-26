@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getList } from '../utils'
 import AutocompleteFilter from '../components/AutocompleteFilterType';
+import TextRaw from '../components/TextRaw.jsx';
 import Edit from '../components/Edit';
 import Routing from 'fos-router';
 
@@ -74,10 +75,6 @@ export default function SkillList() {
         return levelFilter(list);
     }
 
-    const createMarkup = (plainText) => {
-        return {__html: plainText};
-    }
-
     const updateList = (data) => {
         const list = skillList;
         const index = list.findIndex(item => {
@@ -111,7 +108,7 @@ export default function SkillList() {
             <ul>
                 {listFiltered().map((skill) => 
                     <li className="list-group-item" key={skill.id}>
-                        <div dangerouslySetInnerHTML={createMarkup(skill.content)} />
+                        <TextRaw textHtml={skill.content} />
                         <div className="dropdown">
                             <button className="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                             <div className="dropdown-menu" data-target="dropdown-tools">
