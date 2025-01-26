@@ -30,14 +30,20 @@
 >>>>>>> 57b74508 (skill list #274)
 =======
         "/build/main_build/runtime.5ad829b3.js",
+<<<<<<< HEAD
         "/build/main_build/470.24654711.js",
         "/build/main_build/679.47b4ca37.js",
         "/build/main_build/app.755fff0d.js"
 >>>>>>> cfb4dea7 (Modification cluster Skill #274)
+=======
+        "/build/main_build/957.37173e84.js",
+        "/build/main_build/71.c27958f6.js",
+        "/build/main_build/app.f7f682b1.js"
+>>>>>>> ead397b8 (Mutualisation de code update #274)
       ],
       "css": [
-        "/build/main_build/470.d51b8d97.css",
-        "/build/main_build/679.ca2d41b0.css",
+        "/build/main_build/957.86bb35fd.css",
+        "/build/main_build/71.8936c4ab.css",
         "/build/main_build/app.fe91ef95.css"
 >>>>>>> 37d35ea7 (Remplacement de ckeditor en react #274)
 >>>>>>> 9ea4eef8 (Remplacement de ckeditor en react #274)
@@ -78,6 +84,7 @@
         "/build/main_build/admin.dc5cd775.js"
 =======
         "/build/main_build/runtime.5ad829b3.js",
+<<<<<<< HEAD
         "/build/main_build/470.24654711.js",
         "/build/main_build/545.70cff37b.js",
         "/build/main_build/679.47b4ca37.js",
@@ -94,6 +101,17 @@
 =======
         "/build/main_build/admin.cd4c06a5.css"
 >>>>>>> cfb4dea7 (Modification cluster Skill #274)
+=======
+        "/build/main_build/957.37173e84.js",
+        "/build/main_build/954.16aef362.js",
+        "/build/main_build/71.c27958f6.js",
+        "/build/main_build/admin.dc12fce9.js"
+      ],
+      "css": [
+        "/build/main_build/957.86bb35fd.css",
+        "/build/main_build/71.8936c4ab.css",
+        "/build/main_build/admin.ae1ea87c.css"
+>>>>>>> ead397b8 (Mutualisation de code update #274)
       ]
     },
     "wiki": {

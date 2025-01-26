@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { checkStatus, isJsonResponse } from './../../js/fetch.js'
 import { formElement } from '../utils.js';
 import AutocompleteFilter from '../components/AutocompleteFilterType';
@@ -13,14 +13,8 @@ export default function AddSkill({edit, size, route, handleEditChange, update, m
     const [clearCategory, setClearCategory] = useState(false);
     const [level, setLevel] = useState(null);
     const [clearLevel, setClearLevel] = useState(false);
-    
-    useEffect(() => {
-        
-        
-    }, [])
 
     const load = () => {
-        console.log('useEffect', edit, route, loaded)
         if (edit && route && !loaded) {
             fetch(route)
                 .then(checkStatus)
@@ -53,7 +47,6 @@ export default function AddSkill({edit, size, route, handleEditChange, update, m
         .then(isJsonResponse)
         .then((response) => response.json())
         .then((json)=> {
-            console.log('response', json)
             if (json.success) {
                 update(json.data)
                 hide(); 
@@ -96,7 +89,6 @@ export default function AddSkill({edit, size, route, handleEditChange, update, m
     }
 
     const ModalContent = () => {
-        console.log('loaded', form)
         load();
         if (loaded) {
             return (
@@ -106,7 +98,7 @@ export default function AddSkill({edit, size, route, handleEditChange, update, m
                         <h4 className="modal-title">{ title }</h4>
                     </div>
                     <form action={form.action} onSubmit={(event) => onSubmit(event)}>
-            <div className="modal-body">
+                        <div className="modal-body">
                             <div className="row">
                                 <AutocompleteFilter entityName="skill_category" pararms={[]} value={category} label="Catégorie" placeholder="Toutes les catégories" handleChange={handleChangeCategory} isClear={clearCategory} handleClear={handleChangeClearCategory} className="col-md-6 form-group"/>
                                 <AutocompleteFilter entityName="level" pararms={[]} value={level} label="Niveau" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-6 form-group"/>
