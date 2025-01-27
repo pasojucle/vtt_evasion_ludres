@@ -206,7 +206,8 @@ class BikeRideRepository extends ServiceEntityRepository
                     (new Expr())->gte('br.maxAge', ':age'),
                     (new Expr())->isNull('br.maxAge'),
                 ),
-                (new Expr())->notIn('br.id', $bikeRides->getDql())
+                (new Expr())->notIn('br.id', $bikeRides->getDql()),
+                (new Expr())->gte('br.startAt', ':today'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('today', $today),
