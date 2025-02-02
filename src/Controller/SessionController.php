@@ -14,6 +14,7 @@ use App\Repository\SurveyResponseRepository;
 use App\Service\CacheService;
 use App\Service\MessageService;
 use App\Service\SessionService;
+use App\Service\SurveyService;
 use App\UseCase\Session\GetFormSession;
 use App\UseCase\Session\SetSession;
 use App\UseCase\Session\UnregistrableSessionMessage;
@@ -34,6 +35,7 @@ class SessionController extends AbstractController
         private readonly SessionService $sessionService,
         private readonly GetFormSession $getFormSession,
         private readonly SetSession $setSession,
+        private readonly SurveyService $surveyService,
     ) {
     }
 
@@ -56,6 +58,7 @@ class SessionController extends AbstractController
     }
 
     #[Route('/mon-compte/rando/inscription/{bikeRide}', name: 'session_add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function sessionAdd(
         Request $request,
         UnregistrableSessionMessage $unregistrableSessionMessage,
@@ -88,6 +91,7 @@ class SessionController extends AbstractController
     }
 
     #[Route('/mon-compte/rando/disponibilte/{session}', name: 'session_availability_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function sessionAvailabilityEdit(
         Request $request,
         Session $session
@@ -106,11 +110,10 @@ class SessionController extends AbstractController
     }
 
     #[Route('/mon-compte/rando/supprime/{session}', name: 'session_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function sessionDelete(
         FormFactoryInterface $formFactory,
         Request $request,
-        SurveyResponseRepository $surveyResponseRepository,
-        RespondentRepository $respondentRepository,
         MessageService $messageService,
         Session $session
     ) {
@@ -126,8 +129,7 @@ class SessionController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             if ($survey = $session->getCluster()->getBikeRide()->getSurvey()) {
-                $surveyResponseRepository->deleteResponsesByUserAndSurvey($session->getUser(), $survey);
-                $respondentRepository->deleteResponsesByUserAndSurvey($session->getUser(), $survey);
+                $this->surveyService->deleteResponses($session->getUser(), $survey);
             }
             $this->cacheService->deleteCacheIndex($session->getCluster());
             $this->entityManager->remove($session);

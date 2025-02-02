@@ -45,19 +45,19 @@
                             </a>
                         </div>
                         <div>
-                            {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum::ORDERED') %}
-                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::VALIDED').value})}}" title="Valider">
+                            {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').ORDERED %}
+                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED.value})}}" title="Valider">
                                     <div><i class="fas fa-check"></i> Valider</div>
                                 </a>
                             {% endif %}
-                            {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum::VALIDED') %}
-                                <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum::COMPLETED').value})}}" title="Cloturer">
+                            {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED %}
+                                <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED.value})}}" title="Cloturer">
                                     <div><i class="fas fa-check"></i> Cloturer</div>
                                 </a>
                             {% endif %}
                         </div>
                         <div>
-                            {% if order.status < enum('App\\Entity\\Enum\\OrderStatusEnum::COMPLETED') %}
+                            {% if order.status < enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED %}
                                 <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
                                     <i class="fas fa-times"></i>
                                 </a>

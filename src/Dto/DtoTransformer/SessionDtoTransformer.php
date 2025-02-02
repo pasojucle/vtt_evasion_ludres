@@ -31,7 +31,7 @@ class SessionDtoTransformer
         if ($session) {
             $sessionDto->id = $session->getId();
             $sessionDto->availability = $this->getAvailability($session->getAvailability());
-            $sessionDto->bikeRide = $this->bikeRideDtoTransformer->getHeaderFromEntity($session->getCluster()->getBikeRide());
+            $sessionDto->bikeRide = $this->bikeRideDtoTransformer->getHeaderFromEntity(bikeRide: $session->getCluster()->getBikeRide(), availability: $session->getAvailability());
             $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());

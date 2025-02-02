@@ -9,6 +9,8 @@ use App\Entity\Survey;
 use App\Entity\User;
 use App\Repository\HistoryRepository;
 use App\Repository\LogRepository;
+use App\Repository\RespondentRepository;
+use App\Repository\SurveyResponseRepository;
 use App\Service\RouterService;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
@@ -20,9 +22,10 @@ class SurveyService
         private readonly LogRepository $logRepository,
         private readonly RouterService $routerService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly SurveyResponseRepository $surveyResponseRepository,
+        private readonly RespondentRepository $respondentRepository,
     ) {
     }
-
 
     public function getHistory(Survey $survey, User $user): array
     {
@@ -43,5 +46,11 @@ class SurveyService
             }
         }
         return null;
+    }
+
+    public function deleteResponses(User $user, $survey): void
+    {
+        $this->surveyResponseRepository->deleteResponsesByUserAndSurvey($user, $survey);
+        $this->respondentRepository->deleteResponsesByUserAndSurvey($user, $survey);
     }
 }

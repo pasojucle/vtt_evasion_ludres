@@ -33,7 +33,7 @@
                         {% if field is defined %}
                             {% for  child in field.children %}
                                 <div class="inputGroup {{ child.vars.value == field.vars.value ? 'check' : 'ballot' }}">
-                                    {{ form_widget(child)}}
+                                    {{ form_widget(child, {'attr':{'data-toggle': 'sessionResponse', 'data-target': '#responsesContainer',}})}}
                                     {{ form_label(child)}}
                                 </div>
                             {% endfor %}
@@ -43,16 +43,18 @@
                         {{ form_widget(form.session.practice) }}
                     {% endif %}
                     {% if form.responses is defined and bikeRide.survey %}
-                        <div class="separator"></div>
-                        <h2>Sondage</h2>
-                        {{ bikeRide.survey.content|raw }}
-                        <br>
-                        <div class="form-group row">
-                            {% for response in form.responses.surveyResponses %}
-                                <div class="col-md-6 col-xs-12">{{ response.vars.value.surveyIssue.content }}</div>
-                                <div class="col-md-6 col-xs-12">{{ form_widget(response)}}</div>
-                            {% endfor %}
+                        <div id="responsesContainer" class="{{ form.responses.vars.attr.class }}">
+                            <div class="separator"></div>
+                            <h2>Sondage</h2>
+                            {{ bikeRide.survey.content|raw }}
+                            <br>
+                            <div class="form-group row">
+                                {% for response in form.responses.surveyResponses %}
+                                    <div class="col-md-6 col-xs-12">{{ response.vars.value.surveyIssue.content }}</div>
+                                    <div class="col-md-6 col-xs-12">{{ form_widget(response)}}</div>
+                                {% endfor %}
 
+                            </div>
                         </div>
                     {% endif %}
                     {% if form.session.availability is defined %}

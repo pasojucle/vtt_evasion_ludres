@@ -7,6 +7,7 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRide;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
@@ -79,7 +80,7 @@ class BikeRideDtoTransformer
         return $bikeRideDto;
     }
 
-    public function getHeaderFromEntity(?BikeRide $bikeRide, ?array $surveyHistories = null): BikeRideDto
+    public function getHeaderFromEntity(?BikeRide $bikeRide, ?array $surveyHistories = null, ?AvailabilityEnum $availability = AvailabilityEnum::REGISTERED): BikeRideDto
     {
         $bikeRideDto = new BikeRideDto();
         if ($bikeRide) {
@@ -90,7 +91,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->endAt = $bikeRide->getEndAt();
             $bikeRideDto->bikeRideType = $this->bikeRideTypeDtoTransformer->fromEntity($bikeRide->getBikeRideType());
             $bikeRideDto->content = $bikeRide->getContent();
-            $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey(), $surveyHistories) : null;
+            $bikeRideDto->survey = (AvailabilityEnum::REGISTERED === $availability && $bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey(), $surveyHistories) : null;
             $bikeRideDto->period = $this->bikeRideService->getPeriod($bikeRide);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
             $bikeRideDto->isMultiClusters = 1 < $bikeRide->getClusters()->count();

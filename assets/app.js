@@ -35,4 +35,5 @@ import './js/js-datepicker.js';
 import './js/form.js';
 import './js/slideshow.js';
 import './js/notification.js';
+import './js/extraToggle.js'
 registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));

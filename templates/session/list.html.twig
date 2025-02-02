@@ -45,7 +45,7 @@
                                             <a href="{{ path('session_availability_edit',{'session': session.sessionId}) }}" class="btn btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>
                                         {% endif %}
                                     </div>
-                                    {% if session.bikeRide.survey is not null or session.bikeRide.bikeRideType.isShowMemberList %}
+                                        {% if session.bikeRide.survey is not null or session.bikeRide.bikeRideType.isShowMemberList %}
                                         <div class="info-dropdown grid-info" data-target="bike-ride-content">
                                             {% if session.bikeRide.survey is not null %}
                                                 <p class='ck-content'>{{ session.bikeRide.survey.content|raw }}</p>

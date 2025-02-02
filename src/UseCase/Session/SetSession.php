@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\UseCase\Session;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Respondent;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Service\CacheService;
 use App\Service\LogService;
 use App\Service\NotificationService;
+use App\Service\SurveyService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
@@ -24,15 +26,17 @@ class SetSession
         private readonly NotificationService $notificationService,
         private readonly CacheService $cacheService,
         private readonly LogService $logService,
+        private readonly SurveyService $surveyService,
     ) {
     }
 
     public function add(FormInterface $form, User $user, BikeRide $bikeRide): void
     {
+        /** @var Session $session */
         $session = $form->get('session')->getData();
         $user->addSession($session);
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
-        if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {
+        if (AvailabilityEnum::REGISTERED === $session->getAVailability() && $responses && !empty($surveyResponses = $responses['surveyResponses'])) {
             $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
         }
         $this->confirmationSession->execute($session);
@@ -46,28 +50,39 @@ class SetSession
 
     public function edit(FormInterface $form, Session $session): void
     {
+        /** @var Session $session */
         $session = $form->get('session')->getData();
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
         $bikeRide = $session->getCluster()->getBikeRide();
         $user = $session->getUser();
         if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {
-            $unitOfWork = $this->entityManager->getUnitOfWork();
-            $entityState = UnitOfWork::STATE_MANAGED;
-            foreach ($surveyResponses as $response) {
-                $responseEntityState = $unitOfWork->getEntityState($response);
-                if (UnitOfWork::STATE_MANAGED < $responseEntityState) {
-                    $entityState = $responseEntityState;
-                    break;
-                }
-            }
-            if (UnitOfWork::STATE_MANAGED < $entityState) {
-                $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
-            }
+            $this->editSurveyResponses($user, $bikeRide, $surveyResponses, $session->getAvailability());
         }
         $this->entityManager->flush();
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->confirmationSession->execute($session);
         $this->writeLog($bikeRide, $user);
+    }
+
+    private function editSurveyResponses(User $user, BikeRide $bikeRide, array $surveyResponses, AvailabilityEnum $availability): void
+    {
+        if (AvailabilityEnum::REGISTERED !== $availability) {
+            $this->surveyService->deleteResponses($user, $bikeRide->getSurvey());
+            return;
+        }
+
+        $unitOfWork = $this->entityManager->getUnitOfWork();
+        $entityState = UnitOfWork::STATE_MANAGED;
+        foreach ($surveyResponses as $response) {
+            $responseEntityState = $unitOfWork->getEntityState($response);
+            if (UnitOfWork::STATE_MANAGED < $responseEntityState) {
+                $entityState = $responseEntityState;
+                break;
+            }
+        }
+        if (UnitOfWork::STATE_MANAGED < $entityState) {
+            $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
+        }
     }
 
     private function addSurveyResponses(array $surveyResponses, User $user, BikeRide $bikeRide): void
