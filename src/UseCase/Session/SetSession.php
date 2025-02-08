@@ -6,12 +6,14 @@ namespace App\UseCase\Session;
 
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Level;
 use App\Entity\Respondent;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Service\CacheService;
 use App\Service\LogService;
 use App\Service\NotificationService;
+use App\Service\SessionService;
 use App\Service\SurveyService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +29,7 @@ class SetSession
         private readonly CacheService $cacheService,
         private readonly LogService $logService,
         private readonly SurveyService $surveyService,
+        private readonly SessionService $sessionService,
     ) {
     }
 
@@ -64,7 +67,39 @@ class SetSession
         $this->writeLog($bikeRide, $user);
     }
 
-    private function editSurveyResponses(User $user, BikeRide $bikeRide, array $surveyResponses, AvailabilityEnum $availability): void
+    public function addFromdmin(array $data, User $user, BikeRide $bikeRide): void
+    {
+        $userSession = new Session();
+        $userCluster = $data['cluster'];
+        if (null === $userCluster) {
+            $userCluster = $this->sessionService->getCluster($bikeRide, $user, $bikeRide->getClusters());
+        }
+        $userSession->setUser($user)
+            ->setCluster($userCluster);
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
+            $userSession->setAvailability(AvailabilityEnum::REGISTERED);
+        }
+        $user->addSession($userSession);
+        $responses = array_key_exists('responses', $data) ? $data['responses'] : null;
+        if ($responses && !empty($surveyResponses = $responses['surveyResponses'])) {
+            $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
+        }
+        $this->entityManager->persist($userSession);
+        $this->cacheService->deleteCacheIndex($userSession->getCluster());
+        $this->entityManager->flush();
+    }
+
+    public function delete(Session $session): void
+    {
+        if ($survey = $session->getCluster()->getBikeRide()->getSurvey()) {
+            $this->surveyService->deleteResponses($session->getUser(), $survey);
+        }
+        $this->cacheService->deleteCacheIndex($session->getCluster());
+        $this->entityManager->remove($session);
+        $this->entityManager->flush();
+    }
+
+    private function editSurveyResponses(User $user, BikeRide $bikeRide, array $surveyResponses, ?AvailabilityEnum $availability): void
     {
         if (AvailabilityEnum::REGISTERED !== $availability) {
             $this->surveyService->deleteResponses($user, $bikeRide->getSurvey());

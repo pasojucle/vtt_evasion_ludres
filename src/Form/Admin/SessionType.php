@@ -8,6 +8,7 @@ use App\Entity\Cluster;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Licence;
 use App\Form\HiddenClusterType;
+use App\Form\SurveyResponsesType;
 use App\Service\SeasonService;
 use App\Service\SessionService;
 use App\Validator\SessionUniqueMember;
@@ -68,6 +69,7 @@ class SessionType extends AbstractType
                         new NotBlank(),
                         new SessionUniqueMember(),
                     ],
+                    'required' => true,
                 ]);
         };
     
@@ -93,6 +95,13 @@ class SessionType extends AbstractType
                     ;
             }
 
+            if (array_key_exists('responses', $data)) {
+                $form
+                    ->add('responses', SurveyResponsesType::class, [
+                        'label' => false,
+                    ]);
+            }
+
             $formModifier($form, $data['season']);
         });
     
@@ -100,7 +109,7 @@ class SessionType extends AbstractType
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
                 $season = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $season);
+                $formModifier($event->getForm()->getParent(), $season, );
             }
         );
     }

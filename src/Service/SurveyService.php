@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\BikeRide;
 use App\Entity\History;
 use App\Entity\Survey;
+use App\Entity\SurveyResponse;
 use App\Entity\User;
 use App\Repository\HistoryRepository;
 use App\Repository\LogRepository;
@@ -52,5 +54,25 @@ class SurveyService
     {
         $this->surveyResponseRepository->deleteResponsesByUserAndSurvey($user, $survey);
         $this->respondentRepository->deleteResponsesByUserAndSurvey($user, $survey);
+    }
+
+    public function getSurveyResponses(BikeRide $bikeRide, array $surveyResponses = []): ?array
+    {
+        if (!$bikeRide->getSurvey() || $bikeRide->getSurvey()->getSurveyIssues()->isEmpty()) {
+            return $surveyResponses;
+        }
+
+        if (empty($surveyResponses)) {
+            $uuid = uniqid('', true);
+            foreach ($bikeRide->getSurvey()->getSurveyIssues() as $issue) {
+                $response = new SurveyResponse();
+                $response->setSurveyIssue($issue)
+                    ->setUuid($uuid)
+                ;
+                $surveyResponses[] = $response;
+            }
+        }
+
+        return $surveyResponses;
     }
 }

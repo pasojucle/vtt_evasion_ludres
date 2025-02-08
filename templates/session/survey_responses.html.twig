@@ -1,0 +1,15 @@
+{% if form.responses is defined and bikeRide.survey %}
+    <div id="responsesContainer" {% if form.responses.vars.attr.class is defined %}class="{{ form.responses.vars.attr.class }}"{% endif %}>
+        <div class="separator"></div>
+        <h2>Sondage</h2>
+        {{ bikeRide.survey.content|raw }}
+        <br>
+        <div class="form-group row">
+            {% for response in form.responses.surveyResponses %}
+                <div class="col-md-6 col-xs-12">{{ response.vars.value.surveyIssue.content }}</div>
+                <div class="col-md-6 col-xs-12">{{ form_widget(response)}}</div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endif %}

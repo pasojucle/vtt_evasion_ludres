@@ -9,17 +9,12 @@ use App\Entity\BikeRide;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\ContentRepository;
-use App\Repository\RespondentRepository;
-use App\Repository\SurveyResponseRepository;
-use App\Service\CacheService;
 use App\Service\MessageService;
 use App\Service\SessionService;
-use App\Service\SurveyService;
 use App\UseCase\Session\GetFormSession;
 use App\UseCase\Session\SetSession;
 use App\UseCase\Session\UnregistrableSessionMessage;
 use App\UseCase\User\GetBikeRides;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,12 +25,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SessionController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly CacheService $cacheService,
         private readonly SessionService $sessionService,
         private readonly GetFormSession $getFormSession,
         private readonly SetSession $setSession,
-        private readonly SurveyService $surveyService,
     ) {
     }
 
@@ -128,12 +120,7 @@ class SessionController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            if ($survey = $session->getCluster()->getBikeRide()->getSurvey()) {
-                $this->surveyService->deleteResponses($session->getUser(), $survey);
-            }
-            $this->cacheService->deleteCacheIndex($session->getCluster());
-            $this->entityManager->remove($session);
-            $this->entityManager->flush();
+            $this->setSession->delete($session);
 
             $this->addFlash('success', 'Votre désinscription à bien été prise en compte');
 

@@ -17,6 +17,8 @@ use App\Repository\SessionRepository;
 use App\Service\CacheService;
 use App\Service\SeasonService;
 use App\Service\SessionService;
+use App\Service\SurveyService;
+use App\UseCase\Session\SetSession;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -29,11 +31,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SessionController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private CacheService $cacheService,
-        private SessionService $sessionService,
-        private SessionRepository $sessionRepository,
-        private BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly CacheService $cacheService,
+        private readonly SessionService $sessionService,
+        private readonly SurveyService $surveyService,
+        private readonly SessionRepository $sessionRepository,
+        private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
+        private readonly SetSession $setSession,
     ) {
     }
 
@@ -100,7 +104,12 @@ class SessionController extends AbstractController
     ): Response {
         $clusters = $bikeRide->getClusters();
         $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
-        $form = $this->createForm(SessionType::class, ['season' => 'SEASON_' . $seasonService->getCurrentSeason()], [
+        $data = ['season' => 'SEASON_' . $seasonService->getCurrentSeason()];
+        if ($bikeRide->getSurvey()) {
+            $data['responses'] = ['surveyResponses' => $this->surveyService->getSurveyResponses($bikeRide)];
+        }
+
+        $form = $this->createForm(SessionType::class, $data, [
             'filters' => ['bikeRide' => $bikeRide->getId(), 'is_final_licence' => false, ],
             'bikeRide' => $bikeRide,
         ]);
@@ -111,22 +120,8 @@ class SessionController extends AbstractController
             $user = $data['user'];
 
             if (null === $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {
-                $userSession = new Session();
-                $userCluster = $data['cluster'];
-                if (null === $userCluster) {
-                    $userCluster = $this->sessionService->getCluster($bikeRide, $user, $clusters);
-                }
-                $userSession->setUser($user)
-                    ->setCluster($userCluster);
-                if ($bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME) {
-                    $userSession->setAvailability(AvailabilityEnum::REGISTERED);
-                }
-                $user->addSession($userSession);
-                $this->entityManager->persist($userSession);
-
-                $this->cacheService->deleteCacheIndex($userSession->getCluster());
-
-                $this->entityManager->flush();
+                $this->setSession->addFromdmin($data, $user, $bikeRide);
+                
                 $this->addFlash('success', 'Le participant a bien été inscrit');
 
                 $this->sessionService->checkEndTesting($user);
@@ -152,11 +147,7 @@ class SessionController extends AbstractController
     ) {
         $userDto = $userDtoTransformer->fromEntity($session->getUser());
         $bikeRide = $session->getCluster()->getBikeRide();
-
-        $this->entityManager->remove($session);
-        $this->entityManager->flush();
-
-        $this->cacheService->deleteCacheIndex($session->getCluster());
+        $this->setSession->delete($session);
 
         $this->addFlash('success', $userDto->member->fullName . ' à bien été désinscrit');
 

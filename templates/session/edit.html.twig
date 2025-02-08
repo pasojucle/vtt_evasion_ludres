@@ -42,21 +42,7 @@
                     {% if form.session.practice is defined %}
                         {{ form_widget(form.session.practice) }}
                     {% endif %}
-                    {% if form.responses is defined and bikeRide.survey %}
-                        <div id="responsesContainer" class="{{ form.responses.vars.attr.class }}">
-                            <div class="separator"></div>
-                            <h2>Sondage</h2>
-                            {{ bikeRide.survey.content|raw }}
-                            <br>
-                            <div class="form-group row">
-                                {% for response in form.responses.surveyResponses %}
-                                    <div class="col-md-6 col-xs-12">{{ response.vars.value.surveyIssue.content }}</div>
-                                    <div class="col-md-6 col-xs-12">{{ form_widget(response)}}</div>
-                                {% endfor %}
-
-                            </div>
-                        </div>
-                    {% endif %}
+                    {% include 'session/survey_responses.html.twig' %}
                     {% if form.session.availability is defined %}
                         <div class="separator"></div>
                         {% include('session/registered_list_by_type.html.twig') %}
