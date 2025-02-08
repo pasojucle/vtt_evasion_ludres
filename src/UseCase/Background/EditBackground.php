@@ -35,12 +35,10 @@ class EditBackground
                     }
                 }
             }
+            $this->makeAllSizes($background);
+            $this->entityManager->persist($background);
+            $this->entityManager->flush();
         }
-
-        $this->makeAllSizes($background);
-
-        $this->entityManager->persist($background);
-        $this->entityManager->flush();
     }
 
     public function makeAllSizes(Background $background): void
