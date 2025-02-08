@@ -64,7 +64,8 @@ class GetSurvey
         /** @var SurveyIssue $originalIssue */
         foreach ($originalSurvey->getSurveyIssues() as $originalIssue) {
             $issue = new SurveyIssue();
-            $issue->setContent($originalIssue->getContent());
+            $issue->setContent($originalIssue->getContent())
+                ->setResponseType($originalIssue->getResponseType());
             $this->entityManager->persist($issue);
             $survey->addSurveyIssue($issue);
         }
