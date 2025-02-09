@@ -1,37 +1,47 @@
-  .radio-group input[type="radio"] {
-    display: none;
-  }
-  .radio-group input[type="radio"] + label {
-    position: relative;
-    padding-left: 1.3rem;
-  }
-  .radio-group input[type="radio"] + label::before,
-  .radio-group input[type="radio"] + label::after {
-    display: block;
-    position: absolute;
-    box-sizing: border-box;
-    bottom: 0;
-    left: 0;
-    content:'';
-    width: 1rem;
-    height: 1rem; 
-    border-radius: 1rem;
-  }
-  .radio-group input[type="radio"] + label::before {
-    border: 2px solid var(--primary-color-darker);
-    /* background-color: #eee; */
-  }
-  .radio-group input[type=radio]:disabled+label:before {
-    border: 2px solid var(--gray-color);
-    opacity: 0.4;
-  }
-  .radio-group input[type="radio"]:checked + label::after {
-    content: '\f058';
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    color: var(--primary-color-darker);
-  }
-  .radio-group input[type="radio"]:disabled + label, .radio-group input[type="radio"]:disabled+ label::after {
-    color: var(--gray-color);
-    opacity: .4;
-  }
+.radio-group input[type="radio"] {
+  display: none;
+}
+.radio-group input[type="radio"] + label {
+  position: relative;
+  padding-left: 1.3rem;
+}
+.radio-group input[type="radio"] + label::before,
+.radio-group input[type="radio"] + label::after {
+  display: block;
+  position: absolute;
+  box-sizing: border-box;
+  bottom: 0;
+  left: 0;
+  content:'';
+  width: 1rem;
+  height: 1rem; 
+  border-radius: 1rem;
+}
+.radio-group input[type="radio"] + label::before {
+  border: 2px solid var(--primary-color-darker);
+  /* background-color: #eee; */
+}
+.radio-group input[type=radio]:disabled+label:before,
+.radio-group input[type=radio].like-disabled +label:before {
+  border: 2px solid var(--gray-color);
+  opacity: 0.4;
+}
+.radio-group input[type=radio].like-disabled +label {
+  pointer-events: none;
+}
+input[type="radio"].like-disabled {
+  border-color: rgba(118, 118, 118, 0.3);
+  cursor: default;
+  pointer-events: none;
+}
+
+.radio-group input[type="radio"]:checked + label::after {
+  content: '\f058';
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  color: var(--primary-color-darker);
+}
+.radio-group input[type="radio"]:disabled + label, .radio-group input[type="radio"]:disabled+ label::after {
+  color: var(--gray-color);
+  opacity: .4;
+}

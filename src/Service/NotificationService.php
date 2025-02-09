@@ -10,7 +10,6 @@ use App\Entity\Documentation;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
-use App\Entity\RegistrationStep;
 use App\Entity\Session;
 use App\Entity\Survey;
 use App\Entity\User;
@@ -81,6 +80,20 @@ class NotificationService
             'route' => 'user_registration_form',
             'routeParams' => ['step' => 1],
             'labelBtn' => 'S\'incrire'
+        ];
+    }
+
+    public function setSurveyChanged(int $survey): array
+    {
+        $survey = $this->entityManager->getRepository(Survey::class)->find($survey);
+
+        return [
+            'index' => sprintf('NOTIFY_SURVEY_CHANGED_%s', $survey->getId()),
+            'title' => 'Notifier les changements du sondage',
+            'content' => sprintf('Le sondage <b>%s</b> a été modifié alors que certain adhérents ont déja répondu.</p><p>Voulez vous leur notifier les changements ?</p>', $survey->getTitle()),
+            'route' => 'admin_survey_history_notify',
+            'routeParams' => ['survey' => $survey->getId()],
+            'labelBtn' => 'Notifier les changements',
         ];
     }
 

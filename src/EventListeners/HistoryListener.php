@@ -9,6 +9,7 @@ use App\Entity\Health;
 use App\Entity\History;
 use App\Entity\Identity;
 use App\Entity\Licence;
+use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\User;
@@ -16,11 +17,15 @@ use App\Service\SeasonService;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\PostPersist;
+use Doctrine\ORM\UnitOfWork;
 use ReflectionClass;
 
 #[AsDoctrineListener(event: Events::postUpdate)]
+#[AsDoctrineListener(event: Events::postPersist)]
 class HistoryListener
 {
     private EntityManagerInterface $objectManager;
@@ -28,6 +33,21 @@ class HistoryListener
     public function __construct(
         private readonly SeasonService $seasonService,
     ) {
+    }
+
+    public function postPersist(PostPersistEventArgs $event): void
+    {
+        $entity = $event->getObject();
+        if ($entity instanceof SurveyIssue) {
+            $reflexionClass = new ReflectionClass($entity);
+            $className = $reflexionClass->getShortName();
+            $this->objectManager = $event->getObjectManager();
+            $respondents = $this->objectManager->getRepository(Respondent::class)->findBySurvey($entity->getSurvey());
+            if (!empty($respondents)) {
+                $changeSet = ['newIssue' => $entity->getContent()];
+                $this->addSurveyHistory($className, $entity->getSurvey(), $changeSet);
+            }
+        }
     }
 
     public function postUpdate(PostUpdateEventArgs $event): void
@@ -38,7 +58,6 @@ class HistoryListener
         $this->objectManager = $event->getObjectManager();
         $unitOfWork = $this->objectManager->getUnitOfWork();
         $changeSet = $unitOfWork->getEntityChangeSet($entity);
-        $className = $reflexionClass->getShortName();
 
         if ($entity instanceof Address || $entity instanceof Health || $entity instanceof Identity || $entity instanceof Licence) {
             $this->addRegistrationHistory($reflexionClass, $className, $entity, $changeSet);

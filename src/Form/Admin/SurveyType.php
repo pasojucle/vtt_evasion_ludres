@@ -124,10 +124,10 @@ class SurveyType extends AbstractType
                         'Afficher le sondage à l\'inscription à une sortie' => self::DISPLAY_BIKE_RIDE,
                         'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_MEMBER_LIST,
                     ],
-                    'choice_attr' => function () {
+                    'choice_attr' => function () use ($options) {
                         return [
                             'data-modifier' => 'surveyRestriction',
-                            'class' => 'form-modifier',
+                            'class' => ($options['display_disabled']) ? 'like-disabled' : 'form-modifier',
                         ];
                     },
                     'data' => match (true) {
@@ -135,7 +135,6 @@ class SurveyType extends AbstractType
                         !$survey->getMembers()->isEmpty() => self::DISPLAY_MEMBER_LIST,
                         default => self::DISPLAY_ALL_MEMBERS,
                     },
-                    'disabled' => $options['display_disabled'],
                 ]);
         });
 

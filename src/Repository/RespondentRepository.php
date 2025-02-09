@@ -80,4 +80,16 @@ class RespondentRepository extends ServiceEntityRepository
         ->getResult()
     ;
     }
+
+    public function findBySurvey(Survey $survey): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere(
+                (new Expr())->eq('v.survey', ':survey'),
+            )
+            ->setParameter('survey', $survey)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

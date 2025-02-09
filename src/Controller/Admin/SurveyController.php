@@ -230,35 +230,20 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/history/notify/{survey}', name: 'admin_survey_history_notify', methods: ['GET', 'POST'])]
+    #[Route('/history/notify/{survey}', name: 'admin_survey_history_notify', methods: ['GET'])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
     public function adminNotifySurveyHistory(
         Request $request,
         Survey $survey,
     ): jsonResponse|Response {
-        $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_survey_history_notify', [
-                'survey' => $survey->getId(),
-            ]),
-        ]);
-
-        $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey($survey->getId());
-            /** @var History $history */
-            foreach ($histories as $history) {
-                $history->setNotify(true);
-            }
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_surveys');
+        $histories = $this->entityManager->getRepository(History::class)->findNotifiableBySurvey($survey->getId());
+        /** @var History $history */
+        foreach ($histories as $history) {
+            $history->setNotify(true);
         }
+        $this->entityManager->flush();
+        $this->addFlash('success', 'La notification est bien activée');
 
-        return new JsonResponse([
-            'modal' => $this->renderView('survey/admin/history.modal.html.twig', [
-                'survey' => $survey,
-                'form' => $form->createView(),
-            ]),
-        ]);
+        return $this->redirectToRoute('admin_surveys');
     }
 }

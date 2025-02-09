@@ -642,6 +642,7 @@ main:not(.admin) {
     font-weight: 700;
 }
 .form-group > input:disabled,
+.form-group > input.like-disabled,
 .form-group > select:disabled,
 .form-group > textarea:disabled,
 .form-group-inline > input:disabled,

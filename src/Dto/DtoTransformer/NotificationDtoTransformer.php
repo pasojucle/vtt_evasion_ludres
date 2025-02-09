@@ -120,6 +120,8 @@ class NotificationDtoTransformer
         }
         if (array_key_exists('url', $data)) {
             $notificationDto->url = $data['url'];
+        }
+        if (array_key_exists('target', $data)) {
             $notificationDto->target = $data['target'];
         }
 

@@ -196,7 +196,7 @@ class GetList
         }
         $this->notificationService->clear();
         return match ($refererNotification['entity']) {
-            'Survey' => $this->notificationService->getSurveyChanged($refererNotification['entityId']),
+            'Survey' => $this->notificationService->setSurveyChanged($refererNotification['entityId']),
             'Session' => $this->notificationService->getSessionRegistred($refererNotification['entityId']),
             default => null,
         };
