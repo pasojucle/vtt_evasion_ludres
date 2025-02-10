@@ -9,6 +9,7 @@ use App\Entity\RegistrationStep;
 use Error;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -17,17 +18,28 @@ use Symfony\Component\Mime\Part\File;
 
 class MailerService
 {
+    private Address $clubEmail;
+
     public function __construct(
         private MailerInterface $mailer,
         private ReplaceKeywordsService $replaceKeywords,
         private ParameterService $parameterService,
+        private ParameterBagInterface $parameterBag,
     ) {
+        $this->clubEmail = new Address($this->parameterBag->get('club_email'));
     }
 
     public function sendMailToClub(array $data): bool
     {
+        try {
+            $replyTo = new Address($data['email']);
+        } catch (Exception) {
+            return false;
+        }
+        
         $email = (new TemplatedEmail())
-            ->to(new Address('contact@vttevasionludres.fr'))
+            ->to($this->clubEmail)
+            ->replyTo($replyTo)
             ->subject($data['subject'])
             ->htmlTemplate('email/toClub.html.twig')
             ->context([
@@ -59,20 +71,18 @@ class MailerService
             $content = $this->replaceKeywords->replace($content, $user, RegistrationStep::RENDER_FILE, $additionalParams);
         }
 
-        $error = [
-            'success' => false,
-            'message' => 'Adresse mail manquante ou erronnée',
-        ];
         try {
             $email = new Address($userEmail);
         } catch (Exception) {
-            return $error;
-        } catch (Error) {
-            return $error;
+            return [
+                'success' => false,
+                'message' => 'Adresse mail manquante ou erronnée',
+            ];
         }
 
         $email = (new TemplatedEmail())
             ->to($email)
+            ->replyTo($this->clubEmail)
             ->subject($subject)
             ->htmlTemplate('email/toMember.html.twig')
             ->context([

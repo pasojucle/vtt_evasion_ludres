@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    club_email: '%env(CLUB_EMAIL)%'
     project_directory: '%kernel.project_dir%/'
     timezone: '%env(APP_TIMEZONE)%'
     public_directory: '%kernel.project_dir%/public'
