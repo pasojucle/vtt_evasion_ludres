@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Error;
+use GdImage;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -71,30 +72,40 @@ class UploadService
         list($outputWidth, $outputHeight) = $this->getOutputSize($originWidth, $originHeight, $orientation, $size);
 
         $imageSrc = (IMAGETYPE_JPEG === $type) ? imagecreatefromjpeg($inputPath) : imagecreatefrompng($inputPath);
-        // if (function_exists('exif_read_data')) {
-        //     $exif = exif_read_data($inputPath);
-        //     if($exif && array_key_exists('Orientation', $exif) && 1 !== $orientation = (int) $exif['Orientation']) {
-        //         $deg = match($orientation) {
-        //             3 => 180,
-        //             6 => 270,
-        //             8 => 90,
-        //             default => null
-        //         };
-        //         if ($deg) {
-        //             $rotate = imagerotate($imageSrc, $deg, 0);
-        //             $imageSrc = $rotate;
-        //         }
-        //     }
-        // }
+
         $imageBlack = imagecreatetruecolor($outputWidth, $outputHeight);
 
         imagecopyresampled($imageBlack, $imageSrc, 0, 0, 0, 0, $outputWidth, $outputHeight, $originWidth, $originHeight);
+
+        if (!$imageBlack = $this->imageRotate($inputPath, $imageBlack)) {
+            return false;
+        }
 
         if (!imagejpeg($imageBlack, $outputPath) || !imagepng($imageBlack, $outputPath)) {
             return false;
         }
 
         return true;
+    }
+
+    private function imageRotate(string $inputPath, GdImage $imageBlack): GdImage|false
+    {
+        if (function_exists('exif_read_data')) {
+            $exif = exif_read_data($inputPath);
+            if ($exif && array_key_exists('Orientation', $exif) && 1 !== $orientation = (int) $exif['Orientation']) {
+                $deg = match ($orientation) {
+                    3 => 180,
+                    6 => 270,
+                    8 => 90,
+                    default => null
+                };
+                if ($deg) {
+                    return imagerotate($imageBlack, $deg, 0);
+                }
+            }
+        }
+
+        return $imageBlack;
     }
 
     private function getOrientation(int $originWidth, int $originHeight): int
