@@ -88,7 +88,7 @@ class UploadService
         return true;
     }
 
-    private function imageRotate(string $inputPath, GdImage $imageBlack): GdImage|false
+    public function imageRotate(string $inputPath, GdImage $imageBlack): GdImage|false
     {
         if (function_exists('exif_read_data')) {
             $exif = exif_read_data($inputPath);

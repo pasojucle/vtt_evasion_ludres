@@ -59,20 +59,24 @@ class EditBackground
 
     public function resizeBackground(string $filename, array $positions, int $outputWidth, int $outputHeight, string $outputDir): bool
     {
-        $path = $this->parameterBag->get('backgrounds_directory_path') . $filename;
-        list($originWidth, $originHeight, $type) = getimagesize($path);
+        $inputPath = $this->parameterBag->get('backgrounds_directory_path') . $filename;
+        list($originWidth, $originHeight, $type) = getimagesize($inputPath);
 
         $ratio = ($outputWidth / $outputHeight < $originWidth / $originHeight)
             ? $outputHeight / $originHeight
             : $outputWidth / $originWidth;
 
-        $imageSrc = (IMAGETYPE_JPEG == $type) ? imagecreatefromjpeg($path) : imagecreatefrompng($path);
+        $imageSrc = (IMAGETYPE_JPEG == $type) ? imagecreatefromjpeg($inputPath) : imagecreatefrompng($inputPath);
         $imageBlack = imagecreatetruecolor($outputWidth, $outputHeight);
 
         $this->mkdirIfNotExists($outputDir);
 
         $outputPath = $this->parameterBag->get('backgrounds_directory_path') . $outputDir . DIRECTORY_SEPARATOR . $filename;
         imagecopyresampled($imageBlack, $imageSrc, 0, 0, (int) round($positions['positionX']), (int) round($positions['positionY']), (int) round($originWidth * $ratio), (int) round($originHeight * $ratio), $originWidth, $originHeight);
+
+        if (!$imageBlack = $this->uploadService->imageRotate($inputPath, $imageBlack)) {
+            return false;
+        }
 
         if (!imagejpeg($imageBlack, $outputPath) || !imagepng($imageBlack, $outputPath)) {
             return false;
