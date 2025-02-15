@@ -81,7 +81,6 @@ class ContentController extends AbstractController
     #[Route('/', name: 'splash', methods: ['GET'])]
     public function splah(Request $request): Response
     {
-        dump((bool) $request->cookies->get('skip_splash'));
         if ((bool) $request->cookies->get('skip_splash')) {
             return $this->redirectToRoute('home');
         }
