@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lancement{% endblock %}
+
+{% block background %}
+    {% include 'background/backgrounds.html.twig' with {'alt': 'Lancement'} %}
+{% endblock %}
+
+{% block body %}
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        <div>
+            <a class="btn btn-primary" href="{{ path('home')}}">Passer l'intro</a>
+        </div>
+    </div>
+{% endblock %}

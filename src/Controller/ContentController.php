@@ -46,7 +46,7 @@ class ContentController extends AbstractController
     ) {
     }
 
-    #[Route('/', name: 'home', methods: ['GET'])]
+    #[Route('/accueil', name: 'home', methods: ['GET'])]
     public function home(
         LinkRepository $linkRepository,
         ContentRepository $contentRepository,
@@ -69,12 +69,28 @@ class ContentController extends AbstractController
         ]);
     }
 
-    #[Route('/', name: 'home_post', methods: ['POST'])]
+    #[Route('/', name: 'slash_post', methods: ['POST'])]
+    #[Route('/accueil', name: 'home_post', methods: ['POST'])]
     #[Route('/reglement', name: 'rules_post', methods: ['POST'])]
     #[Route('/notifications', name: 'notification_list_post', methods: ['POST'])]
     public function noRoutePost(): Response
     {
         return new Response(null, Response::HTTP_NOT_FOUND);
+    }
+
+    #[Route('/', name: 'splash', methods: ['GET'])]
+    public function splah(Request $request): Response
+    {
+        dump((bool) $request->cookies->get('skip_splash'));
+        if ((bool) $request->cookies->get('skip_splash')) {
+            return $this->redirectToRoute('home');
+        }
+
+        $splash = $this->contentRepository->findOneByRoute('splash');
+
+        return $this->render('content/splash.html.twig', [
+            'backgrounds' => $splash->getBackgrounds(),
+        ]);
     }
 
     #[Route('/club', name: 'club_overview', methods: ['GET'])]

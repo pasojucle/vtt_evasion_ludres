@@ -24,6 +24,7 @@ import './styles/notification.scss';
 import './styles/reveal.css';
 import './styles/carrousel.css';
 import './styles/verticalStepProgress.css';
+import './styles/bootstrap.scss';
 
 import './js/app.js';
 import './js/navigation.js';

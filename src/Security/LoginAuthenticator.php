@@ -7,6 +7,7 @@ namespace App\Security;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,6 +46,7 @@ class LoginAuthenticator extends AbstractAuthenticator
         $csrfToken = $login['_csrf_token'];
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $licenceNumber);
 
+
         if (!$licenceNumber) {
             throw new CustomUserMessageAuthenticationException('Numéro de licence manquant');
         }
@@ -74,31 +76,33 @@ class LoginAuthenticator extends AbstractAuthenticator
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $request->getSession()->set('user_fullName', $userDto->member->fullName);
 
+        $route = 'home';
+        $params = [];
+
         if ($user instanceof User && $user->isPasswordMustBeChanged()) {
-            return new RedirectResponse($this->urlGenerator->generate('change_password'));
+            $route = 'change_password';
         }
 
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-            if (preg_match('#\/mon-compte\/inscription\/#', $targetPath)) {
-                return new RedirectResponse($this->urlGenerator->generate('user_registration_form', [
-                    'step' => 1,
-                ]));
-            }
-
-            // return new RedirectResponse($targetPath);
+        $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
+        if ($targetPath && preg_match('#\/mon-compte\/inscription\/#', $targetPath)) {
+            $route = 'user_registration_form';
+            $params = ['step' => 1, ];
         }
-
-        // if ($targetPath = $request->getSession()->get('registrationPath')) {
-        //     return new RedirectResponse($targetPath);
-        // }
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
-            return new RedirectResponse($this->urlGenerator->generate('admin_home'));
+            $route = 'admin_home';
         }
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
-        return new RedirectResponse($this->urlGenerator->generate('home'));
+        $response = new RedirectResponse($this->urlGenerator->generate($route, $params));
+
+        $login = $request->request->all('login');
+        if (array_key_exists('skipSplash', $login)) {
+            $response->headers->setcookie(new Cookie('skip_splash', $login['skipSplash'], time() + (24 * 60 * 60 * 30)));
+        } else {
+            $response->headers->clearCookie('skip_splash');
+        }
+
+        return $response;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response

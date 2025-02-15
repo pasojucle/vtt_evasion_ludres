@@ -41,6 +41,11 @@ class LoginType extends AbstractType
                 'required' => false,
                 'block_prefix' => 'customsimplecheck',
             ])
+            ->add('skipSplash', CheckboxType::class, [
+                'label' => 'Afficher directement la page d\'accueil',
+                'required' => false,
+                'block_prefix' => 'customsimplecheck',
+            ])
             ;
     }
 

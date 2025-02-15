@@ -15,23 +15,16 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
         $form = $this->createForm(LoginType::class, [
-            'licenceNumber' => $lastUsername,
+            'licenceNumber' => $authenticationUtils->getLastUsername(),
+            'skipSplash' => (bool) $request->cookies->get('skip_splash'),
         ]);
 
         return $this->render('security/login.html.twig', [
             'form' => $form->createView(),
-            'error' => $error,
+            'error' => $authenticationUtils->getLastAuthenticationError(),
         ]);
     }
 

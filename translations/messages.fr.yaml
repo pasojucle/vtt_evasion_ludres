@@ -121,6 +121,7 @@ link:
 
 content:
   route:
+    splash: Page de lancement
     home: Page d'accueil
     registration_detail: Page Inscription
     club: Page Le club
