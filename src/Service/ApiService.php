@@ -80,7 +80,7 @@ class ApiService
         return null;
     }
 
-    private function getChildren(FormView $form, string $blockPrefix): array
+    private function getChildren(FormView $form, ?string $blockPrefix): array
     {
         $children = [];
         if ('collection' === $blockPrefix) {
