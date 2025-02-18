@@ -8,11 +8,9 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
 use App\Entity\Session;
-use App\Entity\SurveyResponse;
 use App\Entity\User;
 use App\Form\SessionType;
 use App\Repository\SessionRepository;
-use App\Repository\SurveyResponseRepository;
 use App\Service\SessionService;
 use App\Service\SurveyService;
 use App\UseCase\BikeRide\CreateClusters;
@@ -34,7 +32,6 @@ class GetFormSession
         private readonly SessionService $sessionService,
         private readonly IsWritableAvailability $isWritableAvailability,
         private readonly BikeRideDtoTransformer $bikeRideDtoTransformer,
-        private readonly SurveyResponseRepository $surveyResponseRepository,
         private readonly SurveyService $surveyService,
     ) {
     }
@@ -48,7 +45,9 @@ class GetFormSession
             ? $this->sessionService->getSessionsBytype($bikeRide)
             : $this->sessionService->getBikeRideMembers($bikeRide);
 
-        $form = $this->getForm($userSession, $bikeRide, $clusters, $isWritableAvailability);
+        $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyService->getResponsesByUserAndSurvey($user, $bikeRide->getSurvey()) : null;
+
+        $form = $this->getForm($userSession, $bikeRide, $clusters, $isWritableAvailability, $surveyResponses);
 
         $this->setParams($form, $bikeRide, $sessions);
 
@@ -63,7 +62,7 @@ class GetFormSession
         $isWritableAvailability = true;
         $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
 
-        $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyResponseRepository->findResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey()) : null;
+        $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyService->getResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey()) : null;
 
         $surveyHistories = ($surveyResponses) ? $this->surveyService->getHistory($bikeRide->getSurvey(), $session->getUser()) : null;
         $form = $this->getForm($session, $bikeRide, $clusters, $isWritableAvailability, $surveyResponses);
@@ -104,14 +103,14 @@ class GetFormSession
         return $userSession;
     }
 
-    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability, array $surveyResponses = []): FormInterface
+    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability, array $surveyResponses): FormInterface
     {
         /** @var BikeRideType $bikeRideType */
         $bikeRideType = $bikeRide->getBikeRideType();
 
         return $this->formFactory->create(SessionType::class, [
             'session' => $userSession,
-            'responses' => ['surveyResponses' => $this->surveyService->getSurveyResponses($bikeRide, $surveyResponses)],
+            'responses' => ['surveyResponses' => $surveyResponses],
         ], [
             'clusters' => $clusters,
             'is_writable_availability' => $isWritableAvailability,

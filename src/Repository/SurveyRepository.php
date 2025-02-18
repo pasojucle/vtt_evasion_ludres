@@ -46,7 +46,6 @@ class SurveyRepository extends ServiceEntityRepository
                 (new Expr())->eq('s.disabled', 0),
                 (new Expr())->lte('s.startAt', 'CURRENT_DATE()'),
                 (new Expr())->gte('s.endAt', 'CURRENT_DATE()'),
-                (new Expr())->isNull('s.bikeRide'),
                 (new Expr())->orX(
                     (new Expr())->isNull('m'),
                     (new Expr())->eq('m', ':member'),

@@ -10,7 +10,6 @@ use App\Entity\SurveyResponse;
 use App\Entity\User;
 use App\Form\SurveyResponsesType;
 use App\Repository\RespondentRepository;
-use App\Repository\SurveyResponseRepository;
 use App\Service\SurveyService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +20,6 @@ class SetSurveyResponses
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly SurveyResponseRepository $surveyResponseRepository,
         private readonly RespondentRepository $respondentRepository,
         private readonly FormFactoryInterface $formFactory,
         private readonly SurveyService $surveyService,
@@ -37,7 +35,6 @@ class SetSurveyResponses
             return [null, null, null, $message, $this->getRedirect($survey)];
         }
         $respondent = $this->respondentRepository->findOneBySurveyAndUser($survey, $user);
-
         if ($respondent) {
             $histories = $this->surveyService->getHistory($survey, $user);
             return $this->editResponses($request, $survey, $respondent, $user, $message, $histories);
@@ -84,7 +81,7 @@ class SetSurveyResponses
     private function editResponses(Request $request, Survey $survey, Respondent $respondent, User $user, ?array $message, ?array $histories): array
     {
         $form = $this->formFactory->create(SurveyResponsesType::class, [
-            'surveyResponses' => $this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey),
+            'surveyResponses' => $this->surveyService->getResponsesByUserAndSurvey($user, $survey),
         ]);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {

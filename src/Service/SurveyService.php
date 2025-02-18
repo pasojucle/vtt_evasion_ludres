@@ -56,23 +56,41 @@ class SurveyService
         $this->respondentRepository->deleteResponsesByUserAndSurvey($user, $survey);
     }
 
-    public function getSurveyResponses(BikeRide $bikeRide, array $surveyResponses = []): ?array
+    public function getSurveyResponsesFromBikeRide(BikeRide $bikeRide): ?array
     {
         if (!$bikeRide->getSurvey() || $bikeRide->getSurvey()->getSurveyIssues()->isEmpty()) {
-            return $surveyResponses;
+            return [];
         }
 
-        if (empty($surveyResponses)) {
-            $uuid = uniqid('', true);
-            foreach ($bikeRide->getSurvey()->getSurveyIssues() as $issue) {
+        return $this->getSurveyResponses($bikeRide->getSurvey());
+    }
+
+    public function getResponsesByUserAndSurvey(User $user, Survey $survey): array
+    {
+        $responseByIssue = [];
+        /** @var SurveyResponse $response */
+        foreach ($this->surveyResponseRepository->findResponsesByUserAndSurvey($user, $survey) as $response) {
+            $responseByIssue[$response->getSurveyIssue()->getId()] = $response;
+        }
+
+        return $this->getSurveyResponses($survey, $responseByIssue);
+    }
+
+    private function getSurveyResponses(Survey $survey, array $responseByIssue = []): array
+    {
+        $uuid = (!empty($responseByIssue)) ? $responseByIssue[array_key_first($responseByIssue)]->getUuid() : uniqid('', true);
+
+        foreach ($survey->getSurveyIssues() as $issue) {
+            if (!array_key_exists($issue->getId(), $responseByIssue)) {
                 $response = new SurveyResponse();
                 $response->setSurveyIssue($issue)
                     ->setUuid($uuid)
                 ;
-                $surveyResponses[] = $response;
+                $responseByIssue[$issue->getId()] = $response;
+                $this->entityManager->persist($response);
             }
         }
 
-        return $surveyResponses;
+        return $responseByIssue;
     }
 }

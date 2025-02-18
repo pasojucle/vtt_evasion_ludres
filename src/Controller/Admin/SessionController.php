@@ -106,7 +106,7 @@ class SessionController extends AbstractController
         $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
         $data = ['season' => 'SEASON_' . $seasonService->getCurrentSeason()];
         if ($bikeRide->getSurvey()) {
-            $data['responses'] = ['surveyResponses' => $this->surveyService->getSurveyResponses($bikeRide)];
+            $data['responses'] = ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)];
         }
 
         $form = $this->createForm(SessionType::class, $data, [
