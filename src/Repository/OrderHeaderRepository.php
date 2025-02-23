@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Enum\OrderStatusEnum;
-use App\Entity\OrderHeader;
+use App\Entity\Log;
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
+use App\Entity\History;
+use App\Entity\OrderHeader;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\Parameter;
+use App\Entity\Enum\OrderStatusEnum;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method OrderHeader|null find($id, $lockMode = null, $lockVersion = null)
@@ -112,5 +116,34 @@ class OrderHeaderRepository extends ServiceEntityRepository
         return $qb->join('oh.orderLines', 'ol')
             ->having((new Expr())->gt((new Expr())->count('ol'), 0))
             ->groupBy('oh');
+    }
+
+    public function findValided(User $user):array
+    {        
+        $orderHistories = $this->getEntityManager()->createQueryBuilder()
+        ->select('h.entityId')
+            ->from(History::class, 'h')
+            ->join(OrderHeader::class, 'orderH', 'WITH', (new Expr())->eq('h.entityId', 'orderH.id'))
+            ->join(Log::class, 'slog', 'WITH', (new Expr())->andX((new Expr())->eq('h.entityId', 'slog.entityId'), (new Expr())->eq('slog.entity', ':entity'), (new Expr())->eq('slog.user', ':user')))
+            ->andWhere(
+                (new Expr())->eq('h.entity', ':entity'),
+                (new Expr())->lt('slog.viewAt', 'h.createdAt'),
+            );
+
+        return $this->createQueryBuilder('oh')
+            ->andWhere(
+                (new Expr())->eq('oh.status', ':valided'),
+                (new Expr())->eq('oh.user', ':user'),
+                (new Expr())->in('oh.id', $orderHistories->getDQL()),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('valided', OrderStatusEnum::VALIDED),
+                new Parameter('user', $user),
+                new Parameter('entity', 'OrderHeader'),
+            ]))
+            ->orderBy('oh.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

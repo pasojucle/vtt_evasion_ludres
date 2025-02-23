@@ -19,4 +19,6 @@ class OrderLineDto
     public string $amountToString = '';
 
     public ?string $formName;
+
+    public array $available = [];
 }

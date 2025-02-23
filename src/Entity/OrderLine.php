@@ -5,34 +5,33 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\OrderLineRepository;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: OrderLineRepository::class)]
+#[ORM\Entity(repositoryClass: OrderLineRepository::class)]
 class OrderLine
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[ManyToOne(targetEntity: OrderHeader::class, inversedBy: 'orderLines')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: OrderHeader::class, inversedBy: 'orderLines')]
+    #[ORM\JoinColumn(nullable: false)]
     private OrderHeader $orderHeader;
 
-    #[ManyToOne(targetEntity: Product::class, inversedBy: 'orderLines')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'orderLines')]
+    #[ORM\JoinColumn(nullable: false)]
     private Product $product;
 
-    #[ManyToOne(targetEntity: Size::class)]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Size::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private Size $size;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $quantity;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $available = null;
 
     public function getId(): ?int
     {
@@ -83,6 +82,18 @@ class OrderLine
     public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    public function isAvailable(): ?bool
+    {
+        return $this->available;
+    }
+
+    public function setAvailable(?bool $available): static
+    {
+        $this->available = $available;
 
         return $this;
     }

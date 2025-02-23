@@ -9,6 +9,7 @@ use App\Entity\Health;
 use App\Entity\History;
 use App\Entity\Identity;
 use App\Entity\Licence;
+use App\Entity\OrderHeader;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
@@ -20,8 +21,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\ORM\Mapping\PostPersist;
-use Doctrine\ORM\UnitOfWork;
 use ReflectionClass;
 
 #[AsDoctrineListener(event: Events::postUpdate)]
@@ -45,7 +44,7 @@ class HistoryListener
             $respondents = $this->objectManager->getRepository(Respondent::class)->findBySurvey($entity->getSurvey());
             if (!empty($respondents)) {
                 $changeSet = ['newIssue' => $entity->getContent()];
-                $this->addSurveyHistory($className, $entity->getSurvey(), $changeSet);
+                $this->addEntityHistory($className, $entity->getSurvey(), $changeSet);
             }
         }
     }
@@ -62,11 +61,8 @@ class HistoryListener
         if ($entity instanceof Address || $entity instanceof Health || $entity instanceof Identity || $entity instanceof Licence) {
             $this->addRegistrationHistory($reflexionClass, $className, $entity, $changeSet);
         }
-        if ($entity instanceof Survey) {
-            $this->addSurveyHistory($className, $entity, $changeSet);
-        }
-        if ($entity instanceof SurveyIssue) {
-            $this->addSurveyIssueHistory($className, $entity, $changeSet);
+        if ($entity instanceof Survey || $entity instanceof SurveyIssue || $entity instanceof OrderHeader) {
+            $this->addEntityHistory($className, $entity, $changeSet);
         }
     }
 
@@ -99,19 +95,13 @@ class HistoryListener
         }
     }
 
-    private function addSurveyHistory(string $className, Survey $entity, array $changeSet): void
+    private function addEntityHistory(string $className, Survey|SurveyIssue|OrderHeader $entity, array $changeSet): void
     {
         $history = $this->objectManager->getRepository(History::class)->findOneByEntity($className, $entity->getId());
         $this->addHistory($history, null, $className, $entity, $changeSet);
     }
 
-    private function addSurveyIssueHistory(string $className, SurveyIssue $entity, array $changeSet): void
-    {
-        $history = $this->objectManager->getRepository(History::class)->findOneByEntity($className, $entity->getId());
-        $this->addHistory($history, null, $className, $entity, $changeSet);
-    }
-
-    private function addHistory(?History $history, ?User $user, string $className, Address|Health|Identity|Licence|Survey|SurveyIssue $entity, array $changeSet): void
+    private function addHistory(?History $history, ?User $user, string $className, Address|Health|Identity|Licence|Survey|SurveyIssue|OrderHeader $entity, array $changeSet): void
     {
         if (null === $history) {
             $history = new History();

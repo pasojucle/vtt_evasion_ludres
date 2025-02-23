@@ -46,7 +46,7 @@
                         </div>
                         <div>
                             {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').ORDERED %}
-                                <a class="btn btn-success order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED.value})}}" title="Valider">
+                                <a class="btn btn-success btn-fixed" href="{{ path('admin_order', {'orderHeader': order.id})}}" title="Valider">
                                     <div><i class="fas fa-check"></i> Valider</div>
                                 </a>
                             {% endif %}
@@ -57,7 +57,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            {% if order.status < enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED %}
+                            {% if order.status not in [enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED, enum('App\\Entity\\Enum\\OrderStatusEnum').CANCELED] %}
                                 <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
                                     <i class="fas fa-times"></i>
                                 </a>

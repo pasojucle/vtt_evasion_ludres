@@ -110,6 +110,7 @@ class GetList
         $this->addSurveys($notifications);
         $this->addSurveysChanged($notifications);
         $this->addNewOrderToValidate($notifications);
+        $this->addOrderValidated($notifications);
         $this->addRegistationInProgress($notifications);
         $this->addNewSeasonReRgistrationEnabled($notifications);
 
@@ -168,6 +169,22 @@ class GetList
         $orderHeaderToValidate = $this->orderHeaderRepository->findOneOrderNotEmpty($this->user);
         if (null !== $orderHeaderToValidate) {
             $notifications[] = $orderHeaderToValidate;
+        }
+    }
+
+    private function addOrderValidated(array &$notifications): void
+    {
+        $orderHeadersValidated = $this->orderHeaderRepository->findValided($this->user);
+        foreach($orderHeadersValidated as $orderHeader) {
+            $notifications[] = $orderHeader;
+        }
+    }
+
+    private function addOrderCanceled(array &$notifications): void
+    {
+        $orderHeadersCanceled = $this->orderHeaderRepository->findCanceled($this->user);
+        foreach($orderHeadersCanceled as $orderHeader) {
+            $notifications[] = $orderHeader;
         }
     }
 

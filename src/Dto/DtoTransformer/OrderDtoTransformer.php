@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\OrderDto;
+use App\Entity\OrderLine;
 use App\Entity\OrderHeader;
+use Symfony\Component\Form\FormInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderDtoTransformer
@@ -32,6 +33,7 @@ class OrderDtoTransformer
             $orderDto->statusToString = $this->translator->trans(sprintf('order.%s', $orderHeader->getStatus()->value));
             $orderDto->orderLines = $this->orderLineDtoTransformer->fromEntities($orderHeader->getOrderLines(), $orderDto->user, $form?->all()['orderLines']);
             $orderDto->amount = $this->getAmount($orderDto->orderLines);
+            $orderDto->comments = $orderHeader->getComments();
         }
 
         return $orderDto;
@@ -51,8 +53,11 @@ class OrderDtoTransformer
     public function getAmount(array $orderLines): string
     {
         $amount = 0;
+        /** @var OrderLineDto $line */
         foreach ($orderLines as $line) {
-            $amount += $line->amount;
+            if (false !== $line->available['value']) {
+                $amount += $line->amount;
+            }
         }
 
         return number_format($amount, 2) . ' €';

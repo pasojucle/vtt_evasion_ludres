@@ -21,4 +21,6 @@ class OrderDto
     public ?string $amount;
 
     public string $createdAt;
+
+    public ?string $comments = null;
 }

@@ -9,13 +9,17 @@ use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Form\Admin\OrderFilterType;
+use App\Form\Admin\OrderType as AdminOrderType;
+use App\Form\OrderType;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\ParameterRepository;
 use App\Service\ExportService;
 use App\Service\MessageService;
 use App\Service\PaginatorService;
+use App\UseCase\Order\SetOrder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,18 +94,28 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/commande/{orderHeader}', name: 'admin_order', methods: ['GET'])]
+    #[Route('/admin/commande/{orderHeader}', name: 'admin_order', methods: ['GET', 'POST'])]
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function admin_order(
         Request $request,
+        SetOrder $setOrder,
         ?OrderHeader $orderHeader
     ): Response {
         $request->getSession()->set('user_return', $this->generateUrl('admin_order', [
             'orderHeader' => $orderHeader->getId(),
         ]));
+        $form = $this->createForm(AdminOrderType::class, $orderHeader, [
+            'status' => $orderHeader->getStatus(),
+        ]);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            list($route, $params) = $setOrder->execute($form, $orderHeader);
+            return $this->redirectToRoute($route, $params);
+        }
 
         return $this->render('order/admin/show.html.twig', [
             'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
+            'form' => $form->createView(),
         ]);
     }
 

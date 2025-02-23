@@ -9,33 +9,32 @@ use App\Repository\OrderHeaderRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: OrderHeaderRepository::class)]
+
+#[ORM\Entity(repositoryClass: OrderHeaderRepository::class)]
 class OrderHeader
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[OneToMany(targetEntity: OrderLine::class, mappedBy: 'orderHeader')]
+    #[ORM\OneToMany(targetEntity: OrderLine::class, mappedBy: 'orderHeader')]
     private Collection $orderLines;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'orderHeaders')]
-    #[JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'orderHeaders')]
+    #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[Column(type: 'OrderStatus')]
+    #[ORM\Column(type: 'OrderStatus')]
     private OrderStatusEnum $status = OrderStatusEnum::IN_PROGRESS;
 
-    #[Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $comments = null;
 
     public function __construct()
     {
@@ -109,6 +108,18 @@ class OrderHeader
     public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getComments(): ?string
+    {
+        return $this->comments;
+    }
+
+    public function setComments(?string $comments): static
+    {
+        $this->comments = $comments;
 
         return $this;
     }

@@ -13,7 +13,7 @@
             <br>
             <ul>
                 {% for line in order.orderLines %}
-                    <li class="row row-list row-align-top block background-ligth">
+                    <li class="row row-align-top block {{ line.available.backgroundColor }}">
                         <div class="col-md-2 col-xs-3">
                             <a href="{{ path('product_show', {'product': line.product.id}) }}">
                                 <div class="thumbnail"><img class="" src="{{ line.product.pathName }}" alt=""></div>
@@ -31,17 +31,27 @@
                             {{ line.quantity }}
                         </div>
                         <div class="col-md-3 col-xs-2 align-right">{{ line.amount }}</div>
+                        <div class="col-md-12 align-right mt-10">
+                            {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED or order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED %}
+                                <div class="bs-badge {{ line.available.color }}">{{ line.available.text }}</div>
+                            {% endif %}
+                        </div>
                     </li>
 
                 {% endfor %}
             </ul>
             <div class="row">
                 <div class="col-md-10 col-xs-10 align-right">Total :</div>
-                <div class="col-md-2 col-xs-10  align-right">{{ order.amount }}</div>
+                <div class="col-md-2 col-xs-10 align-right">{{ order.amount }}</div>
+                {% if order.comments %}
+                    <div class="col-md-12 col-xs-12 block background-ligth">{{ order.comments }}</div>
+                {% endif %}
             </div>
         </div>
         <div class="wrapper-footer">
-            <a href="{{ path('order_acknowledgement', {'orderHeader': order.id}) }}" class="btn btn-xxl btn-primary float-right">Télécharger ma commande</a>
+            {% if order.status == enum('APP\\Entity\\Enum\\OrderStatusEnum').VALIDED %}
+                <a href="{{ path('order_acknowledgement', {'orderHeader': order.id}) }}" class="btn btn-xxl btn-primary float-right">Télécharger ma commande</a>
+            {% endif %}
         </div>
     </div>
 

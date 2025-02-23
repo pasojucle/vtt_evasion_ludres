@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\NotificationDto;
 use App\Entity\BikeRide;
+use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
@@ -66,13 +67,20 @@ class NotificationDtoTransformer
 
     private function fromOrderHeader(OrderHeader $orderHeader): NotificationDto
     {
+        list($title, $url, $labelButton, $message) = match($orderHeader->getStatus()) {
+            OrderStatusEnum::IN_PROGRESS => ['Commande en cours', $this->urlGenerator->generate('order_edit'),'Valider ma commande', 'MODAL_WINDOW_ORDER_IN_PROGRESS'],
+            OrderStatusEnum::VALIDED => ['Commande validée', $this->urlGenerator->generate('order', ['orderHeader' => $orderHeader->getId()]),'Finaliser ma commande', 'MODAL_WINDOW_ORDER_VALIDED'],
+            default => ['Commande annulée', $this->urlGenerator->generate('order', ['orderHeader' => $orderHeader->getId()]),'Voirma commande', 'MODAL_WINDOW_ORDER_CANCELED'],
+        };
+ 
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($orderHeader);
-        $notificationDto->title = 'Commande en cours';
-        $notificationDto->content = $this->notificationOrderInProgress;
-        $notificationDto->url = $this->urlGenerator->generate('order_edit');
-        $notificationDto->labelButton = 'Valider ma commande';
+        $notificationDto->title = $title;
+        $notificationDto->content = $this->messageService->getMessageByName($message);
+        $notificationDto->url = $url;
+        $notificationDto->labelButton = $labelButton;
         $notificationDto->modalLink = $this->getModalLinkFromEntity($orderHeader);
+
 
         return $notificationDto;
     }
@@ -104,7 +112,7 @@ class NotificationDtoTransformer
     }
 
     public function fromArray(array $data): NotificationDto
-    {
+    {dump($data);
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($data['index']);
         $notificationDto->title = $data['title'];

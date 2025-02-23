@@ -1361,10 +1361,16 @@ h3 + ul.block.background-ligth {
     box-sizing: border-box;
     padding: 25px;
 }
+.background-disbled {
+    background-color: var(--gray-400);
+    box-sizing: border-box;
+    color: var(--gray-color);
+    padding: 25px;
+}
 .background-color .table-border,.background-color .table-border th, .background-color .table-border td {
     border: 2px solid var(--white-color);
 }
-.block.no-padding, .row .no-padding {
+.block.no-padding, .row .no-padding, .row > .col-md-3.no-padding {
     padding: 0;
 }
 .row .no-padding-vertical {
