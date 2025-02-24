@@ -9,7 +9,12 @@
         </div>
         <div class="wrapper-body">
             <div>{{ message|raw }}</div>
-            <h3>Cde {{ order.id }} du {{ order.createdAt }}</h3>
+            <br>
+            {% if order.comments %}
+                <div>{{ order.comments }}</div>
+                <br>
+            {% endif %}
+            <h3>Cde {{ order.id }} du {{ order.createdAt }} - {{ order.statusToString }}</h3>
             <br>
             <ul>
                 {% for line in order.orderLines %}
@@ -43,9 +48,6 @@
             <div class="row">
                 <div class="col-md-10 col-xs-10 align-right">Total :</div>
                 <div class="col-md-2 col-xs-10 align-right">{{ order.amount }}</div>
-                {% if order.comments %}
-                    <div class="col-md-12 col-xs-12 block background-ligth">{{ order.comments }}</div>
-                {% endif %}
             </div>
         </div>
         <div class="wrapper-footer">

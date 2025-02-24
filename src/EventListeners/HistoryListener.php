@@ -22,6 +22,7 @@ use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use ReflectionClass;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::postPersist)]
@@ -31,6 +32,7 @@ class HistoryListener
     
     public function __construct(
         private readonly SeasonService $seasonService,
+        private readonly Security $security,
     ) {
     }
 
@@ -61,8 +63,17 @@ class HistoryListener
         if ($entity instanceof Address || $entity instanceof Health || $entity instanceof Identity || $entity instanceof Licence) {
             $this->addRegistrationHistory($reflexionClass, $className, $entity, $changeSet);
         }
-        if ($entity instanceof Survey || $entity instanceof SurveyIssue || $entity instanceof OrderHeader) {
+        if ($entity instanceof Survey || $entity instanceof SurveyIssue) {
             $this->addEntityHistory($className, $entity, $changeSet);
+        }
+        if ($entity instanceof OrderHeader) {
+            /** @var User $user */
+            $user = $this->security->getUser();
+            dump($user, $entity->getUser());
+            if ($user !== $entity->getUser()) {
+                dump($event);
+                $this->addEntityHistory($className, $entity, $changeSet);
+            }
         }
     }
 

@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\OrderDtoTransformer;
+use App\Entity\Enum\OrderStatusEnum;
+use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Form\OrderType;
-use App\Entity\OrderHeader;
-use App\Service\LogService;
-use App\Service\PdfService;
-use App\Service\MessageService;
-use App\Service\PaginatorService;
-use App\Entity\Enum\OrderStatusEnum;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderHeaderRepository;
+use App\Service\LogService;
+use App\Service\MessageService;
 use App\Service\Order\OrderLinesSetService;
 use App\Service\Order\OrderValidateService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Dto\DtoTransformer\OrderDtoTransformer;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Service\PaginatorService;
+use App\Service\PdfService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class OrderController extends AbstractController
 {
@@ -82,9 +82,11 @@ class OrderController extends AbstractController
         
         return $this->render('order/show.html.twig', [
             'order' => $this->orderDtoTransformer->fromEntity($orderHeader),
-            'message' => (OrderStatusEnum::ORDERED === $orderHeader->getStatus()) 
-                ? $this->messageService->getMessageByName('ORDER_WAITING_VALIDATE_MESSAGE')
-                : $this->messageService->getMessageByName('ORDER_ACKNOWLEDGEMENT_MESSAGE'),
+            'message' => match ($orderHeader->getStatus()) {
+                OrderStatusEnum::ORDERED => $this->messageService->getMessageByName('ORDER_WAITING_VALIDATE_MESSAGE'),
+                OrderStatusEnum::CANCELED => $this->messageService->getMessageByName('ORDER_CANCELED_MESSAGE'),
+                default => $this->messageService->getMessageByName('ORDER_ACKNOWLEDGEMENT_MESSAGE')
+            },
         ]);
     }
 

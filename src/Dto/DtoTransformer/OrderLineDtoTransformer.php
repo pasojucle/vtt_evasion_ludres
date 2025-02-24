@@ -54,7 +54,7 @@ class OrderLineDtoTransformer
 
     private function getAvailable(?bool $value): array
     {
-        $available =  match($value) {
+        $available = match ($value) {
             true => ['color' => 'text-bg-success', 'text' => 'En stock', 'backgroundColor' => 'background-ligth'],
             false => ['color' => 'text-bg-danger', 'text' => 'Non disponible', 'backgroundColor' => 'background-disbled'],
             default => ['backgroundColor' => 'background-ligth'],
@@ -62,6 +62,6 @@ class OrderLineDtoTransformer
 
         $available['value'] = $value;
         
-        return $available;   
+        return $available;
     }
 }

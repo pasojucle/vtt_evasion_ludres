@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\OrderDto;
-use App\Entity\OrderLine;
+use App\Dto\OrderLineDto;
 use App\Entity\OrderHeader;
-use Symfony\Component\Form\FormInterface;
+use App\Entity\OrderLine;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderDtoTransformer
@@ -30,7 +31,7 @@ class OrderDtoTransformer
             $orderDto->createdAt = $createdAt->format('d/m/Y');
             $orderDto->user = $this->userDtoTransformer->fromEntity($orderHeader->getUser());
             $orderDto->status = $orderHeader->getStatus();
-            $orderDto->statusToString = $this->translator->trans(sprintf('order.%s', $orderHeader->getStatus()->value));
+            $orderDto->statusToString = $this->translator->trans(sprintf('order.status.%s', $orderHeader->getStatus()->value));
             $orderDto->orderLines = $this->orderLineDtoTransformer->fromEntities($orderHeader->getOrderLines(), $orderDto->user, $form?->all()['orderLines']);
             $orderDto->amount = $this->getAmount($orderDto->orderLines);
             $orderDto->comments = $orderHeader->getComments();

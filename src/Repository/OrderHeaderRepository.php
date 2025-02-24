@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Log;
-use App\Entity\User;
-use App\Entity\History;
-use App\Entity\OrderHeader;
-use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\Parameter;
 use App\Entity\Enum\OrderStatusEnum;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\History;
+use App\Entity\Log;
+use App\Entity\OrderHeader;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method OrderHeader|null find($id, $lockMode = null, $lockVersion = null)
@@ -44,10 +44,8 @@ class OrderHeaderRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('oh')
             ->andWhere(
-                (new Expr())->neq('oh.status', ':statusCanceled'),
                 (new Expr())->eq('oh.user', ':user'),
             )
-            ->setParameter('statusCanceled', OrderStatusEnum::CANCELED)
             ->setParameter('user', $user)
             ->orderBy('oh.createdAt', 'DESC')
         ;
@@ -118,8 +116,8 @@ class OrderHeaderRepository extends ServiceEntityRepository
             ->groupBy('oh');
     }
 
-    public function findValided(User $user):array
-    {        
+    public function findValidedOrCanceled(User $user): array
+    {
         $orderHistories = $this->getEntityManager()->createQueryBuilder()
         ->select('h.entityId')
             ->from(History::class, 'h')
@@ -132,12 +130,16 @@ class OrderHeaderRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('oh')
             ->andWhere(
-                (new Expr())->eq('oh.status', ':valided'),
+                (new Expr())->orX(
+                    (new Expr())->eq('oh.status', ':valided'),
+                    (new Expr())->eq('oh.status', ':canceled'),
+                ),
                 (new Expr())->eq('oh.user', ':user'),
                 (new Expr())->in('oh.id', $orderHistories->getDQL()),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('valided', OrderStatusEnum::VALIDED),
+                new Parameter('canceled', OrderStatusEnum::CANCELED),
                 new Parameter('user', $user),
                 new Parameter('entity', 'OrderHeader'),
             ]))

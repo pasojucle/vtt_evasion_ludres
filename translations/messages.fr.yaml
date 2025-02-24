@@ -149,11 +149,18 @@ content:
     backgrounds: Images de fond
 
 order:
-  in_progress: En cours
-  ordered: Commandées
-  valided: Validées
-  completed: Cloturées
-  canceled: Annulées
+  filter: 
+    in_progress: En cours
+    ordered: Commandées
+    valided: Validées
+    completed: Cloturées
+    canceled: Annulées
+  status: 
+    in_progress: En cours
+    ordered: Commandée
+    valided: Validée
+    completed: Cloturée
+    canceled: Annulée
 
 menu:
   group:

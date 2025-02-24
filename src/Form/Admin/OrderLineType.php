@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Size;
-use App\Entity\OrderLine;
-use Doctrine\ORM\EntityRepository;
 use App\Entity\Enum\OrderStatusEnum;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Entity\OrderLine;
+use App\Entity\Size;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderLineType extends AbstractType
 {

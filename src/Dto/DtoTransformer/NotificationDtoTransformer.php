@@ -22,9 +22,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NotificationDtoTransformer
 {
-    private ?string $notificationOrderInProgress;
-    public ?string $notificationRegistrationInProgress;
-
     public function __construct(
         private readonly NotificationService $notificationService,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -32,8 +29,6 @@ class NotificationDtoTransformer
         private readonly LogService $logService,
         private readonly BikeRideService $bikeRideService,
     ) {
-        $this->notificationOrderInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_ORDER_IN_PROGRESS');
-        $this->notificationRegistrationInProgress = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
     }
 
     public function fromNotification(Notification $notification): NotificationDto
@@ -67,12 +62,11 @@ class NotificationDtoTransformer
 
     private function fromOrderHeader(OrderHeader $orderHeader): NotificationDto
     {
-        list($title, $url, $labelButton, $message) = match($orderHeader->getStatus()) {
-            OrderStatusEnum::IN_PROGRESS => ['Commande en cours', $this->urlGenerator->generate('order_edit'),'Valider ma commande', 'MODAL_WINDOW_ORDER_IN_PROGRESS'],
-            OrderStatusEnum::VALIDED => ['Commande validée', $this->urlGenerator->generate('order', ['orderHeader' => $orderHeader->getId()]),'Finaliser ma commande', 'MODAL_WINDOW_ORDER_VALIDED'],
-            default => ['Commande annulée', $this->urlGenerator->generate('order', ['orderHeader' => $orderHeader->getId()]),'Voirma commande', 'MODAL_WINDOW_ORDER_CANCELED'],
+        list($title, $url, $labelButton, $message) = match ($orderHeader->getStatus()) {
+            OrderStatusEnum::IN_PROGRESS => ['Commande en cours', $this->urlGenerator->generate('order_edit'), 'Valider ma commande', 'MODAL_WINDOW_ORDER_IN_PROGRESS'],
+            OrderStatusEnum::VALIDED => ['Commande validée', $this->urlGenerator->generate('order', ['orderHeader' => $orderHeader->getId()]), 'Finaliser ma commande', 'MODAL_WINDOW_ORDER_VALIDED'],
+            default => ['Commande annulée', $this->urlGenerator->generate('order', ['orderHeader' => $orderHeader->getId()]), 'Voir ma commande', 'MODAL_WINDOW_ORDER_CANCELED'],
         };
- 
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($orderHeader);
         $notificationDto->title = $title;
@@ -90,7 +84,7 @@ class NotificationDtoTransformer
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($licence);
         $notificationDto->title = 'Dossier d\'inscription en cours';
-        $notificationDto->content = $this->notificationRegistrationInProgress;
+        $notificationDto->content = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
         $notificationDto->url = $this->urlGenerator->generate('user_registration_form', ['step' => 1]);
         $notificationDto->labelButton = 'Finaliser mon inscription';
         $notificationDto->modalLink = $this->getModalLinkFromEntity($licence);
@@ -112,7 +106,8 @@ class NotificationDtoTransformer
     }
 
     public function fromArray(array $data): NotificationDto
-    {dump($data);
+    {
+        dump($data);
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($data['index']);
         $notificationDto->title = $data['title'];

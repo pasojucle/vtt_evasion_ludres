@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace App\UseCase\Order;
 
-use App\Entity\OrderHeader;
-use Symfony\Component\Form\Form;
 use App\Entity\Enum\OrderStatusEnum;
+use App\Entity\OrderHeader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\SubmitButton;
 
-class SetOrder 
+class SetOrder
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager
-    )
-    {
-        
+    ) {
     }
 
-    public function execute(Form $form, OrderHeader $orderHeader): array
+    public function execute(FormInterface $form, OrderHeader $orderHeader): array
     {
         $route = 'admin_orders';
         $params = ['filtered' => true];
@@ -31,7 +30,7 @@ class SetOrder
         $unValide = ($form->has('unValide') && $form->get('unValide') instanceof ClickableInterface) ? $form->get('unValide') : null;
         /** @var ?SubmitButton  $cancel */
         $cancel = ($form->has('cancel') && $form->get('cancel') instanceof ClickableInterface) ? $form->get('cancel') : null;
-        dump($cancel);
+
         if ($validate && $validate->isClicked()) {
             $orderHeader->setStatus(OrderStatusEnum::VALIDED);
         }

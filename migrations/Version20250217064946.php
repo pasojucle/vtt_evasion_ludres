@@ -70,6 +70,14 @@ final class Version20250217064946 extends AbstractMigration
                 'sectionId' => 'ORDER',
             ],
             [                
+                'name' => 'ORDER_CANCELED_MESSAGE',
+                'label' => 'Message affiché à l\'adhérent pour une commande annulée',
+                'content' => '<p>Votre commande a été annulée.</p>',
+                'levelType' => null,
+                'protected' => 1,
+                'sectionId' => 'ORDER',
+            ],
+            [                
                 'name' => 'MODAL_WINDOW_ORDER_CANCELED',
                 'label' => 'Message du pop\'up pour une commande annulée',
                 'content' => '<p>Votre commande a été annulée. Souhaitez-vous consulter votre commande ?</p>',

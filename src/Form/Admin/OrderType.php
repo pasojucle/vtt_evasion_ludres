@@ -48,7 +48,7 @@ class OrderType extends AbstractType
                 $this->addBtnValidate($form, $orderLines);
             }
             if (OrderStatusEnum::VALIDED === $options['status']) {
-                $this->addBtnComplete($form, $orderLines);
+                $this->addBtnComplete($form);
             }
         };
 
@@ -69,7 +69,7 @@ class OrderType extends AbstractType
     {
         $linesCheked = 0;
         foreach ($orderLines as $orderLine) {
-            $isAvailable = match(true) {
+            $isAvailable = match (true) {
                 $orderLine instanceof OrderLine => $orderLine->isAvailable(),
                 array_key_exists('available', $orderLine) => (bool) $orderLine['available'],
                 default => null
