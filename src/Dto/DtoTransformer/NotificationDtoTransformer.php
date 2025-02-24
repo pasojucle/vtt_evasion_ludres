@@ -107,7 +107,6 @@ class NotificationDtoTransformer
 
     public function fromArray(array $data): NotificationDto
     {
-        dump($data);
         $notificationDto = new NotificationDto();
         $notificationDto->index = $this->notificationService->getIndex($data['index']);
         $notificationDto->title = $data['title'];

@@ -69,9 +69,7 @@ class HistoryListener
         if ($entity instanceof OrderHeader) {
             /** @var User $user */
             $user = $this->security->getUser();
-            dump($user, $entity->getUser());
             if ($user !== $entity->getUser()) {
-                dump($event);
                 $this->addEntityHistory($className, $entity, $changeSet);
             }
         }

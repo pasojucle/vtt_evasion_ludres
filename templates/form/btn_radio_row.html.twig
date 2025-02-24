@@ -1,8 +1,6 @@
 {% block btn_radio_row %}
-            {% dump(form) %}
     {% for child in form.children %}
         <div class="btn-radio-group">
-            {% dump(child) %}
             {{ form_widget(child) }}
             <label class="label" for="{{ child.vars.id }}" 
                 {% if child.vars.value == form.vars.value %}style="background-color: var(--{{ child.vars.attr['data-color'] }});"{% endif %}>
