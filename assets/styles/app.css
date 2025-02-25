@@ -65,17 +65,37 @@ nav > ul> li > div.nav-bar-title > a:hover, nav > ul> li > div.nav-bar-title > a
 nav > ul > li:hover  ul {
     display: block;
 }
+.header-front {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    overflow: hidden;
+    width: 100%;
+    background-color: var(--background-color);
+    position: relative;
+    padding: 0 15px 15px 15px;
+    box-sizing: border-box;
+}
 .header:not(.admin) > .logo {
     position: absolute;
     left: 25px;
-    top: 15px;
+    top: 5px;
 }
 .header:not(.admin) > .logo.logo-ludres {
     right: 25px;
     left: unset;
 }
-.header:not(.admin) > a.logo img {
-    height: 100px;
+.header-front > a.logo {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+.header-front > a.logo img.logo-club {
+    height: 120px;
+}
+.header-front > a.logo img.logo-ecole{
+    height: 40px;
 }
 nav:not(.admin) > a.logo {
     position: absolute;
@@ -435,6 +455,9 @@ button[type="submit"] {
 
 
 @media screen and (max-width: 1024px) {
+    .header-front {
+        display: none;
+    }
     .wrapper-medium-width, .wrapper-small-width {
         padding: 5%;
     }
