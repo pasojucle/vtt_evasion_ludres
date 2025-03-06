@@ -143,10 +143,12 @@ content:
     user_change_infos: Page demande de modifications d'infos personnelles
     second_hand: Annonces de matériel d'occasion
     second_hand_contact: Page de contact pour les annonces de matériel d'occasion
-  type:
-    flash: Message flash
-    content: Contenu
-    backgrounds: Images de fond
+  kind:
+    home-flash: Message flash
+    home-content: Contenu
+    background-only: Images de fond
+    carrousel-and-text: Diaporama
+    video-and-text: Intégration d'une vidéo youtube
 
 order:
   filter: 

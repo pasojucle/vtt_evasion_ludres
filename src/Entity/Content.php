@@ -4,29 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\ContentKindEnum;
 use App\Repository\ContentRepository;
-use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OrderBy;
 
-#[Entity(repositoryClass: ContentRepository::class)]
+#[ORM\Entity(repositoryClass: ContentRepository::class)]
 class Content
 {
-    public const IS_FLASH = [
-        true => 'content.type.flash',
-        false => 'content.type.content',
-    ];
-
     public const ROUTES = [
         'home' => 'content.route.home',
         'registration_detail' => 'content.route.registration_detail',
@@ -51,61 +40,61 @@ class Content
         'second_hand_contact' => 'content.route.second_hand_contact',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
     #[Column(type: 'string', length: 100)]
     private string $route;
 
-    #[Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content = null;
 
-    #[Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTimeInterface $startAt;
 
-    #[Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTimeInterface $endAt;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $isActive = true;
 
-    #[Column(type: 'boolean')]
-    private bool $isFlash = false;
-
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ? string $title = null;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $filename = null;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $url = null;
 
-    #[Column(type: 'string', length: 30, nullable: true)]
+    #[ORM\Column(type: 'string', length: 30, nullable: true)]
     private ?string $buttonLabel = null;
 
     /**
      * @var ArrayCollection <Background>
      */
-    #[ManyToMany(targetEntity: Background::class, inversedBy: 'contents')]
+    #[ORM\ManyToMany(targetEntity: Background::class, inversedBy: 'contents')]
     private Collection $backgrounds;
 
-    #[ManyToOne(targetEntity: self::class, inversedBy: 'contents')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'contents')]
     private $parent = null;
 
-    #[OneToMany(mappedBy: 'parent', targetEntity: self::class)]
-    #[OrderBy(['orderBy' => 'ASC'])]
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    #[ORM\OrderBy(['orderBy' => 'ASC'])]
     private $contents;
 
-    #[Column(type: 'boolean', options: ['default' => 0])]
-    private bool $backgroundOnly = false;
-
-    #[Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $parameters = null;
+
+    #[ORM\Column(type: 'ContentKind')]
+    private ?object $kind = ContentKindEnum::BACKROUND_AND_TEXT;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $youtubeEmbed = null;
 
     public function __construct()
     {
@@ -186,18 +175,6 @@ class Content
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    public function IsFlash(): ?bool
-    {
-        return $this->isFlash;
-    }
-
-    public function setIsFlash(bool $isFlash): self
-    {
-        $this->isFlash = $isFlash;
 
         return $this;
     }
@@ -313,18 +290,6 @@ class Content
         return $this;
     }
 
-    public function isBackgroundOnly(): ?bool
-    {
-        return $this->backgroundOnly;
-    }
-
-    public function setBackgroundOnly(bool $backgroundOnly): self
-    {
-        $this->backgroundOnly = $backgroundOnly;
-
-        return $this;
-    }
-
     public function getParameters(): ?array
     {
         return $this->parameters;
@@ -333,6 +298,30 @@ class Content
     public function setParameters(?array $parameters): static
     {
         $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    public function getKind(): ?object
+    {
+        return $this->kind;
+    }
+
+    public function setKind(object $kind): static
+    {
+        $this->kind = $kind;
+
+        return $this;
+    }
+
+    public function getYoutubeEmbed(): ?string
+    {
+        return $this->youtubeEmbed;
+    }
+
+    public function setYoutubeEmbed(?string $youtubeEmbed): static
+    {
+        $this->youtubeEmbed = $youtubeEmbed;
 
         return $this;
     }

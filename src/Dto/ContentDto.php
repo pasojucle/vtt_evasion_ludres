@@ -16,7 +16,7 @@ class ContentDto
 
     public ?string $content = null;
 
-    public ?bool $isFlash = false;
+    public ?string $kind = null;
 
     public ?string $fileName = null;
 

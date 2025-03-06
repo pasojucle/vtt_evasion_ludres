@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\ContentDtoTransformer;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Content;
+use App\Entity\Enum\ContentKindEnum;
 use App\Form\Admin\ContentType;
 use App\Form\Admin\HomeBackgroundsType;
 use App\Repository\ContentRepository;
@@ -14,7 +15,7 @@ use App\Repository\MessageRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use App\Service\ProjectDirService;
-use App\Service\UploadService;
+use App\UseCase\Content\SetContent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
@@ -27,35 +28,24 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/admin/param')]
 class ContentController extends AbstractController
 {
-    public const HOME_TAB_FLASH = 0;
-    public const HOME_TAB_CONTENT = 1;
-    public const HOME_TAB_BACKGROUNDS = 2;
-
-    private const HOME_TABS = [
-        self::HOME_TAB_FLASH => 'content.type.flash',
-        self::HOME_TAB_CONTENT => 'content.type.content',
-        self::HOME_TAB_BACKGROUNDS => 'content.type.backgrounds',
-    ];
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly OrderByService $orderByService,
         private readonly ContentRepository $contentRepository,
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly ContentDtoTransformer $contentDtoTransformer,
+        private readonly SetContent $setContent,
     ) {
     }
 
-    #[Route('/page/accueil/contenus/{tab}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'tab' => self::HOME_TAB_FLASH])]
+    #[Route('/page/accueil/contenus/{kind}', name: 'admin_home_contents', methods: ['GET', 'POST'], defaults:['route' => 'home', 'kind' => ContentKindEnum::HOME_FLASH->value])]
     #[IsGranted('ROLE_ADMIN')]
     public function listHome(
         PaginatorService $paginator,
         Request $request,
         ?string $route,
-        int $tab
+        ContentKindEnum $kind
     ): Response {
-        $isFlash = self::HOME_TAB_FLASH === $tab;
-
         $form = $this->createForm(HomeBackgroundsType::class, $this->contentRepository->findOneByRoute('home'));
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -63,73 +53,54 @@ class ContentController extends AbstractController
             $this->addFlash('success', 'Enregistrement effectué.');
         }
 
-        $query = $this->contentRepository->findContentQuery($route, $isFlash);
+        $query = $this->contentRepository->findContentQuery($route, $kind);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('content/admin/home_contents.html.twig', [
             'contents' => $contents,
             'form' => $form->createView(),
-            'paginator' => $this->paginatorDtoTransformer->fromEntities($contents, ['route' => $route, 'tab' => $tab]),
+            'paginator' => $this->paginatorDtoTransformer->fromEntities($contents, ['route' => $route, 'kind' => $kind->value]),
             'current_route' => $route,
-            'is_flash' => $isFlash,
-            'tabs' => self::HOME_TABS,
-            'tab' => $tab,
+            'kind' => $kind,
         ]);
     }
 
-    #[Route('/contenus', name: 'admin_contents', methods: ['GET'], defaults:['route' => null, 'isFlash' => false])]
+    #[Route('/contenus', name: 'admin_contents', methods: ['GET'], defaults:['route' => null])]
     #[IsGranted('ROLE_ADMIN')]
     public function list(
         PaginatorService $paginator,
         Request $request,
-        ?string $route,
-        bool $isFlash
+        ?string $route
     ): Response {
-        $query = $this->contentRepository->findContentQuery($route, $isFlash);
+        $query = $this->contentRepository->findContentQuery($route, null);
         $contents = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
         return $this->render('content/admin/list.html.twig', [
             'contents' => $this->contentDtoTransformer->fromEntities($contents)->contents,
-            'paginator' => $this->paginatorDtoTransformer->fromEntities($contents, ['route' => $route, 'isFlash' => $isFlash]),
+            'paginator' => $this->paginatorDtoTransformer->fromEntities($contents, ['route' => $route]),
             'current_route' => $route,
-            'is_flash' => $isFlash,
         ]);
     }
-
 
     #[Route('/page/accueil/contenu/{content}', name: 'admin_home_content_edit', methods: ['GET', 'POST'], defaults:['content' => null])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminHomeContentEdit(
         Request $request,
-        UploadService $uploadService,
         ?Content $content
     ): Response {
-        $form = $this->createForm(ContentType::class, $content);
+        $form = $this->createForm(ContentType::class, $content, [
+            'allowed_kinds' => [ContentKindEnum::HOME_FLASH, ContentKindEnum::HOME_CONTENT],
+        ]);
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $content = $form->getData();
-            if (null === $content->getOrderBy()) {
-                $content->setOrderBy(0);
-                $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
-                $content->setOrderBy($order);
-            }
-
-            if ($request->files->get('content')) {
-                $file = $request->files->get('content')['file'];
-                if ($file) {
-                    $content->setFileName($uploadService->uploadFile($file));
-                }
-            }
-            $this->entityManager->persist($content);
-            $this->entityManager->flush();
-
-            $contents = $this->contentRepository->findByRoute('home', !$content->isFlash());
+            $this->setContent->execute($form, $request);
+            $contents = $this->contentRepository->findByRoute('home', $content->getKind());
             $this->orderByService->resetOrders($contents);
 
             return $this->redirectToRoute('admin_home_contents', [
                 'route' => $content->getRoute(),
-                'tab' => (int) $content->isFlash() ? self::HOME_TAB_FLASH : self::HOME_TAB_CONTENT,
+                'kind' => $content->getKind()->value,
             ]);
         }
 
@@ -144,28 +115,16 @@ class ContentController extends AbstractController
     public function adminContentEdit(
         Request $request,
         ContentDtoTransformer $contentDtoTransformer,
-        UploadService $uploadService,
         MessageRepository $messageRepository,
         Content $content
     ): Response {
-        $form = $this->createForm(ContentType::class, $content);
+        $form = $this->createForm(ContentType::class, $content, [
+            'allowed_kinds' => [ContentKindEnum::CARROUSEL_AND_TEXT, ContentKindEnum::VIDEO_AND_TEXT],
+        ]);
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $content = $form->getData();
-            if (null === $content->getOrderBy()) {
-                $content->setOrderBy(0);
-                $order = $this->contentRepository->findNexOrderByRoute($content->getRoute(), $content->isFlash());
-                $content->setOrderBy($order);
-            }
-
-            if ($request->files->get('content')) {
-                $file = $request->files->get('content')['file'];
-                $content->setFileName($uploadService->uploadFile($file));
-            }
-
-            $this->entityManager->persist($content);
-            $this->entityManager->flush();
+            $this->setContent->execute($form, $request);
 
             return $this->redirectToRoute('admin_contents');
         }
@@ -194,18 +153,18 @@ class ContentController extends AbstractController
             ),
         ]);
         $route = $content->getRoute();
-        $isFlash = $content->IsFlash();
+        $kind = $content->getKind();
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $this->entityManager->remove($content);
             $this->entityManager->flush();
 
-            $contents = $this->contentRepository->findByRoute($route, $isFlash);
+            $contents = $this->contentRepository->findByRoute($route, $kind);
             $this->orderByService->ResetOrders($contents);
 
             return $this->redirectToRoute('admin_home_contents', [
-                'isFlash' => (int) $isFlash,
+                'kind' => $kind,
             ]);
         }
 
@@ -222,16 +181,13 @@ class ContentController extends AbstractController
         Content $content
     ): Response {
         $route = $content->getRoute();
-        $isFlash = $content->isFlash();
         $newOrder = (int) $request->request->get('newOrder');
-        $contents = $this->contentRepository->findByRoute($route, $isFlash);
+        $contents = $this->contentRepository->findByRoute($route, $content->getKind());
 
         $this->orderByService->setNewOrders($content, $contents, $newOrder);
 
         return new Response();
     }
-
-
 
     #[Route('/file/content/delete/{content}', name: 'admin_content_file_delete', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]

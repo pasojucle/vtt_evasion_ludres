@@ -25,6 +25,7 @@ import './styles/reveal.css';
 import './styles/carrousel.css';
 import './styles/verticalStepProgress.css';
 import './styles/bootstrap.scss';
+import './styles/youtube.scss';
 
 import './js/app.js';
 import './js/navigation.js';
@@ -36,5 +37,6 @@ import './js/js-datepicker.js';
 import './js/form.js';
 import './js/slideshow.js';
 import './js/notification.js';
-import './js/extraToggle.js'
+import './js/extraToggle.js';
+import './js/wrapper-youtube.js';
 registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));

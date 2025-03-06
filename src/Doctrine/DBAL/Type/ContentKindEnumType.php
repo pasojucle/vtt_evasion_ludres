@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Doctrine\DBAL\Type;
 
-use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\ContentKindEnum;
 
-class AvailabilityEnumType extends EnumType
+class ContentKindEnumType extends EnumType
 {
     protected function getEnum(): string
     {
-        return AvailabilityEnum::class;
+        return ContentKindEnum::class;
     }
 
     public function getName(): string
     {
-        return 'Availability';
+        return 'ContentType';
     }
 }

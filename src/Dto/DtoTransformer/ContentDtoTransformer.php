@@ -29,7 +29,7 @@ class ContentDtoTransformer
             $contentDto->route = $content->getRoute();
             $contentDto->routeName = ($content->getRoute()) ? sprintf('content.route.%s', $content->getRoute()) : 'content.route.home';
             $contentDto->title = ($content->getTitle()) ? $content->getTitle() : $contentDto->routeName;
-            $contentDto->isFlash = $content->IsFlash();
+            $contentDto->kind = $content->getKind()->value;
             $contentDto->content = $content->getContent();
             $contentDto->fileName = $this->getPath($content->getFileName());
             $contentDto->fileTag = $this->getFileTag($content->getFileName());
@@ -48,11 +48,11 @@ class ContentDtoTransformer
     public function fromEntities(Paginator|Collection|array $contentEntities): ContentsDto
     {
         $contentsDto = new ContentsDto();
+        
         foreach ($contentEntities as $contentEntity) {
             $content = $this->fromEntity($contentEntity);
             $contentsDto->contents[] = $content;
-            $type = ($content->isFlash) ? 'flashes' : 'contents';
-            $contentsDto->homeContents[$type][] = $content;
+            $contentsDto->homeContents[$contentEntity->getKind()->name][] = $content;
         }
 
         return $contentsDto;
@@ -62,8 +62,7 @@ class ContentDtoTransformer
     {
         $contents = [];
         foreach ($contentEntities as $contentEntity) {
-            $type = ($contentEntity->isFlash()) ? 'flashes' : 'contents';
-            $contents[$type][] = $this->fromEntity($contentEntity);
+            $contents[$contentEntity->getKind()->name][] = $this->fromEntity($contentEntity);
         }
 
         return $contents;

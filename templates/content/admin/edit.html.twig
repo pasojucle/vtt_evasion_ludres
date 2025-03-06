@@ -12,14 +12,13 @@
             <span class="tool-group">
                 {% include 'component/dropdown_settings.html.twig' %}
                 {% if content.route == 'home' %}
-                    {% set isFlash = (content is not null) ? content.isFlash|number_format : 0 %}
-                    <a href="{{ path('admin_home_contents', {'route': content.route, 'isFlash': isFlash}) }}" class="btn btn-ico" title="Retour à la gestion de la page d'accueil"><i class="fas fa-chevron-left"></i></a>
+                    <a href="{{ path('admin_home_contents', {'route': content.route, 'kind': content.kind}) }}" class="btn btn-ico" title="Retour à la gestion de la page d'accueil"><i class="fas fa-chevron-left"></i></a>
                 {% else %}
                     <a href="{{ path('admin_contents', {'route': content.route}) }}" class="btn btn-ico" title="Retour à la liste des contenus"><i class="fas fa-chevron-left"></i></a>
                 {% endif %}
             </span>
         </div> 
-        <div class="wrapper-body">
+        <div id="content_container" class="wrapper-body">
             <h2>{{ content.routeName|trans|capitalize }}</h2>
             {% if form.title is defined %}
                 <div class="form-group">
@@ -48,14 +47,24 @@
                     {{ form_row(form.url) }}
                 </div>
             {% endif %}
-            {% if form.startAt is defined and  form.endAt is defined and form.isFlash is defined %}
+            {% if form.startAt is defined and form.endAt is defined and form.kind is defined %}
                 <div class="form-group">
                     {{ form_row(form.startAt) }}
                     {{ form_row(form.endAt) }}
                 </div>
-                {{ form_row(form.isFlash) }}
+                <div class="form-group">
+                    {{ form_row(form.kind) }}
+                </div>
             {% endif %}
             {{ form_row(form.route) }}
+            {% if content.route != 'home' and form.kind is defined %}
+                <div class="form-group">
+                    {{ form_row(form.kind) }}
+                </div>
+                {% if form.youtubeEmbed is defined %}
+                    {{ form_row(form.youtubeEmbed) }}
+                {% endif %}
+            {% endif %}
             {% if form.backgrounds is defined %}
                 <div class="form-group">
                     {{ form_row(form.backgrounds) }}

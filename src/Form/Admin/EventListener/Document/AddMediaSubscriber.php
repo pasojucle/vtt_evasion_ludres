@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form\Admin\EventListener\Document;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

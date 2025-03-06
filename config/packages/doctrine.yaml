@@ -15,6 +15,7 @@ doctrine:
             Practice: App\Doctrine\DBAL\Type\PracticeEnumType
             Availability: App\Doctrine\DBAL\Type\AvailabilityEnumType
             Evaluation: App\Doctrine\DBAL\Type\EvaluationEnumType
+            ContentKind: App\Doctrine\DBAL\Type\ContentKindEnumType
         mapping_types:
             enum: string
     orm:

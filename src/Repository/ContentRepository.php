@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Content;
+use App\Entity\Enum\ContentKindEnum;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,7 +28,7 @@ class ContentRepository extends ServiceEntityRepository
         parent::__construct($registry, Content::class);
     }
 
-    public function findContentQuery(?string $route = null, ?bool $isFlash = null): QueryBuilder
+    public function findContentQuery(?string $route = null, ?ContentKindEnum $kind = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('c');
 
@@ -39,9 +42,9 @@ class ContentRepository extends ServiceEntityRepository
             $route = 'home';
         }
 
-        if (null !== $isFlash) {
-            $andX->add($qb->expr()->eq('c.isFlash', ':isFlash'));
-            $qb->setParameter('isFlash', $isFlash);
+        if (null !== $kind) {
+            $andX->add($qb->expr()->eq('c.kind', ':kind'));
+            $qb->setParameter('kind', $kind->value);
         }
 
         return $qb
@@ -51,20 +54,22 @@ class ContentRepository extends ServiceEntityRepository
             ;
     }
 
-    public function findByRoute(string $route, ?bool $isFlash = null): array
+    public function findByRoute(string $route, ContentKindEnum $kind): array
     {
         return $this->createQueryBuilder('c')
             ->andWhere(
                 (new Expr())->eq('c.route', ':route'),
-                (new Expr())->eq('c.isFlash', ':isFlash')
+                (new Expr())->eq('c.kind', ':kind')
             )
-            ->setParameter('route', $route)
-            ->setParameter('isFlash', $isFlash)
+            ->setParameters(new ArrayCollection([
+                new Parameter('route', $route),
+                new Parameter('kind', $kind->value),
+            ]))
             ->orderBy('c.orderBy', 'ASC')
             ->getQuery()->getResult();
     }
 
-    public function findNexOrderByRoute(string $route, bool $isFlash = false): int
+    public function findNexOrderByRoute(string $route, ContentKindEnum $kind): int
     {
         $nexOrder = 0;
         $maxOrder = $this->createQueryBuilder('c')
@@ -72,10 +77,12 @@ class ContentRepository extends ServiceEntityRepository
             ->andWhere(
                 (new Expr())->eq('c.route', ':route'),
                 (new Expr())->isNotNull('c.parent'),
-                (new Expr())->eq('c.isFlash', ':isFlash')
+                (new Expr())->eq('c.kind', ':kind')
             )
-            ->setParameter('route', $route)
-            ->setParameter('isFlash', $isFlash)
+            ->setParameters(new ArrayCollection([
+                new Parameter('route', $route),
+                new Parameter('kind', $kind),
+            ]))
             ->getQuery()
             ->getSingleScalarResult()
         ;
@@ -125,8 +132,10 @@ class ContentRepository extends ServiceEntityRepository
                     )
                 )
             )
-            ->setParameter('route', 'home')
-            ->setParameter('today', $today->format('Y-m-d h:i:s'))
+            ->setParameters(new ArrayCollection([
+                new Parameter('route', 'home'),
+                new Parameter('today', $today->format('Y-m-d h:i:s'))
+            ]))
             ->orderBy('c.orderBy', 'ASC')
             ->getQuery()
             ->getResult()

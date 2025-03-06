@@ -9,15 +9,14 @@
 {% endblock %}
 {% block body %}
     <div class="wrapper background-{{ background_color }} background-color col-content">
-        <div is="my-carrousel" class="wrapper-img slider"  style="min-height: 100%">
-            {% for background in content.backgrounds %}
-                <picture>
-                    <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">
-                    <source media="(max-width: 800px)" srcset="../images/background/landscape_md/{{ background.filename }}">
-                    <img src="../images/background/square/{{ background.filename }}" alt="le club">
-                </picture>
-            {% endfor %}
-        </div>
+        {% if content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').CARROUSEL_AND_TEXT %}
+            {{ include('component/carrousel.html.twig') }}
+        {% elseif content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').VIDEO_AND_TEXT %}
+            <div class="wrapper-youtube">
+                <iframe src="{{ content.url }}?autoplay=1&mute=1" frameborder="0"  scrolling="no" class="youtube"></iframe>
+            </div>
+        {% endif %}
+
         <div class="wrapper-content">
             <div class="reveal">
                 {{ content.content | raw}}

@@ -9,8 +9,9 @@
 {% block body %}
     <div class="wrapper wrapper-home wrapper-full-width">
         <div class="news-container">
-            {% if home_contents.flashes is defined %}
-                {% for content in home_contents.flashes %}
+            {% set flash = enum('App\\Entity\\Enum\\ContentKindEnum').HOME_FLASH.name %}
+            {% if home_contents[flash] is defined %}
+                {% for content in home_contents[flash]%}
                     <div class="block background-color background-primary block-flash reveal" data-toggle="block-body">   
                         <div class="block-title">
                             <h2>{{ content.title }}</h2>
@@ -24,8 +25,9 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            {% if home_contents.contents is defined %}
-                {% for content in home_contents.contents %}
+            {% set content = enum('App\\Entity\\Enum\\ContentKindEnum').HOME_CONTENT.name %}
+            {% if home_contents[content] is defined %}
+                {% for content in home_contents[content] %}
                     <div class="block reveal{% if not(content.content matches '/iframe/') %} background-clear{% endif %}">        
                         <div class="block-body">
                             {% include('content/body_content.html.twig') %}

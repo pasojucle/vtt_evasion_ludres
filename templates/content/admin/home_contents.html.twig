@@ -10,13 +10,13 @@
             <h1>{{ title }}</h1>
         </div>
         <nav  class="nav-tab">
-            {% for tab_value, label in tabs %}
-                <a href="{{ path('admin_home_contents', {'tab': tab_value} )}}"{% if tab == tab_value %} class="active"{% endif %}>{{ label|trans}}</a>
+            {% for home_kind in enum('App\\Entity\\Enum\\ContentKindEnum').homeKinds() %}
+                <a href="{{ path('admin_home_contents', {'kind': home_kind.value} )}}"{% if kind == home_kind %} class="active"{% endif %}>{{ home_kind|trans}}</a>
             {% endfor %}
         </nav>
         <div class="wrapper-body">
             {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
-            {% if tab != constant('App\\Controller\\Admin\\ContentController::HOME_TAB_BACKGROUNDS') %}
+            {% if kind == enum('App\\Entity\\Enum\\ContentKindEnum').HOME_FLASH or kind == enum('App\\Entity\\Enum\\ContentKindEnum').HOME_CONTENT %}
             {% set class_ul ='sortable' %}
                 <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un contenu"><i class="fas fa-plus"></i> Ajouter un contenu</a>
                 <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
