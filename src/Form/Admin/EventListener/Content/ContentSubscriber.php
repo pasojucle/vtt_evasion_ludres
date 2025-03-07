@@ -44,7 +44,7 @@ class ContentSubscriber implements EventSubscriberInterface
         $content = $event->getData();
         $options = $form->getConfig()->getOptions();
         $allowedKins = $options['allowed_kinds'];
-        $requiredUrl = ContentKindEnum::VIDEO_AND_TEXT === $content->getKind();
+        $requiredUrl = ContentKindEnum::VIDEO_AND_TEXT === $content?->getKind();
         if (null === $content) {
             $parent = $this->contentRepository->findOneByRoute('home');
             $content = new Content();
@@ -144,8 +144,8 @@ class ContentSubscriber implements EventSubscriberInterface
                     'choice_filter' => ChoiceList::filter(
                         $this->contentType,
                         function (ContentKindEnum $kind) use ($allowedKins): bool {
-                        return in_array($kind, $allowedKins, true);
-                    },
+                            return in_array($kind, $allowedKins, true);
+                        },
                         $allowedKins
                     ),
                     'row_attr' => [

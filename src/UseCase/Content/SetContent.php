@@ -21,7 +21,7 @@ class SetContent
     ) {
     }
 
-    public function execute(FormInterface $form, Request $request): void
+    public function execute(FormInterface $form, Request $request): Content
     {
         $content = $form->getData();
         $this->urlFromYoutubeEmbed($content);
@@ -30,6 +30,8 @@ class SetContent
 
         $this->entityManager->persist($content);
         $this->entityManager->flush();
+
+        return $content;
     }
 
     private function urlFromYoutubeEmbed(Content $content): void

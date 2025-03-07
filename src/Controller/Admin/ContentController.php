@@ -94,7 +94,7 @@ class ContentController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->setContent->execute($form, $request);
+            $content = $this->setContent->execute($form, $request);
             $contents = $this->contentRepository->findByRoute('home', $content->getKind());
             $this->orderByService->resetOrders($contents);
 
