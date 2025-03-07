@@ -5,51 +5,48 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\LogErrorRepository;
-use DateTime;
-use DateTimeInterface;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToOne;
 
-#[Entity(repositoryClass: LogErrorRepository::class)]
+use DateTimeInterface;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: LogErrorRepository::class)]
 class LogError
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $url;
 
     private ?string $message = null;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $userAgent = null;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $fileName;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $line;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $statusCode;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $route;
 
-    #[Column(type: 'text')]
+    #[ORM\Column(type: 'text')]
     private string $errorMessage;
 
     private $persist = true;
 
-    #[ManyToOne(targetEntity: User::class)]
-    private ?User $user;
-
-    #[Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime')]
     private DateTimeInterface $createdAt;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $userId = null;
 
     public function getId(): ?int
     {
@@ -163,19 +160,7 @@ class LogError
 
         return $this;
     }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
+    
     public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
@@ -184,6 +169,18 @@ class LogError
     public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(?int $userId): static
+    {
+        $this->userId = $userId;
 
         return $this;
     }

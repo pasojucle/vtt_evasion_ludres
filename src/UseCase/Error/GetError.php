@@ -92,7 +92,7 @@ class GetError
         /** @var ?User $user */
         $user = $this->security->getUser();
         if ($user) {
-            $logError->setUser($user);
+            $logError->setUserId($user->getId());
         }
     }
 }

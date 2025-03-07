@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\LogErrorDto;
 use App\Entity\LogError;
+use App\Repository\UserRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class LogErrorDtoTransformer
@@ -17,7 +18,8 @@ class LogErrorDtoTransformer
     ];
 
     public function __construct(
-        private UserDtoTransformer $userDtoTransformer
+        private readonly UserDtoTransformer $userDtoTransformer,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -35,8 +37,8 @@ class LogErrorDtoTransformer
         $logErrorDto->url = $logError->getUrl();
         $logErrorDto->fileName = $logError->getFileName();
         $logErrorDto->line = $logError->getLine();
-        $logErrorDto->user = ($logError->getUser())
-            ? $this->userDtoTransformer->fromEntity($logError->getUser())
+        $logErrorDto->user = ($logError->getUserId())
+            ? $this->userDtoTransformer->getHeaderFromEntity($this->userRepository->find($logError->getUserId()))
             : null;
 
         return $logErrorDto;
