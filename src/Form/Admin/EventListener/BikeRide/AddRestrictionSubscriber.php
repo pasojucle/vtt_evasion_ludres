@@ -57,7 +57,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
 
         $data = $event->getData();
         
-        $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
+        $restriction = (array_key_exists('restriction', $data)) ? (int) $data['restriction'] : null;
 
         $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : [];
         $levelFilter = array_key_exists('levelFilter', $data) ? $data['levelFilter'] : [];

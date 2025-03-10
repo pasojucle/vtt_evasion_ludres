@@ -55,7 +55,7 @@ final class Version20250217064946 extends AbstractMigration
         return [
             [                
                 'name' => 'ORDER_WAITING_VALIDATE_MESSAGE',
-                'label' => 'Message afficher à la validationde commande par l\'adhérent',
+                'label' => 'Message afficher à la validation de commande par l\'adhérent',
                 'content' => '<p>LES VÊTEMENTS AUX COULEURS DU CLUB SONT EN STOCK LIMITE. VOTRE COMMANDE POURRA ÊTRE MODIFIÉE OU ANNULÉE EN FONCTION DES STOCKS RESTANTS.</p><p>Vous recevrez une notification dès traitement de votre commande.</p><p><strong>Attendez la validation avant de nous faire parvenir le règlement.</strong></p>',
                 'levelType' => null,
                 'protected' => 1,

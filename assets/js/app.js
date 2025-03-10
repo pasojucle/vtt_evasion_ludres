@@ -44,9 +44,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
     
     $(document).on('click', '#user_search_submit', confirmDeleteUser)
-    if (document.querySelector('select#bike_ride_bikeRideType')){
-        document.querySelector('select#bike_ride_bikeRideType').addEventListener('change', handleChangeBikeRideType)
-    }
+    addBikeRideTypeChangeListener();
 
     document.querySelectorAll('.check-toggle').forEach(element => {
         element.addEventListener('change', handleCheckChange);
@@ -185,6 +183,7 @@ function formModifier(event) {
         });
         initAddItemLink();
         initInputFile();
+        addBikeRideTypeChangeListener();
         targetEl.querySelectorAll('.form-modifier').forEach((element) => {
             element.addEventListener('change', formModifier);
         });
@@ -276,6 +275,12 @@ function resize(object) {
     const width = parent.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
     object.width = width;
     object.height = parent.dataset.ratio * width;
+}
+
+const addBikeRideTypeChangeListener = () => {
+    if (document.querySelector('select#bike_ride_bikeRideType')){
+        document.querySelector('select#bike_ride_bikeRideType').addEventListener('change', handleChangeBikeRideType)
+    }
 }
 
 const handleChangeBikeRideType = () => {

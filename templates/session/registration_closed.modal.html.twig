@@ -1,0 +1,10 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = null%}{% endblock %}
+{% block modal_title %}{{ bike_ride.title }} {{ bike_ride.period }}{% endblock %}
+{% block body %}
+    {{ message|raw }}
+{% endblock %}
+{% block footer %}
+    {% set button_close = 'Fermer' %}
+    {{ parent() }}
+{% endblock %}

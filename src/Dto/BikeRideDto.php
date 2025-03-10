@@ -33,11 +33,11 @@ class BikeRideDto
 
     public false|array $unregistrable = false;
 
+    public bool $registrationClosed = false;
+
     public ?string $rangeAge = null;
 
     public ?string $displayClass;
-
-    public ?string $btnLabel;
 
     public ?string $period;
 
@@ -56,4 +56,6 @@ class BikeRideDto
     public ?string $minAge = null;
 
     public bool $isMultiClusters = false;
+
+    public ?array $btnRegistration = null;
 }

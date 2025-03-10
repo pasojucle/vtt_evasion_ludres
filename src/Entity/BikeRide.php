@@ -107,6 +107,9 @@ class BikeRide
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $notify = false;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $registrationClosedMessage = null;
+
     public function __construct()
     {
         $this->clusters = new ArrayCollection();
@@ -426,6 +429,18 @@ class BikeRide
     public function setNotify(bool $notify): static
     {
         $this->notify = $notify;
+
+        return $this;
+    }
+
+    public function getRegistrationClosedMessage(): ?string
+    {
+        return $this->registrationClosedMessage;
+    }
+
+    public function setRegistrationClosedMessage(?string $registrationClosedMessage): static
+    {
+        $this->registrationClosedMessage = $registrationClosedMessage;
 
         return $this;
     }

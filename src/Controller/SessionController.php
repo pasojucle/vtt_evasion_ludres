@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
@@ -130,6 +131,19 @@ class SessionController extends AbstractController
         return $this->render('session/delete.html.twig', [
             'form' => $form->createView(),
             'session' => $session,
+        ]);
+    }
+
+    #[Route('/programe/inscription/close/{bikeRide}', name: 'registration_closed', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function registrationClosed(
+        BikeRideDtoTransformer $bikeRideDtoTransformer,
+        MessageService $messageService,
+        BikeRide $bikeRide
+    ) {
+        return $this->render('session/registration_closed.modal.html.twig', [
+            'bike_ride' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
+            'message' => $bikeRide->getRegistrationClosedMessage() ?? $messageService->getMessageByName('REGISTRATION_CLOSED_DEFAULT_MESSAGE')
         ]);
     }
 }

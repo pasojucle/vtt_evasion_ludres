@@ -103,7 +103,7 @@ class GetFormSession
         return $userSession;
     }
 
-    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability, array $surveyResponses): FormInterface
+    private function getForm(Session $userSession, BikeRide $bikeRide, Collection $clusters, bool $isWritableAvailability, ?array $surveyResponses): FormInterface
     {
         /** @var BikeRideType $bikeRideType */
         $bikeRideType = $bikeRide->getBikeRideType();

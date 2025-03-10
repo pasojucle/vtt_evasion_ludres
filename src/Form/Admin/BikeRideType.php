@@ -11,6 +11,7 @@ use App\Form\Admin\EventListener\BikeRide\AddRestrictionSubscriber;
 use App\Repository\BikeRideTypeRepository;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
+use App\Service\MessageService;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -35,6 +36,7 @@ class BikeRideType extends AbstractType
         private readonly BikeRideTypeRepository $bikeRideTypeRepository,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly MessageService $messageService,
     ) {
     }
 
@@ -137,7 +139,7 @@ class BikeRideType extends AbstractType
             
         ;
 
-        $builder->addEventSubscriber(new AddContentSubscriber($this->bikeRideTypeRepository));
+        $builder->addEventSubscriber(new AddContentSubscriber($this->bikeRideTypeRepository, $this->messageService));
 
         $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->urlGenerator));
     }

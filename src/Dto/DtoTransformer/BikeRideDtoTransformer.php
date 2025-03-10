@@ -16,10 +16,12 @@ use App\Service\ProjectDirService;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use DateInterval;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BikeRideDtoTransformer
 {
@@ -28,7 +30,6 @@ class BikeRideDtoTransformer
     private DateTimeImmutable $displayAt;
     
     private DateTimeImmutable $closingAt;
-    
 
     public function __construct(
         private Security $security,
@@ -39,14 +40,16 @@ class BikeRideDtoTransformer
         private SurveyDtoTransformer $surveyDtoTransformer,
         private SessionRepository $sessionRepository,
         private BikeRideService $bikeRideService,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
-        $this->today = (new DateTimeImmutable())->setTime(0, 0, 0);
     }
 
     public function fromEntity(?BikeRide $bikeRide, ?array $userAvailableSessions = null): BikeRideDto
     {
         /** @var User $user */
         $user = $this->security->getUser();
+
+        $this->today = (new DateTimeImmutable())->setTime(0, 0, 0);
 
         $bikeRideDto = new BikeRideDto();
         if ($bikeRide) {
@@ -63,18 +66,16 @@ class BikeRideDtoTransformer
 
             $this->displayAt = $bikeRideDto->startAt->setTime(0, 0, 0);
             $this->closingAt = $bikeRideDto->startAt->setTime(23, 59, 59);
-            $bikeRideDto->displayClass = $this->getDisplayClass($bikeRideDto->displayDuration);
+            $bikeRideDto->displayClass = $this->getDisplayClass($bikeRide->getDisplayDuration());
             $bikeRideDto->period = $this->bikeRideService->getPeriod($bikeRide);
-            $bikeRideDto->isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
-            $bikeRideDto->isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
-            $bikeRideDto->unregistrable = $this->getUnregistrable($userAvailableSessions, $bikeRide);
-            $bikeRideDto->btnLabel = $this->getBtnLabel($bikeRideDto);
+
             $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
             $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
 
             $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
             $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
+            $bikeRideDto->btnRegistration = $this->getBtnRegistration($bikeRide, $user, $userAvailableSessions);
         }
 
         return $bikeRideDto;
@@ -148,15 +149,6 @@ class BikeRideDtoTransformer
         return '';
     }
 
-    private function getBtnLabel(?BikeRideDto $bikeRide): string
-    {
-        if ($bikeRide->isWritableAvailability) {
-            return 'Disponibilité';
-        }
-
-        return 'S\'incrire';
-    }
-
     private function getFilename(?string $filename): ?string
     {
         return ($filename) ? $this->projectDirService->dir('', 'upload', $filename) : null;
@@ -200,13 +192,11 @@ class BikeRideDtoTransformer
             if ($session->getCluster()->getBikeRide() === $bikeRide) {
                 return ($session->getAvailability())
                 ? [
-                    'route' => 'session_availability_edit',
-                    'sessionId' => $session->getId(),
+                    'link' => $this->urlGenerator->generate('session_availability_edit', ['session' => $session->getId()]),
                     'btnLabel' => '<i class="fas fa-edit"></i> Modifier sa disponibilité',
                 ]
                 : [
-                    'route' => 'session_delete',
-                    'sessionId' => $session->getId(),
+                    'link' => $this->urlGenerator->generate('session_delete', ['session' => $session->getId()]),
                     'btnLabel' => '<i class="fas fa-times-circle"></i> Se désinscrire',
                 ];
             }
@@ -224,5 +214,45 @@ class BikeRideDtoTransformer
             return sprintf('De %d jusqu\'à %d ans', $bikeRide->getMinAge(), $bikeRide->getMaxAge());
         }
         return sprintf('A partir de %d ans', $bikeRide->getMinAge());
+    }
+
+    private function getBtnRegistration(BikeRide $bikeRide, ?User $user, ?array $userAvailableSessions): ?array
+    {
+        $unregistrable = $this->getUnregistrable($userAvailableSessions, $bikeRide);
+        if ($unregistrable) {
+            $unregistrable['modal'] = false;
+            return $unregistrable;
+        }
+
+        $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
+        $isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
+
+        if (!$isWritableAvailability && $isRegistrable && $this->registrationClosed($bikeRide)) {
+            return [
+                'link' => $this->urlGenerator->generate('registration_closed', ['bikeRide' => $bikeRide->getId()]),
+                'modal' => true,
+                'btnLabel' => sprintf('<i class="fas fa-chevron-circle-right"></i> %s', 'S\'incrire'),
+            ];
+        }
+
+        if ($isRegistrable || $isWritableAvailability) {
+            return [
+                'link' => $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]),
+                'btnLabel' => sprintf('<i class="fas fa-chevron-circle-right"></i> %s', ($isWritableAvailability) ? 'Disponibilité' : 'S\'incrire'),
+                'modal' => false,
+            ];
+        }
+
+        return null;
+    }
+
+    private function registrationClosed(BikeRide $bikeRide): bool
+    {
+        if (!$bikeRide->registrationEnabled()) {
+            return true;
+        }
+
+        $intervalClosing = new DateInterval('P' . $bikeRide->getClosingDuration() . 'D');
+        return $this->closingAt->sub($intervalClosing) < $this->today && $this->today <= $this->closingAt;
     }
 }

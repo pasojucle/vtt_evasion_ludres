@@ -41,19 +41,14 @@ class IsRegistrable
         if ($bikeRide->getMinAge() && !$this->canParticipateByAge($bikeRide, $user, $member)) {
             return false;
         }
-
-        if (!$bikeRide->registrationEnabled()) {
-            return false;
-        }
-
+        
         $today = new DateTime();
         $intervalDisplay = new DateInterval('P' . $bikeRide->GetDisplayDuration() . 'D');
-        $intervalClosing = new DateInterval('P' . $bikeRide->getClosingDuration() . 'D');
 
         $displayAt = $bikeRide->getStartAt()->setTime(0, 0, 0);
         $closingAt = $bikeRide->getStartAt()->setTime(23, 59, 59);
-
-        return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt->sub($intervalClosing);
+ 
+        return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt;
     }
 
     private function canParticipateByAge(BikeRide $bikeRide, User $user, Identity $member): bool

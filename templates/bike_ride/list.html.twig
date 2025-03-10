@@ -23,18 +23,14 @@
                         <div class="bike-ride-date {{ bikeRide.displayClass }}">
                             <div>
                                 {{ bikeRide.period }}</div>
-                                {% if bikeRide.unregistrable %}
+                                {% if bikeRide.btnRegistration %}
                                     <div class="bike-ride-date-btn">
                                         <br>
-                                        <a href="{{ path(bikeRide.unregistrable.route, {'session': bikeRide.unregistrable.sessionId}) }}" class="btn btn-secondary">{{ bikeRide.unregistrable.btnLabel|raw }}</a>
+                                        <a href="{{ bikeRide.btnRegistration.link }}" class="btn btn-secondary" 
+                                            {% if bikeRide.btnRegistration.modal %}data-toggle="modal"{% endif %}>
+                                            {{ bikeRide.btnRegistration.btnLabel|raw }}
+                                        </a>     
                                     </div>
-                                {% else %}
-                                    {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
-                                        <div class="bike-ride-date-btn">
-                                            <br>
-                                            <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
-                                        </div>
-                                    {% endif %}
                                 {% endif %}
                             <div class="badge-members">{{ bikeRide.members }}</div>
                         </div>
@@ -55,20 +51,14 @@
                                 <p>{{ bikeRide.content | raw}}</p>
                             {% endif %}
                         </div>
-                        {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
-                            {% if bikeRide.unregistrable %}
-                                    <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
-                                    <br>
-                                    <a href="{{ path(bikeRide.unregistrable.route, {'session': bikeRide.unregistrable.sessionId}) }}" class="btn btn-secondary">{{ bikeRide.unregistrable.btnLabel|raw }}</a>
+                        {% if bikeRide.btnRegistration %}
+                                <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
+                                <br>
+                                    <a href="{{ bikeRide.btnRegistration.link }}" class="btn btn-secondary" 
+                                    {% if bikeRide.btnRegistration.modal %}data-toggle="modal"{% endif %}>
+                                        {{ bikeRide.btnRegistration.btnLabel|raw }}
+                                    </a>                                
                                 </div>
-                            {% else %}
-                                {% if bikeRide.isRegistrable or bikeRide.isWritableAvailability %}
-                                        <div class="bike-ride-btn item-center align-center {{ bikeRide.displayClass }}">
-                                        <br>
-                                        <a href="{{ path('session_add', {'bikeRide': bikeRide.id}) }}" class="btn btn-secondary"><i class="fas fa-chevron-circle-right"></i> {{ bikeRide.btnLabel }}</a>
-                                    </div>
-                                {% endif %}
-                            {% endif %}
                         {% endif %}
                     {% endif %}
                 {% endfor %}

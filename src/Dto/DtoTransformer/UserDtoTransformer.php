@@ -218,6 +218,7 @@ class UserDtoTransformer
         if (!$user->getId()) {
             return false;
         }
+        
         return !empty($this->licenceRepository->findByUserAndPeriod($user, 5));
     }
 
