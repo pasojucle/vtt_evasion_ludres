@@ -14,8 +14,8 @@ export default function RadioType({id, name, label, choices, value, className}) 
         <div className={className}>
             <label htmlFor={id}>{label }</label>
             {choices.map((choice) => 
-                <div className="radio-group-vue" key={choice.value}>
-                    <input type="radio" name={name} id={choice.id} value={choice.value} onClick={(event) => setPicked(event.target.value)} checked={picked === choice.value}/>
+                <div className="btn-radio-group" key={choice.value}>
+                    <input type="radio" name={name} id={choice.id} value={choice.value} onChange={(event) => setPicked(event.target.value)} checked={picked === choice.value}/>
                     <label className="label" htmlFor={choice.id} style={{'backgroundColor': getBackground(choice)}}>{ choice.label }</label>
                 </div>
             )}
