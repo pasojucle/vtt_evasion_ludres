@@ -26,7 +26,6 @@ export default function ClusterSkillList({cluster, canEdit}) {
     const handleEval = (id) => {
         setRoute(Routing.generate('api_cluster_skill_eval', {'cluster': cluster, 'skill': id}));
         setEdit(true);
-        set
     }
 
     const handleDelete = (id) => {
