@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Routing from 'fos-router';
-import { toString, getList } from '../utils'
+import { toString } from '../utils'
 
 
-export default function AutocompleteFilter({entityName, params, value,  label, className, placeholder, handleChange, isClear= false, handleClear}) {
+export default function ChoiceAutocompleteFilter({list, value,  label, className, placeholder, handleChange, isClear= false, handleClear}) {
 
     const [textFilter, setTextFilter] = useState('');
     const [focused, setFocused] = useState(false);
     const [itemActive, setItemActive] = useState(0);
-    const [list, setList] = useState([]);
-
-    useEffect(() => {
-        const list = getList(`api_${entityName}_list`, params)
-        .then((list) => setList(list))
-
-    }, [])
 
     const input = (event) => {
         setTextFilter(event.target.value.toLowerCase());
@@ -53,9 +45,12 @@ export default function AutocompleteFilter({entityName, params, value,  label, c
     }
 
     const listFiltered = () => {
+        console.log('choiceAutocomplete list', list)
+        console.log('choiceAutocomplete textFilter', textFilter)
         if ('' === textFilter) {
             return list;
         }
+
         return list.filter((item) => toString(item).toLowerCase().includes(textFilter))
     }
 
@@ -65,8 +60,8 @@ export default function AutocompleteFilter({entityName, params, value,  label, c
 
     const ControlContent = () => {
         if (displayControlContent()) {
-            const item =  list.find((item) => item.id === value);
-            const text =  (item) ? toString(item): '';
+            const item = list.find((item) => item.id === value);
+            const text = (item) ? toString(item): '';
             return (
                 <div className="af-content">{ text }</div>
             )
@@ -95,14 +90,38 @@ export default function AutocompleteFilter({entityName, params, value,  label, c
             return (
                 <div className="af-dropdown">
                     {listFiltered().map((item, index) =>
-                        <div key={item.id} className={ optionClassName(index)} onMouseDown={() => change(item.id)}>
-                            {toString(item)}
-                        </div>
+                        <Item key={index} listItem={item} listIndex={index}/>
                     )}
                 </div>
             )
         }
     }
+
+    const Item = ({listItem, listIndex}) => {
+        if (listItem instanceof Object) {
+            return (
+                <Option item={listItem} index={listIndex}/>
+            )
+        }
+        if (listItem instanceof Array) {
+            return (
+                <optgroup>
+                    {listItem.map((item, index) =>
+                        <Option item={item} index={`${listIndex}-${index}`}/>
+                    )}
+                </optgroup>
+            )
+        }
+        console.log('---------------')
+    }
+    const Option = ({item, index}) => {
+        return (
+            <div key={item.id} className={ optionClassName(index)} onMouseDown={() => change(item.id)}>
+                {toString(item)}
+            </div>
+        )
+    }
+
     const classWrapper = "autocomplete-filter " + className;
     const placeholderContent = (value) ? '' : placeholder;
     return (
@@ -117,7 +136,7 @@ export default function AutocompleteFilter({entityName, params, value,  label, c
                         value={textFilter}
                         onInput={input}
                         onFocus={() => setFocused(true)}
-                        onBlur={() => setFocused(false)}
+                        // onBlur={() => setFocused(false)}
                         onKeyDown={handleKeyDown}
                     />
                     <ControlBtn/>

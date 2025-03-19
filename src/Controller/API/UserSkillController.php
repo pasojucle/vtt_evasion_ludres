@@ -9,7 +9,6 @@ use App\Entity\Skill;
 use App\Entity\User;
 use App\Entity\UserSkill;
 use App\Form\Admin\SkillAddType;
-use App\Form\Admin\UserSkillCollectionType;
 use App\Form\Admin\UserSkillType;
 use App\Service\ApiService;
 use App\Service\UserSkillService;
