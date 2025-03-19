@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getList, updateList } from '../utils'
-import AutocompleteFilter from '../components/AutocompleteFilterType';
+import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 import TextRaw from '../components/TextRaw.jsx';
 import Edit from '../components/Edit';
 import Routing from 'fos-router';
@@ -82,8 +82,8 @@ export default function SkillList() {
     return (
         <div>
             <div className="row">
-                <AutocompleteFilter entityName="skill_category" pararms={[]} value={category} label="Catégorie" placeholder="Toutes les catégories" handleChange={handleChangeCategory} isClear={clearCategory} handleClear={handleChangeClearCategory} className="col-md-6 form-group"/>
-                <AutocompleteFilter entityName="level" pararms={[]} value={level} label="Niveau" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-6 form-group"/>
+                <EntityAutocompleteFilter entityName="skill_category" pararms={[]} value={category} label="Catégorie" placeholder="Toutes les catégories" handleChange={handleChangeCategory} isClear={clearCategory} handleClear={handleChangeClearCategory} className="col-md-6 form-group"/>
+                <EntityAutocompleteFilter entityName="level" pararms={[]} value={level} label="Niveau" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-6 form-group"/>
             </div>
             <a className="btn btn-primary" onClick={handleAdd} title="Ajouter"> Ajouter</a>
 
