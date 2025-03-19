@@ -82,4 +82,16 @@ class LicenceRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findSeasons(User $user): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select('l.season')
+            ->where(
+                (new Expr)->eq('l.user', ':user')
+            )
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
 }

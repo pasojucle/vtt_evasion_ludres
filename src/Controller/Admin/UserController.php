@@ -55,7 +55,7 @@ class UserController extends AbstractController
             'messages' => $messageService->getMessagesBySectionName('USER'),
         ];
 
-        return $this->render('user/admin/users.html.twig', $params);
+        return $this->render('user/admin/list.html.twig', $params);
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { checkStatus, isJsonResponse } from './../../js/fetch.js'
 import { formElement } from '../utils.js';
-import AutocompleteFilter from '../components/AutocompleteFilterType';
+import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 
 export default function AddSkill({edit, size, route, handleEditChange, update, mainList}) {
 
@@ -100,8 +100,8 @@ export default function AddSkill({edit, size, route, handleEditChange, update, m
                     <form action={form.action} onSubmit={(event) => onSubmit(event)}>
                         <div className="modal-body">
                             <div className="row">
-                                <AutocompleteFilter entityName="skill_category" pararms={[]} value={category} label="Catégorie" placeholder="Toutes les catégories" handleChange={handleChangeCategory} isClear={clearCategory} handleClear={handleChangeClearCategory} className="col-md-6 form-group"/>
-                                <AutocompleteFilter entityName="level" pararms={[]} value={level} label="Niveau" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-6 form-group"/>
+                                <EntityAutocompleteFilter entityName="skill_category" pararms={[]} value={category} label="Catégorie" placeholder="Toutes les catégories" handleChange={handleChangeCategory} isClear={clearCategory} handleClear={handleChangeClearCategory} className="col-md-6 form-group"/>
+                                <EntityAutocompleteFilter entityName="level" pararms={[]} value={level} label="Niveau" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-6 form-group"/>
                             </div>
                             <div className="row">
                                 {form.components.map((component, key) => 

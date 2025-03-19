@@ -27,6 +27,7 @@ import './styles/loader.scss';
 import './styles/bootstrap.scss';
 import './styles/component/autocompleteFilter.scss';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './styles/component/pagination.scss';
 
 import './js/app.js';
 import './js/navigation.js';

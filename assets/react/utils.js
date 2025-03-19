@@ -13,9 +13,15 @@ export const toString = (entity) => {
         case undefined !== entity.title:
             string = entity.title;
             break;
+        case undefined !== entity.fullName:
+            string = entity.fullName;
+            break;
         case undefined !== entity.content:
             const htmlElement = document.createRange().createContextualFragment(entity.content);
             string = htmlElement.firstChild.innerText;
+            break;
+        case undefined !== entity.label:
+            string = entity.label;
             break;
         default:
             string = entity.name;
@@ -30,11 +36,16 @@ export const resolve = (path, obj) => {
 }
 
 export const getList = async(route, params={}) => {
+    getData(route, params={})
+            .then((data) => data.list)
+}
+
+export const getData = async(route, params={}) => {
     const promise = await fetch(Routing.generate(route, params));
 
     const result = await promise.json();
 
-    return result.list;
+    return result;
 }
 
 export const formElement = (component, key, isCollection, filters={}, mainList=[]) => {

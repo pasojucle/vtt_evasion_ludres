@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Level;
 use App\Repository\LevelRepository;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LevelService
 {
@@ -17,7 +18,10 @@ class LevelService
     public const LEVEL_ALL_FRAME = 'Tout l\'encadrement';
 
 
-    public function __construct(private LevelRepository $levelRepository)
+    public function __construct(
+        private readonly LevelRepository $levelRepository,
+        private readonly TranslatorInterface $translator,
+    )
     {
     }
 
@@ -32,6 +36,27 @@ class LevelService
         $this->addLevels($levels, $levelChoices);
 
         $levelChoices['Membres du bureau et comité'] = Level::TYPE_BOARD_MEMBER;
+
+        return $levelChoices;
+    }
+
+
+    public function getChoicesFilter(): array
+    {
+        $levelChoices = [];
+        $memberLevels = [];
+        $frameLevels = [];
+        foreach ($this->levelRepository->findAll() as $level) {
+            match ($level->getType()) {
+                Level::TYPE_SCHOOL_MEMBER => $memberLevels[] = ['id' => $level->getId(), 'title' => $level->getTitle()],
+                Level::TYPE_FRAME => $frameLevels[] = ['id' => $level->getId(), 'title' => $level->getTitle()],
+                default => $levelChoices[] = ['id' => $level->getId(), 'title' => $level->getTitle()],
+            };
+        }
+
+        // $levelChoices[] = ['Membres du bureau et comité'] = Level::TYPE_BOARD_MEMBER;
+        $levelChoices = array_merge([$memberLevels], [$frameLevels], $levelChoices);
+        dump($levelChoices);
 
         return $levelChoices;
     }

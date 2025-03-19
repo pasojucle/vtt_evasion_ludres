@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getList, updateList } from '../utils.js'
-import AutocompleteFilter from '../components/AutocompleteFilterType.jsx';
-import TextRaw from '../components/TextRaw.jsx';
 import Edit from '../components/Edit.jsx';
 import Routing from 'fos-router';
 

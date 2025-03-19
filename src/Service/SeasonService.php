@@ -67,6 +67,16 @@ class SeasonService
         return array_reverse($seasons);
     }
 
+    public function getChoicesFilter(): array
+    {
+        $seasons = [];
+        foreach (range(2021, $this->getCurrentSeason()) as $season) {
+            $seasons[] = ['id' => $season, 'label' => 'Saison ' . $season];
+        }
+
+        return array_reverse($seasons);
+    }
+
     public function getSeasonsStatus(): array
     {
         $today = new DateTime();
