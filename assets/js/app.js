@@ -3,6 +3,7 @@ import { handleCheckChange, formToggle } from './form.js';
 import { Form } from './formValidator.js';
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
 import { initInputFile } from './input-file';
+import { switchEventListener } from './switch.js';
 import Routing from 'fos-router';
 
 var formValidator;
@@ -184,6 +185,7 @@ function formModifier(event) {
         initAddItemLink();
         initInputFile();
         addBikeRideTypeChangeListener();
+        switchEventListener();
         targetEl.querySelectorAll('.form-modifier').forEach((element) => {
             element.addEventListener('change', formModifier);
         });
