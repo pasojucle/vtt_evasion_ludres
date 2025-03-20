@@ -35,7 +35,7 @@ class IdentityDtoTransformer
             $identityDto->firstName = mb_ucfirst($identity->getFirstName());
             $identityDto->fullName = sprintf('%s %s', mb_strtoupper($identity->getName()), mb_ucfirst($identity->getFirstName()));
         }
-        $identityDto->birthDate = ($bithDate) ? $bithDate->format('d/m/Y') : null;
+        $identityDto->birthDate = ($bithDate) ? $bithDate->format('j/n/Y') : null;
         $identityDto->birthPlace = $this->getBirthplace($identity);
         $identityDto->address = ($identity->getAddress()) ? $this->addressDtoTransformer->fromEntity($identity->getAddress(), $histories) : null;
         $identityDto->email = $identity->getEmail();
