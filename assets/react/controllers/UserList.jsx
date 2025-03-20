@@ -4,6 +4,7 @@ import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 import ChoiceAutocompleteFilter from '../components/ChoiceAutocompleteFilter';
 import Paginator from '../components/Paginator';
 import TextRaw from '../components/TextRaw.jsx';
+import Dropdown from '../components/Dropdown.jsx'
 
 export default function UserList() {
 
@@ -128,6 +129,7 @@ export default function UserList() {
                                 <TextRaw textHtml={user.boardMember} className="col-md-1 col-xs-2"/>
                             </div>
                         </a> 
+                        <Dropdown title={user.actions.title} actions={user.actions.items}/>
                     </li>
                 )}
             </ul>

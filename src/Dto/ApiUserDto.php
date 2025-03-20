@@ -24,6 +24,8 @@ class ApiUserDto
 
     public string $boardMember = '';
 
+    public array $actions;
+
 
     public ?array $lines;
 
