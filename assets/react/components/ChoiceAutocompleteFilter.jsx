@@ -78,11 +78,17 @@ export default function ChoiceAutocompleteFilter({list, value,  label, className
         }
     }
 
-    const optionClassName = (index) => {
-        if (itemActive === index) {
-            return 'af-option active';
+    const optionClassName = (item) => {
+        let className = 'af-option';
+
+        if (itemActive === item.id) {
+            className = className + ' active';
         }
-        return 'af-option';
+        if (item.group || item.target) {
+            className = className + ' af-option-group';
+        }
+
+        return className;
     }
 
     const Dropdown = () => {
@@ -90,43 +96,46 @@ export default function ChoiceAutocompleteFilter({list, value,  label, className
             return (
                 <div className="af-dropdown">
                     {listFiltered().map((item, index) =>
-                        <Item key={index} listItem={item} listIndex={index}/>
+                        <Item key={index} listItem={item}/>
                     )}
                 </div>
             )
         }
     }
 
-    const Item = ({listItem, listIndex}) => {
-        if (listItem instanceof Object) {
+    const Item = ({listItem}) => {
+        if (listItem.label) {
             return (
-                <Option item={listItem} index={listIndex}/>
+                <div className="af-group-label">{listItem.label}</div>
             )
         }
-        if (listItem instanceof Array) {
-            return (
-                <optgroup>
-                    {listItem.map((item, index) =>
-                        <Option item={item} index={`${listIndex}-${index}`}/>
-                    )}
-                </optgroup>
-            )
-        }
-        console.log('---------------')
-    }
-    const Option = ({item, index}) => {
+
         return (
-            <div key={item.id} className={ optionClassName(index)} onMouseDown={() => change(item.id)}>
+            <Option item={listItem}/>
+        )
+
+    }
+    const Option = ({item}) => {
+        return (
+            <div key={item.id} className={ optionClassName(item)} onMouseDown={() => change(item.id)}>
                 {toString(item)}
             </div>
         )
+    }
+
+    const Label = () => {
+        if (label) {
+            return (
+                <label className="form-label" >{ label }</label>
+            )
+        }
     }
 
     const classWrapper = "autocomplete-filter " + className;
     const placeholderContent = (value) ? '' : placeholder;
     return (
         <div className={ classWrapper }>
-            <label className="form-label" >{ label }</label>
+            <Label/>
             <div className="af-wrapper">
                 <div className="af-control">
                     <ControlContent/>
@@ -136,7 +145,7 @@ export default function ChoiceAutocompleteFilter({list, value,  label, className
                         value={textFilter}
                         onInput={input}
                         onFocus={() => setFocused(true)}
-                        // onBlur={() => setFocused(false)}
+                        onBlur={() => setFocused(false)}
                         onKeyDown={handleKeyDown}
                     />
                     <ControlBtn/>
