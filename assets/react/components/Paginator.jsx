@@ -38,25 +38,23 @@ export default function Paginator({list, page, maxResults, handlePageChange, han
         return {'className': className, 'textContent': text ?? value, 'value': value}
     }
 
-    if (list.length < maxResults) {
+    if (list.length <= maxResults) {
         return
     }
 
     return (
-        <div className="col-12 float-right flex flex-align-center mt-20">
-            <div>
-                <div className="input-prepend input-group">
-                    <span className="add-on input-group-addon">Résultats</span>
-                    <select
-                        className="form-control"
-                        value={maxResults}
-                        onChange={(event) => handleMaxResultsChange(event.target.value)}
-                    >
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                    </select>
-                </div>
+        <div className="col-12 float-right pagination-group mt-20">
+            <div className="input-group">
+                <div className="input-group-text"><i class="bi bi-list-ul"></i></div>
+                <select
+                    className="form-select"
+                    value={maxResults}
+                    onChange={(event) => handleMaxResultsChange(event.target.value)}
+                >
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
             </div>
 
             <nav aria-label="pagination" className="ms-20">

@@ -41,16 +41,14 @@ class ApiUserDtoTransformer
         $userDto->id = $user->getId();
         $fullName = sprintf('%s %s', mb_strtoupper($member->getName()), mb_ucfirst($member->getFirstName()));
         $userDto->fullName = $fullName;
-        $userDto->level = [
-            'name' => $user->getLevel()?->getTitle() ?? '',
-            'color' => $user->getLevel()?->getColor() ?? '#ffffff',
-        ];
+        $userDto->level = $this->getLevel($user);
         $userDto->seasons = $this->getLicenceSeasons($user);
         $userDto->testingBikeRides = $this->testingBikeRides($user->getLastLicence(), $user->getSessions()->count());
         $userDto->boardMember = (null !== $user->getBoardRole()) ? '<i class="fa-solid fa-crown"></i>' : '';
         $userDto->btnShow = $this->urlGenerator->generate('admin_user', ['user' => $user->getId()]);
         $userDto->actions = $this->getActions($user, $fullName);
-        // dump($userDto);
+        $userDto->isBoardMember = (bool) $user->getBoardRole();
+
         return $userDto;
     }
 
@@ -86,6 +84,16 @@ class ApiUserDtoTransformer
         usort($users, function ($a, $b) {
             return strtolower($a->fullName) < strtolower($b->fullName) ? -1 : 1;
         });
+    }
+
+    private function getLevel(User $user): array
+    {
+        return [
+            'id' => $user->getLevel()?->getId(),
+            'name' => $user->getLevel()?->getTitle() ?? '',
+            'color' => $user->getLevel()?->getColor() ?? '#ffffff',
+            'type' => $user->getLevel()?->getType(),
+        ];
     }
 
     private function getLicenceSeasons(User $user): array

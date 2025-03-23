@@ -26,6 +26,8 @@ class ApiUserDto
 
     public array $actions;
 
+    public bool $isBoardMember = false;
+
 
     public ?array $lines;
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getData } from '../utils'
+import { getData, resolve } from '../utils'
 import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 import ChoiceAutocompleteFilter from '../components/ChoiceAutocompleteFilter';
 import Paginator from '../components/Paginator';
@@ -8,6 +8,7 @@ import Dropdown from '../components/Dropdown.jsx'
 
 export default function UserList() {
 
+    const [isLoad, setIsLoad] = useState(false);
     const [user, setUser] = useState(null);
     const [clearUser, setClearUser] = useState(false);
     const [level, setLevel] = useState(null);
@@ -28,6 +29,7 @@ export default function UserList() {
                 const currentSeason = data.seasons.find(season => season.id!==undefined)
                 setSeason(currentSeason.id);
                 setLevelList(data.levels);
+                setIsLoad(true);
             })
     }, [])
 
@@ -63,12 +65,21 @@ export default function UserList() {
         return list.filter((item) => item.id === user)
     }
 
-    // const levelFilter = (list) => {
-    //     if (!level) {
-    //         return list;
-    //     }
-    //     return list.filter((item) => item.skill.level.id === level)
-    // }
+    const levelFilter = (list) => {
+        if (!level) {
+            return list;
+        }
+        const levelObject = levelList.find((item) => item.id === level);
+        console.log('levelObject', level, levelObject)
+        return list.filter((item) => {
+            if (levelObject.target) {
+                console.log('target', levelObject.target, resolve(levelObject.target, item))
+                return resolve(levelObject.target, item) === levelObject.value;
+            }
+            console.log('item.level.id',item.level, item.level.id)
+            return item.level.id === level
+        })
+    }
 
     const seasonFilter = (list) => {
         if (!season) {
@@ -80,26 +91,22 @@ export default function UserList() {
     const listFiltered = () => {
         let list = userFilter(userList);
         list = seasonFilter(list)
-
-
-        return list
-        // return levelFilter(list);
+        return levelFilter(list);
     }
 
-    const sliceListFiltered = () => {
+    const pagnedListFiltered = () => {
         let list = userFilter(userList);
-        list = seasonFilter(list)
-
-        const start = (page - 1) * maxResults 
-        return list.slice(start, start + maxResults)
-        // return levelFilter(list);
+        list = seasonFilter(list);
+        list = levelFilter(list);
+        const end = page * maxResults 
+        console.log('paginator', (end - maxResults), end)
+        return list.slice((end - maxResults), end)
     }
 
 
     const userListFiltered = () => {
         const list = seasonFilter(userList)
-        return list
-        // return levelFilter(list);
+        return levelFilter(list);
     }
 
     const handlePageChange = (value) => {
@@ -108,31 +115,46 @@ export default function UserList() {
 
     const handleMaxResultsChange = (value) => {
         setMaxResults(value)
+        setPage(1)
+    }
+
+    const List = () => {
+        if (isLoad) {
+            return (
+                <ul className='list-group'>
+                    {pagnedListFiltered().map((user) => 
+                        <li className="list-dropdown" key={user.id}> 
+                            <a href={ user.btnShow }
+                                style={{backgroundColor: user.level.color }}>
+                                <div className="row">
+                                    <div className="col-md-4 col-xs-12">{ user.fullName }</div>
+                                    <div className="col-md-4 col-xs-12" >{ user.testingBikeRides }</div>
+                                    <div className="col-md-3 col-xs-10">{ user.level.name }</div>
+                                    <TextRaw textHtml={user.boardMember} className="col-md-1 col-xs-2"/>
+                                </div>
+                            </a> 
+                            <Dropdown title={user.actions.title} actions={user.actions.items}/>
+                        </li>
+                    )}
+                </ul>
+            )
+        }
+
+        return(
+            <div className="loader-container">
+                <div className="loader"></div>
+            </div>
+        )
     }
 
     return (
         <div>
             <div className="row">
-                <ChoiceAutocompleteFilter list={userListFiltered()} value={user} label="Adhérent" placeholder="Selectionner un adhérent" handleChange={handleChangeUser} isClear={clearUser} handleClear={handleChangeClearUser} className="col-md-4 form-group"/>
-                <ChoiceAutocompleteFilter list={seasonList} value={season} label="Saison" placeholder="Toutes les saisons" handleChange={handleChangeSeason} isClear={clearSeason} handleClear={handleChangeClearSeason}  className="col-md-4 form-group"/>
-                <ChoiceAutocompleteFilter list={levelList} value={level} label="Niveaux" placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-4 form-group"/>
+                <ChoiceAutocompleteFilter list={userListFiltered()} value={user} label="Adhérent" placeholder="Selectionner un adhérent" handleChange={handleChangeUser} isClear={clearUser} handleClear={handleChangeClearUser} className="col-md-6 form-group"/>
+                <ChoiceAutocompleteFilter list={seasonList} value={season} label="Saison" placeholder="Toutes les saisons" handleChange={handleChangeSeason} isClear={clearSeason} handleClear={handleChangeClearSeason}  className="col-md-6 form-group"/>
+                <ChoiceAutocompleteFilter list={levelList} value={level} label={null} placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-12 form-group"/>
             </div>
-            <ul className='list-group'>
-                {sliceListFiltered().map((user) => 
-                    <li className="list-dropdown" key={user.id}> 
-                        <a href={ user.btnShow }
-                            style={{backgroundColor: user.level.color }}>
-                            <div className="row">
-                                <div className="col-md-4 col-xs-12">{ user.fullName }</div>
-                                <div className="col-md-4 col-xs-12" >{ user.testingBikeRides }</div>
-                                <div className="col-md-3 col-xs-10">{ user.level.name }</div>
-                                <TextRaw textHtml={user.boardMember} className="col-md-1 col-xs-2"/>
-                            </div>
-                        </a> 
-                        <Dropdown title={user.actions.title} actions={user.actions.items}/>
-                    </li>
-                )}
-            </ul>
+            <List/>
             <Paginator list={listFiltered()} page={page} maxResults={maxResults} handlePageChange={handlePageChange} handleMaxResultsChange={handleMaxResultsChange}/>
         </div>
     )
