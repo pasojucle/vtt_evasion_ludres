@@ -53,6 +53,13 @@
             background-color: var(--gray-400);
             cursor: pointer;
           }
+          &.af-option-group {
+              padding-left: 18px;
+          }
+        }
+        .af-group-label {
+          padding: 5px 8px;
+          font-weight: 700;
         }
       }
     }
