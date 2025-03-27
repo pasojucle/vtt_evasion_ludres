@@ -88,7 +88,7 @@ class LicenceRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('l')
             ->select('l.season')
             ->where(
-                (new Expr)->eq('l.user', ':user')
+                (new Expr())->eq('l.user', ':user')
             )
             ->setParameter('user', $user)
             ->getQuery()
