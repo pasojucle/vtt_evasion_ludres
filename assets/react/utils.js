@@ -35,11 +35,6 @@ export const resolve = (path, obj) => {
     }, obj || self)
 }
 
-export const getList = async(route, params={}) => {
-    getData(route, params={})
-            .then((data) => data.list)
-}
-
 export const getData = async(route, params={}) => {
     const promise = await fetch(Routing.generate(route, params));
 

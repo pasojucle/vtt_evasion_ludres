@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getList } from '../utils'
+import { getData } from '../utils'
 import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 import TextRaw from '../components/TextRaw.jsx';
 
@@ -12,8 +12,8 @@ export default function UserSkillList({user}) {
     const [userSkillList, setUserSkillList] = useState([]);
 
     useEffect(() => {
-        const list = getList('api_user_skill_list', {'user': user})
-            .then((list) => setUserSkillList(list))
+        const list = getData('api_user_skill_list', {'user': user})
+            .then((data) => setUserSkillList(data.list))
     }, [])
 
     const handleChangeCategory = (value) => {

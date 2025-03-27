@@ -1,13 +1,13 @@
 import React, { useState, useEffect }  from 'react';
-import {toString, getList} from '../utils'
+import {toString, getData} from '../utils'
 
 export default function ChoiceType({id, name, entityName, value, label, className}) {
     const [list, setList] = useState([]);
     const [selectedValue, setSelectedValue] = useState(value);
 
     useEffect(() => {
-        const list = getList(`api_${entityName}_list`)
-            .then((list) => setList(list))
+        const list = getData(`api_${entityName}_list`)
+            .then((data) => setList(data.list))
     }, [])
 
     return (

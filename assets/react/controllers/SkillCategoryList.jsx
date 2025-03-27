@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getList, updateList } from '../utils.js'
+import { getData, updateList } from '../utils.js'
 import Edit from '../components/Edit.jsx';
 import Routing from 'fos-router';
 
@@ -12,8 +12,8 @@ export default function SkillCategoryList() {
     const [route, setRoute] = useState(null);
 
     useEffect(() => {
-        const list = getList('api_skill_category_list')
-            .then((list) => setSkillCategoryList(list))
+        const list = getData('api_skill_category_list')
+            .then((data) => setSkillCategoryList(data.list))
     }, [])
 
     const handleAdd = () => {
