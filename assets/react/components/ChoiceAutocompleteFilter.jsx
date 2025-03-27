@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { toString } from '../utils'
 
 
-export default function ChoiceAutocompleteFilter({list, value,  label, className, placeholder, handleChange, isClear= false, handleClear}) {
+export default function ChoiceAutocompleteFilter({list, value, label, className, placeholder, handleChange, isClear= false, handleClear}) {
 
     const [textFilter, setTextFilter] = useState('');
     const [focused, setFocused] = useState(false);
-    const [itemActive, setItemActive] = useState(0);
+    const [indexActive, setIndexActive] = useState(0);
+
+    const itemObjectFromValue = (value) => {
+        return list.find((item) => item.id === value);
+    }
 
     const input = (event) => {
         setTextFilter(event.target.value.toLowerCase());
@@ -16,30 +20,33 @@ export default function ChoiceAutocompleteFilter({list, value,  label, className
         setFocused(false);
         handleClear(false);
         setTextFilter('');
-        handleChange(value);
+        const itemObject = itemObjectFromValue(value);
+        handleChange(itemObject);
+        console.log('change', value)
     }
 
     const clear = () => {
         setTextFilter('');
         handleClear(true);
         handleChange(null);
+        console.log('clear')
     }
 
     const handleKeyDown = (event) => {
         if ('Enter' === event.code) {
-            change(listFiltered()[itemActive].id)
+            change(listFiltered()[indexActive].id)
         }
         if ('ArrowDown' === event.code) {
             const length = listFiltered().length;
-            const index = itemActive + 1;
+            const index = indexActive + 1;
             if (index < length) {
-                setItemActive(index);
+                setIndexActive(index);
             }
         }
         if ('ArrowUp' === event.code) {
-            if (0 < itemActive) {
-                const index = itemActive - 1;
-                setItemActive(index);
+            if (0 < indexActive) {
+                const index = indexActive - 1;
+                setIndexActive(index);
             }
         }
     }
@@ -60,33 +67,30 @@ export default function ChoiceAutocompleteFilter({list, value,  label, className
 
     const ControlContent = () => {
         if (displayControlContent()) {
-            const item = list.find((item) => item.id === value);
-            const text = (item) ? toString(item): '';
+            console.log('value', value);
+            const text = (value) ? toString(value): '';
             return (
                 <div className="af-content">{ text }</div>
             )
         }
     }
-    const ControlBtn = () => {
+    const ControlBtnClear = () => {
         if (displayControlContent()) {
             return (
-                <div className="ms-auto" style={{width: "35px"}}>
-                    <button className="btn af-btn" onClick={clear}><i className="bi bi-x"></i></button>
-                    <button className="btn af-btn" onClick={() => setFocused(true)}><i className="bi bi-caret-down-fill"></i></button>
-                </div>
+                <button className="btn af-btn" onClick={clear}><i className="bi bi-x"></i></button>
             )
         }
     }
 
-    const optionClassName = (item) => {
+    const optionClassName = (item, index) => {
         let className = 'af-option';
 
-        if (itemActive === item.id) {
+        if (indexActive === index) {
             className = className + ' active';
         }
-        if (item.group || item.target) {
+        if (item.group) {
             className = className + ' af-option-group';
-        }
+        } 
 
         return className;
     }
@@ -96,28 +100,26 @@ export default function ChoiceAutocompleteFilter({list, value,  label, className
             return (
                 <div className="af-dropdown">
                     {listFiltered().map((item, index) =>
-                        <Item key={index} listItem={item}/>
+                        <Item key={index} listItem={item} index={index}/>
                     )}
                 </div>
             )
         }
     }
 
-    const Item = ({listItem}) => {
+    const Item = ({listItem, index}) => {
         if (listItem.label) {
             return (
                 <div className="af-group-label">{listItem.label}</div>
             )
         }
-
         return (
-            <Option item={listItem}/>
+            <Option item={listItem} index={index}/>
         )
-
     }
-    const Option = ({item}) => {
+    const Option = ({item, index}) => {
         return (
-            <div key={item.id} className={ optionClassName(item)} onMouseDown={() => change(item.id)}>
+            <div key={item.id} className={ optionClassName(item, index)} onMouseDown={() => change(item.id)}>
                 {toString(item)}
             </div>
         )
@@ -148,7 +150,10 @@ export default function ChoiceAutocompleteFilter({list, value,  label, className
                         onBlur={() => setFocused(false)}
                         onKeyDown={handleKeyDown}
                     />
-                    <ControlBtn/>
+                    <div className="af-btn-group">
+                        <ControlBtnClear/>
+                        <button className="btn af-btn" onClick={() => setFocused(true)}><i className="bi bi-chevron-down"></i></button>
+                    </div>
                 </div>
                 <Dropdown/>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getList, updateList } from '../utils'
+import { getData, updateList } from '../utils'
 import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 import TextRaw from '../components/TextRaw.jsx';
 import Edit from '../components/Edit';
@@ -17,8 +17,8 @@ export default function SkillList() {
     const [route, setRoute] = useState(null);
 
     useEffect(() => {
-        const list = getList('api_skill_list')
-            .then((list) => setSkillList(list))
+        const list = getData('api_skill_list')
+            .then((data) => setSkillList(data.list))
     }, [])
 
     const handleAdd = () => {

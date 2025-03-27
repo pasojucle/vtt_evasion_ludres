@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Dto\DtoTransformer\DtoTransformerInterface;
-use Doctrine\ORM\PersistentCollection;
 use ReflectionClass;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -13,7 +12,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
 use function Symfony\Component\String\u;
 
 class ApiService
@@ -30,7 +28,6 @@ class ApiService
     ];
 
     public function __construct(
-        private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly TranslatorInterface $translator,
     ) {

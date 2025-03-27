@@ -21,8 +21,7 @@ class LevelService
     public function __construct(
         private readonly LevelRepository $levelRepository,
         private readonly TranslatorInterface $translator,
-    )
-    {
+    ) {
     }
 
     public function getLevelChoices(): array
@@ -46,14 +45,14 @@ class LevelService
         $levelChoices = [];
         $memberLevels = [
             ['label' => $this->translator->trans(Level::TYPES[Level::TYPE_SCHOOL_MEMBER])],
-            ['id' => sprintf('group-%s', Level::TYPE_SCHOOL_MEMBER), 'title' => self::LEVEL_ALL_MEMBER, 'target' => 'level.type', 'value' => Level::TYPE_SCHOOL_MEMBER],
+            ['id' => sprintf('group-%s', Level::TYPE_SCHOOL_MEMBER), 'title' => self::LEVEL_ALL_MEMBER, 'target' => 'level.type', 'value' => Level::TYPE_SCHOOL_MEMBER, 'group' => Level::TYPE_ADULT_MEMBER],
         ];
         $frameLevels = [
             ['label' => $this->translator->trans(Level::TYPES[Level::TYPE_FRAME])],
-            ['id' => sprintf('group-%s', Level::TYPE_FRAME), 'title' => self::LEVEL_ALL_FRAME, 'target' => 'level.type', 'value' => Level::TYPE_FRAME],
+            ['id' => sprintf('group-%s', Level::TYPE_FRAME), 'title' => self::LEVEL_ALL_FRAME, 'target' => 'level.type', 'value' => Level::TYPE_FRAME, 'group' => Level::TYPE_FRAME],
         ];
         foreach ($this->levelRepository->findAll() as $level) {
-             match ($level->getType()) {
+            match ($level->getType()) {
                 Level::TYPE_SCHOOL_MEMBER => $memberLevels[] = ['id' => $level->getId(), 'title' => $level->getTitle(), 'group' => Level::TYPE_ADULT_MEMBER],
                 Level::TYPE_FRAME => $frameLevels[] = ['id' => $level->getId(), 'title' => $level->getTitle(), 'group' => Level::TYPE_FRAME],
                 default => $levelChoices[] = ['id' => $level->getId(), 'title' => $level->getTitle()],

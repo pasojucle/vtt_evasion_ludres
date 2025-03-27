@@ -22,9 +22,15 @@
           text-overflow: ellipsis;
           white-space: nowrap;
         }
-        .af-btn {
+        .af-btn-group {
+          display: flex;
+          margin-left: auto;
+          align-items: center;
           padding: unset;
-          font-size: 16px;
+          .af-btn {
+            background-color: unset;
+            padding: 8px 1px;
+          }
         }
         input {
           border: unset;

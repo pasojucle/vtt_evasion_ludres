@@ -3,7 +3,7 @@ import Routing from 'fos-router';
 import Edit from '../components/Edit';
 import AddSkill from '../components/AddSkill';
 
-import { getList, updateList } from '../utils';
+import { getData, updateList } from '../utils';
 
 export default function ClusterSkillList({cluster, canEdit}) {
 
@@ -14,8 +14,8 @@ export default function ClusterSkillList({cluster, canEdit}) {
     const [route, setRoute] = useState(null);
 
     useEffect(() => {
-        const list = getList('api_cluster_skill_list', {'cluster': cluster})
-            .then((list) => setClusterSkillList(list))
+        const list = getData('api_cluster_skill_list', {'cluster': cluster})
+            .then((data) => setClusterSkillList(data.list))
     }, [])
 
     const handleAdd = () => {
