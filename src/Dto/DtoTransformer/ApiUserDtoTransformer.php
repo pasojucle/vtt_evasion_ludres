@@ -4,29 +4,19 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\User;
-use App\Entity\Level;
 use App\Dto\ApiUserDto;
-use App\Entity\Licence;
 use App\Entity\Identity;
-use App\Repository\LicenceRepository;
+use App\Entity\Level;
+use App\Entity\Licence;
+use App\Entity\User;
 use App\Repository\IdentityRepository;
+use App\Repository\LicenceRepository;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class ApiUserDtoTransformer
 {
     public function __construct(
-        private readonly ApprovalDtoTransformer $approvalDtoTransformer,
-        private readonly IdentityDtoTransformer $identityDtoTransformer,
-        private readonly HealthDtoTransformer $healthDtoTransformer,
-        private readonly LevelDtoTransformer $levelDtoTransformer,
-        private readonly LicenceDtoTransformer $licenceDtoTransformer,
-        private readonly FFCTLicenceDtoTransformer $FFCTLicenceDtoTransformer,
-        private readonly AccessDecisionManagerInterface $accessDecisionManager,
-        private readonly TranslatorInterface $translator,
         private readonly LicenceRepository $licenceRepository,
         private readonly IdentityRepository $identityRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -99,7 +89,7 @@ class ApiUserDtoTransformer
     private function getLicenceSeasons(User $user): array
     {
         return $this->licenceRepository->findSeasons($user);
-    } 
+    }
 
     private function getActions(User $user, string $fullName): array
     {
@@ -132,7 +122,7 @@ class ApiUserDtoTransformer
         }
         if ($this->security->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
             $actions[] = [
-                'path' => $this->urlGenerator->generate('home', ['_switch_user'=> $user->getLicenceNumber()]),
+                'path' => $this->urlGenerator->generate('home', ['_switch_user' => $user->getLicenceNumber()]),
                 'icon' => 'fas fa-exchange-alt',
                 'label' => 'Se connecter en tant que',
             ];
@@ -141,4 +131,3 @@ class ApiUserDtoTransformer
         return ['title' => $fullName, 'items' => $actions];
     }
 }
-

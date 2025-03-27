@@ -27,7 +27,7 @@ export default function UserList() {
                 setUserList(data.list);
                 setSeasonList(data.seasons);
                 const currentSeason = data.seasons.find(season => season.id!==undefined)
-                setSeason(currentSeason.id);
+                setSeason(currentSeason);
                 setLevelList(data.levels);
                 setIsLoad(true);
             })
@@ -62,22 +62,18 @@ export default function UserList() {
         if (!user) {
             return list;
         }
-        return list.filter((item) => item.id === user)
+        return list.filter((item) => item.id === user.id)
     }
 
     const levelFilter = (list) => {
         if (!level) {
             return list;
         }
-        const levelObject = levelList.find((item) => item.id === level);
-        console.log('levelObject', level, levelObject)
         return list.filter((item) => {
-            if (levelObject.target) {
-                console.log('target', levelObject.target, resolve(levelObject.target, item))
-                return resolve(levelObject.target, item) === levelObject.value;
+            if (level.target) {
+                return resolve(level.target, item) === level.value;
             }
-            console.log('item.level.id',item.level, item.level.id)
-            return item.level.id === level
+            return item.level.id === level.id
         })
     }
 

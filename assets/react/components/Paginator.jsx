@@ -45,7 +45,7 @@ export default function Paginator({list, page, maxResults, handlePageChange, han
     return (
         <div className="col-12 float-right pagination-group mt-20">
             <div className="input-group">
-                <div className="input-group-text"><i class="bi bi-list-ul"></i></div>
+                <div className="input-group-text"><i className="bi bi-list-ul"></i></div>
                 <select
                     className="form-select"
                     value={maxResults}

@@ -7,10 +7,10 @@ namespace App\Form\Admin;
 use App\Entity\Level;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
-use App\Form\Type\ReactAutocompleteType;
-use Symfony\Component\Form\AbstractType;
-use App\Form\Type\ReactChoiceFilteredType;
 use App\Form\Type\ReactAutocompleteFilterType;
+use App\Form\Type\ReactAutocompleteType;
+use App\Form\Type\ReactChoiceFilteredType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Routing from 'fos-router';
-import { toString, getList } from '../utils'
+import { toString, getData } from '../utils'
 
 
 export default function EntityAutocompleteFilter({entityName, params, value,  label, className, placeholder, handleChange, isClear= false, handleClear}) {
@@ -12,8 +12,8 @@ export default function EntityAutocompleteFilter({entityName, params, value,  la
 
     useEffect(() => {
         console.log('AutocompleteFilter', entityName)
-        const list = getList(`api_${entityName}_list`, params)
-        .then((list) => setList(list))
+        const list = getData(`api_${entityName}_list`, params)
+        .then((data) => setList(data.list))
 
     }, [])
 

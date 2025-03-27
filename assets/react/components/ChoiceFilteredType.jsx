@@ -6,8 +6,8 @@ export default function ChoiceFilteredType({id, name, entityName, label, filters
     const [selectedValue, setSelectedValue] = useState('');
 
     useEffect(() => {
-        const list = getList(`api_${entityName}_list`)
-            .then((list) => setList(list))
+        const list = getData(`api_${entityName}_list`)
+            .then((data) => setList(data.list))
     }, [])
 
     const listFiltered = () => {
