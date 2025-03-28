@@ -53,7 +53,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $survey = $event->getForm()->getData();
 
         $data = $event->getData();
-        $restriction = (array_key_exists('restriction', $data)) ? $data['restriction'] : null;
+        $restriction = (array_key_exists('restriction', $data)) ? (int) $data['restriction'] : null;
         $levelFilter = null;
         $levels = $this->toArray($data, 'levels');
         $memberIds = $this->toArray($data, 'memberIds');
