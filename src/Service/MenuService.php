@@ -41,6 +41,7 @@ class MenuService
                 'pattern' => '/school/',
                 'subMenus' => $this->setSubMenusStatus($this->getSchoolSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
+                'badge' => null,
             ],
             [
                 'label' => 'Programme du club',
@@ -77,6 +78,7 @@ class MenuService
                 'pattern' => '/links/',
                 'subMenus' => [],
                 'role' => 'PUBLIC_ACCESS',
+                'badge' => 'notification_link',
             ],
             [
                 'label' => 'Contacts',
@@ -190,6 +192,7 @@ class MenuService
                 'route' => 'school_documentation',
                 'pattern' => '/school_documentation/',
                 'role' => 'DOCUMENTATION_LIST',
+                'badge' => 'notification_documentation',
             ],
         ];
     }

@@ -45,11 +45,11 @@ class SecondHandController extends AbstractController
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
-        $secondHandViewedIds = $logRepository->findSecondHandViewedIds($user);
+        $novelties = $this->secondHandRepository->findNoveltiesByUserIds($user);
         $query = $this->secondHandRepository->findSecondHandEnabledQuery();
         $secondHands = $paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
         return $this->render('second_hand/list.html.twig', [
-            'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands, $secondHandViewedIds),
+            'second_hands' => $this->secondHandDtoTransformer->fromEntities($secondHands, $novelties),
             'paginator' => $paginatorDtoTransformer->fromEntities($secondHands),
         ]);
     }

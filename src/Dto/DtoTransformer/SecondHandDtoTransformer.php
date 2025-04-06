@@ -53,7 +53,7 @@ class SecondHandDtoTransformer
     {
         $secondHands = [];
         foreach ($secondHandEntities as $secondHandEntity) {
-            $secondHands[] = $this->fromEntity($secondHandEntity, !in_array($secondHandEntity->getId(), $secondHandViewedIds));
+            $secondHands[] = $this->fromEntity($secondHandEntity, in_array($secondHandEntity->getId(), $secondHandViewedIds));
         }
 
         return $secondHands;

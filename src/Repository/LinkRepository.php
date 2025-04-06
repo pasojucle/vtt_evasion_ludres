@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Link;
+use App\Entity\Log;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -67,5 +71,48 @@ class LinkRepository extends ServiceEntityRepository
         }
 
         return $nexOrder;
+    }
+
+    public function quertNoveltiesByUser(User $user): QueryBuilder
+    {
+        return $this->createQueryBuilder('l')
+            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX((new Expr())->eq('l.id', 'log.entityId'), (new Expr())->eq('log.entity', ':entityName'), (new Expr())->eq('log.user', ':user')))
+            ->andWhere(
+                (new Expr())->orX(
+                    (new Expr())->isNull('log'),
+                    (new Expr())->lt('log.viewAt', 'l.updateAt'),
+                ),
+                (new Expr())->eq('l.position', ':position'),
+                (new Expr())->isNotNull('l.updateAt'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', 'Link'),
+                new Parameter('position', Link::POSITION_LINK_PAGE),
+            ]))
+       ;
+    }
+
+    /**
+     * @return Link[] Returns an array of Link objects
+     */
+    public function findNoveltiesByUser(User $user): array
+    {
+        return $this->quertNoveltiesByUser($user)
+            ->getQuery()
+            ->getResult()
+       ;
+    }
+
+    /**
+     * @return int[] Returns an array of integer
+     */
+    public function findNoveltiesByUserIds(User $user): array
+    {
+        return $this->quertNoveltiesByUser($user)
+            ->select('l.id')
+            ->getQuery()
+            ->getSingleColumnResult()
+       ;
     }
 }

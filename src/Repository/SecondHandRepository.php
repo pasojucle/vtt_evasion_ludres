@@ -124,23 +124,15 @@ class SecondHandRepository extends ServiceEntityRepository
        ;
     }
 
-
-    /**
-     * @return SecondHand[] Returns an array of SecondHand objects
-     */
-    public function findNotViewedByUser(User $user): array
+    public function quertNoveltiesByUser(User $user): QueryBuilder
     {
-        $viewed = $this->getEntityManager()->createQueryBuilder()
-            ->select('log.entityId')
-            ->from(Log::class, 'log')
-            ->andWhere(
-                (new Expr())->eq('log.user', ':user'),
-                (new Expr())->eq('log.entity', ':entityName')
-            );
-
         return $this->createQueryBuilder('s')
+            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX((new Expr())->eq('s.id', 'log.entityId'), (new Expr())->eq('log.entity', ':entityName'), (new Expr())->eq('log.user', ':user')))
             ->andWhere(
-                (new Expr())->notIn('s.id', $viewed->getDQL()),
+                (new Expr())->orX(
+                    (new Expr())->isNull('log'),
+                    (new Expr())->lt('log.viewAt', 's.validedAt'),
+                ),
                 (new Expr())->isNotNull('s.validedAt'),
                 (new Expr())->eq('s.disabled', ':disabled'),
             )
@@ -149,8 +141,29 @@ class SecondHandRepository extends ServiceEntityRepository
                 new Parameter('entityName', 'SecondHand'),
                 new Parameter('disabled', false),
             ]))
+       ;
+    }
+
+    /**
+     * @return SecondHand[] Returns an array of SecondHand objects
+     */
+    public function findNoveltiesByUser(User $user): array
+    {
+        return $this->quertNoveltiesByUser($user)
             ->getQuery()
             ->getResult()
+       ;
+    }
+
+    /**
+     * @return int[] Returns an array of integer
+     */
+    public function findNoveltiesByUserIds(User $user): array
+    {
+        return $this->quertNoveltiesByUser($user)
+            ->select('s.id')
+            ->getQuery()
+            ->getSingleColumnResult()
        ;
     }
 }

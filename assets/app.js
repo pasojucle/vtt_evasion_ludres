@@ -39,4 +39,6 @@ import './js/slideshow.js';
 import './js/notification.js';
 import './js/extraToggle.js';
 import './js/wrapper-youtube.js';
+import './js/log.js';
+
 registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));

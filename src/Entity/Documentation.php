@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DocumentationRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DocumentationRepository::class)]
@@ -24,6 +25,9 @@ class Documentation
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $updateAt = null;
 
     public function getId(): int
     {
@@ -74,6 +78,18 @@ class Documentation
     public function setLink(?string $link): static
     {
         $this->link = $link;
+
+        return $this;
+    }
+
+    public function getUpdateAt(): ?DateTimeImmutable
+    {
+        return $this->updateAt;
+    }
+
+    public function setUpdateAt(?DateTimeImmutable $updateAt): static
+    {
+        $this->updateAt = $updateAt;
 
         return $this;
     }

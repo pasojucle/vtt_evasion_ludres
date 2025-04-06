@@ -57,7 +57,7 @@ class AddMediaSubscriber implements EventSubscriberInterface
     {
         $documentation = $event->getData();
 
-        $this->modifier($event->getForm(), $documentation['media']);
+        $this->modifier($event->getForm(), (int) $documentation['media']);
     }
 
     private function modifier(FormInterface $form, ?int $media): void

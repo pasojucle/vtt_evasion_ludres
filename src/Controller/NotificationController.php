@@ -7,16 +7,13 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\NotificationDtoTransformer;
 use App\Entity\Documentation;
 use App\Entity\Survey;
-use App\Entity\User;
 use App\Service\NotificationService;
-use App\Service\UserService;
 use App\UseCase\Notification\GetList;
 use App\UseCase\Notification\GetNews;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +23,6 @@ class NotificationController extends AbstractController
 {
     public function __construct(
         private readonly GetNews $getNews,
-        private readonly UserService $userService,
         private readonly NotificationService $notificationService,
         private readonly NotificationDtoTransformer $notificationDtoTransformer,
     ) {
@@ -55,9 +51,7 @@ class NotificationController extends AbstractController
     #[Route('/slideshow', name: 'slideshow', methods: ['GET'], options:['expose' => true])]
     public function slideshow(): JsonResponse
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $slideshowImages = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSlideShowImages() : null;
+        $slideshowImages = $this->getNews->getSlideShowImages();
 
         return new JsonResponse(['hasNewItem' => !empty($slideshowImages)]);
     }
@@ -65,9 +59,7 @@ class NotificationController extends AbstractController
     #[Route('/summary/list', name: 'summary_list', methods: ['GET'], options:['expose' => true])]
     public function summaryList(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $summaries = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSummaries() : null;
+        $summaries = $this->getNews->getSummaries();
 
         return new JsonResponse(['hasNewItem' => !empty($summaries)]);
     }
@@ -75,9 +67,7 @@ class NotificationController extends AbstractController
     #[Route('/user/skill/list', name: 'user_skill_list', methods: ['GET'], options:['expose' => true])]
     public function userSkillList(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $userSkills = ($this->userService->licenceIsActive($user)) ? $this->getNews->getUserSkill() : null;
+        $userSkills = $this->getNews->getUserSkill();
 
         return new JsonResponse(['hasNewItem' => !empty($userSkills)]);
     }
@@ -85,11 +75,25 @@ class NotificationController extends AbstractController
     #[Route('/secondHand', name: 'second_hand', methods: ['GET'], options:['expose' => true])]
     public function secondHand(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $secondHands = ($this->userService->licenceIsActive($user)) ? $this->getNews->getSecondHands() : null;
+        $secondHands = $this->getNews->getSecondHands();
 
         return new JsonResponse(['hasNewItem' => !empty($secondHands)]);
+    }
+
+    #[Route('/link', name: 'link', methods: ['GET'], options:['expose' => true])]
+    public function link(): Response
+    {
+        $links = $this->getNews->getLinks();
+
+        return new JsonResponse(['hasNewItem' => !empty($links)]);
+    }
+
+    #[Route('/documentation', name: 'documentation', methods: ['GET'], options:['expose' => true])]
+    public function documentation(): Response
+    {
+        $documentations = $this->getNews->getDocumentatons();
+
+        return new JsonResponse(['hasNewItem' => !empty($documentations)]);
     }
 
     #[Route('/show/{entityName}/{entityId}', name: 'show', methods: ['GET'], defaults:['entityId' => null])]

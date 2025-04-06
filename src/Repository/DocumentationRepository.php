@@ -3,7 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Documentation;
+use App\Entity\Log;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -72,5 +77,46 @@ class DocumentationRepository extends ServiceEntityRepository
         }
 
         return $nexOrder;
+    }
+
+    public function quertNoveltiesByUser(User $user): QueryBuilder
+    {
+        return $this->createQueryBuilder('d')
+            ->leftjoin(Log::class, 'log', 'WITH', (new Expr())->andX((new Expr())->eq('d.id', 'log.entityId'), (new Expr())->eq('log.entity', ':entityName'), (new Expr())->eq('log.user', ':user')))
+            ->andWhere(
+                (new Expr())->orX(
+                    (new Expr())->isNull('log'),
+                    (new Expr())->lt('log.viewAt', 'd.updateAt'),
+                ),
+                (new Expr())->isNotNull('d.updateAt'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('entityName', 'Documentation'),
+            ]))
+       ;
+    }
+
+    /**
+     * @return Documentation[] Returns an array of Link objects
+     */
+    public function findNoveltiesByUser(User $user): array
+    {
+        return $this->quertNoveltiesByUser($user)
+            ->getQuery()
+            ->getResult()
+       ;
+    }
+
+    /**
+     * @return int[] Returns an array of integer
+     */
+    public function findNoveltiesByUserIds(User $user): array
+    {
+        return $this->quertNoveltiesByUser($user)
+            ->select('d.id')
+            ->getQuery()
+            ->getSingleColumnResult()
+       ;
     }
 }

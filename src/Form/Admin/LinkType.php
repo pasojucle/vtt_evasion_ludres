@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Form;
+namespace App\Form\Admin;
 
 use App\Entity\Link;
 use App\Form\Type\CkeditorType;
@@ -44,7 +44,7 @@ class LinkType extends AbstractType
             ])
             ->add('content', CKEditorType::class, [
                 'label' => 'Détail (optionnel)',
-                'config_name' => 'base',
+                'config_name' => 'full',
                 'required' => false,
                 'row_attr' => [
                     'class' => 'form-group',

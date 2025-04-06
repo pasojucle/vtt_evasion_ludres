@@ -39,7 +39,7 @@ class LogService
         $this->entityManager->flush();
     }
 
-    public function getForm(array $data = null): FormInterface
+    public function getForm(?array $data = null): FormInterface
     {
         return $this->formFactory->create(LogType::class, $data, [
             'action' => $this->urlGenerator->generate('log_write'),

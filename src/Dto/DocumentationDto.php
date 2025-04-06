@@ -8,7 +8,7 @@ use App\Entity\Documentation;
 
 class DocumentationDto
 {
-    public ?Documentation $entity;
+    public int $id;
 
     public ?string $name = null;
 
@@ -19,4 +19,6 @@ class DocumentationDto
     public ?string $mimeType = null;
 
     public ?string $link = null;
+
+    public bool $novelty = false;
 }

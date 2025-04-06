@@ -35,16 +35,21 @@
                     <ul class="list-outside">
                         {% for documentation in documentations %}
                             <li>
-                                {% if documentation.link %}
-                                    <a class="outside-link" data-toggle="modal" href="{{ documentation.link }}" target="_blank">{{ documentation.name }}</a>
-                                {% else %}
-                                    <a href="{{ documentation.source }}" target="_blank">{{ documentation.name }}</a>
-                                {% endif %}
+                                <div class="d-flex gap-2 align-items-center">
+                                    {% if documentation.link %}
+                                        <a class="outside-link" data-trigger="write-log" data-entity-id="{{ documentation.id}}" data-toggle="modal" href="{{ documentation.link }}" target="_blank">{{ documentation.name }}</a>
+                                    {% else %}
+                                        <a href="{{ documentation.source }}" data-trigger="write-log" data-entity-id="{{ documentation.id}}" target="_blank">{{ documentation.name }}</a>
+                                    {% endif %}
+                                    {% if documentation.novelty %}<div class="novelty">N</div>{% endif %}
+                                </div>
                             </li>
                         {% endfor %}
                     </ul>
                 {% endif %}
             </div>
+            {{ form_start(form) }}
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

@@ -20,28 +20,30 @@ class DocumentationDtoTransformer
     ) {
     }
 
-    public function fromEntity(?Documentation $documentation): DocumentationDto
+    public function fromEntity(?Documentation $documentation, bool $novelty = false): DocumentationDto
     {
         $fileName = $documentation?->getFilename();
         $filePath = ($documentation?->getFilename()) ? $this->projectDirService->path('documentation', $fileName) : null;
 
         $documentationDto = new DocumentationDto();
         if ((new ReflectionProperty($documentation, 'id'))->isInitialized($documentation)) {
+            $documentationDto->id = $documentation->getId();
             $documentationDto->name = $documentation->getName();
             $documentationDto->filename = $fileName;
             $documentationDto->source = $this->getSource($filePath);
             $documentationDto->mimeType = $this->getMimeType($filePath);
             $documentationDto->link = $this->getLink($documentation);
+            $documentationDto->novelty = $novelty;
         }
 
         return $documentationDto;
     }
 
-    public function fromEntities(Paginator|Collection|array $documentationEntities): array
+    public function fromEntities(Paginator|Collection|array $documentationEntities, array $linkViewedIds = []): array
     {
         $documentations = [];
         foreach ($documentationEntities as $documentationEntity) {
-            $documentations[] = $this->fromEntity($documentationEntity);
+            $documentations[] = $this->fromEntity($documentationEntity, in_array($documentationEntity->getId(), $linkViewedIds));
         }
 
         return $documentations;

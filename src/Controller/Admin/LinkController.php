@@ -6,11 +6,12 @@ namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Link;
-use App\Form\LinkType;
+use App\Form\Admin\LinkType;
 use App\Repository\LinkRepository;
 use App\Service\OrderByService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
+use Error;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -77,7 +78,7 @@ class LinkController extends AbstractController
                             $newFilename
                         );
                     } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
+                        throw new Error($e->getMessage());
                     }
                     $link->setImage($newFilename);
                 }

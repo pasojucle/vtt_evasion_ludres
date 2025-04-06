@@ -3,7 +3,7 @@
         <label for="{{ formId }}" class="form-label">{{ label }}</label>
         <div style="position: relative;">
             <ckeditor :editor="editor" v-model="editorData" @ready="onReady" @input="onChange" :config="editorConfig"></ckeditor>
-            <textarea style="position: absolute; top: 20px; left: 20px; opacity: 0;" :id="id" :name="name" required :value="editorData"></textarea>
+            <textarea style="position: absolute; top: 20px; left: 20px; opacity: 0;" :id="id" :name="name" :required="required_value" :value="editorData"></textarea>
         </div>
     </div>
 </template>
@@ -37,6 +37,7 @@
             upload_url: String,
             toolbar: Array,
             environment: String,
+            required_value: Boolean,
         },
         data() {
             return {

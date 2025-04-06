@@ -144,10 +144,14 @@ class ContentController extends AbstractController
         DocumentationRepository $documentationRepository,
         DocumentationDtoTransformer $documentationDtoTransformer,
     ): Response {
+        /** @var ?User $user */
+        $user = $this->getUser();
+        $form = $this->logService->getForm(['entityName' => 'Documentation']);
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_documentation'),
-            'documentations' => $documentationDtoTransformer->fromEntities($documentationRepository->findAllAsc()),
+            'documentations' => $documentationDtoTransformer->fromEntities($documentationRepository->findAllAsc(), $documentationRepository->findNoveltiesByUserIds($user)),
             'background_color' => 'red',
+            'form' => $form->createView(),
         ]);
     }
 

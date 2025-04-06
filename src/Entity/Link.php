@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\LinkRepository;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: LinkRepository::class)]
+#[ORM\Entity(repositoryClass: LinkRepository::class)]
 class Link
 {
     public const POSITION_LINK_PAGE = 1;
@@ -26,30 +24,33 @@ class Link
         self::POSITION_HOME_BIKE_RIDE => 'link.position.home_bike_ride',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $url;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $title;
 
-    #[Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $image;
 
-    #[Column(type: 'integer', options:['default' => 1])]
+    #[ORM\Column(type: 'integer', options:['default' => 1])]
     private int $position = 1;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $orderBy = -1;
 
-    #[Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $updateAt = null;
 
     public function getId(): ?int
     {
@@ -136,6 +137,18 @@ class Link
     public function setContent(?string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getUpdateAt(): ?\DateTimeImmutable
+    {
+        return $this->updateAt;
+    }
+
+    public function setUpdateAt(?\DateTimeImmutable $updateAt): static
+    {
+        $this->updateAt = $updateAt;
 
         return $this;
     }

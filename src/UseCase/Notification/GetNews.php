@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\UseCase\Notification;
 
 use App\Entity\User;
+use App\Repository\DocumentationRepository;
+use App\Repository\LinkRepository;
 use App\Repository\SecondHandRepository;
 use App\Repository\SlideshowImageRepository;
 use App\Repository\SummaryRepository;
 use App\Repository\UserSkillRepository;
+use App\Service\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class GetNews
@@ -19,6 +22,9 @@ class GetNews
         private readonly SlideshowImageRepository $slideshowImageRepository,
         private readonly SecondHandRepository $secondHandRepository,
         private readonly UserSkillRepository $userSkillRepository,
+        private readonly LinkRepository $linkRepository,
+        private readonly DocumentationRepository $documentationRepository,
+        private readonly UserService $userService,
     ) {
     }
 
@@ -26,7 +32,7 @@ class GetNews
     {
         /** @var ?User $user */
         $user = $this->security->getUser();
-        if ($user) {
+        if ($user && $this->userService->licenceIsActive($user)) {
             return $this->slideshowImageRepository->findNotViewedByUser($user);
         }
         return [];
@@ -36,7 +42,7 @@ class GetNews
     {
         /** @var ?User $user */
         $user = $this->security->getUser();
-        if ($user) {
+        if ($user && $this->userService->licenceIsActive($user)) {
             return $this->summaryRepository->findNotViewedByUser($user);
         }
         return [];
@@ -46,7 +52,7 @@ class GetNews
     {
         /** @var ?User $user */
         $user = $this->security->getUser();
-        if ($user) {
+        if ($user && $this->userService->licenceIsActive($user)) {
             return $this->userSkillRepository->findNotViewedByUser($user);
         }
         return [];
@@ -56,8 +62,28 @@ class GetNews
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        if ($user) {
-            return $this->secondHandRepository->findNotViewedByUser($user);
+        if ($user && $this->userService->licenceIsActive($user)) {
+            return $this->secondHandRepository->findNoveltiesByUser($user);
+        }
+        return [];
+    }
+
+    public function getLinks(): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if ($user && $this->userService->licenceIsActive($user)) {
+            return $this->linkRepository->findNoveltiesByUser($user);
+        }
+        return [];
+    }
+
+    public function getDocumentatons(): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if ($user && $this->userService->licenceIsActive($user)) {
+            return $this->documentationRepository->findNoveltiesByUser($user);
         }
         return [];
     }

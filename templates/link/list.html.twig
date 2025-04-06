@@ -14,16 +14,12 @@
         <div class="wrapper-body col-4">
             {% for link in links %}
             <div class="card card-link reveal" data-toggle="card-body">
-                <a href="{{ link.url }}" target="_blank">
-                    {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image %}
-                    <div class="card-img" style="background-image:url({{ src }}"></div>
+                <a href="{{ link.btnShow.url }}" target="{{ link.btnShow.target}}">
+                    {% if link.novelty %}<div class="badge novelty">N</div>{% endif %}
+                    <div class="card-img" style="background-image:url({{ link.image }}"></div>
                     <div class="card-title">
-                        <h3>
-                        {{ link.description }}
-                        {% if link.content is not null %} <span title="En savoir plus" class="btn btn-xs" data-action="toggle-down"><i class="fa-solid fa-circle-info"></i></span>{% endif %}
-                        </h3>
+                        <h3>{{ link.description }}</h3>
                     </div>
-                    <div class="card-body card-dropdown"  data-target="card-body"><p class='ck-content'>{{ link.content|raw }}</p></div>
                 </a>
             </div>
             {% endfor %}

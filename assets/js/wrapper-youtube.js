@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", (event) => {
     const wrapperYoutubeEl = document.querySelector('.wrapper-youtube');
+    console.log('wrapperYoutubeEl', wrapperYoutubeEl)
     if (wrapperYoutubeEl) {
         center(wrapperYoutubeEl);
     }
@@ -13,7 +14,6 @@ const center = (wrapperYoutubeEl) => {
         iframeEl.style.width = wrapperYoutubeEl.clientWidth - 40 + 'px';
         iframeEl.style.left = '20px';
         const rect = wrapperYoutubeEl.getBoundingClientRect();
-        let scrollY = window.scrollY;
         let top = rect.top;
         if (top < 46) {
             top = 46;
