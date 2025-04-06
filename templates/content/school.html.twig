@@ -48,8 +48,10 @@
                     </ul>
                 {% endif %}
             </div>
-            {{ form_start(form) }}
-            {{ form_end(form) }}
+            {% if form is defined %}
+                {{ form_start(form) }}
+                {{ form_end(form) }}
+            {% endif %}
         </div>
     </div>
 {% endblock %}
