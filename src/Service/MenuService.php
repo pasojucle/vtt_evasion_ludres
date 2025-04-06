@@ -75,7 +75,7 @@ class MenuService
             [
                 'label' => 'Liens',
                 'route' => 'links',
-                'pattern' => '/links/',
+                'pattern' => '/link/',
                 'subMenus' => [],
                 'role' => 'PUBLIC_ACCESS',
                 'badge' => 'notification_link',
