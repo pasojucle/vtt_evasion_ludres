@@ -8,6 +8,7 @@ use App\Dto\BikeRideDto;
 use App\Dto\BikeRideTypeDto;
 use App\Entity\BikeRide;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Level;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
@@ -227,7 +228,7 @@ class BikeRideDtoTransformer
         $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
         $isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
 
-        if (!$isWritableAvailability && $isRegistrable && $this->registrationClosed($bikeRide)) {
+        if (!$isWritableAvailability && $isRegistrable && $this->registrationClosed($bikeRide, $user)) {
             return [
                 'link' => $this->urlGenerator->generate('registration_closed', ['bikeRide' => $bikeRide->getId()]),
                 'modal' => true,
@@ -246,13 +247,17 @@ class BikeRideDtoTransformer
         return null;
     }
 
-    private function registrationClosed(BikeRide $bikeRide): bool
+    private function registrationClosed(BikeRide $bikeRide, User $user): bool
     {
         if (!$bikeRide->registrationEnabled()) {
             return true;
         }
 
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType()) {
+            return false;
+        }
+
         $intervalClosing = new DateInterval('P' . $bikeRide->getClosingDuration() . 'D');
-        return $this->closingAt->sub($intervalClosing) < $this->today && $this->today <= $this->closingAt;
+        return $this->closingAt->sub($intervalClosing) < $this->today;
     }
 }
