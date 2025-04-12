@@ -41,9 +41,7 @@ class LinkController extends AbstractController
     #[Route('/lien/{link}', name: 'link_show', methods: ['GET'])]
     public function show(LogService $logService, Link $link): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $logService->write('Link', $link->getId(), $user);
+        $logService->writeFromEntity($link);
 
         if (!$link->getContent()) {
             return $this->redirect($link->getUrl());

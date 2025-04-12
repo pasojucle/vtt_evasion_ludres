@@ -60,9 +60,7 @@ class SecondHandController extends AbstractController
         LogService $logService,
         SecondHand $secondHand
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
-        $logService->write('SecondHand', $secondHand->getId(), $user);
+        $logService->writeFromEntity($secondHand);
         return $this->render('second_hand/show.html.twig', [
             'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
         ]);

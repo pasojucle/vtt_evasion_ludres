@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Licence;
 use App\Repository\UserRepository;
+use App\Security\Voter\PermissionVoter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -26,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         self::APPROVAL_GOING_HOME_ALONE => 'approval.going_home_alone',
     ];
 
+    public const PERMISSION_BIKE_RIDE_CLUSTER = 'BIKE_RIDE_CLUSTER';
     public const PERMISSION_BIKE_RIDE = 'BIKE_RIDE';
     public const PERMISSION_USER = 'USER';
     public const PERMISSION_PRODUCT = 'PRODUCT';
@@ -38,6 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const PERMISSION_PARTICIPATION = 'PARTICIPATION';
     public const PERMISSION_SUMMARY = 'SUMMARY';
     public const PERMISSIONS = [
+        self::PERMISSION_BIKE_RIDE_CLUSTER => 'permission.bike_ride_cluster',
         self::PERMISSION_BIKE_RIDE => 'permission.bike_ride',
         self::PERMISSION_USER => 'permission.user',
         self::PERMISSION_PRODUCT => 'permission.product',
@@ -718,6 +721,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPermissions(): array
     {
         $permissions = [
+            self::PERMISSION_BIKE_RIDE_CLUSTER => false,
             self::PERMISSION_BIKE_RIDE => false,
             self::PERMISSION_USER => false,
             self::PERMISSION_PRODUCT => false,
@@ -749,8 +753,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function hasAtLeastOnePermission(): bool
     {
         if ($this->permissions) {
-            foreach ($this->permissions as $permission) {
-                if (true === $permission) {
+            foreach ($this->permissions as $name => $permission) {
+                if (User::PERMISSION_BIKE_RIDE_CLUSTER !== $name && true === $permission) {
                     return true;
                 }
             }

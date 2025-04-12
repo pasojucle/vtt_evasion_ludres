@@ -21,5 +21,8 @@
     {% if modal.toggle is not null %}
         {% set toggle = modal.toggle %}
     {% endif %}
+    {% if modal.closeAfter is not null %}
+        {% set close_after = modal.closeAfter %}
+    {% endif %}
     {{ parent() }}
 {% endblock %}

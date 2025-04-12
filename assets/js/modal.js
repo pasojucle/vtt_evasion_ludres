@@ -30,7 +30,7 @@ const handleShowModal = (event) => {
 }
 
 const handleHideModal = () => {
-    document.querySelectorAll('button.close[data-dismiss="modal"]').forEach((element) => {
+    document.querySelectorAll('button.close[data-dismiss="modal"], .btn[data-dismiss="modal"]').forEach((element) => {
         element.addEventListener('click', closeModal);
     });
 }

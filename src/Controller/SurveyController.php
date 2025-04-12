@@ -34,7 +34,7 @@ class SurveyController extends AbstractController
         /** @var User $user */
         $user = $security->getUser();
         list($histories, $respondent, $form, $message, $redirect) = $setSurveyResponses->execute($request, $survey, $user);
-        $logService->write('Survey', $survey->getId(), $user);
+        $logService->writeFromEntity($survey);
 
         return $this->render('survey/survey_responses.html.twig', [
             'survey' => $surveyDtoTransformer->fromEntity($survey, $histories),

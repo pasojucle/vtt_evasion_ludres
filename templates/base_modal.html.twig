@@ -31,6 +31,7 @@
                         <a href="{{ url }}" class="btn btn-primary" 
                             {% if toggle is defined %}data-toggle="{{ toggle }}"{% endif %}
                             {% if target is defined %}target="{{ target }}"{% endif %}
+                            {% if close_after is defined %}data-dismiss="modal"{% endif %}
                         >
                             {{ anchor_text|raw }}
                         </a>

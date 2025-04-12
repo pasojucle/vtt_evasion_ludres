@@ -78,7 +78,7 @@ class OrderController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $logService->write('OrderHeader', $orderHeader->getId(), $orderHeader->getUser());
+        $logService->writeFromEntity($orderHeader, $orderHeader->getUser());
         
         return $this->render('order/show.html.twig', [
             'order' => $this->orderDtoTransformer->fromEntity($orderHeader),

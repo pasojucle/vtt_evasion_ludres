@@ -23,7 +23,7 @@ class UserSkillController extends AbstractController
 
         /** @var UserSkill $userSkill */
         foreach ($user->getUserSkills() as $userSkill) {
-            $logService->write('UserSkill', $userSkill->getId(), $user);
+            $logService->writeFromEntity($userSkill, $user);
         }
 
         return $this->render('user_skill/list.html.twig', [

@@ -21,6 +21,7 @@ class BikeRideVoter extends Voter
     public const ADD = 'BIKE_RIDE_ADD';
     public const EDIT = 'BIKE_RIDE_EDIT';
     public const VIEW = 'BIKE_RIDE_VIEW';
+    public const EXPORT = 'BIKE_RIDE_CLUSTER_EXPORT';
 
     public function __construct(
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
@@ -35,7 +36,7 @@ class BikeRideVoter extends Voter
         if (in_array($attribute, [self::LIST, self::ADD]) && !$subject) {
             return true;
         }
-        return in_array($attribute, [self::EDIT, self::VIEW])
+        return in_array($attribute, [self::EDIT, self::VIEW, self::EXPORT])
         && ($subject instanceof BikeRide || $subject instanceof Cluster || $subject instanceof Session || $subject instanceof Summary);
     }
 
@@ -53,11 +54,21 @@ class BikeRideVoter extends Voter
         $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_BIKE_RIDE);
 
         return match ($attribute) {
+            self::EXPORT => $this->canExport($token, $user, $subject, $isActiveUser),
             self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
             self::VIEW => $this->canView($token, $user, $subject, $isActiveUser, $isUserWithPermission),
             self::LIST => $this->canList($token, $isActiveUser, $isUserWithPermission),
             default => false
         };
+    }
+
+    private function canExport(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser): bool
+    {
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return true;
+        }
+
+        return $isActiveUser && $user->hasPermissions([User::PERMISSION_BIKE_RIDE, User::PERMISSION_BIKE_RIDE_CLUSTER]) && $this->isOwner($subject, $user);
     }
 
     private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool
@@ -125,13 +136,14 @@ class BikeRideVoter extends Voter
         if (!$subject) {
             return false;
         }
-        
         if ($subject instanceof Session) {
             return $subject->getUser() === $user;
         }
-
-        $bikeRide = ($subject instanceof BikeRide) ? $subject : $subject->getBikeRide();
-        $session = $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide);
+        $session = match (true) {
+            $subject instanceof Cluster => $this->sessionRepository->findOneByUserAndCluster($user, $subject),
+            $subject instanceof BikeRide => $this->sessionRepository->findOneByUserAndBikeRide($user, $subject),
+            default => null,
+        };
         if ($session) {
             return $session->getUser() === $user;
         }

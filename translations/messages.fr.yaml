@@ -185,6 +185,7 @@ second_hand:
   un_valided: Non Validées
 
 permission: 
+  bike_ride_cluster: Exporter un groupe 
   bike_ride: Programme et groupe 
   user: Fiche adhérent et inscription
   product: Boutique et commande

@@ -8,8 +8,10 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\User;
 use App\Form\Admin\ClusterType;
 use App\Service\CacheService;
+use App\Service\LogService;
 use App\UseCase\Cluster\ExportCluster;
 use App\UseCase\Cluster\GetUsersOffSite;
 use App\UseCase\Cluster\MailerSendUsersOffSite;
@@ -123,11 +125,14 @@ class ClusterController extends AbstractController
     }
 
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]
-    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
+    #[IsGranted('BIKE_RIDE_CLUSTER_EXPORT', 'cluster')]
     public function adminClusterExport(
+        LogService $logService,
         ExportCluster $exportCluster,
         Cluster $cluster
     ): Response {
+        $logService->writeFromEntity($cluster);
+
         return $exportCluster->execute($cluster);
     }
 

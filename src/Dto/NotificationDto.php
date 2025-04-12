@@ -25,4 +25,6 @@ class NotificationDto
     public ?FormView $form = null;
 
     public ?string $toggle = null;
+
+    public bool $closeAfter = false;
 }

@@ -20,7 +20,7 @@ class MenuService
         private RequestStack $requestStack,
         private MenuAdminService $menuAdminService,
         private OrderGetService $orderGetService,
-        private Security $security
+        private Security $security,
     ) {
     }
 

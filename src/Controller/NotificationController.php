@@ -31,7 +31,7 @@ class NotificationController extends AbstractController
     #[Route('s', name: 'list', methods: ['GET'])]
     public function list(GetList $showNotification): JsonResponse
     {
-        list($modalNotification, $notifications) = $showNotification->execute();
+        list($modalNotification, $notifications, $repeat) = $showNotification->execute();
 
         return new JsonResponse([
             'modal' => ($modalNotification)
@@ -44,7 +44,8 @@ class NotificationController extends AbstractController
                 'list' => $this->renderView('notification/list.html.twig', [
                     'notifications' => $notifications,
                 ])
-            ]
+            ],
+            'repeat' => $repeat,
         ]);
     }
 

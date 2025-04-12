@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\NotificationDto;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\Licence;
 use App\Entity\Notification;
@@ -17,7 +18,6 @@ use App\Service\MessageService;
 use App\Service\NotificationService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use ReflectionClass;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NotificationDtoTransformer
@@ -42,7 +42,7 @@ class NotificationDtoTransformer
             'entityId' => $notification->getId(),
         ])->createView();
         $notificationDto->labelButton = 'J\'ai compris';
-        $notificationDto->modalLink = $this->getModalLinkFromEntity($notification);
+        $notificationDto->modalLink = $this->notificationService->getModalLinkFromEntity($notification);
 
         return $notificationDto;
     }
@@ -55,9 +55,16 @@ class NotificationDtoTransformer
         $notificationDto->content = $survey->getContent();
         $notificationDto->url = $this->urlGenerator->generate('survey', ['survey' => $survey->getId()]);
         $notificationDto->labelButton = 'Participer';
-        $notificationDto->modalLink = $this->getModalLinkFromEntity($survey);
+        $notificationDto->modalLink = $this->notificationService->getModalLinkFromEntity($survey);
 
         return $notificationDto;
+    }
+
+    private function fromCluster(Cluster $cluster): NotificationDto
+    {
+        $data = $this->notificationService->getClusterExport($cluster);
+
+        return $this->fromArray($data);
     }
 
     private function fromOrderHeader(OrderHeader $orderHeader): NotificationDto
@@ -73,7 +80,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $this->messageService->getMessageByName($message);
         $notificationDto->url = $url;
         $notificationDto->labelButton = $labelButton;
-        $notificationDto->modalLink = $this->getModalLinkFromEntity($orderHeader);
+        $notificationDto->modalLink = $this->notificationService->getModalLinkFromEntity($orderHeader);
 
 
         return $notificationDto;
@@ -87,7 +94,7 @@ class NotificationDtoTransformer
         $notificationDto->content = $this->messageService->getMessageByName('MODAL_WINDOW_REGISTRATION_IN_PROGRESS');
         $notificationDto->url = $this->urlGenerator->generate('user_registration_form', ['step' => 1]);
         $notificationDto->labelButton = 'Finaliser mon inscription';
-        $notificationDto->modalLink = $this->getModalLinkFromEntity($licence);
+        $notificationDto->modalLink = $this->notificationService->getModalLinkFromEntity($licence);
 
         return $notificationDto;
     }
@@ -100,7 +107,7 @@ class NotificationDtoTransformer
         $notificationDto->content = sprintf('%s - %s', $bikeRide->getTitle(), $this->bikeRideService->getPeriod($bikeRide));
         $notificationDto->url = $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]);
         $notificationDto->labelButton = 'Participer';
-        $notificationDto->modalLink = $this->getModalLinkFromEntity($bikeRide);
+        $notificationDto->modalLink = $this->notificationService->getModalLinkFromEntity($bikeRide);
 
         return $notificationDto;
     }
@@ -126,9 +133,11 @@ class NotificationDtoTransformer
         if (array_key_exists('target', $data)) {
             $notificationDto->target = $data['target'];
         }
-
         if (array_key_exists('labelBtn', $data)) {
             $notificationDto->labelButton = $data['labelBtn'];
+        }
+        if (array_key_exists('closeAfter', $data)) {
+            $notificationDto->closeAfter = $data['closeAfter'];
         }
         
         return $notificationDto;
@@ -145,7 +154,7 @@ class NotificationDtoTransformer
         return $notifications;
     }
 
-    public function fromEntity(array|Survey|Notification|Licence|OrderHeader|BikeRide $entity): NotificationDto
+    public function fromEntity(array|Survey|Notification|Licence|OrderHeader|BikeRide|Cluster $entity): NotificationDto
     {
         return match (true) {
             $entity instanceof Notification => $this->fromNotification($entity),
@@ -153,15 +162,8 @@ class NotificationDtoTransformer
             $entity instanceof OrderHeader => $this->fromOrderHeader($entity),
             $entity instanceof Licence => $this->fromLicence($entity),
             $entity instanceof BikeRide => $this->fromBikeRide($entity),
+            $entity instanceof Cluster => $this->fromCluster($entity),
             default => $this->fromArray($entity)
         };
-    }
-
-    private function getModalLinkFromEntity(string|Survey|Notification|Licence|OrderHeader|BikeRide $entity): string
-    {
-        return $this->urlGenerator->generate('notification_show', [
-            'entityName' => (new ReflectionClass($entity))->getShortName(),
-            'entityId' => $entity->getId(),
-        ]);
     }
 }

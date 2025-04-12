@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
+use App\Entity\Cluster;
 use App\Entity\Documentation;
 use App\Entity\Licence;
 use App\Entity\Notification;
@@ -110,7 +111,21 @@ class NotificationService
             'route' => 'survey',
             'routeParams' => ['survey' => $survey->getId()],
             'labelBtn' => 'Consulter',
-            'modalLink' => $this->getModalLink('Survey', $survey->getId()),
+            'modalLink' => $this->getModalLinkFromEntity($survey),
+        ];
+    }
+
+    public function getClusterExport(Cluster $cluster): array
+    {
+        return [
+            'index' => sprintf('CLUSTER_EXPORT_%s', $cluster->getId()),
+            'title' => sprintf('Export la liste %s', $cluster->getTitle()),
+            'content' => str_replace('{{ groupe }}', $cluster->getTitle(), $this->messageService->getMessageByName('CLUSTER_EXPORT_MESSAGE')),
+            'route' => 'admin_cluster_export',
+            'routeParams' => ['cluster' => $cluster->getId()],
+            'labelBtn' => 'Télécharger',
+            'modalLink' => $this->getModalLinkFromEntity($cluster),
+            'closeAfter' => true,
         ];
     }
 
@@ -130,7 +145,7 @@ class NotificationService
             'index' => sprintf('Session_%s', $session->getId()),
             'title' => 'Inscription à une sortie',
             'content' => $this->replaceKeywordsService->replaceWhithParams($content, $additionalParams),
-            'modalLink' => $this->getModalLink('Session', $session->getId()),
+            'modalLink' => $this->getModalLinkFromEntity($session),
         ];
     }
 
@@ -153,15 +168,6 @@ class NotificationService
         ];
     }
 
-
-    private function getModalLink(string $entityName, int $id): string
-    {
-        return $this->urlGenerator->generate('notification_show', [
-            'entityName' => $entityName,
-            'entityId' => $id,
-        ]);
-    }
-
     public function getDocumentation(Documentation $documentation): array
     {
         return [
@@ -172,5 +178,13 @@ class NotificationService
             'url' => $documentation->getLink(),
             'target' => '_blank',
         ];
+    }
+
+    public function getModalLinkFromEntity(string|Survey|Notification|Licence|OrderHeader|BikeRide|Cluster|Session $entity): string
+    {
+        return $this->urlGenerator->generate('notification_show', [
+            'entityName' => (new ReflectionClass($entity))->getShortName(),
+            'entityId' => $entity->getId(),
+        ]);
     }
 }

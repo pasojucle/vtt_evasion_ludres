@@ -16,7 +16,6 @@ use App\UseCase\BikeRide\GetFilters;
 use App\UseCase\BikeRide\GetSchedule;
 use App\UseCase\User\GetFramersFiltered;
 use Doctrine\ORM\EntityManagerInterface;
-use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;

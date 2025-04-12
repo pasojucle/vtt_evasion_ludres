@@ -54,6 +54,11 @@ export const setNotificationList = async() => {
                 document.querySelector('div.dropdown-notifications .tools a').addEventListener('click', toggleNotifications);
                 initModal();
             }
+            if(json.repeat) {
+                setTimeout(() => {
+                    setNotificationList();
+                }, 30000);
+            }
         });
     }
 }
@@ -111,7 +116,6 @@ export const hideNotifications = () => {
 
 export const handleShowNotifications = () => {
     const anchor = document.querySelector('.modal a[data-toggle="notifications"]')
-    console.log(anchor);
     if (anchor) {
         anchor.addEventListener('click', toggleNotificationsFromModal)
     }

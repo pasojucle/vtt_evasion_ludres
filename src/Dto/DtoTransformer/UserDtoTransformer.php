@@ -232,7 +232,9 @@ class UserDtoTransformer
         $permissions = [];
         foreach ($user->getPermissions() as $name => $value) {
             if ($value) {
-                $permissions[] = sprintf('Accès à l\'admin pour gérer %s', $this->translator->trans(sprintf('permission.%s', strtolower($name))));
+                $permissions[] = (User::PERMISSION_BIKE_RIDE_CLUSTER === $name)
+                    ? $this->translator->trans(sprintf('permission.%s', strtolower($name)))
+                    : sprintf('Accès à l\'admin pour gérer %s', $this->translator->trans(sprintf('permission.%s', strtolower($name))));
             }
         }
 

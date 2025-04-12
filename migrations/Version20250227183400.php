@@ -46,6 +46,5 @@ final class Version20250227183400 extends AbstractMigration
         $routes = ['club', 'school_overview', 'school_operating', 'school_practices', 'school_equipment', 'school_documentation'];
 
         return $routes;
-        return implode(',', $routes);
     }
 }
