@@ -40,6 +40,9 @@
                                 <li>
                                     <a class="dropdown-item modal-trigger" href="{{ path('admin_survey_disable', {'survey': survey.id})}}" title="Cloturer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Cloturer</a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item modal-trigger" href="{{ path('admin_survey_delete', {'survey': survey.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
+                                </li>
                             {% endif %}
                         </ul>
                     </div>

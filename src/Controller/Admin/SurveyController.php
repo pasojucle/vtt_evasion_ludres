@@ -14,6 +14,7 @@ use App\Form\Admin\SurveyType;
 use App\Repository\SurveyIssueRepository;
 use App\Repository\SurveyRepository;
 use App\Service\PaginatorService;
+use App\Service\SurveyService;
 use App\UseCase\Survey\ExportSurvey;
 use App\UseCase\Survey\GetAnonymousSurveyResults;
 use App\UseCase\Survey\GetSurvey;
@@ -204,7 +205,7 @@ class SurveyController extends AbstractController
 
     #[Route('disable/{survey}', name: 'admin_survey_disable', methods: ['GET', 'POST'])]
     #[IsGranted('SURVEY_EDIT', 'survey')]
-    public function delete(Request $request, Survey $survey): Response
+    public function disable(Request $request, Survey $survey): Response
     {
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl(
@@ -245,5 +246,28 @@ class SurveyController extends AbstractController
         $this->addFlash('success', 'La notification est bien activée');
 
         return $this->redirectToRoute('admin_surveys');
+    }
+
+    #[Route('detele/{survey}', name: 'admin_survey_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('SURVEY_EDIT', 'survey')]
+    public function delete(Request $request, SurveyService $surveyService, Survey $survey): Response
+    {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl(
+                'admin_survey_delete',['survey' => $survey->getId(),]
+            ),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $surveyService->deleteSurvey($survey);
+ 
+            return $this->redirectToRoute('admin_surveys');
+        }
+
+        return $this->render('survey/admin/delete.modal.html.twig', [
+            'survey' => $survey,
+            'form' => $form->createView(),
+        ]);
     }
 }

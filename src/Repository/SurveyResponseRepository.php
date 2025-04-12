@@ -105,6 +105,26 @@ class SurveyResponseRepository extends ServiceEntityRepository
     ;
     }
 
+    public function deleteBySurvey(Survey $survey): void
+    {
+        $responses = $this->createQueryBuilder('response')
+        ->select('(response)')
+        ->join('response.surveyIssue', 'si')
+        ->where(
+            (new Expr())->eq('si.survey', ':survey')
+        );
+
+        $this->createQueryBuilder('r')
+        ->delete()
+        ->andWhere(
+            (new Expr())->in('r', $responses->getDql())
+        )
+        ->setParameter('survey', $survey)
+        ->getQuery()
+        ->getResult()
+    ;
+    }
+
     public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
     {
         $issues = $this->getEntityManager()->createQueryBuilder()

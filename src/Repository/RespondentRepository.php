@@ -62,7 +62,6 @@ class RespondentRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
     
     public function deleteResponsesByUserAndSurvey(User $user, Survey $survey): void
     {
@@ -78,7 +77,22 @@ class RespondentRepository extends ServiceEntityRepository
         ]))
         ->getQuery()
         ->getResult()
-    ;
+        ;
+    }
+    
+    public function deleteBySurvey(Survey $survey): void
+    {
+        $this->createQueryBuilder('r')
+        ->delete()
+        ->andWhere(
+            (new Expr())->in('r.survey', ':survey')
+        )
+        ->setParameters(new ArrayCollection([
+            new Parameter('survey', $survey),
+        ]))
+        ->getQuery()
+        ->getResult()
+        ;
     }
 
     public function findBySurvey(Survey $survey): array

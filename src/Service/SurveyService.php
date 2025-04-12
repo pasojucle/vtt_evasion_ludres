@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\BikeRide;
-use App\Entity\History;
 use App\Entity\Survey;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
@@ -50,10 +49,22 @@ class SurveyService
         return null;
     }
 
-    public function deleteResponses(User $user, $survey): void
+    public function deleteResponses(User $user, Survey $survey): void
     {
         $this->surveyResponseRepository->deleteResponsesByUserAndSurvey($user, $survey);
         $this->respondentRepository->deleteResponsesByUserAndSurvey($user, $survey);
+    }
+
+    public function deleteSurvey(Survey $survey): void
+    {
+        $this->surveyResponseRepository->deleteBySurvey($survey);
+        $this->respondentRepository->deleteBySurvey($survey);
+        if ($survey->getBikeRide()) {
+            $survey->getBikeRide()->setSurvey(null);
+        }
+        $survey->removeMembers();
+        $this->entityManager->remove($survey);
+        $this->entityManager->flush();
     }
 
     public function getSurveyResponsesFromBikeRide(BikeRide $bikeRide): ?array

@@ -6,9 +6,11 @@ namespace App\Repository;
 
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method SurveyIssue|null find($id, $lockMode = null, $lockVersion = null)
@@ -54,6 +56,21 @@ class SurveyIssueRepository extends ServiceEntityRepository
             ->setParameter('survey', $survey)
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    public function deleteBySurvey(Survey $survey): void
+    {
+        $this->createQueryBuilder('si')
+        ->delete()
+        ->andWhere(
+            (new Expr())->in('si.survey', ':survey')
+        )
+        ->setParameters(new ArrayCollection([
+            new Parameter('survey', $survey),
+        ]))
+        ->getQuery()
+        ->getResult()
         ;
     }
 }
