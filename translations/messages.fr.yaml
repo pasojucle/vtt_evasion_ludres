@@ -197,6 +197,7 @@ permission:
   slideshow: Diaporama
   participation: Participation
   summary: Actualités
+  notification: Pop'up
 
 slideshow:
   files: '{0} (Aucun fichier)|{1} (%count% fichier)|[1,Inf[ (%count% fichiers)'
