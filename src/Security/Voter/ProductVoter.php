@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\ProductDto;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use App\Entity\Product;
@@ -46,7 +47,7 @@ class ProductVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_PRODUCT);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::PRODUCT);
 
         return match ($attribute) {
             self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),

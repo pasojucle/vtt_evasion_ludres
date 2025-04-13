@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\SecondHand;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,7 +44,7 @@ class SecondHandVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_SECOND_HAND);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::SECOND_HAND);
         
         return match ($attribute) {
             self::EDIT => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),

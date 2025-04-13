@@ -34,7 +34,7 @@ class WikiVoter extends Voter
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
 
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(array_keys(User::PERMISSIONS));
+        $isUserWithPermission = $isActiveUser && !empty($user->getPermissions());
         if (self::VIEW === $attribute) {
             return $this->canView($token, $isUserWithPermission);
         }

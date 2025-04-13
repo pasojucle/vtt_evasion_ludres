@@ -12,14 +12,12 @@ use App\Service\PaginatorService;
 use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use PhpParser\Node\Expr\Cast\Object_;
 use ReflectionClass;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class GetUsersFiltered
@@ -46,6 +44,8 @@ abstract class GetUsersFiltered
     abstract protected function getQuery(array $filters): QueryBuilder;
 
     abstract protected function getStatusChoices(): ?array;
+
+    abstract protected function getPermissionChoices(): ?array;
 
     public function list(Request $request, bool $filtered): array
     {
@@ -133,6 +133,7 @@ abstract class GetUsersFiltered
     {
         return $this->formFactory->create(UserFilterType::class, $filters, [
             'status_choices' => $this->getStatusChoices(),
+            'permission_choices' => $this->getPermissionChoices(),
             'status_is_require' => $this->statusIsRequire,
             'status_placeholder' => $this->statusPlaceholder,
             'filters' => $filters,
@@ -192,6 +193,7 @@ abstract class GetUsersFiltered
             'query' => null,
             'status' => 'SEASON_' . $this->seasonService->getCurrentSeason(),
             'levels' => null,
+            'permission' => null,
         ];
     }
 

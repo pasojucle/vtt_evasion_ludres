@@ -1,19 +1,21 @@
 {% block switch_permission_row %}
-    {% set label = ('permission.'~form.vars.name|lower)|trans %}
-    {% set data_switch_on = 'Donner les accès ' ~ label %}
-    {% set data_switch_off = 'Aucun accès ' ~ label %}
-    <div class="form-group switch-group ">
-        <label class="switch">
-            <input type="checkbox" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" 
-            {% if form.vars.checked %}checked{% endif %}
-            data-switch-on="{{ data_switch_on }}" data-switch-off="{{ data_switch_off}}" value="1">
-            <span class="slider round{% if form.vars.disabled %} disabled{% endif %}"></span>
-        </label>
-        <b>
-     
-        <label for="{{ form.vars.id }}" {% if form.vars.disabled %}class="disabled"{% endif %}>
-            {% if form.vars.checked %} {{ data_switch_on }} {% else %} {{ data_switch_off }} {% endif %}
-        </label>
-        </b>
-    </div>
+    {% for child in form.children %}
+        {% set label = child.vars.label|trans %}
+        {% set data_switch_on = 'Donner les accès ' ~ label %}
+        {% set data_switch_off = 'Aucun accès ' ~ label %}
+        <div class="form-group switch-group ">
+            <label class="switch">
+                <input type="checkbox" id="{{ child.vars.id }}" name="{{ child.vars.full_name }}" 
+                {% if child.vars.checked %}checked{% endif %}
+                data-switch-on="{{ data_switch_on }}" data-switch-off="{{ data_switch_off}}" value="{{ child.vars.label.value }}">
+                <span class="slider round{% if child.vars.disabled %} disabled{% endif %}"></span>
+            </label>
+            <b>
+        
+            <label for="{{ child.vars.id }}" {% if child.vars.disabled %}class="disabled"{% endif %}>
+                {% if child.vars.checked %} {{ data_switch_on }} {% else %} {{ data_switch_off }} {% endif %}
+            </label>
+            </b>
+        </div>
+    {% endfor %}
 {% endblock %}

@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Session;
 use App\Entity\Summary;
 use App\Entity\User;
@@ -51,7 +52,7 @@ class BikeRideVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_BIKE_RIDE);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::BIKE_RIDE);
 
         return match ($attribute) {
             self::EXPORT => $this->canExport($token, $user, $subject, $isActiveUser),
@@ -68,7 +69,7 @@ class BikeRideVoter extends Voter
             return true;
         }
 
-        return $isActiveUser && $user->hasPermissions([User::PERMISSION_BIKE_RIDE, User::PERMISSION_BIKE_RIDE_CLUSTER]) && $this->isOwner($subject, $user);
+        return $isActiveUser && $user->hasPermissions([PermissionEnum::BIKE_RIDE, PermissionEnum::BIKE_RIDE_CLUSTER]) && $this->isOwner($subject, $user);
     }
 
     private function canEdit(TokenInterface $token, User $user, null|BikeRide|Cluster|Session|Summary $subject, bool $isActiveUser, bool $isUserWithPermission): bool

@@ -9,6 +9,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
@@ -204,6 +205,9 @@ class GetList
 
     private function addBikeRideClusterExport(array &$notifications): bool
     {
+        if (!$this->user->hasPermissions(PermissionEnum::BIKE_RIDE_CLUSTER)) {
+            return false;
+        }
         $clusters = $this->clusterRepository->findAvailableByUser($this->user);
         $hasCompleteCluster = false;
         /** @var Cluster $cluster */

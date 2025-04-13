@@ -243,9 +243,8 @@ class MenuService
         if (!$this->security->isGranted('ROLE_USER')) {
             return false;
         }
-        /** @var User $user */
-        $user = $this->security->getUser();
-        return $user->hasAtLeastOnePermission() || $this->security->isGranted('ROLE_ADMIN');
+
+        return $this->security->isGranted('ADMIN_NAV');
     }
 
     public function getFooter(): array

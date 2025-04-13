@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\SurveyIssue;
@@ -47,7 +48,7 @@ class SurveyVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_SURVEY);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::SURVEY);
 
         return match ($attribute) {
             self::EDIT , self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),

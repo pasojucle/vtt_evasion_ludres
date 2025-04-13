@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -43,7 +44,7 @@ class PermissionVoter extends Voter
             return true;
         }
 
-        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions(User::PERMISSION_PERMISSION);
+        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && $user->hasPermissions(PermissionEnum::PERMISSION);
     }
 
     private function canView(TokenInterface $token, User $user, ?User $subject): bool
@@ -52,6 +53,6 @@ class PermissionVoter extends Voter
             return true;
         }
 
-        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && ($user->hasPermissions(User::PERMISSION_BIKE_RIDE) || $user->hasPermissions(User::PERMISSION_USER));
+        return $this->accessDecisionManager->decide($token, ['ROLE_USER']) && ($user->hasPermissions(PermissionEnum::BIKE_RIDE) || $user->hasPermissions(PermissionEnum::USER));
     }
 }

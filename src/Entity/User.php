@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Licence;
+use App\Entity\UserPermission;
 use App\Repository\UserRepository;
-use App\Security\Voter\PermissionVoter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -129,14 +130,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $secondHands;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $permissions = null;
-
     /**
      * @var Collection<int, UserSkill>
      */
     #[ORM\OneToMany(targetEntity: UserSkill::class, mappedBy: 'user')]
     private Collection $userSkills;
+
+    /**
+     * @var Collection<int, UserPermission>
+     */
+    #[ORM\OneToMany(targetEntity: UserPermission::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $userPermissions;
+
+    private array $permissions = [];
 
     public function __construct()
     {
@@ -152,6 +158,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->registrationChanges = new ArrayCollection();
         $this->secondHands = new ArrayCollection();
         $this->userSkills = new ArrayCollection();
+        $this->userPermissions = new ArrayCollection();
+        $this->permissions = [];
     }
 
     public function __toString(): string
@@ -718,58 +726,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPermissions(): array
-    {
-        $permissions = [
-            self::PERMISSION_BIKE_RIDE_CLUSTER => false,
-            self::PERMISSION_BIKE_RIDE => false,
-            self::PERMISSION_USER => false,
-            self::PERMISSION_PRODUCT => false,
-            self::PERMISSION_SURVEY => false,
-            self::PERMISSION_MODAL_WINDOW => false,
-            self::PERMISSION_SECOND_HAND => false,
-            self::PERMISSION_PARTICIPATION => false,
-            self::PERMISSION_SUMMARY => false,
-        ];
-        return ($this->permissions) ? array_merge($permissions, $this->permissions) : $permissions;
-    }
-
-    public function hasPermissions(string|array $names): bool
-    {
-        if (null === $this->permissions) {
-            return false;
-        }
-        if (is_string($names)) {
-            $names = [$names];
-        }
-        foreach ($names as $name) {
-            if (array_key_exists($name, $this->permissions) && true === $this->permissions[$name]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function hasAtLeastOnePermission(): bool
-    {
-        if ($this->permissions) {
-            foreach ($this->permissions as $name => $permission) {
-                if (User::PERMISSION_BIKE_RIDE_CLUSTER !== $name && true === $permission) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public function setPermissions(?array $permissions): static
-    {
-        $this->permissions = $permissions;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, UserSkill>
      */
@@ -798,5 +754,68 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, UserPermission>
+     */
+    public function getUserPermissions(): Collection
+    {
+        return $this->userPermissions;
+    }
+
+    /**
+     * @return array<int, PermissionEnum>
+     */
+    public function getPermissions(): array
+    {
+        /** @var UserPermission $userPermission */
+        foreach ($this->userPermissions as $userPermission) {
+            $this->permissions[] = $userPermission->getPermission();
+        }
+    
+        return $this->permissions;
+    }
+
+    public function addPermission(PermissionEnum $permission): static
+    {
+        if (!array_search($permission, $this->permissions)) {
+            $userPermission = new UserPermission();
+            $this->userPermissions->add($userPermission);
+            $userPermission->setUser($this)
+                ->setPermission($permission);
+        }
+
+        return $this;
+    }
+
+    public function removePermission(PermissionEnum $permission): static
+    {
+        /** @var UserPermission $userPermission */
+        foreach ($this->userPermissions as $userPermission) {
+            if ($userPermission->getPermission() === $permission) {
+                $this->userPermissions->removeElement($userPermission);
+            }
+        }
+
+        return $this;
+    }
+
+    public function hasPermissions(PermissionEnum|array $permissions): bool
+    {
+        if (empty($this->permissions)) {
+            return false;
+        }
+
+        if ($permissions instanceof PermissionEnum) {
+            $permissions = [$permissions];
+        }
+
+        foreach ($permissions as $permission) {
+            if (false !== array_search($permission, $this->permissions)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

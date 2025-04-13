@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\SlideshowDirectory;
 use App\Entity\SlideshowImage;
 use App\Entity\User;
@@ -44,7 +45,7 @@ class SlideShowVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_SLIDESHOW);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::SLIDESHOW);
 
         return match ($attribute) {
             self::EDIT => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),

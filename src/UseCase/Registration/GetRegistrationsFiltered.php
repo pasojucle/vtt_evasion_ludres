@@ -40,6 +40,11 @@ class GetRegistrationsFiltered extends GetUsersFiltered
         ];
     }
 
+    public function getPermissionChoices(): ?array
+    {
+        return null;
+    }
+
     public function getDefaultFilters(): array
     {
         return [

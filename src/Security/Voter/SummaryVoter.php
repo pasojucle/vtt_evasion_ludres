@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Session;
 use App\Entity\Summary;
 use App\Entity\User;
@@ -49,7 +50,7 @@ class SummaryVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_SUMMARY);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::SUMMARY);
 
         return match ($attribute) {
             self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isUserWithPermission),

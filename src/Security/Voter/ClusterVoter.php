@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Cluster;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Repository\SessionRepository;
@@ -46,7 +47,7 @@ class ClusterVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_BIKE_RIDE);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::BIKE_RIDE);
 
         return match ($attribute) {
             self::EDIT, self::ADD => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),

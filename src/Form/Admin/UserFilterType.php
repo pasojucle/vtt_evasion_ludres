@@ -51,6 +51,21 @@ class UserFilterType extends AbstractType
                     ])
                 ;
             }
+
+            if ($options['permission_choices']) {
+                $form
+                    ->add('permission', ChoiceType::class, [
+                        'label' => false,
+                        'multiple' => true,
+                        'choices' => $options['permission_choices'],
+                        'autocomplete' => true,
+                        'required' => false,
+                        'attr' => [
+                           'placeholder' => 'Selectionnez une permission',
+                        ],
+                    ])
+                ;
+            }
         });
     }
 
@@ -58,6 +73,7 @@ class UserFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'status_choices' => [],
+            'permission_choices' => [],
             'status_is_require' => false,
             'status_placeholder' => '',
             'filters' => [],

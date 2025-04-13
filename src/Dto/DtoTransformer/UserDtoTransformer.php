@@ -8,6 +8,7 @@ use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -230,12 +231,11 @@ class UserDtoTransformer
             return 'Accès total au menu admin';
         }
         $permissions = [];
-        foreach ($user->getPermissions() as $name => $value) {
-            if ($value) {
-                $permissions[] = (User::PERMISSION_BIKE_RIDE_CLUSTER === $name)
-                    ? $this->translator->trans(sprintf('permission.%s', strtolower($name)))
-                    : sprintf('Accès à l\'admin pour gérer %s', $this->translator->trans(sprintf('permission.%s', strtolower($name))));
-            }
+        /** @var PermissionEnum $permission */
+        foreach ($user->getPermissions() as $permission) {
+            $permissions[] = (PermissionEnum::BIKE_RIDE_CLUSTER === $permission)
+                ? $permission->trans($this->translator)
+                : sprintf('Accès à l\'admin pour gérer %s', $permission->trans($this->translator));
         }
 
         return (!empty($permissions)) ? implode('<br>', $permissions) : null;

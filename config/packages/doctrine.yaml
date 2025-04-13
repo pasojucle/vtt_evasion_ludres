@@ -16,6 +16,7 @@ doctrine:
             Availability: App\Doctrine\DBAL\Type\AvailabilityEnumType
             Evaluation: App\Doctrine\DBAL\Type\EvaluationEnumType
             ContentKind: App\Doctrine\DBAL\Type\ContentKindEnumType
+            Permission: App\Doctrine\DBAL\Type\PermissionEnumType
         mapping_types:
             enum: string
     orm:

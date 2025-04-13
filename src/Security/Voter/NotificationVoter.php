@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Notification;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -44,7 +45,7 @@ class NotificationVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_MODAL_WINDOW);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::MODAL_WINDOW);
 
         return match ($attribute) {
             self::EDIT, self::ADD => $this->canEdit($token, $subject, $isUserWithPermission),

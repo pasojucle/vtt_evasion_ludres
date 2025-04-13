@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\BoardRole;
 use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
@@ -87,7 +88,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     default => $this->addCriteriaBySeason($qb, (int) $season),
                 };
             }
-
+            if (isset($filters['permission'])) {
+                dump($filters['permission']);
+                $this->addCriteriaByPermission($qb, $filters['permission']);
+            }
             if (isset($filters['bikeRide'])) {
                 $this->addCriteriaWithNoSession($qb, (int) $filters['bikeRide']);
             }
@@ -98,6 +102,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         return $this->orderByASC($qb);
+    }
+
+    private function addCriteriaByPermission(QueryBuilder $qb, array $permissions): void
+    {
+        $qb
+            ->leftJoin('u.userPermissions', 'up')
+            ->andWhere(
+                $qb->expr()->in('up.permission', ':permissions'),
+            )
+            ->setParameter('permissions', $permissions)
+        ;
     }
 
     private function addCriteriaByLicenceStatus(QueryBuilder $qb, string $criteria, bool &$isFinalLicence): void

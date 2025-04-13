@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Entity\User;
 use App\Service\LevelService;
 use Doctrine\ORM\QueryBuilder;
 
@@ -29,5 +30,10 @@ class GetMembersFiltered extends GetUsersFiltered
     public function getStatusChoices(): ?array
     {
         return $this->seasonService->getSeasons();
+    }
+
+    public function getPermissionChoices(): ?array
+    {
+        return array_flip(User::PERMISSIONS);
     }
 }

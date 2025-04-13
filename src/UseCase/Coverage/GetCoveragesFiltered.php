@@ -32,4 +32,9 @@ class GetCoveragesFiltered extends GetUsersFiltered
     {
         return null;
     }
+
+    public function getPermissionChoices(): ?array
+    {
+        return null;
+    }
 }

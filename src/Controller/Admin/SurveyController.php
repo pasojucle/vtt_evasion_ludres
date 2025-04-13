@@ -254,7 +254,8 @@ class SurveyController extends AbstractController
     {
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl(
-                'admin_survey_delete',['survey' => $survey->getId(),]
+                'admin_survey_delete',
+                ['survey' => $survey->getId(), ]
             ),
         ]);
 

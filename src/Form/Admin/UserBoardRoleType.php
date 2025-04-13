@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\BoardRole;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Level;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
@@ -12,8 +13,10 @@ use Doctrine\ORM\Query\Expr;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -90,13 +93,21 @@ class UserBoardRoleType extends AbstractType
             $token = new UsernamePasswordToken($user, 'none', $user->getRoles());
             $isGrantedAdmin = $this->accessDecisionManager->decide($token, ['ROLE_ADMIN']);
             if (!$isGrantedAdmin && $this->security->isGranted('PERMISSION_EDIT', $user)) {
+                $notAllowedPermission = PermissionEnum::PERMISSION;
                 $form
-                    ->add('permissions', CollectionType::class, [
-                        'entry_type' => CheckboxType::class,
-                        'entry_options' => [
-                            'block_prefix' => 'switch_permission',
-                            'required' => false,
-                        ]
+                    ->add('permissions', EnumType::class, [
+                        'class' => PermissionEnum::class,
+                        'choice_filter' => ChoiceList::filter(
+                            $this,
+                            function (PermissionEnum $permission) use ($notAllowedPermission): bool {
+                                return  $notAllowedPermission !== $permission;
+                            },
+                            $notAllowedPermission
+                        ),
+                        'expanded' => true,
+                        'multiple' => true,
+                        'block_prefix' => 'switch_permission',
+                        'required' => false,
                     ])
                 ;
             }

@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\Approval;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
@@ -50,8 +51,8 @@ class UserVoter extends Voter
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;
-        $isUserWithSharePermission = $isActiveUser && $user->hasPermissions([User::PERMISSION_USER, User::PERMISSION_BIKE_RIDE]);
-        $isUserWithPermission = $isActiveUser && $user->hasPermissions(User::PERMISSION_USER);
+        $isUserWithSharePermission = $isActiveUser && $user->hasPermissions([PermissionEnum::USER, PermissionEnum::BIKE_RIDE]);
+        $isUserWithPermission = $isActiveUser && $user->hasPermissions(PermissionEnum::USER);
 
         return match ($attribute) {
             self::EDIT, self::VIEW => $this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission),
