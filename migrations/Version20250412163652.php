@@ -22,6 +22,10 @@ final class Version20250412163652 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE user_permission (permission ENUM(\'bike_ride_cluster\', \'bike_ride\', \'user\', \'product\', \'survey\', \'notification\', \'second_hand\', \'permission\', \'documentation\', \'slideshow\', \'participation\', \'summary\') NOT NULL COMMENT \'(DC2Type:Permission)\', user_id INT NOT NULL, INDEX IDX_472E5446A76ED395 (user_id), PRIMARY KEY(user_id, permission)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE user_permission ADD CONSTRAINT FK_472E5446A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
+    }
+
+    public function postUp(Schema $schema): void
+    {
         $users = $this->connection->executeQuery('SELECT `id`, `permissions` FROM `user`')->fetchAllAssociative();
         foreach ($users as $user) {
             $permissions = ($user['permissions']) ? json_decode($user['permissions'], true) : [];
@@ -31,8 +35,7 @@ final class Version20250412163652 extends AbstractMigration
                 }
             }
         }
-
-        $this->addSql('ALTER TABLE user DROP permissions');
+        $this->connection->executeQuery('ALTER TABLE user DROP permissions');
     }
 
     public function down(Schema $schema): void
