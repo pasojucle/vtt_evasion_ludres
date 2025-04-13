@@ -88,8 +88,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     default => $this->addCriteriaBySeason($qb, (int) $season),
                 };
             }
-            if (isset($filters['permission'])) {
-                dump($filters['permission']);
+            if (isset($filters['permission']) && !empty($filters['permission'])) {
                 $this->addCriteriaByPermission($qb, $filters['permission']);
             }
             if (isset($filters['bikeRide'])) {

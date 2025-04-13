@@ -21,13 +21,11 @@ final class NavigationVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        dump($attribute);
         return $attribute === self::ADMIN;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        dump('NAVIGATION_ADMIN_NAV');
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
@@ -47,7 +45,6 @@ final class NavigationVoter extends Voter
 
     private function canDysplayAdminNav(TokenInterface $token, User $user, bool $isActiveUser): bool
     {
-        dump($user->getPermissions());
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
