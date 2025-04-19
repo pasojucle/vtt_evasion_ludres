@@ -7,6 +7,8 @@ namespace App\Service;
 use App\Dto\UserDto;
 use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 
 class ParameterService
 {
@@ -14,18 +16,31 @@ class ParameterService
         private ParameterRepository $parameterRepository,
         private MessageService $messageService,
         private ReplaceKeywordsService $replaceKeywordsService,
+        private readonly RequestStack $request,
     ) {
     }
 
     public function getParameterByName(string $name): string|bool|array|int|null
     {
-        $parameter = $this->parameterRepository->findOneByName($name);
-
-        if ($parameter) {
-            return $this->replaceKeywordsService->replaceCurrentSaison($parameter->getValue());
+        try {
+            $session = $this->request->getCurrentRequest()->getSession();
+            $value = $session->get($name);
+        } catch(SessionNotFoundException) {
+            $session = null;
+            $value = null;
         }
 
-        return null;
+        if (null === $value) {
+            $parameter = $this->parameterRepository->findOneByName($name);
+            if ($parameter) {
+                $value = $this->replaceKeywordsService->replaceCurrentSaison($parameter->getValue());
+            }
+            if ($session && $value) {
+                $session->set($name, $value);
+            }
+        }
+        
+        return $value;
     }
 
     public function getParametersByParameterGroupName(string $name): array

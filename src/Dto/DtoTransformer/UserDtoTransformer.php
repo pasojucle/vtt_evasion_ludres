@@ -211,6 +211,7 @@ class UserDtoTransformer
         if (!$user->getId()) {
             return null;
         }
+
         return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($user));
     }
 

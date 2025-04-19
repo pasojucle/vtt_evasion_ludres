@@ -48,6 +48,7 @@ class UserVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
+
         $isGrantedUser = $this->accessDecisionManager->decide($token, ['ROLE_USER']);
         $userDto = $this->userDtoTransformer->fromEntity($user);
         $isActiveUser = $isGrantedUser && $userDto->lastLicence->isActive;

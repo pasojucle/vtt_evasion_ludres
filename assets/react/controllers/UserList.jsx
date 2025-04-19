@@ -9,15 +9,19 @@ import Dropdown from '../components/Dropdown.jsx'
 export default function UserList() {
 
     const [isLoad, setIsLoad] = useState(false);
+
     const [user, setUser] = useState(null);
-    const [clearUser, setClearUser] = useState(false);
-    const [level, setLevel] = useState(null);
-    const [clearLevel, setClearLevel] = useState(false);
-    const [levelList, setLevelList] = useState([])
     const [userList, setUserList] = useState([]);
+
+    const [levels, setLevels] = useState([]);
+    const [levelList, setLevelList] = useState([]);
+
+    const [permissions, setPermissions] = useState([]);
+    const [permissionList, setPermissionList] = useState([]);
+
     const [season, setSeason] = useState(null);
-    const [clearSeason, setClearSeason] = useState(false);
     const [seasonList, setSeasonList] = useState([]);
+
     const [page, setPage] = useState(1);
     const [maxResults, setMaxResults] = useState(10);
 
@@ -29,36 +33,56 @@ export default function UserList() {
                 const currentSeason = data.seasons.find(season => season.id!==undefined)
                 setSeason(currentSeason);
                 setLevelList(data.levels);
+                setPermissionList(data.permissions)
                 setIsLoad(true);
             })
     }, [])
 
-    const handleChangeUser = (value) => {
+    const handleAddUser = (value) => {
         setUser(value)
     }
 
-    const handleChangeClearUser = (value) => {
-        setClearUser(value)
+    const handleRemoveUser = () => {
+        setUser(null)
     }
 
-    const handleChangeLevel = (value) => {
-        setLevel(value)
+    const handleAddLevel = (level) => {
+        setLevels([
+            ...levels,
+            level
+        ])
     }
 
-    const handleChangeClearLevel = (value) => {
-        setClearLevel(value)
+    const handleRemoveLevel = (level) => {
+        setLevels(               
+            levels.filter(a =>
+                a.id !== level.id
+            )
+        );
     }
 
-    const handleChangeSeason = (value) => {
+    const handleAddPermission = (permission) => {
+        setPermissions([
+            ...permissions,
+            permission
+        ])
+    }
+
+    const handleRemovePermission = (permission) => {
+        setPermissions(
+            permissions.filter(p => p.id !== permission.id)
+        )
+    }
+
+    const handleAddSeason = (value) => {
         setSeason(value)
     }
 
-    const handleChangeClearSeason = (value) => {
-        setClearSeason(value)
+    const handleRemoveSeason = () => {
+        setSeason(null)
     }
 
     const userFilter = (list) => {
-        
         if (!user) {
             return list;
         }
@@ -66,14 +90,16 @@ export default function UserList() {
     }
 
     const levelFilter = (list) => {
-        if (!level) {
+        if (0 === levels.length) {
             return list;
         }
         return list.filter((item) => {
-            if (level.target) {
-                return resolve(level.target, item) === level.value;
-            }
-            return item.level.id === level.id
+            return levels.some((level) => {
+                if (level.target) {
+                    return resolve(level.target, item) === level.value;
+                }
+                return levels.some((level) => item.level.id === level.id);
+            })
         })
     }
 
@@ -81,24 +107,31 @@ export default function UserList() {
         if (!season) {
             return list;
         }
-        return list.filter((item) => item.seasons.includes(season))
+        return list.filter((item) => item.seasons.includes(season.id))
+    }
+
+    const permissionFilter = (list) => {
+        if (0 === permissions.length) {
+            return list;
+        }
+        return list.filter((item) => permissions.some((permission) => item.permissions.includes(permission.id)))
     }
 
     const listFiltered = () => {
         let list = userFilter(userList);
         list = seasonFilter(list)
+        list = permissionFilter(list)
         return levelFilter(list);
     }
 
     const pagnedListFiltered = () => {
         let list = userFilter(userList);
         list = seasonFilter(list);
+        list = permissionFilter(list)
         list = levelFilter(list);
-        const end = page * maxResults 
-        console.log('paginator', (end - maxResults), end)
+        const end = page * maxResults
         return list.slice((end - maxResults), end)
     }
-
 
     const userListFiltered = () => {
         const list = seasonFilter(userList)
@@ -146,9 +179,10 @@ export default function UserList() {
     return (
         <div>
             <div className="row">
-                <ChoiceAutocompleteFilter list={userListFiltered()} value={user} label="Adhérent" placeholder="Selectionner un adhérent" handleChange={handleChangeUser} isClear={clearUser} handleClear={handleChangeClearUser} className="col-md-6 form-group"/>
-                <ChoiceAutocompleteFilter list={seasonList} value={season} label="Saison" placeholder="Toutes les saisons" handleChange={handleChangeSeason} isClear={clearSeason} handleClear={handleChangeClearSeason}  className="col-md-6 form-group"/>
-                <ChoiceAutocompleteFilter list={levelList} value={level} label={null} placeholder="Toutes les niveaux" handleChange={handleChangeLevel} isClear={clearLevel} handleClear={handleChangeClearLevel}  className="col-md-12 form-group"/>
+                <ChoiceAutocompleteFilter list={userListFiltered()} value={user} label={null} placeholder="Selectionner un adhérent" handleAdd={handleAddUser} handleRemove={handleRemoveUser} className="col-md-6 form-group"/>
+                <ChoiceAutocompleteFilter list={seasonList} value={season} label={null} placeholder="Toutes les saisons" handleAdd={handleAddSeason} handleRemove={handleRemoveSeason}  className="col-md-6 form-group"/>
+                <ChoiceAutocompleteFilter list={permissionList} value={permissions} label={null} placeholder="Toutes les permissions" handleAdd={handleAddPermission} handleRemove={handleRemovePermission}  className="col-md-12 form-group"/>
+                <ChoiceAutocompleteFilter list={levelList} value={levels} label={null} placeholder="Toutes les niveaux" handleAdd={handleAddLevel} handleRemove={handleRemoveLevel}  className="col-md-12 form-group"/>
             </div>
             <List/>
             <Paginator list={listFiltered()} page={page} maxResults={maxResults} handlePageChange={handlePageChange} handleMaxResultsChange={handleMaxResultsChange}/>

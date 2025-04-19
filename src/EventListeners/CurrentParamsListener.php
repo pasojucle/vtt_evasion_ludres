@@ -2,6 +2,7 @@
 
 namespace App\EventListeners;
 
+
 use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -19,11 +20,12 @@ class CurrentParamsListener
 
     public function onKernelRequest(): void
     {
+        $session = $this->requestStack->getSession();
         $currentSeason = $this->seasonService->getCurrentSeason();
-        $this->requestStack->getSession()->set('currentSeason', $currentSeason);
+        $session->set('currentSeason', $currentSeason);
 
         $databaseName = $this->entityManager->getConnection()->getParams()['dbname'];
-        $this->requestStack->getSession()->set('databaseName', $databaseName);
+        $session->set('databaseName', $databaseName);
 
         date_default_timezone_set($this->parameterBag->get('timezone'));
     }
