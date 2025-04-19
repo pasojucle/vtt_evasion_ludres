@@ -8,34 +8,40 @@
       font-size: $af-font-size;
       .af-control {
         display: flex;
+        gap: 5px;
         align-items: center;
-        padding:  0.5rem;
         flex-direction: row;
         box-sizing: border-box;
         overflow: hidden;
         width: 100%;
         z-index: 1;
+        .af-multiple {
+          display: flex;
+          align-items: center;
+          background-color: var(--gray-200);
+          padding-right: 5px;
+        }
         .af-content {
           margin-right: 0.2rem;
           box-sizing: border-box;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          padding: 0 5px;
         }
         .af-btn-group {
           display: flex;
           margin-left: auto;
           align-items: center;
           padding: unset;
-          .af-btn {
-            background-color: unset;
-            padding: 8px 1px;
-          }
+        }
+        .af-btn {
+          background-color: unset;
+          padding: 8px 1px;
         }
         input {
           border: unset;
           min-width: 10px;
-          flex: 1 1 10px;
           &:focus {
             outline: none;
           }

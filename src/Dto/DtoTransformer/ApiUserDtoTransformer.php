@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\ApiUserDto;
-use App\Entity\Identity;
-use App\Entity\Level;
-use App\Entity\Licence;
 use App\Entity\User;
-use App\Repository\IdentityRepository;
+use App\Entity\Level;
+use App\Dto\ApiUserDto;
+use App\Entity\Licence;
+use App\Entity\Identity;
+use App\Entity\UserPermission;
 use App\Repository\LicenceRepository;
+use App\Repository\IdentityRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Repository\UserPermissionRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ApiUserDtoTransformer
@@ -19,32 +22,37 @@ class ApiUserDtoTransformer
     public function __construct(
         private readonly LicenceRepository $licenceRepository,
         private readonly IdentityRepository $identityRepository,
+        private readonly UserPermissionRepository $userPermissionRepository,
+        private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
     ) {
     }
 
 
-    public function listHeaderFromEntity(User $user, Identity $member): ApiUserDto
+    public function listHeaderFromEntity(User $user, Identity $member, array $licences, array $permissions, ?bool $isGrantedUserList): ApiUserDto
     {
         $userDto = new ApiUserDto();
         $userDto->id = $user->getId();
         $fullName = sprintf('%s %s', mb_strtoupper($member->getName()), mb_ucfirst($member->getFirstName()));
         $userDto->fullName = $fullName;
         $userDto->level = $this->getLevel($user);
-        $userDto->seasons = $this->getLicenceSeasons($user);
-        $userDto->testingBikeRides = $this->testingBikeRides($user->getLastLicence(), $user->getSessions()->count());
+        $userDto->permissions = $permissions;
+        $userDto->seasons = array_keys($licences);
+        $userDto->testingBikeRides = $this->testingBikeRides($licences, $user->getSessions()->count());
         $userDto->boardMember = (null !== $user->getBoardRole()) ? '<i class="fa-solid fa-crown"></i>' : '';
         $userDto->btnShow = $this->urlGenerator->generate('admin_user', ['user' => $user->getId()]);
-        $userDto->actions = $this->getActions($user, $fullName);
+        $userDto->actions = $this->getActions($user, $fullName, $isGrantedUserList);
         $userDto->isBoardMember = (bool) $user->getBoardRole();
 
         return $userDto;
     }
 
 
-    private function testingBikeRides(?Licence $lastLicence, int $sessionsTotal): string
+    private function testingBikeRides(array $licences, int $sessionsTotal): string
     {
+        $lastLicence = (!empty($licences)) ? $licences[array_key_last($licences)] : null;
+
         if (false === $lastLicence?->isFinal()) {
             return sprintf('%s/3 séances d\'essai', $sessionsTotal);
         }
@@ -52,17 +60,32 @@ class ApiUserDtoTransformer
         return '';
     }
 
-    public function listFromEntities(array $userEntities): array
+    public function listAll(): array
     {
         $users = [];
-        $members = [];
+        $membersByUser = [];
+        $licencesByUser = [];
+        $permissionsByUser = [];
+        $userEntities = $this->userRepository->findAllAsc();
+        $isGrantedUserList = $this->security->isGranted('USER_LIST');
         /** @var Identity $member */
-        foreach ($this->identityRepository->findMembersByUsers($userEntities) as $member) {
-            $members[$member->getUser()->getId()] = $member;
+        foreach ($this->identityRepository->findMembers() as $member) {
+            $membersByUser[$member->getUser()->getId()] = $member;
+        }
+        /** @var Licence $licence */
+        foreach ($this->licenceRepository->findAll() as $licence) {
+            $licencesByUser[$licence->getUser()->getId()][$licence->getSeason()] = $licence;
+        }
+        /** @var UserPermission $userPermission */
+        foreach ($this->userPermissionRepository->findAll() as $userPermission) {
+            $permissionsByUser[$userPermission->getUser()->getId()][] = $userPermission->getPermission();
         }
         foreach ($userEntities as $userEntity) {
-            $member = (array_key_exists($userEntity->getId(), $members)) ? $members[$userEntity->getId()] : null;
-            $users[] = $this->listHeaderFromEntity($userEntity, $member);
+            $member = (array_key_exists($userEntity->getId(), $membersByUser)) ? $membersByUser[$userEntity->getId()] : null;
+            $licences = (array_key_exists($userEntity->getId(), $licencesByUser)) ? $licencesByUser[$userEntity->getId()] : [];
+            $permissions = (array_key_exists($userEntity->getId(), $permissionsByUser)) ? $permissionsByUser[$userEntity->getId()] : [];
+
+            $users[] = $this->listHeaderFromEntity($userEntity, $member, $licences, $permissions, $isGrantedUserList);
         }
         $this->sortByFullName($users);
 
@@ -86,15 +109,13 @@ class ApiUserDtoTransformer
         ];
     }
 
-    private function getLicenceSeasons(User $user): array
-    {
-        return $this->licenceRepository->findSeasons($user);
-    }
-
-    private function getActions(User $user, string $fullName): array
+    private function getActions(User $user, string $fullName, ?bool $isGrantedUserList): array
     {
         $actions = [];
-        if ($this->security->isGranted('USER_LIST') && Level::TYPE_SCHOOL_MEMBER === $user->getLevel()?->getType()) {
+        if (null === $isGrantedUserList) {
+            $isGrantedUserList = $this->security->isGranted('USER_LIST');
+        }
+        if ($isGrantedUserList && Level::TYPE_SCHOOL_MEMBER === $user->getLevel()?->getType()) {
             $actions[] = [
                 'path' => $this->urlGenerator->generate('admin_user_skill_edit', ['user' => $user->getId()]),
                 'icon' => 'fa-solid fa-graduation-cap',

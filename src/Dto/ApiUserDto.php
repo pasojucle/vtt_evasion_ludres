@@ -18,6 +18,8 @@ class ApiUserDto
 
     public array $level = [];
 
+    public array $permissions = [];
+
     public string $btnShow;
 
     public string $testingBikeRides = '';
@@ -60,7 +62,6 @@ class ApiUserDto
 
     public ?FFCTLicenceDto $ffctLicence = null;
 
-    public ?string $permissions = null;
 
     public bool $isEndTesting = false;
 

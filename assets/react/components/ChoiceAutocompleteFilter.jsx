@@ -1,40 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { toString } from '../utils'
 
 
-export default function ChoiceAutocompleteFilter({list, value, label, className, placeholder, handleChange, isClear= false, handleClear}) {
+export default function ChoiceAutocompleteFilter({list, value, label, className, placeholder, handleAdd, handleRemove}) {
 
     const [textFilter, setTextFilter] = useState('');
     const [focused, setFocused] = useState(false);
     const [indexActive, setIndexActive] = useState(0);
+    const inputRef = useRef(null);
+    const multiple = value instanceof Array;
 
     const itemObjectFromValue = (value) => {
         return list.find((item) => item.id === value);
     }
 
     const input = (event) => {
+        setFocused(true);
         setTextFilter(event.target.value.toLowerCase());
     }
 
-    const change = (value) => {
+    const add = (item) => {
         setFocused(false);
-        handleClear(false);
         setTextFilter('');
-        const itemObject = itemObjectFromValue(value);
-        handleChange(itemObject);
-        console.log('change', value)
+        handleAdd(itemObjectFromValue(item));
+    }
+
+    const remove = (item) => {
+        handleRemove(item);
     }
 
     const clear = () => {
         setTextFilter('');
-        handleClear(true);
-        handleChange(null);
-        console.log('clear')
+        handleRemove();
     }
 
     const handleKeyDown = (event) => {
         if ('Enter' === event.code) {
-            change(listFiltered()[indexActive].id)
+            add(listFiltered()[indexActive].id)
         }
         if ('ArrowDown' === event.code) {
             const length = listFiltered().length;
@@ -52,8 +54,6 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
     }
 
     const listFiltered = () => {
-        console.log('choiceAutocomplete list', list)
-        console.log('choiceAutocomplete textFilter', textFilter)
         if ('' === textFilter) {
             return list;
         }
@@ -61,21 +61,30 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
         return list.filter((item) => toString(item).toLowerCase().includes(textFilter))
     }
 
-    const displayControlContent = () => {
-        return null !== value && !isClear;
-    }
-
     const ControlContent = () => {
-        if (displayControlContent()) {
-            console.log('value', value);
-            const text = (value) ? toString(value): '';
+        if (multiple && 0 < value.length) {
+            return(
+                value.map((item) => 
+                    <div key={item.id} className='af-multiple'>
+                        <div className='af-content'>
+                            { (value) ? toString(item): '' }
+                        </div>
+                        <button className="btn af-btn" onClick={() => remove(item)}><i className="bi bi-x"></i></button>
+                    </div>
+                )
+            )
+        }
+        if (null !== value) {
             return (
-                <div className="af-content">{ text }</div>
+                <div className='af-content'>
+                    { (value) ? toString(value): '' }
+                </div>
             )
         }
     }
+
     const ControlBtnClear = () => {
-        if (displayControlContent()) {
+        if (!multiple && null !== value) {
             return (
                 <button className="btn af-btn" onClick={clear}><i className="bi bi-x"></i></button>
             )
@@ -119,7 +128,7 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
     }
     const Option = ({item, index}) => {
         return (
-            <div key={item.id} className={ optionClassName(item, index)} onMouseDown={() => change(item.id)}>
+            <div key={item.id} className={ optionClassName(item, index)} onMouseDown={() => add(item.id)}>
                 {toString(item)}
             </div>
         )
@@ -133,15 +142,20 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
         }
     }
 
+    const handleClick = () => {
+        inputRef.current.focus();
+    }
+
     const classWrapper = "autocomplete-filter " + className;
     const placeholderContent = (value) ? '' : placeholder;
     return (
         <div className={ classWrapper }>
             <Label/>
             <div className="af-wrapper">
-                <div className="af-control">
+                <div className="af-control" onClick={handleClick}>
                     <ControlContent/>
                     <input
+                        ref={inputRef} 
                         type="search"
                         placeholder={placeholderContent}
                         value={textFilter}
