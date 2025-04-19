@@ -7,6 +7,7 @@ namespace App\Controller\API;
 use App\Dto\DtoTransformer\ApiUserDtoTransformer;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
+use App\Service\PermissionService;
 use App\Service\SeasonService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,18 +21,19 @@ class UserController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly SeasonService $seasonService,
         private readonly LevelService $levelService,
+        private readonly PermissionService $permissionService,
     ) {
     }
 
     #[Route(path: '/list', name: 'list', methods: ['GET'], options: ['expose' => true])]
     public function list(): JsonResponse
     {
-        $users = $this->userRepository->findAllAsc();
-
+        
         return new JsonResponse([
-            'list' => $this->transformer->listFromEntities($users),
+            'list' => $this->transformer->listAll(),
             'seasons' => $this->seasonService->getChoicesFilter(),
-            'levels' => $this->levelService->getChoicesFilter()
+            'levels' => $this->levelService->getChoicesFilter(),
+            'permissions' => $this->permissionService->getChoicesFilter(),
         ]);
     }
 }

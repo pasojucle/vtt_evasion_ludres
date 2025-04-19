@@ -103,6 +103,19 @@ class IdentityRepository extends ServiceEntityRepository
         ;
     }
 
+
+    public function findMembers(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere(
+                (new Expr())->eq('i.kind', ':member')
+            )
+            ->setParameter('member', IdentityKindEnum::MEMBER)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findOneKinShipsByUser(User $user): array
     {
         return $this->createQueryBuilder('i')

@@ -62,7 +62,6 @@ class LevelService
         $levelChoices[] = ['id' => sprintf('board-member-%s', Level::TYPE_BOARD_MEMBER), 'title' => 'Membres du bureau et comité', 'target' => 'isBoardMember', 'value' => true];
 
         $levelChoices = array_merge($memberLevels, $frameLevels, $levelChoices);
-        dump($levelChoices);
 
         return $levelChoices;
     }

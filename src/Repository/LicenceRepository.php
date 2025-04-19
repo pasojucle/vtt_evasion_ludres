@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Licence;
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\NonUniqueResultException;
+use App\Entity\Licence;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Licence|null find($id, $lockMode = null, $lockVersion = null)
@@ -93,5 +94,13 @@ class LicenceRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->getSingleColumnResult();
+    }
+
+    public function findToto(Paginator|array $users): array
+    {
+        return $this->createQueryBuilder('l')
+
+            ->getQuery()
+            ->getResult();
     }
 }
