@@ -45,6 +45,9 @@
           &:focus {
             outline: none;
           }
+          &::placeholder {
+            width: 100%;
+          }
         }
       }
       .af-dropdown {
