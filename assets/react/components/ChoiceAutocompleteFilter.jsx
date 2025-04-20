@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { toString } from '../utils'
 
 
@@ -6,7 +6,7 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
 
     const [textFilter, setTextFilter] = useState('');
     const [focused, setFocused] = useState(false);
-    const [indexActive, setIndexActive] = useState(0);
+    const [idActive, setIdActive] = useState(null);
     const inputRef = useRef(null);
     const multiple = value instanceof Array;
 
@@ -19,45 +19,58 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
         setTextFilter(event.target.value.toLowerCase());
     }
 
-    const add = (item) => {
+    const add = (itemId) => {
         setFocused(false);
         setTextFilter('');
-        handleAdd(itemObjectFromValue(item));
+        const itemObject = itemObjectFromValue(itemId)
+        handleAdd(itemObject);
+        itemObject.selected = true;
+        setIdActive(itemObject.id);
     }
 
-    const remove = (item) => {
-        handleRemove(item);
+    const remove = (itemObject) => {
+        itemObject.selected = false;
+        handleRemove(itemObject);
+        setIdActive(null);
+        setTextFilter('');
     }
 
     const clear = () => {
+        list.map((item) => item.selected = false);
         setTextFilter('');
         handleRemove();
+        setIdActive(null);
     }
 
     const handleKeyDown = (event) => {
-        if ('Enter' === event.code) {
-            add(listFiltered()[indexActive].id)
+        const choiceList = choices();
+        let index = choiceList.findIndex((item) => item.id === idActive)
+        if ('Enter' === event.code && true !== choiceList[index].selected) {
+            add(list[index].id)
+            return;
         }
         if ('ArrowDown' === event.code) {
-            const length = listFiltered().length;
-            const index = indexActive + 1;
-            if (index < length) {
-                setIndexActive(index);
+            ++index;
+            if (index < choiceList.length) {
+                setIdActive(choiceList[index].id);
+                return;
             }
         }
         if ('ArrowUp' === event.code) {
-            if (0 < indexActive) {
-                const index = indexActive - 1;
-                setIndexActive(index);
+            if (0 < index) {
+                --index;
+                setIdActive(choiceList[index].id);
+                return;
             }
         }
+        setIdActive(choiceList[0].id);
     }
 
-    const listFiltered = () => {
+    const choices = () => {       
         if ('' === textFilter) {
             return list;
-        }
-
+        } 
+  
         return list.filter((item) => toString(item).toLowerCase().includes(textFilter))
     }
 
@@ -91,14 +104,16 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
         }
     }
 
-    const optionClassName = (item, index) => {
+    const optionClassName = (item) => {
         let className = 'af-option';
-
-        if (indexActive === index) {
+        if (idActive === item.id) {
             className = className + ' active';
         }
         if (item.group) {
-            className = className + ' af-option-group';
+            className += ' af-option-group';
+        } 
+        if (item.selected) {
+            className += ' af-selected';
         } 
 
         return className;
@@ -108,28 +123,23 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
         if (focused) {
             return (
                 <div className="af-dropdown">
-                    {listFiltered().map((item, index) =>
-                        <Item key={index} listItem={item} index={index}/>
+                    {choices().map((item, index) =>
+                        <Item key={index} listItem={item}/>
                     )}
                 </div>
             )
         }
     }
 
-    const Item = ({listItem, index}) => {
+    const Item = ({listItem}) => {
         if (listItem.label) {
             return (
                 <div className="af-group-label">{listItem.label}</div>
             )
         }
         return (
-            <Option item={listItem} index={index}/>
-        )
-    }
-    const Option = ({item, index}) => {
-        return (
-            <div key={item.id} className={ optionClassName(item, index)} onMouseDown={() => add(item.id)}>
-                {toString(item)}
+            <div key={listItem.id} className={ optionClassName(listItem)} onMouseDown={() => add(listItem.id)}>
+                {toString(listItem)}
             </div>
         )
     }
