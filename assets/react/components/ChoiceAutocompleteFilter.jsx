@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { toString } from '../utils'
 
 
@@ -20,26 +20,30 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
     }
 
     const add = (itemId) => {
-        setFocused(false);
-        setTextFilter('');
         const itemObject = itemObjectFromValue(itemId)
         handleAdd(itemObject);
         itemObject.selected = true;
         setIdActive(itemObject.id);
+        clearTextFilter();
     }
 
     const remove = (itemObject) => {
+        clearTextFilter();
         itemObject.selected = false;
         handleRemove(itemObject);
         setIdActive(null);
-        setTextFilter('');
     }
 
     const clear = () => {
+        clearTextFilter();
         list.map((item) => item.selected = false);
-        setTextFilter('');
         handleRemove();
         setIdActive(null);
+    }
+
+    const clearTextFilter = () => {
+        setTextFilter('');
+        setFocused(false);
     }
 
     const handleKeyDown = (event) => {
@@ -75,25 +79,27 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
     }
 
     const ControlContent = () => {
-        if (multiple && 0 < value.length) {
+        if (isEmpty()) {
+            return;
+        }
+        if (multiple) {
             return(
                 value.map((item) => 
                     <div key={item.id} className='af-multiple'>
                         <div className='af-content'>
-                            { (value) ? toString(item): '' }
+                            { toString(item)}
                         </div>
                         <button className="btn af-btn" onClick={() => remove(item)}><i className="bi bi-x"></i></button>
                     </div>
                 )
             )
         }
-        if (null !== value) {
-            return (
-                <div className='af-content'>
-                    { (value) ? toString(value): '' }
-                </div>
-            )
-        }
+  
+        return (
+            <div className='af-content'>
+                { toString(value)}
+            </div>
+        )
     }
 
     const ControlBtnClear = () => {
@@ -120,7 +126,7 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
     }
 
     const Dropdown = () => {
-        if (focused) {
+        if (true === focused) {
             return (
                 <div className="af-dropdown">
                     {choices().map((item, index) =>
@@ -152,17 +158,27 @@ export default function ChoiceAutocompleteFilter({list, value, label, className,
         }
     }
 
-    const handleClick = () => {
-        inputRef.current.focus();
+    const handleClick = (target) => {
+        if (target.classList.contains('af-control')) {
+            inputRef.current.focus();
+        }
+    }
+
+    const isEmpty = () => {
+        if (multiple) {
+            return 0 === value.length;
+        }
+
+        return null === value;
     }
 
     const classWrapper = "autocomplete-filter " + className;
-    const placeholderContent = (value) ? '' : placeholder;
+    const placeholderContent = (isEmpty()) ? placeholder : '';
     return (
         <div className={ classWrapper }>
             <Label/>
             <div className="af-wrapper">
-                <div className="af-control" onClick={handleClick}>
+                <div className="af-control" onClick={(event) => {handleClick(event.target)}}>
                     <ControlContent/>
                     <input
                         ref={inputRef} 
