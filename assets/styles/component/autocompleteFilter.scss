@@ -68,6 +68,10 @@
           &.af-option-group {
               padding-left: 18px;
           }
+          &.af-selected {
+            background-color: var(--gray-400);
+            color: var(--gray-200);
+          }
         }
         .af-group-label {
           padding: 5px 8px;
