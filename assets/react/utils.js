@@ -20,7 +20,7 @@ export const toString = (entity) => {
             const htmlElement = document.createRange().createContextualFragment(entity.content);
             string = htmlElement.firstChild.innerText;
             break;
-        case undefined !== entity.label:
+        case undefined !== entity.label && null !== entity.label:
             string = entity.label;
             break;
         default:
@@ -37,6 +37,14 @@ export const resolve = (path, obj) => {
 
 export const getData = async(route, params={}) => {
     const promise = await fetch(Routing.generate(route, params));
+
+    const result = await promise.json();
+
+    return result;
+}
+
+export const getDataFromApi = async(api) => {
+    const promise = await fetch(api);
 
     const result = await promise.json();
 

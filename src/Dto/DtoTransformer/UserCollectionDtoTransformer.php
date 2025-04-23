@@ -4,40 +4,39 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\User;
-use App\Entity\Level;
-use App\Dto\ApiUserDto;
-use App\Entity\Licence;
+use App\Dto\UserCollectionDto;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Identity;
+use App\Entity\Level;
+use App\Entity\Licence;
+use App\Entity\User;
 use App\Entity\UserPermission;
-use App\Repository\LicenceRepository;
 use App\Repository\IdentityRepository;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Repository\LicenceRepository;
 use App\Repository\UserPermissionRepository;
 use App\Repository\UserRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ApiUserDtoTransformer
+class UserCollectionDtoTransformer
 {
     public function __construct(
-        private readonly LicenceRepository $licenceRepository,
-        private readonly IdentityRepository $identityRepository,
-        private readonly UserPermissionRepository $userPermissionRepository,
-        private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
 
-    public function listHeaderFromEntity(User $user, Identity $member, array $licences, array $permissions, ?bool $isGrantedUserList): ApiUserDto
+    public function fromEntity(User $user, Identity $member, array $licences, array $permissions, ?bool $isGrantedUserList): UserCollectionDto
     {
-        $userDto = new ApiUserDto();
+        $userDto = new UserCollectionDto();
         $userDto->id = $user->getId();
         $fullName = sprintf('%s %s', mb_strtoupper($member->getName()), mb_ucfirst($member->getFirstName()));
         $userDto->fullName = $fullName;
         $userDto->level = $this->getLevel($user);
-        $userDto->permissions = $permissions;
+        $userDto->permissions = $this->getPermissions($permissions);
         $userDto->seasons = array_keys($licences);
         $userDto->testingBikeRides = $this->testingBikeRides($licences, $user->getSessions()->count());
         $userDto->boardMember = (null !== $user->getBoardRole()) ? '<i class="fa-solid fa-crown"></i>' : '';
@@ -58,45 +57,6 @@ class ApiUserDtoTransformer
         }
 
         return '';
-    }
-
-    public function listAll(): array
-    {
-        $users = [];
-        $membersByUser = [];
-        $licencesByUser = [];
-        $permissionsByUser = [];
-        $userEntities = $this->userRepository->findAllAsc();
-        $isGrantedUserList = $this->security->isGranted('USER_LIST');
-        /** @var Identity $member */
-        foreach ($this->identityRepository->findMembers() as $member) {
-            $membersByUser[$member->getUser()->getId()] = $member;
-        }
-        /** @var Licence $licence */
-        foreach ($this->licenceRepository->findAll() as $licence) {
-            $licencesByUser[$licence->getUser()->getId()][$licence->getSeason()] = $licence;
-        }
-        /** @var UserPermission $userPermission */
-        foreach ($this->userPermissionRepository->findAll() as $userPermission) {
-            $permissionsByUser[$userPermission->getUser()->getId()][] = $userPermission->getPermission();
-        }
-        foreach ($userEntities as $userEntity) {
-            $member = (array_key_exists($userEntity->getId(), $membersByUser)) ? $membersByUser[$userEntity->getId()] : null;
-            $licences = (array_key_exists($userEntity->getId(), $licencesByUser)) ? $licencesByUser[$userEntity->getId()] : [];
-            $permissions = (array_key_exists($userEntity->getId(), $permissionsByUser)) ? $permissionsByUser[$userEntity->getId()] : [];
-
-            $users[] = $this->listHeaderFromEntity($userEntity, $member, $licences, $permissions, $isGrantedUserList);
-        }
-        $this->sortByFullName($users);
-
-        return $users;
-    }
-
-    private function sortByFullName(array &$users): void
-    {
-        usort($users, function ($a, $b) {
-            return strtolower($a->fullName) < strtolower($b->fullName) ? -1 : 1;
-        });
     }
 
     private function getLevel(User $user): array
@@ -150,5 +110,15 @@ class ApiUserDtoTransformer
         }
 
         return ['title' => $fullName, 'items' => $actions];
+    }
+
+    private function getPermissions(array $enumPermissions): array
+    {
+        $permissions = [];
+        foreach ($enumPermissions as $permission) {
+            $permissions[] = ['id' => $permission->value, 'name' => $permission->trans($this->translator)];
+        }
+
+        return $permissions;
     }
 }

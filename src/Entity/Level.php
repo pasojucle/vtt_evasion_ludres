@@ -4,12 +4,24 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Dto\ChoiceDto;
 use App\Repository\LevelRepository;
+use App\State\LevelChoicesStateProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LevelRepository::class)]
+#[ApiResource(shortName: 'Level')]
+#[GetCollection(
+    // uriTemplate: '/levels/choices',
+    routePrefix: 'choices',
+    name: 'level_choices',
+    output: ChoiceDto::class,
+    provider: LevelChoicesStateProvider::class,
+)]
 class Level
 {
     public const TYPE_SCHOOL_MEMBER = 1;

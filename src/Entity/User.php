@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Dto\UserCollectionDto;
 use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Licence;
 use App\Entity\UserPermission;
 use App\Repository\UserRepository;
+use App\State\UserStateProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -17,6 +21,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ApiResource(shortName: 'User')]
+#[GetCollection(
+    name: 'user_collection',
+    output: UserCollectionDto::class,
+    provider: UserStateProvider::class,
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const APPROVAL_RIGHT_TO_THE_IMAGE = 1;

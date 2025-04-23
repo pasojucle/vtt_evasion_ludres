@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use ApiPlatform\Metadata\UrlGeneratorInterface;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Parameter;
 use App\Entity\User;
@@ -40,11 +41,12 @@ class UserController extends AbstractController
     public function adminUsers(
         GetMembersFiltered $getMembersFiltered,
         MessageService $messageService,
+        UrlGeneratorInterface $apiUrlGenerator,
         Request $request,
         bool $filtered
     ): Response {
-        $params = $getMembersFiltered->list($request, $filtered);
-
+        // $params = $getMembersFiltered->list($request, $filtered);
+        $params = [];
         $params['settings'] = [
             'parameters' => $this->entityManager->getRepository(Parameter::class)->findByParameterGroupName('USER'),
             'routes' => [
@@ -53,6 +55,12 @@ class UserController extends AbstractController
                 ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
             ],
             'messages' => $messageService->getMessagesBySectionName('USER'),
+        ];
+        $params['api'] = [
+            'users' => $apiUrlGenerator->generate('user_collection'),
+            'levels' => $apiUrlGenerator->generate('level_choices'),
+            'permissions' => $apiUrlGenerator->generate('permission_choices'),
+            'seasons' => $apiUrlGenerator->generate('season_choices'),
         ];
 
         return $this->render('user/admin/list.html.twig', $params);
