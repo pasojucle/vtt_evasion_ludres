@@ -8,18 +8,14 @@ use App\Entity\Licence;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class SeasonService
 {
     public const MIN_SEASON_TO_TAKE_PART = 'minSeasonToTakepart';
 
     public function __construct(
-        private readonly ParameterService $parameterService, 
-        private readonly RequestStack $request,
-    )
-    {
-  
+        private readonly ParameterService $parameterService,
+    ) {
     }
 
     public function getCurrentSeason(): int
@@ -67,16 +63,6 @@ class SeasonService
         $seasons = [];
         foreach (range(2021, $this->getCurrentSeason()) as $season) {
             $seasons['Saison ' . $season] = 'SEASON_' . $season;
-        }
-
-        return array_reverse($seasons);
-    }
-
-    public function getChoicesFilter(): array
-    {
-        $seasons = [];
-        foreach (range(2021, $this->getCurrentSeason()) as $season) {
-            $seasons[] = ['id' => $season, 'name' => 'Saison ' . $season];
         }
 
         return array_reverse($seasons);
