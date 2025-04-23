@@ -7,8 +7,8 @@ namespace App\Service;
 use App\Dto\UserDto;
 use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ParameterService
 {
@@ -25,7 +25,7 @@ class ParameterService
         try {
             $session = $this->request->getCurrentRequest()->getSession();
             $value = $session->get($name);
-        } catch(SessionNotFoundException) {
+        } catch (SessionNotFoundException) {
             $session = null;
             $value = null;
         }

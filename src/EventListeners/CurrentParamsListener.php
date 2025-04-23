@@ -2,7 +2,6 @@
 
 namespace App\EventListeners;
 
-
 use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

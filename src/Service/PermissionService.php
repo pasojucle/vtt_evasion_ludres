@@ -9,9 +9,7 @@ class PermissionService
 {
     public function __construct(
         private readonly TranslatorInterface $translator,
-    )
-    {
-        
+    ) {
     }
 
     public function getChoicesFilter(): array

@@ -1,6 +1,6 @@
 {% block ckeditor_row %}
     <div {% if form.vars.row_attr.class is defined %}class="{{ form.vars.row_attr.class }}"{% endif %}>
-        <div {{ react_component('Ckeditor',{
+        <div {{ react_component('Ckeditor', {
             'id': form.vars.id,
             'label': form.vars.label, 
             'value': form.vars.value, 

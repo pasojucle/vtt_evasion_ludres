@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getData, resolve } from '../utils'
+import { getDataFromApi, resolve } from '../utils'
 import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 import ChoiceAutocompleteFilter from '../components/ChoiceAutocompleteFilter';
 import Paginator from '../components/Paginator';
 import TextRaw from '../components/TextRaw.jsx';
 import Dropdown from '../components/Dropdown.jsx'
 
-export default function UserList() {
+export default function UserList({api}) {
 
     const [isLoad, setIsLoad] = useState(false);
 
@@ -26,16 +26,28 @@ export default function UserList() {
     const [maxResults, setMaxResults] = useState(10);
 
     useEffect(() => {
-        const list = getData('api_user_list')
+        getDataFromApi(api.levels)
             .then((data) => {
-                setUserList(data.list);
-                setSeasonList(data.seasons);
-                const currentSeason = data.seasons.find(season => season.id!==undefined)
+                console.log('levels', data)
+                setLevelList(data);
+        })
+        getDataFromApi(api.permissions)
+            .then((data) => {
+                console.log('permissions', data)
+                setPermissionList(data);
+        })
+        getDataFromApi(api.seasons)
+            .then((data) => {
+                console.log('season', data)
+                setSeasonList(data);
+                const currentSeason = data.find(season => season.id!==undefined)
                 setSeason(currentSeason);
-                setLevelList(data.levels);
-                setPermissionList(data.permissions)
+        })
+        getDataFromApi(api.users)
+            .then((data) => {
+                setUserList(data);
                 setIsLoad(true);
-            })
+        })
     }, [])
 
     const handleAddUser = (value) => {
@@ -114,7 +126,10 @@ export default function UserList() {
         if (0 === permissions.length) {
             return list;
         }
-        return list.filter((item) => permissions.some((permission) => item.permissions.includes(permission.id)))
+
+        return list.filter((user) => permissions.some((permission) => {
+            return user.permissions.some((userPermission) => userPermission.id === permission.id)
+        }))
     }
 
     const listFiltered = () => {
@@ -177,16 +192,37 @@ export default function UserList() {
     }
 
     return (
-        <div>
-            <div className="row">
-                <ChoiceAutocompleteFilter list={userListFiltered()} value={user} label={null} placeholder="Selectionner un adhérent" handleAdd={handleAddUser} handleRemove={handleRemoveUser} className="col-md-6 form-group"/>
-                <ChoiceAutocompleteFilter list={seasonList} value={season} label={null} placeholder="Toutes les saisons" handleAdd={handleAddSeason} handleRemove={handleRemoveSeason}  className="col-md-6 form-group"/>
-                <ChoiceAutocompleteFilter list={permissionList} value={permissions} label={null} placeholder="Toutes les permissions" handleAdd={handleAddPermission} handleRemove={handleRemovePermission}  className="col-md-12 form-group"/>
-                <ChoiceAutocompleteFilter list={levelList} value={levels} label={null} placeholder="Toutes les niveaux" handleAdd={handleAddLevel} handleRemove={handleRemoveLevel}  className="col-md-12 form-group"/>
+        <>
+            <div className="wrapper-title">
+                <h1>Gestion des adhérents - <span className="badge badge-info">{listFiltered().length}</span></h1>
+                <div className="tool-group">
+                    {/* <a href="{{ path('wiki_show', {'directory': 'adhérents'})}}" target="_blank" title="wiki" class="btn-wiki"></a> */}
+                    {/* {% include 'component/dropdown_settings.html.twig' %} */}
+                    {/* <div class="dropdown">
+                        <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                        <div class="dropdown-menu" data-target="dropdown-tools">
+                            <ul class="dropdown-body">
+                                <li><a href="{{ path('admin_members_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></li>
+                                <li><a href="{{ path('admin_members_export') }}" class="dropdown-item" title="Exporter la sélection"><i class="fas fa-file-csv"></i> Exporter la sélection</a></li>
+                                <li><a href="{{ path('admin_user_skill_export') }}" class="dropdown-item" title="Exporter les évaluations de la sélection"><i class="fas fa-file-csv"></i> Exporter les évaluations de la sélection</a></li>
+                                <li><a href="{{ path('admin_overview_season') }}" class="dropdown-item" title="Synthèse par saison"><i class="fa-solid fa-users-rectangle"></i> Synthèse par saison</a></li>
+                            </ul>
+                        </div>
+                    </div> */}
+                </div>
             </div>
-            <List/>
-            <Paginator list={listFiltered()} page={page} maxResults={maxResults} handlePageChange={handlePageChange} handleMaxResultsChange={handleMaxResultsChange}/>
-        </div>
+            <div className="wrapper-body">
+                <div className="row">
+                    <ChoiceAutocompleteFilter list={userListFiltered()} value={user} label={null} placeholder="Selectionner un adhérent" handleAdd={handleAddUser} handleRemove={handleRemoveUser} className="col-md-6 form-group"/>
+                    <ChoiceAutocompleteFilter list={seasonList} value={season} label={null} placeholder="Toutes les saisons" handleAdd={handleAddSeason} handleRemove={handleRemoveSeason}  className="col-md-6 form-group"/>
+                    <ChoiceAutocompleteFilter list={permissionList} value={permissions} label={null} placeholder="Toutes les permissions" handleAdd={handleAddPermission} handleRemove={handleRemovePermission}  className="col-md-12 form-group"/>
+                    <ChoiceAutocompleteFilter list={levelList} value={levels} label={null} placeholder="Toutes les niveaux" handleAdd={handleAddLevel} handleRemove={handleRemoveLevel}  className="col-md-12 form-group"/>
+                </div>
+                <List/>
+                <Paginator list={listFiltered()} page={page} maxResults={maxResults} handlePageChange={handlePageChange} handleMaxResultsChange={handleMaxResultsChange}/>
+            
+            </div>
+        </>
     )
 }
 

@@ -4,11 +4,11 @@
   "build/main_build/admin.css": "/build/main_build/admin.44b63ccc.css",
   "build/main_build/admin.js": "/build/main_build/admin.5d12de25.js",
   "build/main_build/wiki.css": "/build/main_build/wiki.41615a6b.css",
-  "build/main_build/wiki.js": "/build/main_build/wiki.7d71ff7f.js",
+  "build/main_build/wiki.js": "/build/main_build/wiki.f142901f.js",
   "build/main_build/runtime.js": "/build/main_build/runtime.5ad829b3.js",
   "build/main_build/436.10248fe9.js": "/build/main_build/436.10248fe9.js",
   "build/main_build/627.86bb35fd.css": "/build/main_build/627.86bb35fd.css",
-  "build/main_build/627.fe297ccc.js": "/build/main_build/627.fe297ccc.js",
+  "build/main_build/627.d51689de.js": "/build/main_build/627.d51689de.js",
   "build/main_build/954.16aef362.js": "/build/main_build/954.16aef362.js",
   "build/main_build/636.f7625402.js": "/build/main_build/636.f7625402.js",
   "build/main_build/661.97789c83.js": "/build/main_build/661.97789c83.js",
@@ -74,8 +74,12 @@
 >>>>>>> ceea50eb (Modification dropdow autocomplete #274)
 =======
   "build/main_build/71.6204fc00.css": "/build/main_build/71.6204fc00.css",
+<<<<<<< HEAD
   "build/main_build/71.6cf702ae.js": "/build/main_build/71.6cf702ae.js",
 >>>>>>> 65b06bd6 (Correction placeholder #274)
+=======
+  "build/main_build/71.d6a03f1c.js": "/build/main_build/71.d6a03f1c.js",
+>>>>>>> 9fcd7cf8 (Création des endpoints avec api platform #274)
   "build/main_build/fonts/NotoSans-Regular.ttf": "/build/main_build/fonts/NotoSans-Regular.c6776e82.ttf",
   "build/main_build/fonts/bootstrap-icons.woff?": "/build/main_build/fonts/bootstrap-icons.39795c0b.woff",
   "build/main_build/fonts/bootstrap-icons.woff2?": "/build/main_build/fonts/bootstrap-icons.b7bcc075.woff2"

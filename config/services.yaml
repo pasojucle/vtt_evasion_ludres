@@ -93,3 +93,8 @@ services:
         tags: 
             - {name: 'doctrine.orm.entity_listener',  event: 'preUpdate'}  
             - {name: 'doctrine.orm.entity_listener',  event: 'prePersist'}
+
+    App\Doctrine\NoneDeletedResources:
+        tags:
+        - { name: api_platform.doctrine.orm.query_extension.collection }
+        - { name: api_platform.doctrine.orm.query_extension.item }
