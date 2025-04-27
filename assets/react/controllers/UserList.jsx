@@ -4,7 +4,9 @@ import EntityAutocompleteFilter from '../components/EntityAutocompleteFilter';
 import ChoiceAutocompleteFilter from '../components/ChoiceAutocompleteFilter';
 import Paginator from '../components/Paginator';
 import TextRaw from '../components/TextRaw.jsx';
-import Dropdown from '../components/Dropdown.jsx'
+import Dropdown from '../components/Dropdown.jsx';
+import Settings from '../components/Settings.jsx';
+import Actions from '../components/Actions.jsx';
 
 export default function UserList({api}) {
 
@@ -177,7 +179,7 @@ export default function UserList({api}) {
                                     <TextRaw textHtml={user.boardMember} className="col-md-1 col-xs-2"/>
                                 </div>
                             </a> 
-                            <Dropdown title={user.actions.title} actions={user.actions.items}/>
+                            <Dropdown title={user.actions.title} actions={user.actions.items} id={user.id}/>
                         </li>
                     )}
                 </ul>
@@ -196,8 +198,10 @@ export default function UserList({api}) {
             <div className="wrapper-title">
                 <h1>Gestion des adhérents - <span className="badge badge-info">{listFiltered().length}</span></h1>
                 <div className="tool-group">
-                    {/* <a href="{{ path('wiki_show', {'directory': 'adhérents'})}}" target="_blank" title="wiki" class="btn-wiki"></a> */}
+                    <a href="{{ path('wiki_show', {'directory': 'adhérents'})}}" target="_blank" title="wiki" className="btn-wiki"></a>
                     {/* {% include 'component/dropdown_settings.html.twig' %} */}
+                    <Settings api={api} />
+                    <Actions api={api} />
                     {/* <div class="dropdown">
                         <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                         <div class="dropdown-menu" data-target="dropdown-tools">

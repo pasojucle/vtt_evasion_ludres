@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Attribute\Setting;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\BoardRole;
 use App\Form\Admin\BoardRoleType;
@@ -14,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/bureau/role', name: 'admin_board_role')]
@@ -26,6 +27,7 @@ class BoardRoleController extends AbstractController
 
     #[Route('s', name: '_list', methods: ['GET'], defaults:['type' => 1])]
     #[IsGranted('ROLE_ADMIN')]
+    #[Setting(section: 'USER')]
     public function adminBoardRoleList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
