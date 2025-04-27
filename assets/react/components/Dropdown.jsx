@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function Dropdown({title, actions}) {
+export default function Dropdown({title, actions, id}) {
 
 
-    const DropdownItem = (action) => {
+    const DropdownItem = ({action}) => {
         if (action.path) {
             return (
                 <li>
@@ -21,14 +21,14 @@ export default function Dropdown({title, actions}) {
 
     return (
         <div className="dropdown">
-        <button className="dropdown-toggle" type="button" data-toggle="dropdown-{{ user.id }}"></button>
-        <div className="dropdown-menu" data-target="dropdown-{{ user.id }}">
-            <div className="dropdown-title">{title}</div>
-                <ul className="dropdown-body">
-                    {actions.map((action, id) => 
-                        <DropdownItem key={id} action={action} />
-                    )}
-              </ul>
+            <button className="dropdown-toggle" type="button" data-toggle={ 'dropdown-' + id }></button>
+            <div className="dropdown-menu" data-target={ 'dropdown-' + id }>
+                <div className="dropdown-title">{title}</div>
+                    <ul className="dropdown-body">
+                        {actions.map((action, id) => 
+                            <DropdownItem key={id} action={action} />
+                        )}
+                </ul>
             </div>
         </div>
     )

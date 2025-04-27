@@ -2,11 +2,24 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Dto\ActionDto;
 use App\Repository\MessageRepository;
+use App\State\MessageStateProvider;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[ApiResource(shortName: 'Message')]
+#[GetCollection(
+    name: 'message_collection',
+    output: ActionDto::class,
+    provider: MessageStateProvider::class,
+)]
+#[ApiFilter(SearchFilter::class, properties: ['section.name' => 'exact'])]
 class Message
 {
     #[ORM\Id]

@@ -111,8 +111,15 @@ class SessionRepository extends ServiceEntityRepository
             ->leftJoin('c.bikeRide', 'b')
             ->andWhere(
                 (new Expr())->eq('b.id', ':bikeRideId'),
+                (new Expr())->orX(
+                    (new Expr())->eq('s.availability', ':registered'),
+                    (new Expr())->isNull('s.availability'),
+                )
             )
-            ->setParameter('bikeRideId', $bikeRideId)
+            ->setParameters(new ArrayCollection([
+                new Parameter('bikeRideId', $bikeRideId),
+                new Parameter('registered', AvailabilityEnum::REGISTERED),
+            ]))
             ->getQuery()
             ->getResult()
         ;

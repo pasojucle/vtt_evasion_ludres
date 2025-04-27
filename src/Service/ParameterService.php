@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\UserDto;
 use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;

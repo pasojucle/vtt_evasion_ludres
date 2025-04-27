@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Attribute\Setting;
 use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Entity\Level;
 use App\Form\Admin\LevelType;
@@ -15,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/param/niveau', name: 'admin_level')]
@@ -30,6 +31,7 @@ class LevelController extends AbstractController
 
     #[Route('x/{type}', name: 's', methods: ['GET'], defaults:['type' => 1])]
     #[IsGranted('ROLE_ADMIN')]
+    #[Setting(section: 'USER')]
     public function adminList(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
