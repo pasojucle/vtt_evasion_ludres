@@ -75,11 +75,15 @@
 =======
   "build/main_build/71.6204fc00.css": "/build/main_build/71.6204fc00.css",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "build/main_build/71.6cf702ae.js": "/build/main_build/71.6cf702ae.js",
 >>>>>>> 65b06bd6 (Correction placeholder #274)
 =======
   "build/main_build/71.d6a03f1c.js": "/build/main_build/71.d6a03f1c.js",
 >>>>>>> 9fcd7cf8 (Création des endpoints avec api platform #274)
+=======
+  "build/main_build/71.dd36a920.js": "/build/main_build/71.dd36a920.js",
+>>>>>>> 7d377517 (Ajout des attributs setting et action #274)
   "build/main_build/fonts/NotoSans-Regular.ttf": "/build/main_build/fonts/NotoSans-Regular.c6776e82.ttf",
   "build/main_build/fonts/bootstrap-icons.woff?": "/build/main_build/fonts/bootstrap-icons.39795c0b.woff",
   "build/main_build/fonts/bootstrap-icons.woff2?": "/build/main_build/fonts/bootstrap-icons.b7bcc075.woff2"

@@ -13,7 +13,7 @@ class SeasonStateProvider implements ProviderInterface
 {
     public function __construct(
         private readonly SeasonService $seasonService,
-        private readonly ChoiceDtoTransformer $choiceDtoTransformer,
+        private readonly ChoiceDtoTransformer $transformer,
     ) {
     }
 
@@ -21,7 +21,7 @@ class SeasonStateProvider implements ProviderInterface
     {
         $seasons = [];
         foreach (range(2021, $this->seasonService->getCurrentSeason()) as $season) {
-            $seasons[] = $this->choiceDtoTransformer->fromValue($season, 'Saison')->toArray();
+            $seasons[] = $this->transformer->fromValue($season, 'Saison')->toArray();
         }
 
         return new ArrayCollection(array_reverse($seasons));

@@ -143,6 +143,13 @@ content:
     user_change_infos: Page demande de modifications d'infos personnelles
     second_hand: Annonces de matériel d'occasion
     second_hand_contact: Page de contact pour les annonces de matériel d'occasion
+    admin_levels: Niveaux
+    admin_board_role_list: Compétences
+    admin_skill_category_list: Roles du bureau et comité
+    admin_members_export: Exporter la sélection
+    admin_members_email_to_clipboard: Copier les emails de la séléction
+    admin_user_skill_export: Exporter les évaluations de la sélection
+    admin_overview_season: Synthèse par saison
   kind:
     home-flash: Message flash
     home-content: Contenu
@@ -206,3 +213,4 @@ user_skill:
   unacquired: non acquis
   pending: en cours
   acquired: acquis
+

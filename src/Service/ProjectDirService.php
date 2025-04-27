@@ -38,6 +38,11 @@ class ProjectDirService
         return $this->join($dirs);
     }
 
+    public function projectDir(): string
+    {
+        return $this->directories['project'];
+    }
+
     private function getDir(string $dirName): string
     {
         if (array_key_exists($dirName, $this->directories)) {
@@ -45,7 +50,6 @@ class ProjectDirService
         }
         return $dirName;
     }
-
 
     private function join(array $dirs): string
     {

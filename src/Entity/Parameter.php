@@ -4,16 +4,28 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Dto\ActionDto;
 use App\Repository\ParameterRepository;
+use App\State\ParameterStateProvider;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Egulias\EmailValidator\Warning\TLD;
 
 #[Entity(repositoryClass: ParameterRepository::class)]
+#[ApiResource(shortName: 'Parameter')]
+#[GetCollection(
+    name: 'parameter_collection',
+    output: ActionDto::class,
+    provider: ParameterStateProvider::class,
+)]
+#[ApiFilter(SearchFilter::class, properties: ['parameterGroup.name' => 'exact'])]
 class Parameter
 {
     public const TYPE_HTML = 1;

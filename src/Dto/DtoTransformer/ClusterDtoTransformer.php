@@ -69,6 +69,7 @@ class ClusterDtoTransformer
     public function fromBikeRide(BikeRide $bikeRide): array
     {
         $sessionsByClusters = [];
+        dump($this->sessionRepository->findByBikeRideId($bikeRide->getId()));
         /** @var Session $session */
         foreach ($this->sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
             $clusterId = $session->getCluster()->getId();

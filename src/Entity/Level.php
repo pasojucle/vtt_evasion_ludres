@@ -16,7 +16,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: LevelRepository::class)]
 #[ApiResource(shortName: 'Level')]
 #[GetCollection(
-    // uriTemplate: '/levels/choices',
     routePrefix: 'choices',
     name: 'level_choices',
     output: ChoiceDto::class,

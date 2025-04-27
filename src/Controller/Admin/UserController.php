@@ -5,25 +5,29 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use ApiPlatform\Metadata\UrlGeneratorInterface;
+use App\Attribute\Action;
+use App\Attribute\ParameterTool;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Parameter;
 use App\Entity\User;
 use App\Form\Admin\UserBoardRoleType;
 use App\Form\Admin\UserType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
+use App\Service\ParameterService;
 use App\UseCase\User\GetFramersFiltered;
 use App\UseCase\User\GetMembersFiltered;
 use App\UseCase\User\GetOverviewSeason;
 use App\UseCase\User\GetParticipation;
 use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin', name: 'admin_')]
@@ -36,38 +40,29 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/adherents/{filtered}', name: 'users', methods: ['GET', 'POST'], defaults:['filtered' => 0])]
+    #[Route('/adherents', name: 'users', methods: ['GET'])]
     #[IsGranted('USER_LIST')]
     public function adminUsers(
-        GetMembersFiltered $getMembersFiltered,
-        MessageService $messageService,
         UrlGeneratorInterface $apiUrlGenerator,
-        Request $request,
-        bool $filtered
     ): Response {
-        // $params = $getMembersFiltered->list($request, $filtered);
-        $params = [];
-        $params['settings'] = [
-            'parameters' => $this->entityManager->getRepository(Parameter::class)->findByParameterGroupName('USER'),
-            'routes' => [
-                ['name' => 'admin_levels', 'label' => 'Niveaux'],
-                ['name' => 'admin_skill_list', 'label' => 'Compétences'],
-                ['name' => 'admin_board_role_list', 'label' => 'Roles du bureau et comité'],
-            ],
-            'messages' => $messageService->getMessagesBySectionName('USER'),
-        ];
-        $params['api'] = [
-            'users' => $apiUrlGenerator->generate('user_collection'),
-            'levels' => $apiUrlGenerator->generate('level_choices'),
-            'permissions' => $apiUrlGenerator->generate('permission_choices'),
-            'seasons' => $apiUrlGenerator->generate('season_choices'),
-        ];
-
-        return $this->render('user/admin/list.html.twig', $params);
+        $section = 'USER';
+        return $this->render('user/admin/list.html.twig', [
+            'api' => [
+                'users' => $apiUrlGenerator->generate('user_collection'),
+                'levels' => $apiUrlGenerator->generate('level_choices'),
+                'permissions' => $apiUrlGenerator->generate('permission_choices'),
+                'seasons' => $apiUrlGenerator->generate('season_choices'),
+                'messages' => $apiUrlGenerator->generate('message_collection', ['section.name' => $section]),
+                'parameters' => $apiUrlGenerator->generate('parameter_collection', ['parameterGroup.name' => $section]),
+                'settings' => $apiUrlGenerator->generate('action_collection', ['section' => $section, 'type' => 'setting']),
+                'actions' => $apiUrlGenerator->generate('action_collection', ['section' => $section, 'type' => 'action']),
+            ]
+        ]);
     }
 
     #[Route('/export/adherents', name: 'members_export', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
+    #[Action(section: 'USER', icon: 'fas fa-file-csv')]
     public function adminUsersExport(
         GetMembersFiltered $getMembersFiltered,
         Request $request
@@ -77,6 +72,7 @@ class UserController extends AbstractController
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
+    #[Action(section: 'USER', icon: 'fas fa-copy')]
     public function adminEmailUsers(
         GetMembersFiltered $getMembersFiltered,
         Request $request
