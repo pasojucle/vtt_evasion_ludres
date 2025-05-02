@@ -14,7 +14,7 @@ class GetMembersFiltered extends GetUsersFiltered
 
     public string $statusPlaceholder = 'Sélectionnez une saison';
 
-    public string $filterName = 'admin_users_filters';
+    public string $filterName = 'admin_users_list';
 
     public string $remoteRoute = 'admin_member_autocomplete';
 
@@ -36,4 +36,6 @@ class GetMembersFiltered extends GetUsersFiltered
     {
         return array_flip(User::PERMISSIONS);
     }
+
+    // public function export()
 }

@@ -14,5 +14,5 @@ class ActionDto extends AbstractApiTransformer
 
     public ?string $icon = null;
 
-    public bool $openInModal = false;
+    public ?string $onClick = null;
 }

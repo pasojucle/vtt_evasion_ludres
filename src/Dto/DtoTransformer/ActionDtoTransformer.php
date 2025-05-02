@@ -22,10 +22,10 @@ class ActionDtoTransformer
     public function fromMessage(Message $message): ActionDto
     {
         $actionDto = new ActionDto();
-        $actionDto->url = $this->urlGenerator->generate('admin_message_edit_content', ['message' => $message->getId()]);
+        $actionDto->url = $this->urlGenerator->generate('admin_message_edit_content_react', ['message' => $message->getId()]);
         $actionDto->label = $message->getLabel();
         $actionDto->icon = 'fa-regular fa-message';
-        $actionDto->openInModal = true;
+        $actionDto->onClick = 'toggleModal';
 
         return $actionDto;
     }
@@ -33,10 +33,10 @@ class ActionDtoTransformer
     public function fromParameter(Parameter $parameter): ActionDto
     {
         $actionDto = new ActionDto();
-        $actionDto->url = $this->urlGenerator->generate('admin_parameter_edit', ['name' => $parameter->getId()]);
+        $actionDto->url = $this->urlGenerator->generate('admin_parameter_edit_react', ['name' => $parameter->getId()]);
         $actionDto->label = $parameter->getLabel();
         $actionDto->icon = 'fas fa-sliders-h';
-        $actionDto->openInModal = true;
+        $actionDto->onClick = 'toggleModal';
 
         return $actionDto;
     }
@@ -48,6 +48,7 @@ class ActionDtoTransformer
         $actionDto->url = $this->urlGenerator->generate($routeName);
         $actionDto->label = $this->translator->trans(sprintf('content.route.%s', $routeName));
         $actionDto->icon = $action->getIcon();
+        $actionDto->onClick = $action->getOnClick();
 
         return $actionDto;
     }

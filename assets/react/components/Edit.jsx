@@ -42,7 +42,9 @@ export default function Edit({edit, size, route, handleEditChange, update}) {
         .then((response) => response.json())
         .then((json)=> {
             if (json.success) {
-                update(json.data)
+                if (json.data) {
+                    update(json.data)
+                }
                 hide(); 
             }
             if (json.form) {

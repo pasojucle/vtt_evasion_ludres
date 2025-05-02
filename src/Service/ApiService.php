@@ -40,7 +40,6 @@ class ApiService
                 'action' => $form->getConfig()->getAction(),
                 'message' => $message,
                 'components' => $this->getComponents($form),
-
                 'submit' => $submit,
             ],
             'theme' => sprintf('btn-%s', $theme),
