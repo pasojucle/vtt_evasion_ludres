@@ -30,6 +30,8 @@ class Action
 
     private ?string $icon = null;
 
+    private ?string $onClick = null;
+
     public function getType(): string
     {
         return $this->type;
@@ -87,6 +89,18 @@ class Action
     public function setIcon(?string $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getOnClick(): ?string
+    {
+        return $this->onClick;
+    }
+
+    public function setOnClick(?string $onClick): static
+    {
+        $this->onClick = $onClick;
 
         return $this;
     }

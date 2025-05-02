@@ -825,4 +825,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return null;
         }
     }
+
+    /**
+     * @return User[] Returns an array of User objects
+     */
+    public function findByIds(array $ids): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where(
+                (new Expr())->in('u.id', ':ids')
+            )
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -9,7 +9,8 @@ class Action
 {
     public function __construct(
         private string $section,
-        private string $icon,
+        private ?string $icon = null,
+        private ?string $onClick = null,
     ) {
     }
 
@@ -18,8 +19,13 @@ class Action
         return $this->section;
     }
 
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return $this->icon;
+    }
+
+    public function getOnClick(): ?string
+    {
+        return $this->onClick;
     }
 }

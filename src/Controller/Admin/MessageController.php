@@ -12,6 +12,7 @@ use App\Form\Admin\MessageFilterType;
 use App\Form\Admin\MessageType;
 use App\Repository\MessageRepository;
 use App\Repository\ParameterGroupRepository;
+use App\Service\ApiService;
 use App\Service\PaginatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -110,6 +111,28 @@ class MessageController extends AbstractController
             'section' => $message->getSection(),
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/content/react/{message}', name: 'edit_content_react', methods: ['GET', 'POST'], requirements:['message' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminEditContentReact(
+        Request $request,
+        ApiService $api,
+        Message $message
+    ): Response {
+        $form = $this->createForm(MessageType::class, $message, [
+            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+            'referer' => $request->headers->get('referer'),
+            'modal' => true,
+        ]);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+            return new JsonResponse(['success' => true]);
+        }
+
+        return $api->renderModal($form, 'Modifier un message', 'Modifier');
     }
 
     #[Route('/{message}', name: 'edit', methods: ['GET', 'POST'], requirements:['message' => '\d+'])]

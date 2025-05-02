@@ -1,54 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { getDataFromApi } from '../utils'
 
-export default function Settings({api}) {
-    const [messages, setMessages] = useState([]);
-    const [parameters, setParameters] = useState([]);
-    const [settings, setSettings] = useState([]);
-
+export default function Modal({show, route}) {
+    const [data, setData] = useState([]);
     useEffect(() => {
-        getDataFromApi(api.messages)
+        getDataFromApi(route)
             .then((data) => {
-                console.log('messages', data)
-                setMessages(data);
+                console.log('modal', data)
+                setData(data);
         })
-        // getDataFromApi(api.parameters)
-        //     .then((data) => {
-        //         console.log('parameters', data)
-        //         setParameters(data);
-        // })
-        // getDataFromApi(api.settings)
-        //     .then((data) => {
-        //         console.log('settings', data)
-        //         setSettings(data);
-        // })
     }, [])
-    const DropdownItem = ({action}) => {
-        if (action.url) {
-            return (
-                <li>
-                    <a href={action.url} className="dropdown-item" title={action.label} data-toggle="modal" data-type="primary">
-                        <i className={action.icon}></i> {action.label}
-                    </a>
-              </li>
-            )
-        }
 
-        return (
-            <li className="info"><i className={action.icon}></i> {action.label}</li>
-        )
-    }
 
     return (
-        <div className="dropdown sliders">
-            <button className="dropdown-toggle" type="button" data-toggle="dropdown-settings"></button>
-            <div className="dropdown-menu" data-target="dropdown-settings">
-                <ul className="dropdown-body">
-                    {messages.map((action, id) => 
-                        <DropdownItem key={'message' + id} action={action} />
-                    )}
-              </ul>
+        <div className="modal fade" tabindex="-1" role="dialog">
+    <div className="modal-dialog{% if app.request.attributes.get('_route') == 'flash_info_show'%} modal-xl{% endif %}" role="document">
+        <div class="modal-content">
+            {% block form %}{% endblock %}
+            {% if form is defined and form is not null %}
+                {{ form_start(form, {'action': (button_href is defined) ?  button_href : form.vars.action})}}
+            {% endif %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{% block modal_title %}{% endblock %}</h4>
             </div>
-        </div>
+            <div class="modal-body">
+                {% block body %}{% endblock %}
+            </div>
+            {% block footer %}
+                <div class="modal-footer">
+                    {% set button_close = (button_close is defined) ? button_close : 'Annuler' %}
+                    {% if cancel_route is defined %} 
+                        <a href="{{ cancel_route}}" class="btn btn-default close" >{{ button_close }}</a>
+                    {% else %}
+                        <button type="button" class="btn btn-default close" data-dismiss="modal">{{ button_close }}</button>
+                    {% endif %}
+                    {% if button_text is defined or button_href is defined %}
+                        <button 
+                        {% if button_href is defined %} href="{{ button_href }}"{% endif %}
+                        type="submit" class="btn btn-primary{% if async is defined %} async{% endif %}">
+                        {% if button_text is defined %}{{ button_text|raw }}{% endif %}
+                        </button>
+                    {% endif %}
+                    {% if url is defined %}
+                        <a href="{{ url }}" class="btn btn-primary" 
+                            {% if toggle is defined %}data-toggle="{{ toggle }}"{% endif %}
+                            {% if target is defined %}target="{{ target }}"{% endif %}
+                            {% if close_after is defined %}data-dismiss="modal"{% endif %}
+                        >
+                            {{ anchor_text|raw }}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endblock %}
+            {% if form is defined and form is not null %}
+                {{ form_end(form)}}
+            {% endif %}
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
     )
 }

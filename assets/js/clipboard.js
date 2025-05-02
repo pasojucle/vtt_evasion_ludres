@@ -13,7 +13,7 @@ const clipboard = (event) => {
     navigator.clipboard.writeText(value);
 }
 
-const emailToClipboard = (event) => {
+export const emailToClipboard = (event) => {
     event.preventDefault();
     const url = event.target.getAttribute('href');
     fetch(url).then ((response) => {

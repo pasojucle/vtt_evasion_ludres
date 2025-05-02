@@ -7,6 +7,8 @@ import TextRaw from '../components/TextRaw.jsx';
 import Dropdown from '../components/Dropdown.jsx';
 import Settings from '../components/Settings.jsx';
 import Actions from '../components/Actions.jsx';
+import Edit from '../components/Edit';
+import Routing from 'fos-router';
 
 export default function UserList({api}) {
 
@@ -26,6 +28,9 @@ export default function UserList({api}) {
 
     const [page, setPage] = useState(1);
     const [maxResults, setMaxResults] = useState(10);
+
+    const [editAction, setEditAction] = useState(false);
+    const [routeAction, setRouteAction] = useState(null);
 
     useEffect(() => {
         getDataFromApi(api.levels)
@@ -96,6 +101,15 @@ export default function UserList({api}) {
         setSeason(null)
     }
 
+    const handleEditAction = (value) => {
+        setEditAction(value)
+    }
+
+    const handleRouteAction = (value) => {
+        setEditAction(true);
+        setRouteAction(value);
+    }
+
     const userFilter = (list) => {
         if (!user) {
             return list;
@@ -134,12 +148,38 @@ export default function UserList({api}) {
         }))
     }
 
-    const listFiltered = () => {
+    const listFiltered = (save) => {
         let list = userFilter(userList);
         list = seasonFilter(list)
         list = permissionFilter(list)
-        return levelFilter(list);
+        list = levelFilter(list);
+        if (save) {
+            saveListFiltered(list);
+        }
+        return list;
     }
+
+    const saveListFiltered = async(list) => {
+        if (isLoad) {
+            const data = new FormData();
+            data.append('list[name]', 'admin_users_list');
+            // data.append('list[values]', JSON.stringify(list));
+            // data.append('list[filters][user]', JSON.stringify(user));
+            // data.append('list[filters][levels]', JSON.stringify(levels));
+            // data.append('list[filters][permissions]', JSON.stringify(permissions));
+            // data.append('list[filters][season]', JSON.stringify(season));
+            data.append('list[values]', JSON.stringify(list.map(x=>x.id)));
+
+            await fetch(Routing.generate('admin_save_list_filtered'), {
+                method: 'POST',
+                body : data,
+            })
+            .then((response) => response.json())
+            .then((json)=> {
+                console.log('saveListFiltered', json);
+            });
+        }
+    } 
 
     const pagnedListFiltered = () => {
         let list = userFilter(userList);
@@ -196,23 +236,11 @@ export default function UserList({api}) {
     return (
         <>
             <div className="wrapper-title">
-                <h1>Gestion des adhérents - <span className="badge badge-info">{listFiltered().length}</span></h1>
+                <h1>Gestion des adhérents - <span className="badge badge-info">{listFiltered(false).length}</span></h1>
                 <div className="tool-group">
                     <a href="{{ path('wiki_show', {'directory': 'adhérents'})}}" target="_blank" title="wiki" className="btn-wiki"></a>
-                    {/* {% include 'component/dropdown_settings.html.twig' %} */}
-                    <Settings api={api} />
-                    <Actions api={api} />
-                    {/* <div class="dropdown">
-                        <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                        <div class="dropdown-menu" data-target="dropdown-tools">
-                            <ul class="dropdown-body">
-                                <li><a href="{{ path('admin_members_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></li>
-                                <li><a href="{{ path('admin_members_export') }}" class="dropdown-item" title="Exporter la sélection"><i class="fas fa-file-csv"></i> Exporter la sélection</a></li>
-                                <li><a href="{{ path('admin_user_skill_export') }}" class="dropdown-item" title="Exporter les évaluations de la sélection"><i class="fas fa-file-csv"></i> Exporter les évaluations de la sélection</a></li>
-                                <li><a href="{{ path('admin_overview_season') }}" class="dropdown-item" title="Synthèse par saison"><i class="fa-solid fa-users-rectangle"></i> Synthèse par saison</a></li>
-                            </ul>
-                        </div>
-                    </div> */}
+                    <Settings api={api} handleRouteAction={handleRouteAction} />
+                    <Actions api={api} handleRouteAction={handleRouteAction} />
                 </div>
             </div>
             <div className="wrapper-body">
@@ -223,9 +251,9 @@ export default function UserList({api}) {
                     <ChoiceAutocompleteFilter list={levelList} value={levels} label={null} placeholder="Toutes les niveaux" handleAdd={handleAddLevel} handleRemove={handleRemoveLevel}  className="col-md-12 form-group"/>
                 </div>
                 <List/>
-                <Paginator list={listFiltered()} page={page} maxResults={maxResults} handlePageChange={handlePageChange} handleMaxResultsChange={handleMaxResultsChange}/>
-            
+                <Paginator list={listFiltered(true)} page={page} maxResults={maxResults} handlePageChange={handlePageChange} handleMaxResultsChange={handleMaxResultsChange}/>
             </div>
+            <Edit edit={editAction} route={routeAction} size="lg" handleEditChange={handleEditAction}/>
         </>
     )
 }
