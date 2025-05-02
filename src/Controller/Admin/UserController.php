@@ -67,17 +67,17 @@ class UserController extends AbstractController
         GetMembersFiltered $getMembersFiltered,
         Request $request
     ): Response {
-        return $getMembersFiltered->export($request);
+        return $getMembersFiltered->exportFromIds($request);
     }
 
     #[Route('/emails/adherents', name: 'members_email_to_clipboard', methods: ['GET'])]
     #[IsGranted('USER_SHARE')]
-    #[Action(section: 'USER', icon: 'fas fa-copy')]
+    #[Action(section: 'USER', icon: 'fas fa-copy', onClick: 'emailToClipboard')]
     public function adminEmailUsers(
         GetMembersFiltered $getMembersFiltered,
         Request $request
     ): JsonResponse {
-        return new JsonResponse($getMembersFiltered->emailsToClipboard($request));
+        return new JsonResponse($getMembersFiltered->emailsToClipboardFromIds($request));
     }
 
     #[Route('/adherent/{user}', name: 'user', requirements:['user' => '\d+'], methods: ['GET'])]

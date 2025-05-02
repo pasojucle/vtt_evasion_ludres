@@ -5,7 +5,7 @@ import AddSkill from '../components/AddSkill';
 
 import { getData, updateList } from '../utils';
 
-export default function ClusterSkillList({cluster, canEdit}) {
+export default function ClusterSkillList({cluster}) {
 
     const [clusterSkillList, setClusterSkillList] = useState([]);
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import ActionDropDownItem from '../components/ActionsDropDownItem';
 import { getDataFromApi } from '../utils'
 
-export default function Settings({api}) {
+export default function Settings({api, handleRouteAction}) {
     const [messages, setMessages] = useState([]);
     const [parameters, setParameters] = useState([]);
     const [settings, setSettings] = useState([]);
@@ -23,35 +24,20 @@ export default function Settings({api}) {
                 setSettings(data);
         })
     }, [])
-    const DropdownItem = ({action}) => {
-        if (action.url) {
-            return (
-                <li>
-                    <a href={action.url} className="dropdown-item" title={action.label} data-toggle="modal" data-type="primary">
-                        <i className={action.icon}></i> {action.label}
-                    </a>
-              </li>
-            )
-        }
-
-        return (
-            <li className="info"><i className={action.icon}></i> {action.label}</li>
-        )
-    }
-
+    
     return (
         <div className="dropdown sliders">
             <button className="dropdown-toggle" type="button" data-toggle="dropdown-settings"></button>
             <div className="dropdown-menu" data-target="dropdown-settings">
                 <ul className="dropdown-body">
                     {parameters.map((action, id) => 
-                        <DropdownItem key={'parameter' + id} action={action} />
+                        <ActionDropDownItem key={'parameter' + id} action={action} handleRouteAction={handleRouteAction}/> 
                     )}
                     {settings.map((action, id) => 
-                        <DropdownItem key={'action' + id} action={action} />
+                        <ActionDropDownItem key={'action' + id} action={action} handleRouteAction={handleRouteAction}/>
                     )}
                     {messages.map((action, id) => 
-                        <DropdownItem key={'message' + id} action={action} />
+                        <ActionDropDownItem key={'message' + id} action={action} handleRouteAction={handleRouteAction} />
                     )}
               </ul>
             </div>

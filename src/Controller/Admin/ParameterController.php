@@ -9,8 +9,10 @@ use App\Form\ParameterGroupType;
 use App\Form\ParameterType;
 use App\Repository\ParameterGroupRepository;
 use App\Repository\ParameterRepository;
+use App\Service\ApiService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -42,7 +44,6 @@ class ParameterController extends AbstractController
         ]);
     }
 
-
     #[Route('/admin/parameter/{name}', name: 'admin_parameter_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
@@ -68,6 +69,33 @@ class ParameterController extends AbstractController
                 'parameter' => $parameter,
                 'form' => $form->createView(),
             ]);
+        }
+        return new Response(null, Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/admin/parameter/react/{name}', name: 'admin_parameter_edit_react', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function editReact(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ParameterRepository $parameterRepository,
+        ApiService $api,
+        string $name
+    ): Response {
+        $referer = $request->headers->get('referer');
+        $parameter = $parameterRepository->findOneByName($name);
+        if ($parameter) {
+            $form = $this->createForm(ParameterType::class, $parameter, [
+                'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+                'referer' => $referer,
+            ]);
+            $form->handleRequest($request);
+            if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+                $entityManager->flush();
+                return new JsonResponse(['success' => true]);
+            }
+
+            return $api->renderModal($form, 'Modifier un paramètre', 'Modifier');
         }
         return new Response(null, Response::HTTP_BAD_REQUEST);
     }

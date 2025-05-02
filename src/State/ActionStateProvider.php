@@ -81,7 +81,8 @@ class ActionStateProvider implements ProviderInterface
                 $methodRouteName = $this->getRouteName($attribute);
             }
             if ($objectAttribut instanceof Setting || $objectAttribut instanceof Action) {
-                $attribubeType = strtolower((new ReflectionClass($objectAttribut))->getShortName());
+                $reflectionClass = new ReflectionClass($objectAttribut);
+                $attribubeType = strtolower($reflectionClass->getShortName());
                 if ($section && $section !== $objectAttribut->getSection()) {
                     continue;
                 }
@@ -93,6 +94,9 @@ class ActionStateProvider implements ProviderInterface
                     ->setMethodRoute($methodRouteName)
                     ->setSection($objectAttribut->getSection())
                     ->setIcon($objectAttribut->getIcon());
+                if ($reflectionClass->hasProperty('onClick')) {
+                    $action->setOnClick($objectAttribut->getOnClick());
+                }
             }
         }
 

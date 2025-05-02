@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class GetUsersFiltered
 {
@@ -38,6 +39,7 @@ abstract class GetUsersFiltered
         protected UserRepository $userRepository,
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -96,6 +98,32 @@ abstract class GetUsersFiltered
         return $response;
     }
 
+    private function getUsersFromIds(Request $request): array
+    {
+        $session = $request->getSession();
+        $ids = $session->get($this->filterName);
+        if ($ids) {
+            $ids = json_decode($ids);
+        }
+        return $this->userRepository->findByIds($ids);
+    }
+
+    public function exportFromIds(Request $request): Response
+    {
+        $users = $this->getUsersFromIds($request);
+        $content = $this->getExportContent($users);
+
+        $response = new Response($content);
+        $disposition = HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $this->exportFilename
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
+    }
+
     public function emailsToClipboard(Request $request): string
     {
         $session = $request->getSession();
@@ -108,6 +136,17 @@ abstract class GetUsersFiltered
             $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
         }
 
+        return implode(',', $emails);
+    }
+
+    public function emailsToClipboardFromIds(Request $request): string
+    {
+        $users = $this->getUsersFromIds($request);
+        $emails = [];
+
+        foreach ($users as $user) {
+            $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
+        }
 
         return implode(',', $emails);
     }
@@ -200,13 +239,13 @@ abstract class GetUsersFiltered
     private function getExportContent(array $users): string
     {
         $content = [];
-        $row = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai'];
+        $row = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai', 'Status'];
         $content[] = implode(',', $row);
 
         foreach ($users as $user) {
             $userDto = $this->userDtoTransformer->fromEntity($user);
             $isTesting = ($userDto->lastLicence?->isFinal) ? 0 : 1;
-            $row = [$userDto->licenceNumber, $userDto->member->name, $userDto->member->firstName, $userDto->level?->title, $userDto->mainEmail, $userDto->member->birthDate, $userDto->lastLicence->shortSeason, $isTesting, $userDto->lastLicence->status];
+            $row = [$userDto->licenceNumber, $userDto->member->name, $userDto->member->firstName, $userDto->level?->title, $userDto->mainEmail, $userDto->member->birthDate, $userDto->lastLicence->shortSeason, $isTesting, $this->translator->trans($userDto->lastLicence->statusStr)];
             $content[] = implode(',', $row);
         }
 
