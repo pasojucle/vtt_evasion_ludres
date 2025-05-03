@@ -124,8 +124,13 @@ class SessionType extends AbstractType
 
     private function getSeasonChoices(): array
     {
-        $seasonChoices = $this->seasonService->getSeasons();
-
+        $currentSeason = $this->seasonService->getCurrentSeason();
+        $seasonChoices = ['Saison ' . $currentSeason => 'SEASON_' . $currentSeason];
+        $minSeasonToTakePart = $this->seasonService->getMinSeasonToTakePart();
+        if ($minSeasonToTakePart < $currentSeason) {
+            $seasonChoices = ['Saison ' . $minSeasonToTakePart => 'SEASON_' . $minSeasonToTakePart];
+        }
+        
         $seasonChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;
         $seasonChoices['licence.status.in_processing'] = Licence::STATUS_IN_PROCESSING;
 
