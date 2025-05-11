@@ -1,8 +1,6 @@
 twig:
-    default_path: '%kernel.project_dir%/templates'
-    
-    form_themes: ['@TetranzSelect2Entity/Form/fields.html.twig']
+    file_name_pattern: '*.twig'
 
-    globals:
-        search_service: '@App\Service\SearchService'
-        parameter_service: '@App\Service\ParameterService'
+when@test:
+    twig:
+        strict_variables: true
