@@ -28,6 +28,12 @@ Encore
     .enableReactPreset()
 
     .enablePostCssLoader()
+    .configureWatchOptions((watchOptions) => {
+        watchOptions.poll = 250;
+        watchOptions.ignored = [
+            '**/public/build'
+        ];
+    })
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

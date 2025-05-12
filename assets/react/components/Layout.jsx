@@ -1,51 +1,77 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Outlet, Link } from "react-router-dom";
 import { AuthProvider } from "../hooks/useAuth";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 import Login from '../components/Login';
 
 export default function Layout() {
+    const menuRef = useRef(null);
+    const [collapseMenu, setCollapseMenu] = useState(true);
+
+
+    const toggleMenu = () => {
+        setCollapseMenu(!collapseMenu);
+    }
+
+    const classNameMenu = () => {
+        let className = "menu w-full lg:block flex-grow lg:flex lg:items-center lg:w-auto lg:px-3 px-8";
+        if (collapseMenu) {
+            className += ' hidden'
+        }
+
+        return className;
+    }
 
     return (
         <AuthProvider>
-          <div className="max-w-3xl mx-auto">
-          <nav className="border-gray-200 px-2 mb-10">
-            <div className="container mx-auto flex flex-wrap items-center justify-between">
-            <div className="flex md:order-2">
-                <div className="relative mr-3 md:mr-0 hidden md:block">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path>
-                        </svg>
+            <div className="mx-auto">
+                <nav className="flex items-center justify-between flex-wrap bg-white py-4 lg:px-12 shadow border-solid border-t-2 border-blue-700">
+                    <div className="flex justify-between lg:w-auto w-full lg:border-b-0 pl-6 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
+                        <div className="flex items-center flex-shrink-0 text-gray-800 mr-16">
+                            <span className="font-semibold text-xl tracking-tight">My Navbar</span>
+                        </div>
+                        <div className="block lg:hidden" onClick={() => toggleMenu()}>
+                            <button
+                                id="nav"
+                                className="flex items-center px-3 py-2 border-2 rounded text-blue-700 border-blue-700 hover:text-blue-700 hover:border-blue-700">
+                                <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title>
+                                    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <input type="text" id="email-adress-icon" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2" placeholder="Search..."/>
-                </div>
-                <button data-collapse-toggle="mobile-menu-3" type="button" className="md:hidden text-gray-400 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-lg inline-flex items-center justify-center" aria-controls="mobile-menu-3" aria-expanded="false">
-                <span className="sr-only">Open main menu</span>
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
-                <svg className="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                </button>
+                
+                    <div className={classNameMenu()}>
+                        <div className="text-md font-bold text-blue-700 lg:flex-grow">
+                            <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/">Index</Link>
+                                <ProtectedRoute>
+                                    <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/article/add">Ajouter un article</Link>
+                                    <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/users">Ajouter un utilisateur</Link>
+                                    <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/settings">Parametrages</Link>
+                                </ProtectedRoute>
+                             </div>
+                        <div className="relative mx-auto text-gray-600 lg:block hidden">
+                            <input
+                                className="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
+                                type="search" name="search" placeholder="Search"/>
+                            <button type="submit" className="absolute right-0 top-0 mt-3 mr-2">
+                                <svg className="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                                    version="1.1" id="Capa_1" x="0px" y="0px"
+                                    viewBox="0 0 56.966 56.966"
+                                    width="512px" height="512px">
+                            <path
+                                d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"/>
+                        </svg>
+                            </button>
+                        </div>
+                        <div className="flex ">
+                        <Login />
+                        </div>
+                    </div>
+                
+                </nav>      
             </div>
-            <div className="hidden md:flex justify-between items-center w-full md:w-auto md:order-1" id="mobile-menu-3">
-                <ul className="flex-col md:flex-row flex md:space-x-8 mt-4 md:mt-0 md:text-sm md:font-medium">
-                <li>
-                    <Link className="bg-blue-700 md:bg-transparent text-white block pl-3 pr-4 py-2 md:text-blue-700 md:p-0 rounded" to="/">Index</Link>
-                </li>
-                <li>
-                    <Link className="text-gray-700 hover:bg-gray-50 border-b border-gray-100 md:hover:bg-transparent md:border-0 block pl-3 pr-4 py-2 md:hover:text-blue-700 md:p-0" to="/article/add">Ajouter un article</Link>
-                </li>
-                <li>
-                    <Link className="text-gray-700 hover:bg-gray-50 border-b border-gray-100 md:hover:bg-transparent md:border-0 block pl-3 pr-4 py-2 md:hover:text-blue-700 md:p-0" to="/users">Ajouter un utilisateur</Link>
-                </li>
-                <li>
-                    <Link className="text-gray-700 hover:bg-gray-50 border-b border-gray-100 md:hover:bg-transparent md:border-0 block pl-3 pr-4 py-2 md:hover:text-blue-700 md:p-0" to="/settings">Parametrages</Link>
-                </li>
-                </ul>
-            </div>
-            </div>
-            </nav>
-            </div>
-          <Login/>
-          <Outlet />
+            <Outlet />
         </AuthProvider>
     )
 }

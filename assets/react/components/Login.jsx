@@ -13,11 +13,11 @@ export default function Login() {
         const { user } = useAuth();
         if (user) {
             return (
-                <button onClick={handleLogout}>Logout</button>
+                <button className="block text-md px-4 py-2 rounded text-blue-700 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0" onClick={handleLogout}>Logout</button>
             )
         }
         return (
-            <Link to="/login">Login</Link>
+            <Link className="block text-md px-4 py-2 rounded text-blue-700 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0" to="/login">Login</Link>
         )
     }
 
