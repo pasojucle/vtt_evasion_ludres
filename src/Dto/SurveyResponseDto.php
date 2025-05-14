@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Dto\UserDto;
-
 class SurveyResponseDto
 {
-    public ?UserDto $user;
+    public array $user;
 
     public ?string $issue;
 

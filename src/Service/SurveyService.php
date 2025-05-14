@@ -98,7 +98,6 @@ class SurveyService
                     ->setUuid($uuid)
                 ;
                 $responseByIssue[$issue->getId()] = $response;
-                $this->entityManager->persist($response);
             }
         }
 

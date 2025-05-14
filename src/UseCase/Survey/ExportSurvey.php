@@ -62,11 +62,10 @@ class ExportSurvey
     {
         foreach ($surveyResponsesByUuid as $uuid => $data) {
             $row = [];
-
             foreach ($data['responses'] as $key => $surveyResponse) {
                 $surveyResponse = $this->surveyResponseDtoTransformer->fromEntity($surveyResponse);
                 if (0 === $key) {
-                    $row[] = $surveyResponse->user?->member->fullName ?? $uuid;
+                    $row[] = ('' !== $surveyResponse->user['fullName']) ? $surveyResponse->user['fullName'] : $uuid;
                 }
 
                 $row[] = $this->addQuote($surveyResponse->value);
@@ -84,10 +83,12 @@ class ExportSurvey
 
         foreach ($surveyResponsesByUuid as $data) {
             foreach ($data['responses'] as $response) {
-                if (SurveyIssue::RESPONSE_TYPE_CHOICE === $response->getSurveyIssue()->getResponseType()) {
+                if (null === $response->getValue()) {
+                    continue;
+                }
+                if (SurveyIssue::RESPONSE_TYPE_STRING !== $response->getSurveyIssue()->getResponseType()) {
                     $surveyIssueId = $response->getSurveyIssue()->getId();
-
-                    if (!array_key_exists($surveyIssueId, $results[$response->getValue()])) {
+                    if (array_key_exists($response->getValue(), $results) && !array_key_exists($surveyIssueId, $results[$response->getValue()])) {
                         foreach (array_keys(SurveyResponse::VALUES) as $choice) {
                             $results[$choice][$surveyIssueId] = 0;
                         }
@@ -109,8 +110,7 @@ class ExportSurvey
         if ($results) {
             ksort($results);
             foreach ($results as $choice => $resultsByChoice) {
-                $row = [];
-                $row[] = $this->translator->trans(SurveyResponse::VALUES[$choice]);
+                $row = [$this->translator->trans(SurveyResponse::VALUES[$choice])];
                 if (!$survey->getSurveyIssues()->isEmpty()) {
                     foreach ($survey->getSurveyIssues() as $issue) {
                         if (array_key_exists($issue->getId(), $resultsByChoice)) {

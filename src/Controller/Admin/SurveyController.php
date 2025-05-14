@@ -168,7 +168,8 @@ class SurveyController extends AbstractController
 
         $emails = [];
         foreach ($surveyResponsesDto as $response) {
-            $emails[] = $response->user->mainEmail;
+            dump($response->user);
+            $emails[] = $response->user['mainEmail'];
         }
 
         return new JsonResponse(implode(',', $emails));
@@ -186,7 +187,7 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('export/{survey}', name: 'admin_survey_export', methods: ['GET'])]
+    #[Route('/export/{survey}', name: 'admin_survey_export', methods: ['GET'])]
     #[IsGranted('SURVEY_VIEW', 'survey')]
     public function export(ExportSurvey $export, Survey $survey): Response
     {
