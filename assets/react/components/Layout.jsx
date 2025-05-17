@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Outlet, Link } from "react-router-dom";
 import { AuthProvider } from "../hooks/useAuth";
-import { ProtectedRoute } from "../components/ProtectedRoute";
+import ProtectedLinks  from "../components/ProtectedLinks";
 import Login from '../components/Login';
 
 export default function Layout() {
@@ -44,11 +44,7 @@ export default function Layout() {
                     <div className={classNameMenu()}>
                         <div className="text-md font-bold text-blue-700 lg:flex-grow">
                             <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/">Index</Link>
-                                <ProtectedRoute>
-                                    <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/article/add">Ajouter un article</Link>
-                                    <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/users">Ajouter un utilisateur</Link>
-                                    <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/settings">Parametrages</Link>
-                                </ProtectedRoute>
+                                <ProtectedLinks />
                              </div>
                         <div className="relative mx-auto text-gray-600 lg:block hidden">
                             <input
@@ -68,7 +64,6 @@ export default function Layout() {
                         <Login />
                         </div>
                     </div>
-                
                 </nav>      
             </div>
             <Outlet />

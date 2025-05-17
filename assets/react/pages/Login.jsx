@@ -8,7 +8,7 @@ export default function Login() {
     e.preventDefault();
     // Here you would usually send a request to your backend to authenticate the user
     // For the sake of this example, we're using a mock authentication
-    if (username === "user" && password === "password") {
+    if (username === "user" && password === "test01") {
       // Replace with actual authentication logic
       await login({ username });
     } else {
