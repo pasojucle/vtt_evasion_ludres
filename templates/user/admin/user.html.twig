@@ -36,6 +36,11 @@
                     <div class="col-md-9 col-xs-12">
                         <ul>
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Date de naissance : </b></div><div class="col-md-7 col-xs-6">{{ user.member.birthDate }}</div></div></li>
+                            <li><div class="row"><div class="col-md-5 col-xs-6"><b>Lieu de naissance : </b></div><div class="col-md-7 col-xs-6">{{ user.member.birthPlace }}</div></div></li>
+                            {% if user.member.birthDepartment %}
+                                <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6">{{ user.member.birthDepartment }}</div></div></li>
+                            {% endif %}
+                            <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6">{{ user.member.birthCountry }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse : </b></div><div class="col-md-7 col-xs-6">{{ user.member.address.street }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"></div><div class="col-md-7 col-xs-6">{{ user.member.address.postalCode }} {{ user.member.address.town }}</div></div></li>
                             <li><div class="row"><div class="col-md-5 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-7 col-xs-6">{{ user.member.email }}</div></div></li>

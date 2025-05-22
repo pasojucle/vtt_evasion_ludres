@@ -241,7 +241,17 @@ class IdentityType extends AbstractType
                             'required' => !$foreignBorn,
                         ])
                         ->add('birthPlace', TextType::class, [
-                            'label' => 'Lieu et pays de naissance',
+                            'label' => 'Lieu de naissance',
+                            'row_attr' => [
+                                'class' => $birthPlaceClass,
+                            ],
+                            'attr' => [
+                                'data-constraint' => '',
+                            ],
+                            'required' => $foreignBorn,
+                        ])
+                        ->add('birthCountry', TextType::class, [
+                            'label' => 'Pays de naissance',
                             'row_attr' => [
                                 'class' => $birthPlaceClass,
                             ],

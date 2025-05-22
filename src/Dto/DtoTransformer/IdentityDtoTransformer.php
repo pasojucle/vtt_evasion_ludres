@@ -36,7 +36,7 @@ class IdentityDtoTransformer
             $identityDto->fullName = sprintf('%s %s', mb_strtoupper($identity->getName()), mb_ucfirst($identity->getFirstName()));
         }
         $identityDto->birthDate = ($bithDate) ? $bithDate->format('j/n/Y') : null;
-        $identityDto->birthPlace = $this->getBirthplace($identity);
+        list($identityDto->birthPlace, $identityDto->birthDepartment, $identityDto->birthCountry) = $this->getBirthplace($identity);
         $identityDto->address = ($identity->getAddress()) ? $this->addressDtoTransformer->fromEntity($identity->getAddress(), $histories) : null;
         $identityDto->email = $identity->getEmail();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
@@ -118,17 +118,17 @@ class IdentityDtoTransformer
         return implode(' - ', array_filter([$this->getPhoneAnchor($identity->getMobile()), $this->getPhoneAnchor($identity->getPhone())]));
     }
 
-    private function getBirthplace(Identity $identity): ?string
+    private function getBirthplace(Identity $identity): array
     {
         $birthCommune = $identity->getBirthCommune();
-        
         if ($birthCommune) {
-            return ($birthCommune->getDepartment())
-                ? $birthCommune->getName() . ' (' . $birthCommune->getDepartment()->getName() . ')'
-                : $birthCommune->getName();
+            return [
+                $birthCommune->getName(),
+                sprintf('%s - %s', $birthCommune->getDepartment()->getId(), $birthCommune->getDepartment()->getName()),
+                'France'];
         }
 
-        return $identity->getBirthPlace();
+        return [$identity->getBirthPlace(), null, $identity->getBirthCountry()];
     }
 
     private function getDecoratedChanges(array $histories, IdentityDto &$identityDto): void

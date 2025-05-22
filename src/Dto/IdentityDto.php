@@ -16,7 +16,11 @@ class IdentityDto
 
     public ?string $birthDate;
 
+    public ?string $birthDepartment;
+
     public ?string $birthPlace;
+
+    public ?string $birthCountry;
 
     public ?int $id = null;
 

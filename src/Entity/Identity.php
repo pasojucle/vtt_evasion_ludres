@@ -7,13 +7,9 @@ namespace App\Entity;
 use App\Entity\Enum\IdentityKindEnum;
 use App\Repository\IdentityRepository;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: IdentityRepository::class)]
+#[ORM\Entity(repositoryClass: IdentityRepository::class)]
 
 class Identity
 {
@@ -32,54 +28,57 @@ class Identity
         self::KINSHIP_OTHER => 'identity.kinship.other',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $name = null;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $firstName = null;
 
-    #[Column(type: 'date', nullable: true)]
+    #[ORM\Column(type: 'date', nullable: true)]
     private ?DateTimeInterface $birthDate = null;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $birthPlace = null;
 
-    #[Column(type: 'string', length: 14, nullable: true)]
+    #[ORM\Column(type: 'string', length: 14, nullable: true)]
     private ?string $phone = null;
 
-    #[Column(type: 'string', length: 14, nullable: true)]
+    #[ORM\Column(type: 'string', length: 14, nullable: true)]
     private ?string $mobile = null;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $profession = null;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $kinship = null;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'identities')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'identities')]
     private ?User $user;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $email = null;
 
-    #[Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $picture = null;
 
-    #[ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
+    #[ORM\ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
     private $address;
 
-    #[Column(type: 'IdentityKind', options: ['default' => IdentityKindEnum::MEMBER])]
+    #[ORM\Column(type: 'IdentityKind', options: ['default' => IdentityKindEnum::MEMBER])]
     private IdentityKindEnum $kind = IdentityKindEnum::MEMBER;
 
-    #[ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
+    #[ORM\ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
     private ?Commune $birthCommune = null;
 
-    #[Column(type: 'string', length: 14, nullable: true)]
+    #[ORM\Column(type: 'string', length: 14, nullable: true)]
     private ?string $emergencyPhone = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $birthCountry = null;
 
     public function getId(): ?int
     {
@@ -272,6 +271,18 @@ class Identity
     public function setEmergencyPhone(?string $emergencyPhone): self
     {
         $this->emergencyPhone = $emergencyPhone;
+
+        return $this;
+    }
+
+    public function getBirthCountry(): ?string
+    {
+        return $this->birthCountry;
+    }
+
+    public function setBirthCountry(?string $birthCountry): static
+    {
+        $this->birthCountry = $birthCountry;
 
         return $this;
     }

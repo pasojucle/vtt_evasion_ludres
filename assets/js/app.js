@@ -95,12 +95,15 @@ const updateIdentity = (event)  => {
 }
 
 const toggleBirthPlace = () => {
-    document.querySelectorAll('input[name$="[birthPlace]"], select[name$="[birthCommune]"]').forEach((element) => {
+    document.querySelectorAll('input[name$="[birthPlace]"], input[name$="[birthCountry]"], select[name$="[birthCommune]"]').forEach((element) => {
         const parent = element.closest('.birth-place')
         parent.classList.toggle('d-none');
         let required = true;
         if (parent.classList.contains('d-none')) {
             element.value = null;
+            parent.querySelectorAll('.ts-control .clear-button').forEach((element) => {
+                element.click();
+            })
             required = false;
         }
         element.required = required;
