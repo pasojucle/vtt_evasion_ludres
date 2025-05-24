@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Cluster;
+use App\Entity\Enum\PracticeEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Licence;
 use App\Form\HiddenClusterType;
@@ -15,6 +16,7 @@ use App\Validator\SessionUniqueMember;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -93,6 +95,16 @@ class SessionType extends AbstractType
                 $form
                         ->add('cluster', HiddenClusterType::class)
                     ;
+            }
+            if (true === $bikeRide->getBikeRideType()->isDisplayBikeKind()) {
+                $form
+                    ->add('practice', EnumType::class, [
+                        'label' => 'Type de vélo',
+                        'class' => PracticeEnum::class,
+                        'expanded' => true,
+                        'multiple' => false,
+                        'block_prefix' => 'customcheck',
+                    ]);
             }
 
             if (array_key_exists('responses', $data)) {

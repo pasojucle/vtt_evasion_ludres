@@ -27,6 +27,11 @@
             <div class="col-md-12 col-xs-12">
                 {{ form_widget(form.cluster)}}
             </div>
+            {% if form.practice is defined %}
+                <div class="col-md-12 col-xs-12">
+                    {{ form_widget(form.practice) }}
+                </div>
+            {% endif %}
         </div>
         {% include 'session/survey_responses.html.twig' %}
     </div>
