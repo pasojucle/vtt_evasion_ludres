@@ -33,17 +33,19 @@ class LogService
             /** @var User $user */
             $user = $this->security->getUser();
         }
-        $log = $this->logRepository->findOneByEntityAndUser($className, $entityId, $user);
-        if (!$log) {
-            $log = new Log();
-            $log->setEntity($className)
-                ->setEntityId($entityId)
-                ->setUser($user);
-            $this->entityManager->persist($log);
-        }
+        if ($user) {
+            $log = $this->logRepository->findOneByEntityAndUser($className, $entityId, $user);
+            if (!$log) {
+                $log = new Log();
+                $log->setEntity($className)
+                    ->setEntityId($entityId)
+                    ->setUser($user);
+                $this->entityManager->persist($log);
+            }
 
-        $log->setViewAt(new DateTimeImmutable());
-        $this->entityManager->flush();
+            $log->setViewAt(new DateTimeImmutable());
+            $this->entityManager->flush();
+        }
     }
 
     public function writeFromEntity(object $entity, ?User $user = null): void

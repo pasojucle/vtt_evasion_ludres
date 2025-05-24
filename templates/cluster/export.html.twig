@@ -17,6 +17,14 @@
                 <tr>
                     <td colspan="3" ><b>Lieu de naissance : </b>{{ user.member.birthPlace }}</td>
                 </tr>
+                {% if user.member.birthDepartment %}
+                    <tr>
+                        <td colspan="3" ><b>Déprtement de naissance : </b>{{ user.member.birthDepartment }}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="3" ><b>Pays de naissance : </b>{{ user.member.birthCountry }}</td>
+                </tr>
                 <tr>
                     <td colspan="3" ><b>Adresse : </b> {{ user.member.address.street }} {{ user.member.address.postalCode }} {{ user.member.address.town }}</td>
                 </tr>

@@ -200,13 +200,13 @@ abstract class GetUsersFiltered
     private function getExportContent(array $users): string
     {
         $content = [];
-        $row = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Année', '3 séances d\'essai'];
+        $row = ['Numéro de licence', 'Nom', 'Prénom', 'Groupe ou Niveau', 'Mail contact principal', 'Date de naissance', 'Lieu de naissance', 'Département de naissance', 'Pays de naissance', 'Année', '3 séances d\'essai'];
         $content[] = implode(',', $row);
 
         foreach ($users as $user) {
             $userDto = $this->userDtoTransformer->fromEntity($user);
             $isTesting = ($userDto->lastLicence?->isFinal) ? 0 : 1;
-            $row = [$userDto->licenceNumber, $userDto->member->name, $userDto->member->firstName, $userDto->level?->title, $userDto->mainEmail, $userDto->member->birthDate, $userDto->lastLicence->shortSeason, $isTesting, $userDto->lastLicence->status];
+            $row = [$userDto->licenceNumber, $userDto->member->name, $userDto->member->firstName, $userDto->level?->title, $userDto->mainEmail, $userDto->member->birthDate, $userDto->member->birthPlace, $userDto->member->birthDepartment, $userDto->member->birthCountry, $userDto->lastLicence->shortSeason, $isTesting, $userDto->lastLicence->status];
             $content[] = implode(',', $row);
         }
 
