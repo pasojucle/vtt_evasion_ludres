@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GetParticipations
 {
@@ -39,6 +40,7 @@ class GetParticipations
         private readonly BikeRideTypeRepository $bikeRideTypeRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LevelService $levelService,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -95,6 +97,7 @@ class GetParticipations
             'endAt' => $period['endAt'],
             'bikeRideType' => null,
             'levels' => null,
+            'practice' => null,
         ];
     }
 
@@ -139,18 +142,19 @@ class GetParticipations
         if (isset($filters['startAt']) && isset($filters['endAt'])) {
             $content[] = sprintf('Du %s au %s', $filters['startAt']->format('d/m/Y'), $filters['endAt']->format('d/m/Y'));
         }
-
         if (isset($filters['bikeRideType'])) {
             $content[] = sprintf('Type de sortie : %s', $filters['bikeRideType']->getName());
         }
-
-        if (isset($filters['levels'])) {
+        if (isset($filters['levels']) && !empty($filters['levels'])) {
             $levelsToStr = $this->levelService->getLevelsAndTypesToStr();
             $levels = [];
             foreach ($filters['levels'] as $level) {
                 $levels[] = $levelsToStr[$level];
             }
             $content[] = sprintf('Niveau(x) : %s', implode(' - ', $levels));
+        }
+        if (isset($filters['practice'])) {
+            $content[] = sprintf('Type de pratique : %s', $filters['practice']->trans($this->translator));
         }
         $content[] = '';
     }
@@ -170,9 +174,9 @@ class GetParticipations
         foreach ($participationsByBikeRide as $bikeRide) {
             $row = [$bikeRide['entity']->period . ' - ' . $bikeRide['entity']->title];
             foreach ($bikeRide['sessions'] as $session) {
-                $participation = 'Absent';
+                $participation = '-';
                 if ($session instanceof SessionDto) {
-                    $participation = $session->userIsOnSiteToStr;
+                    $participation = $session->practice ?? $session->userIsOnSiteToStr;
                 }
                 $row[] = $participation;
             }

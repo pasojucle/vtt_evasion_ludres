@@ -7,6 +7,7 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\SessionDto;
 use App\Entity\BikeRideType;
 use App\Entity\Enum\AvailabilityEnum;
+use App\Entity\Enum\PracticeEnum;
 use App\Entity\Session;
 use App\Entity\User;
 use App\Model\Currency;
@@ -35,7 +36,7 @@ class SessionDtoTransformer
             $sessionDto->user = $this->userDtoTransformer->fromEntity($session->getUser());
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
-            $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToHtml($session->isPresent());
+            $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToHtml($session);
             $sessionDto->indemnity = $this->getIndemnity($session->getUser(), $session->getCluster()->getBikeRide()->getBikeRideType(), $sessionDto->userIsOnSite);
             $sessionDto->indemnityStr = ($sessionDto->indemnity) ? $sessionDto->indemnity->toString() : null;
             $sessionDto->cluster = $session->getCluster()->getTitle();
@@ -53,7 +54,7 @@ class SessionDtoTransformer
             $sessionDto->availability = $this->getAvailability($session->getAvailability());
             $sessionDto->userIsOnSite = $session->isPresent();
             $sessionDto->userIsOnSiteToStr = $this->getUserIsOnSiteToStr($session->isPresent());
-            $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session->isPresent());
+            $sessionDto->userIsOnSiteToHtml = $this->getUserIsOnSiteToIcon($session);
             $sessionDto->practice = $session->getPractice()->trans($this->translator);
         }
 
@@ -120,13 +121,25 @@ class SessionDtoTransformer
         return ($isPresent) ? 'Présent' : 'Absent';
     }
 
-    private function getUserIsOnSiteToHtml(bool $isPresent): string
+    private function getUserIsOnSiteToHtml(Session $session): string
     {
-        return ($isPresent) ? '<span class="success"></span> Présent' : '<span class="alert-danger"></span> Absent';
+        if (!$session->isPresent()) {
+            return '<span class="alert-danger"></span> Absent';
+        }
+        return sprintf('<span class="success"></span> %s', $this->getBadge($session->getPractice()));
     }
 
-    private function getUserIsOnSiteToIcon(bool $isPresent): string
+    private function getUserIsOnSiteToIcon(Session $session): string
     {
-        return ($isPresent) ? '<i class="fa-solid fa-user-check text-success"></i>' : '<i class="fa-solid fa-user-xmark alert-danger"></i>';
+        if (!$session->isPresent()) {
+            return '<i class="fa-solid fa-user-xmark alert-danger"></i>';
+        }
+
+        return $this->getBadge($session->getPractice());
+    }
+
+    private function getBadge(PracticeEnum $practice): string
+    {
+        return sprintf('<span class="bs-badge" style="background-color:%s">%s</span>', $practice->color(), $practice->trans($this->translator));
     }
 }

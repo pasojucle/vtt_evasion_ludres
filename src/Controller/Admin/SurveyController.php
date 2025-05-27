@@ -168,7 +168,6 @@ class SurveyController extends AbstractController
 
         $emails = [];
         foreach ($surveyResponsesDto as $response) {
-            dump($response->user);
             $emails[] = $response->user['mainEmail'];
         }
 

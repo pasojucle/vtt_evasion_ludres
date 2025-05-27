@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\Enum\PracticeEnum;
 use App\Form\Admin\BikeRideTypeAutocompleteField;
 use App\Service\LevelService;
 use App\Validator\Period;
@@ -11,7 +12,9 @@ use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ParticipationFilterType extends AbstractType
 {
@@ -51,17 +54,38 @@ class ParticipationFilterType extends AbstractType
                 'constraints' => [new Period()],
             ])
             ->add('bikeRideType', BikeRideTypeAutocompleteField::class)
-            ->add('levels', ChoiceType::class, [
-                'label' => false,
-                'multiple' => true,
-                'choices' => $this->levelService->getLevelChoices(),
-                'required' => false,
-                'autocomplete' => true,
-                'attr' => [
-                    'data-width' => '100%',
-                    'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
-                ],
-            ])
             ;
+
+        if (null === $options['user']) {
+            $builder
+                    ->add('levels', ChoiceType::class, [
+                        'label' => false,
+                        'multiple' => true,
+                        'choices' => $this->levelService->getLevelChoices(),
+                        'required' => false,
+                        'autocomplete' => true,
+                        'attr' => [
+                            'data-width' => '100%',
+                            'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
+                        ],
+                    ])
+                    ->add('practice', EnumType::class, [
+                        'label' => false,
+                        'class' => PracticeEnum::class,
+                        'autocomplete' => true,
+                        'attr' => [
+                            'data-width' => '100%',
+                            'data-placeholder' => 'Sélectionnez une pratique',
+                        ],
+                        'required' => false,
+                    ]);
+        }
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'user' => null,
+        ]);
     }
 }

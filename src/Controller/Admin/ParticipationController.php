@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Form\Admin\ParticipationFilterType;
 use App\Repository\SessionRepository;
-
-use App\Service\PaginatorService;
 use App\UseCase\User\GetParticipations;
 use DateInterval;
 use DateTimeImmutable;

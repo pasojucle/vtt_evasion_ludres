@@ -36,7 +36,7 @@ class GetParticipation
         private SessionRepository $sessionRepository,
         private SeasonService $seasonService,
         private IndemnityService $indemnityService,
-        private BikeRideTypeRepository $bikeRideTypeRepository
+        private BikeRideTypeRepository $bikeRideTypeRepository,
     ) {
     }
 
@@ -45,7 +45,7 @@ class GetParticipation
         $session = $request->getSession();
         $filters = $this->getFilters($request, $filtered);
 
-        $form = $this->createForm($filters);
+        $form = $this->createForm($filters, $user);
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -69,9 +69,11 @@ class GetParticipation
         ];
     }
 
-    private function createForm(array $filters): FormInterface
+    private function createForm(array $filters, ?User $user): FormInterface
     {
-        return $this->formFactory->create(ParticipationFilterType::class, $filters);
+        return $this->formFactory->create(ParticipationFilterType::class, $filters, [
+            'user' => $user,
+        ]);
     }
 
     private function getFilters(Request $request, bool $filtered): array
@@ -121,10 +123,10 @@ class GetParticipation
         if (isset($filters['startAt']) && isset($filters['endAt'])) {
             $content[] = sprintf('Du %s au %s', $filters['startAt']->format('d/m/Y'), $filters['endAt']->format('d/m/Y'));
         }
-
         if (isset($filters['bikeRideType'])) {
             $content[] = sprintf('Type de sortie : %s', $filters['bikeRideType']->getName());
         }
+
         $content[] = '';
     }
 

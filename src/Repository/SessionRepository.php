@@ -193,6 +193,11 @@ class SessionRepository extends ServiceEntityRepository
             $this->addCriteriaByLevel($andX, $parameters, $filters['levels']);
         }
 
+        if (isset($filters['practice'])) {
+            $andX->add((new Expr())->eq('s.practice', ':practice'));
+            $parameters[] = new Parameter('practice', $filters['practice']);
+        }
+
         return $this->createQueryBuilder('s')
             ->leftJoin('s.cluster', 'c')
             ->leftJoin('c.bikeRide', 'br')
