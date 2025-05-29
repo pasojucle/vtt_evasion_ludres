@@ -1,0 +1,12 @@
+api_platform:
+    title: Wiki
+    version: 1.0.0
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']
+
+when@dev:
+    api_platform:
+        defaults:
+            stateless: false

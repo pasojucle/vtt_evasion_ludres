@@ -2,80 +2,59 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(fields={"email"}, message="Un compte utilisateur existe déja avec cette adresse mail.")
- */
-class User implements UserInterface
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    const ROLES_STR = [
-        'ROLE_ADMIN' => 'administrateur',
-        'ROLE_USER' => 'utilisateur',
-    ];
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 180)]
+    private ?string $email = null;
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var list<string> The user roles
      */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     * @Assert\Email(message = "L'adresse '{{ value }}' n'est pas valide.")
-     */
-    private $email;
-
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    #[ORM\Column]
+    private array $roles = [];
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string", nullable=true)
      */
-    private $password;
+    #[ORM\Column]
+    private ?string $password = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(Types::BOOLEAN, options:['default' => false])]
+    private bool $isActive = false;
+
+    #[ORM\Column(length: 13, nullable: true)]
+    private ?string $uuid = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=Article::class, mappedBy="user")
+     * @var Collection<int, Article>
      */
-    private $articles;
-
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $firstName;
-
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $lastName;
-
-    /**
-     * @ORM\Column(type="boolean", options={"default" : 0})
-     */
-    private $isActive = 0;
-
-    private $sendActiveLink;
-
-    /**
-     * @ORM\Column(type="string", length=13, nullable=true)
-     */
-    private $uuid;
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'user')]
+    private Collection $articles;
 
     public function __construct()
     {
         $this->articles = new ArrayCollection();
-        $this->uuid = uniqid();
     }
 
     public function getId(): ?int
@@ -88,7 +67,7 @@ class User implements UserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(string $email): static
     {
         $this->email = $email;
 
@@ -100,7 +79,7 @@ class User implements UserInterface
      *
      * @see UserInterface
      */
-    public function getUsername(): string
+    public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
@@ -117,34 +96,25 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    public function getRole(): string
-    {
-        return self::ROLES_STR[$this->roles[0]];
-    }
-
-    public function setRoles(array $roles): self
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
         return $this;
     }
 
-    public function addRole(string $role): self
-    {
-        $this->roles[] = $role;
-
-        return $this;
-    }
-
     /**
-     * @see UserInterface
+     * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
@@ -154,49 +124,10 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getSalt()
-    {
-        // not needed when using the "bcrypt" algorithm in security.yaml
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    /**
-     * @return Collection|Article[]
-     */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
-
-    public function addArticle(Article $article): self
-    {
-        if (!$this->articles->contains($article)) {
-            $this->articles[] = $article;
-            $article->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticle(Article $article): self
-    {
-        if ($this->articles->contains($article)) {
-            $this->articles->removeElement($article);
-            // set the owning side to null (unless already changed)
-            if ($article->getUser() === $this) {
-                $article->setUser(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getFirstName(): ?string
@@ -204,7 +135,7 @@ class User implements UserInterface
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
 
@@ -216,33 +147,21 @@ class User implements UserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function IsActive(): ?bool
+    public function isActive(): bool
     {
         return $this->isActive;
     }
 
-    public function setIsActive(bool $isActive): self
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    public function getSendActiveLink(): ?bool
-    {
-        return $this->sendActiveLink;
-    }
-
-    public function setSendActiveLink(bool $sendActiveLink): self
-    {
-        $this->sendActiveLink = $sendActiveLink;
 
         return $this;
     }
@@ -252,9 +171,39 @@ class User implements UserInterface
         return $this->uuid;
     }
 
-    public function setUuid(?string $uuid): self
+    public function setUuid(?string $uuid): static
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): static
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): static
+    {
+        if ($this->articles->removeElement($article)) {
+            // set the owning side to null (unless already changed)
+            if ($article->getUser() === $this) {
+                $article->setUser(null);
+            }
+        }
 
         return $this;
     }

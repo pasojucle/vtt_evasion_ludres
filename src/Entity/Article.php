@@ -2,51 +2,33 @@
 
 namespace App\Entity;
 
-use App\Entity\Chapter;
-use App\Entity\Section;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ArticleRepository;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-
-/**
- * @ORM\Entity(repositoryClass=ArticleRepository::class)
- * @ORM\EntityListeners({"App\EventListeners\EntityListener"})
- */
+#[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    #[Groups(['section:item'])]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $title;
+    #[ORM\Column(length: 50)]
+    #[Groups(['section:item'])]
+    private ?string $title = null;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $content;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $content = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Chapter::class, inversedBy="articles")
-     * @ORM\JoinColumn(nullable=false)
-     * @ORM\OrderBy({"title" = "ASC"})
-     */
-    private $chapter;
+    #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Chapter $chapter = null;
 
-    private $chapterTitle;
-    private $section;
-    private $sectionTitle;
-    private $isPrivate;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articles")
-     */
-    private $user;
+    #[ORM\ManyToOne(inversedBy: 'articles')]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -58,7 +40,7 @@ class Article
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
@@ -70,7 +52,7 @@ class Article
         return $this->content;
     }
 
-    public function setContent(?string $content): self
+    public function setContent(string $content): static
     {
         $this->content = $content;
 
@@ -82,46 +64,9 @@ class Article
         return $this->chapter;
     }
 
-    public function setChapter(?Chapter $chapter): self
+    public function setChapter(?Chapter $chapter): static
     {
         $this->chapter = $chapter;
-
-        return $this;
-    }
-
-    public function getChapterTitle(): ?string
-    {
-        return $this->chapterTitle;
-    }
-
-    public function setChapterTitle(?string $chapterTitle): self
-    {
-        $this->chapterTitle = $chapterTitle;
-
-        return $this;
-    }
-
-
-    public function getSection(): ?Section
-    {
-        return $this->section;
-    }
-
-    public function setSection(Section $section): self
-    {
-        $this->section = $section;
-
-        return $this;
-    }
-
-    public function getSectionTitle(): ?string
-    {
-        return $this->sectionTitle;
-    }
-
-    public function setSectionTitle(?string $sectionTitle): self
-    {
-        $this->sectionTitle = $sectionTitle;
 
         return $this;
     }
@@ -131,21 +76,9 @@ class Article
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(?User $user): static
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getIsPrivate(): ?bool
-    {
-        return (null !== $this->isPrivate) ? $this->isPrivate : false;;
-    }
- 
-    public function setIsPrivate(?bool $isPrivate): self
-    {
-        $this->isPrivate = $isPrivate;
 
         return $this;
     }

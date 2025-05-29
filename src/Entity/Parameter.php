@@ -3,90 +3,40 @@
 namespace App\Entity;
 
 use App\Repository\ParameterRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ParameterRepository::class)
- */
+#[ORM\Entity(repositoryClass: ParameterRepository::class)]
 class Parameter
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "NONE")]
+    #[ORM\Column(length: 50)]
+    private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $name;
+    #[ORM\Column(length: 50)]
+    private ?string $label = null;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $value;
+    #[ORM\Column(length: 50)]
+    private ?string $value = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $type;
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $options = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $label;
+    #[ORM\Column]
+    private ?int $position = null;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private $options = [];
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $orderBy;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    #[ORM\Column(type: 'ParameterKind')]
+    private ?object $kind = null;
 
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getValue()
-    {
-        return ($this->type === 'bool') ? (bool) $this->value : $this->value;
-    }
-
-    public function setValue($value): self
-    {
-        $this->value = $value;
-        if ($this->type === 'bool' && empty($value)) {
-            $this->value = 0;
-        } 
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
 
         return $this;
     }
@@ -96,9 +46,21 @@ class Parameter
         return $this->label;
     }
 
-    public function setLabel(string $label): self
+    public function setLabel(string $label): static
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function setValue(string $value): static
+    {
+        $this->value = $value;
 
         return $this;
     }
@@ -108,21 +70,33 @@ class Parameter
         return $this->options;
     }
 
-    public function setOptions(?array $options): self
+    public function setOptions(?array $options): static
     {
         $this->options = $options;
 
         return $this;
     }
 
-    public function getOrderBy(): ?int
+    public function getPosition(): ?int
     {
-        return $this->orderBy;
+        return $this->position;
     }
 
-    public function setOrderBy(?int $orderBy): self
+    public function setPosition(int $position): static
     {
-        $this->orderBy = $orderBy;
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function getKind(): ?object
+    {
+        return $this->kind;
+    }
+
+    public function setKind(object $kind): static
+    {
+        $this->kind = $kind;
 
         return $this;
     }

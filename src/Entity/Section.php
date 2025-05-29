@@ -2,33 +2,39 @@
 
 namespace App\Entity;
 
-use App\Repository\SectionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\SectionRepository;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-/**
- * @ORM\Entity(repositoryClass=SectionRepository::class)
- */
+#[ORM\Entity(repositoryClass: SectionRepository::class)]
+#[ApiResource(
+    shortName: 'Section'
+)]
+#[GetCollection(normalizationContext: ['groups' => 'section:list'])]
+#[Get(normalizationContext: ['groups' => 'section:item'])]
 class Section
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    #[Groups(['section:list'])]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 50)]
+    #[Groups(['section:list', 'section:item'])]
+    private ?string $title = null;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @var Collection<int, Chapter>
      */
-    private $title;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Chapter::class, mappedBy="section")
-     * @ORM\OrderBy({"title" = "ASC"})
-     */
-    private $chapters;
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'section')]
+    #[Groups(['section:list', 'section:item'])]
+    private Collection $chapters;
 
     public function __construct()
     {
@@ -45,7 +51,7 @@ class Section
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
@@ -53,27 +59,26 @@ class Section
     }
 
     /**
-     * @return Collection|Chapter[]
+     * @return Collection<int, Chapter>
      */
     public function getChapters(): Collection
     {
         return $this->chapters;
     }
 
-    public function addChapter(Chapter $chapter): self
+    public function addChapter(Chapter $chapter): static
     {
         if (!$this->chapters->contains($chapter)) {
-            $this->chapters[] = $chapter;
+            $this->chapters->add($chapter);
             $chapter->setSection($this);
         }
 
         return $this;
     }
 
-    public function removeChapter(Chapter $chapter): self
+    public function removeChapter(Chapter $chapter): static
     {
-        if ($this->chapters->contains($chapter)) {
-            $this->chapters->removeElement($chapter);
+        if ($this->chapters->removeElement($chapter)) {
             // set the owning side to null (unless already changed)
             if ($chapter->getSection() === $this) {
                 $chapter->setSection(null);
