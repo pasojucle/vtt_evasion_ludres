@@ -45,17 +45,20 @@ export const router = createBrowserRouter([
         ]
       },
       {
-        path: 'chapter',
+        path: '/chapter',
         Component: LayoutPublic,
         children: [
           {
             path: ':id',
-            element: <ChapterPage />
+            loader: async ({ params }) => {
+              return { data: await dataLoader(`chapters/${params.id}`) };
+            },
+            Component: ChapterPage,
           },
         ]
       },
       {
-        path: '/article',
+        path: 'article',
         element: <LayoutProtected />,
         children: [
           {

@@ -11,7 +11,7 @@ export default function Section() {
     return (
         <>
             <div className="mx-auto">
-                <h1 class="text-5xl font-extrabold text-center my-5 dark:text-white">{data.title}</h1>
+                <h1 className="text-5xl font-extrabold text-center my-5 dark:text-white">{data.title}</h1>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 { data.chapters.map((chapter) =>

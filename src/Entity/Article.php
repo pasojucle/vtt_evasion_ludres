@@ -13,14 +13,15 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:item'])]
+    #[Groups(['section:item', 'Chapter:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['section:item'])]
+    #[Groups(['section:item', 'Chapter:item'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['Chapter:item'])]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]

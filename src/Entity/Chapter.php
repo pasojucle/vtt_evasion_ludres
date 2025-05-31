@@ -2,23 +2,30 @@
 
 namespace App\Entity;
 
+use App\Entity\Article;
+use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ChapterRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
+#[ApiResource(
+    shortName: 'Chapter'
+)]
+#[Get(normalizationContext: ['groups' => 'Chapter:item'])]
 class Chapter
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:list'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['section:list', 'section:item'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item'])]
     private ?string $title = null;
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]
@@ -29,7 +36,7 @@ class Chapter
      * @var Collection<int, Article>
      */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'chapter')]
-    #[Groups(['section:item'])]
+    #[Groups(['section:item', 'Chapter:item'])]
     private Collection $articles;
 
     public function __construct()
