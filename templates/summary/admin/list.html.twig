@@ -21,7 +21,18 @@
                                 <div class="col-md-3">{{ summary.createdAt|date('d/m/Y') }}</div>
                                 <div class="col-md-9">{{ summary.Title }}</div>
                             </div>
+                            
                         </a>
+                        <div class="dropdown">
+                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-{{ summary.id }}"></button>
+                                <div class="dropdown-menu" data-target="dropdown-{{ summary.id }}">
+                                    <ul class="dropdown-body">
+                                        {% if is_granted('SUMMARY_LIST') %}
+                                            <li><a href="{{ path('admin_summary_delete', {'summary': summary.id}) }}" class="dropdown-item" title="supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
                     </li>
                 {% endfor %}
             </ul>

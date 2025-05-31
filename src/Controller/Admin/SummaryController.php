@@ -11,6 +11,7 @@ use App\Form\Admin\SummaryType;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,7 +53,7 @@ class SummaryController extends AbstractController
             $summary = $form->getData();
             $this->entityManager->persist($summary);
             $this->entityManager->flush();
-            return $this->redirectToRoute('admin_summary_list', ['bikeRide' => $bikeRide->getId()]);
+            return $this->redirectToRoute('admin_summary_list', ['bikeRide' => $summary->getBikeRide()->getId()]);
         }
 
         return $this->render('summary/admin/edit.html.twig', [
@@ -76,6 +77,33 @@ class SummaryController extends AbstractController
         }
 
         return $this->render('summary/admin/edit.html.twig', [
+            'summary' => $summary,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('delete/{summary}', name: 'delete', methods: ['GET', 'POST'])]
+    #[IsGranted('SUMMARY_EDIT', 'summary')]
+    public function delete(
+        Request $request,
+        Summary $summary
+    ): Response {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $request->getUri(),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $bikeRide = $summary->getBikeRide();
+            $this->entityManager->remove($summary);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_summary_list', [
+                'bikeRide' => $bikeRide->getId(),
+            ]);
+        }
+
+        return $this->render('summary/admin/delete.modal.html.twig', [
             'summary' => $summary,
             'form' => $form->createView(),
         ]);
