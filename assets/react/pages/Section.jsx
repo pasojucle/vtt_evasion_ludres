@@ -11,11 +11,11 @@ export default function Section() {
     return (
         <>
             <div className="mx-auto">
-                <h1 className="text-5xl font-extrabold text-center my-5 dark:text-white">{data.title}</h1>
+                <h1 className="text-4xl font-extrabold my-4 text-blue-700">{data.title}</h1>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                 { data.chapters.map((chapter) =>
-                    <div key={chapter.id} className="max-w rounded overflow-hidden shadow-lg">
+                    <div key={chapter.id} className="max-w rounded overflow-hidden shadow-lg bg-gray-200 dark:bg-gray-800">
                         <div className="px-6 py-4">
                             <div className="font-bold text-xl mb-2">
                                 <Link to={`/chapter/${chapter.id}`}>{chapter.title}</Link>

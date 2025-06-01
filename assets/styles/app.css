@@ -1,17 +1,12 @@
 @import "tailwindcss";
 
-body {
-    background-color: lightgray;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
-img, table, td, blockquote, code, pre, textarea, input, video {
-    max-width: 100%;
-}
-div, textarea, table, td, th, code, pre, samp {
-    word-wrap: break-word;
-}
+
 pre {
-    background-color: var(--background-color);
+    @apply w-full p-2 break-words text-gray-200 bg-gray-700 dark:text-gray-700 dark:bg-gray-200;
+}
 
-    padding: 8px;
+h3 {
+    @apply font-bold mt-5 mb-2;
 }
