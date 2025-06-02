@@ -2,42 +2,9 @@
   "entrypoints": {
     "app": {
       "js": [
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-        "/build/main_build/runtime.85c9f900.js",
-        "/build/main_build/688.7c55c327.js",
-        "/build/main_build/427.154cb76f.js",
-        "/build/main_build/app.ff6cd4a5.js"
-      ],
-      "css": [
-        "/build/main_build/688.b613d0d9.css",
-        "/build/main_build/427.b9d42142.css",
-<<<<<<< HEAD
-        "/build/main_build/app.1f196a5b.css"
-=======
-        "/build/main_build/app.8d102c93.css"
-=======
-        "/build/main_build/runtime.d097867b.js",
-        "/build/main_build/230.420ee49b.js",
-        "/build/main_build/679.42286af6.js",
-        "/build/main_build/app.31791e52.js"
-=======
-        "/build/main_build/runtime.2fdb6fa9.js",
-        "/build/main_build/218.0c2143d5.js",
-        "/build/main_build/679.aff2521e.js",
-        "/build/main_build/app.b400691a.js"
->>>>>>> 57b74508 (skill list #274)
-=======
-=======
->>>>>>> dac44ccb (Modidification skillCategoryList #274)
-=======
->>>>>>> 5b7fb068 (Autocomplete multiple + filtre permissions #274)
         "/build/main_build/runtime.5ad829b3.js",
         "/build/main_build/297.06913ddf.js",
-        "/build/main_build/71.f22ace81.js",
+        "/build/main_build/71.6ff3ab1f.js",
         "/build/main_build/app.3931eba4.js"
       ],
       "css": [
@@ -48,48 +15,10 @@
     },
     "admin": {
       "js": [
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-        "/build/main_build/runtime.85c9f900.js",
-        "/build/main_build/688.7c55c327.js",
-        "/build/main_build/799.7f0b8deb.js",
-        "/build/main_build/427.154cb76f.js",
-        "/build/main_build/admin.237fa833.js"
-      ],
-      "css": [
-        "/build/main_build/688.b613d0d9.css",
-        "/build/main_build/427.b9d42142.css",
-        "/build/main_build/admin.ad06248b.css"
-=======
-        "/build/main_build/runtime.d097867b.js",
-        "/build/main_build/230.420ee49b.js",
-        "/build/main_build/530.5e68907a.js",
-        "/build/main_build/679.42286af6.js",
-        "/build/main_build/admin.076c18e9.js"
-      ],
-      "css": [
-        "/build/main_build/230.d51b8d97.css",
-        "/build/main_build/679.cc741ef3.css",
-        "/build/main_build/admin.ae1ea87c.css"
->>>>>>> 37d35ea7 (Remplacement de ckeditor en react #274)
-=======
-        "/build/main_build/runtime.2fdb6fa9.js",
-        "/build/main_build/218.0c2143d5.js",
-        "/build/main_build/935.2a37ff27.js",
-        "/build/main_build/679.aff2521e.js",
-        "/build/main_build/admin.dc5cd775.js"
-=======
-=======
->>>>>>> dac44ccb (Modidification skillCategoryList #274)
-=======
->>>>>>> 5b7fb068 (Autocomplete multiple + filtre permissions #274)
         "/build/main_build/runtime.5ad829b3.js",
         "/build/main_build/297.06913ddf.js",
         "/build/main_build/220.4a098d3a.js",
-        "/build/main_build/71.f22ace81.js",
+        "/build/main_build/71.6ff3ab1f.js",
         "/build/main_build/admin.42e6df51.js"
       ],
       "css": [

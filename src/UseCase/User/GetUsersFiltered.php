@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class GetUsersFiltered
 {
@@ -39,7 +38,6 @@ abstract class GetUsersFiltered
         protected UserRepository $userRepository,
         private readonly PaginatorDtoTransformer $paginatorDtoTransformer,
         private readonly EntityManagerInterface $entityManager,
-        private readonly TranslatorInterface $translator,
     ) {
     }
 
