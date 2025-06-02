@@ -164,7 +164,7 @@ class ContentController extends AbstractController
             $this->orderByService->ResetOrders($contents);
 
             return $this->redirectToRoute('admin_home_contents', [
-                'kind' => $kind,
+                'kind' => $kind->value,
             ]);
         }
 

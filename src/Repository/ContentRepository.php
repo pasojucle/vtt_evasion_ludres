@@ -63,7 +63,7 @@ class ContentRepository extends ServiceEntityRepository
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('route', $route),
-                new Parameter('kind', $kind->value),
+                new Parameter('kind', $kind),
             ]))
             ->orderBy('c.orderBy', 'ASC')
             ->getQuery()->getResult();
