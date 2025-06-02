@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Outlet, Link } from "react-router-dom";
+import { useLocation, Outlet, Link } from 'react-router-dom';
 import { AuthProvider } from "../hooks/useAuth";
 import ProtectedLinks  from "../components/ProtectedLinks";
 import Login from '../components/Login';
