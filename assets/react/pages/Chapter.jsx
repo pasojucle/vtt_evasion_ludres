@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useLoaderData, Link } from "react-router";
 import { useScrollToLocation } from '../hooks/UseScrollToLocation'
+import BreadcrumbTrail from '../components/BreadcrumbTrail';
 import TextRaw from '../components/TextRaw';
 
 export default function Chapter() {
@@ -9,12 +10,17 @@ export default function Chapter() {
     let {id} = useParams();
 
     const { data } = useLoaderData();
+
+    const routes = () => {
+        return [
+            {'title': data.section.title,'pathname': `/section/${data.section.id}`},
+            {'title': data.title,'pathname': `/chapter/${id}`},
+        ];
+    }
     console.log('data chapter', data)
     return (
         <>
-            <div className="mx-auto">
-                <h1 className="text-4xl font-extrabold my-4 text-blue-700">{data.title}</h1>
-            </div>
+            <BreadcrumbTrail routes={routes()} />
             <div className='max-w-3xl mx-auto xl:max-w-none xl:mr-[17.5rem] xl:pr-16'>
                 <div className="relative z-20 prose prose-slate mt-8 dark:prose-dark">
                     { data.articles.map((article) =>
@@ -27,16 +33,16 @@ export default function Chapter() {
                     )}
                 </div>
             </div>
-            <div className="fixed z-20 top-[10rem] px-5 bottom-20 right-[max(0px,calc(50%-45rem))] w-[19.5rem] py-10 overflow-y-auto hidden xl:block shadow-lg bg-gray-100 dark:bg-gray-800">
-            <h2 className='text-blue-700 font-bold'>Sommaire</h2>
-            <ul>
-                { data.articles.map((article) =>
-                    <li key={article.id}>
-                        <Link to={`/chapter/${data.id}#${article.id}`}>{article.title}</Link>
-                    </li>
-                )}
-            </ul>
-        </div>
+            <div className="fixed z-20 top-[10rem] px-5 right-[max(0px,calc(50%-45rem))] w-[19.5rem] py-10 overflow-y-auto hidden xl:block shadow-lg bg-gray-100 dark:bg-gray-800">
+                <h2 className='text-blue-700 font-bold mb-5 text-2xl'>Sommaire</h2>
+                <ul>
+                    { data.articles.map((article) =>
+                        <li key={article.id}>
+                            <Link to={`/chapter/${data.id}#${article.id}`}> {article.title}</Link>
+                        </li>
+                    )}
+                </ul>
+            </div>
         </>
     )
 }

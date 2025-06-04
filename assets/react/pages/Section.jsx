@@ -1,18 +1,22 @@
 import React from 'react';
-
 import { useParams , useLoaderData, Link } from "react-router";
+import BreadcrumbTrail from '../components/BreadcrumbTrail';
 
 export default function Section() {
 
     let {id} = useParams();
 
     const { data } = useLoaderData();
+
+    const routes = () => {
+        return [
+            {'title': data.title,'pathname': `/section/${data.id}`}
+        ];
+    }
     console.log('data section', data)
     return (
         <>
-            <div className="mx-auto">
-                <h1 className="text-4xl font-extrabold my-4 text-blue-700">{data.title}</h1>
-            </div>
+            <BreadcrumbTrail routes={routes()} />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                 { data.chapters.map((chapter) =>
                     <div key={chapter.id} className="max-w rounded overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">

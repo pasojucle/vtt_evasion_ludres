@@ -13,20 +13,20 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SectionRepository::class)]
 #[ApiResource(
-    shortName: 'Section'
+    shortName: 'Section',
 )]
-#[GetCollection(normalizationContext: ['groups' => 'section:list'])]
-#[Get(normalizationContext: ['groups' => 'section:item'])]
+#[GetCollection(normalizationContext: ['groups' => 'section:list'], order: ['title' => 'ASC', 'chapters.title' => 'ASC'],)]
+#[Get(normalizationContext: ['groups' => 'section:item'], order: ['title' => 'ASC', 'chapters.title' => 'ASC', 'chapters.articles.title' => 'ASC'],)]
 class Section
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:list'])]
+    #[Groups(['section:list', 'Chapter:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['section:list', 'section:item'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item'])]
     private ?string $title = null;
 
     /**

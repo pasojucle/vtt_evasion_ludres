@@ -13,9 +13,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
 #[ApiResource(
-    shortName: 'Chapter'
+    shortName: 'Chapter',
 )]
-#[Get(normalizationContext: ['groups' => 'Chapter:item'])]
+#[Get(
+    normalizationContext: ['groups' => 'Chapter:item'], 
+    order: ['article.title' => 'ASC'],
+)]
 class Chapter
 {
     #[ORM\Id]
@@ -30,6 +33,7 @@ class Chapter
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Chapter:item'])]
     private ?Section $section = null;
 
     /**
