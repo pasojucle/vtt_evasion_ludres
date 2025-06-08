@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Outlet, Link } from 'react-router-dom';
 import { AuthProvider } from "../hooks/useAuth";
-import ProtectedLinks  from "../components/ProtectedLinks";
-import Login from '../components/Login';
+import { ModalProvider } from '../hooks/useModal';
+import Modal from './Modal';
+import ProtectedLinks  from "./ProtectedLinks";
+import Login from './Login';
 
 export default function Layout() {
     const [collapseMenu, setCollapseMenu] = useState(true);
@@ -43,6 +45,7 @@ export default function Layout() {
 
     return (
         <AuthProvider>
+            <ModalProvider>
             <div className="sticky z-40 top-0 shadow border-solid border-t-2 border-blue-700 bg-white">
                 <nav className="max-w-[90rem] mx-auto flex items-center justify-between flex-wrap py-4 lg:px-12">
                     <div className="flex items-center justify-between lg:w-auto w-full lg:border-b-0 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
@@ -80,6 +83,8 @@ export default function Layout() {
             <div className="max-w-[90rem] mx-auto px-4 sm:px-6 md:px-8">
                 <Outlet />
             </div>
+            <Modal />
+            </ModalProvider>
         </AuthProvider>
     )
 }

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 export default function BreadcrumbTrail({routes}) {
 
     const Item = ({breadcrumb}) => {
-        console.log('item', breadcrumb);
         if (breadcrumb.path !== null) {
             return (
                 <Link className= {`font-extrabold ${breadcrumb.color}`} to={breadcrumb.pathname}>{breadcrumb.title}</Link>
@@ -31,10 +30,7 @@ export default function BreadcrumbTrail({routes}) {
     const breadcrumbs = () => {
         const defaultColor = 'text-gray-800 dark text-gray-200';
         const breadcrumbs = [];
-
-        console.log('routes', routes);
         routes.forEach((breadcrumb, index) => {
-            console.log('routes index', index);
             if (index === 0) {
                 breadcrumbs.push({'title': <Home />,'pathname': '/', 'color': defaultColor})
                 breadcrumbs.push({'title': <Separator />,'pathname': null})
@@ -45,7 +41,6 @@ export default function BreadcrumbTrail({routes}) {
                 breadcrumbs.push({'title': <Separator />,'pathname': null})
             }
         })
-        console.log('breadcrumbs', breadcrumbs);
 
         return breadcrumbs;
     }
@@ -53,9 +48,7 @@ export default function BreadcrumbTrail({routes}) {
     return(
         <div className='flex mt-7 mb-4'>
             {breadcrumbs().map((breadcrumb, item) =>  
-                <>
-                    <Item key={item} breadcrumb={breadcrumb} />
-                </>
+                <Item key={item} breadcrumb={breadcrumb} />
             )}
         </div>
     )

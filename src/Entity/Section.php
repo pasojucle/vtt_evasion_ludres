@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SectionRepository;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\Entity(repositoryClass: SectionRepository::class)]
 #[ApiResource(
@@ -22,11 +24,11 @@ class Section
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:list', 'Chapter:item'])]
+    #[Groups(['section:list', 'Chapter:item', 'Article:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['section:list', 'section:item', 'Chapter:item'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item'])]
     private ?string $title = null;
 
     /**
