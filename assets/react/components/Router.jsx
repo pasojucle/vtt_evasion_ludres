@@ -1,23 +1,15 @@
 
 import { createBrowserRouter } from 'react-router-dom';
 import HomePage from '../pages/Home';
-import ArticleEditPage from '../pages/ArticleEdit';
 import UserEditPage from '../pages/UserEdit';
 import LayoutProtected from '../components/LayoutProtected';
 import LayoutPublic from './LayoutPublic';
 import SectionPage from '../pages/Section';
 import ChapterPage from '../pages/Chapter';
 import Layout from '../components/Layout';
-import LoginPage from '../pages/Login';
-import NotFoundPage from '../pages/NotFound'
+import NotFoundPage from '../pages/NotFound';
+import { dataLoader } from '../helpers/queryHelper';
 
-
-export const dataLoader = async (param) => {
-  const res = await fetch(`/api/${param}`);
-  const jsonResult = await res.json();
-
-  return jsonResult;
-};
 
 export const router = createBrowserRouter([
   {
@@ -58,21 +50,6 @@ export const router = createBrowserRouter([
         ]
       },
       {
-        path: 'article',
-        element: <LayoutProtected />,
-        children: [
-          {
-            path: 'add',
-            element: <ArticleEditPage />
-          },
-          {
-            path: ':id/edit',
-            element: <ArticleEditPage />
-          },
-        ]
-      },
-
-      {
         path: '/user',
         element: <LayoutProtected />,
         children: [
@@ -85,10 +62,6 @@ export const router = createBrowserRouter([
             element: <UserEditPage />
           },
         ]
-      },
-      {
-        path: 'login',
-        element: <LoginPage />,
       },
       {
         path: '*',

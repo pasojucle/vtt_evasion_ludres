@@ -7,10 +7,13 @@ export const ModalProvider = ({ children }) => {
   const [data, setData] = useState(null);
   const [title, setTitle] = useState('');
   const [component, setComponent] = useState(null);
+  const [size, setSize] = useState('sm');
 
-  const show = async(title, component, api=null) => {
+  const show = async(title, component, size, api=null) => {
       setTitle(title);
       setComponent(component);
+      setSize(size);
+      console.log('size', size);
       if (api) {
         await dataLoader(api).then((data) => {
           console.log('modal data', data);
@@ -33,6 +36,7 @@ export const ModalProvider = ({ children }) => {
       title,
       data,
       component,
+      size,
       show,
       hide,
     }),

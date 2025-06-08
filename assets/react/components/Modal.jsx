@@ -1,13 +1,21 @@
 import React, { createElement } from 'react';
 import { useModal } from '../hooks/useModal';
-import ArticleType from './ArticleType';
+import ArticleType from '../types/Article';
+import LoginType from '../types/Login';
 
 
 export default function Modal() {
 
-    const { shown, title, component, data, hide } = useModal();
+    const { shown, title, component, size, data, hide } = useModal();
+    
+    const sizes = {
+        sm: 'w-full md:w-20/100 inset-x-0 md:inset-x-40/100',
+        md: 'w-full md:w-40/100 inset-x-0 md:inset-x-30/100',
+        lg: 'w-full md:w-60/100 inset-x-0 md:inset-x-20/100'
+    };
+    console.log('size', size), sizes[size];
+
     console.log('shown', shown)
-    const size = 'lg';
 
     const overlayClassName = () => {
         const visibility = (shown) ? 'visible bg-gray-500/70 dark:bg-gray-100/70' : 'invisible bg-gray-100/0 dark:bg-gray-800/0';
@@ -16,12 +24,13 @@ export default function Modal() {
     }
 
     const dialogClassName = () => {
-        const translate = (shown) ? 'top-0 md:top-[15vh]' : '-top-[100vh]';
-        return `fixed block z-100 w-full md:w-40/100 md:inset-x-0 md:inset-x-30/100 bg-gray-100 dark:bg-gray-800 ${translate} transition-all duration-1000 ease-in-out]`;
+        const position = (shown) ? 'top-0 md:top-[15vh]' : '-top-[100vh]';
+        return `fixed block z-100 ${sizes[size]} bg-gray-100 dark:bg-gray-800 ${position} transition-all duration-1000 ease-in-out]`;
     }
 
     const Components = {
-        articleType: ArticleType,
+        login: LoginType,
+        article: ArticleType,
     };
 
     const ModalContent = () => {
@@ -45,7 +54,7 @@ export default function Modal() {
                     <span className="sr-only">Fermer</span>
                 </button>
             </div>
-            <div class="p-4 md:p-5">
+            <div className="p-4 md:p-5">
                 <ModalContent />
             </div>
         </div>

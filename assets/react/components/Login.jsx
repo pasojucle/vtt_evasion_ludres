@@ -1,9 +1,14 @@
 import React from 'react';
-import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useModal } from "../hooks/useModal";
 
 export default function Login() {
     const { user , logout } = useAuth();
+    const { show } = useModal();
+
+    const handleLogin= () => {
+        show('Authentification', 'login', 'sm')
+      };
 
     const handleLogout = () => {
         logout();
@@ -16,7 +21,7 @@ export default function Login() {
             )
         }
         return (
-            <Link className="block text-md px-4 py-2 rounded text-blue-700 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0" to="/login">Login</Link>
+            <button className="block text-md px-4 py-2 rounded text-blue-700 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0" onClick={handleLogin}>Login</button>
         )
     }
 
