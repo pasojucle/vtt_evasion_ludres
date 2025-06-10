@@ -5,9 +5,9 @@ import { useAuth } from "../hooks/useAuth";
 
 export default function LayoutProtected() {
 
-  const { user } = useAuth();
+  const { token } = useAuth();
 
-  if (!user) {
+  if (!token) {
     // user is not authenticated
     console.log('redirect to login')
     return <Navigate to="/login" replace state={{ from: location }} />;

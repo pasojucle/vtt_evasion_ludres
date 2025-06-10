@@ -5,12 +5,12 @@ import { useLocalStorage } from "./useLocalStorage";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useLocalStorage("user", null);
+  const [token, setToken] = useLocalStorage("token", null);
   const navigate = useNavigate();
   let location = useLocation();
 
-  const login = async (data) => {
-    setUser(data);
+  const login = async (token) => {
+    setToken(token);
     if (location.pathname.includes('login')) {
       navigate('/');
     }
@@ -18,17 +18,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setUser(null);
+    setToken(null);
     navigate('/');
   };
 
   const value = useMemo(
     () => ({
-      user,
+      token,
       login,
       logout,
     }),
-    [user]
+    [token]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

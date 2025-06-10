@@ -34,6 +34,7 @@ export default function Modal() {
     };
 
     const ModalContent = () => {
+        console.log('component', component)
         if (component) {
             return React.createElement(Components[component], {
                 data: data,

@@ -8,7 +8,7 @@ import TextRaw from '../components/TextRaw';
 
 export default function Chapter() {
     useScrollToLocation();
-    const { user } = useAuth();
+    const { token } = useAuth();
     const { id } = useParams();
     const { data } = useLoaderData();
     const { show } = useModal();
@@ -21,7 +21,7 @@ export default function Chapter() {
     }
 
     const ButtonGroup = ({article}) => {
-        if (user) {
+        if (token) {
             return (
                 <div className='ml-auto inline-flex rounded-md shadow-xs' role='group'>
                     <button type="button" onClick={() => {show('Modifier', 'article', 'md', `articles/${article.id}`)}}

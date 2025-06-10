@@ -4,9 +4,9 @@ import { useAuth } from "../hooks/useAuth";
 
 export default function Protecteds() {
 
-    const { user } = useAuth();
+    const { token } = useAuth();
 
-    if (user !== null) {
+    if (token) {
         return (
             <>
                 <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/article/add">Ajouter un article</Link>

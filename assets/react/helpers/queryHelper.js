@@ -13,7 +13,7 @@ export const dataLoader = async (param) => {
 export const dataSender = async (param, data) => {
 
   try {
-    const res = await fetch(`/api/${param}`, {
+    const response = await fetch(`/api/${param}`, {
       method: 'POST',
       body: data,
     });
@@ -22,7 +22,7 @@ export const dataSender = async (param, data) => {
       return {user: null};
     }
 
-    const jsonResult = await res.json();
+    const jsonResult = await response.json();
 
     return jsonResult;
   } catch (error) {

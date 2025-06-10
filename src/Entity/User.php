@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
     private ?string $lastName = null;
 
-    #[ORM\Column(Types::BOOLEAN, options:['default' => false])]
+    #[ORM\Column(options:['default' => false])]
     private bool $isActive = false;
 
     #[ORM\Column(length: 13, nullable: true)]

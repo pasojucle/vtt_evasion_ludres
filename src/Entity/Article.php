@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 )]
 #[Get(
     normalizationContext: ['groups' => 'Article:item'], 
+    security: "is_granted('ROLE_USER')"
 )]
 class Article
 {
