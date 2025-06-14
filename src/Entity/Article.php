@@ -2,14 +2,13 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
+
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(
@@ -29,14 +28,13 @@ class Article
 
     #[ORM\Column(length: 50)]
     #[Groups(['section:item', 'Chapter:item', 'Article:item'])]
-    private ?string $title = null;
+    private string $title = 'undefined';
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['Chapter:item', 'Article:item'])]
-    private ?string $content = null;
+    private string $content = 'undefined';
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
     #[Groups(['Article:item', ])]
     private ?Chapter $chapter = null;
 
@@ -48,7 +46,7 @@ class Article
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -60,7 +58,7 @@ class Article
         return $this;
     }
 
-    public function getContent(): ?string
+    public function getContent(): string
     {
         return $this->content;
     }

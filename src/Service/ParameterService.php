@@ -26,29 +26,26 @@ class ParameterService
 
     public function getEncryption(ArrayCollection $parameters)
     {
-        if (!empty($parameters)) {
-            foreach ($parameters as $parameter) {
-                if ('ENCRYPTION' === $parameter->getName()) {
-                    return (bool) $parameter->getValue();
-                }
+        foreach ($parameters as $parameter) {
+            if ('ENCRYPTION' === $parameter->getName()) {
+                return (bool) $parameter->getValue();
             }
         }
+
         return null;
     }
 
     public function uploadFiles(ArrayCollection &$parameters, array $files)
     {
-        if (!empty($parameters)) {
-            foreach ($parameters as $key => $parameter) {
-                if ('image' === $parameter->getType()) {
-                    $value = $parameter->getValue();
-                    $filename = $value['filename'];
-                    $file = $files[$key]['value']['file'];
-                    if (null !== $file) {
-                        $filename = $this->fileUploader->upload($file, null, 32);
-                    }
-                    $parameter->setValue($filename);
+        foreach ($parameters as $key => $parameter) {
+            if ('image' === $parameter->getType()) {
+                $value = $parameter->getValue();
+                $filename = $value['filename'];
+                $file = $files[$key]['value']['file'];
+                if (null !== $file) {
+                    $filename = $this->fileUploader->upload($file, null, 32);
                 }
+                $parameter->setValue($filename);
             }
         }
     }

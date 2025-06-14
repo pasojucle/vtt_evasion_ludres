@@ -13,10 +13,8 @@ export const ModalProvider = ({ children }) => {
       setTitle(title);
       setComponent(component);
       setSize(size);
-      console.log('size', size);
       if (api) {
         await dataLoader(api).then((data) => {
-          console.log('modal data', data);
           setData(data);
           setShown(true);
         })

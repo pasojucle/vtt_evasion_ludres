@@ -20,7 +20,6 @@ class EncryptionService
 {
     public function __construct(
         private readonly ParameterBagInterface $params,
-        private readonly ParameterService $parameterService,
         private readonly ArticleRepository $articleRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,

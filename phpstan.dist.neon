@@ -5,5 +5,4 @@ parameters:
         - config/
         - public/
         - src/
-        - tests/
     treatPhpDocTypesAsCertain: false

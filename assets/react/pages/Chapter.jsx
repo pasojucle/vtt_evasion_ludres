@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useLoaderData, Link } from "react-router";
+import { useParams, useLocation, Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useModal } from "../hooks/useModal";
 import { useDataLoader } from '../hooks/useDataLoader';
@@ -8,11 +8,11 @@ import BreadcrumbTrail from '../components/BreadcrumbTrail';
 import TextRaw from '../components/TextRaw';
 
 export default function Chapter() {
-    useScrollToLocation();
     const { token } = useAuth();
     const { id } = useParams();
-    const {data, error, httpResponse} = useDataLoader('chapters', id);
-    console.log('chapter', data, error, httpResponse)
+    const { data, error, httpResponse } = useDataLoader('chapters', id);
+    const { hash } = useLocation();
+    useScrollToLocation(data, hash);
     const { show } = useModal();
 
     const routes = () => {

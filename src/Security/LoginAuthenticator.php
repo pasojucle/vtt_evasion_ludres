@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
+
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -33,7 +33,6 @@ class LoginAuthenticator extends AbstractAuthenticator
     public function __construct(
         private Security $security,
         private UrlGeneratorInterface $urlGenerator,
-        private UserDtoTransformer $userDtoTransformer
     ) {
     }
 
@@ -73,15 +72,9 @@ class LoginAuthenticator extends AbstractAuthenticator
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $userDto = $this->userDtoTransformer->fromEntity($user);
-        $request->getSession()->set('user_fullName', $userDto->member->fullName);
 
         $route = 'home';
         $params = [];
-
-        if ($user instanceof User && $user->isPasswordMustBeChanged()) {
-            $route = 'change_password';
-        }
 
         $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
         if ($targetPath && preg_match('#\/mon-compte\/inscription\/#', $targetPath)) {

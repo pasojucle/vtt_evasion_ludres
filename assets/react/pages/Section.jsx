@@ -4,10 +4,8 @@ import { useDataLoader } from '../hooks/useDataLoader';
 import BreadcrumbTrail from '../components/BreadcrumbTrail';
 
 export default function Section() {
-
     let {id} = useParams();
     const {data, error, httpResponse} = useDataLoader('sections', id);
-    console.log('section', data, error, httpResponse)
 
     const routes = () => {
         return [

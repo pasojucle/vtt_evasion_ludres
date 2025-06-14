@@ -1,9 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
 
-export const useScrollToLocation = () => {
+export const useScrollToLocation = (data, hash) => {
   const scrolledRef = useRef(false);
-  const { hash } = useLocation();
   const hashRef = useRef(hash);
 
   useEffect(() => {
@@ -25,5 +23,5 @@ export const useScrollToLocation = () => {
         }
       }
     }
-  }, []);
+  }, [data, hash]);
 };

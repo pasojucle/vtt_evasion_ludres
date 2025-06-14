@@ -20,7 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    private ?string $email = null;
+    private string $email = 'undefined';
 
     /**
      * @var list<string> The user roles
@@ -32,13 +32,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    private ?string $password = null;
+    private string $password = 'undefined';
 
     #[ORM\Column(length: 50)]
-    private ?string $firstName = null;
+    private string $firstName = 'undefined';
 
     #[ORM\Column(length: 50)]
-    private ?string $lastName = null;
+    private string $lastName = 'undefined';
 
     #[ORM\Column(options: ['default' => false])]
     private bool $isActive = false;
@@ -109,7 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }

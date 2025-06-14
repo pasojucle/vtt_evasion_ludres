@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ParameterKindEnum;
 use App\Repository\ParameterRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,22 +13,22 @@ class Parameter
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column(length: 50)]
-    private ?string $name = null;
+    private string $name = 'UNDEFINED';
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $label = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $value = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $options = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $position = null;
 
     #[ORM\Column(type: 'ParameterKind')]
-    private ?object $kind = null;
+    private ParameterKindEnum $kind = ParameterKindEnum::TEXT;
 
     public function getName(): ?string
     {
@@ -89,12 +90,12 @@ class Parameter
         return $this;
     }
 
-    public function getKind(): ?object
+    public function getKind(): object
     {
         return $this->kind;
     }
 
-    public function setKind(object $kind): static
+    public function setKind(ParameterKindEnum $kind): static
     {
         $this->kind = $kind;
 

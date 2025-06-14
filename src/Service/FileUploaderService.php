@@ -59,8 +59,8 @@ class FileUploaderService
                 $functionImage = 'imagepng';
             }
 
-            $imageBlack = imagecreatetruecolor(round($fileWidth * $ratio), round($fileHeight * $ratio));
-            imagecopyresampled($imageBlack, $imageSrc, $dstX, $dstY, 0, 0, round($fileWidth * $ratio), round($fileHeight * $ratio), $fileWidth, $fileHeight);
+            $imageBlack = imagecreatetruecolor((int) round($fileWidth * $ratio), (int) round($fileHeight * $ratio));
+            imagecopyresampled($imageBlack, $imageSrc, $dstX, $dstY, 0, 0, (int) round($fileWidth * $ratio), (int) round($fileHeight * $ratio), $fileWidth, $fileHeight);
         
             try {
                 $functionImage($imageBlack, $this->getTargetDirectory() . DIRECTORY_SEPARATOR . $fileName);

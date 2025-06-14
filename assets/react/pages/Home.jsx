@@ -4,7 +4,6 @@ import { useDataLoader } from '../hooks/useDataLoader';
 
 export default function Home() {
     const {data, error, httpResponse} = useDataLoader('sections');
-    console.log('home', data, error, httpResponse)
 
     if (data.member) {
         return (

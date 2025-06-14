@@ -13,9 +13,6 @@ export default function Modal() {
         md: 'w-full md:w-40/100 inset-x-0 md:inset-x-30/100',
         lg: 'w-full md:w-60/100 inset-x-0 md:inset-x-20/100'
     };
-    console.log('size', size), sizes[size];
-
-    console.log('shown', shown)
 
     const overlayClassName = () => {
         const visibility = (shown) ? 'visible bg-gray-500/70 dark:bg-gray-100/70' : 'invisible bg-gray-100/0 dark:bg-gray-800/0';
@@ -34,7 +31,6 @@ export default function Modal() {
     };
 
     const ModalContent = () => {
-        console.log('component', component)
         if (component) {
             return React.createElement(Components[component], {
                 data: data,

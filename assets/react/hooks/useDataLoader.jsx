@@ -7,10 +7,8 @@ export const useDataLoader = (entity, param) => {
     const [httpResponse, setHttpResponse] = useState(null)
     const { token } = useAuth();
 
-
     useEffect(() => {
         const fetchData = async () => {
-            console.log('token', token)
             const options = (token)
                 ? {headers: {
                     'Authorization': `Bearer ${token}`
@@ -22,7 +20,6 @@ export const useDataLoader = (entity, param) => {
                 url += `/${param}`;
             }
 
-            console.log('url', url)
             const response = await fetch(url, options);
             setHttpResponse(response.status)
             if (response.ok) {

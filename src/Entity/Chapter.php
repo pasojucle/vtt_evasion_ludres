@@ -29,12 +29,11 @@ class Chapter
     #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item'])]
-    private ?string $title = null;
+    private string $title = 'undefined';
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]
-    #[ORM\JoinColumn(nullable: false)]
     #[Groups(['Chapter:item', 'Article:item'])]
     private ?Section $section = null;
 
@@ -55,7 +54,7 @@ class Chapter
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
