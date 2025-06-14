@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Outlet, Link } from 'react-router-dom';
-import { AuthProvider } from "../hooks/useAuth";
+import { AuthProvider, useAuth } from "../hooks/useAuth";
 import { ModalProvider } from '../hooks/useModal';
 import Modal from './Modal';
 import ProtectedLinks  from "./ProtectedLinks";

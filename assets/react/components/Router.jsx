@@ -8,19 +8,16 @@ import SectionPage from '../pages/Section';
 import ChapterPage from '../pages/Chapter';
 import Layout from '../components/Layout';
 import NotFoundPage from '../pages/NotFound';
-import { dataLoader } from '../helpers/queryHelper';
+import ErrorPage from '../pages/Error'
 
 
-export const router = createBrowserRouter([
-  {
+const routeConfig = [
+{
     path: '/',
     Component: Layout,
     children: [
       {
         index: true,
-        loader: async () => {
-          return { data: await dataLoader('sections') };
-        },
         Component: HomePage,
       },
       {
@@ -29,9 +26,6 @@ export const router = createBrowserRouter([
         children: [
           {
             path: ':id',
-            loader: async ({ params }) => {
-              return { data: await dataLoader(`sections/${params.id}`) };
-            },
             Component: SectionPage,
           },
         ]
@@ -42,9 +36,6 @@ export const router = createBrowserRouter([
         children: [
           {
             path: ':id',
-            loader: async ({ params }) => {
-              return { data: await dataLoader(`chapters/${params.id}`) };
-            },
             Component: ChapterPage,
           },
         ]
@@ -69,5 +60,8 @@ export const router = createBrowserRouter([
       },
     ]
   },
-]);
+];
+
+
+export const router = createBrowserRouter(routeConfig);
 

@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\Get;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\SectionRepository;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\SectionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 
@@ -17,8 +17,8 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 #[ApiResource(
     shortName: 'Section',
 )]
-#[GetCollection(normalizationContext: ['groups' => 'section:list'], order: ['title' => 'ASC', 'chapters.title' => 'ASC'],)]
-#[Get(normalizationContext: ['groups' => 'section:item'], order: ['title' => 'ASC', 'chapters.title' => 'ASC', 'chapters.articles.title' => 'ASC'],)]
+#[GetCollection(normalizationContext: ['groups' => 'section:list'], order: ['title' => 'ASC', 'chapters.title' => 'ASC'], )]
+#[Get(normalizationContext: ['groups' => 'section:item'], order: ['title' => 'ASC', 'chapters.title' => 'ASC', 'chapters.articles.title' => 'ASC'], )]
 class Section
 {
     #[ORM\Id]

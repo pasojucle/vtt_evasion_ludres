@@ -2,60 +2,46 @@
 
 namespace App\Service;
 
-use Throwable;
 use App\Entity\Article;
-use Psr\Log\LoggerInterface;
-use ParagonIE\Halite\KeyFactory;
-use App\Service\ParameterService;
 use App\Repository\ArticleRepository;
+use App\Service\ParameterService;
 use Doctrine\ORM\EntityManagerInterface;
-use ParagonIE\HiddenString\HiddenString;
-use ParagonIE\Halite\Symmetric\EncryptionKey;
+use ParagonIE\Halite\KeyFactory;
 use ParagonIE\Halite\Symmetric\Crypto as Symmetric;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use ParagonIE\Halite\Symmetric\EncryptionKey;
+use ParagonIE\HiddenString\HiddenString;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Throwable;
 
 class EncryptionService
 {
-
-    private $articleRepository;
-    private $entityManager;
-    private $logger;
-    private $session;
-    private $params;
- 
     public function __construct(
-        ParameterBagInterface $params,
-        ParameterService $parameterService,
-        ArticleRepository $articleRepository,
-        EntityManagerInterface $entityManager,
-        LoggerInterface $logger,
-        SessionInterface $session
-    )
-    {
-        $this->params = $params;
-        $this->parameterEncryption = $parameterService->getParameter('ENCRYPTION');
-        $this->articleRepository = $articleRepository;
-        $this->entityManager = $entityManager;
-        $this->logger = $logger;
-        $this->session = $session;
+        private readonly ParameterBagInterface $params,
+        private readonly ParameterService $parameterService,
+        private readonly ArticleRepository $articleRepository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
+        private readonly RequestStack $request,
+    ) {
     }
 
     public function loadKey(): EncryptionKey
     {
-        try
-        {
+        try {
             return KeyFactory::loadEncryptionKey($this->params->get('encryption_key'));
-        
-        }
-        catch(\Throwable $e)
-        {
-            $this->session->getFlashBag()->add('danger', 'Unable to load encryption key!');
+        } catch (\Throwable $e) {
+            /** @var FlashBagAwareSessionInterface $session */
+            $session = $this->request->getSession();
+            $session->getFlashBag()->add('danger', 'Unable to load encryption key!');
             $this->logger->emergency(
-                'Unable to lod the encryption key!', array(
+                'Unable to lod the encryption key!',
+                [
                 'error' => $e->getMessage(),
-            ));
+            ]
+            );
             throw $e;
         }
     }
@@ -80,13 +66,16 @@ class EncryptionService
                 new HiddenString($value),
                 $key
             );
-        } catch(\Throwable $e)
-        {
-            $this->session->getFlashBag()->add('danger', 'Unable to encrypt field');
+        } catch (\Throwable $e) {
+            /** @var FlashBagAwareSessionInterface $session */
+            $session = $this->request->getSession();
+            $session->getFlashBag()->add('danger', 'Unable to encrypt field');
             $this->logger->critical(
-                'Unable to encrypt field "'.$fieldName.'" in Article entity. DB update terminated.', array(
+                'Unable to encrypt field "' . $fieldName . '" in Article entity. DB update terminated.',
+                [
                 'error' => $e->getMessage(),
-            ));
+            ]
+            );
             throw $e;
         }
     }
@@ -106,25 +95,28 @@ class EncryptionService
 
     public function decrypt($id, $fieldName, $value, $key)
     {
-        try
-        {
+        try {
             return Symmetric::decrypt($value, $key);
-        }
-        catch (\Throwable $e)
-        {
-            $this->session->getFlashBag()->add('warning', 'Unable to decrypt field');
+        } catch (\Throwable $e) {
+            /** @var FlashBagAwareSessionInterface $session */
+            $session = $this->request->getSession();
+            $session->getFlashBag()->add('warning', 'Unable to decrypt field');
             $this->logger->warning(
-                'Unable to decrypt field "'.$fieldName.'" in Article entity for ID: '.$id, array(
+                'Unable to decrypt field "' . $fieldName . '" in Article entity for ID: ' . $id,
+                [
                 'error' => $e->getMessage(),
-            ));
+            ]
+            );
         }
     }
  
-    public function toggleEncryption($parameterEncryption) {
+    public function toggleEncryption($parameterEncryption)
+    {
         $articles = $this->articleRepository->findAll();
-        $this->session->set('encryptionLock', true);
+        $session = $this->request->getSession();
+        $session->set('encryptionLock', true);
         if (!empty($articles)) {
-            foreach($articles as $article) {
+            foreach ($articles as $article) {
                 if ($parameterEncryption) {
                     $this->encryptFields($article);
                 } else {
@@ -136,14 +128,5 @@ class EncryptionService
         }
 
         $this->entityManager->flush();
-
-        //$encKey = KeyFactory::generateEncryptionKey();
-        //KeyFactory::save($encKey, '../data/encryption.key');
-
-        //$encryptionKey = KeyFactory::loadEncryptionKey('../data/encryption.key');
-        
-        //dump($encryptionKey);
     }
-
-
 }

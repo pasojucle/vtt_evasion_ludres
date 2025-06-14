@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\Get;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\ArticleRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 
@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
     shortName: 'Article',
 )]
 #[Get(
-    normalizationContext: ['groups' => 'Article:item'], 
+    normalizationContext: ['groups' => 'Article:item'],
     security: "is_granted('ROLE_USER')"
 )]
 class Article

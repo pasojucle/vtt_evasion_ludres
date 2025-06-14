@@ -14,15 +14,11 @@ export default function Login() {
       e.preventDefault();
         const response = await fetch('/api/login_check', {
           method: 'POST',
-          // credentials: 'include',
-          // mode: 'cors',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({username: email, password: password}),
         });
-        console.log('response', response);
-        console.log('response', response.status);
         if (response.ok) {
           const jsonResult = await response.json();
           hide();

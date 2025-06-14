@@ -6,7 +6,6 @@ namespace App\Doctrine\DBAL\Type;
 
 use App\Entity\Enum\ParameterKindEnum;
 
-
 class ParameterKindEnumType extends EnumType
 {
     protected function getEnum(): string

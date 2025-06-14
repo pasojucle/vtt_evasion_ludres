@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Entity\Article;
-use ApiPlatform\Metadata\Get;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use App\Entity\Article;
 use App\Repository\ChapterRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 
@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
     shortName: 'Chapter',
 )]
 #[Get(
-    normalizationContext: ['groups' => 'Chapter:item'], 
+    normalizationContext: ['groups' => 'Chapter:item'],
     order: ['article.title' => 'ASC'],
 )]
 class Chapter

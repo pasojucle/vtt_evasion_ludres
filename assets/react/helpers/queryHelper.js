@@ -1,6 +1,10 @@
-export const dataLoader = async (param) => {
+export const dataLoader = async (param, token) => {
   try {
-    const res = await fetch(`/api/${param}`);
+    const res = await fetch(`/api/${param}`, {
+      // headers: {
+      //   'Authorization': `Bearer ${token}`
+      // }
+    });
     const jsonResult = await res.json();
 
     return jsonResult;

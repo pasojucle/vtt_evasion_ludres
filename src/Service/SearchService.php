@@ -8,24 +8,23 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SearchService
 {
-    private $form; 
+    private $form;
  
     private $router;
  
     private $formFactory;
  
-    public function __construct(UrlGeneratorInterface $router, FormFactoryInterface $formFactory) 
+    public function __construct(UrlGeneratorInterface $router, FormFactoryInterface $formFactory)
     {
         $this->router = $router;
  
         $this->formFactory = $formFactory;
-
     }
  
-    public function getForm($term = null) 
+    public function getForm($term = null)
     {
         $this->form = $this->formFactory->create(SearchType::class, $term, [
-            'attr' =>[
+            'attr' => [
                 'action' => $this->router->generate('search')
             ]
         ]);

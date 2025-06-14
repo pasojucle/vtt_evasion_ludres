@@ -3,51 +3,53 @@
 namespace App\EventListeners;
 
 use App\Entity\Article;
-use App\Service\ParameterService;
+use App\Entity\Chapter;
 use App\Service\EncryptionService;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Service\ParameterService;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Event\PostLoadEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Events;
+use Symfony\Component\HttpFoundation\RequestStack;
 
+#[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: Article::class)]
+#[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Article::class)]
+#[AsEntityListener(event: Events::postLoad, method: 'postLoad', entity: Article::class)]
 class EntityListener
 {
-    private ParameterService $parameterService;
-    private EncryptionService $encryptionService;
-    private SessionInterface $session;
-    private $parameterEncryption;
-
     public function __construct(
-        ParameterService $parameterService,
-        EncryptionService $encryptionService,
-        SessionInterface $session
-    )
-    {
-        $this->parameterService = $parameterService;
-        $this->parameterEncryption = $this->parameterService->getParameter('ENCRYPTION');
-        $this->encryptionService = $encryptionService;
-        $this->session = $session;
+        private readonly ParameterService $parameterService,
+        private readonly EncryptionService $encryptionService,
+        private readonly RequestStack $request,
+    ) {
     }
 
-    public function prePersist(Article $article, LifecycleEventArgs $event)
+    public function prePersist(Article $article)
     {
-        if ($this->parameterEncryption && true !== $this->session->get('encryptionLock'))
-        {
+        if ($this->isEncrypted()) {
             $this->encryptionService->encryptFields($article);
         }
     }
 
-    public function preUpdate(Article $article, LifecycleEventArgs $event)
+    public function preUpdate(Article $article)
     {
-        if ($this->parameterEncryption && true !== $this->session->get('encryptionLock'))
-        {
+        if ($this->isEncrypted()) {
             $this->encryptionService->encryptFields($article);
         }
     }
 
-    public function postLoad(Article $article, LifecycleEventArgs $event)
+    public function postLoad(Article $article)
     {
-        if ($this->parameterEncryption && true !== $this->session->get('encryptionLock'))
-        {
+        if ($this->isEncrypted()) {
             $this->encryptionService->decryptFields($article);
         }
+    }
+
+    private function isEncrypted(): bool
+    {
+        $session = $this->request->getSession();
+        $parameterEncryption = $this->parameterService->getParameter('ENCRYPTION');
+        return $parameterEncryption && true !== $session->get('encryptionLock');
     }
 }
