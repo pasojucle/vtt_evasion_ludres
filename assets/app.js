@@ -12,7 +12,7 @@ import './styles/app.css';
 
 registerReactControllerComponents(require.context('./react/controllers', true, /\.(j|t)sx?$/));
 
-localStorage.theme = "light";
+localStorage.theme = "dark";
 document.documentElement.classList.toggle(
   "dark",
   localStorage.theme === "dark" ||
