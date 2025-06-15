@@ -1,7 +1,8 @@
 import React, { createElement } from 'react';
 import { useModal } from '../hooks/useModal';
-import ArticleType from '../types/Article';
-import LoginType from '../types/Login';
+import Article from '../types/Article';
+import Login from '../types/Login';
+import Parameters from '../types/Parameters';
 
 
 export default function Modal() {
@@ -15,7 +16,7 @@ export default function Modal() {
     };
 
     const overlayClassName = () => {
-        const visibility = (shown) ? 'visible bg-gray-500/70 dark:bg-gray-100/70' : 'invisible bg-gray-100/0 dark:bg-gray-800/0';
+        const visibility = (shown) ? 'visible bg-gray-500/70' : 'invisible bg-gray-100/0 dark:bg-gray-800/0';
 
         return `block fixed w-full h-full top-0 left-0 z-90 ${visibility} transition duration-1000 ease-in-out`;
     }
@@ -26,8 +27,9 @@ export default function Modal() {
     }
 
     const Components = {
-        login: LoginType,
-        article: ArticleType,
+        login: Login,
+        article: Article,
+        parameters: Parameters
     };
 
     const ModalContent = () => {

@@ -4,8 +4,9 @@ import { useDataLoader } from '../hooks/useDataLoader';
 
 export default function Home() {
     const {data, error, httpResponse} = useDataLoader('sections');
+    console.log('home', data)
 
-    if (data.member) {
+    if (data) {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 pt-10">
                 { data.member.map((section) =>
@@ -14,7 +15,7 @@ export default function Home() {
                             <div className="font-bold text-xl mb-2">
                                 <Link to={`/section/${section.id}`}>{section.title}</Link> 
                             </div>
-                            <ul className="text-gray-700 text-base">
+                            <ul>
                                 { section.chapters.map((chapter) =>
                                     <li key={chapter.id}>
                                         <Link to={`/chapter/${chapter.id}`}>{chapter.title}</Link>

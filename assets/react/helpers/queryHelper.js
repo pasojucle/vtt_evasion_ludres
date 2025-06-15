@@ -1,17 +1,25 @@
-export const dataLoader = async (param, token) => {
-  try {
-    const res = await fetch(`/api/${param}`, {
-      // headers: {
-      //   'Authorization': `Bearer ${token}`
-      // }
-    });
-    const jsonResult = await res.json();
+export const dataLoader = async (entity, param, token) => {
+      const options = (token)
+          ? {headers: {
+              'Authorization': `Bearer ${token}`
+          }}
+          : {};
 
-    return jsonResult;
-  } catch (error) {
-    console.error(error);
-    return {'error': error, httpResponse: response.status}
-  }
+      let url = `/api/${entity}`;
+      if (param) {
+          url += `/${param}`;
+      }
+
+      const response = await fetch(url, options);
+      console.log(response);
+      const httpResponse = response.status
+      const jsonResult = await response.json();
+      if (response.ok) {
+          return {data: jsonResult, httpResponse: httpResponse, error: null};
+      } else {
+          console.error(jsonResult);
+          return {data: null, httpResponse: httpResponse, error: jsonResult.message};
+      } 
 };
 
 export const dataSender = async (param, data) => {

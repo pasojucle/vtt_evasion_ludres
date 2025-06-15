@@ -1,36 +1,23 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
+import { dataLoader} from "../helpers/queryHelper";
 
 export const useDataLoader = (entity, param) => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(null);
     const [error, setError] = useState('');
     const [httpResponse, setHttpResponse] = useState(null)
     const { token } = useAuth();
 
     useEffect(() => {
-        const fetchData = async () => {
-            const options = (token)
-                ? {headers: {
-                    'Authorization': `Bearer ${token}`
-                }}
-                : {};
-
-            let url = `/api/${entity}`;
-            if (param) {
-                url += `/${param}`;
-            }
-
-            const response = await fetch(url, options);
-            setHttpResponse(response.status)
-            if (response.ok) {
-                const jsonResult = await response.json();
-                setData(jsonResult);
-            } else {
-                console.error(error);
-                setError(error);
-            }
-            
+        const fetchData = async() => {
+            await dataLoader(entity, param, token).then((result) => {
+                console.log('result', result);
+                setData(result.data);
+                setError(result.error);
+                setHttpResponse(result.httpResponse);
+            })
         }
+
         fetchData();
     }, [entity, param]);
 

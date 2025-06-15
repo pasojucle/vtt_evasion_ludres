@@ -2,17 +2,27 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\ParameterKindEnum;
-use App\Repository\ParameterRepository;
+use ApiPlatform\Metadata\Get;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Entity\Enum\ParameterKindEnum;
+use App\Repository\ParameterRepository;
 
 #[ORM\Entity(repositoryClass: ParameterRepository::class)]
+#[ApiResource(
+    shortName: 'Parameter',
+    security: "is_granted('ROLE_USER')",
+)]
+#[GetCollection()]
 class Parameter
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column(length: 50)]
+    #[ApiProperty(identifier: true)]
     private string $name = 'UNDEFINED';
 
     #[ORM\Column(length: 50, nullable: true)]

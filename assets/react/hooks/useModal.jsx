@@ -1,4 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
+import { useAuth } from "./useAuth";
+import { useToast } from "./useToast";
 import { dataLoader } from '../helpers/queryHelper';
 const ModalContext = createContext();
 
@@ -8,15 +10,22 @@ export const ModalProvider = ({ children }) => {
   const [title, setTitle] = useState('');
   const [component, setComponent] = useState(null);
   const [size, setSize] = useState('sm');
+  const { token } = useAuth();
+  const { showToast } = useToast();
 
-  const show = async(title, component, size, api=null) => {
+  const show = async(title, component, size, entity=null, param=null) => {
       setTitle(title);
       setComponent(component);
       setSize(size);
-      if (api) {
-        await dataLoader(api).then((data) => {
-          setData(data);
-          setShown(true);
+      if (entity) {
+        await dataLoader(entity, param, token).then((response) => {
+          console.log('response', response)
+          if (response.data) {
+            setData(response.data);
+            setShown(true);
+          } else {
+            showToast(response.error, 'error')
+          }
         })
         return;
       }

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Outlet, Link } from 'react-router-dom';
-import { AuthProvider, useAuth } from "../hooks/useAuth";
+import { AuthProvider } from "../hooks/useAuth";
+import { ToastProvider } from '../hooks/useToast';
 import { ModalProvider } from '../hooks/useModal';
+import Toast from './Toast';
 import Modal from './Modal';
 import ProtectedLinks  from "./ProtectedLinks";
 import Login from './Login';
@@ -28,7 +30,7 @@ export default function Layout() {
         return (
             <>
                 <input
-                    className="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
+                    className="border-2 border-gray-300 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
                     type="search" name="search" placeholder="Search"/>
                 <button type="submit" className="absolute right-0 top-0 mt-3 mr-2">
                     <svg className="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
@@ -45,11 +47,12 @@ export default function Layout() {
 
     return (
         <AuthProvider>
+            <ToastProvider>
             <ModalProvider>
-            <div className="sticky z-40 top-0 shadow border-solid border-t-2 border-blue-700 bg-white">
+            <div className="sticky z-40 top-0 shadow border-solid border-t-2 border-blue-700 bg-gray-100 dark:bg-gray-800">
                 <nav className="max-w-[90rem] mx-auto flex items-center justify-between flex-wrap py-4 lg:px-12">
                     <div className="flex items-center justify-between lg:w-auto w-full lg:border-b-0 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
-                        <div className="flex items-center flex-shrink-0 text-gray-800">
+                        <div className="flex items-center flex-shrink-0 text-gray-800 dark:text-gray-100">
                             <span className="font-semibold text-xl tracking-tight px-3 md:px-0">Wiki</span>
                         </div>
                         <div className="relative mx-auto text-gray-600 block lg:hidden">
@@ -84,7 +87,9 @@ export default function Layout() {
                 <Outlet />
             </div>
             <Modal />
+            <Toast />
             </ModalProvider>
+            </ToastProvider>
         </AuthProvider>
     )
 }

@@ -13,7 +13,7 @@ export default function Section() {
         ];
     }
 
-    if (data.chapters) {
+    if (data) {
         return (
             <>
                 <BreadcrumbTrail routes={routes()} />
@@ -24,7 +24,7 @@ export default function Section() {
                                 <div className="font-bold text-xl mb-2">
                                     <Link to={`/chapter/${chapter.id}`}>{chapter.title}</Link>
                                 </div>
-                                <ul className="text-gray-700 text-base">
+                                <ul>
                                     { chapter.articles.map((article) =>
                                         <li key={article.id}>
                                             <Link to={`/chapter/${chapter.id}#${article.id}`}>{article.title}</Link>

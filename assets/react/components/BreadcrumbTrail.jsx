@@ -28,14 +28,14 @@ export default function BreadcrumbTrail({routes}) {
     }
 
     const breadcrumbs = () => {
-        const defaultColor = 'text-gray-800 dark text-gray-200';
+        const defaultColor = 'text-gray-800 dark:text-gray-200';
         const breadcrumbs = [];
         routes.forEach((breadcrumb, index) => {
             if (index === 0) {
                 breadcrumbs.push({'title': <Home />,'pathname': '/', 'color': defaultColor})
                 breadcrumbs.push({'title': <Separator />,'pathname': null})
             }
-            breadcrumb['color'] = (index === routes.length - 1) ? 'text-blue-700' : defaultColor;
+            breadcrumb['color'] = (index === routes.length - 1) ? 'text-blue-700 dark:text-blue-300' : defaultColor;
             breadcrumbs.push(breadcrumb)
             if (index < routes.length - 1)  {
                 breadcrumbs.push({'title': <Separator />,'pathname': null})
