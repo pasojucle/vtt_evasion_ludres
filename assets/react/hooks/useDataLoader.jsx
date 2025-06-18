@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
-import { dataLoader} from "../helpers/queryHelper";
+import { dataLoader } from "../helpers/queryHelper";
 
 export const useDataLoader = (entity, param) => {
     const [data, setData] = useState(null);

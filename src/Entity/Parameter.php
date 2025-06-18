@@ -8,8 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use App\Entity\Enum\ParameterKindEnum;
 use App\Repository\ParameterRepository;
+use App\State\ParameterStateProcessor;
 
 #[ORM\Entity(repositoryClass: ParameterRepository::class)]
 #[ApiResource(
@@ -17,6 +19,10 @@ use App\Repository\ParameterRepository;
     security: "is_granted('ROLE_USER')",
 )]
 #[GetCollection()]
+#[Patch(
+    processor: ParameterStateProcessor::class
+)]
+
 class Parameter
 {
     #[ORM\Id]
