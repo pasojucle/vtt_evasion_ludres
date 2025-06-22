@@ -6,6 +6,7 @@ import { dataSender }  from "../helpers/queryHelper";
 import TextType from './TextType';
 import ChoiceType from './ChoiceType';
 import CheckboxType from './CheckboxType';
+import FileType from './FileType';
 
 export default function Parameters({data}) {
     const entity = 'parameters';
@@ -25,10 +26,12 @@ export default function Parameters({data}) {
 
     const changeProjectName = (value) => {
         setProjectName(value);
+        submit('PROJECT_NAME', value);
     }
 
     const changeTheme = (value) => {
         setTheme(value);
+        submit('THEME_CSS', value);
     }
 
     const changeEncryption = (value) => {
@@ -39,6 +42,20 @@ export default function Parameters({data}) {
 
     const changeFavicon = (value) => {
         setFavicon(value);
+        console.log(value)
+        const formData = new FormData();
+        formData.append('file', value);
+        fetch('/api/parameters/fileupload/FAVICON', {
+            method: 'POST',
+            body: formData,
+            headers: {
+            'Authorization': `Bearer ${token}`,
+        }
+        })
+            .then(() => {
+
+            })
+
     }
 
     const FormElement = ({element}) => {
@@ -55,17 +72,14 @@ export default function Parameters({data}) {
                 return React.createElement(ChoiceType, {label: element.label , name: `${entity}[${element.name}]`, value: theme, options: options, handleChange: changeTheme, col: 2});
             case 'ENCRYPTION':
                 return React.createElement(CheckboxType, {label: element.label , name: `${entity}[${element.name}]`, checked: encryption, handleChange: changeEncryption, col: 2});
-
-
             case 'FAVICON':
-                console.log('FAVICON')
+                return React.createElement(FileType, {label: element.label , name: `${entity}[${element.name}]`, filename: favicon, handleChange: changeFavicon, col: 2});
         }
     }
 
     const submit = async(name, value) => {
         const data = JSON.stringify({value: value});
-
-        dataSender('PATCH', 'parameters', name, token, data)
+        dataSender('PATCH',  'parameters', name, token, data)
             .then(() => {
 
             })

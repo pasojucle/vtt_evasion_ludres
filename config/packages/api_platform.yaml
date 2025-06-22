@@ -10,6 +10,10 @@ api_platform:
             JWT:
                 name: Authorization
                 type: header
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        multipart: ['multipart/form-data']
 
 when@dev:
     api_platform:

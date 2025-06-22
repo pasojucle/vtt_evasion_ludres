@@ -46,12 +46,18 @@ const options = (token, method='GET', data = null) => {
   }
 
   if (method === 'POST') {
-    options['method']= 'POST';
+    options['method'] = 'POST';
     options['headers']['Content-Type'] = 'application/json';
   }
 
+  if (method === 'FILE') {
+    options['method'] = 'PATCH';
+    options['headers']['Content-Type'] = 'multipart/form-data';
+    options['headers']['Accept'] = 'application/ld+json';
+  }
+
   if (method === 'PATCH') {
-    options['method']= 'PATCH';
+    options['method'] = 'PATCH';
     options['headers']['Content-Type'] = 'application/merge-patch+json';
     options['headers']['Accept'] = 'application/ld+json';
   }
