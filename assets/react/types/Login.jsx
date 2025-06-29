@@ -23,6 +23,7 @@ export default function Login() {
           const jsonResult = await response.json();
           hide();
           login(jsonResult.token)
+          console.log('auth', jsonResult)
           return;
         }
         if (401 === response.status) {

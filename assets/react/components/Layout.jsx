@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, Outlet, Link } from 'react-router-dom';
 import { AuthProvider } from "../hooks/useAuth";
 import { ToastProvider } from '../hooks/useToast';
 import { ModalProvider } from '../hooks/useModal';
+import { useTheme } from '../hooks/useTheme';
 import Toast from './Toast';
 import Modal from './Modal';
 import ProtectedLinks  from "./ProtectedLinks";
 import Login from './Login';
+import ThemePanel from './ThemePanel';
 
 export default function Layout() {
     const [collapseMenu, setCollapseMenu] = useState(true);
-    const location = useLocation()
+    const location = useLocation();
     useEffect(() => { setCollapseMenu(true) }, [location])
 
+    const { projectName} = useTheme();
+    console.log('test', projectName);
     const toggleMenu = () => {
         setCollapseMenu(!collapseMenu);
     }
@@ -48,47 +52,48 @@ export default function Layout() {
     return (
         <AuthProvider>
             <ToastProvider>
-            <ModalProvider>
-            <div className="sticky z-40 top-0 shadow border-solid border-t-2 border-blue-700 bg-gray-100 dark:bg-gray-800">
-                <nav className="max-w-[90rem] mx-auto flex items-center justify-between flex-wrap py-4 lg:px-12">
-                    <div className="flex items-center justify-between lg:w-auto w-full lg:border-b-0 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
-                        <div className="flex items-center flex-shrink-0 text-gray-800 dark:text-gray-100">
-                            <span className="font-semibold text-xl tracking-tight px-3 md:px-0">Wiki</span>
-                        </div>
-                        <div className="relative mx-auto text-gray-600 block lg:hidden">
-                            <Search/>
-                        </div>
-                        <div className="block lg:hidden" onClick={() => toggleMenu()}>
-                            <button
-                                id="nav"
-                                className="flex items-center px-3 py-2 border-2 rounded text-blue-700 border-blue-700 hover:text-blue-700 hover:border-blue-700">
-                                <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title>
-                                    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                
-                    <div className={classNameMenu()}>
-                        <div className="text-md font-bold text-blue-700 lg:flex-grow">
-                            <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/">Index</Link>
-                                <ProtectedLinks />
+                <ModalProvider>
+                <div className="sticky z-40 top-0 shadow border-solid border-t-2 border-blue-700 bg-gray-100 dark:bg-gray-800">
+                    <nav className="max-w-[90rem] mx-auto flex items-center justify-between flex-wrap py-4 lg:px-12">
+                        <div className="flex items-center justify-between lg:w-auto w-full lg:border-b-0 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
+                            <div className="flex items-center flex-shrink-0 text-gray-800 dark:text-gray-100">
+                                <span className="font-semibold text-xl tracking-tight px-3 md:px-0">{projectName}</span>
                             </div>
-                        <div className="relative mx-auto text-gray-600 lg:block hidden">
-                            <Search/>
+                            <div className="relative mx-auto text-gray-600 block lg:hidden">
+                                <Search/>
+                            </div>
+                            <div className="block lg:hidden" onClick={() => toggleMenu()}>
+                                <button
+                                    id="nav"
+                                    className="flex items-center px-3 py-2 border-2 rounded text-blue-700 border-blue-700 hover:text-blue-700 hover:border-blue-700">
+                                    <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title>
+                                        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                        <div className="flex ">
-                        <Login />
+                    
+                        <div className={classNameMenu()}>
+                            <div className="text-md font-bold text-blue-700 lg:flex-grow">
+                                <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/">Index</Link>
+                                    <ProtectedLinks />
+                                </div>
+                            <div className="relative mx-auto text-gray-600 lg:block hidden">
+                                <Search/>
+                            </div>
+                            <div className="flex mx-2">
+                                <ThemePanel />
+                                <Login />
+                            </div>
                         </div>
-                    </div>
-                </nav>      
-            </div>
-            <div className="max-w-[90rem] mx-auto px-4 sm:px-6 md:px-8">
-                <Outlet />
-            </div>
-            <Modal />
-            <Toast />
-            </ModalProvider>
+                    </nav>      
+                </div>
+                <div className="max-w-[90rem] mx-auto px-4 sm:px-6 md:px-8">
+                    <Outlet />
+                </div>
+                <Modal />
+                <Toast />
+                </ModalProvider>
             </ToastProvider>
         </AuthProvider>
     )

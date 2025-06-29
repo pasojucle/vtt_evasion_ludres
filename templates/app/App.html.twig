@@ -6,8 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        // TODO favicon dynamique
-        <link rel="icon" type="image/x-icon" href="/uploads/favicon.jpg">
+        <link rel="icon" type="image/x-icon" href="{{ asset(favicon) }}">
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -18,6 +17,6 @@
     </head>
     <body class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
         <div id="root"></div>
-        <div {{ react_component('App') }} ></div>
+        <div {{ react_component('App', {'projectName': project_name}) }} ></div>
     </body>
 </html>

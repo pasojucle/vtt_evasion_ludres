@@ -11,6 +11,7 @@ use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 #[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: Article::class)]
@@ -19,7 +20,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class EntityListener
 {
     public function __construct(
-        private readonly ParameterService $parameterService,
+        private readonly ParameterBagInterface $param,
         private readonly EncryptionService $encryptionService,
         private readonly RequestStack $request,
     ) {
@@ -49,7 +50,7 @@ class EntityListener
     private function isEncrypted(): bool
     {
         $session = $this->request->getSession();
-        $parameterEncryption = $this->parameterService->getParameter('ENCRYPTION');
-        return $parameterEncryption && true !== $session->get('encryptionLock');
+        $private = $this->param->get('private');
+        return $private && true !== $session->get('encryptionLock');
     }
 }

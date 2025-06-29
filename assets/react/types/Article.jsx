@@ -6,7 +6,17 @@ export default function Article({data}) {
 
     const {id} = useParams();
     console.log('article', data)
+    if (!data) {
+        data = {chapter: {
+            title: null,
+            content: null,
+            section: {
+                title: null,
+            }
+        }}
+    }
 
+    console.log('article', data)
     if (data) {
         return (
             <form className="space-y-4" action="#">

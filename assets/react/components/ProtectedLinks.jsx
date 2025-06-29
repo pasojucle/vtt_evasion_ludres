@@ -11,10 +11,11 @@ export default function Protecteds() {
     if (token) {
         return (
             <>
-                <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/article/add">Ajouter un article</Link>
-                <Link className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2" to="/users">Ajouter un utilisateur</Link>
-                <button onClick={() => show('Paramètres', 'parameters', 'sm', 'parameters')}
-                    className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2">Paramètres
+                <button onClick={() => show('Ajouter un article', 'article', 'md')}
+                    className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2">Ajouter un article
+                </button>
+                <button onClick={() => show('Ajouter un utilisateur', 'user', 'md')}
+                    className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2">Ajouter un utilisateur
                 </button>
             </>
         )
