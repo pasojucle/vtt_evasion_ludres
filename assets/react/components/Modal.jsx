@@ -22,8 +22,8 @@ export default function Modal() {
     }
 
     const dialogClassName = () => {
-        const position = (shown) ? 'top-0 md:top-[15vh]' : '-top-[100vh]';
-        return `fixed block z-100 ${sizes[size]} bg-gray-100 dark:bg-gray-800 ${position} transition-all duration-1000 ease-in-out]`;
+        const position = (shown) ? 'top-0 md:top-[5vh]' : '-top-[100vh]';
+        return `fixed block z-100 ${sizes[size]} bg-gray-100 dark:bg-gray-800 ${position} transition-all duration-1000 ease-in-out] max-h-full md:max-h-90/100 overflow-y-auto`;
     }
 
     const Components = {

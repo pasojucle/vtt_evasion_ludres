@@ -9,7 +9,9 @@
         "@symfony/ux-react": "file:vendor/symfony/ux-react/assets",
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^5.0.0",
-        "@tailwindcss/postcss": "^4.1.6",
+        "@tailwindcss/postcss": "^4.1.11",
+        "@tiptap/extension-code-block": "^2.26.1",
+        "@tiptap/extension-text-align": "^2.26.1",
         "core-js": "^3.38.0",
         "file-loader": "^6.0.0",
         "postcss": "^8.5.3",
@@ -30,6 +32,16 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@tiptap/core": "^2.7.0",
+        "@tiptap/extension-code-block-lowlight": "^2.25.0",
+        "@tiptap/extension-image": "^2.25.0",
+        "@tiptap/extension-link": "^2.25.0",
+        "@tiptap/extension-placeholder": "^2.25.0",
+        "@tiptap/pm": "^2.25.0",
+        "@tiptap/react": "^2.25.0",
+        "@tiptap/starter-kit": "^2.25.0",
+        "highlight.js": "^11.11.1",
+        "lowlight": "^3.3.0",
         "react-router-dom": "^7.6.0"
     }
 }

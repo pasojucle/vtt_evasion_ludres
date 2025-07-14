@@ -11,7 +11,7 @@ export default function Protecteds() {
     if (token) {
         return (
             <>
-                <button onClick={() => show('Ajouter un article', 'article', 'md')}
+                <button onClick={() => show('Ajouter un article', 'article', 'lg')}
                     className="block mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-700 mr-2">Ajouter un article
                 </button>
                 <button onClick={() => show('Ajouter un utilisateur', 'user', 'md')}

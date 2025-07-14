@@ -7,6 +7,14 @@ pre {
     @apply w-full p-2 break-words text-gray-200 bg-gray-700 dark:text-gray-700 dark:bg-gray-200;
 }
 
+h1 {
+    @apply text-2xl font-bold text-blue-700 mt-5 mb-2;
+}
+
+h2 {
+    @apply text-xl font-bold text-blue-700 mt-5 mb-2;
+}
+
 h3 {
-    @apply font-bold mt-5 mb-2;
+    @apply text-lg font-bold mt-5 mb-2;
 }
