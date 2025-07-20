@@ -1,18 +1,39 @@
 import React, { useState } from 'react';
 import { useParams } from "react-router";
 import TiptapEditor from './TipTapEditor';
+import AutocompleteType from './AutocompleteType';
 
 
 export default function Article({data}) {
 
     const {id} = useParams();
-    const [content, setContent] = useState(null);
+    const [section, setSection] = useState((undefined === data.chapter.section) ? null : data.chapter.section);
+    const [chapter, setChapter] = useState((undefined === data.chapter) ? null : data.chapter);
+    const [content, setContent] = useState((undefined === data.content) ? null : data.content);
+
+    const handleAddSection = (value) => {
+        console.log('handleAddSection', value)
+        setSection(value)
+        setChapter(null)
+    }
+
+    const handleRemoveSection = () => {
+        console.log('handleRemoveSection')
+        setSection(null)
+    }
+    const handleAddChapter = (value) => {
+        console.log('handleAddChapter', value)
+        setChapter(value)
+    }
+
+    const handleRemoveChapter = () => {
+        setChapter(null)
+    }
 
     const handleChangeContent = (html) => {
         console.log('content', html);
         setContent(html);
     }
-
 
     console.log('article', data)
     if (!data) {
@@ -27,19 +48,13 @@ export default function Article({data}) {
 
     const toolbar = [ 'bold', 'italic', 'underline', '|', 'fontColor', '|', 'alignment', '|', 'heading']
 
-    console.log('article', data)
+    console.log('article', data, section)
     if (data) {
         return (
             <form className="space-y-4" action="#">
                 <div className="grid gap-4 mb-4 grid-cols-3">
-                    <div className="col-span-3 sm:col-span-1">
-                        <label htmlFor="article_charpter_section_title" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Rubrique</label>
-                        <input type="text" name="article[charpter][section][title]" id="article_charpter_section_title" value={data.chapter.section.title} onChange={() => {}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-                    </div>
-                    <div className="col-span-3 sm:col-span-1">
-                        <label htmlFor="article_charpter_title" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Chapitre</label>
-                        <input type="text" name="article[charpter][title]" id="article_charpter_title" value={data.chapter.title} onChange={() => {}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-                    </div>
+                    <AutocompleteType resource='sections' value={section} label='Rubrique' className='col-span-3 sm:col-span-1' placeholder='placehoder' handleAdd={handleAddSection} handleRemove={handleRemoveSection} />
+                    <AutocompleteType resource={`chapters?section.id=${section.id}`} value={chapter} label='Chapitre' className='col-span-3 sm:col-span-1' placeholder='placehoder' handleAdd={handleAddChapter} handleRemove={handleRemoveChapter} />
                     <div className="col-span-3 sm:col-span-1">
                         <label htmlFor="article_title" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Titre</label>
                         <input type="text" name="article[title]" id="article_title" value={data.title} onChange={() => {}} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />

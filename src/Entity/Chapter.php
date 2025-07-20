@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\QueryParameter;
 use App\Entity\Article;
 use App\Repository\ChapterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,16 +24,23 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
     normalizationContext: ['groups' => 'Chapter:item'],
     order: ['article.title' => 'ASC'],
 )]
+#[GetCollection(
+    normalizationContext: ['groups' => 'Chapter:list'],
+    filters: ['chapter.search_filter'],
+    parameters: [
+        'section.id' => new QueryParameter(filter: 'chapter.search_filter')
+    ]
+)]
 class Chapter
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Chapter:list', 'Article:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Chapter:list', 'Article:item'])]
     private string $title = 'undefined';
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]
