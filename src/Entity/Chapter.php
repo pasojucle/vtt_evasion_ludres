@@ -40,7 +40,7 @@ class Chapter
     private ?int $id = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Chapter:list', 'Article:item'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Chapter:list', 'Article:item', 'Article:write'])]
     private string $title = 'undefined';
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]

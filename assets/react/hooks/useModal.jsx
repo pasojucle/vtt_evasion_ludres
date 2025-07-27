@@ -17,6 +17,7 @@ export const ModalProvider = ({ children }) => {
       setTitle(title);
       setComponent(component);
       setSize(size);
+      console.log('entity', entity)
       if (entity) {
         await dataLoader(entity, param, token).then((response) => {
           console.log('response', response)

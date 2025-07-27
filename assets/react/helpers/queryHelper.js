@@ -19,6 +19,9 @@ export const dataSender = async (method, entity, param, token, data) => {
     if (response.status === 401) {
       return {user: null};
     }
+    if (response.status === 204) {
+      return {'status': 204}
+    }
 
     const jsonResult = await response.json();
 
@@ -45,9 +48,13 @@ const options = (token, method='GET', data = null) => {
     }
   }
 
+  if (method === 'DELETE') {
+    options['method'] = 'DELETE';
+  }
+
   if (method === 'POST') {
     options['method'] = 'POST';
-    options['headers']['Content-Type'] = 'application/json';
+    options['headers']['Content-Type'] = 'application/ld+json';
   }
 
   if (method === 'FILE') {
