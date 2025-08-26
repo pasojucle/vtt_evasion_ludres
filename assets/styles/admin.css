@@ -145,4 +145,8 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     .wrapper {
         min-height: calc(100vh - 45px);
     }
+    .sortable {
+        overflow-y: visible;
+        width: calc(100% - 25px);
+    }
 }
