@@ -68,7 +68,7 @@ class ResetPasswordController extends AbstractController
     }
 
     #[Route('/reset/{token}', name: 'app_reset_password', methods: ['GET', 'POST'])]
-    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, string $token = null): Response
+    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, ?string $token = null): Response
     {
         if ($token) {
             // We store the token in session and remove it from the URL, to avoid the URL being

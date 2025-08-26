@@ -23,5 +23,6 @@
 {% if progress.user.member.emergencyPhone is not null %}
     <ul class="block background-ligth">
         <li><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ progress.user.member.emergencyPhone|raw}}</li>
+        <li><b>Lien de parenté: </b>{{ progress.user.member.emergencyContact|raw}}</li>
     </ul>
 {% endif %}

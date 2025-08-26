@@ -29,6 +29,7 @@
     {% if user.member.emergencyPhone is not null %}
         <tr>
             <td colspan="7"><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone|raw}}</td>
+            <td colspan="7"><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</td>
         </tr>
     {% endif %}
 </table>

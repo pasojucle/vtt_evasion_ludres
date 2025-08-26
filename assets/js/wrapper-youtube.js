@@ -1,10 +1,9 @@
 document.addEventListener("DOMContentLoaded", (event) => {
     const wrapperYoutubeEl = document.querySelector('.wrapper-youtube');
-    console.log('wrapperYoutubeEl', wrapperYoutubeEl)
     if (wrapperYoutubeEl) {
         center(wrapperYoutubeEl);
+        window.addEventListener('scroll', () => center(wrapperYoutubeEl));
     }
-    window.addEventListener('scroll', () => center(wrapperYoutubeEl));
 });
 
 const center = (wrapperYoutubeEl) => {

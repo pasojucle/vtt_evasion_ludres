@@ -80,6 +80,9 @@ class Identity
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $birthCountry = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $emergencyContact = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -283,6 +286,18 @@ class Identity
     public function setBirthCountry(?string $birthCountry): static
     {
         $this->birthCountry = $birthCountry;
+
+        return $this;
+    }
+
+    public function getEmergencyContact(): ?string
+    {
+        return $this->emergencyContact;
+    }
+
+    public function setEmergencyContact(?string $emergencyContact): static
+    {
+        $this->emergencyContact = $emergencyContact;
 
         return $this;
     }

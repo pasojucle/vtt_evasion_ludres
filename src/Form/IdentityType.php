@@ -185,7 +185,7 @@ class IdentityType extends AbstractType
                         ->add('emergencyPhone', TextType::class, [
                             'label' => 'Télephone de la personne à prévenir en cas d\'urgence',
                             'row_attr' => [
-                                'class' => 'form-group-inline full-width',
+                                'class' => 'form-group-inline',
                             ],
                             'constraints' => [
                                 new Phone(),
@@ -195,6 +195,15 @@ class IdentityType extends AbstractType
                                 'data-multiple-fields' => 1,
                                 'autocomplete' => 'off',
                                 'class' => 'phone-number',
+                            ],
+                        ])
+                        ->add('emergencyContact', TextType::class, [
+                            'label' => 'Lien de parenté (Mari, Femme, Fils, Fille, Frère, Sœur, Oncle, Tante, Grand parents.....)',
+                            'row_attr' => [
+                                'class' => 'form-group-inline',
+                            ],
+                            'attr' => [
+                                'data-constraint' => '',
                             ],
                         ])
                     ;

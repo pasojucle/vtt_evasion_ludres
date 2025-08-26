@@ -18,7 +18,7 @@ class ValidatorService
     {
     }
 
-    public function ValidateToArray(mixed $value, Constraint|array $constraints = null, string|GroupSequence|array $groups = null): array
+    public function ValidateToArray(mixed $value, Constraint|array|null $constraints = null, string|GroupSequence|array|null $groups = null): array
     {
         $violationsList = $this->validator->validate($value, $constraints, $groups);
 
