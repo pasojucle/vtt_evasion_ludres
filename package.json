@@ -16,7 +16,7 @@
         "vue": "^3.0",
         "vue-loader": "^17.4.2",
         "webpack": "^5.96",
-        "webpack-cli": "^5.1",
+        "webpack-cli": "^5.1.0",
         "webpack-notifier": "^1.15.0"
     },
     "license": "UNLICENSED",
@@ -44,7 +44,7 @@
         "@ckeditor/ckeditor5-upload": "^43.2.0",
         "@ckeditor/ckeditor5-vue": "^5.1.0",
         "@popperjs/core": "^2.11.8",
-        "bootstrap": "^5.3",
+        "bootstrap": "5.3.8",
         "ckeditor5-package-generator": "^2.1.1",
         "moment": "^2.29.4"
     }
