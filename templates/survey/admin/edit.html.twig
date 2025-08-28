@@ -18,12 +18,12 @@
                 {{ form_row(form.title) }}
             </div>
             {{ form_row(form.content) }}
-            <div class="form-group">
-                {{ form_row(form.startAt) }}
-                {{ form_row(form.endAt) }}
-            </div>
-            {{ form_row(form.isAnonymous) }}
             <div id="surveyRestriction">
+                <div class="form-group">
+                    {{ form_row(form.startAt) }}
+                    {{ form_row(form.endAt) }}
+                </div>
+                {{ form_row(form.isAnonymous) }}
                 {% for restriction in form.restriction %}
                 <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
                     {% if restriction.vars.value == constant('App\\Form\\Admin\\SurveyType::DISPLAY_BIKE_RIDE') %}

@@ -7,6 +7,7 @@ namespace App\Form\Admin;
 use App\Entity\Survey;
 use App\Form\Admin\EventListener\Survey\AddRestrictionSubscriber;
 use App\Form\Type\CkeditorType;
+use App\Repository\BikeRideRepository;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Validator\CKEditorBlank;
@@ -14,7 +15,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,6 +32,7 @@ class SurveyType extends AbstractType
     public function __construct(
         private readonly LevelService $levelService,
         private readonly UserRepository $userRepository,
+        private readonly BikeRideRepository $bikeRideRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -53,32 +54,6 @@ class SurveyType extends AbstractType
                 ],
                 'constraints' => [
                     new CKEditorBlank(),
-                ],
-            ])
-            ->add('startAt', DateTimeType::class, [
-                'label' => 'Date de début',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => 'off',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-            ])
-            ->add('endAt', DateTimeType::class, [
-                'label' => 'Date de fin',
-                'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => 'off',
-                ],
-                'row_attr' => [
-                    'class' => 'form-group-inline',
                 ],
             ])
             ->add('save', SubmitType::class, [
@@ -115,6 +90,12 @@ class SurveyType extends AbstractType
             $form = $event->getForm();
             /** @var Survey $survey */
             $survey = $event->getData();
+            $restriction = match (true) {
+                null !== $survey->getBikeRide() => self::DISPLAY_BIKE_RIDE,
+                !$survey->getMembers()->isEmpty() => self::DISPLAY_MEMBER_LIST,
+                default => self::DISPLAY_ALL_MEMBERS,
+            };
+            $survey->setRestriction($restriction);
             $form
                 ->add('restriction', ChoiceType::class, [
                     'expanded' => true,
@@ -130,15 +111,10 @@ class SurveyType extends AbstractType
                             'class' => ($options['display_disabled']) ? 'like-disabled' : 'form-modifier',
                         ];
                     },
-                    'data' => match (true) {
-                        null !== $survey->getBikeRide() => self::DISPLAY_BIKE_RIDE,
-                        !$survey->getMembers()->isEmpty() => self::DISPLAY_MEMBER_LIST,
-                        default => self::DISPLAY_ALL_MEMBERS,
-                    },
                 ]);
         });
 
-        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->urlGenerator));
+        $builder->addEventSubscriber(new AddRestrictionSubscriber($this->levelService, $this->userRepository, $this->bikeRideRepository, $this->urlGenerator));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

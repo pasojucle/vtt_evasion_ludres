@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Form\Admin\EventListener\Survey;
 
+use App\Entity\BikeRide;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Form\Admin\BikeRideAutocompleteField;
 use App\Form\Admin\SurveyType;
 use App\Form\Admin\UsersAutocompleteField;
+use App\Repository\BikeRideRepository;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
 use App\Service\SeasonService;
+use DateInterval;
+use DateTimeImmutable;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -24,6 +29,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly LevelService $levelService,
         private readonly UserRepository $userRepository,
+        private readonly BikeRideRepository $bikeRideRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -45,7 +51,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $memberIds[] = $member->getId();
         }
 
-        $this->modifier($event->getForm(), $survey->getRestriction(), $survey->getLevelFilter(), $memberIds);
+        $this->modifier($event->getForm(), $survey->getRestriction(), $survey->getLevelFilter(), $memberIds, $survey->getBikeRide());
     }
 
     public function preSubmit(FormEvent $event): void
@@ -65,26 +71,62 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             $this->addOrRemoveMembers($data, $levels, $memberIds, $survey);
             $this->cleanData($restriction, $data, $survey);
         }
+        
+        $this->setPeriod($restriction, $survey, $data);
         $event->setData($data);
         $event->getForm()->setData($survey);
-
-        $this->modifier($event->getForm(), $restriction, $levelFilter, $memberIds);
+        $this->modifier($event->getForm(), $restriction, $levelFilter, $memberIds, $survey->getBikeRide());
     }
 
-    private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter, ?array $memberIds): void
+    private function modifier(FormInterface $form, ?int $restriction, ?array $levelFilter, ?array $memberIds, ?BikeRide $bikeRide): void
     {
         $options = $form->getConfig()->getOptions();
         $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
         $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction || $options['display_disabled'];
-
+        $disabledPeriod = !$disabledBikeRide && null !== $bikeRide;
         if (!$disabledBikeRide) {
             $form
-            ->add('bikeRide', BikeRideAutocompleteField::class, [
-                'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
-                'required' => true,
-                'disabled' => $disabledBikeRide,
-            ]);
+                ->add('bikeRide', BikeRideAutocompleteField::class, [
+                    'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
+                    'required' => true,
+                    'disabled' => $disabledBikeRide,
+                    'attr' => [
+                        'data-modifier' => 'surveyRestriction',
+                        'class' => 'form-modifier',
+                    ],
+                ]);
+        } else {
+            $form->remove('bikeRide');
         }
+        $form
+            ->add('startAt', DateTimeType::class, [
+                    'label' => 'Date de début',
+                    'widget' => 'single_text',
+                    'html5' => false,
+                    'format' => 'dd/MM/yyyy',
+                    'attr' => [
+                        'class' => 'js-datepicker',
+                        'autocomplete' => 'off',
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-group-inline',
+                    ],
+                    'disabled' => $disabledPeriod,
+                ])
+            ->add('endAt', DateTimeType::class, [
+                'label' => 'Date de fin',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'dd/MM/yyyy',
+                'attr' => [
+                    'class' => 'js-datepicker',
+                    'autocomplete' => 'off',
+                ],
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'disabled' => $disabledPeriod,
+            ]);
         if (!$disabledMembers) {
             $form
             ->add('members', UsersAutocompleteField::class, [
@@ -212,5 +254,28 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         unset($data['levelsFilter']);
         $survey->clearMembers()
             ->setLevelFilter([]);
+    }
+
+    private function setPeriod(int $restriction, Survey $survey, array &$data): void
+    {
+        $startAt = $endAt = new DateTimeImmutable();
+        if (SurveyType::DISPLAY_BIKE_RIDE === $restriction && array_key_exists('bikeRide', $data)) {
+            $bikeRide = $this->bikeRideRepository->find($data['bikeRide']);
+            if ($bikeRide) {
+                $intervalDisplay = new DateInterval('P' . $bikeRide->GetDisplayDuration() . 'D');
+                $startAt = $bikeRide->getStartAt()->sub($intervalDisplay);
+                $endAt = $bikeRide->getStartAt();
+                $survey->setBikeRide($bikeRide);
+            }
+        } else {
+            $data['bikeRide'] = null;
+            $survey->setBikeRide(null);
+        }
+        $startAt = $startAt->setTime(0, 0, 0);
+        $endAt = $endAt->setTime(23, 59, 59);
+        $survey->setStartAt($startAt);
+        $survey->setEndAt($endAt);
+        $data['startAt'] = $startAt->format('d/m/Y H:i:s');
+        $data['endAt'] = $endAt->format('d/m/Y H:i:s');
     }
 }
