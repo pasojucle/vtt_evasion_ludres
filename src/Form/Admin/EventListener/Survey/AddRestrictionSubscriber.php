@@ -83,7 +83,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $options = $form->getConfig()->getOptions();
         $disabledMembers = SurveyType::DISPLAY_MEMBER_LIST !== $restriction;
         $disabledBikeRide = SurveyType::DISPLAY_BIKE_RIDE !== $restriction || $options['display_disabled'];
-        $disabledPeriod = !$disabledBikeRide && null !== $bikeRide;
+        $disabledPeriod = SurveyType::DISPLAY_BIKE_RIDE === $restriction && null !== $bikeRide;
         if (!$disabledBikeRide) {
             $form
                 ->add('bikeRide', BikeRideAutocompleteField::class, [
