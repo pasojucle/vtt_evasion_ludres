@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\State\ArticleStateProcessor;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Patch;
 use App\Repository\ArticleRepository;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -22,6 +23,11 @@ use Symfony\Component\Serializer\Attribute\Groups;
     security: "is_granted('ROLE_USER')"
 )]
 #[Post(
+    denormalizationContext: ['groups' => 'Article:write'],
+    processor: ArticleStateProcessor::class,
+    security: "is_granted('ROLE_USER')"
+)]
+#[Patch(
     denormalizationContext: ['groups' => 'Article:write'],
     processor: ArticleStateProcessor::class,
     security: "is_granted('ROLE_USER')"

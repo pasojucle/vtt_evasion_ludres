@@ -5,7 +5,7 @@ import { SectionType } from '@/types/SectionType';
 import { ChapterType } from '@/types/ChapterType';
 
 export default function Home(): React.JSX.Element|undefined {
-    const {data, error, httpResponse} = useDataLoader('sections');
+    const data = useDataLoader('sections');
     console.log('home', data)
 
     if (data) {

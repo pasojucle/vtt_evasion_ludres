@@ -8,7 +8,8 @@ export const dataLoader = async (
   entity: string,
   param?: string | number | undefined,
   token?: string | undefined
-): Promise<FetchResult> => {
+) => {
+
   const response = await fetch(url(entity, param), options(token));
   console.log(response);
   const httpResponse = response.status;
@@ -33,7 +34,6 @@ export const dataSender = async (
   token: string | undefined,
   data?: BodyInit
 ): Promise<any> => {
-  console.log('param', param)
   try {
     const response = await fetch(url(entity, param), options(token, method, data));
     console.log('response', response.status);
@@ -53,12 +53,11 @@ export const dataSender = async (
 };
 
 const url = (entity: string, param: string | number | undefined): string => {
-  console.log('param', param)
   let apiUrl = `/api/${entity}`;
   if (param) {
     apiUrl += `/${param}`;
   }
-console.log('apiUrl', apiUrl)
+
   return apiUrl;
 };
 
@@ -89,8 +88,6 @@ const options = (
     headers,
     body: data,
   };
-
-  console.log('options', config);
 
   return config;
 };

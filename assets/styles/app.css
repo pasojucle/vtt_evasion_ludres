@@ -108,7 +108,7 @@ h3 {
 
     --popover-foreground: oklch(0.13 0.028 261.692);
 
-    --primary: oklch(0.21 0.034 264.665);
+    --primary: oklch(48.8% 0.243 264.376);
 
     --primary-foreground: oklch(0.985 0.002 247.839);
 
@@ -173,7 +173,7 @@ h3 {
 
     --popover-foreground: oklch(0.985 0.002 247.839);
 
-    --primary: oklch(0.928 0.006 264.531);
+    --primary: oklch(48.8% 0.243 264.376);
 
     --primary-foreground: oklch(0.21 0.034 264.665);
 

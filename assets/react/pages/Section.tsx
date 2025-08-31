@@ -8,18 +8,18 @@ import { ArticleType } from '@/types/ArticleType';
 export default function Section(): React.JSX.Element|undefined {
     let {id} = useParams();
 
-    const {data, error, httpResponse} = useDataLoader('sections', id);
+    const data = useDataLoader('sections', id);
 
     const routes = () => {
         return [
-            {'title': data.title,'pathname': `/section/${data.id}`}
+            {'title': data.title,'pathname': `/section/${id}`}
         ];
     }
 
     if (data) {
         console.log("useDataLoader appelé dans Section", data);
         return (
-            <>
+            <div>
                 <BreadcrumbTrail routes={routes()} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                     { data.chapters.map((chapter: ChapterType) =>
@@ -39,7 +39,7 @@ export default function Section(): React.JSX.Element|undefined {
                         </div>
                     )}
                 </div>
-            </>
+            </div>
         )
     }
 }

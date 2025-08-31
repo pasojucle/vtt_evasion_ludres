@@ -3,23 +3,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { dataLoader } from "@/helpers/queryHelper";
 
 export const useDataLoader = (entity: string, param?: string | number | undefined) => {
-    const [data, setData] = useState<any|null>(null);
-    const [error, setError] = useState<string|null>('');
-    const [httpResponse, setHttpResponse] = useState<number|null>(null)
+    const [data, setData] = useState<any | null>(null);
     const { token } = useAuth();
+
     useEffect(() => {
-        const fetchData = async() => {
+        const fetchData = async () => {
             await dataLoader(entity, param, token).then((result) => {
-                console.log('result', result);
                 setData(result.data);
-                setError(result.error);
-                setHttpResponse(result.httpResponse);
+
+                if (result.error) {
+                    console.error(result.error);
+                }
             })
         }
 
         fetchData();
     }, [entity, param]);
 
-    
-    return {data, error, httpResponse};
+
+    return data;
 }

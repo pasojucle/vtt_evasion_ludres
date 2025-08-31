@@ -21,11 +21,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (newToken: string) => {
     setToken(newToken);
-    if (location.pathname.includes('login')) {
-      navigate('/');
-    } else {
-      navigate(location.pathname);
-    }
   };
 
   const logout = () => {

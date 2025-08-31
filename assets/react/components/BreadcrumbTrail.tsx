@@ -63,7 +63,7 @@ export default function BreadcrumbTrail({ routes }: BreadcrumbTrailProps): React
   }
 
   return (
-    <div className="flex mt-7 mb-4">
+    <div className="flex mt-7 mb-4 ml-4 lg:ml-0">
       {breadcrumbs().map((breadcrumb, index) => (
         <Item key={index} breadcrumb={breadcrumb} />
       ))}

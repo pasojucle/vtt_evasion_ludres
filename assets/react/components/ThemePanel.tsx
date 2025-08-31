@@ -1,5 +1,5 @@
 import { useTheme} from '@/hooks/useTheme';
-
+import { Button } from './ui/button';
 
 export default function ThemePanel(): React.JSX.Element {
     const { theme, toggleTheme } = useTheme();
@@ -21,8 +21,9 @@ export default function ThemePanel(): React.JSX.Element {
     }
 
     return(
-        <button onClick={toggleTheme}>
+        <Button className="has-[>svg]:px-0 px-0 justify-start" variant="ghost" type="button" onClick={toggleTheme}>
+            <span className="lg:hidden">Thème</span>
             <Icon />
-        </button>
+        </Button>
     )
 }

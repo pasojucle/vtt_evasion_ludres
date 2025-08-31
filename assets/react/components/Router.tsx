@@ -40,26 +40,12 @@ const routeConfig: RouteObject[] = [
           },
         ]
       },
-      // {
-      //   path: '/user',
-      //   element: <LayoutProtected />,
-      //   children: [
-      //     {
-      //       path: 'add',
-      //       element: <UserEditPage />
-      //     },
-      //     {
-      //       path: ':id/edit',
-      //       element: <UserEditPage />
-      //     },
-      //   ]
-      // },
       {
         path: '*',
         element: <NotFoundPage />,
       },
     ]
-  },
+  }
 ];
 
 
