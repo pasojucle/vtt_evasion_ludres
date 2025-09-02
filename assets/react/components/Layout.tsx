@@ -20,7 +20,7 @@ export default function Layout(): React.JSX.Element {
     }
 
     const classNameMenu = () => {
-        let className = "menu w-full lg:block flex-grow lg:flex lg:items-center lg:w-auto lg:pl-3 mt-4 pt-4 border-t-1 border-gray-300 lg:border-none lg:mt-0 lg:pt-0";
+        let className = "menu w-full lg:block flex-grow lg:flex lg:items-center lg:w-auto mt-4 pt-4 border-t-1 border-gray-300 lg:border-none lg:mt-0 lg:pt-0";
         if (collapseMenu) {
             className += ' hidden'
         }
@@ -66,14 +66,14 @@ export default function Layout(): React.JSX.Element {
                         <div className="relative w-1/3 2xl:w-1/2 mx-auto text-gray-600 lg:block hidden">
                             <Search/>
                         </div>
-                        <div className="flex w-full lg:w-1/12 flex-col lg:flex-row pl-4 lg:pl-0 lg:gap-8">
+                        <div className="flex w-full lg:max-w-max flex-col lg:flex-row pl-4 lg:pl-0 lg:gap-8">
                             <ThemePanel />
                             <Login />
                         </div>
                     </div>
                 </nav>      
             </div>
-            <div className="max-w-[90rem] mx-auto lg:px-4 sm:px-6 md:px-8">
+            <div className="max-w-[90rem] mx-auto lg:px-4 sm:px-6 md:px-8 pb-8">
                 <Outlet />
             </div>
             <Toaster />

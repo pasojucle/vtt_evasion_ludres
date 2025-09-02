@@ -41,8 +41,18 @@ export const dataSender = async (
     if (response.status === 401) return { user: null };
     if (response.status === 204) return { status: 204 };
 
-    const jsonResult = await response.json();
-    return jsonResult;
+    let jsonResult = null;
+    try {
+      jsonResult = await response.json()
+    } catch (err) {
+      console.warn("JSON parse error:", err);
+    }
+
+    // console.log("jsonResult",jsonResult);
+    return {
+      data: jsonResult,
+      status: response.status,
+    };
   } catch (error: any) {
     console.error(error.message);
     return {
