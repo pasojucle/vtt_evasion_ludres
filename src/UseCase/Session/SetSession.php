@@ -39,8 +39,8 @@ class SetSession
         $session = $form->get('session')->getData();
         $user->addSession($session);
         $responses = ($form->has('responses')) ? $form->get('responses')->getData() : null;
-        if (AvailabilityEnum::REGISTERED === $session->getAVailability() && $responses && !empty($surveyResponses = $responses['surveyResponses'])) {
-            $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
+        if ($this->hasSurveyResponsesToAdd($responses, $user, $bikeRide, $session)) {
+            $this->addSurveyResponses($responses['surveyResponses'], $user, $bikeRide);
         }
         $this->confirmationSession->execute($session);
         $this->cacheService->deleteCacheIndex($session->getCluster());
@@ -118,6 +118,23 @@ class SetSession
         if (UnitOfWork::STATE_MANAGED < $entityState) {
             $this->addSurveyResponses($surveyResponses, $user, $bikeRide);
         }
+    }
+
+    private function hasSurveyResponsesToAdd(?array $responses, User $user, BikeRide $bikeRide, Session $session): bool
+    {
+        if (null === $bikeRide->getSurvey()) {
+            return false;
+        }
+
+        if (null === $responses || empty($responses['surveyResponses'])) {
+            return false;
+        }
+
+        if (Level::TYPE_FRAME === $user->getLevel()->getType() && $bikeRide->getBikeRideType()->isNeedFramers() && AvailabilityEnum::REGISTERED !== $session->getAVailability()) {
+            return false;
+        } 
+
+        return true;
     }
 
     private function addSurveyResponses(array $surveyResponses, User $user, BikeRide $bikeRide): void
