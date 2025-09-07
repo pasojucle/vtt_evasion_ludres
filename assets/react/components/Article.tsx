@@ -42,7 +42,6 @@ export default function Article({ article, parent, sections, chapters, handleCha
     const deleteArticle = (article: ArticleType) => {
 
         dataSender('DELETE', 'articles', article.id, token).then((response) => {
-            console.log('deleteArticle -----', response.status, `/chapter/${parent?.id}`)
             if (204 === response.status) {
                 toast.success(`Suppression ${article.title} réussi.`);
                 refresh();

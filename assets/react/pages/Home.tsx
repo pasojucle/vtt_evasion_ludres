@@ -6,7 +6,6 @@ import { ChapterType } from '@/types/ChapterType';
 
 export default function Home(): React.JSX.Element|undefined {
     const data = useDataLoader('sections');
-    console.log('home', data)
 
     if (data) {
         return (

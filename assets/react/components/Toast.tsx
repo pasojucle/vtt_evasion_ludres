@@ -43,7 +43,6 @@ export default function Toast(): React.JSX.Element {
         type: ToastType;
     }
     const Icon: React.FC<IconProps> = () => {
-        console.log('type', type)
         return React.createElement(Components[type]);
     }
 

@@ -31,7 +31,6 @@ export default function Loginl(): React.JSX.Element {
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log('handleLogin');
         const response = await fetch('/api/login_check', {
             method: 'POST',
             headers: {
@@ -39,13 +38,11 @@ export default function Loginl(): React.JSX.Element {
             },
             body: JSON.stringify({ username: email, password: password }),
         });
-        console.log('response', response);
         if (response.ok) {
             const jsonResult = await response.json();
             setOpen(false);
             login(jsonResult.token)
 
-            console.log('auth', jsonResult)
             return;
         }
         if (401 === response.status) {

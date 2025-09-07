@@ -11,7 +11,6 @@ export const dataLoader = async (
 ) => {
 
   const response = await fetch(url(entity, param), options(token));
-  console.log(response);
   const httpResponse = response.status;
   const jsonResult = await response.json();
 
@@ -36,7 +35,6 @@ export const dataSender = async (
 ): Promise<any> => {
   try {
     const response = await fetch(url(entity, param), options(token, method, data));
-    console.log('response', response.status);
 
     if (response.status === 401) return { user: null };
     if (response.status === 204) return { status: 204 };
@@ -48,7 +46,6 @@ export const dataSender = async (
       console.warn("JSON parse error:", err);
     }
 
-    // console.log("jsonResult",jsonResult);
     return {
       data: jsonResult,
       status: response.status,

@@ -9,6 +9,7 @@ import ChapterPage from '@/pages/Chapter';
 import Layout from '@/components/Layout';
 import NotFoundPage from '@/pages/NotFound';
 import ErrorPage from '@/pages/Error';
+import SectionAddArticle from '@/pages/SectionAddArticle';
 
 
 const routeConfig: RouteObject[] = [
@@ -29,6 +30,16 @@ const routeConfig: RouteObject[] = [
             Component: SectionPage,
           },
         ]
+      },
+      {
+        path: 'section/:id/add/article',
+        Component: LayoutProtected,
+        children: [
+          {
+            index: true,
+            Component: SectionAddArticle,
+          },
+        ],
       },
       {
         path: '/chapter',

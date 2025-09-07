@@ -9,7 +9,7 @@ import Article from '@/components/Article';
 import { SectionType } from '@/types/SectionType';
 import { dataLoader } from '@/helpers/queryHelper';
 import { Button } from '@/components/ui/button';
-import { CaptionsOff, Plus } from 'lucide-react';
+import { CirclePlus, Plus } from 'lucide-react';
 import ArticleEdit from '@/components/ArticleEdit';
 
 
@@ -17,7 +17,7 @@ export default function Chapter(): React.JSX.Element {
     const { id } = useParams();
     const [addArticle, setAddArticle] = useState(false);
     const [chapter, setChapter] = useState<ChapterType | null>(null);
-    const sections = useDataLoader('sections');
+    const sections = useDataLoader('sections') ?? {member: []};
     const location = useLocation();
     const hash = location.hash;
     useScrollToLocation(chapter, hash);
@@ -35,7 +35,6 @@ export default function Chapter(): React.JSX.Element {
     }
 
     const getChaptersBySection = (section: SectionType) => {
-        console.log('section ///', section)
         if (undefined !== section.id) {
             dataLoader(`chapters?section.id=${section.id}`)
             .then((result) => {
@@ -120,8 +119,8 @@ export default function Chapter(): React.JSX.Element {
                 <div className="relative z-20 prose prose-slate dark:prose-dark flex flex-wrap gap-5 mt-8">
                     {addArticle 
                         ? <NewArticle />
-                        : <div className="w-full h-48 lg:w-4/12 overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800 flex items-center">
-                            <Button variant="ghost" size="lg" className="w-full" onClick={() => setAddArticle(true)}><Plus /> Ajouter un article</Button>
+                        : <div className="w-full lg:w-4/12 overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800 flex items-center">
+                            <Button variant="ghost" size="lg" className="w-full flex-col h-48" onClick={() => setAddArticle(true)}><CirclePlus className="size-10" /> Ajouter un article</Button>
                         </div>
                     }
                 </div>

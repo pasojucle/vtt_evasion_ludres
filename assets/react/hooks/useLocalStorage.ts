@@ -4,7 +4,6 @@ export function useLocalStorage<T>(keyName: string, defaultValue: T): [T, (value
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const value = window.localStorage.getItem(keyName);
-      console.log('localStorage', value);
       if (value) {
         return JSON.parse(value) as T;
       } else {
@@ -18,10 +17,9 @@ export function useLocalStorage<T>(keyName: string, defaultValue: T): [T, (value
 
   const setValue = (newValue: T) => {
     try {
-      console.log('localStorage set value', keyName, newValue);
       window.localStorage.setItem(keyName, JSON.stringify(newValue));
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
     setStoredValue(newValue);
   };

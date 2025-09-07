@@ -20,7 +20,6 @@ export const ThemeProvider = ({ children }: ThemeProviderProps): React.JSX.Eleme
 
   useEffect(() => {
     applyTheme(theme);
-    console.log("applyMode", theme);
   }, []);
 
   const toggleTheme = (): void => {

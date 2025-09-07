@@ -6,7 +6,6 @@ export default function UserEdit(): React.JSX.Element {
 
     let {id} = useParams();
 
-    console.log('section', id)
 
     return (
         <div>

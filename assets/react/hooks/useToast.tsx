@@ -27,7 +27,6 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [type, setType] = useState<ToastType>('default');
 
   const showToast = (message: string, type: ToastType = 'default') => {
-    console.log('showToast', type);
     setType(type);
     setMessage(message);
     setShown(true);

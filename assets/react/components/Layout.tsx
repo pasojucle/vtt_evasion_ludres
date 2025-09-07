@@ -14,7 +14,6 @@ export default function Layout(): React.JSX.Element {
     useEffect(() => { setCollapseMenu(true) }, [location])
 
     const { projectName} = useTheme();
-    console.log('test', projectName);
     const toggleMenu = () => {
         setCollapseMenu(!collapseMenu);
     }

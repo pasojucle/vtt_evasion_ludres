@@ -13,7 +13,6 @@ export default function ChoiceType({label, name, value, options, handleChange, c
     const id = idFromName(name);
 
     const Option = ({option}:any) => {
-        console.log('option', option)
         return (
             <option value={option.value}>{option.text}</option>
         )

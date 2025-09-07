@@ -10,9 +10,7 @@ export const imageUpload = async (file: File, token: string|undefined) => {
             'Authorization': `Bearer ${token}`,
         }
     })
-console.log('upload response', response)
     const result = await response.json();
-    console.log('upload response', result)
     if (result['@id']) {
         return decodeURIComponent(result['@id']);
     } else {

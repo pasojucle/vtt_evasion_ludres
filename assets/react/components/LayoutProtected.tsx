@@ -14,7 +14,6 @@ export default function LayoutProtected(): React.JSX.Element {
 
   return (
       <>
-        <h1>protected</h1>
         <Outlet />
       </>
     )

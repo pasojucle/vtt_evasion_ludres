@@ -20,59 +20,48 @@ type ArticleEditProps = {
 }
 
 export default function ArticleEdit({article, parent, sections, chapters, handleChangeParent, handleClose }: ArticleEditProps): React.JSX.Element | undefined {
-
     const undefinedValue = {'@id': undefined, id: undefined}
     const { token } = useAuth();
     const [title, setTitle] = useState(article?.title);
     const [content, setContent] = useState(article?.content);
-    const [section, setSection] = useState(parent ? parent.section : undefinedValue);
+    const [section, setSection] = useState(article?.section ?? undefinedValue);
     const [chapter, setChapter] = useState(parent ?? undefinedValue);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = {
-            'section': undefined !== section['@id'] ? section['@id'] : section,
+            'section': undefined !== section?.['@id'] ? section['@id'] : section,
             'chapter': undefined !== chapter['@id'] ? chapter['@id'] : chapter,
             'title': title,
             'content': content,
-        };
-        console.log("handleSubmit", data)
-        
+        };        
         dataSender(
                 undefined !== article.id ? 'PATCH' : 'POST',
                 'articles', article?.id ?? undefined,
                 token, JSON.stringify(data)
             ).then((response) => {
-
-                
-            console.log("toast", response)
             if (200 === response.status) {
-                console.log("toast", `Modification ${title} réussi.`)
                 toast(`Modification ${title} réussi.`)
                 toast.success(`Modification ${title} réussi.`)
                 
             }
             if (201 === response.status) {
-                console.log("toast", `L'article ${title} a bien été ajouté.`)
                 toast.success(`L'article ${title} a bien été ajouté.`)
             }
             handleClose();
         });
     }
     const handleSelectSection = (value: any) => {
-        console.log('handleSelectSection', value)
         setSection(value)
         setChapter(undefinedValue)
         handleChangeParent(value);
     }
 
     const handleRemoveSection = () => {
-        console.log('handleRemoveSection')
         setSection(undefinedValue)
         setChapter(undefinedValue)
     }
     const handleSelectChapter = (value: any) => {
-        console.log('handleSelectChapter', value)
         setChapter(value)
     }
 
@@ -85,7 +74,6 @@ export default function ArticleEdit({article, parent, sections, chapters, handle
     }
 
     const handleChangeContent = (html: string) => {
-        console.log('content', html);
         setContent(html);
     }
 

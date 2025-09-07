@@ -60,7 +60,6 @@ export default function AutocompleteType({ list, value, label, className, placeh
             selected: true,
         };
         handleSelect(item)
-        console.log('added ---', item)
         setIdActive(0);
         clearTextFilter();
         setDropDowCollapsed(true);
@@ -74,7 +73,6 @@ export default function AutocompleteType({ list, value, label, className, placeh
     }
 
     const clear = () => {
-        console.log('--- clear ---')
         clearTextFilter();
         list.map((item: any) => item.selected = false);
         handleRemove();
@@ -88,7 +86,6 @@ export default function AutocompleteType({ list, value, label, className, placeh
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>, filteredChoices: any) => {
         let index = filteredChoices.findIndex((item:any) => item.id === idActive)
-        console.log('index', index);
         if ('Enter' === event.code) {
             event.preventDefault();
             if (true !== filteredChoices[index].selected) {

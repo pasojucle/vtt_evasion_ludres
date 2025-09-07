@@ -22,7 +22,7 @@ class Section
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:list', 'Chapter:item', 'Article:item'])]
+    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, nullable: true)]
