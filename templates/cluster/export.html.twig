@@ -7,7 +7,7 @@
             <br>
             <table class="table-fixed">
                 <tr>
-                    <td rowspan="6" style="width: 150px">
+                    <td rowspan="8" style="width: 150px">
                         {% if user.member.picture %}
                             <img src="{{ user.member.picture|imgPath(media) }}" style="width: 80px;">
                         {% endif %}
@@ -36,12 +36,12 @@
                 </tr>
                 {% if user.member.emergencyPhone is not null %}
                     <tr>
-                        <td colspan="7"><b>Personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</td>
+                        <td colspan="3"><b>Personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</td>
                     </tr>
                 {% endif %}
                 {% if user.member.emergencyContact is not null %}
                     <tr>
-                        <td colspan="7"><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</td>
+                        <td colspan="3"><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</td>
                     </tr>
                 {% endif %}
             </table>

@@ -64,7 +64,7 @@ export class Form {
                     field.setMessageError(validator.html);
                 }
                 field.setStatus(validator.status);
-                field.refreshDynamicField();
+                field.refreshDynamicFields();
             })
             if (json.alert) {
                 this.callErrorRoute(json.alert.id)
@@ -91,11 +91,13 @@ export class Form {
         return this.fields.find((field) => field.id === id)
     }
     addEventListenerChange = (targeEl) => {
-        const fieldEl = targeEl.querySelector('[data-constraint]');
-        const field = (fieldEl) ? this.findById(fieldEl.id) : null;
-        if (field) {
-            field.getFieldEl().addEventListener('input', field.handleChange);
-        }
+        targeEl.querySelectorAll('[data-constraint]').forEach((fieldEl) => {
+            const field = (fieldEl) ? this.findById(fieldEl.id) : null;
+            if (field) {
+                field.addEventListeners();
+            }
+        })
+        this.validate();
     }
 }
 
@@ -114,11 +116,12 @@ class Field {
         this.multipleFields = field.dataset.multipleFields;
         this.isPhoneNumber = field.classList.contains('phone-number');
         this.alertRoute = field.dataset.alertRoute;
+        this.dynamicFieldIds = [];
         this.addRelations(field.dataset.modifier);
         this.addExtraParam(field.dataset.extraParamName, field.dataset.extraValue)
-        this.addEventListener();
+        this.addEventListeners();
     }
-    addEventListener() {
+    addEventListeners() {
         const element = this.getFieldEl();
         if (element.tagName === 'INPUT' && ['text', 'password'].includes(element.type)) {
             element.addEventListener('input', this.handleChange);
@@ -133,9 +136,10 @@ class Field {
     }
     addRelations = (dynamicFieldId) => {
         if (dynamicFieldId) {
-            const dynamicField = this.form.element.querySelector(`#${dynamicFieldId} [data-constraint]`)
-            this.dynamicFieldId = getBaseName(dynamicField.id)['shortName'];
-            dynamicField.relatedFieldId = this.id;
+            const dynamicFields = this.form.element.querySelectorAll(`#${dynamicFieldId} [data-constraint]`)
+            dynamicFields.forEach((dynamicField) => {
+                this.dynamicFieldIds.push(getBaseName(dynamicField.id)['shortName']);
+            })
         }
     }
     addExtraParam = (name, value) => {
@@ -215,16 +219,19 @@ class Field {
             fieldEl.parentElement.classList.remove('alert-warning', 'success');
         }
     }
-    refreshDynamicField = () => {
-        if (this.dynamicFieldId) {
-            const dynamicField = this.form.findById(this.dynamicFieldId);
-            if (this.status === 'ALERT_WARNING') {
-                dynamicField.getFieldEl().value = null;
-                const errorEl = dynamicField.getErrorEl();
-                if (errorEl) {
-                    errorEl.remove();
+    refreshDynamicFields = () => {
+        if (0 < this.dynamicFieldIds.length) {
+            this.dynamicFieldIds.forEach((dynamicFieldId) => {
+                const dynamicField = this.form.findById(dynamicFieldId);
+                if (this.status === 'ALERT_WARNING') {
+                    dynamicField.getFieldEl().value = null;
+                    const errorEl = dynamicField.getErrorEl();
+                    if (errorEl) {
+                        errorEl.remove();
+                    }
                 }
-            }
+            })
+
         }
     }
 }

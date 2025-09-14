@@ -102,7 +102,7 @@ class RegistrationController extends AbstractController
 
         $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration();
 
-        if (!$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress->current->form && !$progress->user->licenceNumber) {
+        if ($step === 1 && !$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress->current->form && !$progress->user->licenceNumber) {
             $message = str_replace(['<p>', '</p>'], '', html_entity_decode($schoolTestingRegistration['message']));
             $this->addFlash('success', $message);
         }

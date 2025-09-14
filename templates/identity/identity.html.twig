@@ -42,16 +42,18 @@
             {{ form_row(identity.phone) }}
         {% endif %}
     </div>  
-    {% if identity.profession is defined %}
-        <div class="form-group">{{ form_row(identity.profession) }}</div>
-    {% endif %}
-      
-    {% if identity.emergencyPhone is defined %}
-        <div class="form-group">
-            {{ form_row(identity.emergencyPhone) }}
-            {{ form_row(identity.emergencyContact) }}
-        </div>
-    {% endif %}
+    <div id="adultContainer">
+        {% if identity.profession is defined %}
+            <div class="form-group">{{ form_row(identity.profession) }}</div>
+        {% endif %}
+        
+        {% if identity.emergencyPhone is defined %}
+            <div class="form-group">
+                {{ form_row(identity.emergencyPhone) }}
+                {{ form_row(identity.emergencyContact) }}
+            </div>
+        {% endif %}
+    </div>
     {% if identity.email is defined %}
         <div class="form-group">{{ form_row(identity.email) }}</div>
     {% endif %}

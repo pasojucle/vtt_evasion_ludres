@@ -132,7 +132,7 @@ class SetSession
 
         if (Level::TYPE_FRAME === $user->getLevel()->getType() && $bikeRide->getBikeRideType()->isNeedFramers() && AvailabilityEnum::REGISTERED !== $session->getAVailability()) {
             return false;
-        } 
+        }
 
         return true;
     }

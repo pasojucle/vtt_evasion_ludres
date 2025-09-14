@@ -1,7 +1,7 @@
  <h2>Renseignements concernant l'adhérent</h2>
 <table class="table-fixed" >
     <tr>
-        <td rowspan="9" colspan="2"><img src="{{ user.member.picture|imgPath(media) }}" style="width: 100px;"></td>
+        <td rowspan="10" colspan="2"><img src="{{ user.member.picture|imgPath(media) }}" style="width: 100px;"></td>
         <td colspan="5" style="width: 450px"><b>Nom et prénom : </b>{{ user.member.fullName }}</td>
         <td colspan="2" class="licence-number">{{ user.licenceNumber }}</td>
     </tr>
@@ -28,12 +28,12 @@
     </tr>
     {% if user.member.emergencyPhone is not null %}
         <tr>
-            <td colspan="7"><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone|raw}}</td>
+            <td colspan="5"><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone|raw}}</td>
         </tr>
     {% endif %}
     {% if user.member.emergencyContact is not null %}
         <tr>
-            <td colspan="7"><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</td>
+            <td colspan="5"><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</td>
         </tr>
     {% endif %}
 </table>
