@@ -140,7 +140,7 @@ class SessionType extends AbstractType
         $seasonChoices = ['Saison ' . $currentSeason => 'SEASON_' . $currentSeason];
         $minSeasonToTakePart = $this->seasonService->getMinSeasonToTakePart();
         if ($minSeasonToTakePart < $currentSeason) {
-            $seasonChoices = ['Saison ' . $minSeasonToTakePart => 'SEASON_' . $minSeasonToTakePart];
+            $seasonChoices['Saison ' . $minSeasonToTakePart] = 'SEASON_' . $minSeasonToTakePart;
         }
         
         $seasonChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;

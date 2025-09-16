@@ -104,11 +104,13 @@ class SessionController extends AbstractController
     ): Response {
         $clusters = $bikeRide->getClusters();
         $request->getSession()->set('admin_session_add_clusters', serialize($clusters));
-        $data = ['season' => 'SEASON_' . $seasonService->getCurrentSeason()];
+        $data = [];
+        $currentSeason = $seasonService->getCurrentSeason();
+        $minSeasonToTakePart = $seasonService->getMinSeasonToTakePart();
+        $data['season'] = ($minSeasonToTakePart < $currentSeason) ? null : sprintf('SEASON_%s', $currentSeason);
         if ($bikeRide->getSurvey()) {
             $data['responses'] = ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)];
         }
-
         $form = $this->createForm(SessionType::class, $data, [
             'filters' => ['bikeRide' => $bikeRide->getId(), 'is_final_licence' => false, ],
             'bikeRide' => $bikeRide,

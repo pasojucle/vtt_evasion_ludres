@@ -63,7 +63,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $isFinalLicence = true;
         if (!empty($filters)) {
             if (array_key_exists('is_final_licence', $filters)) {
-                $isFinalLicence = $filters['is_final_licence'];
+                $isFinalLicence = (bool) $filters['is_final_licence'];
             }
             if (isset($filters['query'])) {
                 $this->addCriteriaByName($qb, $filters['query']);
@@ -78,14 +78,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $this->addCriteriaBySeason($qb, (int) $matches[1]);
             }
             if (array_key_exists('season', $filters)) {
-                $season = (1 === preg_match('#^SEASON_(\d{4})$#', $filters['season'], $matches))
-                    ? (int) $matches[1]
+                $season = (1 === preg_match('#^(SEASON_(\d{4})|(\d+))$#', $filters['season'], $matches))
+                    ? (int) sprintf('%s%s', $matches[2], array_key_exists(3, $matches) ? $matches[3] : '')
                     : $filters['season'];
                 match ($season) {
                     $this->seasonService::MIN_SEASON_TO_TAKE_PART => $this->addCriteriaGteSeason($qb),
                     Licence::STATUS_IN_PROCESSING => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isFinalLicence),
                     Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isFinalLicence),
-                    default => $this->addCriteriaBySeason($qb, (int) $season),
+                    default => $this->addCriteriaBySeason($qb, $season),
                 };
             }
             if (isset($filters['permission']) && !empty($filters['permission'])) {
@@ -118,7 +118,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $currentSeason = $this->seasonService->getCurrentSeason();
         $isFinalLicence = false;
-        $this->$$criteria($qb, $currentSeason);
+        $this->$criteria($qb, $currentSeason);
     }
 
     private function addCriteriaWithNoSession(QueryBuilder $qb, int $bikeRideId): QueryBuilder
