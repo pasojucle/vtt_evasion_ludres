@@ -25,7 +25,7 @@ export default function ArticleEdit({article, parent, sections, chapters, handle
     const [title, setTitle] = useState(article?.title);
     const [content, setContent] = useState(article?.content);
     const [section, setSection] = useState(article?.section ?? undefinedValue);
-    const [chapter, setChapter] = useState(parent ?? undefinedValue);
+    const [chapter, setChapter] = useState(article?.chapter ?? undefinedValue);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

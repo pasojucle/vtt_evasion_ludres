@@ -1,11 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from "react-router";
 import { useDataLoader } from '../hooks/useDataLoader';
+import { useArticleAdd } from '@/hooks/UseArticleAdd';
 import { SectionType } from '@/types/SectionType';
 import { ChapterType } from '@/types/ChapterType';
+import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
 
 export default function Home(): React.JSX.Element|undefined {
     const data = useDataLoader('sections');
+    const { setSectionOrigin } = useArticleAdd();
+
+    useEffect(() => {
+        setSectionOrigin(undefined);
+    }, [setSectionOrigin]);
 
     if (data) {
         return (
@@ -13,7 +20,7 @@ export default function Home(): React.JSX.Element|undefined {
                 { data.member.map((section: SectionType) =>
                     <div key={section.id} className="max-w rounded overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">
                         <div className="px-6 py-4">
-                            <div className="font-bold text-xl mb-2">
+                            <div className="font-bold text-xl text-blue-700 mb-2">
                                 <Link to={`/section/${section.id}`}>{section.title}</Link> 
                             </div>
                             <ul>
@@ -25,7 +32,10 @@ export default function Home(): React.JSX.Element|undefined {
                             </ul>
                         </div>
                     </div>
-                )}
+                )}                
+                <div className="fixed bottom-10 right-3 lg:hidden">
+                    <ButtonSmArticleAdd />
+                </div>
             </div>
         )
     }

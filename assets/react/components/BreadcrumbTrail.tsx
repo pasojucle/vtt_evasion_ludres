@@ -44,10 +44,11 @@ export default function BreadcrumbTrail({ routes }: BreadcrumbTrailProps): React
   function breadcrumbs(): Breadcrumb[] {
     const defaultColor = 'text-gray-800 dark:text-gray-200';
     const list: Breadcrumb[] = [];
+    list.push({ title: <Home />, pathname: '/', color: defaultColor });
+        
 
     routes.forEach((breadcrumb, index) => {
       if (index === 0) {
-        list.push({ title: <Home />, pathname: '/', color: defaultColor });
         list.push({ title: <Separator />, pathname: null });
       }
 

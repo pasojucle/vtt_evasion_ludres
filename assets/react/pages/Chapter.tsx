@@ -11,11 +11,13 @@ import { dataLoader } from '@/helpers/queryHelper';
 import { Button } from '@/components/ui/button';
 import { CirclePlus, Plus } from 'lucide-react';
 import ArticleEdit from '@/components/ArticleEdit';
+import { useArticleAdd } from '@/hooks/UseArticleAdd';
+import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
 
 
 export default function Chapter(): React.JSX.Element {
     const { id } = useParams();
-    const [addArticle, setAddArticle] = useState(false);
+    const { setSectionOrigin, setChapterOrigin, addArticle, setAddArticle } = useArticleAdd();
     const [chapter, setChapter] = useState<ChapterType | null>(null);
     const sections = useDataLoader('sections') ?? {member: []};
     const location = useLocation();
@@ -46,7 +48,10 @@ export default function Chapter(): React.JSX.Element {
     useEffect(() => {
         dataLoader(`chapters?section.id=${id}`)
             .then((result) => {
-                setChapters(result.data.member);
+                const chapterOrigin = result.data.member;
+                setChapters(chapterOrigin);
+                setChapterOrigin(chapterOrigin)
+                setSectionOrigin(chapterOrigin.section)
             })
         loadChapter();
     }, [])
@@ -88,17 +93,14 @@ export default function Chapter(): React.JSX.Element {
             <div>
                 <BreadcrumbTrail routes={routes()} />
                 <div className='max-w-3xl mx-auto xl:max-w-none xl:mr-[17.5rem] xl:pr-16'>
-                    <div className="relative z-20 prose prose-slate dark:prose-dark flex flex-col gap-5 mt-8">
+                    <div className="relative z-0 prose prose-slate dark:prose-dark flex flex-col gap-5 mt-8">
                         { chapter.articles.map((article: ArticleType) =>
                             <Article key={article?.id} article={article} parent={chapter} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} refresh={loadChapter}/>
                         )}
                         <NewArticle />
                     </div>
                 </div>
-                <div className="fixed z-20 top-[10rem] right-[max(0px,calc(50%-44rem))] w-[19.5rem] xl:block shadow-lg bg-gray-100 dark:bg-gray-800">
-                    <Button variant="ghost" size="lg" className="w-full h-18 items-center" onClick={() => setAddArticle(true)}><Plus /> Ajouter un article</Button>
-                </div>
-                <div className="fixed z-20 top-[16rem] p-5 right-[max(0px,calc(50%-44rem))] w-[19.5rem] overflow-y-auto hidden xl:block shadow-lg bg-gray-100 dark:bg-gray-800">
+                <div className="fixed z-20 top-[10rem] p-5 right-[max(16px,calc(50%-44rem))] w-[19.5rem] overflow-y-auto hidden xl:block shadow-lg bg-gray-100 dark:bg-gray-800">
                     <Link className='text-blue-700 font-bold mb-5 text-2xl' to={`/chapter/${chapter.id}#${chapter.articles[0].id}`}>Sommaire</Link>
                     <ul>
                         { chapter.articles.map((article: ArticleType) =>
@@ -107,6 +109,9 @@ export default function Chapter(): React.JSX.Element {
                             </li>
                         )}
                     </ul>
+                </div>
+                <div className="fixed z-30 bottom-10 right-3 lg:hidden">
+                    <ButtonSmArticleAdd />
                 </div>
             </div>
         )

@@ -70,7 +70,7 @@ export default function Article({ article, parent, sections, chapters, handleCha
         <div id={String(article?.id)} className="max-w rounded overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">
             <div className="px-6 py-4">
                 <div className="flex flex-wrap items-center font-bold text-xl mb-2">
-                    <div>{article?.title}</div>
+                    <div className="text-blue-700">{article?.title}</div>
                     <ButtonGroup article={article} />
                 </div>
                 <TextRaw textHtml={article?.content} />

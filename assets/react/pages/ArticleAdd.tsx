@@ -6,29 +6,32 @@ import { ArticleType } from '@/types/ArticleType';
 import { SectionType } from '@/types/SectionType';
 import { dataLoader } from '@/helpers/queryHelper';
 import ArticleEdit from '@/components/ArticleEdit';
+import { useArticleAdd } from '@/hooks/UseArticleAdd';
 
 
-export default function SectionAddArticle(): React.JSX.Element {
-    const { id } = useParams();
+export default function ArticleAdd(): React.JSX.Element {
+    const { sectionOrigin, chapterOrigin} = useArticleAdd();
     const navigate = useNavigate();
-    const data = useDataLoader('sections', id);
     const article: ArticleType = {
         title: '',
         content: '',
-        section: undefined,
-        chapter: undefined,
+        section: sectionOrigin,
+        chapter: chapterOrigin,
     }
-    const [loaded, setLoaded] = useState(false);
     const sections = useDataLoader('sections') ?? {member: []};
     const [chapters, setChapters] = useState([]);
     const [newArticleObject, setNewArticleObject] = useState<ArticleType>(article)
 
     const handleClose = () => {
-        navigate(`/section/${id}`)
+        if (sectionOrigin) {
+           navigate(`/section/${sectionOrigin.id}`);
+        } else {
+            navigate("/");
+        }
     }
 
-    const getChaptersBySection = (section: SectionType) => {
-        if (undefined !== section.id) {
+    const getChaptersBySection = (section: SectionType | undefined) => {
+        if (section && undefined !== section.id) {
             dataLoader(`chapters?section.id=${section.id}`)
             .then((result) => {
                 setChapters(result.data.member);
@@ -39,37 +42,23 @@ export default function SectionAddArticle(): React.JSX.Element {
     }
 
     useEffect(() => {
-        dataLoader(`chapters?section.id=${id}`)
-            .then((result) => {
-                setChapters(result.data.member);
-            })
-        dataLoader(`sections/${id}`)
-            .then((result) => {
-                article.section = result.data;
-                setNewArticleObject(article);
-                setLoaded(true);
-            });
+        getChaptersBySection(sectionOrigin);
     }, [])
 
     const routes = () => {
-        return [
-            {'title': data?.title,'pathname': `/section/${id}`}
-        ];
+        if (sectionOrigin) {
+            return [
+                {'title': sectionOrigin.title,'pathname': `/section/${sectionOrigin.id}`}
+            ];
+        }
+        return [];
     }
    
-    const ArticleAdd = () => {
-        if (loaded) {
-            return (
-                <ArticleEdit article={newArticleObject} parent={undefined} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} handleClose={handleClose}/>
-            )
-        }
-    }
-
     return (
         <div>
             <BreadcrumbTrail routes={routes()} />
             <div className='max-w-3xl mx-auto xl:max-w-none xl:mr-[17.5rem] xl:pr-16'>
-                <ArticleAdd />
+                <ArticleEdit article={newArticleObject} parent={undefined} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} handleClose={handleClose}/>
             </div>
         </div>
     )
