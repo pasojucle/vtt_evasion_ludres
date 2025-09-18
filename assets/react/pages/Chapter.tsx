@@ -11,19 +11,24 @@ import { dataLoader } from '@/helpers/queryHelper';
 import { Button } from '@/components/ui/button';
 import { CirclePlus, Plus } from 'lucide-react';
 import ArticleEdit from '@/components/ArticleEdit';
-import { useArticleAdd } from '@/hooks/UseArticleAdd';
+import { useArticleAction } from '@/hooks/UseArticleAction';
 import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
+import ArticleDelete from '@/components/ArticleDelete'
+import { toast } from 'sonner';
+import { dataSender } from '@/helpers/queryHelper';
+import { useAuth } from '../hooks/useAuth';
 
 
 export default function Chapter(): React.JSX.Element {
     const { id } = useParams();
-    const { setSectionOrigin, setChapterOrigin, addArticle, setAddArticle } = useArticleAdd();
+    const { setSectionOrigin, setChapterOrigin, addArticle, setAddArticle, deleteArticle, setDeleteArticle} = useArticleAction();
     const [chapter, setChapter] = useState<ChapterType | null>(null);
     const sections = useDataLoader('sections') ?? {member: []};
     const location = useLocation();
     const hash = location.hash;
     useScrollToLocation(chapter, hash);
     const [chapters, setChapters] = useState([]);
+    const { token } = useAuth();
 
     const loadChapter = async() => {
         dataLoader(`chapters/${id}`)
@@ -71,7 +76,17 @@ export default function Chapter(): React.JSX.Element {
         return (
             <div>Aucune donnée</div>
         )
-    } 
+    }
+
+    const confirmDeleteArticle = () => {
+        dataSender('DELETE', 'articles', deleteArticle?.id, token).then((response) => {
+            if (204 === response.status) {
+                toast.success(`Suppression ${deleteArticle?.title} réussi.`);
+                loadChapter();
+            }
+        });
+        setDeleteArticle(null)
+    }
 
 
     const NewArticle = (): React.JSX.Element | undefined => {
@@ -113,6 +128,7 @@ export default function Chapter(): React.JSX.Element {
                 <div className="fixed z-30 bottom-10 right-3 lg:hidden">
                     <ButtonSmArticleAdd />
                 </div>
+                <ArticleDelete handleConfirm={confirmDeleteArticle} />
             </div>
         )
     }

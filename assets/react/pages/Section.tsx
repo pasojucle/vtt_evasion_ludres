@@ -4,12 +4,12 @@ import { useDataLoader } from '../hooks/useDataLoader';
 import BreadcrumbTrail from '../components/BreadcrumbTrail';
 import { ChapterType } from '@/types/ChapterType';
 import { ArticleType } from '@/types/ArticleType';
-import { useArticleAdd } from '@/hooks/UseArticleAdd';
+import { useArticleAction } from '@/hooks/UseArticleAction';
 import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
 
 export default function Section(): React.JSX.Element|undefined {
     let {id} = useParams();
-    const { setSectionOrigin } = useArticleAdd();
+    const { setSectionOrigin } = useArticleAction();
 
     const data = useDataLoader('sections', id);
     useEffect(() => {

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { dataSender } from '@/helpers/queryHelper';
 import TextRaw from '@/components/TextRaw';
 import { useAuth } from '../hooks/useAuth';
 import { Pencil, CircleX } from 'lucide-react';
-import { toast } from 'sonner';
 import { ArticleType } from '@/types/ArticleType';
 import { ChapterType } from '@/types/ChapterType';
 import { SectionType } from '@/types/SectionType';
 import ArticleEdit from './ArticleEdit';
+import { useArticleAction } from '@/hooks/UseArticleAction';
+
 
 type ArticleProps = {
     article: ArticleType;
@@ -21,6 +21,7 @@ type ArticleProps = {
 export default function Article({ article, parent, sections, chapters, handleChangeParent, refresh }: ArticleProps): React.JSX.Element | undefined {
 
     const { token } = useAuth();
+    const { deleteArticle, setDeleteArticle } = useArticleAction();
     
     const [edit, setEdit] = useState(false);
 
@@ -39,14 +40,8 @@ export default function Article({ article, parent, sections, chapters, handleCha
         ) 
     }
 
-    const deleteArticle = (article: ArticleType) => {
-
-        dataSender('DELETE', 'articles', article.id, token).then((response) => {
-            if (204 === response.status) {
-                toast.success(`Suppression ${article.title} réussi.`);
-                refresh();
-            }
-        });
+    const handleDeleteArticle = (article: ArticleType) => {
+        setDeleteArticle(article);
     }
 
     const ButtonGroup = ({article}:{article: ArticleType | undefined}) => {
@@ -57,7 +52,7 @@ export default function Article({ article, parent, sections, chapters, handleCha
                         className="p-1 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
                         <Pencil />
                     </button>
-                    <button type="button" onClick={() => {deleteArticle(article)}}
+                    <button type="button" onClick={() => {handleDeleteArticle(article)}}
                         className="p-1 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
                         <CircleX />
                     </button>
@@ -70,7 +65,7 @@ export default function Article({ article, parent, sections, chapters, handleCha
         <div id={String(article?.id)} className="max-w rounded overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">
             <div className="px-6 py-4">
                 <div className="flex flex-wrap items-center font-bold text-xl mb-2">
-                    <div className="text-blue-700">{article?.title}</div>
+                    <div className="text-blue-700 max-w-[calc(100%-80px)]">{article?.title}</div>
                     <ButtonGroup article={article} />
                 </div>
                 <TextRaw textHtml={article?.content} />

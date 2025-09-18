@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
 import { Link } from "react-router";
 import { useDataLoader } from '../hooks/useDataLoader';
-import { useArticleAdd } from '@/hooks/UseArticleAdd';
+import { useArticleAction } from '@/hooks/UseArticleAction';
 import { SectionType } from '@/types/SectionType';
 import { ChapterType } from '@/types/ChapterType';
 import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
 
 export default function Home(): React.JSX.Element|undefined {
     const data = useDataLoader('sections');
-    const { setSectionOrigin } = useArticleAdd();
+    const { setSectionOrigin } = useArticleAction();
 
     useEffect(() => {
         setSectionOrigin(undefined);

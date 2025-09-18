@@ -6,6 +6,7 @@ interface Breadcrumb {
   pathname: string | null;
   color?: string;
   path?: string | null;
+  width?: string;
 }
 
 interface BreadcrumbTrailProps {
@@ -17,7 +18,7 @@ export default function BreadcrumbTrail({ routes }: BreadcrumbTrailProps): React
   function Item({ breadcrumb }: { breadcrumb: Breadcrumb }): React.JSX.Element | null {
     if (breadcrumb.path !== null) {
       return (
-        <Link className={`font-extrabold ${breadcrumb.color}`} to={breadcrumb.pathname!}>
+        <Link className={`font-extrabold ${breadcrumb.color} truncate lg:maw-w-auto ${breadcrumb.width}`} to={breadcrumb.pathname!}>
           {breadcrumb.title}
         </Link>
       );
@@ -53,6 +54,7 @@ export default function BreadcrumbTrail({ routes }: BreadcrumbTrailProps): React
       }
 
       breadcrumb.color = index === routes.length - 1 ? 'text-blue-700 dark:text-blue-300' : defaultColor;
+      breadcrumb.width = (1 < routes.length) ? 'max-w-5/12' : 'max-w-10/12'
       list.push(breadcrumb);
 
       if (index < routes.length - 1) {

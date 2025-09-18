@@ -6,11 +6,11 @@ import { ArticleType } from '@/types/ArticleType';
 import { SectionType } from '@/types/SectionType';
 import { dataLoader } from '@/helpers/queryHelper';
 import ArticleEdit from '@/components/ArticleEdit';
-import { useArticleAdd } from '@/hooks/UseArticleAdd';
+import { useArticleAction } from '@/hooks/UseArticleAction';
 
 
-export default function ArticleAdd(): React.JSX.Element {
-    const { sectionOrigin, chapterOrigin} = useArticleAdd();
+export default function ArticleAction(): React.JSX.Element {
+    const { sectionOrigin, chapterOrigin} = useArticleAction();
     const navigate = useNavigate();
     const article: ArticleType = {
         title: '',

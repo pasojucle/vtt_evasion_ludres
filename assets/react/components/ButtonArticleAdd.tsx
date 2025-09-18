@@ -2,13 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { CirclePlus } from "lucide-react";
-import { useArticleAdd } from "@/hooks/UseArticleAdd";
+import { useArticleAction } from "@/hooks/UseArticleAction";
 import { useAuth } from "@/hooks/useAuth";
 
 
 export default function ButtonArticleAdd(): React.JSX.Element|undefined {
 
-    const {sectionOrigin, chapterOrigin, setAddArticle} = useArticleAdd();
+    const {sectionOrigin, chapterOrigin, setAddArticle} = useArticleAction();
     const { token } = useAuth();
 
     if (!token) {

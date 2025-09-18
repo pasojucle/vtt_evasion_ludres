@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Search as SearchIcon } from 'lucide-react';
 import Login from '@/components/Login';
 import ThemePanel from '@/components/ThemePanel';
-import { ArticleAddProvider } from '@/hooks/UseArticleAdd';
+import { ArticleActionProvider } from '@/hooks/UseArticleAction';
 import ButtonArticleAdd from '@/components/ButtonArticleAdd';
 
 
@@ -44,7 +44,7 @@ export default function Layout(): React.JSX.Element {
 
     return (
         <AuthProvider>
-            <ArticleAddProvider>
+            <ArticleActionProvider>
             <div className="sticky z-40 top-0 shadow border-solid border-t-2 border-blue-700 bg-gray-100 dark:bg-gray-800">
                 <nav className="max-w-[90rem] mx-auto flex items-center justify-between flex-wrap py-4 lg:px-4">
                     <div className="flex items-center justify-between lg:w-auto w-full px-4">
@@ -66,13 +66,14 @@ export default function Layout(): React.JSX.Element {
                     </div>
                     <div className={classNameMenu()}>
                         <div className="hidden lg:block">
-                            <ButtonArticleAdd />
+                            <ButtonArticleAdd/>
                         </div>
                         <div className="relative w-1/3 2xl:w-1/2 mx-auto text-gray-600 lg:block hidden">
                             <Search/>
                         </div>
-                        <div className="flex w-full lg:max-w-max flex-col lg:flex-row pl-4 lg:pl-0 lg:gap-8">
+                        <div className="flex w-full items-center lg:max-w-max pl-4 lg:pl-0 gap-4 lg:gap-8">
                             <ThemePanel />
+                            <div className="block lg:hidden">|</div>
                             <Login />
                         </div>
                     </div>
@@ -82,7 +83,7 @@ export default function Layout(): React.JSX.Element {
                 <Outlet />
             </div>
             <Toaster />
-            </ArticleAddProvider>
+            </ArticleActionProvider>
         </AuthProvider>
     )
 }

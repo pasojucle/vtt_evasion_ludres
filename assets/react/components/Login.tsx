@@ -70,8 +70,8 @@ export default function Loginl(): React.JSX.Element {
                             <span className="sr-only">Fermer</span>
                         </button>
                     </div>
-                    <div className="p-4 md:p-5">
-                        <form className="space-y-4" onSubmit={handleLogin}>
+                    <form onSubmit={handleLogin}>
+                        <div className="p-4 md:p-5 space-y-4">
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Identifiant</label>
                                 <input type="email" name="email" id="email" value={email} onChange={(event) => { setEmail(event.target.value) }} autoComplete="username"
@@ -83,14 +83,14 @@ export default function Loginl(): React.JSX.Element {
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                             </div>
                             <Message />
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <Button variant="secondary" onClick={() => setOpen(false)}>
-                                Annuler
-                                </Button>
-                                <Button type="submit">S'authentifier</Button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div className="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-3 border-t dark:border-gray-600 border-gray-200 mt-3">
+                            <Button variant="secondary" onClick={() => setOpen(false)}>
+                            Annuler
+                            </Button>
+                            <Button type="submit">S'authentifier</Button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </>
