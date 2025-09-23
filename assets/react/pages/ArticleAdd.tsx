@@ -58,7 +58,7 @@ export default function ArticleAction(): React.JSX.Element {
         <div>
             <BreadcrumbTrail routes={routes()} />
             <div className='max-w-3xl mx-auto xl:max-w-none xl:mr-[17.5rem] xl:pr-16'>
-                <ArticleEdit article={newArticleObject} parent={undefined} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} handleClose={handleClose}/>
+                <ArticleEdit article={newArticleObject} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} handleClose={handleClose}/>
             </div>
         </div>
     )

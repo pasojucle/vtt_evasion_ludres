@@ -18,7 +18,7 @@ type ArticleProps = {
     refresh: () => void;
 }
 
-export default function Article({ article, parent, sections, chapters, handleChangeParent, refresh }: ArticleProps): React.JSX.Element | undefined {
+export default function Article({ article, sections, chapters, handleChangeParent, refresh }: ArticleProps): React.JSX.Element | undefined {
 
     const { token } = useAuth();
     const { deleteArticle, setDeleteArticle } = useArticleAction();
@@ -36,7 +36,7 @@ export default function Article({ article, parent, sections, chapters, handleCha
 
     if (edit) {
         return (
-            <ArticleEdit article={article} parent={parent} sections={sections} chapters={chapters} handleChangeParent={handleChangeParent} handleClose={handleClose} />
+            <ArticleEdit article={article} sections={sections} chapters={chapters} handleChangeParent={handleChangeParent} handleClose={handleClose} />
         ) 
     }
 
@@ -47,7 +47,7 @@ export default function Article({ article, parent, sections, chapters, handleCha
     const ButtonGroup = ({article}:{article: ArticleType | undefined}) => {
         if (undefined !== article && token) {
             return (
-                <div className='ml-auto inline-flex rounded-md shadow-xs' role='group'>
+                <div className='ml-auto inline-flex items-start rounded-md shadow-xs' role='group'>
                     <button type="button" onClick={handleEdit}
                         className="p-1 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
                         <Pencil />
@@ -63,13 +63,11 @@ export default function Article({ article, parent, sections, chapters, handleCha
 
     return (
         <div id={String(article?.id)} className="max-w rounded overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">
-            <div className="px-6 py-4">
-                <div className="flex flex-wrap items-center font-bold text-xl mb-2">
-                    <div className="text-blue-700 max-w-[calc(100%-80px)]">{article?.title}</div>
-                    <ButtonGroup article={article} />
-                </div>
-                <TextRaw textHtml={article?.content} />
+            <div className="px-6 py-4 flex flex-wrap items-center font-bold text-xl border border-b-2">
+                <div className="text-blue-700 max-w-[calc(100%-80px)]">{article?.title}</div>
+                <ButtonGroup article={article} />
             </div>
+            <TextRaw className='px-6 py-4' textHtml={article?.content} />
         </div>
     )
 }

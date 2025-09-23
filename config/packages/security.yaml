@@ -11,24 +11,34 @@ security:
 
     firewalls:
         login:
-            pattern: /api/login
+            pattern: ^/api/login
             stateless: true
             provider: users
             json_login:
-                check_path: /api/login_check
+                check_path: /api/login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        api:
-            pattern:   /api
+        refresh:
+            pattern: ^/api/token/refresh
             stateless: true
+            refresh_jwt:
+                check_path: /api/token/refresh
+
+        api:
+            pattern: ^/api
+            stateless: true
+            entry_point: jwt
             jwt: ~
 
+            logout:
+                path: api_token_invalidate
 
     access_control:
         # - { path: ^/api/login, roles: PUBLIC_ACCESS }
         # - { path: ^/api/docs, roles: PUBLIC_ACCESS }
         # - { path: /,       roles: PUBLIC_ACCESS }
+        - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
 
 when@test:
     security:

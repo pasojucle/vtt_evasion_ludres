@@ -4,17 +4,23 @@ import { dataLoader } from "@/helpers/queryHelper";
 
 export const useDataLoader = (entity: string, param?: string | number | undefined) => {
     const [data, setData] = useState<any | null>(null);
-    const { token } = useAuth();
+    const { getToken, logout } = useAuth();
 
     useEffect(() => {
         const fetchData = async () => {
-            await dataLoader(entity, param, token).then((result) => {
-                setData(result.data);
+            const token =  await getToken();
+            let result = await dataLoader(entity, param, token);
+            if (result.httpResponse === 401) {
+                logout();
+            }
 
-                if (result.error) {
-                    console.error(result.error);
-                }
-            })
+            if (result.data) {
+                setData(result.data);
+            }
+
+            if (result.error) {
+                console.error(result.error);
+            }
         }
 
         fetchData();

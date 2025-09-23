@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function ButtonArticleAdd(): React.JSX.Element|undefined {
 
-    const {sectionOrigin, chapterOrigin, setAddArticle} = useArticleAction();
+    const {chapterOrigin, setAddArticle} = useArticleAction();
     const { token } = useAuth();
 
     if (!token) {

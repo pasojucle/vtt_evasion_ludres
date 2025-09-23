@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use App\Repository\SectionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Patch;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\SectionRepository;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SectionRepository::class)]
@@ -17,16 +18,22 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 #[GetCollection(normalizationContext: ['groups' => 'section:list'], order: ['title' => 'ASC', 'chapters.title' => 'ASC'], )]
 #[Get(normalizationContext: ['groups' => 'section:item'], order: ['title' => 'ASC', 'chapters.title' => 'ASC', 'chapters.articles.title' => 'ASC'], )]
+
+#[Patch(
+    normalizationContext: ['groups' => 'section:item'],
+    denormalizationContext:['groups' => 'section:write'],
+    order: ['article.title' => 'ASC'],
+)]
 class Section
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item'])]
+    #[Groups(['section:list', 'section:item', 'chapter:item', 'article:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Article:item', 'Article:write'])]
+    #[Groups(['section:list', 'section:item', 'chapter:item', 'article:item', 'article:write', 'section:write'])]
     private ?string $title = null;
 
     /**

@@ -12,16 +12,15 @@ import { SectionType } from '@/types/SectionType';
 
 type ArticleEditProps = {
     article: ArticleType;
-    parent?: ChapterType;
     sections: {member: SectionType[]};
     chapters: ChapterType[];
     handleChangeParent: (section: SectionType) => void;
     handleClose: () => void;
 }
 
-export default function ArticleEdit({article, parent, sections, chapters, handleChangeParent, handleClose }: ArticleEditProps): React.JSX.Element | undefined {
+export default function ArticleEdit({article, sections, chapters, handleChangeParent, handleClose }: ArticleEditProps): React.JSX.Element | undefined {
     const undefinedValue = {'@id': undefined, id: undefined}
-    const { token } = useAuth();
+    const { getToken } = useAuth();
     const [title, setTitle] = useState(article?.title);
     const [content, setContent] = useState(article?.content);
     const [section, setSection] = useState(article?.section ?? undefinedValue);
@@ -34,14 +33,14 @@ export default function ArticleEdit({article, parent, sections, chapters, handle
             'chapter': undefined !== chapter['@id'] ? chapter['@id'] : chapter,
             'title': title,
             'content': content,
-        };        
+        };
+        const token = await getToken();     
         dataSender(
                 undefined !== article.id ? 'PATCH' : 'POST',
                 'articles', article?.id ?? undefined,
                 token, JSON.stringify(data)
             ).then((response) => {
             if (200 === response.status) {
-                toast(`Modification ${title} réussi.`)
                 toast.success(`Modification ${title} réussi.`)
                 
             }

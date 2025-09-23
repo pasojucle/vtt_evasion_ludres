@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\QueryParameter;
 use App\Entity\Article;
 use App\Repository\ChapterRepository;
@@ -14,44 +13,48 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
 #[ApiResource(
     shortName: 'Chapter',
 )]
 #[Get(
-    normalizationContext: ['groups' => 'Chapter:item'],
+    normalizationContext: ['groups' => 'chapter:item'],
     order: ['article.title' => 'ASC'],
 )]
 #[GetCollection(
-    normalizationContext: ['groups' => 'Chapter:list'],
+    normalizationContext: ['groups' => 'chapter:list'],
     filters: ['chapter.search_filter'],
     parameters: [
         'section.id' => new QueryParameter(filter: 'chapter.search_filter')
     ]
+)]
+#[Patch(
+    normalizationContext: ['groups' => 'chapter:item'],
+    denormalizationContext:['groups' => 'chapter:write'],
+    order: ['article.title' => 'ASC'],
 )]
 class Chapter
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Chapter:list', 'Article:item'])]
+    #[Groups(['section:list', 'section:item', 'chapter:item', 'chapter:list', 'article:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Groups(['section:list', 'section:item', 'Chapter:item', 'Chapter:list', 'Article:item', 'Article:write'])]
-    private string $title = 'undefined';
+    #[Groups(['section:list', 'section:item', 'chapter:item', 'chapter:list', 'article:item', 'article:write', 'chapter:write'])]
+    private ?string $title = 'undefined';
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]
-    #[Groups(['Chapter:item', 'Article:item'])]
+    #[Groups(['chapter:item', 'article:item'])]
     private ?Section $section = null;
 
     /**
      * @var Collection<int, Article>
      */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'chapter')]
-    #[Groups(['section:item', 'Chapter:item'])]
+    #[Groups(['section:item', 'chapter:item'])]
     private Collection $articles;
 
     public function __construct()
@@ -64,12 +67,12 @@ class Chapter
         return $this->id;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 

@@ -12,7 +12,6 @@ export default function ButtonSmArticleAction(): React.JSX.Element | undefined {
     const [lastScrollY, setLastScrollY] = useState(0);
     const { sectionOrigin, chapterOrigin, setAddArticle } = useArticleAction();
     const { token } = useAuth();
-    console.log("ButtonSmArticleAction")
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,7 +32,6 @@ export default function ButtonSmArticleAction(): React.JSX.Element | undefined {
     }, [lastScrollY]);
 
     const Label = (): React.JSX.Element => {
-        console.log("scrollDir", scrollDir)
         if (scrollDir === "down") {
             return (
                 <>

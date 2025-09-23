@@ -35,7 +35,7 @@ export default function ArticleDelete({handleConfirm}: ArticleDeleteProps): Reac
                     </button>
                 </div>
                 <div className="p-4 md:p-5">
-                    <p>La suppression d'un'article est définitive</p>
+                    <p>La suppression d'un article est définitive</p>
                     <p>{`Est-vous sûr de voiloir supprimer l'article ${deleteArticle?.title} ?`}</p>
                     
                 </div>

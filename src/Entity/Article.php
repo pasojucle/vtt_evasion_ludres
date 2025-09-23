@@ -19,16 +19,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
     shortName: 'Article',
 )]
 #[Get(
-    normalizationContext: ['groups' => 'Article:item'],
+    normalizationContext: ['groups' => 'article:item'],
     security: "is_granted('ROLE_USER')"
 )]
 #[Post(
-    denormalizationContext: ['groups' => 'Article:write'],
+    denormalizationContext: ['groups' => 'article:write'],
     processor: ArticleStateProcessor::class,
     security: "is_granted('ROLE_USER')"
 )]
 #[Patch(
-    denormalizationContext: ['groups' => 'Article:write'],
+    denormalizationContext: ['groups' => 'article:write'],
     processor: ArticleStateProcessor::class,
     security: "is_granted('ROLE_USER')"
 )]
@@ -40,25 +40,25 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['section:item', 'Chapter:item', 'Article:item', 'Article:write'])]
+    #[Groups(['section:item', 'chapter:item', 'article:item', 'article:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['section:item', 'Chapter:item', 'Article:item', 'Article:write'])]
+    #[Groups(['section:item', 'chapter:item', 'article:item', 'article:write'])]
     private string $title = 'undefined';
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['Chapter:item', 'Article:item', 'Article:write'])]
+    #[Groups(['chapter:item', 'article:item', 'article:write'])]
     private string $content = 'undefined';
 
     #[ORM\ManyToOne(inversedBy: 'articles', cascade: ['persist'])]
-    #[Groups(['Article:item','Article:write'])]
+    #[Groups(['article:item','article:write'])]
     private ?Chapter $chapter = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     private ?User $user = null;
 
-    #[Groups(['Article:write'])]
+    #[Groups(['article:write'])]
     private Section $section;
 
     public function getId(): ?int

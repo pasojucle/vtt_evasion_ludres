@@ -7,7 +7,7 @@ import { ArticleType } from '@/types/ArticleType';
 import { ChapterType } from '@/types/ChapterType';
 import Article from '@/components/Article';
 import { SectionType } from '@/types/SectionType';
-import { dataLoader } from '@/helpers/queryHelper';
+import { dataLoader, dataSender } from '@/helpers/queryHelper';
 import { Button } from '@/components/ui/button';
 import { CirclePlus, Plus } from 'lucide-react';
 import ArticleEdit from '@/components/ArticleEdit';
@@ -15,7 +15,6 @@ import { useArticleAction } from '@/hooks/UseArticleAction';
 import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
 import ArticleDelete from '@/components/ArticleDelete'
 import { toast } from 'sonner';
-import { dataSender } from '@/helpers/queryHelper';
 import { useAuth } from '../hooks/useAuth';
 
 
@@ -28,7 +27,7 @@ export default function Chapter(): React.JSX.Element {
     const hash = location.hash;
     useScrollToLocation(chapter, hash);
     const [chapters, setChapters] = useState([]);
-    const { token } = useAuth();
+    const { getToken } = useAuth();
 
     const loadChapter = async() => {
         dataLoader(`chapters/${id}`)
@@ -78,7 +77,8 @@ export default function Chapter(): React.JSX.Element {
         )
     }
 
-    const confirmDeleteArticle = () => {
+    const confirmDeleteArticle = async() => {
+        const token = await getToken();
         dataSender('DELETE', 'articles', deleteArticle?.id, token).then((response) => {
             if (204 === response.status) {
                 toast.success(`Suppression ${deleteArticle?.title} réussi.`);
@@ -87,7 +87,6 @@ export default function Chapter(): React.JSX.Element {
         });
         setDeleteArticle(null)
     }
-
 
     const NewArticle = (): React.JSX.Element | undefined => {
         if (addArticle) {
@@ -98,7 +97,7 @@ export default function Chapter(): React.JSX.Element {
                 chapter: chapter
             }
             return (
-                <ArticleEdit article={newArticleObject} parent={chapter} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} handleClose={handleClose}/>
+                <ArticleEdit article={newArticleObject} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} handleClose={handleClose}/>
             )
         }
     }
@@ -109,8 +108,13 @@ export default function Chapter(): React.JSX.Element {
                 <BreadcrumbTrail routes={routes()} />
                 <div className='max-w-3xl mx-auto xl:max-w-none xl:mr-[17.5rem] xl:pr-16'>
                     <div className="relative z-0 prose prose-slate dark:prose-dark flex flex-col gap-5 mt-8">
-                        { chapter.articles.map((article: ArticleType) =>
-                            <Article key={article?.id} article={article} parent={chapter} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} refresh={loadChapter}/>
+                        { chapter.articles.map((article: ArticleType) => {
+                            article.chapter = chapter;
+                            article.section = chapter.section;
+                            return (
+                                <Article key={article?.id} article={article} sections={sections} chapters={chapters} handleChangeParent={getChaptersBySection} refresh={loadChapter}/>
+                            )
+                        }
                         )}
                         <NewArticle />
                     </div>
