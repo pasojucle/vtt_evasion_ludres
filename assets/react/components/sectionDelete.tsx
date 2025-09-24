@@ -28,7 +28,7 @@ export default function SectionDelete({section, loadSections}: ArticleDeleteProp
 
     const confirmDeleteSection = async() => {
         const token = await getToken();
-        dataSender('DELETE', 'chapters', section?.id, token).then((response) => {
+        dataSender('DELETE', 'sections', section?.id, token).then((response) => {
             if (204 === response.status) {
                 toast.success(`Suppression ${section?.title} réussi.`);
                 loadSections();

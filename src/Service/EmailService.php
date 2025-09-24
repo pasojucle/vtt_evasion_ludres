@@ -4,9 +4,9 @@
 namespace App\Service;
 
 use App\Entity\User;
-use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -16,21 +16,16 @@ class EmailService
     public const ACTION_REGISTER = 1;
     public const ACTION_RESET = 2;
 
-    private $mailer;
+
     private $projectName;
-    private $router;
-    private $userRepository;
 
     public function __construct(
-        MailerInterface $mailer,
-        ParameterRepository $parameterRepository,
-        UrlGeneratorInterface $router,
-        UserRepository $userRepository
+        private readonly MailerInterface $mailer,
+        private readonly UrlGeneratorInterface $router,
+        private readonly UserRepository $userRepository,
+        private readonly ParameterBagInterface $parameterBag
     ) {
-        $this->mailer = $mailer;
-        $this->projectName = $parameterRepository->findOneByName('PROJECT_NAME');
-        $this->router = $router;
-        $this->userRepository = $userRepository;
+        $this->projectName = $this->parameterBag->get('PROJECT_NAME');
     }
 
     public function register(User $user, int $action = self::ACTION_REGISTER)
@@ -54,10 +49,10 @@ class EmailService
         $email = (new TemplatedEmail())
             ->from($admin->getEmail())
             ->to(new Address($user->getEmail()))
-            ->subject('Votre compte au site ' . $this->projectName->getValue())
+            ->subject('Votre compte au site ' . $this->projectName)
             ->htmlTemplate($template)
             ->context([
-                'projectName' => $this->projectName->getValue(),
+                'projectName' => $this->projectName,
                 'user' => $user,
                 'url' => $url,
             ])

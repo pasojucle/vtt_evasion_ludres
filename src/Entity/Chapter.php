@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
@@ -34,6 +35,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     denormalizationContext:['groups' => 'chapter:write'],
     order: ['article.title' => 'ASC'],
 )]
+#[Delete]
 class Chapter
 {
     #[ORM\Id]
@@ -53,7 +55,7 @@ class Chapter
     /**
      * @var Collection<int, Article>
      */
-    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'chapter')]
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'chapter', cascade: ['persist', 'remove'])]
     #[Groups(['section:item', 'chapter:item'])]
     private Collection $articles;
 

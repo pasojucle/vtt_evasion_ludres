@@ -40,9 +40,10 @@ export default function Chapter(): React.JSX.Element {
         loadChapter();
     }
 
-    const getChaptersBySection = (section: SectionType) => {
+    const getChaptersBySection = async(section: SectionType) => {
         if (undefined !== section.id) {
-            dataLoader(`chapters?section.id=${section.id}`)
+            const accessToken = await getToken();
+            dataLoader(`chapters?section.id=${section.id}`, undefined, accessToken)
             .then((result) => {
                 setChapters(result.data.member);
             })
@@ -50,14 +51,17 @@ export default function Chapter(): React.JSX.Element {
     }
 
     useEffect(() => {
-        dataLoader(`chapters?section.id=${id}`)
-            .then((result) => {
-                const chapterOrigin = result.data.member;
-                setChapters(chapterOrigin);
-                setChapterOrigin(chapterOrigin)
-                setSectionOrigin(chapterOrigin.section)
-            })
-        loadChapter();
+        const fetchData = async () => {
+            const accessToken = await getToken();
+            const result = await dataLoader(`chapters?section.id=${id}`, undefined, accessToken);
+
+            const chapterOrigin = result.data.member;
+            setChapters(chapterOrigin);
+            setChapterOrigin(chapterOrigin);
+            setSectionOrigin(chapterOrigin.section);
+            loadChapter();
+        }
+        fetchData();
     }, [])
 
     const routes = () => {
@@ -78,8 +82,8 @@ export default function Chapter(): React.JSX.Element {
     }
 
     const confirmDeleteArticle = async() => {
-        const token = await getToken();
-        dataSender('DELETE', 'articles', deleteArticle?.id, token).then((response) => {
+        const accessToken = await getToken();
+        dataSender('DELETE', 'articles', deleteArticle?.id, accessToken).then((response) => {
             if (204 === response.status) {
                 toast.success(`Suppression ${deleteArticle?.title} réussi.`);
                 loadChapter();

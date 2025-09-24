@@ -17,7 +17,7 @@ export default function Home(): React.JSX.Element|undefined {
     const { setSectionOrigin } = useArticleAction();
     const [sectionEdit, setSectionEdit] = useState<null | number>(null)
     const [sections, setSections] = useState<SectionType[] | null>(null)
-    const { token } = useAuth();
+    const { token, getToken } = useAuth();
     
     useEffect(() => {
         loadSections();
@@ -28,7 +28,8 @@ export default function Home(): React.JSX.Element|undefined {
     }, [setSectionOrigin]);
 
     const loadSections = async () => {
-        dataLoader("sections")
+        const accessToken = await getToken();
+        dataLoader("sections", undefined, accessToken)
             .then((result) => {
                 setSections(result.data.member);
             });
@@ -37,7 +38,6 @@ export default function Home(): React.JSX.Element|undefined {
     const closeSectionEdit = (refresh: boolean) => {
         setSectionEdit(null);
         if (refresh) {
-            console.log("refresh")
             loadSections();
         }
     }

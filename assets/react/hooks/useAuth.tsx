@@ -31,13 +31,40 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     navigate('/');
   };
 
-  const getToken = async (): Promise<string | undefined> => {
+  const renewAccessToken = useCallback(async (): Promise<string | undefined> => {
+    try {
+      const response = await fetch("/api/token/refresh", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "refresh_token": refreshToken })
+      });
+
+      if (!response.ok) throw new Error("Refresh token failed");
+
+      const data = await response.json();
+      if (data.token) {
+        setToken(data.token);
+        return data.token;
+      }
+    } catch (err) {
+      console.error("Erreur de renouvellement :", err);
+      logout();
+      return undefined;
+    }
+    logout();
+    return undefined;
+  }, [setToken, logout]);
+
+  const getToken = useCallback(async (): Promise<string | undefined> => {
     if (shouldRefreshTokenSoon(token)) {
       const newToken = await renewAccessToken();
       return newToken;
     }
     return token;
-  }
+  }, [token, renewAccessToken]);
 
   const abord = (): boolean => {
     logout();
@@ -63,34 +90,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return abord();
   };
 
-  const renewAccessToken = useCallback(async (): Promise<string | undefined> => {
-    console.log('renewAccessToken')
-    try {
-      const response = await fetch("/api/token/refresh", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ "refresh_token": refreshToken })
-      });
-
-      if (!response.ok) throw new Error("Refresh token failed");
-
-      const data = await response.json();
-      if (data.accessToken) {
-        setToken(data.accessToken);
-        return data.accessToken;
-      }
-    } catch (err) {
-      console.error("Erreur de renouvellement :", err);
-      logout();
-      return undefined;
-    }
-    logout();
-    return undefined;
-  }, [setToken, logout]);
-
   useEffect(() => {
     if (!token) return;
 
@@ -108,7 +107,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       logout,
       getToken,
     }),
-    [token]
+    [token, login, logout, getToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

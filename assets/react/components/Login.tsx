@@ -40,7 +40,6 @@ export default function Loginl(): React.JSX.Element {
         });
         if (response.ok) {
             const jsonResult = await response.json();
-            console.log('login', jsonResult);
             setOpen(false);
             login(jsonResult)
 

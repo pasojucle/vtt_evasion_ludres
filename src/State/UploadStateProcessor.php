@@ -7,7 +7,6 @@ use App\ApiResource\UploadFile;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use ApiPlatform\Doctrine\Common\State\PersistProcessor;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class UploadStateProcessor implements ProcessorInterface
 {
     public function __construct(
-        private PersistProcessor $persistProcessor,
         private ParameterBagInterface $parameterBag,
         private SluggerInterface $slugger,
     )
@@ -42,7 +40,9 @@ class UploadStateProcessor implements ProcessorInterface
         }
         $uploadFile->filename = sprintf('%s.%s', $this->slugger->slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)), $file->guessExtension());
 
-        $directories = [$this->parameterBag->get('project_directory'),  UploadFile::PATH];
+        /** @var string $prrojectDirectoy */
+        $prrojectDirectoy = $this->parameterBag->get('project_directory') ?? '';
+        $directories = [$prrojectDirectoy,  UploadFile::PATH];
         $file->move(implode(DIRECTORY_SEPARATOR, $directories), $uploadFile->filename);
         
         return $uploadFile;

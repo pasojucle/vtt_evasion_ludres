@@ -16,12 +16,13 @@ import ChapterEdit from '@/components/ChapterEdit';
 export default function Section(): React.JSX.Element | undefined {
     let { id } = useParams();
     const { setSectionOrigin } = useArticleAction();
-    const { token } = useAuth();
+    const { token, getToken } = useAuth();
     const [chapterEdit, setChapterEdit] = useState<null | number>(null)
     const [section, setSection] = useState<SectionType | null>(null)
 
     const loadSection = async () => {
-        dataLoader(`sections/${id}`)
+        const accessToken = await getToken();
+        dataLoader(`sections/${id}`, undefined, accessToken)
             .then((result) => {
                 setSection(result.data);
             });
