@@ -391,7 +391,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->join('sessionsinprogress.user', 'userinprogress')
             ->groupBy('userinprogress.id')
             ->andHaving(
-                $qb->expr()->lt($qb->expr()->count('sessionsinprogress.id'), 3)
+                $qb->expr()->lte($qb->expr()->count('sessionsinprogress.id'), 3)
             );
 
         $qb
