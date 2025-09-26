@@ -416,11 +416,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb
             ->leftjoin('u.sessions', 's')
             ->andWhere(
-                $qb->expr()->eq('li.final', ':final'),
+                // $qb->expr()->eq('li.final', ':final'),
                 $qb->expr()->eq('li.season', ':season'),
                 $qb->expr()->eq('li.status', ':statusInprocessing'),
             )
-            ->setParameter('final', false)
+            // ->setParameter('final', false)
             ->setParameter('season', $season)
             ->setParameter('statusInprocessing', Licence::STATUS_IN_PROCESSING)
         ;
