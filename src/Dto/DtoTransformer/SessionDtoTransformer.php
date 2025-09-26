@@ -12,6 +12,7 @@ use App\Entity\Session;
 use App\Entity\User;
 use App\Model\Currency;
 use App\Repository\IndemnityRepository;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -123,10 +124,15 @@ class SessionDtoTransformer
 
     private function getUserIsOnSiteToHtml(Session $session): string
     {
-        if (!$session->isPresent()) {
-            return '<span class="alert-danger"></span> Absent';
+        if ($session->isPresent()) {
+            return sprintf('<span class="success"></span> %s', $this->getBadge($session->getPractice()));
         }
-        return sprintf('<span class="success"></span> %s', $this->getBadge($session->getPractice()));
+
+        if (new DateTime() < $session->getCluster()->getBikeRide()->getStartAt() && AvailabilityEnum::UNAVAILABLE !== $session->getAvailability()) {
+            return '<i class="fas fa-clock warning-color"></i></span> Inscrit';
+        }
+        
+        return '<span class="alert-danger"></span> Absent';
     }
 
     private function getUserIsOnSiteToIcon(Session $session): string

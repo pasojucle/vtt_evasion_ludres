@@ -154,6 +154,7 @@ class SessionRepository extends ServiceEntityRepository
                 $qb->expr()->eq('s.user', ':user')
             )
             ->setParameter('user', $user)
+            ->orderBy('br.startAt')
             ;
         if (isset($filters['startAt']) && isset($filters['endAt'])) {
             $qb
