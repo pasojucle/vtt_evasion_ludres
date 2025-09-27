@@ -33,7 +33,7 @@
     {% endif %}
     {% if user.member.emergencyContact is not null %}
         <tr>
-            <td colspan="5"><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</td>
+            <td colspan="5"><b>Lien de parenté: </b>{{ user.member.emergencyContact|raw}}</td>
         </tr>
     {% endif %}
 </table>

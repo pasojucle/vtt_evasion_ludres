@@ -20,6 +20,7 @@ use App\Service\StringService;
 use App\Service\UploadService;
 use App\UseCase\Registration\GetRegistrationFile;
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,10 +74,14 @@ class EditRegistration
         $category = $user->getSeasonLicence($season)->getCategory();
 
         if (UserType::FORM_OVERVIEW === $progress->current->form) {
+            /** @var Licence $seasonLicence */
             $seasonLicence = $user->getSeasonLicence($season);
-            $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE)
-                ->setCreatedAt(new DateTime());
-
+            $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE);
+            if ($seasonLicence->isFinal()) {
+                $seasonLicence->setCreatedAt(new DateTime());
+            } else {
+                $seasonLicence->setTestingAt(new DateTimeImmutable());
+            }
             $this->sendMailToClub($user);
             $this->sendMailToUser($user, $user->isLoginSend());
             $user->setLoginSend(true);

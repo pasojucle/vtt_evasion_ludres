@@ -5,18 +5,13 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\LicenceRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: LicenceRepository::class)]
+#[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
 {
     public const COVERAGE_MINI_GEAR = 1;
@@ -73,51 +68,54 @@ class Licence
         self::STATUS_VALID => 'licence.status.valid',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $coverage = null;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $magazineSubscription = false;
 
-    #[Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $subscriptionAmount = null;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $additionalFamilyMember = false;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $medicalCertificateRequired = false;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $category = self::CATEGORY_ADULT;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'licences')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'licences')]
     private User $user;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $season;
 
-    #[Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTimeInterface $createdAt = null;
 
-    #[Column(type: 'boolean', options:['default' => true])]
+    #[ORM\Column(type: 'boolean', options:['default' => true])]
     private bool $final = false;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $status = self::STATUS_IN_PROCESSING;
 
-    #[Column(type: 'boolean', options:['default' => false])]
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $currentSeasonForm = false;
 
-    #[Column(type: 'boolean', options:['default' => false])]
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
     private $isVae = false;
 
-    #[OneToMany(mappedBy: 'licence', targetEntity: LicenceSwornCertification::class)]
+    #[ORM\OneToMany(mappedBy: 'licence', targetEntity: LicenceSwornCertification::class)]
     private Collection $licenceSwornCertifications;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $testingAt = null;
 
     public function __construct()
     {
@@ -311,6 +309,18 @@ class Licence
                 $licenceSwornCertification->setLicence(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTestingAt(): ?DateTimeImmutable
+    {
+        return $this->testingAt;
+    }
+
+    public function setTestingAt(?DateTimeImmutable $testingAt): static
+    {
+        $this->testingAt = $testingAt;
 
         return $this;
     }

@@ -59,7 +59,8 @@ class PdfService
             Licence::COVERAGE_HIGH_GEAR => 73,
         ];
 
-        $today = new DateTime();
+        
+        $createdAt = ($userDto->lastLicence->isFinal) ? $userDto->lastLicence->createdAt : $userDto->lastLicence->testingAt;
 
         $fields = [
             [
@@ -103,7 +104,7 @@ class PdfService
                 'y' => 262,
             ],
             [
-                'value' => $userDto->lastLicence->createdAt ?? $today->format('d/m/Y'),
+                'value' => $createdAt ?? (new DateTime())->format('d/m/Y'),
                 'x' => 75,
                 'y' => 262,
             ],

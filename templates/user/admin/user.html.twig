@@ -125,8 +125,9 @@
                 </div>
             </div>
             <div class="block background-ligth">
-                <div class="block-title">
-                    <h2>Licence</h2>
+                <div class="block-title d-flex align-items-center">
+                    <h2>Licence </h2>
+                    <span class="bs-badge text-bg-info mx-20">{{ licence.isFinal ? licence.shortSeason : 'Période d\'essai'}}</span>
                     {% if is_granted('USER_EDIT', user)%}
                         <div class="tools">
                         <a href="{{ path('admin_user_edit', {'user': user.id}) }}"
@@ -140,7 +141,12 @@
                     <ul>
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>Numéro</b></div><div class="col-md-8 col-xs-6">{{ user.licenceNumber }}</div></div></li>
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>Saison</b></div><div class="col-md-8 col-xs-6">{{ licence.shortSeason }}</div></div></li>
-                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription</b></div><div class="col-md-8 col-xs-6" title="{{ licence.createdAtLong }}">{{ licence.createdAt }}</div></div></li>
+                        {% if licence.createdAt is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription</b></div><div class="col-md-8 col-xs-6" title="{{ licence.createdAtLong }}">{{ licence.createdAt }}</div></div></li>
+                        {% endif %}
+                        {% if licence.testingAt is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription à la période d'éssaie</b></div><div class="col-md-8 col-xs-6" title="{{ licence.testingAtLong }}">{{ licence.testingAt }}</div></div></li>
+                        {% endif %}
                         {% if licence.status is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.statusStr|trans }}</div></div></li>
                         {% endif %}
