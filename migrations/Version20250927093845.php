@@ -23,9 +23,19 @@ final class Version20250927093845 extends AbstractMigration
         $this->addSql('ALTER TABLE licence ADD testing_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
     }
 
+    public function postUp(Schema $schema): void
+    {
+        $this->connection->executeQuery('UPDATE licence set testing_at = created_at, created_at = NULL WHERE final = 0');
+    }
+
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE licence DROP testing_at');
+    }
+
+    public function preDown(Schema $schema): void
+    {
+        $this->connection->executeQuery('UPDATE licence set created_at = testing_at WHERE final = 0 AND testing_at IS NOT NULL');
     }
 }
