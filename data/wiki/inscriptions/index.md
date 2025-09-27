@@ -23,7 +23,7 @@ Afficher la liste des inscriptions en fonction du filtre.
 
 - Pour une réinscription : En cours de création => en attente de validation => validé
 
-🛈 **NOTE :** Pour S'incrire au club après une période d'essai, il faut :
+🛈 **NOTE :** Pour s'inscrire au club après une période d'essai, il faut :
 - pour un membre de l'école VTT: avoir ***participé*** à au moins une rando
 - pour un membre adulte: ***être inscrit*** à au moins une rando
 
