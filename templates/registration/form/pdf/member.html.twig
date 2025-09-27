@@ -1,7 +1,7 @@
  <h2>Renseignements concernant l'adhérent</h2>
 <table class="table-fixed" >
     <tr>
-        <td rowspan="10" colspan="2"><img src="{{ user.member.picture|imgPath(media) }}" style="width: 100px;"></td>
+        <td rowspan="11" colspan="2"><img src="{{ user.member.picture|imgPath(media) }}" style="width: 100px;"></td>
         <td colspan="5" style="width: 450px"><b>Nom et prénom : </b>{{ user.member.fullName }}</td>
         <td colspan="2" class="licence-number">{{ user.licenceNumber }}</td>
     </tr>
@@ -11,6 +11,14 @@
     <tr>
         <td colspan="5" ><b>Lieu de naissance : </b>{{ user.member.birthPlace|raw }}</td>
     </tr>
+    {% if user.member.birthDepartment %}
+        <tr>
+            <td colspan="5"><b>Département de naissance : </b>
+                {{ user.member.birthDepartment|raw }}
+                {% if user.member.birthCountry %} - {{ user.member.birthCountry|raw }}{% endif %}
+            </td>
+        </tr>
+    {% endif %}
     <tr>
         <td colspan="5" ><b>Adresse : </b> {{ user.member.address.street|raw }}</td>
     </tr>
