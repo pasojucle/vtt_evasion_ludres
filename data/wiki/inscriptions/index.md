@@ -27,7 +27,7 @@ Afficher la liste des inscriptions en fonction du filtre.
 - pour un membre de l'école VTT: avoir ***participé*** à au moins une rando
 - pour un membre adulte: ***être inscrit*** à au moins une rando
 
-🛈 ### Paramètres
+### Paramètres
 Certain paramètres perment de gérer les inscription
 - Autoriser les inscriptions au 3 séances d'essai pour l'école vtt: permet d'autoriser ou non les nouvelles inscriptions à l'école vtt
 - Autoriser les réinscriptions pour la nouvelle saison : permet de bloquer la réinscription des adhérent de l'année précédente en attandant la nouvelle licence de la fédération. Au changement de saison, ce paramètre se rèqle automatiquement pour interdire la réinscription.
