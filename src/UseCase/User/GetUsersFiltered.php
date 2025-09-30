@@ -114,6 +114,10 @@ abstract class GetUsersFiltered
 
     public function choices(array $filters): array
     {
+        if (array_key_exists('user', $filters)) {
+            unset($filters['user']);
+        }
+        
         $query = $this->getQuery($filters);
         $users = $query->getQuery()->getResult();
 
