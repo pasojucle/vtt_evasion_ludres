@@ -198,6 +198,7 @@ permission:
   participation: Participation
   summary: Actualités
   notification: Pop'up
+  skill: Compétences
 
 slideshow:
   files: '{0} (Aucun fichier)|{1} (%count% fichier)|[1,Inf[ (%count% fichiers)'

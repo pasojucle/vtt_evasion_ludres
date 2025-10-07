@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\API;
 
-use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Entity\Skill;
+use App\Service\ApiService;
 use App\Form\Admin\SkillType;
 use App\Repository\SkillRepository;
-use App\Service\ApiService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Dto\DtoTransformer\SkillDtoTransformer;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route(path: '/api/skill', name: 'api_skill_')]
 class SkillController extends AbstractController
@@ -28,6 +29,7 @@ class SkillController extends AbstractController
     }
 
     #[Route(path: '/list', name: 'list', methods: ['GET'], options: ['expose' => true])]
+    #[IsGranted('SKILL_LIST')]
     public function list(SkillRepository $skillRepository): JsonResponse
     {
         return new JsonResponse([
@@ -36,6 +38,7 @@ class SkillController extends AbstractController
     }
 
     #[Route(path: '/add', name: 'add', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[IsGranted('SKILL_ADD')]
     public function add(Request $request): JsonResponse
     {
         $skill = new Skill();
@@ -51,6 +54,7 @@ class SkillController extends AbstractController
     }
 
     #[Route(path: '/edit/{id}', name: 'edit', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[IsGranted('SKILL_EDIT', 'skill')]
     public function edit(Request $request, Skill $skill): JsonResponse|Response
     {
         $form = $this->api->createForm($request, SkillType::class, $skill);
@@ -64,6 +68,7 @@ class SkillController extends AbstractController
     }
 
     #[Route(path: '/delete/{id}', name: 'delete', methods: ['GET', 'POST'], options: ['expose' => true])]
+    #[IsGranted('SKILL_EDIT', 'skill')]
     public function delete(Request $request, Skill $skill): JsonResponse
     {
         $form = $this->api->createForm($request, FormType::class, $skill);

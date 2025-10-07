@@ -22,6 +22,7 @@ enum PermissionEnum: string implements TranslatableInterface
     case SLIDESHOW = 'slideshow';
     case PARTICIPATION = 'participation';
     case SUMMARY = 'summary';
+    case SKILL = 'skill';
 
     use EnumTrait;
 
