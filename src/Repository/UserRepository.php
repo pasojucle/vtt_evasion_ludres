@@ -390,8 +390,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->from(Session::class, 'sessionsinprogress')
             ->join('sessionsinprogress.user', 'userinprogress')
             ->groupBy('userinprogress.id')
+            ->andWhere(
+                $qb->expr()->eq('sessionsinprogress.isPresent', 1)
+            )
             ->andHaving(
-                $qb->expr()->lte($qb->expr()->count('sessionsinprogress.id'), 3)
+                $qb->expr()->lt($qb->expr()->count('sessionsinprogress.id'), 3)
             );
 
         $qb
@@ -428,28 +431,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaTestinComplete(QueryBuilder &$qb, int $season): void
     {
+        $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
+            ->select('userinprogress.id')
+            ->from(Session::class, 'sessionsinprogress')
+            ->join('sessionsinprogress.user', 'userinprogress')
+            ->groupBy('userinprogress.id')
+            ->andWhere(
+                $qb->expr()->eq('sessionsinprogress.isPresent', 1)
+            )
+            ->andHaving(
+                $qb->expr()->gt($qb->expr()->count('sessionsinprogress.id'), 2)
+            ); 
         $qb
-            ->join('u.sessions', 's')
+            ->leftjoin('u.sessions', 's')
             ->andWhere(
                 $qb->expr()->eq('li.final', ':final'),
                 $qb->expr()->eq('li.season', ':season'),
-                $qb->expr()->orX(
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('s.isPresent', 1),
-                        $qb->expr()->eq('l.type', ':typeSchool')
-                    ),
-                    $qb->expr()->eq('l.type', ':typeAdulte'),
-                )
+                $qb->expr()->gte('li.status', ':statusInprogress'),
+
+                    $qb->expr()->in('u.id', $usersWithSessions->getDQL())
+
             )
-            ->setParameter('final', 0)
-            ->setParameter('typeSchool', Level::TYPE_SCHOOL_MEMBER)
-            ->setParameter('typeAdulte', Level::TYPE_ADULT_MEMBER)
+            ->setParameter('final', false)
             ->setParameter('season', $season)
-            ->groupBy('u.id')
-            ->andHaving(
-                $qb->expr()->gt($qb->expr()->count('s.id'), 2)
-            )
-            ->orderBy('i.name', 'ASC')
+            ->setParameter('statusInprogress', Licence::STATUS_WAITING_VALIDATE)
         ;
     }
 
