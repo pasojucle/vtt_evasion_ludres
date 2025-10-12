@@ -19,9 +19,13 @@ class UserSkillDtoTransformer implements DtoTransformerInterface
     public function fromEntity($userSkill): UserSkillDto
     {
         $userSkillDto = new UserSkillDto();
-        $userSkillDto->skill = $this->getSkill($userSkill->getSkill());
+
+        $skill= $userSkill-> getSkill();
         $userSkillDto->evaluation = ($userSkill->getEvaluation()) ? $this->getEvaluation($userSkill->getEvaluation()) : null;
         $userSkillDto->evaluateAt = ($userSkill->getEvaluateAt()) ? $userSkill->getEvaluateAt()->format('d/m/Y') : null;
+        $userSkillDto->content = $skill->getContent();
+        $userSkillDto->category =['id' => $skill->getCategory()->getId()];
+        $userSkillDto->level =['id' => $skill->getLevel()->getId()];
 
         return $userSkillDto;
     }
@@ -34,15 +38,6 @@ class UserSkillDtoTransformer implements DtoTransformerInterface
         }
 
         return $userSkills;
-    }
-
-    private function getSkill(Skill $skill): array
-    {
-        return [
-            'content' => $skill->getContent(),
-            'category' => $skill->getCategory()->getName(),
-            'level' => $skill->getLevel()->getTitle(),
-        ];
     }
 
     private function getEvaluation(EvaluationEnum $eveluation): array
