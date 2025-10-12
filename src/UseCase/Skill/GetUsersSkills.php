@@ -83,7 +83,7 @@ class GetUsersSkills
                 $content[] = sprintf('%s - %s', $userDto->licenceNumber, $userDto->member->fullName);
             }
             $userSkillDto = $this->userSkillDtoTransformer->fromEntity($userSkill);
-            $row = [$userSkillDto->evaluateAt, sprintf('"%s"', strip_tags($userSkillDto->skill['content'])), $userSkillDto->evaluation['value']];
+            $row = [$userSkillDto->evaluateAt, sprintf('"%s"', strip_tags($userSkillDto->content)), $userSkillDto->evaluation['value']];
             $content[] = implode(',', $row);
         }
 
