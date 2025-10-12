@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Service\ExportService;
+use App\Dto\DtoTransformer\SkillDtoTransformer;
 use App\Repository\SkillRepository;
+use App\Service\ExportService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Dto\DtoTransformer\SkillDtoTransformer;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route(path: '/admin/skill', name: 'admin_skill_')]
 class SkillController extends AbstractController
@@ -37,7 +37,6 @@ class SkillController extends AbstractController
         SkillRepository $skillRepository,
         SkillDtoTransformer $skillDtoTransformer,
     ): Response {
-
         $skills = $skillRepository->findAll();
         $content = $exportService->exportSkills($skillDtoTransformer->fromEntities($skills));
 

@@ -61,7 +61,7 @@ class SkillVoter extends Voter
         return $isUserWithPermission;
     }
 
-    private function canList(TokenInterface $token,  bool $isUserWithPermission): bool
+    private function canList(TokenInterface $token, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;

@@ -441,16 +441,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
             ->andHaving(
                 $qb->expr()->gt($qb->expr()->count('sessionsinprogress.id'), 2)
-            ); 
+            );
         $qb
             ->leftjoin('u.sessions', 's')
             ->andWhere(
                 $qb->expr()->eq('li.final', ':final'),
                 $qb->expr()->eq('li.season', ':season'),
                 $qb->expr()->gte('li.status', ':statusInprogress'),
-
-                    $qb->expr()->in('u.id', $usersWithSessions->getDQL())
-
+                $qb->expr()->in('u.id', $usersWithSessions->getDQL())
             )
             ->setParameter('final', false)
             ->setParameter('season', $season)

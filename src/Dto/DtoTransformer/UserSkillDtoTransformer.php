@@ -20,12 +20,12 @@ class UserSkillDtoTransformer implements DtoTransformerInterface
     {
         $userSkillDto = new UserSkillDto();
 
-        $skill= $userSkill-> getSkill();
+        $skill = $userSkill-> getSkill();
         $userSkillDto->evaluation = ($userSkill->getEvaluation()) ? $this->getEvaluation($userSkill->getEvaluation()) : null;
         $userSkillDto->evaluateAt = ($userSkill->getEvaluateAt()) ? $userSkill->getEvaluateAt()->format('d/m/Y') : null;
         $userSkillDto->content = $skill->getContent();
-        $userSkillDto->category =['id' => $skill->getCategory()->getId()];
-        $userSkillDto->level =['id' => $skill->getLevel()->getId()];
+        $userSkillDto->category = ['id' => $skill->getCategory()->getId()];
+        $userSkillDto->level = ['id' => $skill->getLevel()->getId()];
 
         return $userSkillDto;
     }
