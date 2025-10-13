@@ -21,7 +21,7 @@ export default function ThemePanel(): React.JSX.Element {
     }
 
     return(
-        <Button className="has-[>svg]:px-0 px-0 justify-start" variant="ghost" type="button" onClick={toggleTheme}>
+        <Button className="has-[>svg]:px-0 px-0 justify-start" variant="ghost" type="button" tabIndex={0} onClick={toggleTheme}>
             <span className="lg:hidden">Thème</span>
             <Icon />
         </Button>

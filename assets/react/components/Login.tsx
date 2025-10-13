@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from './ui/button';
+import { Label } from './ui/label';
+import { Input } from './ui/input';
 
 export default function Loginl(): React.JSX.Element {
     const [open, setOpen] = useState<boolean>(false);
@@ -55,8 +57,8 @@ export default function Loginl(): React.JSX.Element {
     return (
         <>
             {token
-                ? <Button className="px-0 justify-start" variant="ghost" type="button" onClick={logout}>Logout</Button>
-                : <Button className="px-0 justify-start" variant="ghost" type="button" onClick={() => setOpen(true)}>Login</Button>
+                ? <Button className="px-0 justify-start" variant="ghost" type="button" tabIndex={0} onClick={logout}>Logout</Button>
+                : <Button className="px-0 justify-start" variant="ghost" type="button" tabIndex={0} onClick={() => setOpen(true)}>Login</Button>
             }
                     
             <div className={overlayClassName()} tabIndex={-1} role="dialog">           
@@ -73,9 +75,8 @@ export default function Loginl(): React.JSX.Element {
                     <form onSubmit={handleLogin}>
                         <div className="p-4 md:p-5 space-y-4">
                             <div>
-                                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Identifiant</label>
-                                <input type="email" name="email" id="email" value={email} onChange={(event) => { setEmail(event.target.value) }} autoComplete="username"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                                <Label>Identifiant</Label>
+                                <Input className='w-full' variant='outline' required type='email' value={email} onChange={(event) => { setEmail(event.target.value) }} autoComplete="username"/>
                             </div>
                             <div>
                                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mot de passe</label>

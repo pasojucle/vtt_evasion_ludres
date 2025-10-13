@@ -2,16 +2,15 @@
 
 namespace App\Entity;
 
-
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Post;
-use Doctrine\DBAL\Types\Types;
-use ApiPlatform\Metadata\Delete;
-use Doctrine\ORM\Mapping as ORM;
-use App\State\ArticleStateProcessor;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ArticleRepository;
+use App\State\ArticleStateProcessor;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -52,7 +51,7 @@ class Article
     private string $content = 'undefined';
 
     #[ORM\ManyToOne(inversedBy: 'articles', cascade: ['persist'])]
-    #[Groups(['article:item','article:write'])]
+    #[Groups(['article:item', 'article:write'])]
     private ?Chapter $chapter = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]

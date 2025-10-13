@@ -13,9 +13,7 @@ readonly class ArticleStateProcessor implements ProcessorInterface
     public function __construct(
         private PersistProcessor $persistProcessor,
         private EntityManagerInterface $entityManager,
-    )
-    {
-        
+    ) {
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Article

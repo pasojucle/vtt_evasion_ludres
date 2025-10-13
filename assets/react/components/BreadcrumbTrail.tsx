@@ -43,7 +43,7 @@ export default function BreadcrumbTrail({ routes }: BreadcrumbTrailProps): React
   }
 
   function breadcrumbs(): Breadcrumb[] {
-    const defaultColor = 'text-gray-800 dark:text-gray-200';
+    const defaultColor = 'text-foreground';
     const list: Breadcrumb[] = [];
     list.push({ title: <Home />, pathname: '/', color: defaultColor });
         
@@ -53,7 +53,7 @@ export default function BreadcrumbTrail({ routes }: BreadcrumbTrailProps): React
         list.push({ title: <Separator />, pathname: null });
       }
 
-      breadcrumb.color = index === routes.length - 1 ? 'text-blue-700 dark:text-blue-300' : defaultColor;
+      breadcrumb.color = index === routes.length - 1 ? 'text-primary-lighten' : defaultColor;
       breadcrumb.width = (1 < routes.length) ? 'max-w-5/12' : 'max-w-10/12'
       list.push(breadcrumb);
 

@@ -15,7 +15,7 @@ export const useDataLoader = (entity: string, param?: string | number | undefine
             }
 
             if (result.data) {
-                setData(result.data);
+                setData(result.data.member ?? result.data);
             }
 
             if (result.error) {

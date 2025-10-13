@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\ApiResource;
 
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\ApiResource;
 use App\State\UploadStateProcessor;
 use App\State\UploadStateProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -34,5 +34,3 @@ class UploadFile
 
     public ?UploadedFile $file = null;
 }
-
-

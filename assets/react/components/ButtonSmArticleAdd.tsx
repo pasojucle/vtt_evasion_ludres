@@ -10,7 +10,7 @@ export default function ButtonSmArticleAction(): React.JSX.Element | undefined {
 
     const [scrollDir, setScrollDir] = useState<"up" | "down" | null>(null);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const { sectionOrigin, chapterOrigin, setAddArticle } = useArticleAction();
+    const { section, chapter, setOpenArticleSheet } = useArticleAction();
     const { token } = useAuth();
 
     useEffect(() => {
@@ -51,9 +51,9 @@ export default function ButtonSmArticleAction(): React.JSX.Element | undefined {
         return undefined;
     }
 
-    if (chapterOrigin) {
+    if (chapter) {
         return (
-            <Button className="transition-[width] duration-500" onClick={() => setAddArticle(true)}>
+            <Button className="transition-[width] duration-500" onClick={() => setOpenArticleSheet(true)}>
                 <Label />
             </Button>
         )

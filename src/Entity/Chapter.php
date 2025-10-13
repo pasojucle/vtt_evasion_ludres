@@ -32,7 +32,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 #[Patch(
     normalizationContext: ['groups' => 'chapter:item'],
-    denormalizationContext:['groups' => 'chapter:write'],
+    denormalizationContext: ['groups' => 'chapter:write'],
     order: ['article.title' => 'ASC'],
 )]
 #[Delete]
@@ -101,7 +101,7 @@ class Chapter
         return $this->articles;
     }
 
-    public function addArticle(Article $article): static
+    public function openArticleSheet(Article $article): static
     {
         if (!$this->articles->contains($article)) {
             $this->articles->add($article);

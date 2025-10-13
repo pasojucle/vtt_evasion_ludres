@@ -43,6 +43,8 @@ h3 {
 
     --color-primary: var(--primary);
 
+    --color-primary-lighten: var(--primary-lighten);
+
     --color-primary-foreground: var(--primary-foreground);
 
     --color-secondary: var(--secondary);
@@ -90,6 +92,10 @@ h3 {
     --color-sidebar-border: var(--sidebar-border);
 
     --color-sidebar-ring: var(--sidebar-ring);
+
+    --color-sheet: var(--sheet);
+
+    --color-sheet-foreground: var(--sheet-foreground);
 }
 
 :root {
@@ -98,17 +104,19 @@ h3 {
 
     --background: oklch(1 0 0);
 
-    --foreground: oklch(0.13 0.028 261.692);
+    --foreground: oklch(37.3% 0.034 259.733);
 
-    --card: oklch(1 0 0);
+    --card: oklch(96.7% 0.003 264.542);
 
-    --card-foreground: oklch(0.13 0.028 261.692);
+    --card-foreground: oklch(37.3% 0.034 259.733);
 
     --popover: oklch(1 0 0);
 
     --popover-foreground: oklch(0.13 0.028 261.692);
 
     --primary: oklch(48.8% 0.243 264.376);
+
+    --primary-lighten: oklch(62.3% 0.214 259.815);
 
     --primary-foreground: oklch(0.985 0.002 247.839);
 
@@ -157,15 +165,19 @@ h3 {
     --sidebar-border: oklch(0.928 0.006 264.531);
 
     --sidebar-ring: oklch(0.707 0.022 261.325);
+
+    --sheet: oklch(96.7% 0.003 264.542);
+
+    --sheet-foreground: oklch(37.3% 0.034 259.733);
 }
 
 .dark {
 
-    --background: oklch(0.13 0.028 261.692);
+    --background: oklch(37.3% 0.034 259.733);
 
     --foreground: oklch(0.985 0.002 247.839);
 
-    --card: oklch(0.21 0.034 264.665);
+    --card: oklch(27.8% 0.033 256.848);
 
     --card-foreground: oklch(0.985 0.002 247.839);
 
@@ -173,7 +185,7 @@ h3 {
 
     --popover-foreground: oklch(0.985 0.002 247.839);
 
-    --primary: oklch(48.8% 0.243 264.376);
+    --primary-lighten: oklch(80.9% 0.105 251.813);
 
     --primary-foreground: oklch(0.21 0.034 264.665);
 
@@ -222,13 +234,18 @@ h3 {
     --sidebar-border: oklch(1 0 0 / 10%);
 
     --sidebar-ring: oklch(0.551 0.027 264.364);
+
+    --sheet: oklch(27.8% 0.033 256.848);
+
+    --sheet-foreground: oklch(0.985 0.002 247.839);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
 }

@@ -1,31 +1,36 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router";
 import { useAuth } from '../hooks/useAuth';
 import { useDataLoader } from '../hooks/useDataLoader';
 import { useArticleAction } from '@/hooks/UseArticleAction';
 import { SectionType } from '@/types/SectionType';
 import { ChapterType } from '@/types/ChapterType';
-import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
 import { Pencil } from 'lucide-react';
 import { dataLoader } from '@/helpers/queryHelper';
 import SectionEdit from '@/components/SectionEdit';
 import SectionDelete from '@/components/sectionDelete';
+import {
+    Card,
+    CardAction,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { ArticleSheet } from '@/components/ArticleSheet';
 
 
-export default function Home(): React.JSX.Element|undefined {
+export default function Home(): React.JSX.Element | undefined {
     const data = useDataLoader('sections');
-    const { setSectionOrigin } = useArticleAction();
+    const { setSection, setChapter } = useArticleAction();
     const [sectionEdit, setSectionEdit] = useState<null | number>(null)
     const [sections, setSections] = useState<SectionType[] | null>(null)
     const { token, getToken } = useAuth();
-    
-    useEffect(() => {
-        loadSections();
-    }, [])
 
     useEffect(() => {
-        setSectionOrigin(undefined);
-    }, [setSectionOrigin]);
+        loadSections();
+        setSection(undefined);
+        setChapter(undefined)
+    }, [])
 
     const loadSections = async () => {
         const accessToken = await getToken();
@@ -42,7 +47,7 @@ export default function Home(): React.JSX.Element|undefined {
         }
     }
 
-    const ButtonGroup = ({section}:{section: SectionType | undefined}) => {
+    const ButtonGroup = ({ section }: { section: SectionType | undefined }) => {
         if (undefined !== section && token) {
             return (
                 <div className='ml-auto inline-flex items-start rounded-md shadow-xs' role='group'>
@@ -57,38 +62,44 @@ export default function Home(): React.JSX.Element|undefined {
     }
 
     const SectionHeader = ({ section }: { section: SectionType }): React.JSX.Element => {
-            if (sectionEdit === section.id) {
-                return (
-                    <SectionEdit section={section} handleClose={closeSectionEdit} />
-                )
-            }
+        if (sectionEdit === section.id) {
             return (
-                <>
-                    <Link to={`/section/${section.id}`} className='font-bold text-xl text-blue-700 '>{section.title}</Link>
-                    <ButtonGroup section={section} />
-                </>
+                <SectionEdit section={section} handleClose={closeSectionEdit} />
             )
         }
+        return (
+            <>
+                <CardTitle>
+                    <Link to={`/section/${section.id}`} className='font-bold text-xl text-blue-700 '>{section.title}</Link>
+                </CardTitle>
+                <CardAction>
+                    <ButtonGroup section={section} />
+                </CardAction>
+            </>
+        )
+    }
 
     if (sections) {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 pt-10">
-                { sections.map((section: SectionType) =>
-                    <div key={section.id} className="max-w rounded overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">
-                        <div className="flex border border-b-2 px-6 py-4">
+                {sections.map((section: SectionType) =>
+                    <Card key={section.id}>
+                        <CardHeader>
                             <SectionHeader section={section} />
-                        </div>
-                        <ul className="px-6 py-4">
-                            { section.chapters.map((chapter:ChapterType) =>
-                                <li key={chapter.id}>
-                                    <Link to={`/chapter/${chapter.id}`}>{chapter.title}</Link>
-                                </li>
-                            )}
-                        </ul>
-                    </div>
-                )}                
-                <div className="fixed bottom-10 right-3 lg:hidden">
-                    <ButtonSmArticleAdd />
+                        </CardHeader>
+                        <CardContent>
+                            <ul>
+                                {section.chapters && section.chapters.map((chapter: ChapterType) =>
+                                    <li key={chapter.id}>
+                                        <Link className="hover:text-primary-lighten" to={`/chapter/${chapter.id}`}>{chapter.title}</Link>
+                                    </li>
+                                )}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                )}
+                <div className="fixed z-30 bottom-10 right-3 lg:hidden">
+                    <ArticleSheet />
                 </div>
             </div>
         )

@@ -186,7 +186,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->articles;
     }
 
-    public function addArticle(Article $article): static
+    public function openArticleSheet(Article $article): static
     {
         if (!$this->articles->contains($article)) {
             $this->articles->add($article);

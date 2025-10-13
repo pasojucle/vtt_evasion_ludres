@@ -5,6 +5,6 @@ export type ChapterType = {
     '@id'?: string,
     id: number,
     title: string,
-    section: SectionType,
-    articles: ArticleType[],
+    section?: SectionType,
+    articles?: ArticleType[],
 }

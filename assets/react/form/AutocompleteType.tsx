@@ -18,6 +18,8 @@ export default function AutocompleteType({ list, value, label, className, placeh
     const inputRef = useRef<HTMLInputElement>(null);
     const multiple = value instanceof Array;
 
+    console.log('value', value)
+
     const toString = (entity: any) => {
         let string;
         switch (true) {
@@ -91,8 +93,7 @@ export default function AutocompleteType({ list, value, label, className, placeh
             if (true !== filteredChoices[index].selected) {
                 select(list[index].id)
             }
-            
-            inputRef.current?.blur();
+            // setTimeout(() => inputRef.current?.blur(), 100);
             return;
         }
         if ('ArrowDown' === event.code) {
@@ -212,7 +213,14 @@ export default function AutocompleteType({ list, value, label, className, placeh
             )
         }
         return (
-            <div key={listItem.id} className={optionClassName(listItem)} onMouseDown={() => select(listItem.id)}>
+            <div 
+                key={listItem.id} 
+                className={optionClassName(listItem)} 
+                onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    select(listItem.id);
+                }}>
                 {toString(listItem)}
             </div>
         )
@@ -240,6 +248,18 @@ export default function AutocompleteType({ list, value, label, className, placeh
         return 0 === Object.keys(value).length;
     }
 
+    const handleFocus = (event: React.FocusEvent) => {
+        event.stopPropagation();
+        setDropDowCollapsed(false);
+    }
+
+    const handleBlur = (event: React.FocusEvent) => {
+        event.stopPropagation();
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+            setDropDowCollapsed(true);
+        }
+    }
+
     const classWrapper = "autocomplete-filter " + className;
     const placeholderContent = (isEmpty()) ? placeholder : '';
     const filteredChoices = choiceList();
@@ -257,8 +277,8 @@ export default function AutocompleteType({ list, value, label, className, placeh
                         placeholder={placeholderContent}
                         value={textFilter}
                         onInput={input}
-                        onFocus={() => setDropDowCollapsed(false)}
-                        onBlur={() => setDropDowCollapsed(true)}
+                        onFocus={handleFocus}
+                        onBlurCapture={handleBlur}
                         onKeyDown={(e) => handleKeyDown(e, filteredChoices)}
                     />
                     <div className="ml-auto bg-transparent px-[1px] flex flex-nowrap">

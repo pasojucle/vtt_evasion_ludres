@@ -6,36 +6,34 @@ import BreadcrumbTrail from '../components/BreadcrumbTrail';
 import { ChapterType } from '@/types/ChapterType';
 import { ArticleType } from '@/types/ArticleType';
 import { useArticleAction } from '@/hooks/UseArticleAction';
-import ButtonSmArticleAdd from '@/components/ButtonSmArticleAdd';
 import { dataLoader } from '@/helpers/queryHelper';
 import { SectionType } from '@/types/SectionType';
 import ChapterDelete from '@/components/ChapterDelete';
 import ChapterEdit from '@/components/ChapterEdit';
+import {
+    Card,
+    CardAction,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { ArticleSheet } from '@/components/ArticleSheet';
 
 
 export default function Section(): React.JSX.Element | undefined {
     let { id } = useParams();
-    const { setSectionOrigin } = useArticleAction();
+    const { section, setSection } = useArticleAction();
     const { token, getToken } = useAuth();
     const [chapterEdit, setChapterEdit] = useState<null | number>(null)
-    const [section, setSection] = useState<SectionType | null>(null)
 
     const loadSection = async () => {
         const accessToken = await getToken();
-        dataLoader(`sections/${id}`, undefined, accessToken)
-            .then((result) => {
-                setSection(result.data);
-            });
+        const result = await dataLoader(`sections/${id}`, undefined, accessToken);
+        setSection(result.data);
     }
     useEffect(() => {
         loadSection();
     }, [])
-
-    useEffect(() => {
-        if (section) {
-            setSectionOrigin(section);
-        }
-    }, [section, setSectionOrigin]);
 
     const routes = () => {
         if (null !== section) {
@@ -75,8 +73,11 @@ export default function Section(): React.JSX.Element | undefined {
         }
         return (
             <>
-                <Link to={`/chapter/${chapter.id}`} className='font-bold text-xl text-blue-700 '>{chapter.title}</Link>
-                <ButtonGroup chapter={chapter} />
+                <CardTitle>
+                    <Link to={`/chapter/${chapter.id}`} className='font-bold text-xl text-blue-700 '>{chapter.title}</Link>                            </CardTitle>
+                <CardAction>
+                    <ButtonGroup chapter={chapter} />
+                </CardAction>
             </>
         )
     }
@@ -86,26 +87,28 @@ export default function Section(): React.JSX.Element | undefined {
             <div>
                 <BreadcrumbTrail routes={routes()} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                    {section.chapters.map((chapter: ChapterType) => {
+                    {section.chapters && section.chapters.map((chapter: ChapterType) => {
                         chapter.section = section;
                         return (
-                            <div key={chapter.id} className="max-w rounded overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-800">
-                                <div className="flex border border-b-2 px-6 py-4">
+                            <Card key={section.id}>
+                                <CardHeader>
                                     <ChapterHeader chapter={chapter} />
-                                </div>
-                                <ul className='px-6 py-4'>
-                                    {chapter.articles.map((article: ArticleType) =>
-                                        <li key={article.id}>
-                                            <Link to={`/chapter/${chapter.id}#${article.id}`}>{article.title}</Link>
-                                        </li>
-                                    )}
-                                </ul>
-                            </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <ul>
+                                        {chapter.articles && chapter.articles.map((article: ArticleType) =>
+                                            <li key={article.id}>
+                                                <Link className="hover:text-primary-lighten" to={`/chapter/${chapter.id}#${article.id}`}>{article.title}</Link>
+                                            </li>
+                                        )}
+                                    </ul>
+                                </CardContent>
+                            </Card>
                         )
                     })}
                 </div>
                 <div className="fixed bottom-10 right-3 lg:hidden">
-                    <ButtonSmArticleAdd />
+                    <ArticleSheet />
                 </div>
             </div>
         )
