@@ -18,8 +18,6 @@ export default function AutocompleteType({ list, value, label, className, placeh
     const inputRef = useRef<HTMLInputElement>(null);
     const multiple = value instanceof Array;
 
-    console.log('value', value)
-
     const toString = (entity: any) => {
         let string;
         switch (true) {

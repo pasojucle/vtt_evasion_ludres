@@ -30,7 +30,7 @@ export default function ArticleEdit({article, handleClose }: ArticleEditProps): 
         handleAddSection,
         handleAddChapter
     } = useArticleAction();
-console.log("**** edit sections", sections);
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = {
@@ -65,7 +65,6 @@ console.log("**** edit sections", sections);
     }
 
     return (
-        <div className="p-3 bg-background">
             <form className="space-y-4" action="#" onSubmit={handleSubmit}>
                 <div className="grid gap-4 mb-4 grid-cols-3">
                     <Combobox 
@@ -94,11 +93,10 @@ console.log("**** edit sections", sections);
                 </div>
                 <div className="flex">
                     <div className='ml-auto inline-flex rounded-md shadow-xs' role='group'>
-                        <Button className='rounded-none rounded-s-lg' type="button" variant="secondary" onClick={handleClose}>Annuler</Button>
+                        <Button className='rounded-none rounded-s-lg' type="button" variant="ghost" onClick={handleClose}>Annuler</Button>
                         <Button className='rounded-none rounded-e-lg' type="submit">Enregistrer</Button>
                     </div>   
                 </div>
             </form>
-        </div>
     ) 
 }

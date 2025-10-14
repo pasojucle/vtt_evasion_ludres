@@ -38,7 +38,16 @@ export default function Article({ article, handleDeleteArticle, refresh }: Artic
 
     if (editArticle === article.id) {
         return (
-            <ArticleEdit article={article} handleClose={handleClose} />
+            <Card id={String(article?.id)} >
+                <CardHeader>
+                    <CardTitle>
+                        {article?.title}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ArticleEdit article={article} handleClose={handleClose} />
+                </CardContent>
+            </Card>
         )
     }
 

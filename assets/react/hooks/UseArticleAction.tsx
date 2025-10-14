@@ -43,6 +43,17 @@ export const ArticleActionProvider = ({ children }: ArticleActionProviderProps):
   const [chapters, setChapters] = useState<ChapterType[]>([]);
   const { getToken } = useAuth();
 
+
+  useEffect(() => {
+    loadSections();
+  }, [])
+
+  useEffect(() => {
+    if (chapter?.id !== -1) {
+      loadChapters(section);
+    }
+  }, [section])
+
   useEffect(() => {
     if (pendingSection) {
       const exists = sections.some((s) => String(s.id) === pendingSection);
@@ -88,19 +99,16 @@ export const ArticleActionProvider = ({ children }: ArticleActionProviderProps):
 
   const handleSelectSection = (value: string | undefined) => {
     const currentSection = sections.find((s: SectionType) => s.id === Number(value));
-    console.log("currentSection", currentSection)
     setSection(currentSection)
     setChapter(undefined)
   }
 
   const handleSelectChapter = (value: string | undefined) => {
     const currentChapter = chapters.find((c: SectionType) => c.id === Number(value));
-    console.log("currentChapter", currentChapter, chapters)
     setChapter(currentChapter)
   }
 
   const handleAddSection = (title: string) => {
-    console.log('handleAddSection', title, sections)
     const sectionToAdd: SectionType = { id: -1, title: title }
     setSections((prevSections) => {
       const index = prevSections.findIndex((section) => section.id === -1)
@@ -116,11 +124,9 @@ export const ArticleActionProvider = ({ children }: ArticleActionProviderProps):
   }
 
   const handleAddChapter = (title: string) => {
-    console.log('handleAddChapter', title)
     const chapterToAdd: ChapterType = { id: -1, title: title }
     setChapters((prevChapters) => {
       const index = prevChapters.findIndex((chapter) => chapter.id === -1)
-      console.log('handleAddChapter index', index)
       if (index > -1) {
         const updated = [...prevChapters]
         updated.splice(index, 1, chapterToAdd)
@@ -153,23 +159,8 @@ export const ArticleActionProvider = ({ children }: ArticleActionProviderProps):
       handleAddSection,
       handleAddChapter,
     }),
-    [openArticleSheet, editArticle, section, chapter]
+    [openArticleSheet, editArticle, section, chapter, chapters, sections]
   );
-
-
-  useEffect(() => {
-    console.log("load sections");
-    loadSections();
-  }, [])
-
-  useEffect(() => {
-    console.log("loadChapters section", section);
-    if (chapter?.id !== -1) {
-      loadChapters(section);
-    }
-  }, [section])
-
-
 
   return <ArticleActionContext.Provider value={value}>{children}</ArticleActionContext.Provider>;
 };

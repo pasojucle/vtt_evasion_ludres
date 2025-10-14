@@ -44,16 +44,11 @@ export function Combobox({label,  items, initialValue, className, placeholder, h
 
 
     const normalizedItems = useMemo(() => {
-        console.log('selectedItem', selectedItem);
         return items.map((item) => ({
             label: item.name ?? item.title ?? "",
             value: String(item.id),
         }))
     }, [items])
-
-    // const handleAddItem = () => {
-    //     console.log('handleAddItem', inputValue)
-    // }
 
     return (
         <div className={className}>
@@ -77,10 +72,7 @@ export function Combobox({label,  items, initialValue, className, placeholder, h
                 <PopoverContent className="w-full p-0">
                     <Command>
                         <CommandInput placeholder="Rechercher" value={inputValue} 
-                                    onValueChange={(value) => {
-                                        console.log('onChange', value, normalizedItems)
-                                        setInputValue(value)
-                                    }}/>
+                                    onValueChange={(value) => setInputValue(value)}/>
                         <CommandEmpty>
                             <div>Aucun résultat.</div>
                             {2 < inputValue.length &&
@@ -101,7 +93,6 @@ export function Combobox({label,  items, initialValue, className, placeholder, h
                                     value={item.value}
                                     onSelect={(currentValue) => {
                                         const selectValue = currentValue === selectedItem ? "" : currentValue
-                                        console.log('command item on select', selectValue)
                                         setSelectedItem(selectValue)
                                         handleSelect(selectValue)
                                         setOpen(false)

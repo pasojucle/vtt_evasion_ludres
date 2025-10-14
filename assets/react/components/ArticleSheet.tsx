@@ -22,7 +22,6 @@ import { Combobox } from '@/components/ui/combobox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
-
 export function ArticleSheet(): React.JSX.Element {
 
     const { 
@@ -51,16 +50,6 @@ export function ArticleSheet(): React.JSX.Element {
     const [scrollDir, setScrollDir] = useState<"up" | "down" | null>(null);
     const [lastScrollY, setLastScrollY] = useState(0);
 
-    // useEffect(() => {
-    //     console.log("section", section)
-    //     handleSelectSection("-1")
-    // }, [sections])
-
-    // useEffect(() => {
-    //     console.log("chapter", chapter, chapters)
-    //     handleSelectChapter("-1")
-    // }, [chapters])
-
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
@@ -87,20 +76,19 @@ export function ArticleSheet(): React.JSX.Element {
             'title': title,
             'content': content,
         };
-        console.log('handleSubmit', data)
         const token = await getToken();
-        dataSender(
+        const response =  await dataSender(
             'POST',
             'articles', undefined,
             token, JSON.stringify(data)
-        ).then((response) => {
-            if (201 === response.status) {
-                toast.success(`L'article ${title} a bien été ajouté.`)
-            }
-            handleClose();
-        });
-    }
+        )
 
+        if (201 === response.status) {
+            redirect(response.data.chapter)
+            toast.success(`L'article ${title} a bien été ajouté.`)
+        }
+        setOpenArticleSheet(false);
+    }
 
     const handleChangeTitle = (e:any) => {
         setTitle((e.target.value));
@@ -110,15 +98,18 @@ export function ArticleSheet(): React.JSX.Element {
         setContent(html);
     }
 
-    const handleClose = () => {
-        console.log('handleClose', location.pathname)
-        setOpenArticleSheet(false);
-        const path = `/chapter/${chapter?.id}`
-        if (location.pathname !== path) {
-            navigate(path);
-            return;
+    const redirect = (chapterIri: string) => {
+        const  re = /^\/api\/chapters\/(\d+)$/i;
+        const result = chapterIri.match(re);
+        if (result) {
+            const id = result[1];
+            const path = `/chapter/${id}`
+            if (location.pathname !== path) {
+                navigate(path);
+                return;
+            }
+            loadChapter(id)
         }
-        loadChapter(chapter?.id)
     }
 
     const handleOpen = (isOpen: boolean) => {
