@@ -58,7 +58,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $kind = $identity->getKind();
         $kinship = $kind !== IdentityKindEnum::MEMBER;
-        $disabled = $this->haspreviousLicence($identity->getUser()) && !$identity->getKinship();
+        $disabled = $this->haspreviousLicence($identity->getUser()) && IdentityKindEnum::MEMBER === $identity->getKind();
         $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
         $foreignBorn = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
         list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
