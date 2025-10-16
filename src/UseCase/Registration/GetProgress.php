@@ -60,7 +60,7 @@ class GetProgress
             throw new NotFoundHttpException('The registration step does not exist');
         }
         $progress = $this->registrationProgressDtoTransformer->fromEntities($steps, $step, $this->user, $this->season);
-
+        
         return $progress;
     }
 
@@ -119,7 +119,7 @@ class GetProgress
     private function updateStatus(): void
     {
         $licence = $this->seasonLicence;
-        if (false === $licence->isFinal() &&
+        if (false === $licence->isFinal() && Licence::STATUS_IN_PROCESSING < $licence->getStatus() &&
             ((0 < count($this->user->getDoneSessions()) && Licence::CATEGORY_MINOR === $licence->getCategory())
             || (0 < count($this->user->getSessions()) && Licence::CATEGORY_ADULT === $licence->getCategory()))) {
             $this->seasonLicence->setFinal(true)
