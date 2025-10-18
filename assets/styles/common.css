@@ -304,6 +304,20 @@ body > script {display: none !important;}
     text-align: center;
     border-radius: 5px;
 }
+.file-contract::before {
+    content: '\f56c';
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    background-color: var(--danger-color);
+    color: var(--white-color);
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 30px;
+    text-align: center;
+    border: 2px solid var(--white-color);
+}
 .fas.fa-check-circle {
     font-size: 20px;
 }

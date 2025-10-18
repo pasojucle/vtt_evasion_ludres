@@ -82,6 +82,8 @@ class UserDtoTransformer
         $userDto->seasons = $this->getSeasons($user->getLicences());
         $sessionsTotal = $user->getSessions()->count();
         $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
+        $userDto->mustProvideRegistration = $this->mustProvideRegistration($userDto->lastLicence, $user->getLicences()->count());
+        $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $sessionsTotal);
 
         return $userDto;
     }
