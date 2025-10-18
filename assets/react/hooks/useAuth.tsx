@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [setToken, logout]);
 
   const getToken = useCallback(async (): Promise<string | undefined> => {
-    if (shouldRefreshTokenSoon(token)) {
+    if (token && shouldRefreshTokenSoon(token)) {
       const newToken = await renewAccessToken();
       return newToken;
     }

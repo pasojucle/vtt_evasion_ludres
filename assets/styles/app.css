@@ -124,9 +124,9 @@ h3 {
 
     --secondary-foreground: oklch(0.21 0.034 264.665);
 
-    --muted: oklch(0.967 0.003 264.542);
+    --muted: oklch(70.7% 0.022 261.325);
 
-    --muted-foreground: oklch(0.551 0.027 264.364);
+    --muted-foreground: oklch(37.3% 0.034 259.733);
 
     --accent: oklch(0.967 0.003 264.542);
 
@@ -193,9 +193,9 @@ h3 {
 
     --secondary-foreground: oklch(0.985 0.002 247.839);
 
-    --muted: oklch(0.278 0.033 256.848);
+    --muted: oklch(37.3% 0.034 259.733);
 
-    --muted-foreground: oklch(0.707 0.022 261.325);
+    --muted-foreground: oklch(70.7% 0.022 261.325);
 
     --accent: oklch(0.278 0.033 256.848);
 

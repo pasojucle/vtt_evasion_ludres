@@ -7,7 +7,6 @@ import { ChapterType } from '@/types/ChapterType';
 import { ArticleType } from '@/types/ArticleType';
 import { useArticleAction } from '@/hooks/UseArticleAction';
 import { dataLoader } from '@/helpers/queryHelper';
-import { SectionType } from '@/types/SectionType';
 import ChapterDelete from '@/components/ChapterDelete';
 import ChapterEdit from '@/components/ChapterEdit';
 import {
@@ -18,6 +17,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { ArticleSheet } from '@/components/ArticleSheet';
+import CardSkeleton from '@/components/CardSkeleton';
 
 
 export default function Section(): React.JSX.Element | undefined {
@@ -106,6 +106,7 @@ export default function Section(): React.JSX.Element | undefined {
                             </Card>
                         )
                     })}
+                    <CardSkeleton nomberOfResults={section.chapters?.length} />
                 </div>
                 <div className="fixed bottom-10 right-3 lg:hidden">
                     <ArticleSheet />

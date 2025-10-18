@@ -17,6 +17,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { ArticleSheet } from '@/components/ArticleSheet';
+import CardSkeleton from '@/components/CardSkeleton';
 
 
 export default function Home(): React.JSX.Element | undefined {
@@ -97,7 +98,8 @@ export default function Home(): React.JSX.Element | undefined {
                             </ul>
                         </CardContent>
                     </Card>
-                )}
+                )}                    
+                <CardSkeleton nomberOfResults={sections?.length} />
                 <div className="fixed z-30 bottom-10 right-3 lg:hidden">
                     <ArticleSheet />
                 </div>
