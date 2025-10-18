@@ -127,9 +127,10 @@
             <div class="block background-ligth">
                 <div class="block-title d-flex align-items-center">
                     <h2>Licence </h2>
-                    <span class="bs-badge text-bg-info mx-20">{{ licence.isFinal ? licence.shortSeason : 'Période d\'essai'}}</span>
                     {% if user.isEndTesting %}
-                    <span class="bs-badge text-bg-danger mx-20">{{ 'Terminée'}}</span>
+                        <span class="bs-badge text-bg-danger mx-20">{{ 'Période d\'essai terminée'}}</span>
+                    {% else %}
+                        <span class="bs-badge text-bg-info mx-20">{{ licence.isFinal ? licence.shortSeason : 'Période d\'essai'}}</span>
                     {% endif %}
                     {% if is_granted('USER_EDIT', user)%}
                         <div class="tools">
