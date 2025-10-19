@@ -41,7 +41,7 @@ final class Version20251019100930 extends AbstractMigration
             [                
                 'name' => 'BIKE_RIDE_MUST_PROVIDE_REGISTRATION',
                 'label' => 'Message afficher à un encadrant pour un dossier d\'inscription',
-                'content' => '<p>{{ prenom_nom }} a confirmé son inscription pour la saison 2025-2026. Pensez à lui demander les papiers signés.</p>',
+                'content' => '<p>{{ prenom_nom }} a confirmé son inscription pour la saison {{ saison_actuelle }}. Pensez à lui demander les papiers signés avec le paiement.</p>',
                 'levelType' => null,
                 'protected' => 1,
                 'sectionId' => 'BIKE_RIDE',
@@ -49,7 +49,7 @@ final class Version20251019100930 extends AbstractMigration
             [                
                 'name' => 'BIKE_RIDE_END_TESTING',
                 'label' => 'Message afficher à un encadrant pour une période de test terminée',
-                'content' => '<p>La période d\'essai de {{ prenom_nom }} est terminée. Pensez à lui rappeler de finaliser son inscription s\'il souhaite continuer à participer aux événements du club.</p>',
+                'content' => '<p>La période d\'essai de {{ prenom_nom }} est terminée. Pensez à lui demander de faire son inscription et de donner les papiers d\'inscription signés avec le paiement AVANT la prochaine séance.</p>',
                 'levelType' => null,
                 'protected' => 1,
                 'sectionId' => 'BIKE_RIDE',
