@@ -29,7 +29,7 @@ const handleShowModal = (event) => {
     showModal(route, modalType);
 }
 
-const handleHideModal = () => {
+export const handleHideModal = () => {
     document.querySelectorAll('button.close[data-dismiss="modal"], .btn[data-dismiss="modal"]').forEach((element) => {
         element.addEventListener('click', closeModal);
     });

@@ -1,4 +1,4 @@
-import { openModal, closeModal } from './modal.js';
+import { openModal, handleHideModal, closeModal } from './modal.js';
 import Routing from 'fos-router';
 import { checkStatus, isJsonResponse } from './fetch.js'
 
@@ -25,7 +25,6 @@ class Cluster {
     getSessions = () => {
         fetch(this.route)
         .then(checkStatus)
-        // .then(isJsonResponse)
         .then((response) => response.json())
         .then((json) => {
             if (parseInt(json.codeError) === 0) {
@@ -65,7 +64,6 @@ class Cluster {
         event.preventDefault();
         const route = Routing.generate('admin_cluster_complete', {'cluster': this.entityId});
         fetch(route)
-        // .then(isJsonResponse)
         .then((response) => response.json())
         .then((json)=> {
             if (json.html) {
@@ -74,6 +72,7 @@ class Cluster {
             }
             if (json.modal) {
                 openModal(json.modal, 'primary');
+                handleHideModal();
                 document.querySelector('.modal form').addEventListener('submit', this.confirmComplete)
             }
         });
@@ -88,7 +87,6 @@ class Cluster {
             method: 'POST',
             body : data,
         })
-        // .then(isJsonResponse)
         .then((response) => response.json())
         .then((json)=> {
             this.replaceCluster(json.html);
@@ -110,8 +108,35 @@ class Attendance {
         this.addEventListener();
     }
     addEventListener = () => {
-        this.element.addEventListener('click', this.adminSessionPresent);
+        if (this.element.dataset.toggle === 'modal') {
+            this.element.addEventListener('click', this.showMessage);
+        } else {
+            this.element.addEventListener('click', this.adminSessionPresent);
+        }
     }
+    showMessage = (event) => {
+        event.preventDefault();
+        const route = Routing.generate('admin_session_message', {'session': this.session});
+        fetch(route)
+        .then((response) => response.json())
+        .then((json)=> {
+            if (json.modal) {
+                openModal(json.modal, 'primary');
+                handleHideModal();
+                document.querySelector('.modal form').addEventListener('submit', this.detectPresence)
+            }
+        });
+    }
+    detectPresence = (event) => {
+        event.preventDefault();
+        const button = document.querySelector(`a[data-session="${this.session}"]`);
+        button.dataset.toggle = null;
+        this.element.removeEventListener('click', this.showMessage);
+        this.element.addEventListener('click', this.adminSessionPresent);
+        closeModal();
+        button.click();
+    }
+
     adminSessionPresent = (event) => {
         event.preventDefault();
         this.btnEl = (event.tagName === 'A') ? event.target : event.target.closest('a');

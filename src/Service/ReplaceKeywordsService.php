@@ -177,4 +177,13 @@ class ReplaceKeywordsService
 
         return $content;
     }
+
+    public function replaceUserFullName(string|bool|array|int|null $content, UserDto $user): string|bool|array|int|null
+    {
+        if (is_string($content)) {
+            return str_replace('{{ prenom_nom }}', (string) $user->member->fullName, $content);
+        }
+
+        return $content;
+    }
 }

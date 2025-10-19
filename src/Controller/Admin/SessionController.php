@@ -4,29 +4,30 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\BikeRide;
-use App\Entity\Enum\AvailabilityEnum;
-use App\Entity\Level;
 use App\Entity\Session;
-use App\Form\Admin\SessionType;
-use App\Form\SessionSwitchType;
-use App\Repository\SessionRepository;
+use App\Entity\BikeRide;
 use App\Service\CacheService;
 use App\Service\SeasonService;
-use App\Service\SessionService;
 use App\Service\SurveyService;
+use App\Form\Admin\SessionType;
+use App\Form\SessionSwitchType;
+use App\Service\SessionService;
 use App\UseCase\Session\SetSession;
+use App\Repository\SessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\LicenceDtoTransformer;
+use App\Service\MessageService;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
@@ -49,8 +50,7 @@ class SessionController extends AbstractController
     ): Response {
         $codeError = 1;
         $sessionId = $request->request->get('sessionId');
-
-        $session = $sessionRepository->find($sessionId);
+        $session = ($sessionId) ? $sessionRepository->find($sessionId) : null;
         if ($session) {
             $cachePool = new FilesystemAdapter();
             $cachePool->deleteItem(sprintf('cluster.%s', $session->getCluster()->getId()));
@@ -64,6 +64,38 @@ class SessionController extends AbstractController
         }
 
         return new JsonResponse(['codeError' => $codeError]);
+    }
+
+    #[Route('/admin/session/message/{session}', name: 'admin_session_message', methods: ['GET'], options:['expose' => true])]
+    #[IsGranted('BIKE_RIDE_LIST')]
+    public function adminMessage(
+        Session $session,
+        UserDtoTransformer $userDtoTransformer,
+        MessageService $messageService,
+    ): Response {
+        
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl('admin_session_present'),
+        ]);
+        $form->add('sessionId', HiddenType::class, ['data' => $session->getId()]);
+
+
+        $user = $userDtoTransformer->getHeaderFromEntity($session->getUser());
+        $message = '';
+        if ($user->mustProvideRegistration) {
+            $message = $messageService->getMessageByName('BIKE_RIDE_MUST_PROVIDE_REGISTRATION', $user);
+        }
+        if ($user->isEndTesting) {
+            $message = $messageService->getMessageByName('BIKE_RIDE_END_TESTING', $user);
+        }
+
+        return new JsonResponse([
+            'codeError' => 0,
+            'modal' => $this->renderView('session/admin/message.html.twig', [
+                'message' => $message,
+                'form' => $form->createView(),
+            ]),
+        ]);
     }
 
     #[Route('/admin/groupe/change/{session}', name: 'admin_bike_ride_switch_cluster', methods: ['GET', 'POST'])]

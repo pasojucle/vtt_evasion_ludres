@@ -1,0 +1,10 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %} Rappel inscription{% endblock %}
+{% block body %}
+    <p>{{ message|raw }}</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = 'Valider sa participation' %}
+    {{ parent() }}
+{% endblock %}
