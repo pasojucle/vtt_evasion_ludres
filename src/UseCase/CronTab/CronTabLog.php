@@ -33,9 +33,14 @@ class CronTabLog
 
     public function read(): array
     {
-        $content = explode(PHP_EOL, $this->filesystem->readFile($this->projectDir->path('data', self::FILENAME)));
+        $filename = $this->projectDir->path('data', self::FILENAME);
+        if (file_exists($filename)) {
+            $content = explode(PHP_EOL, $this->filesystem->readFile($filename));
 
-        return array_map(fn ($log): ?array => json_decode($log, true), array_reverse($content));
+            return array_map(fn ($log): ?array => json_decode($log, true), array_reverse($content));
+        }
+        
+        return [];
     }
 
     public function filemtime(): int
