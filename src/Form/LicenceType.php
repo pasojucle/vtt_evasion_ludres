@@ -27,7 +27,7 @@ class LicenceType extends AbstractType
                 if (Licence::CATEGORY_MINOR === $options['category']) {
                     array_shift($choicesCoverage);
                 }
-                if (Licence::CATEGORY_ADULT === $options['category'] && $licence->isFinal()) {
+                if (Licence::CATEGORY_ADULT === $options['category'] && $licence->getState()->isYearly()) {
                     if (UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
                         $form
                             ->add('isVae', CheckboxType::class, [

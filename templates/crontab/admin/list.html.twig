@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Journal des tâches plannifiées{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="wrapper-title">
+            <h1>Tâches planifiées</h1>
+        </div>
+        <div class="wrapper-body">
+            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
+            <ul>
+                {% for log in logs %}
+                    {% if log %}
+                    <li class="row row-list light-separator align-items-start">
+                        <div class="col-md-11 col-xs-10">
+                            <div class="row">
+                                <div class="col-md-3 col-xs-12">{{ log.executeAt }}</div>
+                                {% if 1 == log.codeError %}
+                                    <div class="col-md-9 col-xs-12">
+                                        <span class="{{ log.codeError ? 'danger' : 'success' }}"></span> 
+                                        {{ log.message }}
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-9 col-xs-12">
+                                        {% for crontab in log.context %}
+                                            <div>
+                                                    <span class="{{ crontab.codeError ? 'danger' : 'success' }}"></span>
+                                                    {{ crontab.message }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                {% if logs is empty %}<li>Aucun log</li>{% endif %}
+            </ul>
+            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+        </div>
+    </div>
+{% endblock %}

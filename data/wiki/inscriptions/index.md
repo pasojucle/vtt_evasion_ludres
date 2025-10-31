@@ -13,17 +13,34 @@ Afficher la liste des inscriptions en fonction du filtre.
 - Renouvellement à valiser : membre incrit à la saison précédente et qui s'est incrit pour la nouvelle saison.
 - Licence non renouvelées: membre incrit à la saison précédente et qui n'a pas renouvellé sa licence.
 - En cour de création: membre qui a commencé de remplir le formulaire d'incription mais qui n'a pas validé le récaptulatif
+- Inscrire à la ffvélo: membre dont l'inscription annuelle a été réceptionnée et qu'il faut inscrire à la ffvélo. 
 
-![image](/wiki/img/inscriptions/list.png)
+![image](/wiki/img/inscriptions/licences_to_receive.png)
 
 🛈 **NOTE :** la liste filtrée est exportable via le menu Exporter la sélection, et les adresses mail peuvent être copier dans le presse papier via le menu *Copier les emails de la séléction*
 
-### Cycle de vie d'une inscription
-- Pour un nouveau membre : En cours de création => en attente de validation => période de test => En cours de création => en attente de validation => validé
 
-- Pour une réinscription : En cours de création => en attente de validation => validé
+🛈 **NOTE :** l'affichage des liste pour la periode d'essai, indique le nombre de participations / le nombre d'inscription à une sortie.
+
+### Réception d'un dossier d'inscription
+Pour les membres qui se sont incrits aux 3 séances d'essai ou à la licence annuelle, un bouton permet d'indiqué que le dossier d'incription a été reçu par le club. Une pop'up permet de confirmer l'action.
+
+![image](/wiki/img/inscriptions/recepted.png)
+
+### Inscription à la ffvélo
+Pour les membres don le dossier d'incription annuelle, un bouton permet d'indiqué que l'incription a été saisie sur le site de la ffvélo. Une pop'up permet de confirmer l'action.
+
+![image](/wiki/img/inscriptions/registered.png)
+
+### Cycle de vie d'une inscription
+- Pour un nouveau membre : inscription de test en cours de création => inscription de test enregistrée => inscription de test reçue par le club => Inscription annuelle en cours de création => inscription annuelle enregistrée => inscription annuelle reçue par le club => inscription annuelle enregistrée auprès de la fédération => expirée
+
+- Pour une réinscription : Inscription annuelle en cours de création => inscription annuelle enregistrée => inscription annuelle reçue par le club => inscription annuelle enregistrée auprès de la fédération => expirée
+
+![image](/wiki/img/inscriptions/graph.svg)
 
 🛈 **NOTE :** Pour s'inscrire au club après une période d'essai, il faut :
+- que l'inscription des 3 séances d'essai soit reçue par le club
 - pour un membre de l'école VTT: avoir ***participé*** à au moins une rando
 - pour un membre adulte: ***être inscrit*** à au moins une rando
 

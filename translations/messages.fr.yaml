@@ -14,17 +14,31 @@ licence:
     minor: Mineur
     adult: Adulte
     place_holder: Mineur et adulte
-  status:
+  filter:
     none: Non renouvelée
     waiting_renew: Licences non renouvelées
     in_processing: En cours de création
     waiting_validate: En attente de validation
     valid: Valide
     testing: 3 séances gratuites
-    testing_in_processing: 3 séances en cours
-    testing_complete: 3 séances terminées
+    testing_in_processing: 3 séances d'essai en cours
+    testing_complete: 3 séances d'essai terminées
     new: Nouvelles inscriptions à valider
     renew: Renouvellements à valider
+    to_register: Inscrire à la ffvélo
+  state:
+    trial_file_pending: Licence de test cours de création
+    trial_file_submitted: Licence de test enregistrée
+    trial_file_received: Licence de test reçue par le club
+    trial_completed: Période de test terminée
+    yearly_file_pending: Licence annuelle cours de création
+    yearly_file_submitted: Licence annuelle enregistrée
+    yearly_file_received: Licence annuelle reçue par le club
+    yearly_file_registred: Licence annuelle enregistrée par la fédération
+
+    cancelled: Licence annulée
+    expired: Licence expirée
+
   all_users: Tous les utilisateurs
 
 identity:

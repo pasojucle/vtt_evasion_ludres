@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\LicenceStateEnum;
 use App\Repository\LicenceRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -37,35 +38,38 @@ class Licence
         self::CATEGORY_ADULT => 'licence.category.adult',
     ];
 
-    public const STATUS_NONE = 0;
+    public const FILTER_NONE = 0;
 
-    public const STATUS_WAITING_RENEW = 1;
+    public const FILTER_WAITING_RENEW = 1;
 
-    public const STATUS_IN_PROCESSING = 2;
+    public const FILTER_IN_PROCESSING = 2;
 
-    public const STATUS_WAITING_VALIDATE = 3;
+    public const FILTER_WAITING_VALIDATE = 3;
 
-    public const STATUS_TESTING = 4;
+    public const FILTER_TESTING = 4;
 
-    public const STATUS_VALID = 5;
+    public const FILTER_VALID = 5;
 
-    public const STATUS_TESTING_IN_PROGRESS = 6;
+    public const FILTER_TESTING_IN_PROGRESS = 6;
 
-    public const STATUS_TESTING_COMPLETE = 7;
+    public const FILTER_TESTING_COMPLETE = 7;
 
-    public const STATUS_NEW = 8;
+    public const FILTER_NEW = 8;
 
-    public const STATUS_RENEW = 9;
+    public const FILTER_RENEW = 9;
+
+    public const FILTER_TO_REGISTER = 10;
 
     public const ALL_USERS = 99;
 
-    public const STATUS = [
-        self::STATUS_NONE => 'licence.status.none',
-        self::STATUS_WAITING_RENEW => 'licence.status.waiting_renew',
-        self::STATUS_IN_PROCESSING => 'licence.status.in_processing',
-        self::STATUS_WAITING_VALIDATE => 'licence.status.waiting_validate',
-        self::STATUS_TESTING => 'licence.status.testing',
-        self::STATUS_VALID => 'licence.status.valid',
+    public const FILTERS = [
+        self::FILTER_NONE => 'licence.filter.none',
+        self::FILTER_WAITING_RENEW => 'licence.filter.waiting_renew',
+        self::FILTER_IN_PROCESSING => 'licence.filter.in_processing',
+        self::FILTER_WAITING_VALIDATE => 'licence.filter.waiting_validate',
+        self::FILTER_TESTING => 'licence.filter.testing',
+        self::FILTER_VALID => 'licence.filter.valid',
+        self::FILTER_TO_REGISTER => 'licence.filter.to_register',
     ];
 
     #[ORM\Column(type: 'integer')]
@@ -99,12 +103,6 @@ class Licence
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(type: 'boolean', options:['default' => true])]
-    private bool $final = false;
-
-    #[ORM\Column(type: 'integer')]
-    private int $status = self::STATUS_IN_PROCESSING;
-
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $currentSeasonForm = false;
 
@@ -116,6 +114,9 @@ class Licence
 
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $testingAt = null;
+
+    #[ORM\Column(type: 'LicenceState', options:['default' => LicenceStateEnum::DRAFT->value])]
+    private LicenceStateEnum $state = LicenceStateEnum::DRAFT;
 
     public function __construct()
     {
@@ -235,30 +236,6 @@ class Licence
         return $this;
     }
 
-    public function isFinal(): ?bool
-    {
-        return $this->final;
-    }
-
-    public function setFinal(bool $final): self
-    {
-        $this->final = $final;
-
-        return $this;
-    }
-
-    public function getStatus(): ?int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(int $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
     public function getCurrentSeasonForm(): ?bool
     {
         return $this->currentSeasonForm;
@@ -321,6 +298,18 @@ class Licence
     public function setTestingAt(?DateTimeImmutable $testingAt): static
     {
         $this->testingAt = $testingAt;
+
+        return $this;
+    }
+
+    public function getState(): ?object
+    {
+        return $this->state;
+    }
+
+    public function setState(object $state): static
+    {
+        $this->state = $state;
 
         return $this;
     }

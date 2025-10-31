@@ -1,0 +1,81 @@
+framework:
+  workflows:
+    licence:
+      type: 'state_machine'
+      marking_store:
+        service: 'App\Workflow\MarkingStore\EnumMarkingStore'
+      supports:
+        - App\Entity\Licence
+      initial_marking: draft
+      places:
+        - draft
+        # Phase dossier d'essai
+        - trial_file_pending
+        - trial_file_submitted
+        - trial_file_received
+        - trial_completed
+        
+        # Phase dossier définitif
+        - yearly_file_pending
+        - yearly_file_submitted
+        - yearly_file_received
+        - yearly_file_registred
+    
+        - cancelled
+        - expired
+        
+      transitions:
+        # Phase d'essai
+        start_trial:
+          from: draft
+          to: trial_file_pending
+        
+        submit_trial_file:
+          from: trial_file_pending
+          to: trial_file_submitted
+        
+        receive_trial_file:
+          from: trial_file_submitted
+          to: trial_file_received
+        
+        reject_trial_file:
+          from: trial_file_submitted
+          to: trial_file_pending
+        
+        complete_trial_file:
+          from: [trial_file_submitted, trial_file_received]
+          to: trial_completed
+        
+        uncomplete_trial_file:
+          from: trial_completed
+          to: trial_file_received
+
+        # Phase définitive
+        start_yearly_registration:
+          from: [trial_file_received, trial_completed, draft]
+          to: yearly_file_pending
+        
+        submit_yearly_file:
+          from: yearly_file_pending
+          to: yearly_file_submitted
+        
+        receive_yearly_file:
+          from: yearly_file_submitted
+          to: yearly_file_received
+        
+        reject_yearly_file:
+          from: yearly_file_submitted
+          to: yearly_file_pending
+        
+        register_to_federation:
+          from: yearly_file_received
+          to: yearly_file_registred
+
+        expire:
+          from: [yearly_file_received, yearly_file_registred]
+          to: expired
+
+        # Gestion des annulations
+        cancel:
+          from: [draft, trial_file_pending, trial_file_submitted, yearly_file_pending, yearly_file_submitted]
+          to: cancelled

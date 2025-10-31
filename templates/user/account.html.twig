@@ -41,10 +41,21 @@
                                     </div>
                                 </li>
                             {% endif %}
+                            {% if user.lastLicence.isYearly is same as(false) %}
+                                <li>
+                                    <div class="row padding-top-5">
+                                        <div class="col-md-5"><b>3 séances d'essai</b></div>
+                                        <div class="col-md-7">
+                                            {{ user.trialSessionsPresent }} effectuées /{{ user.testingBikeRides }} inscriptions
+                                        </div>
+                                    </div>
+                                    <b></b>
+                                </li>
+                            {% endif %}
                             {% if user.isEndTesting %}
                                 <li>
                                     <div class="row padding-top-5">
-                                        <div class="col-md-5"><b>Votre période d'essaie est terminée</b></div>
+                                        <div class="col-md-5 text-primary"><b>Votre période d'essaie est terminée</b></div>
                                         <div class="col-md-7">
                                             <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step': 1})}}">S'inscrire</a>
                                         </div>
@@ -55,11 +66,11 @@
                             <li>
                                 <div class="row padding-top-5">
                                     <div class="col-md-5"><b>Dernière licence</b></div>
-                                    <div class="col-md-7">{{ user.lastLicence.shortSeason }}</div>
+                                    <div class="col-md-7">{{ user.lastLicence.shortSeason }} - {{ user.lastLicence.state.value|trans }}</div>
                                 </div>
                                 <b></b>
                             </li>
-                            {% if user.lastLicence.status > constant('App\\Entity\\Licence::STATUS_IN_PROCESSING') %}
+                            {% if not user.lastLicence.state.value.isPending %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon dossier d'inscription</b></div>

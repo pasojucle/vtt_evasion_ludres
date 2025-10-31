@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use App\Doctrine\DBAL\Type\LicenceStateEnumType;
 use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
@@ -49,7 +51,6 @@ class UserDtoTransformer
         $userDto->secondKinship = (array_key_exists(IdentityKindEnum::SECOND_CONTACT->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::SECOND_CONTACT->name] : null;
         $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->prevLicence = $this->getPrevLicence($user);
-        $userDto->hasAlreadyBeenRegistered = $this->hasAlreadyBeenRegistered($user);
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
@@ -62,6 +63,7 @@ class UserDtoTransformer
 
         $sessionsTotal = $user->getSessions()->count();
         $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $sessionsTotal);
+        $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $user);
         $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
         $userDto->mustProvideRegistration = $this->mustProvideRegistration($userDto->lastLicence, $user->getLicences()->count());
 
@@ -82,6 +84,7 @@ class UserDtoTransformer
         $userDto->seasons = $this->getSeasons($user->getLicences());
         $sessionsTotal = $user->getSessions()->count();
         $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
+        $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $user);
         $userDto->mustProvideRegistration = $this->mustProvideRegistration($userDto->lastLicence, $user->getLicences()->count());
         $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $sessionsTotal);
 
@@ -180,7 +183,7 @@ class UserDtoTransformer
     
     private function isEndTesting(LicenceDto $lastLicence, int $sessionTotal): bool
     {
-        if (false === $lastLicence->isFinal) {
+        if (in_array($lastLicence->state['value'], [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
             return 2 < $sessionTotal;
         }
 
@@ -189,8 +192,23 @@ class UserDtoTransformer
 
     private function testingBikeRides(LicenceDto $lastLicence, int $sessionsTotal): ?int
     {
-        if (false === $lastLicence->isFinal) {
+        if (in_array($lastLicence->state['value'], [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
             return $sessionsTotal;
+        }
+
+        return null;
+    }
+
+    private function trialSessionsPresent(LicenceDto $lastLicence, User $user): ?int
+    {
+        if (in_array($lastLicence->state['value'], [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
+            $sessions = [];
+            foreach ($user->getSessions() as $session) {
+                if ($session->isPresent()) {
+                    $sessions[] = $session;
+                }
+            }
+            return count($sessions);
         }
 
         return null;
@@ -198,7 +216,7 @@ class UserDtoTransformer
 
     private function mustProvideRegistration(LicenceDto $lastLicence, int $licencesTotal): bool
     {
-        return 1 === $licencesTotal && $lastLicence->isSeasonLicence && $lastLicence->isFinal && Licence::STATUS_WAITING_VALIDATE === $lastLicence->status;
+        return 1 === $licencesTotal && $lastLicence->isSeasonLicence && LicenceStateEnum::YEARLY_FILE_SUBMITTED === $lastLicence->state['value'];
     }
 
     private function getLastLicence(User $user, ?array $histories): LicenceDto
@@ -214,15 +232,6 @@ class UserDtoTransformer
             return null;
         }
         return $this->licenceDtoTransformer->fromEntity($this->licenceRepository->findOneByUserAndLastSeason($user));
-    }
-
-    private function hasAlreadyBeenRegistered(User $user): bool
-    {
-        if (!$user->getId()) {
-            return false;
-        }
-        
-        return !empty($this->licenceRepository->findByUserAndPeriod($user, 5));
     }
 
     private function getPermissions(User $user): ?string

@@ -34,8 +34,8 @@
                             <div class="row">
                                 <div class="col-md-4 col-xs-12">{{ user.member.fullName }}</div>
                                 <div class="col-md-4 col-xs-12">
-                                    {% if user.lastLicence.isFinal is same as(false) %}
-                                        {{ user.testingBikeRides }}/3 séances d'essai
+                                    {% if user.lastLicence.isYearly is same as(false) %}
+                                        {{ user.trialSessionsPresent }}/{{ user.testingBikeRides }} séances d'essai
                                     {% endif %}
                                 </div>
                                 <div class="col-md-3 col-xs-10">

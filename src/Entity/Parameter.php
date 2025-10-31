@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Egulias\EmailValidator\Warning\TLD;
 
 #[Entity(repositoryClass: ParameterRepository::class)]
 class Parameter

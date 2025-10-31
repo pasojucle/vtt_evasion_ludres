@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -21,28 +24,24 @@ class LicenceType extends AbstractType
             $licence = $event->getData();
             $form = $event->getForm();
             if ($licence === $options['season_licence']) {
-                $statusChoices = [
-                    'licence.status.waiting_validate' => Licence::STATUS_WAITING_VALIDATE,
-                    'licence.status.valid' => ($options['season_licence']->isFinal()) ? Licence::STATUS_VALID : Licence::STATUS_TESTING,
-                    'licence.status.in_processing' => Licence::STATUS_IN_PROCESSING,
-                ];
+                $notAllowedState = LicenceStateEnum::DRAFT;
                 $form
-                    ->add('final', ChoiceType::class, [
-                        'label' => 'Période de 3 séances de test',
-                        'choices' => [
-                            'En cours' => false,
-                            'Terminée' => true,
+                    ->add('state', EnumType::class, [
+                        'label' => 'État',
+                        'class' => LicenceStateEnum::class,
+                        'choice_filter' => ChoiceList::filter(
+                            $this,
+                            function (LicenceStateEnum $licenceState) use ($notAllowedState): bool {
+                                return  $notAllowedState !== $licenceState;
+                            },
+                            $notAllowedState
+                        ),
+                        'autocomplete' => true,
+                        'attr' => [
+                            'data-width' => '100%',
+                            'data-placeholder' => 'Sélectionnez un état',
                         ],
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                    ])
-                    ->add('status', ChoiceType::class, [
-                        'label' => 'Dossier d\'inscription',
-                        'choices' => $statusChoices,
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
+                        'required' => false,
                     ])
                     ->add('isVae', CheckboxType::class, [
                         'label' => 'VTT à assistance électrique',

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\UseCase\CronTab\CronTabLog;
+use App\UseCase\Licence\ExpireLicence;
 use App\UseCase\Log\DeleteOutOfPeriod as LogDeleteOutOfPeriod;
 use App\UseCase\Parameter\DisabledNewSeasonReRegistration;
 use App\UseCase\Registration\FramerParticipation;
@@ -24,6 +26,8 @@ class CronTabController extends AbstractController
         SlideshowDeleteOutOfPeriod $slideshowDeleteOutOfPeriod,
         LogDeleteOutOfPeriod $logDeleteOutOfPeriod,
         FramerParticipation $framerParticipation,
+        ExpireLicence $expireLicence,
+        CronTabLog $cronTabLog,
     ): Response {
         $results = [];
 
@@ -33,10 +37,13 @@ class CronTabController extends AbstractController
             $results[] = $slideshowDeleteOutOfPeriod->execute();
             $results[] = $logDeleteOutOfPeriod->execute();
             $results[] = $framerParticipation->execute();
+            $results[] = $expireLicence->execute();
         } catch (Exception $exception) {
+            $cronTabLog->write(1, $results, $exception->getMessage());
             return new JsonResponse(['codeError' => 1, 'error' => $exception->getMessage()]);
         }
 
+        $cronTabLog->write(0, $results);
         return new JsonResponse($results);
     }
 }

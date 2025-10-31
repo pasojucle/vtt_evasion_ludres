@@ -9,9 +9,9 @@ use Symfony\Component\Form\FormInterface;
 
 class RegistrationStepDto
 {
-    public const OUTPUT_FILENAME_CLUB = 0;
-    public const OUTPUT_FILENAME_PERSONAL = 1;
-    public const OUTPUT_FILENAMES = [
+    public const int OUTPUT_FILENAME_CLUB = 0;
+    public const int OUTPUT_FILENAME_PERSONAL = 1;
+    public const array OUTPUT_FILENAMES = [
         self::OUTPUT_FILENAME_CLUB => 'Docs_à_redonner_au_club.pdf',
         self::OUTPUT_FILENAME_PERSONAL => 'Informations_à_lire_et_à_conserver.pdf',
     ];

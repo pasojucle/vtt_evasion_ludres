@@ -14,8 +14,11 @@ use App\Repository\BikeRideRepository;
 use App\Repository\OrderHeaderRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\ParameterService;
+use App\UseCase\CronTab\CronTabLog;
 use App\UseCase\User\GetCurrentSeasonUsers;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -127,6 +130,18 @@ class DashboardController extends AbstractController
             'title' => 'Annonces d\'occasion',
             'data' => $secondHandsByType,
             'link' => $this->generateUrl('admin_second_hand_list'),
+        ]);
+    }
+
+    #[Route('/crontab', name: '_crontab', methods: ['GET'], options:['expose' => true])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function crontab(CronTabLog $cronTabLog): Response
+    {
+        $executeAt = $cronTabLog->filemtime();
+
+        return $this->render('dashboard/crontab.html.twig', [
+            'executeAt' => date("d/m/Y H:i:s.", $executeAt),
+            'onError' => $executeAt < (new DateTime())->setTime(0, 0, 0)->getTimestamp(),
         ]);
     }
 }

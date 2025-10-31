@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use App\Repository\LicenceRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -36,8 +37,8 @@ class GetCurrentSeasonUsers
         if (array_key_exists($season, $licencesBySeason)) {
             /** @var Licence $licence */
             foreach ($licencesBySeason[$season] as $licence) {
-                $type = ($licence->isFinal())
-                    ? $this->getFinalType($licence, $licencesBySeason[$season - 1])
+                $type = ($licence->getState()->isYearly())
+                    ? $this->getYearlyType($licence, $licencesBySeason[$season - 1])
                     : self::TESTING;
                 if ($type) {
                     $usersByType[$type][] = $licence;
@@ -49,12 +50,12 @@ class GetCurrentSeasonUsers
         return $usersByType;
     }
 
-    private function getFinalType(Licence $licence, array $lastSeasonLicences): ?string
+    private function getYearlyType(Licence $licence, array $lastSeasonLicences): ?string
     {
-        if (Licence::STATUS_VALID === $licence->getStatus()) {
+        if ($licence->getState()->isValid()) {
             return self::MEMBER;
         }
-        if (Licence::STATUS_WAITING_VALIDATE <= $licence->getStatus()) {
+        if (!$licence->getState()->isValid()) {
             if (array_key_exists($licence->getUser()->getId(), $lastSeasonLicences)) {
                 return self::RE_REGISTRATION;
             }

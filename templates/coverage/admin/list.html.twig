@@ -27,9 +27,9 @@
                                 {% if user.level.colors is not null %}style="background-color: {{ user.level.colors.background }}"{% endif %}>
                                 <div class="row">
                                     <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
-                                    {% if user.lastLicence is not empty and user.lastLicence.isFinal is same as(false) %}
+                                    {% if user.lastLicence is not empty and user.lastLicence.isYearly is same as(false) %}
                                         <div class="col-md-5 col-xs-12">
-                                            {{ user.testingBikeRides }}/3 séances d'essai
+                                            {{ user.trialSessionsPresent }}/{{ user.testingBikeRides }} séances d'essai
                                         </div>
                                     {% endif %}
                                 </div>

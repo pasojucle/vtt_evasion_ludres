@@ -130,7 +130,7 @@
                     {% if user.isEndTesting %}
                         <span class="bs-badge text-bg-danger mx-20">{{ 'Période d\'essai terminée'}}</span>
                     {% else %}
-                        <span class="bs-badge text-bg-info mx-20">{{ licence.isFinal ? licence.shortSeason : 'Période d\'essai'}}</span>
+                        <span class="bs-badge text-bg-info mx-20">{{ licence.isYearly ? licence.shortSeason : 'Période d\'essai'}}</span>
                     {% endif %}
                     {% if is_granted('USER_EDIT', user)%}
                         <div class="tools">
@@ -151,11 +151,11 @@
                         {% if licence.testingAt is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Date d'incription à la période d'éssaie</b></div><div class="col-md-8 col-xs-6" title="{{ licence.testingAtLong }}">{{ licence.testingAt }}</div></div></li>
                         {% endif %}
-                        {% if licence.status is not null %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.statusStr|trans }}</div></div></li>
+                        {% if licence.state is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.state.value|trans }}</div></div></li>
                         {% endif %}
-                        {% if licence.isFinal is same as(false) %}
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6">{{ user.testingBikeRides }} sortie(s)</div></div></li>
+                        {% if licence.isYearly is same as(false) %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>En période de test :</b></div><div class="col-md-8 col-xs-6"> {{ user.trialSessionsPresent }} / {{ user.testingBikeRides }} sortie(s)</div></div></li>
                         {% endif %}
                         {% if licence.coverage is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
@@ -181,7 +181,7 @@
                     </ul>
                 </div>
             </div>
-            {% if licence.isFinal and user.health is not empty %}
+            {% if licence.isYearly and user.health is not empty %}
                 <div class="block background-ligth">
                 <div class="block-title">
                     <h2>Informations sanitaires</h2>

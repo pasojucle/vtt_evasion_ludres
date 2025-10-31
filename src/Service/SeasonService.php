@@ -74,15 +74,25 @@ class SeasonService
 
         $seasonsStatus = [];
 
-        $seasonsStatus[Licence::STATUS_NONE] = ((int) $today->format('m') <= $this->seasonStartAt['month'] && (int) $today->format('d') <= $this->seasonStartAt['day'])
+        $seasonsStatus[Licence::FILTER_NONE] = ((int) $today->format('m') <= $this->seasonStartAt['month'] && (int) $today->format('d') <= $this->seasonStartAt['day'])
             ? $currentSeason - 2
             : $currentSeason - 1;
 
-        $seasonsStatus[Licence::STATUS_WAITING_RENEW] = ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
+        $seasonsStatus[Licence::FILTER_WAITING_RENEW] = ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
             ? $currentSeason - 1
             : 1970;
 
         return $seasonsStatus;
+    }
+
+    public function getSeasonForRenew(): int
+    {
+        $today = new DateTime();
+        $currentSeason = $this->getCurrentSeason();
+
+        return ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
+            ? $currentSeason - 1
+            : 1970;
     }
 
     public function getSeasonByStatus(int $status): int

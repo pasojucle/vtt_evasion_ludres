@@ -209,8 +209,21 @@ abstract class GetUsersFiltered
 
         foreach ($users as $user) {
             $userDto = $this->userDtoTransformer->fromEntity($user);
-            $isTesting = ($userDto->lastLicence?->isFinal) ? 0 : 1;
-            $row = [$userDto->licenceNumber, $userDto->member->name, $userDto->member->firstName, $userDto->level?->title, $userDto->mainEmail, $userDto->member->birthDate, $userDto->member->birthPlace, $userDto->member->birthDepartment, $userDto->member->birthCountry, $userDto->lastLicence->shortSeason, $isTesting, $userDto->lastLicence->status];
+            $isTesting = ($userDto->lastLicence?->isYearly) ? 0 : 1;
+            $row = [
+                $userDto->licenceNumber,
+                $userDto->member->name,
+                $userDto->member->firstName,
+                $userDto->level?->title,
+                $userDto->mainEmail,
+                $userDto->member->birthDate,
+                $userDto->member->birthPlace,
+                $userDto->member->birthDepartment,
+                $userDto->member->birthCountry,
+                $userDto->lastLicence->shortSeason,
+                $isTesting,
+                $userDto->lastLicence->state['label']
+            ];
             $content[] = implode(',', $row);
         }
 

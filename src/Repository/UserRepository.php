@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\BoardRole;
-use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\IdentityKindEnum;
-use App\Entity\Enum\PermissionEnum;
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\Session;
@@ -60,10 +59,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findMemberQuery(?array $filters): QueryBuilder
     {
         $qb = $this->createQuery();
-        $isFinalLicence = true;
+        $isYearlyLicence = true;
         if (!empty($filters)) {
-            if (array_key_exists('is_final_licence', $filters)) {
-                $isFinalLicence = (bool) $filters['is_final_licence'];
+            if (array_key_exists('is_yearly_licence', $filters)) {
+                $isYearlyLicence = (bool) $filters['is_yearly_licence'];
             }
             if (isset($filters['query'])) {
                 $this->addCriteriaByName($qb, $filters['query']);
@@ -83,8 +82,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     : $filters['season'];
                 match ($season) {
                     $this->seasonService::MIN_SEASON_TO_TAKE_PART => $this->addCriteriaGteSeason($qb),
-                    Licence::STATUS_IN_PROCESSING => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isFinalLicence),
-                    Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isFinalLicence),
+                    Licence::FILTER_IN_PROCESSING => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isYearlyLicence),
+                    Licence::FILTER_TESTING_IN_PROGRESS => $this->addCriteriaByLicenceStatus($qb, 'addCriteriaTestinInProgress', $isYearlyLicence),
                     default => $this->addCriteriaBySeason($qb, $season),
                 };
             }
@@ -96,7 +95,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
         }
 
-        if ($isFinalLicence) {
+        if ($isYearlyLicence) {
             $this->addCriteriaMember($qb);
         }
 
@@ -253,11 +252,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb
             ->andWhere(
-                $qb->expr()->eq('li.status', ':statusValid'),
-                $qb->expr()->eq('li.season', ':season')
+                $qb->expr()->eq('li.season', ':season'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.state', ':trialSubmited'),
+                    $qb->expr()->eq('li.state', ':trialValid'),
+                    $qb->expr()->eq('li.state', ':yearlySubmitted'),
+                    $qb->expr()->eq('li.state', ':yearlyValid'),
+                    $qb->expr()->eq('li.state', ':yearlySentToFederation'),
+                )
             )
             ->setParameter('season', $season)
-            ->setParameter('statusValid', Licence::STATUS_VALID)
+            ->setParameter('trialSubmited', LicenceStateEnum::TRIAL_FILE_SUBMITTED)
+            ->setParameter('trialValid', LicenceStateEnum::TRIAL_FILE_RECEIVED)
+            ->setParameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
+            ->setParameter('yearlyValid', LicenceStateEnum::YEARLY_FILE_RECEIVED)
+            ->setParameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED)
         ;
     }
 
@@ -266,20 +275,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb
             ->orWhere(
                 $qb->expr()->andX(
-                    $qb->expr()->eq('li.status', ':statusRegistration'),
-                    $qb->expr()->eq('li.final', ':isFinal'),
+                    $qb->expr()->eq('li.state', ':stateYearlySubmitted'),
                     $qb->expr()->eq('li.season', ':season')
                 ),
                 $qb->expr()->andX(
-                    $qb->expr()->gte('li.status', ':statusRegistration'),
-                    $qb->expr()->eq('li.final', ':isTesting'),
+                    $qb->expr()->orX(
+                        $qb->expr()->eq('li.state', ':stateTrialSubmitted'),
+                        $qb->expr()->eq('li.state', ':stateTrialValidated'),
+                    ),
                     $qb->expr()->eq('li.season', ':season')
                 ),
             )
             ->setParameter('season', $season)
-            ->setParameter('isFinal', true)
-            ->setParameter('isTesting', false)
-            ->setParameter('statusRegistration', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('stateTrialSubmitted', LicenceStateEnum::TRIAL_FILE_SUBMITTED)
+            ->setParameter('stateTrialValidated', LicenceStateEnum::TRIAL_FILE_RECEIVED)
+            ->setParameter('stateYearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
         ;
     }
 
@@ -298,11 +308,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb
             ->andWhere(
-                $qb->expr()->gte('li.status', ':status'),
-                $qb->expr()->eq('li.final', ':finalMember'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.state', ':yearlyValid'),
+                    $qb->expr()->eq('li.state', ':yearlySentToFederation'),
+                )
             )
-            ->setParameter('status', Licence::STATUS_WAITING_VALIDATE)
-            ->setParameter('finalMember', true)
+            ->setParameter('yearlyValid', LicenceStateEnum::YEARLY_FILE_RECEIVED)
+            ->setParameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED)
         ;
     }
 
@@ -320,12 +332,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $qb
             ->andWhere(
-                $qb->expr()->eq('li.final', ':finalNew'),
-                $qb->expr()->eq('li.status', ':statusNew'),
+                $qb->expr()->eq('li.state', ':statusNew'),
                 $qb->expr()->in('u', $usersWhithOnlyOneLicence->getDQL()),
             )
-            ->setParameter('finalNew', true)
-            ->setParameter('statusNew', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('statusNew', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
             ->setParameter('season', $season)
             ->orderBy('i.name', 'ASC')
         ;
@@ -344,13 +354,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $qb
             ->andWhere(
-                $qb->expr()->eq('li.final', ':finalRenew'),
-                $qb->expr()->eq('li.status', ':statusRenew'),
+                $qb->expr()->eq('li.state', ':statusRenew'),
                 $qb->expr()->in('u', $usersWhithMoreThanLicence->getDQL()),
                 $qb->expr()->eq('li.season', ':season'),
             )
-            ->setParameter('finalRenew', true)
-            ->setParameter('statusRenew', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('statusRenew', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
             ->setParameter('season', $season)
             ->orderBy('i.name', 'ASC')
         ;
@@ -363,22 +371,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->from(User::class, 'user')
             ->join('user.licences', 'userLicence')
             ->andWhere(
-                $qb->expr()->eq('userLicence.final', ':finalWaitingRenew'),
-                $qb->expr()->gte('userLicence.status', ':statusWaitingRenew'),
                 $qb->expr()->eq('userLicence.season', ':currentSeason'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('userLicence.state', ':stateSubmitted'),
+                    $qb->expr()->eq('userLicence.state', ':stateValidated'),
+                    $qb->expr()->eq('userLicence.state', ':stateSentToFederation'),
+                )
             );
 
         $qb
             ->andWhere(
-                $qb->expr()->eq('li.final', ':finalWaitingRenew'),
-                $qb->expr()->gt('li.status', ':statusWaitingRenew'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.state', ':stateValidated'),
+                    $qb->expr()->eq('li.state', ':stateSentToFederation'),
+                ),
                 $qb->expr()->eq('li.season', ':previousSeason'),
                 $qb->expr()->notIn('u', $usersWhithCurrentSeasonLicence->getDQL()),
             )
             ->setParameter('previousSeason', $currentSeason - 1)
             ->setParameter('currentSeason', $currentSeason)
-            ->setParameter('finalWaitingRenew', true)
-            ->setParameter('statusWaitingRenew', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('stateSubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
+            ->setParameter('stateValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED)
+            ->setParameter('stateSentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED)
             ->orderBy('i.name', 'ASC')
         ;
     }
@@ -390,27 +404,40 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->from(Session::class, 'sessionsinprogress')
             ->join('sessionsinprogress.user', 'userinprogress')
             ->groupBy('userinprogress.id')
-            ->andWhere(
-                $qb->expr()->eq('sessionsinprogress.isPresent', 1)
-            )
+            // ->andWhere(
+            //     $qb->expr()->eq('sessionsinprogress.isPresent', 1)
+            // )
             ->andHaving(
                 $qb->expr()->lt($qb->expr()->count('sessionsinprogress.id'), 3)
             );
-
         $qb
             ->leftjoin('u.sessions', 's')
             ->andWhere(
-                $qb->expr()->eq('li.final', ':final'),
                 $qb->expr()->eq('li.season', ':season'),
-                $qb->expr()->gte('li.status', ':statusInprogress'),
+                $qb->expr()->orX(
+                    $qb->expr()->eq('li.state', ':trialSubmitted'),
+                    $qb->expr()->eq('li.state', ':trialReceived'),
+                ),
                 $qb->expr()->orX(
                     $qb->expr()->isNull('s'),
                     $qb->expr()->in('u.id', $usersWithSessions->getDQL())
                 )
             )
-            ->setParameter('final', false)
             ->setParameter('season', $season)
-            ->setParameter('statusInprogress', Licence::STATUS_WAITING_VALIDATE)
+            ->setParameter('trialSubmitted', LicenceStateEnum::TRIAL_FILE_SUBMITTED)
+            ->setParameter('trialReceived', LicenceStateEnum::TRIAL_FILE_RECEIVED)
+        ;
+    }
+
+    private function addCriteriaToRegister(QueryBuilder &$qb, int $season): void
+    {
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('li.season', ':season'),
+                $qb->expr()->eq('li.state', ':yearlyReceived'),
+            )
+            ->setParameter('season', $season)
+            ->setParameter('yearlyReceived', LicenceStateEnum::YEARLY_FILE_RECEIVED)
         ;
     }
 
@@ -419,40 +446,46 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb
             ->leftjoin('u.sessions', 's')
             ->andWhere(
-                // $qb->expr()->eq('li.final', ':final'),
                 $qb->expr()->eq('li.season', ':season'),
-                $qb->expr()->eq('li.status', ':statusInprocessing'),
+                $qb->expr()->orx(
+                    $qb->expr()->eq('li.state', ':stateTrialPending'),
+                    $qb->expr()->eq('li.state', ':stateYearlyPending'),
+                )
             )
-            // ->setParameter('final', false)
             ->setParameter('season', $season)
-            ->setParameter('statusInprocessing', Licence::STATUS_IN_PROCESSING)
+            ->setParameter('stateTrialPending', LicenceStateEnum::TRIAL_FILE_PENDING)
+            ->setParameter('stateYearlyPending', LicenceStateEnum::YEARLY_FILE_PENDING)
         ;
     }
 
     private function addCriteriaTestinComplete(QueryBuilder &$qb, int $season): void
     {
-        $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
-            ->select('userinprogress.id')
-            ->from(Session::class, 'sessionsinprogress')
-            ->join('sessionsinprogress.user', 'userinprogress')
-            ->groupBy('userinprogress.id')
-            ->andWhere(
-                $qb->expr()->eq('sessionsinprogress.isPresent', 1)
-            )
-            ->andHaving(
-                $qb->expr()->gt($qb->expr()->count('sessionsinprogress.id'), 2)
-            );
+        // $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
+        //     ->select('userinprogress.id')
+        //     ->from(Session::class, 'sessionsinprogress')
+        //     ->join('sessionsinprogress.user', 'userinprogress')
+        //     ->groupBy('userinprogress.id')
+        //     ->andWhere(
+        //         $qb->expr()->eq('sessionsinprogress.isPresent', 1)
+        //     )
+        //     ->andHaving(
+        //         $qb->expr()->gt($qb->expr()->count('sessionsinprogress.id'), 2)
+        //     );
         $qb
             ->leftjoin('u.sessions', 's')
             ->andWhere(
-                $qb->expr()->eq('li.final', ':final'),
                 $qb->expr()->eq('li.season', ':season'),
-                $qb->expr()->gte('li.status', ':statusInprogress'),
-                $qb->expr()->in('u.id', $usersWithSessions->getDQL())
+                $qb->expr()->eq('li.state', ':trialValidate'),
+                // $qb->expr()->orx(
+                //     $qb->expr()->eq('li.state', ':trialSubmitted'),
+                //     $qb->expr()->eq('li.state', ':trialValidate'),
+                // ),
+                // $qb->expr()->in('u.id', $usersWithSessions->getDQL())
             )
-            ->setParameter('final', false)
             ->setParameter('season', $season)
-            ->setParameter('statusInprogress', Licence::STATUS_WAITING_VALIDATE)
+            // ->setParameter('trialSubmitted', LicenceStateEnum::TRIAL_FILE_SUBMITTED)
+            // ->setParameter('trialValidate', LicenceStateEnum::TRIAL_FILE_RECEIVED)
+            ->setParameter('trialValidate', LicenceStateEnum::TRIAL_COMPLETED)
         ;
     }
 
@@ -505,33 +538,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    public function findUserLicenceInProgressQuery(?array $filters): QueryBuilder
-    {
-        $currentSeason = $this->seasonService->getCurrentSeason();
+    // public function findUserLicenceInProgressQuery(?array $filters): QueryBuilder
+    // {
+    //     $currentSeason = $this->seasonService->getCurrentSeason();
 
-        $qb = $this->createQueryBuilder('u')
-            ->innerJoin('u.identities', 'i')
-            ->innerJoin('u.licences', 'li')
-        ;
-        if (null !== $filters && array_key_exists('isFinal', $filters) && null !== $filters['isFinal']) {
-            $qb->andWhere(
-                $qb->expr()->eq('li.final', ':isFinal')
-            )
-                ->setParameter('isFinal', $filters['isFinal'])
-            ;
-        }
+    //     $qb = $this->createQueryBuilder('u')
+    //         ->innerJoin('u.identities', 'i')
+    //         ->innerJoin('u.licences', 'li')
+    //     ;
+    //     if (null !== $filters && array_key_exists('isFinal', $filters) && null !== $filters['isFinal']) {
+    //         $qb->andWhere(
+    //             $qb->expr()->eq('li.final', ':isFinal')
+    //         )
+    //             ->setParameter('isFinal', $filters['isFinal'])
+    //         ;
+    //     }
 
-        return $qb
-            ->andWhere(
-                $qb->expr()->isNull('i.kinship'),
-                $qb->expr()->eq('li.status', ':inProgress'),
-                $qb->expr()->eq('li.season', ':season'),
-            )
-            ->setParameter('inProgress', Licence::STATUS_WAITING_VALIDATE)
-            ->setParameter('season', $currentSeason)
-            ->orderBy('i.name', 'ASC')
-            ;
-    }
+    //     return $qb
+    //         ->andWhere(
+    //             $qb->expr()->isNull('i.kinship'),
+    //             $qb->expr()->orx(
+    //                 $qb->expr()->eq('li.status', ':stateTrialPending'),
+    //                 $qb->expr()->eq('li.status', ':stateYearlyPending'),
+    //             ),
+    //             $qb->expr()->eq('li.season', ':season'),
+    //         )
+    //         ->setParameter('stateTrialPending', LicenceStateEnum::TRIAL_FILE_PENDING)
+    //         ->setParameter('stateYearlyPending', LicenceStateEnum::YEARLY_FILE_PENDING)
+    //         ->setParameter('season', $currentSeason)
+    //         ->orderBy('i.name', 'ASC')
+    //         ;
+    // }
 
     public function findlicenceInProgressQuery(?array $filters): QueryBuilder
     {
@@ -550,12 +587,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             }
             if (isset($filters['status'])) {
                 match ((int) $filters['status']) {
-                    Licence::STATUS_TESTING_IN_PROGRESS => $this->addCriteriaTestinInProgress($qb, $currentSeason),
-                    Licence::STATUS_TESTING_COMPLETE => $this->addCriteriaTestinComplete($qb, $currentSeason),
-                    Licence::STATUS_NEW => $this->addCriteriaNew($qb, $currentSeason),
-                    Licence::STATUS_RENEW => $this->addCriteriaRenew($qb, $currentSeason),
-                    Licence::STATUS_WAITING_RENEW => $this->addCriteriaWaitingRenew($qb, $currentSeason),
-                    Licence::STATUS_IN_PROCESSING => $this->addCriteriaInProcessing($qb, $currentSeason),
+                    Licence::FILTER_TESTING_IN_PROGRESS => $this->addCriteriaTestinInProgress($qb, $currentSeason),
+                    Licence::FILTER_TESTING_COMPLETE => $this->addCriteriaTestinComplete($qb, $currentSeason),
+                    Licence::FILTER_NEW => $this->addCriteriaNew($qb, $currentSeason),
+                    Licence::FILTER_RENEW => $this->addCriteriaRenew($qb, $currentSeason),
+                    Licence::FILTER_WAITING_RENEW => $this->addCriteriaWaitingRenew($qb, $currentSeason),
+                    Licence::FILTER_IN_PROCESSING => $this->addCriteriaInProcessing($qb, $currentSeason),
+                    Licence::FILTER_TO_REGISTER => $this->addCriteriaToRegister($qb, $currentSeason),
                     default => $this->addCriteriaRegistrationBySeason($qb, $currentSeason),
                 };
             }
@@ -705,21 +743,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findNewRegisteredBySeason(int $season): array|string
     {
         $currentSeasonUsers = $this->getEntityManager()->createQueryBuilder()
-        ->select('lcsu.id')
-        ->from(Licence::class, 'lcs')
-        ->leftJoin('lcs.user', 'lcsu')
-        ->andWhere(
-            (new Expr())->eq('lcs.season', ':season'),
-            (new Expr())->eq('lcs.final', ':isFinal'),
-        );
+            ->select('lcsu.id')
+            ->from(Licence::class, 'lcs')
+            ->leftJoin('lcs.user', 'lcsu')
+            ->andWhere(
+                (new Expr())->eq('lcs.season', ':season'),
+                (new Expr())->orX(
+                    (new Expr())->eq('lcs.state', ':yearlySubmitted'),
+                    (new Expr())->eq('lcs.state', ':yearlyValidated'),
+                    (new Expr())->eq('lcs.state', ':yearlySentToFederation'),
+                )
+            );
 
         $lastSeasonUsers = $this->getEntityManager()->createQueryBuilder()
-        ->select('llsu.id')
-        ->from(Licence::class, 'lls')
-        ->leftJoin('lls.user', 'llsu')
-        ->andWhere(
-            (new Expr())->eq('lls.season', ':lastSeason'),
-        );
+            ->select('llsu.id')
+            ->from(Licence::class, 'lls')
+            ->leftJoin('lls.user', 'llsu')
+            ->andWhere(
+                (new Expr())->eq('lls.season', ':lastSeason'),
+            );
 
         return $this->createQueryBuilder('u')
             ->join('u.identities', 'i')
@@ -732,7 +774,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 new Parameter('kind', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
-                new Parameter('isFinal', true),
+                new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
+                new Parameter('yearlyValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED),
+                new Parameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
             ]))
             ->groupBy('u.id')
             ->getQuery()
@@ -755,7 +799,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ->leftJoin('lls.user', 'llsu')
         ->andWhere(
             (new Expr())->eq('lls.season', ':lastSeason'),
-            (new Expr())->eq('lls.final', ':isFinal'),
+            (new Expr())->orX(
+                (new Expr())->eq('lls.state', ':yearlySubmitted'),
+                (new Expr())->eq('lls.state', ':yearlyValidated'),
+                (new Expr())->eq('lls.state', ':yearlySentToFederation'),
+            )
         );
 
         return $this->createQueryBuilder('u')
@@ -769,7 +817,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 new Parameter('kind', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
-                new Parameter('isFinal', true),
+                new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
+                new Parameter('yearlyValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED),
+                new Parameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
             ]))
             ->groupBy('u.id')
             ->getQuery()
@@ -793,7 +843,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ->leftJoin('lls.user', 'llsu')
         ->andWhere(
             (new Expr())->eq('lls.season', ':lastSeason'),
-            (new Expr())->eq('lls.final', ':isFinal'),
+            (new Expr())->orX(
+                (new Expr())->eq('lls.state', ':yearlySubmitted'),
+                (new Expr())->eq('lls.state', ':yearlyValidated'),
+                (new Expr())->eq('lls.state', ':yearlySentToFederation'),
+            )
         );
 
         return $this->createQueryBuilder('u')
@@ -807,7 +861,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 new Parameter('kind', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
-                new Parameter('isFinal', true),
+                new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
+                new Parameter('yearlyValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED),
+                new Parameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
             ]))
             ->groupBy('u.id')
             ->getQuery()

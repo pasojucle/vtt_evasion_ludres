@@ -360,4 +360,32 @@ class SessionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // public function findParticipationByUser(User $user): int
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select((new Expr())->count('s.isPresent'))
+    //         ->andWhere(
+    //             (new Expr())->eq('s.user', ':user')
+    //         )
+    //         ->setParameter('user', $user)
+    //         ->getQuery()
+    //         ->getSingleScalarResult()
+    //     ;
+    // }
+
+    public function findParticipationByUser(User $user): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select((new Expr())->count('s.isPresent'))
+            ->andWhere(
+                (new Expr())->eq('s.user', ':user'),
+                (new Expr())->eq('s.isPresent', ':isPresent')
+            )
+            ->setParameter('user', $user)
+            ->setParameter('isPresent', true)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
 }

@@ -38,7 +38,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
     /**
      * @return RegistrationStep[] Returns an array of RegistrationStep objects
      */
-    public function findByCategoryAndFinal(?int $category, bool $final, int $render): array
+    public function findByCategoryAndFinal(?int $category, bool $isYearly, int $render): array
     {
         $qb = $this->createQueryBuilder('r')
             ->join('r.registrationStepGroup', 'rsg')
@@ -54,7 +54,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
         $render = (RegistrationStep::RENDER_FILE === $render)
             ? [RegistrationStep::RENDER_FILE, RegistrationStep::RENDER_FILE_AND_VIEW, RegistrationStep::RENDER_FILE_AND_LINK]
             : [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE_AND_VIEW];
-        if (!$final) {
+        if (!$isYearly) {
             $andX->add($qb->expr()->in('r.testingRender', ':render'));
         } else {
             $andX->add($qb->expr()->in('r.finalRender', ':render'));

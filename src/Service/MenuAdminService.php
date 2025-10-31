@@ -189,6 +189,12 @@ class MenuAdminService
                 'role' => 'ROLE_ADMIN',
             ],
             [
+                'label' => 'Tâches plannifiées',
+                'route' => 'admin_crontab_logs',
+                'pattern' => '/admin_crontab/',
+                'role' => 'ROLE_ADMIN',
+            ],
+            [
                 'label' => 'Maintenance',
                 'route' => 'admin_service',
                 'pattern' => '/parameter/',

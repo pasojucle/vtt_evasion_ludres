@@ -75,7 +75,7 @@ class UnregistrableSessionMessage
         $requirementSeasonLicenceAt = new DateTime(implode('-', array_reverse($requirementSeasonLicenceAtParam)));
         if ($requirementSeasonLicenceAt <= new DateTime()) {
             return ($user->lastLicence->isSeasonLicence)
-                ? Licence::STATUS_WAITING_VALIDATE <= $user->lastLicence->status
+                ? $user->lastLicence->state['value']->isRegistered()
                 : false;
         }
         return true;
@@ -83,7 +83,7 @@ class UnregistrableSessionMessage
 
     private function registrationIsComplete(UserDto $user, int $currentSeason): bool
     {
-        if ($currentSeason === $user->lastLicence->season && Licence::STATUS_IN_PROCESSING === $user->lastLicence->status) {
+        if ($currentSeason === $user->lastLicence->season && $user->lastLicence->state['value']->isPending()) {
             return false;
         }
 

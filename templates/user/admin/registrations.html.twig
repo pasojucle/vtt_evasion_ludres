@@ -25,15 +25,15 @@
             {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
             <ul>
                 {% for user in users %}
-                    <li class="col-list col-1md-1sx-btn">
+                    <li class="col-list col-1md-btn">
                         <div class="list-dropdown">
                             <a href="{{ path('admin_registration_user', {'user': user.id})}}"
                                 {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
                                 <div class="row">
                                     <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
-                                    {% if user.lastLicence.isFinal is same as(false) %}
+                                    {% if user.lastLicence.isYearly is same as(false) %}
                                         <div class="col-md-5 col-xs-12">
-                                            {{ user.testingBikeRides }}/3 séances d'essai
+                                            {{ user.trialSessionsPresent }}/{{ user.testingBikeRides }} séances d'essai
                                         </div>
                                     {% endif %}
                                 </div>
@@ -41,8 +41,10 @@
                             {% include('user/admin/dropdown.html.twig') %}
                         </div>
                         {% if user.lastLicence.toValidate %}
-                            <a class="btn btn-success" href="{{ path('admin_registration_validate', {'licence': user.lastLicence.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
-                            <a class="btn btn-danger" href="{{ path('admin_delete_licence', {'licence': user.lastLicence.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                            <a class="btn btn-success" href="{{ path('admin_registration_receive', {'licence': user.lastLicence.id})}}" title="Réceptionner le dossier d'inscription" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Reçu</a>
+                        {% endif %}
+                        {% if user.lastLicence.toRegister %}
+                            <a class="btn btn-success" href="{{ path('admin_registration_register', {'licence': user.lastLicence.id})}}" title="Inscrire à la FFvélo" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Inscrit</a>
                         {% endif %}
                     </li>
                 {% endfor %}

@@ -11,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class GetRegistrationsFiltered extends GetUsersFiltered
 {
-    public int $statusType = LevelService::STATUS_TYPE_REGISTRATION;
+    public int $statusType = LevelService::FILTER_TYPE_REGISTRATION;
 
     public string $statusPlaceholder = 'Sélectionnez un statut';
 
@@ -31,12 +31,13 @@ class GetRegistrationsFiltered extends GetUsersFiltered
     public function getStatusChoices(): ?array
     {
         return [
-            'licence.status.testing_in_processing' => Licence::STATUS_TESTING_IN_PROGRESS,
-            'licence.status.testing_complete' => Licence::STATUS_TESTING_COMPLETE,
-            'licence.status.new' => Licence::STATUS_NEW,
-            'licence.status.renew' => Licence::STATUS_RENEW,
-            'licence.status.waiting_renew' => Licence::STATUS_WAITING_RENEW,
-            'licence.status.in_processing' => Licence::STATUS_IN_PROCESSING,
+            'licence.filter.testing_in_processing' => Licence::FILTER_TESTING_IN_PROGRESS,
+            'licence.filter.testing_complete' => Licence::FILTER_TESTING_COMPLETE,
+            'licence.filter.new' => Licence::FILTER_NEW,
+            'licence.filter.renew' => Licence::FILTER_RENEW,
+            'licence.filter.waiting_renew' => Licence::FILTER_WAITING_RENEW,
+            'licence.filter.in_processing' => Licence::FILTER_IN_PROCESSING,
+            'licence.filter.to_register' => Licence::FILTER_TO_REGISTER,
         ];
     }
 
@@ -50,7 +51,7 @@ class GetRegistrationsFiltered extends GetUsersFiltered
         return [
             'user' => null,
             'query' => null,
-            'status' => Licence::STATUS_NEW,
+            'status' => Licence::FILTER_NEW,
             'levels' => null,
         ];
     }

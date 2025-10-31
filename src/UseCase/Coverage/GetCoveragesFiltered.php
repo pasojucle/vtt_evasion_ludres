@@ -11,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class GetCoveragesFiltered extends GetUsersFiltered
 {
-    public int $statusType = LevelService::STATUS_TYPE_COVERAGE;
+    public int $statusType = LevelService::FILTER_TYPE_COVERAGE;
 
     public string $statusPlaceholder = 'Toutes les saisons';
 

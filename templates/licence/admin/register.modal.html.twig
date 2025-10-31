@@ -1,0 +1,18 @@
+{% extends 'base_modal.html.twig' %}
+{% set button_href = path('admin_registration_register', {'licence' : licence.id}) %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Inscription de {{ fullname }}{% endblock %}
+{% block body %}
+    <p>Enregistrement de l'inscription auprès de la FFVélo.</p>
+    <br>
+    {% if form.licenceNumber is defined %}
+        {{ form_row(form.licenceNumber) }}
+    {% endif %}
+    {% if form.medicalCertificateDate is defined %}
+        {{ form_row(form.medicalCertificateDate) }}
+    {% endif %}
+{% endblock %}
+{% block footer %}
+    {% set button_text = '<i class="fas fa-check"></i> Inscrit' %}
+    {{ parent() }}
+{% endblock %}

@@ -333,6 +333,16 @@ body > script {display: none !important;}
     font-weight: 900;
     margin-right: 10px;
 }
+.danger:not(.form-group-inline, .form-group) {
+    color: var(--success-color);
+}
+.danger:not(.form-group-inline, .form-group, .home)::before {
+    content: '\f06a';
+    color: var(--danger-color);
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+}
 .toggle-on::before {
     content: '\f205';
     color: var(--success-color);

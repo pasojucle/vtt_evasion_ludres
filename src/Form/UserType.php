@@ -89,7 +89,7 @@ class UserType extends AbstractType
                         'label' => false,
                         'category' => $options['category'],
                         'is_kinship' => false,
-                        'is_final' => $options['season_licence']?->isFinal,
+                        'is_yearly' => $options['season_licence']?->isYearly,
                     ],
                 ])
                 ->add('licences', CollectionType::class, [
@@ -112,7 +112,7 @@ class UserType extends AbstractType
                         'label' => false,
                         'category' => $options['category'],
                         'is_kinship' => true,
-                        'is_final' => $options['season_licence']->isFinal,
+                        'is_yearly' => $options['season_licence']->isYearly,
                     ],
                 ])
                 ;

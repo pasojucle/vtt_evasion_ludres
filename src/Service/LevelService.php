@@ -8,9 +8,9 @@ use Doctrine\Common\Collections\Collection;
 
 class LevelService
 {
-    public const STATUS_TYPE_MEMBER = 1;
-    public const STATUS_TYPE_REGISTRATION = 2;
-    public const STATUS_TYPE_COVERAGE = 3;
+    public const FILTER_TYPE_MEMBER = 1;
+    public const FILTER_TYPE_REGISTRATION = 2;
+    public const FILTER_TYPE_COVERAGE = 3;
     public const LEVEL_GROUP_SCHOOL = 'École VTT';
     public const LEVEL_GROUP_FRAME = 'Encadrement';
     public const LEVEL_ALL_MEMBER = 'Toute l\'école VTT';

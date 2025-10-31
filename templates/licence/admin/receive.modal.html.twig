@@ -1,8 +1,10 @@
 {% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_registration_validate', {'licence' : licence.id}) %}
+{% set button_href = path('admin_registration_receive', {'licence' : licence.id}) %}
 {% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Valider l'inscription de {{ fullname }}{% endblock %}
+{% block modal_title %}Inscription de {{ fullname }}{% endblock %}
 {% block body %}
+    <p>{{ message }}</p>
+    <br>
     {% if form.licenceNumber is defined %}
         {{ form_row(form.licenceNumber) }}
     {% endif %}
@@ -11,6 +13,6 @@
     {% endif %}
 {% endblock %}
 {% block footer %}
-    {% set button_text = '<i class="fas fa-check"></i> Valider' %}
+    {% set button_text = '<i class="fas fa-check"></i> Réceptionner' %}
     {{ parent() }}
 {% endblock %}

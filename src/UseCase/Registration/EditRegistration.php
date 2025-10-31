@@ -6,6 +6,7 @@ namespace App\UseCase\Registration;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationProgressDto;
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -46,7 +47,7 @@ class EditRegistration
     ) {
     }
 
-    public function execute(Request $request, FormInterface $form, RegistrationProgressDto $progress): string
+    public function execute(Request $request, FormInterface $form, RegistrationProgressDto $progress): string | false
     {
         $season = $progress->season;
         $user = $form->getData();
@@ -76,18 +77,21 @@ class EditRegistration
         if (UserType::FORM_OVERVIEW === $progress->current->form) {
             /** @var Licence $seasonLicence */
             $seasonLicence = $user->getSeasonLicence($season);
-            $seasonLicence->setStatus(Licence::STATUS_WAITING_VALIDATE);
-            if ($seasonLicence->isFinal()) {
-                $seasonLicence->setCreatedAt(new DateTime());
-            } else {
+            if (LicenceStateEnum::TRIAL_FILE_PENDING === $seasonLicence->getState()) {
                 $seasonLicence->setTestingAt(new DateTimeImmutable());
+                $route = 'registration_form';
+                if (!$this->licenceService->applyTransition($seasonLicence, 'submit_trial_file')) {
+                    return false;
+                }
+            } else {
+                $seasonLicence->setCreatedAt(new DateTime());
+                if (!$this->licenceService->applyTransition($seasonLicence, 'submit_yearly_file')) {
+                    return false;
+                }
             }
             $this->sendMailToClub($user);
             $this->sendMailToUser($user, $user->isLoginSend());
             $user->setLoginSend(true);
-            if (!$seasonLicence->isFinal()) {
-                $route = 'registration_form';
-            }
         }
 
         $this->entityManager->flush();

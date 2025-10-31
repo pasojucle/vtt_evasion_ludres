@@ -46,11 +46,11 @@ class UserDto
 
     public bool $isEndTesting = false;
 
+    public ?int $trialSessionsPresent = null;
+
     public ?int $testingBikeRides = null;
 
     public bool $mustProvideRegistration = false;
 
     public string $seasons = '';
-
-    public bool $hasAlreadyBeenRegistered = false;
 }

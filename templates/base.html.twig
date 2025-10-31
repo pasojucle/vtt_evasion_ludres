@@ -37,7 +37,6 @@
                 </div>
                 {% include 'navigation/admin.html.twig' %}
             {% endif %}
-            {% if display_nav %}
                 <div class="notification">
                     <div class="flashes">
                         {% for label, messages in app.flashes %}
@@ -48,13 +47,14 @@
                             {% endfor %}
                         {% endfor %}
                     </div>
-                    {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
-                        <div class="alert-mode">Mode Maintenance</div>
-                    {% elseif parameter_service.getParameterByName('TEST_MODE') %}
-                        <div class="alert-mode">Site de test</div>
+                    {% if display_nav %}
+                        {% if parameter_service.getParameterByName('MAINTENANCE_MODE') %}
+                            <div class="alert-mode">Mode Maintenance</div>
+                        {% elseif parameter_service.getParameterByName('TEST_MODE') %}
+                            <div class="alert-mode">Site de test</div>
+                        {% endif %}
                     {% endif %}
                 </div>
-            {% endif %}
             {% block body %}{% endblock %}
             {% if display_nav %}
                 {% include 'component/footer.html.twig' %}

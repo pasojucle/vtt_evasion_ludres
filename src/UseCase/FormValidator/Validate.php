@@ -58,7 +58,7 @@ class Validate
             $this->addAlert($id, $violations, $alerts);
         }
 
-        return  ['constraintsValidator' => $constraintsValidator, 'alert' => array_shift($alerts)];
+        return ['constraintsValidator' => $constraintsValidator, 'alert' => array_shift($alerts)];
     }
 
     private function getConstraints(?string $constraintsClass, bool $required): array

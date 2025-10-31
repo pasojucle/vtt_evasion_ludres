@@ -9,6 +9,7 @@ use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Licence;
 use App\Entity\Notification;
@@ -23,6 +24,7 @@ use App\Repository\SurveyRepository;
 use App\Service\NotificationService;
 use App\Service\ParameterService;
 use App\Service\RouterService;
+use App\Service\SeasonService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -48,6 +50,7 @@ class GetList
         private readonly ParameterService $parameterService,
         private readonly NotificationService $notificationService,
         private readonly ClusterRepository $clusterRepository,
+        private readonly SeasonService $seasonService,
     ) {
         /** @var ?User $user */
         $user = $security->getUser();
@@ -163,7 +166,7 @@ class GetList
             return;
         };
 
-        if (Licence::STATUS_IN_PROCESSING === $this->userDto->lastLicence?->status) {
+        if ($this->userDto->lastLicence?->state['value']->isPending()) {
             $notifications[] = $this->user->getLastLicence();
         }
     }
@@ -189,7 +192,10 @@ class GetList
 
     private function addNewSeasonReRgistrationEnabled(array &$notifications): void
     {
-        if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && Licence::STATUS_WAITING_RENEW === $this->userDto->lastLicence->status) {
+        if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED')
+            && in_array($this->userDto->lastLicence->state, [LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED])
+            && $this->userDto->lastLicence->season === $this->seasonService->getSeasonForRenew()
+        ) {
             $notifications[] = $this->notificationService->getNewSeasonReRegistration();
         }
     }

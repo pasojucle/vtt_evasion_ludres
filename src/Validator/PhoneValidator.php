@@ -23,15 +23,22 @@ class PhoneValidator extends ConstraintValidator
         if (is_array($value)) {
             if (array_key_exists('mobile', $value) && array_key_exists('emergencyPhone', $value) && $value['emergencyPhone'] === $value['mobile']) {
                 $this->context->buildViolation($constraint->nonUnique)
-                ->addViolation()
-            ;
+                ->addViolation();
+            }
+            if (array_key_exists('emergencyPhone', $value) && !$this->isPhoneNumber($value['emergencyPhone'])) {
+                $this->context->buildViolation($constraint->format)
+                ->addViolation();
             }
         }
         
-        if (is_string($value) && !preg_match('#^\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2}$#', $value)) {
+        if (is_string($value) && !$this->isPhoneNumber($value)) {
             $this->context->buildViolation($constraint->format)
-                ->addViolation()
-            ;
+                ->addViolation();
         }
+    }
+
+    private function isPhoneNumber($value): bool
+    {
+        return 1 === preg_match('#^\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2}$#', $value);
     }
 }

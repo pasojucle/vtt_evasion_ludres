@@ -38,11 +38,12 @@ class MessageService
         $message = $this->messageRepository->findOneByName($name);
 
         if ($message) {
+            $content = $message->getContent();
             if ($user) {
-                return $this->replaceKeywords->replaceUserFullName($message->getContent(), $user);
+                $content = $this->replaceKeywords->replaceUserFullName($content, $user);
             }
 
-            return $this->replaceKeywords->replaceCurrentSaison($message->getContent());
+            return $this->replaceKeywords->replaceCurrentSaison($content);
         }
 
         return null;

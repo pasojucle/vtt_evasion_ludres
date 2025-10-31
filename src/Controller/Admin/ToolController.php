@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Licence;
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\User;
 use App\Form\Admin\ToolType;
 use App\Form\Admin\UserSearchType;
@@ -13,8 +14,9 @@ use App\Repository\ParameterRepository;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
 use App\Service\MessageService;
-use App\Service\ParameterService;
+use App\Service\PaginatorService;
 use App\Service\UserService;
+use App\UseCase\CronTab\CronTabLog;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\ClickableInterface;
@@ -113,7 +115,9 @@ class ToolController extends AbstractController
 
                 $result = $mailerService->sendMailToMember($user, $subject, $content);
                 if ($result['success']) {
-                    $licence->setStatus(Licence::STATUS_IN_PROCESSING);
+                    $licence->setState((LicenceStateEnum::TRIAL_FILE_SUBMITTED === $licence->getState())
+                        ? LicenceStateEnum::TRIAL_FILE_PENDING
+                        : LicenceStateEnum::YEARLY_FILE_PENDING);
                     $this->entityManager->persist($licence);
                     $this->entityManager->flush();
                 } else {
@@ -144,7 +148,7 @@ class ToolController extends AbstractController
             foreach ($users as $user) {
                 $identity = $user->getFirstIdentity();
                 $licence = $user->getLastLicence();
-                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->isFinal()];
+                $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->getState()->isYearly()];
                 $content[] = implode(',', $row);
             }
         }
@@ -160,5 +164,22 @@ class ToolController extends AbstractController
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
+    }
+
+    #[Route('/admin/crontab/logs', name: 'admin_crontab_logs', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminCronrabLog(
+        Request $request,
+        CronTabLog $cronTabLog,
+        PaginatorDtoTransformer $paginatorDtoTransformer,
+        PaginatorService $paginatorService,
+    ): Response {
+        $data = $cronTabLog->read();
+        [$logs, $currentPage] = $paginatorService->paginateFromArray($data, $request, PaginatorService::PAGINATOR_PER_PAGE);
+
+        return $this->render('crontab/admin/list.html.twig', [
+            'logs' => $logs,
+            'paginator' => $paginatorDtoTransformer->fromArray($data, PaginatorService::PAGINATOR_PER_PAGE, $currentPage),
+        ]);
     }
 }

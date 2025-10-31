@@ -143,8 +143,8 @@ class SessionType extends AbstractType
             $seasonChoices['Saison ' . $minSeasonToTakePart] = 'SEASON_' . $minSeasonToTakePart;
         }
         
-        $seasonChoices['licence.status.testing_in_processing'] = Licence::STATUS_TESTING_IN_PROGRESS;
-        $seasonChoices['licence.status.in_processing'] = Licence::STATUS_IN_PROCESSING;
+        $seasonChoices['licence.filter.testing_in_processing'] = Licence::FILTER_TESTING_IN_PROGRESS;
+        $seasonChoices['licence.filter.in_processing'] = Licence::FILTER_IN_PROCESSING;
 
         return $seasonChoices;
     }

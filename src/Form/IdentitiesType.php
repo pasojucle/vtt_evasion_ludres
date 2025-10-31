@@ -22,7 +22,7 @@ class IdentitiesType extends AbstractType
                 'entry_options' => [
                     'label' => false,
                     'category' => $options['category'],
-                    'is_final' => $options['is_final'],
+                    'is_yearly' => $options['is_yearly'],
                     'is_kinship' => $options['is_kinship'],
                 ],
             ])
@@ -39,7 +39,7 @@ class IdentitiesType extends AbstractType
     {
         $resolver->setDefaults([
             'category' => Licence::CATEGORY_ADULT,
-            'is_final' => null,
+            'is_yearly' => null,
             'is_kinship' => false,
         ]);
     }

@@ -36,7 +36,7 @@ class IdentityController extends AbstractController
         }
         $form = $this->createForm(IdentitiesType::class, ['identities' => $identities], [
             'category' => $licence->getCategory(),
-            'is_final' => $licence->isFinal(),
+            'is_yearly' => $licence->getState()->isYearly(),
             'is_kinship' => $isKinship,
         ]);
         $form->handleRequest($request);

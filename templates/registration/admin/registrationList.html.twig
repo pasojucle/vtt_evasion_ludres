@@ -33,18 +33,18 @@
                                 {% endfor %}
                                 <div class="col-md-12 col-xs-12">
                                     <div class="row">
-                                        {% for isFinal in labels.isFinalLabels %}
-                                            <div class="col-md-3 col-xs-3">{{ isFinal|capitalize }}</div>
+                                        {% for licenceType in labels.licenceTypeLabels %}
+                                            <div class="col-md-3 col-xs-3">{{ licenceType|capitalize }}</div>
                                         {% endfor %}
                                     </div>
                                 </div>
                                 {% for categories in labels.render %}
                                     <div class="col-md-6 col-xs-6">
                                         <div class="row">
-                                            {% for isFinal in categories %}
+                                            {% for licenceType in categories %}
                                                 <div class="col-md-6 col-xs-6">
                                                     <div class="row">
-                                                        {% for render in isFinal %}
+                                                        {% for render in licenceType %}
                                                             <div class="col-md-6 col-xs-6 chart">{{ render|raw }}</div> 
                                                         {% endfor %}
                                                     </div>
@@ -90,10 +90,10 @@
                                             {% set category_class = (loop.index0 == 0) ?  'school-vtt' : 'adult' %}
                                                 <div class="col-md-6 col-xs-6 no-padding-vertical">
                                                     <div class="row">
-                                                    {% for isFinal in category %}
+                                                    {% for licenceType in category %}
                                                         <div class="col-md-6 col-xs-6 no-padding-vertical">
                                                             <div class="row">
-                                                                {% for render in isFinal %}
+                                                                {% for render in licenceType %}
                                                                     <div class="col-md-6 col-xs-6 no-padding-vertical chart {{ category_class }}
                                                                     {% if step in render %} active{% endif %}
                                                                     {% if is_last_item %} last-item{% endif %}
@@ -112,7 +112,6 @@
                             {% endfor %}
                             </ul>
                         </div>
-                        
                     </li>
                 {% endfor %}
             </ul>

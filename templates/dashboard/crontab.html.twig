@@ -1,0 +1,10 @@
+<div class="dashboard-item w-100 flex-auto">
+    <a href="{{ path('admin_crontab_logs')}}">
+        <div class="dashboard-item-body">
+            <div>
+                <span class="{{ onError ? 'danger' : 'success' }}"></span>
+                <span> Dernière execution de la tâche planifiée : {{ executeAt }}</span>
+            </div>
+        </div>
+    </a>
+</div>

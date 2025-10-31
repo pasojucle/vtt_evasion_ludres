@@ -4,30 +4,31 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Session;
-use App\Entity\BikeRide;
-use App\Service\CacheService;
-use App\Service\SeasonService;
-use App\Service\SurveyService;
-use App\Form\Admin\SessionType;
-use App\Form\SessionSwitchType;
-use App\Service\SessionService;
-use App\UseCase\Session\SetSession;
-use App\Repository\SessionRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\LicenceDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\BikeRide;
+use App\Entity\Session;
+use App\Form\Admin\SessionType;
+use App\Form\SessionSwitchType;
+use App\Repository\SessionRepository;
+use App\Service\CacheService;
+use App\Service\LicenceService;
 use App\Service\MessageService;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Service\SeasonService;
+use App\Service\SessionService;
+use App\Service\SurveyService;
+use App\UseCase\Session\SetSession;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SessionController extends AbstractController
 {
@@ -47,6 +48,7 @@ class SessionController extends AbstractController
     public function adminPresent(
         Request $request,
         SessionRepository $sessionRepository,
+        LicenceService $licenceService,
     ): Response {
         $codeError = 1;
         $sessionId = $request->request->get('sessionId');
@@ -58,6 +60,8 @@ class SessionController extends AbstractController
             $isPresent = !$session->isPresent();
             $session->setIsPresent($isPresent);
             $this->entityManager->flush();
+
+            $licenceService->applyCompleteTrial($session->getUser());
 
             $this->cacheService->deleteCacheIndex($session->getCluster());
             $codeError = 0;
@@ -73,7 +77,6 @@ class SessionController extends AbstractController
         UserDtoTransformer $userDtoTransformer,
         MessageService $messageService,
     ): Response {
-        
         $form = $this->createForm(FormType::class, null, [
             'action' => $this->generateUrl('admin_session_present'),
         ]);
@@ -144,7 +147,7 @@ class SessionController extends AbstractController
             $data['responses'] = ['surveyResponses' => $this->surveyService->getSurveyResponsesFromBikeRide($bikeRide)];
         }
         $form = $this->createForm(SessionType::class, $data, [
-            'filters' => ['bikeRide' => $bikeRide->getId(), 'is_final_licence' => false, ],
+            'filters' => ['bikeRide' => $bikeRide->getId(), 'is_yearly_licence' => false, ],
             'bikeRide' => $bikeRide,
         ]);
         $form->handleRequest($request);

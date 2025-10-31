@@ -25,4 +25,16 @@ class PaginatorService
 
         return new Paginator($query);
     }
+
+
+
+    public function paginateFromArray(array $data, Request $request, int $limit): array
+    {
+        $currentPage = $request->query->getInt('p') ?: 1;
+
+        $offset = $limit * ($currentPage - 1);
+        $data = array_slice($data, $offset, $limit);
+
+        return [$data, $currentPage];
+    }
 }

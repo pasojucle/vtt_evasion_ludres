@@ -9,6 +9,7 @@ use App\Dto\RegistrationProgressDto;
 use App\Entity\Address;
 use App\Entity\Approval;
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
@@ -16,7 +17,6 @@ use App\Entity\LicenceSwornCertification;
 use App\Entity\RegistrationStep;
 use App\Entity\SwornCertification;
 use App\Entity\User;
-use App\Form\UserType;
 use App\Repository\LevelRepository;
 use App\Repository\RegistrationStepRepository;
 use App\Service\HealthService;
@@ -24,6 +24,7 @@ use App\Service\LicenceService;
 use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetProgress
@@ -55,7 +56,7 @@ class GetProgress
         $this->setUser();
         $this->updateStatus();
         $category = $this->seasonLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->isFinal(), RegistrationStep::RENDER_VIEW);
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $this->seasonLicence->getState()->isYearly(), RegistrationStep::RENDER_VIEW);
         if ($step < 1 || count($steps) < $step) {
             throw new NotFoundHttpException('The registration step does not exist');
         }
@@ -98,8 +99,7 @@ class GetProgress
             if ($this->user->getApprovals()->count() < count(User::APPROVALS)) {
                 $this->createApproval(User::APPROVAL_GOING_HOME_ALONE);
             }
-
-            if (!$this->seasonLicence->isFinal()) {
+            if (LicenceStateEnum::TRIAL_FILE_PENDING === $this->seasonLicence->getState()) {
                 $this->setAwaitingLevel();
             }
         } else {
@@ -110,7 +110,7 @@ class GetProgress
             if (!$this->user->getIdentities()->isEmpty()) {
                 $this->removeKinship();
             }
-            if (!$this->seasonLicence->isFinal()) {
+            if (LicenceStateEnum::TRIAL_FILE_PENDING === $this->seasonLicence->getState()) {
                 $this->setAdultLevel();
             }
         }
@@ -119,12 +119,13 @@ class GetProgress
     private function updateStatus(): void
     {
         $licence = $this->seasonLicence;
-        if (false === $licence->isFinal() && Licence::STATUS_IN_PROCESSING < $licence->getStatus() &&
+        // if (in_array($licence->getState(),[LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED]) &&
+        if (LicenceStateEnum::TRIAL_FILE_RECEIVED === $licence->getState() &&
             ((0 < count($this->user->getDoneSessions()) && Licence::CATEGORY_MINOR === $licence->getCategory())
             || (0 < count($this->user->getSessions()) && Licence::CATEGORY_ADULT === $licence->getCategory()))) {
-            $this->seasonLicence->setFinal(true)
-                ->setStatus(Licence::STATUS_IN_PROCESSING)
-            ;
+            if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_yearly_registration')) {
+                throw new ConflictHttpException('Unable to start yearly registration. The license is not in a valid state for this transition.');
+            }
         }
     }
 
@@ -140,13 +141,17 @@ class GetProgress
         $this->seasonLicence = new Licence();
         $this->seasonLicence->setSeason($this->season);
         if (!$this->user->getLicences()->isEmpty()) {
-            $this->seasonLicence->setFinal(true);
+            if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_yearly_registration')) {
+                throw new ConflictHttpException('Unable to start yearly registration. The license is not in a valid state for this transition.');
+            }
             if ($this->user->getLastLicence()->getCoverage()) {
                 $this->seasonLicence->setCoverage($this->user->getLastLicence()->getCoverage());
             }
         } else {
-            $this->seasonLicence->setFinal(false)
-                ->setCoverage(Licence::COVERAGE_MINI_GEAR)
+            if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_trial')) {
+                throw new ConflictHttpException('Unable to start trial registration. The license is not in a valid state for this transition.');
+            }
+            $this->seasonLicence->setCoverage(Licence::COVERAGE_MINI_GEAR)
             ;
         }
         if (!$this->user->getIdentities()->isEmpty()) {
@@ -161,7 +166,7 @@ class GetProgress
     private function addSwornCertifications(): void
     {
         $existingLicenceSwornCertifications = $this->getExistingLicenceSwornCertifications();
-        if ($this->seasonLicence->isFinal()) {
+        if (LicenceStateEnum::YEARLY_FILE_PENDING === $this->seasonLicence->getState()) {
             match ($this->seasonLicence->getCategory()) {
                 Licence::CATEGORY_ADULT => $this->addAdultSwornCertifications($existingLicenceSwornCertifications),
                 Licence::CATEGORY_MINOR => $this->addSchoolSwornCertifications($existingLicenceSwornCertifications),

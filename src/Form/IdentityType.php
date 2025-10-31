@@ -29,7 +29,7 @@ class IdentityType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Identity::class,
             'category' => Licence::CATEGORY_ADULT,
-            'is_final' => false,
+            'is_yearly' => false,
             'is_kinship' => false,
         ]);
     }

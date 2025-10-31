@@ -7,6 +7,7 @@ namespace App\UseCase\Licence;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\Entity\User;
+use App\Service\LicenceService;
 use App\Service\MailerService;
 use App\Service\MessageService;
 use DateTime;
@@ -20,6 +21,7 @@ class ValidateLicence
         private MailerService $mailerService,
         private UserDtoTransformer $userDtoTransformer,
         private MessageService $messageService,
+        private LicenceService $licenceService,
     ) {
     }
 
@@ -27,8 +29,7 @@ class ValidateLicence
     {
         $user = $licence->getUser();
         $licenceNumber = $user->getLicenceNumber();
-        $status = ($licence->isFinal()) ? Licence::STATUS_VALID : Licence::STATUS_TESTING;
-        $licence->setStatus($status);
+        $this->licenceService->applyTransition($licence, 'register_to_federation');
         $this->entityManager->persist($licence);
         $data = $request->request->all('licence_validate');
         $this->setLicenceNumber($data, $user);

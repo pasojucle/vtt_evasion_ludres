@@ -60,7 +60,7 @@ class PdfService
         ];
 
         
-        $createdAt = ($userDto->lastLicence->isFinal) ? $userDto->lastLicence->createdAt : $userDto->lastLicence->testingAt;
+        $createdAt = ($userDto->lastLicence->isYearly) ? $userDto->lastLicence->createdAt : $userDto->lastLicence->testingAt;
 
         $fields = [
             [

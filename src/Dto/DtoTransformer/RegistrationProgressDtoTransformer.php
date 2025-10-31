@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\RegistrationProgressDto;
-use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\HistoryRepository;
+use App\Repository\LicenceRepository;
 use App\Service\ParameterService;
 
 class RegistrationProgressDtoTransformer
@@ -19,6 +19,7 @@ class RegistrationProgressDtoTransformer
         private UserDtoTransformer $userDtoTransformer,
         private HistoryRepository $historyRepository,
         private ParameterService $parameterService,
+        private LicenceRepository $licenceRepository,
     ) {
     }
 
@@ -38,7 +39,7 @@ class RegistrationProgressDtoTransformer
         $registrationProgressDto->current = $this->registrationStepDtoTransformer->fromEntity($currentRegistrationStep, $user, $userDto, $step, registrationStep::RENDER_VIEW);
         $registrationProgressDto->season = $season;
 
-        $registrationProgressDto->redirecToRoute = $this->validate($registrationProgressDto);
+        $registrationProgressDto->redirecToRoute = $this->validate($registrationProgressDto, $user);
         
         return $registrationProgressDto;
     }
@@ -71,18 +72,26 @@ class RegistrationProgressDtoTransformer
         return $this->historyRepository->findBySeason($user, $season);
     }
 
-    private function validate(RegistrationProgressDto $progress): ?string
+    private function validate(RegistrationProgressDto $progress, User $user): ?string
     {
-        if (!$this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && $progress->user->hasAlreadyBeenRegistered) {
+        if (!$this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && $this->isAlreadyBeenRegistered($user)) {
             return 'unregistrable_new_saison';
         }
-        if (Licence::STATUS_IN_PROCESSING < $progress->user->lastLicence->status && UserType::FORM_REGISTRATION_FILE !== $progress->current->form) {
+        if ($progress->user->lastLicence->state['value']->isRegistered() && UserType::FORM_REGISTRATION_FILE !== $progress->current->form) {
             return 'registration_existing';
         }
 
         return null;
     }
 
+    private function isAlreadyBeenRegistered(User $user): bool
+    {
+        if (!$user->getId()) {
+            return false;
+        }
+        
+        return !empty($this->licenceRepository->findByUserAndPeriod($user, 5));
+    }
 
     private function getOverviewTemplate(int $form): ?string
     {

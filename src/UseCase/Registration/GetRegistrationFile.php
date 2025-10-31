@@ -48,7 +48,7 @@ class GetRegistrationFile
         $season = $this->seasonService->getCurrentSeason();
         $lastLicence = $user->getLastLicence();
         $category = $lastLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->isFinal(), RegistrationStep::RENDER_FILE);
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->getState()->isYearly(), RegistrationStep::RENDER_FILE);
 
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();
         $this->healthService->getHealthSwornCertifications($user);

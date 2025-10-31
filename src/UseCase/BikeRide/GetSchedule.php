@@ -120,7 +120,6 @@ class GetSchedule
         } catch (ValueError) {
             $date = new DateTimeImmutable();
         }
-        
         $direction = (array_key_exists('direction', $data)) ? $data['direction'] : null;
 
         return $this->getFilters->execute($period, $date, $direction);

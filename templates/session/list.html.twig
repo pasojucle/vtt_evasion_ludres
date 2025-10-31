@@ -71,7 +71,7 @@
                         {% endfor %}
                         {% if sessions is empty %}
                             <p>Vous n'êtes inscrit à aucune rando</p>
-                            {% if not user.lastLicence.isFinal and user.testingBikeRides < 1 %}
+                            {% if not user.lastLicence.isYearly and user.testingBikeRides < 1 %}
                                 <p>Pour valider votre inscription, vous devez obligatoirement vous inscrire à une sortie ou à une séance de l'école VTT</p>
                             {% endif %}
                             <br>

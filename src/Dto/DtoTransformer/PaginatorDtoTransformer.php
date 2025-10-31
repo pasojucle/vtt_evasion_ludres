@@ -47,6 +47,35 @@ class PaginatorDtoTransformer
         return $paginatorDto;
     }
 
+
+    public function fromArray(array $data, int $itemsPerPage, int $currentPage, ?array $filters = [], ?string $targetRoute = null): PaginatorDto
+    {
+        $paginatorDto = new PaginatorDto();
+
+        $total = count($data);
+
+        $paginatorDto->lastPage = (int) ceil($total / $itemsPerPage);
+
+        $paginatorDto->total = $total;
+
+        $paginatorDto->currentPage = $currentPage;
+
+        $this->currentRoute = $targetRoute ?? $this->requestStack->getCurrentRequest()->attributes->get('_route');
+
+        $this->currentParams = $this->requestStack->getCurrentRequest()->get('_route_params');
+
+        if (!empty($filters)) {
+            $this->currentParams = array_merge($this->currentParams, $filters);
+        }
+        $paginatorDto->first = $this->getPageData(1);
+        $paginatorDto->last = $this->getPageData($paginatorDto->lastPage);
+        $this->getPages($paginatorDto);
+        $paginatorDto->previous = (1 < $paginatorDto->currentPage) ? $this->getPageData($paginatorDto->currentPage - 1) : null;
+        $paginatorDto->next = ($paginatorDto->currentPage < $paginatorDto->lastPage) ? $this->getPageData($paginatorDto->currentPage + 1) : null;
+        
+        return $paginatorDto;
+    }
+
     private function getCurrentPage(): int
     {
         $querry = $this->requestStack->getCurrentRequest()->query->get('p');

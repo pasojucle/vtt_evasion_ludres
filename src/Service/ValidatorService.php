@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Validator\SchoolTestingRegistration;
-use App\Validator\UniqueMember;
 use ReflectionClass;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;

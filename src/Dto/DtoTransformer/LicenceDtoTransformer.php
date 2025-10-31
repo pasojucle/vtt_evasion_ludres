@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\LicenceDto;
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\LicenceSwornCertification;
@@ -25,16 +26,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
 {
-    private const STATUS_CLASS = [
-        Licence::STATUS_NONE => 'alert-black',
-        Licence::STATUS_WAITING_RENEW => 'alert-danger',
-        Licence::STATUS_IN_PROCESSING => 'alert-warning',
-        Licence::STATUS_WAITING_VALIDATE => 'alert-warning',
-        Licence::STATUS_TESTING => 'success-test',
-        Licence::STATUS_VALID => 'success',
-    ];
-
-    private array $seasonsStatus;
     public function __construct(
         private SeasonService $seasonService,
         private HistoryRepository $historyRepository,
@@ -46,7 +37,6 @@ class LicenceDtoTransformer
         private readonly LicenceService $licenceService,
         private readonly LicenceRepository $licenceRepository,
     ) {
-        $this->seasonsStatus = $this->seasonService->getSeasonsStatus();
     }
 
     public function fromEntity(?Licence $licence, ?array $histories = null): LicenceDto
@@ -64,18 +54,18 @@ class LicenceDtoTransformer
             $licenceDto->season = $licence->getSeason();
             $licenceDto->shortSeason = $this->getSeason($licence->getSeason());
             $licenceDto->fullSeason = $this->getFullSeason($licence->getSeason());
-            $licenceDto->isFinal = $licence->isFinal();
+            $licenceDto->isYearly = $licence->getState()->isYearly();
             $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
             $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]) : null;
             $licenceDto->hasFamilyMember = $licence->getAdditionalFamilyMember();
             $licenceDto->category = $licence->getCategory();
-            $licenceDto->status = $this->getStatus($licence, $currentSeason);
-            $licenceDto->statusClass = self:: STATUS_CLASS[$licenceDto->status];
-            $licenceDto->statusStr = Licence::STATUS[$licenceDto->status];
+            $licenceDto->state = $this->getState($licence->getState());
             $licenceDto->lock = $licence->getSeason() !== $currentSeason;
             $licenceDto->currentSeasonForm = $this->getCurrentSeasonForm($licence, $currentSeason);
             $licenceDto->isVae = $this->isVae($licence->isVae());
-            $licenceDto->toValidate = $this->getToValidate($licence->getStatus());
+            $licenceDto->toValidate = $licence->getState()->toValidate();
+            $licenceDto->toRegister = $licence->getState()->toRegister();
+            $licenceDto->isRegistered = $licence->getState()->isRegistered();
             $licenceDto->isSeasonLicence = $licence->getSeason() === $currentSeason;
             $licenceDto->amount = $this->getAmount($licence, $currentSeason);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
@@ -108,7 +98,7 @@ class LicenceDtoTransformer
         $title = 'registration_step.type.';
 
         if (null !== $this) {
-            if (false === $licence->isFinal()) {
+            if (false === $licence->getState()->isYearly()) {
                 $title .= 'testing';
             } else {
                 if (null !== $licence->getCategory()) {
@@ -141,11 +131,6 @@ class LicenceDtoTransformer
     private function isVae(bool $isVae): string
     {
         return $isVae ? 'VTT à assistance électrique' : '';
-    }
-
-    private function getToValidate(int $status): bool
-    {
-        return in_array($status, [Licence::STATUS_WAITING_VALIDATE, Licence::STATUS_WAITING_RENEW]);
     }
 
     private function getSeason(int $season): string
@@ -182,7 +167,7 @@ class LicenceDtoTransformer
         $amount = null;
         $amountToStr = '';
 
-        if ($licence->isFinal()) {
+        if ($licence->getState()->isYearly()) {
             /** @var User $user */
             $user = $licence->getUser();
             $isNewMember = $this->isNewMember($user, $currentSeason);
@@ -227,21 +212,16 @@ class LicenceDtoTransformer
     {
         $previousLicence = $this->licenceRepository->findOneByUserAndLastSeason($user);
 
-        return !$previousLicence || $currentSeason - 1 !== $previousLicence->getSeason() || !$previousLicence->isFinal() || Licence::STATUS_VALID > $previousLicence->getStatus();
+        return !$previousLicence || $currentSeason - 1 !== $previousLicence->getSeason() || !$previousLicence->getState()->isYearly() || Licence::FILTER_VALID > $previousLicence->getState();
     }
 
-    private function getStatus(Licence $licence, int $currentSeason): int
+    private function getState(LicenceStateEnum $state): array
     {
-        $status = $licence->getStatus();
-        if ($licence->getSeason() !== $currentSeason) {
-            if ($this->seasonsStatus[Licence::STATUS_NONE] >= $licence->getSeason()) {
-                $status = Licence::STATUS_NONE;
-            }
-            if ($this->seasonsStatus[Licence::STATUS_WAITING_RENEW] === $licence->getSeason()) {
-                $status = Licence::STATUS_WAITING_RENEW;
-            }
-        }
-        return $status;
+        return [
+            'value' => $state,
+            'label' => $state->trans($this->translator),
+            'className' => $state->getClassName(),
+        ];
     }
 
     private function getLicenceSwornCertifications(Licence $licence): string

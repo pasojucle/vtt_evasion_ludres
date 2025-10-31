@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 
 class LicenceDto
@@ -19,7 +20,7 @@ class LicenceDto
     public ?string $shortSeason;
     public ?string $fullSeason;
 
-    public ?bool $isFinal = false;
+    public ?bool $isYearly = false;
 
     public ?int $coverage;
 
@@ -29,11 +30,7 @@ class LicenceDto
 
     public ?int $category = Licence::CATEGORY_ADULT;
 
-    public ?string $statusClass;
-
-    public ?int $status = Licence::STATUS_NEW;
-
-    public ?string $statusStr;
+    public array $state;
 
     public ?bool $lock;
 
@@ -42,6 +39,10 @@ class LicenceDto
     public string $isVae;
 
     public bool $toValidate = false;
+
+    public bool $toRegister = false;
+
+    public bool $isRegistered = false;
 
     public bool $isSeasonLicence = false;
 

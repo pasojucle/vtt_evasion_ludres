@@ -111,7 +111,7 @@ class ReplaceKeywordsService
                 '{{ full_saison }}' => $licence?->fullSeason,
                 '{{ numero_licence }}' => $this->getDtoProperty($user, 'licenceNumber'),
                 '{{ cotisation }}' => $licence?->amount['str'],
-                '{{ date }}' => ($licence->isFinal) ? $licence?->createdAt : $licence?->testingAt,
+                '{{ date }}' => ($licence->isYearly) ? $licence?->createdAt : $licence?->testingAt,
                 '{{ prenom_nom_parent }}' => $kinship?->fullName,
                 '{{ date_naissance_parent }}' => $kinship?->birthDate,
                 '{{ adresse_parent }}' => $this->getAddress($user->kinship),

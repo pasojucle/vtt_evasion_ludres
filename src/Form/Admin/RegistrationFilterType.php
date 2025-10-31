@@ -13,7 +13,7 @@ class RegistrationFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('isFinal', ChoiceType::class, [
+            ->add('isYearly', ChoiceType::class, [
                 'label' => false,
                 'placeholder' => 'Tous',
                 'choices' => [

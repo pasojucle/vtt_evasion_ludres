@@ -10,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class GetMembersFiltered extends GetUsersFiltered
 {
-    public int $statusType = LevelService::STATUS_TYPE_MEMBER;
+    public int $statusType = LevelService::FILTER_TYPE_MEMBER;
 
     public string $statusPlaceholder = 'Sélectionnez une saison';
 

@@ -18,7 +18,6 @@ use App\Validator\SchoolTestingRegistration;
 use App\Validator\UniqueMember;
 use DateInterval;
 use DateTime;
-use PhpParser\Node\Expr\Cast\Bool_;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -362,7 +361,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
 
     private function haspreviousLicence(?User $user): bool
     {
-        return true === $user->getLastLicence()?->isFinal();
+        return true === $user->getLastLicence()?->getState()->isYearly();
     }
 
     private function getBirthPlaceClasses(bool $foreignBorn): array

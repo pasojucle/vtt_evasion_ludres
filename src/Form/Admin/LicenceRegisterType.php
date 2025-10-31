@@ -11,11 +11,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 
-class LicenceValidateType extends AbstractType
+class LicenceRegisterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $disabled = count($options['licences']) > 1 || !$options['is_final'];
+        $disabled = count($options['licences']) > 1 || !$options['is_yearly'];
 
         $builder
             ->add('licenceNumber', TextType::class, [
@@ -32,32 +32,26 @@ class LicenceValidateType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ;
-
-        if ($options['is_final']) {
-            $builder
-                ->add('medicalCertificateDate', DateTimeType::class, [
-                    'label' => 'Date du certificat médical',
-                    'widget' => 'single_text',
-                    'html5' => false,
-                    'format' => 'dd/MM/yyyy',
-                    'attr' => [
-                        'class' => 'js-datepicker',
-                        'autocomplete' => 'off',
-                    ],
-                    'row_attr' => [
-                        'class' => 'form-group',
-                    ],
-                ])
-            ;
-        }
+            ->add('medicalCertificateDate', DateTimeType::class, [
+                'label' => 'Date du certificat médical',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'dd/MM/yyyy',
+                'attr' => [
+                    'class' => 'js-datepicker',
+                    'autocomplete' => 'off',
+                ],
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'licences' => [],
-            'is_final' => false,
+            'is_yearly' => false,
         ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -33,12 +34,16 @@ class LicenceRepository extends ServiceEntityRepository
             return $this->createQueryBuilder('li')
                 ->andWhere(
                     (new Expr())->eq('li.user', ':user'),
-                    (new Expr())->eq('li.status', ':status'),
+                    (new Expr())->orX(
+                        (new Expr())->eq('li.state', ':stateValided'),
+                        (new Expr())->eq('li.state', ':stateFederation'),
+                    ),
                     (new Expr())->eq('li.season', ':lastSeason'),
                 )
                 ->setParameters(new ArrayCollection([
                     new Parameter('user', $user),
-                    new Parameter('status', Licence::STATUS_VALID),
+                    new Parameter('stateValided', LicenceStateEnum::YEARLY_FILE_RECEIVED),
+                    new Parameter('stateFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
                     new Parameter('lastSeason', $this->request->getSession()->get('currentSeason') - 1)
                 ]))
                 ->getQuery()
@@ -54,14 +59,16 @@ class LicenceRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('li')
             ->andWhere(
                 (new Expr())->eq('li.user', ':user'),
-                (new Expr())->eq('li.status', ':status'),
-                (new Expr())->eq('li.final', ':isFinal'),
+                (new Expr())->orX(
+                    (new Expr())->eq('li.state', ':stateValided'),
+                    (new Expr())->eq('li.state', ':stateFederation'),
+                ),
                 (new Expr())->gte('li.season', ':deadline'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('user', $user),
-                new Parameter('status', Licence::STATUS_VALID),
-                new Parameter('isFinal', true),
+                new Parameter('stateValided', LicenceStateEnum::YEARLY_FILE_RECEIVED),
+                new Parameter('stateFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
                 new Parameter('deadline', $this->request->getSession()->get('currentSeason') - ($totalSeasons + 1))
             ]))
             ->getQuery()
@@ -78,6 +85,22 @@ class LicenceRepository extends ServiceEntityRepository
                 (new Expr())->gte('li.season', ':lastSeason')
             )
             ->setParameter('lastSeason', $season - 1)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findAllRegistredFromSeason(int $season): array
+    {
+        return $this->createQueryBuilder('li')
+            ->andWhere(
+                (new Expr())->eq('li.season', ':season'),
+                (new Expr())->eq('li.state', ':yearlyFileRegistred'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('season', $season),
+                new Parameter('yearlyFileRegistred', LicenceStateEnum::YEARLY_FILE_REGISTRED),
+            ]))
             ->getQuery()
             ->getResult()
         ;
