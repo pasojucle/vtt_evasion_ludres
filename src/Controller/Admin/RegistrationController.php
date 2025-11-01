@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Repository\ParameterRepository;
 use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\UseCase\Registration\GetRegistrationsFiltered;

@@ -1,0 +1,13 @@
+{% extends 'base_modal.html.twig' %}
+{% set button_href = path('admin_registration_reject', {'licence' : licence.id}) %}
+{% block form %}{% set form = form %}{% endblock %}
+{% block modal_title %}Refuser l'inscription de {{ fullname }}{% endblock %}
+{% block body %}
+    <p>Ce message sera envoyé automatiquement à l'adhérent, à la validation du formulaire. Préciser clairement la raison du refus.</p>
+    </br>
+    <p>{{ form_row(form.content)}}</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = '<i class="fas fa-times"></i> Refuser' %}
+    {{ parent() }}
+{% endblock %}

@@ -62,6 +62,13 @@ final class Version20251019134229 extends AbstractMigration
                     ]
                 );
             }
+
+            $params = [
+                'registered' => LicenceStateEnum::YEARLY_FILE_REGISTRED->value,
+                'receive' => LicenceStateEnum::YEARLY_FILE_RECEIVED->value,
+                'season' => $currentSeason,
+            ];
+            $this->connection->executeQuery('UPDATE licence SET state=:registered WHERE state=:receive AND season < :season', $params);
         }
         $this->connection->executeQuery('ALTER TABLE licence DROP final, DROP status');
     }
@@ -85,7 +92,7 @@ final class Version20251019134229 extends AbstractMigration
             1 => [
                 Licence::FILTER_IN_PROCESSING => LicenceStateEnum::YEARLY_FILE_PENDING,
                 Licence::FILTER_WAITING_VALIDATE => LicenceStateEnum::YEARLY_FILE_SUBMITTED,
-                Licence::FILTER_VALID => LicenceStateEnum::YEARLY_FILE_REGISTRED,
+                Licence::FILTER_VALID => LicenceStateEnum::YEARLY_FILE_RECEIVED,
             ],
         ];
     }

@@ -63,7 +63,6 @@ class ToolController extends AbstractController
                 ]),
             ]);
 
-
             $fullname = $user->getLicenceNumber();
             if (null !== $user->GetFirstIdentity()) {
                 $fullname .= ' ' . $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();

@@ -7,7 +7,9 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Licence;
 use App\Form\Admin\LicenceRegisterType;
+use App\Form\Admin\LicenceRejectType;
 use App\Service\LicenceService;
+use App\Service\MailerService;
 use App\UseCase\Licence\ValidateLicence;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,12 +35,7 @@ class LicenceController extends AbstractController
         $userDto = $userDtoTransformer->fromEntity($licence->getUser());
         $fullName = $userDto->member->fullName;
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_delete_licence',
-                [
-                    'licence' => $licence->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
         ]);
 
         $form->handleRequest($request);
@@ -66,7 +63,7 @@ class LicenceController extends AbstractController
 
     #[Route('/admin/inscription/receive/{licence}', name: 'admin_registration_receive', methods: ['GET', 'POST'])]
     #[IsGranted('USER_EDIT', 'licence')]
-    public function adminRegistartionValidate(
+    public function adminRegistartionReceive(
         Request $request,
         LicenceService $licenceService,
         Licence $licence
@@ -91,7 +88,7 @@ class LicenceController extends AbstractController
                 ]);
             }
  
-            $this->addFlash('success', "Une erreur est survenue lors de la réception du dossier de {$fullName}");
+            $this->addFlash('danger', "Une erreur est survenue lors de la réception du dossier de {$fullName}");
         }
 
         return $this->render('licence/admin/receive.modal.html.twig', [
@@ -101,6 +98,51 @@ class LicenceController extends AbstractController
             'message' => ($licence->getState()->isYearly())
                 ? 'Réception du dossier d\'inscription signé avec le paiement.'
                 : 'Réception du dossier d\'inscription signé'
+        ]);
+    }
+
+
+    #[Route('/admin/inscription/reject/{licence}', name: 'admin_registration_reject', methods: ['GET', 'POST'])]
+    #[IsGranted('USER_EDIT', 'licence')]
+    public function adminRegistartionReject(
+        Request $request,
+        LicenceService $licenceService,
+        MailerService $mailerService,
+        UserDtoTransformer $userDtoTransformer,
+        Licence $licence
+    ): Response {
+        $user = $licence->getUser();
+        $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
+        $content = 'Le dossier d\'inscription au club est incomplet ou non conforme. Merci de le transmettre à nouveau, signé, en tenant compte des modifications suivantes :';
+
+        $form = $this->createForm(LicenceRejectType::class, ['content' => $content], [
+            'action' => $request->getUri(),
+        ]);
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $subject = 'Votre inscription au club de Vtt Évasion Ludres';
+            $data = $form->getData();
+
+            $result = $mailerService->sendMailToMember($userDtoTransformer->fromEntity($licence->getUser()), $subject, $data['content']);
+            dump($result);
+            $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
+            if ($result['success'] && $licenceService->applyTransition($licence, $tansition)) {
+                $this->entityManager->persist($licence);
+                $this->entityManager->flush();
+                $this->addFlash('success', "Le message a bien été envoyé");
+            } else {
+                $this->addFlash('danger', "Une erreur est survenue");
+            }
+            return $this->redirectToRoute('admin_registrations', [
+                'filtered' => true,
+                'p' => $request->query->get('p'),
+            ]);     
+        }
+
+        return $this->render('licence/admin/reject.modal.html.twig', [
+            'form' => $form->createView(),
+            'licence' => $licence,
+            'fullname' => $fullName,
         ]);
     }
 
