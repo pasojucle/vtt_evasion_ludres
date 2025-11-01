@@ -74,8 +74,3 @@ framework:
         expire:
           from: [yearly_file_received, yearly_file_registred]
           to: expired
-
-        # Gestion des annulations
-        cancel:
-          from: [draft, trial_file_pending, trial_file_submitted, yearly_file_pending, yearly_file_submitted]
-          to: cancelled
