@@ -36,7 +36,7 @@
         <li><a class="dropdown-item" href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"><i class="fas fa-exchange-alt"></i> Se connecter en tant que</a></li>
       {% endif %}
       {% if app.request.get('_route') == 'admin_registrations' and user.lastLicence.toValidate %}
-        <li><a class="dropdown-item" href="{{ path('admin_registration_reject', {'licence': user.lastLicence.id})}}" data-toggle="modal" data-type="danger"><i class="fa-solid fa-circle-exclamation"></i> Refuser l'inscription</a></li>
+        <li><a class="dropdown-item" href="{{ path('admin_registration_reject', {'licence': user.lastLicence.id})}}" data-toggle="modal" data-type="danger"><i class="fa-solid fa-circle-exclamation"></i> Inscription incompète</a></li>
         <li><a class="dropdown-item" href="{{ path('admin_delete_licence', {'licence': user.lastLicence.id})}}" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer l'inscription</a></li>
       {% endif %}
     </ul>

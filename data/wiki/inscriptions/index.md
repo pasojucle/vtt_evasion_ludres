@@ -32,6 +32,17 @@ Pour les membres don le dossier d'incription annuelle, un bouton permet d'indiqu
 
 ![image](/wiki/img/inscriptions/registered.png)
 
+### Inscription incomplète
+Dans la cas d'un dossier incomplet, il est possible d'envoyer un message à l'adhérent en lui indiquant les informations manquantes ou erronées. A la validation du formulaire, l'état de l'incription repasse en "inscription en cours de création". Action est accèssible par le menu contextuel.
+
+![image](/wiki/img/inscriptions/reject.png)
+
+
+### Suppression d'une inscription
+Action est accèssible par le menu contextuel.
+
+![image](/wiki/img/inscriptions/cancel.png)
+
 ### Cycle de vie d'une inscription
 - Pour un nouveau membre : inscription de test en cours de création => inscription de test enregistrée => inscription de test reçue par le club => Inscription annuelle en cours de création => inscription annuelle enregistrée => inscription annuelle reçue par le club => inscription annuelle enregistrée auprès de la fédération => expirée
 

@@ -108,7 +108,6 @@ class MailerService
                 'success' => true,
             ];
         } catch (TransportExceptionInterface $e) {
-                        dump($e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Problème d\'envoi de mail',

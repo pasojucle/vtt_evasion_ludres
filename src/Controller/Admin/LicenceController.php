@@ -124,7 +124,6 @@ class LicenceController extends AbstractController
             $data = $form->getData();
 
             $result = $mailerService->sendMailToMember($userDtoTransformer->fromEntity($licence->getUser()), $subject, $data['content']);
-            dump($result);
             $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
             if ($result['success'] && $licenceService->applyTransition($licence, $tansition)) {
                 $this->entityManager->persist($licence);
