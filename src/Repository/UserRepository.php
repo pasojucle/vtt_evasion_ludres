@@ -404,9 +404,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->from(Session::class, 'sessionsinprogress')
             ->join('sessionsinprogress.user', 'userinprogress')
             ->groupBy('userinprogress.id')
-            // ->andWhere(
-            //     $qb->expr()->eq('sessionsinprogress.isPresent', 1)
-            // )
+            ->andWhere(
+                $qb->expr()->eq('sessionsinprogress.isPresent', 1)
+            )
             ->andHaving(
                 $qb->expr()->lt($qb->expr()->count('sessionsinprogress.id'), 3)
             );

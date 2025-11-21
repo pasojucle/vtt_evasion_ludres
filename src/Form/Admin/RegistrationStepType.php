@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Licence;
+use App\Form\UserType;
+use App\Form\Type\CkeditorType;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
-use App\Form\Type\CkeditorType;
-use App\Form\UserType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Enum\LicenceCategoryEnum;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class RegistrationStepType extends AbstractType
 {
@@ -47,10 +48,10 @@ class RegistrationStepType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ->add('category', ChoiceType::class, [
+            ->add('category', EnumType::class, [
                 'label' => 'Catégorie',
+                'class' => LicenceCategoryEnum::class,
                 'placeholder' => 'licence.category.place_holder',
-                'choices' => array_flip(Licence::CATEGORIES),
                 'required' => false,
                 'row_attr' => [
                     'class' => 'form-group',

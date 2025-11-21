@@ -14,13 +14,11 @@
     </ul>
 {% endif %}
 <br>
-{% for licence in form.licences %}
-    {% if licence.licenceSwornCertifications is defined %}
-        {% for licenceSwornCertification in licence.licenceSwornCertifications %}
+<div>
+    {% set licence = form.lastLicence %}
+    {% for  licenceConsent in licence.licenceOverviewConsents %}
         <div class="form-group">
-            {{ form_widget(licenceSwornCertification.value) }}
-            {{ form_label(licenceSwornCertification.value) }}
+            {{ form_widget(licenceConsent) }}
         </div>
-        {% endfor %}
-    {% endif %}
-{% endfor %}
+    {% endfor %}
+</div>

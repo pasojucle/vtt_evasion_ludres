@@ -246,3 +246,17 @@ li::before {
     background-color: #e6841b;
     padding: 5px;
 }
+.img-check {
+    height: 12px;
+    width: 12px;
+    margin: 5px 5px 0 0;
+}
+.text-start {
+    text-align: left;
+}
+.text-center {
+    text-align: center;
+}
+.text-end {
+    text-align: right;
+}

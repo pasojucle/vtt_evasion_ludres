@@ -6,6 +6,7 @@ namespace App\UseCase\Registration;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationProgressDto;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
@@ -63,12 +64,12 @@ class EditRegistration
         if (null !== $user->getMemberIdentity()->getBirthDate()) {
             $category = $this->licenceService->getCategory($user);
             $user->getSeasonLicence($season)->setCategory($category);
-            if (Licence::CATEGORY_MINOR === $category) {
+            if (LicenceCategoryEnum::SCHOOL === $category) {
                 $this->identityService->setAddress($user);
             }
         }
 
-        $session->set(sprintf('health_sworn_certifications_%s', $user->getLicenceNumber()), $user->getHealth()->getSwornCertifications());
+        $session->set(sprintf('health_concents_%s', $user->getLicenceNumber()), $user->getHealth()->getConsents());
 
         $this->UploadFile($request, $user);
 
@@ -93,7 +94,6 @@ class EditRegistration
             $this->sendMailToUser($user, $user->isLoginSend());
             $user->setLoginSend(true);
         }
-
         $this->entityManager->flush();
 
         if ($selfAuthenticating) {

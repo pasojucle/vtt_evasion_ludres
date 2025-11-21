@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Approval;
+use App\Entity\LicenceAuthorization;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
-class ApprovalType extends AbstractType
+class LicenceAuthorizationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('type', HiddenType::class)
             ->add('value', ChoiceType::class, [
                 'label' => false,
                 'choices' => [
@@ -25,14 +23,13 @@ class ApprovalType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Approval::class,
+            'data_class' => LicenceAuthorization::class,
         ]);
     }
 }

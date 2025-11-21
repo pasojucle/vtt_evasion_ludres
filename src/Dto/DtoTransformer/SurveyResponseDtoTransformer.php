@@ -7,6 +7,7 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\SurveyResponseDto;
 
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\SurveyIssue;
@@ -76,10 +77,10 @@ class SurveyResponseDtoTransformer
         return $identities;
     }
 
-    private function getMainEmail(array $identitiesByType, int $category): ?string
+    private function getMainEmail(array $identitiesByType, LicenceCategoryEnum $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+            $identity = (LicenceCategoryEnum::SCHOOL === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
                 ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
                 : $identitiesByType[IdentityKindEnum::MEMBER->name];
             return $identity->getEmail();

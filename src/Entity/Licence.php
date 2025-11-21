@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Enum\LicenceStateEnum;
-use App\Repository\LicenceRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Enum\LicenceStateEnum;
+use App\Repository\LicenceRepository;
+use App\Entity\Enum\LicenceOptionEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
+use App\Form\UserType;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
@@ -91,9 +96,6 @@ class Licence
     #[ORM\Column(type: 'boolean')]
     private bool $medicalCertificateRequired = false;
 
-    #[ORM\Column(type: 'integer')]
-    private int $category = self::CATEGORY_ADULT;
-
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'licences')]
     private User $user;
 
@@ -109,18 +111,34 @@ class Licence
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private $isVae = false;
 
-    #[ORM\OneToMany(mappedBy: 'licence', targetEntity: LicenceSwornCertification::class)]
-    private Collection $licenceSwornCertifications;
-
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $testingAt = null;
 
     #[ORM\Column(type: 'LicenceState', options:['default' => LicenceStateEnum::DRAFT->value])]
     private LicenceStateEnum $state = LicenceStateEnum::DRAFT;
 
+    #[ORM\Column(type:Types::JSON)]
+    private array $options = [LicenceOptionEnum::NO_ADDITIONAL_OPTION];
+
+    /**
+     * @var Collection<int, LicenceAuthorization>
+     */
+    #[ORM\OneToMany(targetEntity: LicenceAuthorization::class, mappedBy: 'licence')]
+    private Collection $licenceAuthorizations;
+
+    /**
+     * @var Collection<int, LicenceConsent>
+     */
+    #[ORM\OneToMany(targetEntity: LicenceConsent::class, mappedBy: 'licence')]
+    private Collection $licenceConsents;
+
+    #[ORM\Column(type: 'LicenceCategory')]
+    private LicenceCategoryEnum $category = LicenceCategoryEnum::ADULT;
+
     public function __construct()
     {
-        $this->licenceSwornCertifications = new ArrayCollection();
+        $this->licenceAuthorizations = new ArrayCollection();
+        $this->licenceConsents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,18 +206,6 @@ class Licence
         return $this;
     }
 
-    public function getCategory(): ?int
-    {
-        return $this->category;
-    }
-
-    public function setCategory(int $category): self
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -260,36 +266,6 @@ class Licence
         return $this;
     }
 
-    /**
-     * @return Collection<int, LicenceSwornCertification>
-     */
-    public function getLicenceSwornCertifications(): Collection
-    {
-        return $this->licenceSwornCertifications;
-    }
-
-    public function addLicenceSwornCertification(LicenceSwornCertification $licenceSwornCertification): static
-    {
-        if (!$this->licenceSwornCertifications->contains($licenceSwornCertification)) {
-            $this->licenceSwornCertifications->add($licenceSwornCertification);
-            $licenceSwornCertification->setLicence($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLicenceSwornCertification(LicenceSwornCertification $licenceSwornCertification): static
-    {
-        if ($this->licenceSwornCertifications->removeElement($licenceSwornCertification)) {
-            // set the owning side to null (unless already changed)
-            if ($licenceSwornCertification->getLicence() === $this) {
-                $licenceSwornCertification->setLicence(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getTestingAt(): ?DateTimeImmutable
     {
         return $this->testingAt;
@@ -310,6 +286,126 @@ class Licence
     public function setState(object $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function setOptions(array $options): static
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LicenceAuthorization>
+     */
+    public function getLicenceAuthorizations(): Collection
+    {
+        return $this->licenceAuthorizations;
+    }
+
+    public function addLicenceAuthorization(LicenceAuthorization $licenceAuthorization): static
+    {
+        if (!$this->licenceAuthorizations->contains($licenceAuthorization)) {
+            $this->licenceAuthorizations->add($licenceAuthorization);
+            $licenceAuthorization->setLicence($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLicenceAuthorization(LicenceAuthorization $licenceAuthorization): static
+    {
+        if ($this->licenceAuthorizations->removeElement($licenceAuthorization)) {
+            // set the owning side to null (unless already changed)
+            if ($licenceAuthorization->getLicence() === $this) {
+                $licenceAuthorization->setLicence(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LicenceConsent>
+     */
+    public function getLicenceConsents(): Collection
+    {
+        return $this->licenceConsents;
+    }
+
+    public function getLicenceAuthorizationConsents(): array
+    {
+        $licenceAuthorizationConsents = [];
+        foreach($this->licenceConsents as $licenceConsent) {
+            if (UserType::FORM_LICENCE_AUTHORIZATIONS === $licenceConsent->getConsent()->getRegistrationForm()) {
+                $licenceAuthorizationConsents[] = $licenceConsent;
+            }
+        }
+
+        return $licenceAuthorizationConsents;
+    }
+
+    public function getLicenceHealthConsents(): array
+    {
+        $licenceAuthorizationConsents = [];
+        foreach($this->licenceConsents as $licenceConsent) {
+            if (UserType::FORM_HEALTH_QUESTION === $licenceConsent->getConsent()->getRegistrationForm()) {
+                $licenceAuthorizationConsents[] = $licenceConsent;
+            }
+        }
+
+        return $licenceAuthorizationConsents;
+    }
+
+    public function getLicenceOverviewConsents(): array
+    {
+        $licenceAuthorizationConsents = [];
+        foreach($this->licenceConsents as $licenceConsent) {
+            if (UserType::FORM_OVERVIEW === $licenceConsent->getConsent()->getRegistrationForm()) {
+                $licenceAuthorizationConsents[] = $licenceConsent;
+            }
+        }
+
+        return $licenceAuthorizationConsents;
+    }
+
+    public function addLicenceConsent(LicenceConsent $licenceConsent): static
+    {
+        if (!$this->licenceConsents->contains($licenceConsent)) {
+            $this->licenceConsents->add($licenceConsent);
+            $licenceConsent->setLicence($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLicenceConsent(LicenceConsent $licenceConsent): static
+    {
+        if ($this->licenceConsents->removeElement($licenceConsent)) {
+            // set the owning side to null (unless already changed)
+            if ($licenceConsent->getLicence() === $this) {
+                $licenceConsent->setLicence(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCategory(): LicenceCategoryEnum
+    {
+        return $this->category;
+    }
+
+    public function setCategory(LicenceCategoryEnum $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

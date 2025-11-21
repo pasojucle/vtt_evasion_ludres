@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
+use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Licence;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
@@ -54,64 +55,89 @@ class PdfService
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
         $coverage = [
-            Licence::COVERAGE_MINI_GEAR => 50.5,
-            Licence::COVERAGE_SMALL_GEAR => 60,
-            Licence::COVERAGE_HIGH_GEAR => 73,
+            Licence::COVERAGE_MINI_GEAR => 55.5,
+            Licence::COVERAGE_SMALL_GEAR => 80,
+            Licence::COVERAGE_HIGH_GEAR => 106,
         ];
-
         
         $createdAt = ($userDto->lastLicence->isYearly) ? $userDto->lastLicence->createdAt : $userDto->lastLicence->testingAt;
 
         $fields = [
             [
                 'value' => $userDto->ffctLicence->fullName,
-                'x' => 35,
-                'y' => 208,
+                'x' => 40,
+                'y' => 113.2,
             ],
             [
                 'value' => $userDto->ffctLicence->birthDate,
-                'x' => 165,
-                'y' => 208,
+                'x' => 27,
+                'y' => 118.9,
             ],
             [
                 'value' => $userDto->ffctLicence->fullNameChildren,
-                'x' => 60,
-                'y' => 213,
+                'x' => 70,
+                'y' => 128.9,
             ],
             [
                 'value' => $userDto->ffctLicence->birthDateChildren,
-                'x' => 165,
-                'y' => 213,
+                'x' => 26,
+                'y' => 134.9,
             ],
             [
                 'value' => 'VTT EVASION LUDRES',
-                'x' => 65,
-                'y' => 219,
+                'x' => 80,
+                'y' => 140.9,
+            ],
+            [
+                'value' => 'X',
+                'x' => 12,
+                'y' => 156,
+            ],
+            [
+                'value' => 'X',
+                'x' => 12,
+                'y' => 166,
+            ],
+            [
+                'value' => 'X',
+                'x' => 12,
+                'y' => 180.5,
             ],
             [
                 'value' => 'X',
                 'x' => $coverage[$userDto->lastLicence->coverage],
-                'y' => 247.5,
-            ],
-            [
-                'value' => 'X',
-                'x' => 81,
-                'y' => 257.5,
+                'y' => 180.5,
             ],
             [
                 'value' => 'Ludres',
-                'x' => 20,
-                'y' => 262,
+                'x' => 25,
+                'y' => 200,
             ],
             [
                 'value' => $createdAt ?? (new DateTime())->format('d/m/Y'),
-                'x' => 75,
-                'y' => 262,
+                'x' => 90,
+                'y' => 200,
             ],
         ];
+        foreach($userDto->lastLicence->options as $option) {
+            $fields[] = [
+                'value' => 'X',
+                'x' => $this->getOptionYAxis(LicenceOptionEnum::from($option)),
+                'y' => 190.5,
+            ];
+        }
+
         $this->writeFields($pdf, $fields);
     }
 
+    private function getOptionYAxis(LicenceOptionEnum $option): float
+    {
+        return match($option) {
+            LicenceOptionEnum::FLAT_DAILY_ALLOWANCE => 12,
+            LicenceOptionEnum::DEATH_DISABILITY_SUPPLEMENT => 62,
+            default => 108,
+        };
+    }
 
     private function writeHealthQuestion(Fpdi &$pdf): void
     {

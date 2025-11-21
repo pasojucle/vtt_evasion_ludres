@@ -6,11 +6,19 @@
     <div id="order" class="wrapper">
         <div class="wrapper-title">
             <h1>Cde {{ order.id }} du {{ order.createdAt }}</h1>
-            <span class="tools">
+            <div class="tool-group">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                    <div class="dropdown-menu" data-target="dropdown-tools">
+                        <ul class="dropdown-body">
+                            <li><a href="{{path('order_acknowledgement', {'orderHeader': order.id})}}" class="dropdown-item"><i class="fas fa-download"></i> Télécharger</a></li>
+                        </ul>
+                    </div>
+                </div>
                 <a href="{{ path('admin_orders', {'filtered': true}) }}" class="btn btn-ico" title="Retour à la liste des commandes">
                     <i class="fas fa-chevron-left"></i>
                 </a>
-            </span>
+            </div>
         </div>
         <div class="wrapper-body">
             {% set member = order.user.member %}

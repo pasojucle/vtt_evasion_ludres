@@ -2,24 +2,22 @@
 
 namespace App\Entity;
 
-use App\Repository\LicenceSwornCertificationRepository;
+use App\Repository\LicenceConsentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LicenceSwornCertificationRepository::class)]
-class LicenceSwornCertification
+#[ORM\Entity(repositoryClass: LicenceConsentRepository::class)]
+class LicenceConsent
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'licenceSwornCertifications')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'licenceConsents')]
     private ?Licence $licence = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?SwornCertification $swornCertification = null;
+    #[ORM\ManyToOne(inversedBy: 'licenceConsents')]
+    private ?Consent $consent = null;
 
     #[ORM\Column]
     private bool $value = false;
@@ -41,19 +39,19 @@ class LicenceSwornCertification
         return $this;
     }
 
-    public function getSwornCertification(): ?SwornCertification
+    public function getConsent(): ?Consent
     {
-        return $this->swornCertification;
+        return $this->consent;
     }
 
-    public function setSwornCertification(?SwornCertification $swornCertification): static
+    public function setConsent(?Consent $consent): static
     {
-        $this->swornCertification = $swornCertification;
+        $this->consent = $consent;
 
         return $this;
     }
 
-    public function isValue(): bool
+    public function getValue(): bool
     {
         return $this->value;
     }
@@ -64,4 +62,5 @@ class LicenceSwornCertification
 
         return $this;
     }
+
 }

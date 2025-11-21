@@ -1,11 +1,10 @@
 {% block customcheck_widget %}
     <div class="form-group">
-        {% if form.parent.vars.name == 'approvals' %}
-            {% set children = form.value.children %}
-            {{ form_widget(form.type) }}
-        {% elseif form.vars.name in ['coverage', 'type'] %}
+        {% if form.vars.name in ['coverage', 'type', 'options'] %}
             {% set children = form.children  %}
         {% elseif form.vars.name in ['cluster', 'practice'] %}
+            {% set children = form %}
+        {% else %}
             {% set children = form %}
         {% endif %}    
         {% if form.vars.label is not null %}

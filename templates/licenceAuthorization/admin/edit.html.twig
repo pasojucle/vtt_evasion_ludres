@@ -14,9 +14,8 @@
                 </span>
             </div>
             {{ form_start(form) }}
-
             <div class="wrapper-body">
-                <h2>{{ approval.fullName|trans }}</h2>
+                <h2>{{ approval.title }}</h2>
                 <div class="form-group">
                     {% for  child in form.value.children %}
                         <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
@@ -24,7 +23,6 @@
                             {{ form_label(child)}}
                         </div>
                     {% endfor %}
-                    {{ form_widget(form.type) }}
                 </div>
             </div>
             <div class="wrapper-footer">

@@ -154,7 +154,6 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_user', [

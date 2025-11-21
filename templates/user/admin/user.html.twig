@@ -170,11 +170,11 @@
                 </div>
                 <div class="block-body">
                     <ul>
-                        {% for approval in user.approvals %}
+                        {% for licenceAuthorization in licence.authorizations %}
                             <li style="position: relative">
-                                <div><b>{{ approval.toHtml.message }}</b></div>
+                                <div><b>{{ licenceAuthorization.toHtml.message }}</b></div>
                                 <div style="position: absolute; right: 0; top: 0;">
-                                    <a href="{{ path('admin_approval_edit', {'approval': approval.id}) }}" class="btn" style="padding: unset; font-size: 20px" title="Modifier"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ path('admin_licence_authorization_edit', {'licenceAuthorization': licenceAuthorization.id}) }}" class="btn" style="padding: unset; font-size: 20px" title="Modifier"><i class="fas fa-edit"></i></a>
                                 </div>
                             </li>
                         {% endfor %}

@@ -201,14 +201,14 @@ body > script {display: none !important;}
 }
 .fa-slash::after, .camera.alert-danger::after {
     content: '';
-    height: 28px;
-    width: 3px;
+    height: 32px;
+    width: 2px;
     position: absolute;
-    left: 8px;
-    top: -5px;
+    left: 7px;
+    top: -9px;
     rotate: 45deg;
     display: block;
-    background-color:var(--danger-color);
+    background-color:var(--white-color);
 }
 .fa-solid.fa-crown {
     color: var(--primary-color);

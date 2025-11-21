@@ -10,7 +10,6 @@ use DateTimeImmutable;
 use IntlDateFormatter;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
@@ -27,8 +26,8 @@ class AppExtension extends AbstractExtension
     public function imgPath($content, $media = RegistrationStep::RENDER_VIEW)
     {
         if (RegistrationStep::RENDER_FILE === $media) {
-            $pattern = ['#\/images\/#', '#\/uploads\/#'];
-            $replace = ['./images/', './uploads/'];
+            $pattern = ['#\/images\/#', '#\/uploads\/#', '#\/logos\/#'];
+            $replace = ['./images/', './uploads/', './logos/'];
             $content = preg_replace($pattern, $replace, $content);
         }
         

@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\LicenceDto;
-use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\Level;
-use App\Entity\Licence;
-use App\Entity\LicenceSwornCertification;
+use DateTime;
 use App\Entity\User;
+use App\Entity\Level;
+use DateTimeImmutable;
+use App\Dto\LicenceDto;
+use App\Entity\Licence;
 use App\Model\Currency;
-use App\Repository\HistoryRepository;
-use App\Repository\LicenceRepository;
-use App\Repository\MembershipFeeAmountRepository;
-use App\Service\IndemnityService;
+use App\Entity\LicenceConsent;
+use App\Service\SeasonService;
 use App\Service\LicenceService;
+use App\Service\IndemnityService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
-use App\Service\SeasonService;
-use DateTime;
-use DateTimeImmutable;
+use App\Entity\Enum\LicenceStateEnum;
+use App\Repository\HistoryRepository;
+use App\Repository\LicenceRepository;
 use Doctrine\Common\Collections\Collection;
+use App\Repository\MembershipFeeAmountRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
@@ -36,6 +36,7 @@ class LicenceDtoTransformer
         private ProjectDirService $projectDir,
         private readonly LicenceService $licenceService,
         private readonly LicenceRepository $licenceRepository,
+        private readonly LicenceAuthorizationDtoTransformer $licenceAuthorizationDtoTransformer
     ) {
     }
 
@@ -57,6 +58,7 @@ class LicenceDtoTransformer
             $licenceDto->isYearly = $licence->getState()->isYearly();
             $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
             $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]) : null;
+            $licenceDto->options = $licence->getOptions();
             $licenceDto->hasFamilyMember = $licence->getAdditionalFamilyMember();
             $licenceDto->category = $licence->getCategory();
             $licenceDto->state = $this->getState($licence->getState());
@@ -69,7 +71,10 @@ class LicenceDtoTransformer
             $licenceDto->isSeasonLicence = $licence->getSeason() === $currentSeason;
             $licenceDto->amount = $this->getAmount($licence, $currentSeason);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
-            $licenceDto->licenceSwornCertifications = $this->getLicenceSwornCertifications($licence);
+            $licenceDto->licenceAuthorizationConsents = $this->getLicenceAuthorizationConsents($licence);
+            $licenceDto->licenceHealthConsents = $licence->getLicenceHealthConsents();
+            $licenceDto->licenceOvewiewConsents = $licence->getLicenceOverviewConsents();
+            $licenceDto->authorizations = $this->licenceAuthorizationDtoTransformer->fromEntities($licence->getLicenceAuthorizations());
             $licenceDto->isActive = $this->licenceService->isActive($licence);
             if ($licence->getAdditionalFamilyMember()) {
                 $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club';
@@ -102,11 +107,7 @@ class LicenceDtoTransformer
                 $title .= 'testing';
             } else {
                 if (null !== $licence->getCategory()) {
-                    $categories = [
-                        Licence::CATEGORY_MINOR => 'minor',
-                        Licence::CATEGORY_ADULT => 'adult',
-                    ];
-                    $title .= $categories[$licence->getCategory()];
+                    $title .= $licence->getCategory()->value;
                 }
             }
         }
@@ -224,14 +225,13 @@ class LicenceDtoTransformer
         ];
     }
 
-    private function getLicenceSwornCertifications(Licence $licence): string
+    private function getLicenceAuthorizationConsents(Licence $licence): array
     {
-        $licenceSwornCertifications = '';
-        /** @var LicenceSwornCertification  $licenceSwornCertification */
-        foreach ($licence->getLicenceSwornCertifications() as $licenceSwornCertification) {
-            $checkImg = base64_encode(file_get_contents($this->projectDir->path('logos', 'check-square-regular.png')));
-            $licenceSwornCertifications .= sprintf('<p><img src="data:image/png;base64, %s"/> %s</p>', $checkImg, $licenceSwornCertification->getSwornCertification()->getLabel());
+        $licenceAutorizationConsents = [];
+        /** @var LicenceConsent  $licenceConsent */
+        foreach ($licence->getLicenceAuthorizationConsents() as $licenceAuthorizationConsent) {
+            $licenceAutorizationConsents[$licenceAuthorizationConsent->getConsent()->getId()] = $licenceAuthorizationConsent;
         }
-        return $licenceSwornCertifications;
+        return $licenceAutorizationConsents;
     }
 }

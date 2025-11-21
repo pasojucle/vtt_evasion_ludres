@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Doctrine\DBAL\Type\LicenceStateEnumType;
 use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Identity;
@@ -25,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UserDtoTransformer
 {
     public function __construct(
-        private ApprovalDtoTransformer $approvalDtoTransformer,
+        private LicenceAuthorizationDtoTransformer $approvalDtoTransformer,
         private IdentityDtoTransformer $identityDtoTransformer,
         private HealthDtoTransformer $healthDtoTransformer,
         private LevelDtoTransformer $levelDtoTransformer,
@@ -58,7 +58,7 @@ class UserDtoTransformer
         $userDto->boardRole = $user->getBoardRole()?->getName();
         $userDto->isBoardMember = null !== $user->getBoardRole();
         $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
-        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
+        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAuthorizations());
         $userDto->permissions = $this->getPermissions($user);
 
         $sessionsTotal = $user->getSessions()->count();
@@ -100,7 +100,7 @@ class UserDtoTransformer
         $userDto->id = $user->getId();
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $histories);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
-        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getApprovals());
+        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAuthorizations());
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
 
         return $userDto;
@@ -131,10 +131,10 @@ class UserDtoTransformer
         });
     }
 
-    private function getMainEmail(array $identitiesByType, int $category): ?string
+    private function getMainEmail(array $identitiesByType, LicenceCategoryEnum $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+            $identity = (LicenceCategoryEnum::SCHOOL === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
                 ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
                 : $identitiesByType[IdentityKindEnum::MEMBER->name];
             return $identity?->email;
@@ -143,10 +143,10 @@ class UserDtoTransformer
         return '';
     }
 
-    private function getMainFullName(array $identitiesByType, int $category): ?string
+    private function getMainFullName(array $identitiesByType, LicenceCategoryEnum $category): ?string
     {
         if (!empty($identitiesByType)) {
-            $identity = (Licence::CATEGORY_MINOR === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+            $identity = (LicenceCategoryEnum::SCHOOL === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
                 ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
                 : $identitiesByType[IdentityKindEnum::MEMBER->name];
             return $identity?->fullName;
@@ -160,7 +160,7 @@ class UserDtoTransformer
         $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
         $lastLicence = $this->getLastLicence($userEntity, null);
         if (!empty($identitiesByType)) {
-            return (Licence::CATEGORY_MINOR === $lastLicence->category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
+            return (LicenceCategoryEnum::SCHOOL === $lastLicence->category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
             ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
             : $identitiesByType[IdentityKindEnum::MEMBER->name];
         }

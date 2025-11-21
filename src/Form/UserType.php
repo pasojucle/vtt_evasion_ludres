@@ -29,7 +29,7 @@ class UserType extends AbstractType
 
     public const FORM_HEALTH = 3;
 
-    public const FORM_APPROVAL = 4;
+    public const FORM_LICENCE_AUTHORIZATIONS = 4;
 
     public const FORM_LICENCE_COVERAGE = 5;
 
@@ -50,7 +50,7 @@ class UserType extends AbstractType
         self::FORM_HEALTH_QUESTION => 'form.health_question',
         self::FORM_IDENTITY => 'form.identity',
         self::FORM_HEALTH => 'form.health',
-        self::FORM_APPROVAL => 'form.approval_right_image',
+        self::FORM_LICENCE_AUTHORIZATIONS => 'form.licence_authorizations',
         self::FORM_LICENCE_COVERAGE => 'form.licence_coverage',
         self::FORM_MEMBERSHIP_FEE => 'form.membership_fee',
         self::FORM_REGISTRATION_FILE => 'form.registration_file',
@@ -92,14 +92,10 @@ class UserType extends AbstractType
                         'is_yearly' => $options['season_licence']?->isYearly,
                     ],
                 ])
-                ->add('licences', CollectionType::class, [
+                ->add('lastLicence', AdditionalFamilyMemberType::class, [
                     'label' => false,
-                    'entry_type' => AdditionalFamilyMemberType::class,
-                    'entry_options' => [
-                        'label' => false,
-                        'season_licence' => $options['season_licence'],
-                        'is_kinship' => $options['is_kinship'],
-                    ],
+                    'season_licence' => $options['season_licence'],
+                    'is_kinship' => $options['is_kinship']
                 ])
             ;
         }
@@ -117,29 +113,14 @@ class UserType extends AbstractType
                 ])
                 ;
         }
-        if (self::FORM_APPROVAL === $options['current']->getForm()) {
+        
+        if (in_array($options['current']->getForm(), [self::FORM_LICENCE_COVERAGE, self::FORM_LICENCE_TYPE, self::FORM_OVERVIEW, self::FORM_LICENCE_AUTHORIZATIONS, self::FORM_HEALTH_QUESTION], true)) {
             $builder
-                ->add('approvals', CollectionType::class, [
+                ->add('lastLicence', LicenceType::class, [
                     'label' => false,
-                    'entry_type' => ApprovalType::class,
-                    'entry_options' => [
-                        'label' => false,
-                        'block_prefix' => 'customcheck',
-                    ],
-                ])
-            ;
-        }
-        if (in_array($options['current']->getForm(), [self::FORM_LICENCE_COVERAGE, self::FORM_LICENCE_TYPE, self::FORM_OVERVIEW], true)) {
-            $builder
-                ->add('licences', CollectionType::class, [
-                    'label' => false,
-                    'entry_type' => LicenceType::class,
-                    'entry_options' => [
-                        'label' => false,
-                        'season_licence' => $options['season_licence'],
-                        'category' => $options['category'],
-                        'current' => $options['current'],
-                    ],
+                    'season_licence' => $options['season_licence'],
+                    'category' => $options['category'],
+                    'current' => $options['current']
                 ])
             ;
         }

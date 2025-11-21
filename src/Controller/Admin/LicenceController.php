@@ -40,8 +40,11 @@ class LicenceController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            foreach ($licence->getLicenceSwornCertifications() as $licenceSwornCertification) {
-                $this->entityManager->remove($licenceSwornCertification);
+            foreach ($licence->getLicenceAuthorizations() as $licenceAuthorization) {
+                $this->entityManager->remove($licenceAuthorization);
+            }
+            foreach ($licence->getLicenceConsents() as $licenceConsent) {
+                $this->entityManager->remove($licenceConsent);
             }
             $this->entityManager->remove($licence);
             $this->entityManager->flush();

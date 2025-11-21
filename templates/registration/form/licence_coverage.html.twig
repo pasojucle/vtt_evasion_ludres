@@ -1,22 +1,36 @@
 {% if media == constant('App\\Entity\\RegistrationStep::RENDER_VIEW') %}
-    {% set licences = form.children.licences %}
-    {% for licence in form.licences %}
-        {% set boutons_radio_type = (licence.children.type is defined) ? form_widget(licence.children.type) : '' %}
-        {% set boutons_radio_coverage = (licence.children.coverage is defined) ? form_widget(licence.children.coverage) : '' %}
-        {% set replaces =
-            {
-                '{{ boutons_radio_type }}': boutons_radio_type,
-                '{{ boutons_radio_assurance }}': boutons_radio_coverage,
-            }
-        %}
-        <div class="container">{{ progress.current.content|replace(replaces) | raw}}</div>
-        {% if licence.isVae is defined %}
-            <div class="inputGroup long check">
-                {{ form_widget(licence.isVae) }}
-                {{ form_label(licence.isVae) }}
-            </div>
-        {% endif %}
-    {% endfor %}
+    {% set licence = form.children.lastLicence %}
+    {% if licence.type is defined %}
+        <div class="form-group">
+            {{ form_row(licence.type) }}
+        </div>
+    {% endif %}
+    {% if licence.coverage is defined and licence.options is defined %}
+        <div class="form-group">
+            <div>{{ form_label(licence.coverage) }}</div>
+            {% for child in licence.coverage.children %}                        
+                <div class="inputGroup {{ child.vars.value ?'ballot' : 'check' }}">
+                    {{ form_widget(child) }}
+                    {{ form_label(child, null) }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            <div>{{ form_label(licence.options) }}</div>
+            {% for child in licence.options.children %}                        
+                <div class="inputGroup {{ child.vars.value ?'ballot' : 'check' }}">
+                    {{ form_widget(child) }}
+                    {{ form_label(child, null) }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if licence.isVae is defined %}
+        <div class="inputGroup long check">
+            {{ form_widget(licence.isVae) }}
+            {{ form_label(licence.isVae) }}
+        </div>
+    {% endif %}
     <br>
 {% endif %}
 

@@ -33,7 +33,7 @@ class HealthType extends AbstractType
 
         if (null !== $options['current'] && UserType::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
             $builder
-                ->add('swornCertifications', CollectionType::class, [
+                ->add('consents', CollectionType::class, [
                     'label' => false,
                     'entry_type' => CheckboxType::class,
                     'entry_options' => [

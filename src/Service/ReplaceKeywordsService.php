@@ -9,7 +9,6 @@ use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
-use App\Entity\User;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -121,7 +120,6 @@ class ReplaceKeywordsService
                 '{{ type_assurance }}' => $this->translator->trans($licence?->coverageStr),
                 '{{ VTTAE }}' => ($licence?->isVae) ? 'Oui' : 'Non',
                 '{{ necessite_sertificat_medical }}' => $health?->isMedicalCertificateRequired,
-                '{{ attestations_sur_honneur }}' => $licence?->licenceSwornCertifications,
                 '{{ montant }}' => $licence?->amount['value']?->toString(),
                 '{{ autorisation_droit_image }}' => $this->getRightToTheImage($user, $render),
                 '{{ saison_actuelle }}' => $this->requestStack->getSession()->get('currentSeason'),
@@ -153,19 +151,19 @@ class ReplaceKeywordsService
         return((new ReflectionProperty($identity, 'address'))->isInitialized($identity)) ? $identity->address->toString() : '';
     }
 
-    private function getDtoProperty(UserDto|IdentityDto $dto, string $property): string|array|null|LicenceDto|HealthDto|IdentityDto
+    private function getDtoProperty(UserDto|IdentityDto|LicenceDto $dto, string $property): string|array|null|LicenceDto|HealthDto|IdentityDto
     {
         return (new ReflectionProperty($dto, $property))->isInitialized($dto) ? $dto->$property : '';
     }
 
     private function getRightToTheImage(UserDto $user, int $render): string
     {
-        $approvals = $this->getDtoProperty($user, 'approvals');
-        if (!$approvals) {
+        $authorizations = $this->getDtoProperty($user->lastLicence, 'authorizations');
+        if (!$authorizations) {
             return '';
         }
 
-        return (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $approvals['rightToTheImage']?->toString) : 'autorise';
+        return (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $authorizations['rightToTheImage']?->toString) : 'autorise';
     }
 
     public function replaceCurrentSaison(string|bool|array|int|null $content): string|bool|array|int|null

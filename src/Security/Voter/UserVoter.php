@@ -9,6 +9,7 @@ use App\Entity\Enum\PermissionEnum;
 use App\Entity\Health;
 use App\Entity\Identity;
 use App\Entity\Licence;
+use App\Entity\LicenceAuthorization;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -38,7 +39,7 @@ class UserVoter extends Voter
         }
 
         return in_array($attribute, [self::EDIT, self::VIEW])
-        && ($subject instanceof User || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health || $subject instanceof Approval);
+        && ($subject instanceof User || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health || $subject instanceof LicenceAuthorization);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -62,7 +63,7 @@ class UserVoter extends Voter
         };
     }
 
-    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence|Approval $subject, bool $isActiveUser, bool $isUserWithPermission): bool
+    private function canEdit(TokenInterface $token, User $user, null|User|UserDto|Licence|LicenceAuthorization $subject, bool $isActiveUser, bool $isUserWithPermission): bool
     {
         if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN']) || $isUserWithPermission) {
             return true;
@@ -89,12 +90,20 @@ class UserVoter extends Voter
         return $isUserWithSharePermission;
     }
 
-    private function isOwner(null|User|UserDto|Licence|Approval $subject, User $user): bool
+    private function isOwner(null|User|UserDto|Licence|LicenceAuthorization $subject, User $user): bool
     {
         if (!$subject) {
             return false;
         }
 
-        return $subject === $user;
+        if ($subject instanceof User) {
+            return $subject === $user;
+        }
+
+        if ($subject instanceof Licence || $subject instanceof LicenceAuthorization) {
+            return $subject->getUser() === $user;
+        }
+        
+        return false;
     }
 }

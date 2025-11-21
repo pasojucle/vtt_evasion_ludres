@@ -18,6 +18,8 @@ doctrine:
             ContentKind: App\Doctrine\DBAL\Type\ContentKindEnumType
             Permission: App\Doctrine\DBAL\Type\PermissionEnumType
             LicenceState: App\Doctrine\DBAL\Type\LicenceStateEnumType
+            LicenceCategory: App\Doctrine\DBAL\Type\LicenceCategoryEnumType
+            LicenceMembership: App\Doctrine\DBAL\Type\LicenceMembershipEnumType
         mapping_types:
             enum: string
     orm:

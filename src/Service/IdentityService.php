@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -33,7 +34,7 @@ class IdentityService
     public function getMainContact(User $user): Identity
     {
         $licence = $user->getLastLicence();
-        return (Licence::CATEGORY_MINOR === $licence?->getCategory())
+        return (LicenceCategoryEnum::SCHOOL === $licence?->getCategory())
         ? $user->getKinshipIdentity()
         : $user->getMemberIdentity();
     }

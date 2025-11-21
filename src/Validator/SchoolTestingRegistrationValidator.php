@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validator;
 
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Service\ParameterService;
@@ -51,7 +52,7 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
         }
 
         $category = $this->licenceService->getCategoryByBirthDate($birthDate);
-        if (Licence::CATEGORY_MINOR !== $category) {
+        if (LicenceCategoryEnum::SCHOOL !== $category) {
             return;
         }
 

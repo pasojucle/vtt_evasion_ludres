@@ -17,11 +17,9 @@
                 </div>
                 <div class="col-md-3 col-xs-2">
                     <div class="row">
-                        <div class="camera {{ user.approvals.rightToTheImage.toHtml.class.color }}"></div>
-                        {% if user.approvals.goingHomeAlone is defined %}
-                            <div class="home {{ user.approvals.goingHomeAlone.toHtml.class.color }}"></div>
-                        {% endif %}
-                        
+                        {% for authorization in user.lastLicence.authorizations %}
+                            <div class="bs-badge rounded-circle border border-white d-flex align-items-center mx-1 align-content-center text-bg-{{ authorization.toHtml.color }}">{{ authorization.toHtml.icon|raw }}</div>
+                        {% endfor %}
                         {% if user.health.content is not null %}
                             <div class="medical-plus"></div>
                         {% endif %}

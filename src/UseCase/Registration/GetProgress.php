@@ -4,26 +4,30 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
-use App\Dto\RegistrationProgressDto;
+use App\Entity\User;
+use App\Entity\Health;
 use App\Entity\Address;
-use App\Entity\Approval;
+use App\Entity\Licence;
+use App\Entity\Identity;
+use App\Entity\Authorization;
+use App\Entity\LicenceConsent;
+use App\Service\HealthService;
+use App\Service\SeasonService;
+use App\Service\LicenceService;
+use App\Entity\RegistrationStep;
+use App\Repository\LevelRepository;
+use App\Dto\RegistrationProgressDto;
+use App\Entity\LicenceAuthorization;
 use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\Health;
-use App\Entity\Identity;
-use App\Entity\Licence;
-use App\Entity\LicenceSwornCertification;
-use App\Entity\RegistrationStep;
-use App\Entity\SwornCertification;
-use App\Entity\User;
-use App\Repository\LevelRepository;
-use App\Repository\RegistrationStepRepository;
-use App\Service\HealthService;
-use App\Service\LicenceService;
-use App\Service\SeasonService;
+use App\Repository\ConsentRepository;
+use App\Entity\Enum\LicenceCategoryEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AuthorizationRepository;
 use Symfony\Bundle\SecurityBundle\Security;
+use App\Repository\RegistrationStepRepository;
+use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
+use App\Entity\Enum\LicenceMembershipEnum;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -36,7 +40,9 @@ class GetProgress
 
     public function __construct(
         private SeasonService $seasonService,
+        private AuthorizationRepository $authorizationRepository,
         private RegistrationStepRepository $registrationStepRepository,
+        private ConsentRepository $consentRepository,
         private LevelRepository $levelRepository,
         private RegistrationProgressDtoTransformer $registrationProgressDtoTransformer,
         private Security $security,
@@ -76,36 +82,31 @@ class GetProgress
             $this->createNewLicence();
         }
 
-        $this->addSwornCertifications();
+        $this->addLicenceConsents();
 
         if (null === $this->user->getHealth()) {
             $this->createHealth();
         }
         
-        $this->healthService->getHealthSwornCertifications($this->user);
+        $this->healthService->getHealthConents($this->user);
 
         if ($this->user->getIdentities()->isEmpty()) {
             $this->createIdentityMember();
         }
 
-        if ($this->user->getApprovals()->isEmpty()) {
-            $this->createApproval(User::APPROVAL_RIGHT_TO_THE_IMAGE);
-        }
+        $this->addLicenceAuthorizations();
 
-        if (Licence::CATEGORY_MINOR === $this->seasonLicence->getCategory()) {
+        if (LicenceCategoryEnum::SCHOOL === $this->seasonLicence->getCategory()) {
             if ($this->user->getIdentities()->count() < 2) {
                 $this->createIdentitiesKinship();
-            }
-            if ($this->user->getApprovals()->count() < count(User::APPROVALS)) {
-                $this->createApproval(User::APPROVAL_GOING_HOME_ALONE);
             }
             if (LicenceStateEnum::TRIAL_FILE_PENDING === $this->seasonLicence->getState()) {
                 $this->setAwaitingLevel();
             }
         } else {
             // si on passe du status de mineur à majeur
-            if (!$this->user->getApprovals()->isEmpty()) {
-                $this->removeMinorApprovals();
+            if (!$this->seasonLicence->getLicenceAuthorizations()->isEmpty()) {
+                $this->removeMinorAuthorizations();
             }
             if (!$this->user->getIdentities()->isEmpty()) {
                 $this->removeKinship();
@@ -121,8 +122,8 @@ class GetProgress
         $licence = $this->seasonLicence;
         // if (in_array($licence->getState(),[LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED]) &&
         if (LicenceStateEnum::TRIAL_FILE_RECEIVED === $licence->getState() &&
-            ((0 < count($this->user->getDoneSessions()) && Licence::CATEGORY_MINOR === $licence->getCategory())
-            || (0 < count($this->user->getSessions()) && Licence::CATEGORY_ADULT === $licence->getCategory()))) {
+            ((0 < count($this->user->getDoneSessions()) && LicenceCategoryEnum::SCHOOL === $licence->getCategory())
+            || (0 < count($this->user->getSessions()) && LicenceCategoryEnum::ADULT === $licence->getCategory()))) {
             if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_yearly_registration')) {
                 throw new ConflictHttpException('Unable to start yearly registration. The license is not in a valid state for this transition.');
             }
@@ -163,68 +164,58 @@ class GetProgress
         $this->user->addLicence($this->seasonLicence);
     }
 
-    private function addSwornCertifications(): void
+    private function addLicenceConsents(): void
     {
-        $existingLicenceSwornCertifications = $this->getExistingLicenceSwornCertifications();
-        if (LicenceStateEnum::YEARLY_FILE_PENDING === $this->seasonLicence->getState()) {
-            match ($this->seasonLicence->getCategory()) {
-                Licence::CATEGORY_ADULT => $this->addAdultSwornCertifications($existingLicenceSwornCertifications),
-                Licence::CATEGORY_MINOR => $this->addSchoolSwornCertifications($existingLicenceSwornCertifications),
-                default => null
-            };
-        } else {
-            $this->addCommonSwornCertifications($existingLicenceSwornCertifications);
-        }
+        $existingLicenceConsents = $this->getExistingLicenceContents();
+        $membership = (LicenceStateEnum::YEARLY_FILE_PENDING) ? LicenceMembershipEnum::YEARLY : LicenceMembershipEnum::TRIAL;
+        match ($this->seasonLicence->getCategory()) {
+            LicenceCategoryEnum::ADULT => $this->addAdultLicenceConsents($membership, $existingLicenceConsents),
+            LicenceCategoryEnum::SCHOOL => $this->addSchoolLicenceConsents($membership, $existingLicenceConsents),
+            default => null
+        };
     }
 
-    private function getExistingLicenceSwornCertifications(): array
+    private function addAdultLicenceConsents(LicenceMembershipEnum $membership, array $existingLicenceConsents): void
     {
-        $existingLicenceSwornCertifications = [];
-        foreach ($this->seasonLicence->getLicenceSwornCertifications() as $licenceSwornCertification) {
-            $existingLicenceSwornCertifications[] = $licenceSwornCertification->getSwornCertification()->getId();
-        }
-        return $existingLicenceSwornCertifications;
-    }
-
-    private function addAdultSwornCertifications(array $existingLicenceSwornCertifications): void
-    {
-        foreach ($this->seasonLicence->getLicenceSwornCertifications() as $licenceSwornCertification) {
-            if (!$licenceSwornCertification->getSwornCertification()->isAdult()) {
-                $this->seasonLicence->removeLicenceSwornCertification($licenceSwornCertification);
+        foreach ($this->seasonLicence->getLicenceConsents() as $licenceConsent) {
+            if (LicenceCategoryEnum::SCHOOL === $licenceConsent->getConsent()->getCategory()) {
+                $this->seasonLicence->removeLicenceConsent($licenceConsent);
             }
         }
-        $swornCertifications = $this->entityManager->getRepository(SwornCertification::class)->findAdultSwornCertifications($existingLicenceSwornCertifications);
-        $this->addAllSwornCertifications($swornCertifications);
+        $licenceConsents = $this->consentRepository->findAdultConsents($membership, $existingLicenceConsents);
+        $this->addAllLicenceConsents($licenceConsents);
     }
 
-    private function addSchoolSwornCertifications(array $existingLicenceSwornCertifications): void
+    private function addSchoolLicenceConsents(LicenceMembershipEnum $membership, array $existingLicenceConsents): void
     {
-        foreach ($this->seasonLicence->getLicenceSwornCertifications() as $licenceSwornCertification) {
-            if (!$licenceSwornCertification->getSwornCertification()->isSchool()) {
-                $this->seasonLicence->removeLicenceSwornCertification($licenceSwornCertification);
+        foreach ($this->seasonLicence->getLicenceConsents() as $licenceConsent) {
+            if (LicenceCategoryEnum::ADULT === $licenceConsent->getConsent()->getCategory()) {
+                $this->seasonLicence->removeLicenceConsent($licenceConsent);
             }
         }
-        $swornCertifications = $this->entityManager->getRepository(SwornCertification::class)->findSchoolSwornCertifications($existingLicenceSwornCertifications);
-        $this->addAllSwornCertifications($swornCertifications);
+        $licenceConsents = $this->consentRepository->findSchoolConsents($membership, $existingLicenceConsents);
+        $this->addAllLicenceConsents($licenceConsents);
     }
 
-    private function addCommonSwornCertifications(array $existingLicenceSwornCertifications): void
+    private function addAllLicenceConsents(array $consents): void
     {
-        $swornCertifications = $this->entityManager->getRepository(SwornCertification::class)->findCommonSwornCertifications($existingLicenceSwornCertifications);
-        $this->addAllSwornCertifications($swornCertifications);
-    }
-
-    private function addAllSwornCertifications(array $swornCertifications): void
-    {
-        foreach ($swornCertifications as $swornCertification) {
-            $licenceSwornCertification = new LicenceSwornCertification();
-            $licenceSwornCertification->setLicence($this->seasonLicence)
-                ->setSwornCertification($swornCertification);
-            $this->entityManager->persist($licenceSwornCertification);
-            $this->seasonLicence->addLicenceSwornCertification($licenceSwornCertification);
+        foreach ($consents as $consent) {
+            $licenceConsent = new LicenceConsent();
+            $licenceConsent->setLicence($this->seasonLicence)
+                ->setConsent($consent);
+            $this->entityManager->persist($licenceConsent);
         }
     }
 
+    private function getExistingLicenceContents(): array
+    {
+        $existingLicenceContents = [];
+        /**  @var LicenceConsent $licenceConsent */
+        foreach ($this->seasonLicence->getLicenceConsents() as $licenceConsent) {
+            $existingLicenceContents[] = $licenceConsent->getConsent()->getId();
+        }
+        return $existingLicenceContents;
+    }
 
     private function createHealth(): void
     {
@@ -265,12 +256,57 @@ class GetProgress
         $identity->setAddress($address);
     }
 
-    private function createApproval(int $approvalType): void
+    private function addLicenceAuthorizations(): void
     {
-        $aproval = new Approval();
-        $aproval->setType($approvalType);
-        $this->user->addApproval($aproval);
-        $this->entityManager->persist($aproval);
+        $existingLicenceAuthorizations = $this->getExistingLicenceAuthorizations();
+        $membership = (LicenceStateEnum::YEARLY_FILE_PENDING) ? LicenceMembershipEnum::YEARLY : LicenceMembershipEnum::TRIAL;
+        match ($this->seasonLicence->getCategory()) {
+            LicenceCategoryEnum::ADULT => $this->addAdultLicenceAuthorizations($membership, $existingLicenceAuthorizations),
+            LicenceCategoryEnum::SCHOOL => $this->addSchoolLicenceAuthorizations($membership, $existingLicenceAuthorizations),
+            default => null
+        };
+    }
+
+    private function addAdultLicenceAuthorizations(LicenceMembershipEnum $membership, array $existingLicenceLicenceConsents): void
+    {
+        foreach ($this->seasonLicence->getLicenceAuthorizations() as $licenceAuthorization) {
+            if (LicenceCategoryEnum::SCHOOL === $licenceAuthorization->getAuthorization()->getCategory()) {
+                $this->seasonLicence->removeLicenceAuthorization($licenceAuthorization);
+            }
+        }
+        $licenceAuthorizations = $this->authorizationRepository->findAdultAuthorizations($membership, $existingLicenceLicenceConsents);
+        $this->addAllLicenceAuthorisations($licenceAuthorizations);
+    }
+
+    private function addSchoolLicenceAuthorizations(LicenceMembershipEnum $membership, array $existingLicenceLicenceConsents): void
+    {
+        foreach ($this->seasonLicence->getLicenceAuthorizations() as $licenceAuthorization) {
+            if (LicenceCategoryEnum::ADULT === $licenceAuthorization->getAuthorization()->getCategory()) {
+                $this->seasonLicence->removeLicenceAuthorization($licenceAuthorization);
+            }
+        }
+        $licenceAuthorizations = $this->authorizationRepository->findSchoolAutorizations($membership, $existingLicenceLicenceConsents);
+        $this->addAllLicenceAuthorisations($licenceAuthorizations);
+    }
+
+    private function addAllLicenceAuthorisations(array $authorizations): void
+    {
+        foreach ($authorizations as $authorization) {
+            $licenceAuthorization = new LicenceAuthorization();
+            $licenceAuthorization->setAuthorization($authorization)
+                ->setLicence($this->seasonLicence);
+            $this->entityManager->persist($licenceAuthorization);
+        }
+    }
+
+    private function getExistingLicenceAuthorizations(): array
+    {
+        $existingAuthorizations = [];
+        /** @var LicenceAuthorization $licenceAuthorization*/
+        foreach($this->seasonLicence->getLicenceAuthorizations() as $licenceAuthorization) {
+            $existingAuthorizations[] = $licenceAuthorization->getAuthorization()->getId();
+        }
+        return $existingAuthorizations;
     }
 
     private function setAwaitingLevel(): void
@@ -285,12 +321,12 @@ class GetProgress
         $this->user->setLevel($unframedAdultlevel);
     }
 
-    private function removeMinorApprovals(): void
+    private function removeMinorAuthorizations(): void
     {
-        foreach ($this->user->getApprovals() as $approval) {
-            if (User::APPROVAL_GOING_HOME_ALONE === $approval->getType()) {
-                $this->user->removeApproval($approval);
-                $this->entityManager->remove($approval);
+        foreach ($this->seasonLicence->getLicenceAuthorizations() as $licenceAuthorization) {
+            if ('BACK_HOME_ALONE' === $licenceAuthorization->getId()) {
+                $this->seasonLicence->removeLicenceAuthorization($licenceAuthorization);
+                $this->entityManager->remove($licenceAuthorization);
             }
         }
     }

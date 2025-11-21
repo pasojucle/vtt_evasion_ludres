@@ -1,0 +1,22 @@
+</br>
+<div>
+    {% for  licenceAuthorization in licence.authorizations %}
+        <h2>
+            {{ licenceAuthorization.title }}
+        </h2>
+        {{ keywords.replace(licenceAuthorization.content, user)|raw }}
+    {% endfor %}
+</div>
+<div>
+    {% for key, licenceConsent in licence.licenceAuthorizationConsents %}
+        {% if key != 'PARENTAL_CONSENT' %}
+            <h2>
+                <label class="required">
+                    {{ licenceConsent.consent.title }}
+                </label>
+            </h2>
+            <p>{{ keywords.replace(licenceConsent.consent.content, user) }}</p>
+            {# <p><img src="data:image/png;base64, {{ check_img }}" class="img-check"/>{{ keywords.replace(licenceConsent.consent.content, user) }}</p> #}
+         {% endif %}
+    {% endfor %}
+</div>

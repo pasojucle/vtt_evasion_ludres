@@ -129,6 +129,9 @@
     &.justify-content-center {
         justify-content: center;
     }
+    &.align-content-center {
+        align-content: center;
+    }
     &.justify-content-end {
         justify-content: end;
     }
@@ -146,8 +149,17 @@
     margin: 0 20px;
 }
 
+.mx-1 {
+    margin: 0 1px;
+}
+.text-start {
+    text-align: left;
+}
 .text-center {
     text-align: center;
+}
+.text-end {
+    text-align: right;
 }
 
 .p-3 {
@@ -182,7 +194,6 @@
     color: var(--primary-color);
 }
 
-
 .bs-badge {
     --bs-badge-padding-x: 0.65em;
     --bs-badge-padding-y: 0.35em;
@@ -200,4 +211,25 @@
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: var(--bs-badge-border-radius);
+}
+
+.rounded-circle {
+    border-radius: 50%;
+}
+
+.border {
+    border: 2px solid #dee2e6;
+}
+
+.border.border-white {
+    border-color: #fff;
+}
+
+.bs-badge.rounded-circle {
+    height: 34px;
+    width: 34px;
+    box-sizing: border-box;
+    i {
+        font-size: 15px;
+    }
 }

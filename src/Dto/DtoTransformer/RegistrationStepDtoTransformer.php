@@ -114,7 +114,7 @@ class RegistrationStepDtoTransformer
             UserType::FORM_MEMBER => 'member',
             UserType::FORM_KINSHIP => 'kindship',
             UserType::FORM_HEALTH => 'health',
-            UserType::FORM_APPROVAL => 'approval',
+            UserType::FORM_LICENCE_AUTHORIZATIONS => 'approval',
             UserType::FORM_LICENCE_COVERAGE => 'coverage',
             UserType::FORM_REGISTRATION_DOCUMENT => null,
         ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -38,14 +39,15 @@ class RegistrationStepRepository extends ServiceEntityRepository
     /**
      * @return RegistrationStep[] Returns an array of RegistrationStep objects
      */
-    public function findByCategoryAndFinal(?int $category, bool $isYearly, int $render): array
+    public function findByCategoryAndFinal(?LicenceCategoryEnum $category, bool $isYearly, int $render): array
     {
         $qb = $this->createQueryBuilder('r')
             ->join('r.registrationStepGroup', 'rsg')
         ;
         $andX = $qb->expr()->andX();
         $orX = $qb->expr()->orx();
-        $orX->add($qb->expr()->isNull('r.category'));
+        $orX->add($qb->expr()->eq('r.category', ':schoolAdAdult'));
+        $qb->setParameter('schoolAdAdult', LicenceCategoryEnum::SCHOOL_AND_ADULT);
         if (null !== $category) {
             $orX->add($qb->expr()->eq('r.category', ':category'));
             $qb->setParameter('category', $category);
@@ -107,7 +109,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByGroupAndCategory(int $group, int $category): array
+    public function findByGroupAndCategory(int $group, LicenceCategoryEnum $category): array
     {
         return $this->createQueryBuilder('r')
             ->andWhere(
@@ -116,7 +118,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('group', $group),
-                new Parameter('category', $category),
+                new Parameter('category', $category->value),
             ]))
             ->getQuery()
             ->getResult()

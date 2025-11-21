@@ -30,7 +30,7 @@ class Health
     #[Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    private array $swornCertifications = [];
+    private array $consents = [];
 
     public function getId(): ?int
     {
@@ -49,14 +49,14 @@ class Health
         return $this;
     }
 
-    public function getSwornCertifications(): array
+    public function getConsents(): array
     {
-        return $this->swornCertifications;
+        return $this->consents;
     }
 
-    public function setSwornCertifications(array $swornCertifications): static
+    public function setConsents(array $consents): static
     {
-        $this->swornCertifications = $swornCertifications;
+        $this->consents = $consents;
 
         return $this;
     }

@@ -1,9 +1,0 @@
-    <div class="form-group">
-        {% for  child in approval[key].value.children %}
-            <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
-                {{ form_widget(child)}}
-                {{ form_label(child)}}
-            </div>
-        {% endfor %}
-        {{ form_widget(approval[key].type) }}
-    </div>

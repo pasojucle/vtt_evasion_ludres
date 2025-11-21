@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Repository\RegistrationStepRepository;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: RegistrationStepRepository::class)]
+
+#[ORM\Entity(repositoryClass: RegistrationStepRepository::class)]
 class RegistrationStep
 {
     public const RENDER_NONE = 0;
@@ -34,43 +32,43 @@ class RegistrationStep
         self::RENDER_FILE_AND_LINK => 'registration_step.render.file_and_link',
     ];
 
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $title;
 
-    #[Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $filename;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $form;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
 
-    #[Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content;
 
     private ?string $class;
 
     private UploadedFile $file;
 
-    #[Column(type: 'integer', nullable: true)]
-    private ?int $category;
-
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $testingRender;
 
-    #[ManyToOne(targetEntity: RegistrationStepGroup::class, inversedBy: 'registrationSteps')]
+    #[ORM\ManyToOne(targetEntity: RegistrationStepGroup::class, inversedBy: 'registrationSteps')]
     private RegistrationStepGroup $registrationStepGroup;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     private int $finalRender;
 
-    #[Column(type:Types::BOOLEAN, options:['default' => false])]
+    #[ORM\Column(type:Types::BOOLEAN, options:['default' => false])]
     private bool $personal = false;
+
+    #[ORM\Column(type: 'LicenceCategory', options:['default' => LicenceCategoryEnum::SCHOOL_AND_ADULT->value])]
+    private LicenceCategoryEnum $category = LicenceCategoryEnum::SCHOOL_AND_ADULT;
 
     public function getId(): ?int
     {
@@ -161,18 +159,6 @@ class RegistrationStep
         return $this;
     }
 
-    public function getCategory(): ?int
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?int $category): static
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
     public function getTestingRender(): ?int
     {
         return $this->testingRender;
@@ -217,6 +203,18 @@ class RegistrationStep
     public function setPersonal(bool $personal): static
     {
         $this->personal = $personal;
+
+        return $this;
+    }
+
+    public function getCategory(): ?object
+    {
+        return $this->category;
+    }
+
+    public function setCategory(object $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

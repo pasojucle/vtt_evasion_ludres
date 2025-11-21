@@ -24,6 +24,9 @@ class AdditionalFamilyMemberType extends AbstractType
                 $form
                     ->add('additionalFamilyMember', CheckboxType::class, [
                         'label' => 'Un membre de ma famille est déjà inscrit au club',
+                        'row_attr' => [
+                            'class' => 'inputGroup long check',
+                        ],
                         'required' => false,
                     ])
                 ;

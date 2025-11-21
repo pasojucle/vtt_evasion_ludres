@@ -6,6 +6,7 @@ namespace App\Form\EventListener;
 
 use App\Entity\Enum\ContentKindEnum;
 use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Entity\User;
@@ -308,15 +309,15 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
         $kinship = $kind && $kind !== IdentityKindEnum::MEMBER;
         if ($data && false === $options['is_kinship'] && false === $kinship) {
             $birthDate = (array_key_exists('birthDate', $data)) ? new dateTime($data['birthDate']) : null;
-            $category = ($birthDate) ? $this->licenceService->getCategoryByBirthDate($birthDate) : null;
+            $category = ($birthDate) ? $this->licenceService->getCategoryByBirthDate($birthDate) : LicenceCategoryEnum::ADULT;
             $this->modifier($event->getForm(), $kinship, $category);
         }
     }
 
-    private function modifier(FormInterface $form, ?bool $isKindship, ?int $category): void
+    private function modifier(FormInterface $form, ?bool $isKindship, LicenceCategoryEnum $category): void
     {
         if (!$isKindship) {
-            $hidden = Licence::CATEGORY_ADULT !== $category;
+            $hidden = LicenceCategoryEnum::ADULT !== $category;
             $class = ($hidden) ? 'hidden' : 'form-group-inline';
             $form
                 ->add('profession', TextType::class, [

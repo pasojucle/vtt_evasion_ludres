@@ -1,41 +1,70 @@
 {% extends 'base_pdf.html.twig' %}
 
 {% block body %}
+
+    
     {% if template is not defined %}
         <div class="minimize">
-        {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
-        {% if registration_document_steps[key]is defined %}
-            {{ registration_document_steps[key]['header']|imgPath(media)|raw }}
-        {% endif %}
-        {% set health = registration_document_steps[key] is defined %}
-        {% set key = constant('App\\Form\\UserType::FORM_MEMBER') %}
-        {% if registration_document_steps[key] is defined %}
-            {% include('registration/form/pdf/member.html.twig') %}
-        {% endif %}
-        {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
-        {% if registration_document_steps[key] is defined %}
-            
-            {% include('registration/form/pdf/health.html.twig') %}
-        {% endif %}
-        {% set key = constant('App\\Form\\UserType::FORM_APPROVAL') %}
-        {% if registration_document_steps[key]is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_ADULT') %}
-            {{ registration_document_steps[key]|raw }}
-        {% endif %}
-        {% if user.kinship %}
-            {% set key = constant('App\\Form\\UserType::FORM_KINSHIP') %}
+            {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
+            {% if registration_document_steps[key]is defined %}
+                {{ registration_document_steps[key]['header']|imgPath(media)|raw }}
+            {% endif %}
+            {% set health = registration_document_steps[key] is defined %}
+            {% set key = constant('App\\Form\\UserType::FORM_MEMBER') %}
             {% if registration_document_steps[key] is defined %}
-                {% include('registration/form/pdf/kinship.html.twig') %}
-                {% set key = constant('App\\Form\\UserType::FORM_APPROVAL') %}
-                {% if registration_document_steps[key] is defined and licence.category == constant('App\\Entity\\Licence::CATEGORY_MINOR') %}
-                    {{ registration_document_steps[key]|imgPath(media)|raw }}
+                {% include('registration/form/pdf/member.html.twig') %}
+            {% endif %}
+            {% set key = constant('App\\Form\\UserType::FORM_HEALTH') %}
+            {% if registration_document_steps[key] is defined %}
+                {% include('registration/form/pdf/health.html.twig') %}
+            {% endif %}
+            {% set key = constant('App\\Form\\UserType::FORM_LICENCE_AUTHORIZATIONS') %}
+
+            {% if user.kinship %}
+                {% set key = constant('App\\Form\\UserType::FORM_KINSHIP') %}
+                {% if registration_document_steps[key] is defined %}
+                    {% include('registration/form/pdf/kinship.html.twig') %}
+                    </br>
+                    {% if licence.licenceAuthorizationConsents.PARENTAL_CONSENT is defined %}
+                        <p>{{ keywords.replace(licence.licenceAuthorizationConsents.PARENTAL_CONSENT.consent.content, user) }}</p>
+                    {% endif %}
                 {% endif %}
+                <br>
+            {% endif %}
+            {% if registration_document_steps[key]is defined %}
+                {{ registration_document_steps[key]|raw }}
+                {% include('registration/form/pdf/licence_authorizations.html.twig') %}
             {% endif %}
             <br>
-        {% endif %}
-        {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
-        {% if registration_document_steps[key]is defined %}
-            {{ registration_document_steps[key]['footer']|raw|nl2br }}
-        {% endif %}
+            {% set key = constant('App\\Form\\UserType::FORM_OVERVIEW') %}
+            {% if registration_document_steps[key]is defined %}
+                {{ registration_document_steps[key]|raw }}
+                {% include('registration/form/pdf/licence_overview.html.twig') %}
+            {% endif %}
+            <br>
+            {% include('registration/form/pdf/licence_consents.html.twig') %}
+            <br>
+            <p><b>Type d'assurance : </b>{{ user.lastLicence.coverageStr|trans }}</p>
+            <p>
+                <b>Options d'assurance : </b>
+                {% for option in user.lastLicence.options %}
+                    {% set optionEnum = enum('App\\Entity\\Enum\\LicenceOptionEnum').from(option) %}
+                    {% if not loop.first %} - {% endif %}
+                    {{ optionEnum|trans }}
+                {% endfor %}
+            </p>
+            <br>
+            <p>{{ user.lastLicence.amount.str|raw }}</p>
+
+            {% if user.lastLicence.isYearly %}
+                <p>{{ user.health.isMedicalCertificateRequired|raw }}</p>
+            {% endif %}
+
+            {% set key = constant('App\\Form\\UserType::FORM_REGISTRATION_DOCUMENT') %}
+            {% if registration_document_steps[key]is defined %}
+                {{ registration_document_steps[key]['footer']|raw|nl2br }}
+            {% endif %}
+
         </div>
     {% else %}
         {% include(template) %}

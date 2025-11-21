@@ -23,9 +23,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public const APPROVAL_GOING_HOME_ALONE = 2;
 
+    public const APPROVAL_EMERGENCY_CARE = 3;
+
     public const APPROVALS = [
         self::APPROVAL_RIGHT_TO_THE_IMAGE => 'approval.right_to_the_image',
         self::APPROVAL_GOING_HOME_ALONE => 'approval.going_home_alone',
+        self::APPROVAL_EMERGENCY_CARE => 'approval.emergency_care',
     ];
 
     public const PERMISSION_BIKE_RIDE_CLUSTER = 'BIKE_RIDE_CLUSTER';
@@ -83,9 +86,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     // #[ORM\OneToOne(targetEntity: Health::class, cascade: ['persist', 'remove'])]
     private ?Health $health;
-
-    #[ORM\OneToMany(targetEntity: Approval::class, mappedBy: 'user')]
-    private $approvals;
 
     #[ORM\OneToMany(targetEntity: Licence::class, mappedBy: 'user')]
     private Collection $licences;
@@ -147,7 +147,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->identities = new ArrayCollection();
-        $this->approvals = new ArrayCollection();
         $this->licences = new ArrayCollection();
         $this->sessions = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
@@ -359,36 +358,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setHealth(?Health $health): self
     {
         $this->health = $health;
-
-        return $this;
-    }
-
-    /**
-     * @return Approval[]|Collection
-     */
-    public function getApprovals(): Collection
-    {
-        return $this->approvals;
-    }
-
-    public function addApproval(Approval $approval): self
-    {
-        if (!$this->approvals->contains($approval)) {
-            $this->approvals[] = $approval;
-            $approval->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeApproval(Approval $approval): self
-    {
-        if ($this->approvals->removeElement($approval)) {
-            // set the owning side to null (unless already changed)
-            if ($approval->getUser() === $this) {
-                $approval->setUser(null);
-            }
-        }
 
         return $this;
     }

@@ -13,16 +13,16 @@ class HealthService
     {
     }
     
-    public function getHealthSwornCertifications(User &$user)
+    public function getHealthConents(User &$user)
     {
-        $swornCertifications = $this->requestStack->getSession()->get(sprintf('health_sworn_certifications_%s', $user->getLicenceNumber()));
-        if (empty($swornCertifications)) {
-            $swornCertifications = [];
+        $consents = $this->requestStack->getSession()->get(sprintf('health_concents_%s', $user->getLicenceNumber()));
+        if (empty($consents)) {
+            $consents = [];
             foreach (range(0, 2) as $number) {
-                $swornCertifications[sprintf('check_up_%d', $number)] = false;
+                $consents[sprintf('check_up_%d', $number)] = false;
             }
         }
 
-        $user->getHealth()->setSwornCertifications($swornCertifications);
+        $user->getHealth()->setConsents($consents);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
 
@@ -26,9 +27,11 @@ class LicenceDto
 
     public ?string $coverageStr;
 
+    public array $options;
+
     public ?bool $hasFamilyMember;
 
-    public ?int $category = Licence::CATEGORY_ADULT;
+    public LicenceCategoryEnum $category = LicenceCategoryEnum::ADULT;
 
     public array $state;
 
@@ -50,9 +53,15 @@ class LicenceDto
 
     public string $registrationTitle = '';
 
-    public string $licenceSwornCertifications = '';
+    public array $licenceAuthorizationConsents = [];
+
+    public array $licenceHealthConsents = [];
+
+    public array $licenceOvewiewConsents = [];
 
     public bool $isActive = false;
 
     public string $additionalFamilyMember = '';
+
+    public array $authorizations = [];
 }

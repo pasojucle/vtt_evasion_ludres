@@ -36,9 +36,13 @@ class UserService
                         $this->orderLineRepository->deleteByOrderHeader($entity);
                     }
                     if ($entity instanceof Licence) {
-                        foreach ($entity->getLicenceSwornCertifications() as $swornCertification) {
-                            $entity->removeLicenceSwornCertification($swornCertification);
-                            $this->entityManager->remove($swornCertification);
+                        foreach ($entity->getLicenceAuthorizations() as $licenceAuthorization) {
+                            $entity->removeLicenceAuthorization($licenceAuthorization);
+                            $this->entityManager->remove($licenceAuthorization);
+                        }
+                        foreach ($entity->getLicenceConsents() as $licenceConsent) {
+                            $entity->removeLicenceConsent($licenceConsent);
+                            $this->entityManager->remove($licenceConsent);
                         }
                     }
                     if ($entity) {

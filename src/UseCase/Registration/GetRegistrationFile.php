@@ -49,9 +49,8 @@ class GetRegistrationFile
         $lastLicence = $user->getLastLicence();
         $category = $lastLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->getState()->isYearly(), RegistrationStep::RENDER_FILE);
-
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();
-        $this->healthService->getHealthSwornCertifications($user);
+        $this->healthService->getHealthConents($user);
 
         $histories = $this->historyRepository->findBySeason($user, $season);
         $userDto = $this->userDtoTransformer->fromEntity($user, $histories);
@@ -119,6 +118,7 @@ class GetRegistrationFile
                 'registration_document_steps' => $this->registrationDocumentSteps,
                 'licence' => $userDto->lastLicence,
                 'media' => RegistrationStep::RENDER_FILE,
+                'check_img' => base64_encode(file_get_contents($this->projectDir->path('logos', 'check-square-regular.png'))),
             ]);
             $pdfFilepath = $this->pdfService->makePdf($registration, 'registration_temp');
 

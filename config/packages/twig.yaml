@@ -20,6 +20,7 @@ twig:
         menu_admin_service: '@App\Service\MenuAdminService'
         parameter_service: '@App\Service\ParameterService'
         background_service: '@App\Service\BackgroundService'
+        keywords: '@App\Service\ReplaceKeywordsService'
 
     paths:
         # point this wherever your css files live

@@ -36,8 +36,8 @@
 
             <div class="ffvelo-footer">
                 <div class="form-group ffvelo-check-up">
-                    {{ form_widget(form.health.swornCertifications.check_up_0) }}
-                    {{ form_label(form.health.swornCertifications.check_up_0) }}
+                    {{ form_widget(form.health.consents.check_up_0) }}
+                    {{ form_label(form.health.consents.check_up_0) }}
                 </div>
                 <p>avoir bien pris note de ces questions et comprends que certains symptômes peuvent être des signes de pathologie cardiaque à risque pour ma santé, et représenter potentiellement un risque vital. Je m’engage à stopper l’activité sportive intensive et à consulter d’urgence en cas d’apparition de ces symptômes.</p>
             </div>
@@ -65,8 +65,8 @@
             </ul>
             <div class="ffvelo-footer">
                 <div class="form-group ffvelo-check-up">
-                    {{ form_widget(form.health.swornCertifications.check_up_1) }}
-                    {{ form_label(form.health.swornCertifications.check_up_1) }}
+                    {{ form_widget(form.health.consents.check_up_1) }}
+                    {{ form_label(form.health.consents.check_up_1) }}
                 </div>
                 <p>comprendre que certains antécédents familiaux, les facteurs de risques cardiovasculaires, et certaines pathologies chroniques peuvent entraîner un risque lors de la pratique du sport et doivent faire prendre avis auprès d’un médecin pour une pratique sécurisée. De même, je comprends qu’un bilan médical à certains âges de la vie est nécessaire pour faire le point sur ma pratique et ses risques.</p>
             </div>
@@ -94,12 +94,20 @@
             </ul>
             <div class="ffvelo-footer">
                 <div class="form-group ffvelo-check-up">
-                    {{ form_widget(form.health.swornCertifications.check_up_2) }}
-                    {{ form_label(form.health.swornCertifications.check_up_2) }}
+                    {{ form_widget(form.health.consents.check_up_2) }}
+                    {{ form_label(form.health.consents.check_up_2) }}
                 </div>
                 <p>
                 avoir pris note de ces questions et comprends que certaines situations ou symptômes peuvent entraîner un risque pour ma santé et/ou pour mes performances.</p>
             </div>
         </div>
     </div>
+</div>
+<div>
+    {% set licence = form.lastLicence %}
+    {% for  licenceConsent in licence.licenceHealthConsents %}
+        <div class="form-group">
+            {{ form_widget(licenceConsent) }}
+        </div>
+    {% endfor %}
 </div>

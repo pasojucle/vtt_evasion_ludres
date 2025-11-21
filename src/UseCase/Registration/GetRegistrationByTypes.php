@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Entity\Licence;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\RegistrationStep;
 use App\Repository\RegistrationStepRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GetRegistrationByTypes
 {
-    public function __construct(private RegistrationStepRepository $registrationStepRepository)
+    public function __construct(
+        private RegistrationStepRepository $registrationStepRepository,
+        private TranslatorInterface $translator,
+        )
     {
     }
 
@@ -23,15 +27,15 @@ class GetRegistrationByTypes
         $renders = [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE];
         $registrationByTypes = [];
         $labels = [];
-        foreach (array_keys(Licence::CATEGORIES) as $category) {
-            $labels['categories'][] = Licence::CATEGORIES[$category];
+        foreach ([LicenceCategoryEnum::SCHOOL, LicenceCategoryEnum::ADULT] as $category) {
+            $labels['categories'][] = $category->trans($this->translator);
             foreach ($licenceTypes as $licenceTypeLabel => $isYearly) {
                 $labels['licenceTypeLabels'][] = $licenceTypeLabel;
                 foreach ($renders as $render) {
-                    $labels['render'][$category][$isYearly][] = (RegistrationStep::RENDER_VIEW === $render)
+                    $labels['render'][$category->value][$isYearly][] = (RegistrationStep::RENDER_VIEW === $render)
                         ? '<i class="fas fa-desktop"></i>'
                         : '<i class="fas fa-file-pdf"></i>';
-                    $registrationByTypes[$category][$isYearly][$render] = $this->registrationStepRepository->findByCategoryAndFinal($category, $isYearly, $render);
+                    $registrationByTypes[$category->value][$isYearly][$render] = $this->registrationStepRepository->findByCategoryAndFinal($category, $isYearly, $render);
                 }
             }
         }

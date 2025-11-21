@@ -111,8 +111,9 @@
                     },
                     alignment: {
                         options: [
-                            { name: 'left', className: 'my-align-left' },
-                            { name: 'right', className: 'my-align-right' }
+                            { name: 'left', className: 'text-start' },
+                            { name: 'center', className: 'text-center' },
+                            { name: 'right', className: 'text-end' }
                         ]
                     },
                     language: 'fr',

@@ -5,16 +5,14 @@
     {% if form.plainPassword is defined %}
         <div class="form-group">{{ form_row(form.plainPassword)}}</div>
     {% endif %}
-    {% if form.children.licences is defined %}
-        {% for licence in form.children.licences%}
-            {% if licence.additionalFamilyMember is defined %}
-            <div class="form-group">
-                <div class="inputGroup long check">
-                    {{ form_widget(licence.additionalFamilyMember )}}
-                    {{ form_label(licence.additionalFamilyMember )}}
-                </div>
+    {% if form.lastLicence is defined %}
+        {% set licence = form.lastLicence %}
+        {% if licence.additionalFamilyMember is defined %}
+        <div class="form-group">
+            <div class="inputGroup long check">
+                {{ form_row(licence.additionalFamilyMember )}}
             </div>
-            {% endif %}
-        {% endfor %}
+        </div>
+        {% endif %}
     {% endif %}
 </div>
