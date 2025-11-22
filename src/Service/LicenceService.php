@@ -36,7 +36,7 @@ class LicenceService
 
     public function isActive(Licence $licence): bool
     {
-        return $this->seasonService->getMinSeasonToTakePart() <= $licence->getSeason() && !$licence->getState()->isPending();
+        return $this->seasonService->getMinSeasonToTakePart() <= $licence->getSeason();
     }
 
     public function applyTransition(Licence $licence, string $transition): bool
