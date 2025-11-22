@@ -399,14 +399,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaTestinInProgress(QueryBuilder &$qb, int $season): void
     {
+        dump('addCriteriaTestinInProgress');
+        $usersWithSessionsPresent = $this->getEntityManager()->createQueryBuilder()
+            ->select('sessionsinprogresspresent.id')
+            ->from(Session::class, 'sessionsinprogresspresent')
+            ->join('sessionsinprogresspresent.user', 'userinprogresspresent')
+            ->groupBy('userinprogresspresent.id')
+            ->andWhere(
+                $qb->expr()->eq('sessionsinprogresspresent.isPresent', 1)
+            )
+            ->andHaving(
+                $qb->expr()->lt($qb->expr()->count('sessionsinprogresspresent.id'), 3)
+            );      
         $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
             ->select('userinprogress.id')
             ->from(Session::class, 'sessionsinprogress')
             ->join('sessionsinprogress.user', 'userinprogress')
             ->groupBy('userinprogress.id')
-            ->andWhere(
-                $qb->expr()->eq('sessionsinprogress.isPresent', 1)
-            )
             ->andHaving(
                 $qb->expr()->lt($qb->expr()->count('sessionsinprogress.id'), 3)
             );
@@ -420,7 +429,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ),
                 $qb->expr()->orX(
                     $qb->expr()->isNull('s'),
-                    $qb->expr()->in('u.id', $usersWithSessions->getDQL())
+                    $qb->expr()->in('u.id', $usersWithSessions->getDQL()),
+                    $qb->expr()->in('u.id', $usersWithSessionsPresent->getDQL())
                 )
             )
             ->setParameter('season', $season)
