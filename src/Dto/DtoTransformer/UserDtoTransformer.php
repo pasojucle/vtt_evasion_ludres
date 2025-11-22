@@ -16,6 +16,7 @@ use App\Entity\Licence;
 use App\Entity\User;
 use App\Repository\IdentityRepository;
 use App\Repository\LicenceRepository;
+use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -35,6 +36,7 @@ class UserDtoTransformer
         private TranslatorInterface $translator,
         private LicenceRepository $licenceRepository,
         private IdentityRepository $identityRepository,
+        private SessionRepository $sessionRepository,
     ) {
     }
 
@@ -61,10 +63,9 @@ class UserDtoTransformer
         $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAuthorizations());
         $userDto->permissions = $this->getPermissions($user);
 
-        $sessionsTotal = $user->getSessions()->count();
-        $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $sessionsTotal);
         $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $user);
-        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
+        $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $userDto->trialSessionsPresent);
+        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $user->getSessions()->count());
         $userDto->mustProvideRegistration = $this->mustProvideRegistration($userDto->lastLicence, $user->getLicences()->count());
 
         return $userDto;
@@ -82,11 +83,10 @@ class UserDtoTransformer
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
         $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->seasons = $this->getSeasons($user->getLicences());
-        $sessionsTotal = $user->getSessions()->count();
-        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $sessionsTotal);
+        $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $user->getSessions()->count());
         $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $user);
         $userDto->mustProvideRegistration = $this->mustProvideRegistration($userDto->lastLicence, $user->getLicences()->count());
-        $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $sessionsTotal);
+        $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $userDto->trialSessionsPresent);
 
         return $userDto;
     }
@@ -178,40 +178,39 @@ class UserDtoTransformer
         $userDto->mainEmail = $mainIdentity->email;
         $userDto->mainFullName = $mainIdentity->fullName;
         $userDto->licenceNumber = $userEntity->getLicenceNumber();
+        $userDto->lastLicence = $this->getLastLicence($userEntity, null);
+        $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $userEntity);
+        dump($userDto->trialSessionsPresent);
+        $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $userDto->trialSessionsPresent);
         return $userDto;
     }
     
-    private function isEndTesting(LicenceDto $lastLicence, int $sessionTotal): bool
+    private function isEndTesting(LicenceDto $lastLicence, int $sessionPresents): bool
     {
         if (in_array($lastLicence->state['value'], [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
-            return 2 < $sessionTotal;
+            return 2 < $sessionPresents;
         }
 
         return false;
     }
 
-    private function testingBikeRides(LicenceDto $lastLicence, int $sessionsTotal): ?int
+    private function testingBikeRides(LicenceDto $lastLicence, int $sessionsTotal): int
     {
         if (in_array($lastLicence->state['value'], [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
             return $sessionsTotal;
         }
 
-        return null;
+        return 0;
     }
 
-    private function trialSessionsPresent(LicenceDto $lastLicence, User $user): ?int
+    private function trialSessionsPresent(LicenceDto $lastLicence, User $user): int
     {
         if (in_array($lastLicence->state['value'], [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
-            $sessions = [];
-            foreach ($user->getSessions() as $session) {
-                if ($session->isPresent()) {
-                    $sessions[] = $session;
-                }
-            }
-            return count($sessions);
+            
+            return $this->sessionRepository->findParticipationByUser($user);
         }
 
-        return null;
+        return 0;
     }
 
     private function mustProvideRegistration(LicenceDto $lastLicence, int $licencesTotal): bool

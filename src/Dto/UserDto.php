@@ -46,9 +46,9 @@ class UserDto
 
     public bool $isEndTesting = false;
 
-    public ?int $trialSessionsPresent = null;
+    public int $trialSessionsPresent = 0;
 
-    public ?int $testingBikeRides = null;
+    public int $testingBikeRides = 0;
 
     public bool $mustProvideRegistration = false;
 

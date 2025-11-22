@@ -156,9 +156,10 @@ class SessionService
     public function checkEndTesting(User $user): void
     {
         $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
-
+        dump($userDto->isEndTesting);
         if ($userDto->isEndTesting) {
             $subject = 'Fin de la période d\'essai';
+            dump($subject);
             $this->mailerService->sendMailToMember($userDto, $subject, $this->messageService->getMessageByName('EMAIL_END_TESTING'));
         }
     }

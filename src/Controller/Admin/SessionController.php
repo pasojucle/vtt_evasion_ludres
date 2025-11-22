@@ -61,7 +61,12 @@ class SessionController extends AbstractController
             $session->setIsPresent($isPresent);
             $this->entityManager->flush();
 
-            $licenceService->applyCompleteTrial($session->getUser());
+            $user = $session->getUser();
+            $licenceService->applyCompleteTrial($session->getUser($user));
+            
+            if (!$user->getLastLicence()->getState()->isYearly()) {
+                $this->sessionService->checkEndTesting($user);
+            }
 
             $this->cacheService->deleteCacheIndex($session->getCluster());
             $codeError = 0;
@@ -160,8 +165,6 @@ class SessionController extends AbstractController
                 $this->setSession->addFromdmin($data, $user, $bikeRide);
                 
                 $this->addFlash('success', 'Le participant a bien été inscrit');
-
-                $this->sessionService->checkEndTesting($user);
 
                 return $this->redirectToRoute('admin_bike_ride_cluster_show', [
                     'bikeRide' => $bikeRide->getId(),

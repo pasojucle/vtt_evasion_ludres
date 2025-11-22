@@ -64,7 +64,6 @@ class LicenceService
         if ($licence->getState()->isYearly()) {
             return;
         }
-        $participations = $this->sessionRepository->findParticipationByUser($licence->getUser());
         if (2 < $this->sessionRepository->findParticipationByUser($licence->getUser())) {
             $this->applyTransition($licence, 'complete_trial_file');
         } else {

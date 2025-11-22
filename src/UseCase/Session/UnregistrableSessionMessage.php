@@ -56,7 +56,7 @@ class UnregistrableSessionMessage
         }
 
         if ($userDto->isEndTesting) {
-            return 'Votre période d\'essai est terminée ! Pour continuer à participer aux sorties, inscrivez-vous.';
+            return 'La période d\'essai est limité à 3 séances ! Pour continuer à participer aux sorties, inscrivez-vous.';
         }
 
         return null;
