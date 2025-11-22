@@ -7,13 +7,14 @@ namespace App\Dto\DtoTransformer;
 use App\Dto\FFCTLicenceDto;
 use App\Dto\IdentityDto;
 use App\Dto\UserDto;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Licence;
 
 class FFCTLicenceDtoTransformer
 {
     public function fromEntity(UserDto $user): FFCTLicenceDto
     {
-        $subscriber = (Licence::CATEGORY_MINOR === $user->lastLicence->category)
+        $subscriber = (LicenceCategoryEnum::SCHOOL === $user->lastLicence->category)
                 ? $user->kinship
                 : $user->member;
         $children = ($user->member && $user->kinship) ? $user->member : null;
