@@ -138,7 +138,7 @@ class LicenceController extends AbstractController
             return $this->redirectToRoute('admin_registrations', [
                 'filtered' => true,
                 'p' => $request->query->get('p'),
-            ]);     
+            ]);
         }
 
         return $this->render('licence/admin/reject.modal.html.twig', [

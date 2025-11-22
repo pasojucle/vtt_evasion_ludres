@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\LicenceConsent;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<LicenceConsent>
@@ -15,5 +15,4 @@ class LicenceConsentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, LicenceConsent::class);
     }
-
 }

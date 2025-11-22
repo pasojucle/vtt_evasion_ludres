@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Entity\User;
-use App\Entity\Health;
-use App\Entity\Address;
-use App\Entity\Licence;
-use App\Entity\Identity;
-use App\Entity\Authorization;
-use App\Entity\LicenceConsent;
-use App\Service\HealthService;
-use App\Service\SeasonService;
-use App\Service\LicenceService;
-use App\Entity\RegistrationStep;
-use App\Repository\LevelRepository;
-use App\Dto\RegistrationProgressDto;
-use App\Entity\LicenceAuthorization;
-use App\Entity\Enum\IdentityKindEnum;
-use App\Entity\Enum\LicenceStateEnum;
-use App\Repository\ConsentRepository;
-use App\Entity\Enum\LicenceCategoryEnum;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\AuthorizationRepository;
-use Symfony\Bundle\SecurityBundle\Security;
-use App\Repository\RegistrationStepRepository;
 use App\Dto\DtoTransformer\RegistrationProgressDtoTransformer;
+use App\Dto\RegistrationProgressDto;
+use App\Entity\Address;
+use App\Entity\Authorization;
+use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
+use App\Entity\Enum\LicenceStateEnum;
+use App\Entity\Health;
+use App\Entity\Identity;
+use App\Entity\Licence;
+use App\Entity\LicenceAuthorization;
+use App\Entity\LicenceConsent;
+use App\Entity\RegistrationStep;
+use App\Entity\User;
+use App\Repository\AuthorizationRepository;
+use App\Repository\ConsentRepository;
+use App\Repository\LevelRepository;
+use App\Repository\RegistrationStepRepository;
+use App\Service\HealthService;
+use App\Service\LicenceService;
+use App\Service\SeasonService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -167,7 +167,9 @@ class GetProgress
     private function addLicenceConsents(): void
     {
         $existingLicenceConsents = $this->getExistingLicenceContents();
-        $membership = (LicenceStateEnum::YEARLY_FILE_PENDING) ? LicenceMembershipEnum::YEARLY : LicenceMembershipEnum::TRIAL;
+        $membership = (LicenceStateEnum::YEARLY_FILE_PENDING === $this->seasonLicence->getState())
+            ? LicenceMembershipEnum::YEARLY
+            : LicenceMembershipEnum::TRIAL;
         match ($this->seasonLicence->getCategory()) {
             LicenceCategoryEnum::ADULT => $this->addAdultLicenceConsents($membership, $existingLicenceConsents),
             LicenceCategoryEnum::SCHOOL => $this->addSchoolLicenceConsents($membership, $existingLicenceConsents),
@@ -259,7 +261,9 @@ class GetProgress
     private function addLicenceAuthorizations(): void
     {
         $existingLicenceAuthorizations = $this->getExistingLicenceAuthorizations();
-        $membership = (LicenceStateEnum::YEARLY_FILE_PENDING) ? LicenceMembershipEnum::YEARLY : LicenceMembershipEnum::TRIAL;
+        $membership = (LicenceStateEnum::YEARLY_FILE_PENDING === $this->seasonLicence->getState())
+            ? LicenceMembershipEnum::YEARLY
+            : LicenceMembershipEnum::TRIAL;
         match ($this->seasonLicence->getCategory()) {
             LicenceCategoryEnum::ADULT => $this->addAdultLicenceAuthorizations($membership, $existingLicenceAuthorizations),
             LicenceCategoryEnum::SCHOOL => $this->addSchoolLicenceAuthorizations($membership, $existingLicenceAuthorizations),
@@ -303,7 +307,7 @@ class GetProgress
     {
         $existingAuthorizations = [];
         /** @var LicenceAuthorization $licenceAuthorization*/
-        foreach($this->seasonLicence->getLicenceAuthorizations() as $licenceAuthorization) {
+        foreach ($this->seasonLicence->getLicenceAuthorizations() as $licenceAuthorization) {
             $existingAuthorizations[] = $licenceAuthorization->getAuthorization()->getId();
         }
         return $existingAuthorizations;

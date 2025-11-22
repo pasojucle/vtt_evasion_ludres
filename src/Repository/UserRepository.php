@@ -409,7 +409,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
             ->andHaving(
                 $qb->expr()->lt($qb->expr()->count('sessionsinprogresspresent.id'), 3)
-            );      
+            );
         $usersWithSessions = $this->getEntityManager()->createQueryBuilder()
             ->select('userinprogress.id')
             ->from(Session::class, 'sessionsinprogress')

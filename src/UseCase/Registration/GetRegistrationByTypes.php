@@ -14,8 +14,7 @@ class GetRegistrationByTypes
     public function __construct(
         private RegistrationStepRepository $registrationStepRepository,
         private TranslatorInterface $translator,
-        )
-    {
+    ) {
     }
 
     public function execute(): array

@@ -28,7 +28,7 @@ class GetStatusWarning
             if (in_array($lastLicence->state['value'], [LicenceStateEnum::YEARLY_FILE_SUBMITTED, LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED ])) {
                 return sprintf('Votre inscription pour la saison %s a été %s.<br>Vous ne pouvez plus la modifier en ligne.</p>', $lastLicence->shortSeason, $licenceStatus);
             }
-            if ($user->getDoneSessions()->isEmpty() && LicenceCategoryEnum::SCHOOL  === $lastLicence->category) {
+            if ($user->getDoneSessions()->isEmpty() && LicenceCategoryEnum::SCHOOL === $lastLicence->category) {
                 return sprintf('Votre inscription aux 3 séances d\'essai a été %s.<br>Pour s\'incrire à la saison %s, vous devez avoir participé au moins à une sortie du club. </p>', $licenceStatus, $lastLicence->shortSeason);
             }
             if ($user->getSessions()->isEmpty() && LicenceCategoryEnum::ADULT === $lastLicence->category) {

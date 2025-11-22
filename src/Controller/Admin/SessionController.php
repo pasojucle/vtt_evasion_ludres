@@ -62,7 +62,7 @@ class SessionController extends AbstractController
             $this->entityManager->flush();
 
             $user = $session->getUser();
-            $licenceService->applyCompleteTrial($session->getUser($user));
+            $licenceService->applyCompleteTrial($session->getUser());
             
             if (!$user->getLastLicence()->getState()->isYearly()) {
                 $this->sessionService->checkEndTesting($user);

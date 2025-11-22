@@ -4,27 +4,25 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Licence;
 use App\Form\LicenceConsentType;
-use Symfony\Component\Form\FormEvent;
-use App\Entity\Enum\LicenceOptionEnum;
-use Symfony\Component\Form\FormEvents;
-use App\Entity\Enum\LicenceCategoryEnum;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class LicenceType extends AbstractType
 {
     public function __construct(
         private TranslatorInterface $translator,
-    )
-    {
-        
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -101,7 +99,7 @@ class LicenceType extends AbstractType
     private function getOptionChoices(): array
     {
         $options = [];
-        foreach(LicenceOptionEnum::cases() as $option) {
+        foreach (LicenceOptionEnum::cases() as $option) {
             $options[$option->trans($this->translator)] = $option->value;
         }
 

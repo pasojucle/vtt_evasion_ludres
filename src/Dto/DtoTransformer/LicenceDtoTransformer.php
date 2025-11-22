@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use DateTime;
-use App\Entity\User;
-use App\Entity\Level;
-use DateTimeImmutable;
 use App\Dto\LicenceDto;
-use App\Entity\Licence;
-use App\Model\Currency;
-use App\Entity\LicenceConsent;
-use App\Service\SeasonService;
-use App\Service\LicenceService;
-use App\Service\IndemnityService;
-use App\Service\ParameterService;
-use App\Service\ProjectDirService;
 use App\Entity\Enum\LicenceStateEnum;
+use App\Entity\Level;
+use App\Entity\Licence;
+use App\Entity\LicenceConsent;
+use App\Entity\User;
+use App\Model\Currency;
 use App\Repository\HistoryRepository;
 use App\Repository\LicenceRepository;
-use Doctrine\Common\Collections\Collection;
 use App\Repository\MembershipFeeAmountRepository;
+use App\Service\IndemnityService;
+use App\Service\LicenceService;
+use App\Service\ParameterService;
+use App\Service\ProjectDirService;
+use App\Service\SeasonService;
+use DateTime;
+use DateTimeImmutable;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceDtoTransformer
@@ -228,7 +228,7 @@ class LicenceDtoTransformer
     private function getLicenceAuthorizationConsents(Licence $licence): array
     {
         $licenceAutorizationConsents = [];
-        /** @var LicenceConsent  $licenceConsent */
+        /** @var LicenceConsent  $licenceAuthorizationConsent */
         foreach ($licence->getLicenceAuthorizationConsents() as $licenceAuthorizationConsent) {
             $licenceAutorizationConsents[$licenceAuthorizationConsent->getConsent()->getId()] = $licenceAuthorizationConsent;
         }

@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceOptionEnum;
+use App\Entity\Enum\LicenceStateEnum;
+use App\Form\UserType;
+use App\Repository\LicenceRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Enum\LicenceStateEnum;
-use App\Repository\LicenceRepository;
-use App\Entity\Enum\LicenceOptionEnum;
-use App\Entity\Enum\LicenceCategoryEnum;
-use App\Form\UserType;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
@@ -343,7 +343,7 @@ class Licence
     public function getLicenceAuthorizationConsents(): array
     {
         $licenceAuthorizationConsents = [];
-        foreach($this->licenceConsents as $licenceConsent) {
+        foreach ($this->licenceConsents as $licenceConsent) {
             if (UserType::FORM_LICENCE_AUTHORIZATIONS === $licenceConsent->getConsent()->getRegistrationForm()) {
                 $licenceAuthorizationConsents[] = $licenceConsent;
             }
@@ -355,7 +355,7 @@ class Licence
     public function getLicenceHealthConsents(): array
     {
         $licenceAuthorizationConsents = [];
-        foreach($this->licenceConsents as $licenceConsent) {
+        foreach ($this->licenceConsents as $licenceConsent) {
             if (UserType::FORM_HEALTH_QUESTION === $licenceConsent->getConsent()->getRegistrationForm()) {
                 $licenceAuthorizationConsents[] = $licenceConsent;
             }
@@ -367,7 +367,7 @@ class Licence
     public function getLicenceOverviewConsents(): array
     {
         $licenceAuthorizationConsents = [];
-        foreach($this->licenceConsents as $licenceConsent) {
+        foreach ($this->licenceConsents as $licenceConsent) {
             if (UserType::FORM_OVERVIEW === $licenceConsent->getConsent()->getRegistrationForm()) {
                 $licenceAuthorizationConsents[] = $licenceConsent;
             }

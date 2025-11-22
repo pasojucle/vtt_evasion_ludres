@@ -205,7 +205,6 @@ class UserDtoTransformer
     private function trialSessionsPresent(LicenceDto $lastLicence, User $user): int
     {
         if (in_array($lastLicence->state['value'], [LicenceStateEnum::TRIAL_FILE_SUBMITTED, LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED])) {
-            
             return $this->sessionRepository->findParticipationByUser($user);
         }
 

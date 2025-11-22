@@ -4,24 +4,22 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\LicenceConsent;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use App\Service\ReplaceKeywordsService;
 use Symfony\Component\Form\AbstractType;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LicenceConsentType extends AbstractType
 {
-        public function __construct(
+    public function __construct(
         private ReplaceKeywordsService $replaceKeywordsService,
         private UserDtoTransformer $userDtoTransformer,
-    )
-    {
-        
+    ) {
     }
     
     public function buildForm(FormBuilderInterface $builder, array $options): void

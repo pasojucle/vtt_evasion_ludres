@@ -7,9 +7,8 @@ namespace App\Entity;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Repository\RegistrationStepRepository;
 use Doctrine\DBAL\Types\Types;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: RegistrationStepRepository::class)]
 class RegistrationStep

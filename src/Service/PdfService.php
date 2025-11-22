@@ -119,7 +119,7 @@ class PdfService
                 'y' => 200,
             ],
         ];
-        foreach($userDto->lastLicence->options as $option) {
+        foreach ($userDto->lastLicence->options as $option) {
             $fields[] = [
                 'value' => 'X',
                 'x' => $this->getOptionYAxis(LicenceOptionEnum::from($option)),
@@ -132,7 +132,7 @@ class PdfService
 
     private function getOptionYAxis(LicenceOptionEnum $option): float
     {
-        return match($option) {
+        return match ($option) {
             LicenceOptionEnum::FLAT_DAILY_ALLOWANCE => 12,
             LicenceOptionEnum::DEATH_DISABILITY_SUPPLEMENT => 62,
             default => 108,

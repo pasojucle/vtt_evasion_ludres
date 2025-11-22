@@ -62,5 +62,4 @@ class LicenceConsent
 
         return $this;
     }
-
 }

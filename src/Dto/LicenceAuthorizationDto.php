@@ -6,7 +6,6 @@ namespace App\Dto;
 
 class LicenceAuthorizationDto
 {
-    
     public ?int $id = null;
     
     public string $title = '';

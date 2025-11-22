@@ -264,8 +264,8 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
 
     private function setPeriod(int $restriction, Survey $survey, array &$data): void
     {
-        $startAt = (array_key_exists('startAt', $data)) ? DateTimeImmutable::createFromFormat('d/m/Y',$data['startAt']) : new DateTimeImmutable();
-        $endAt = (array_key_exists('endAt', $data)) ? DateTimeImmutable::createFromFormat('d/m/Y',$data['endAt']) : new DateTimeImmutable();
+        $startAt = (array_key_exists('startAt', $data)) ? DateTimeImmutable::createFromFormat('d/m/Y', $data['startAt']) : new DateTimeImmutable();
+        $endAt = (array_key_exists('endAt', $data)) ? DateTimeImmutable::createFromFormat('d/m/Y', $data['endAt']) : new DateTimeImmutable();
 
         if (SurveyType::DISPLAY_BIKE_RIDE === $restriction && array_key_exists('bikeRide', $data)) {
             $bikeRide = $this->bikeRideRepository->find($data['bikeRide']);
