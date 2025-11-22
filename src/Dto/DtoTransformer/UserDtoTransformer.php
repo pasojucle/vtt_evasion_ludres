@@ -180,7 +180,6 @@ class UserDtoTransformer
         $userDto->licenceNumber = $userEntity->getLicenceNumber();
         $userDto->lastLicence = $this->getLastLicence($userEntity, null);
         $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $userEntity);
-        dump($userDto->trialSessionsPresent);
         $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $userDto->trialSessionsPresent);
         return $userDto;
     }

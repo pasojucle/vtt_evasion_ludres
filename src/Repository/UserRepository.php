@@ -399,7 +399,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     private function addCriteriaTestinInProgress(QueryBuilder &$qb, int $season): void
     {
-        dump('addCriteriaTestinInProgress');
         $usersWithSessionsPresent = $this->getEntityManager()->createQueryBuilder()
             ->select('sessionsinprogresspresent.id')
             ->from(Session::class, 'sessionsinprogresspresent')
