@@ -7,9 +7,9 @@
         <div class="wrapper-title">
             <h1>Boutique</h1>
         </div>
-        <div class="wrapper-body col-1-3 product-detail">
+        <div class="wrapper-body col-1-3 product-detail{% if product.isDisabled %} disabled{% endif %}">
             <div> 
-                    <img src="{{ product.pathName }}" alt="{{ product.filename }}">  
+                <img src="{{ product.pathName }}" alt="{{ product.filename }}">  
             </div>
             <div>
                 <h2>{{ product.name }}</h2>
@@ -22,12 +22,14 @@
                         <span class="{{ product.priceClass }}">{{ product.price }}</span>
                         {% if product.discountPrice %} <span class="price">{{ product.discountPrice }}</span>{% endif %}
                     </p>
+                    {% if not product.isDisabled %}
                     {{ form_start(form)}}
                     <div class="form-group">
                         {{ form_row(form.size)}}
                         {{ form_row(form.quantity)}}
                     </div>
                     {{ form_end(form)}}
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

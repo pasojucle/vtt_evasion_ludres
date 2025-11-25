@@ -10,7 +10,7 @@
         {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
         <div class="wrapper-body col-4">
             {% for product in products %}
-                <div class="card card-product">
+                <div class="card card-product{% if product.isDisabled %} disabled{% endif %}">
                     <a href="{{ path('product_show', {'product': product.id}) }}">
                         <div class="card-img" style="background-image:url({{ product.pathName }}"></div>
                         <div class="card-body">

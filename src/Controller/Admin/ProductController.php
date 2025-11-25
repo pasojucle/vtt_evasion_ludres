@@ -97,17 +97,12 @@ class ProductController extends AbstractController
         Product $product
     ): Response {
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_product_delete',
-                [
-                    'product' => $product->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
         ]);
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $product->setIsDisabled(true);
+            $product->setDeleted(true);
             $this->entityManager->persist($product);
             $this->entityManager->flush();
 
@@ -115,6 +110,31 @@ class ProductController extends AbstractController
         }
 
         return $this->render('product/admin/delete.modal.html.twig', [
+            'product' => $this->productDtoTransformer->fromEntity($product),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/desactiver/produit/{product}', name: 'admin_product_disable', methods: ['GET', 'POST'])]
+    #[IsGranted('PRODUCT_EDIT', 'product')]
+    public function adminProduitDisbaled(
+        Request $request,
+        Product $product
+    ): Response {
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $request->getUri(),
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+            $product->setDisabled(!$product->isDisabled());
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_products');
+        }
+
+        return $this->render('product/admin/disabled.modal.html.twig', [
             'product' => $this->productDtoTransformer->fromEntity($product),
             'form' => $form->createView(),
         ]);

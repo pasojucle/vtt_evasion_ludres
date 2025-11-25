@@ -44,11 +44,11 @@ class OrderLineType extends AbstractType
                     'block_prefix' => 'btn_radio',
                     'choices' => [
                         'En stock' => true,
-                        'Non disponible' => false,
+                        'En commande' => false,
                     ],
                     'choice_attr' => [
                         'En stock' => array_merge($attrClass, ['data-color' => 'success-color', 'data-icon' => 'check']),
-                        'Non disponible' => array_merge($attrClass, ['data-color' => 'danger-color', 'data-icon' => 'times']),
+                        'En commande' => array_merge($attrClass, ['data-color' => 'danger-color', 'data-icon' => 'times']),
                     ],
                 ]);
         }

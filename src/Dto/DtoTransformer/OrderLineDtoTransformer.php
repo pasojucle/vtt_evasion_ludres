@@ -56,7 +56,7 @@ class OrderLineDtoTransformer
     {
         $available = match ($value) {
             true => ['color' => 'text-bg-success', 'text' => 'En stock', 'backgroundColor' => 'background-ligth'],
-            false => ['color' => 'text-bg-danger', 'text' => 'Non disponible', 'backgroundColor' => 'background-disbled'],
+            false => ['color' => 'text-bg-danger', 'text' => 'En commande', 'backgroundColor' => 'background-disbled'],
             default => ['backgroundColor' => 'background-ligth'],
         };
 

@@ -7,56 +7,52 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OrderBy;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $name = '';
 
-    #[Column(type: 'text')]
+    #[ORM\Column(type: 'text')]
     private string $content = '';
 
-    #[Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private string $filename = '';
 
-    #[Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $price = null;
 
-    #[OneToMany(targetEntity: OrderLine::class, mappedBy: 'product')]
+    #[ORM\OneToMany(targetEntity: OrderLine::class, mappedBy: 'product')]
     private Collection $orderLines;
 
-    #[Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private bool $isDisabled = false;
 
-    #[ManyToMany(targetEntity: Size::class, inversedBy: 'products')]
-    #[JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false)]
-    #[OrderBy(['id' => 'ASC'])]
+    #[ORM\ManyToMany(targetEntity: Size::class, inversedBy: 'products')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $sizes;
 
-    #[Column(type: 'string', length: 25)]
+    #[ORM\Column(type: 'string', length: 25)]
     private string $ref = '';
 
-    #[Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $discountPrice = null;
 
-    #[Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $discountTitle = null;
 
-    #[Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $category = null;
+
+    #[ORM\Column(type: 'boolean', options:['default' => false])]
+    private bool $deleted = false;
 
     public function __construct()
     {
@@ -152,7 +148,7 @@ class Product
         return $this->isDisabled;
     }
 
-    public function setIsDisabled(bool $isDisabled): self
+    public function setDisabled(bool $isDisabled): self
     {
         $this->isDisabled = $isDisabled;
 
@@ -227,6 +223,18 @@ class Product
     public function setCategory(?int $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): static
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

@@ -39,6 +39,7 @@ class ProductDtoTransformer
             $productDto->sellingPrice = $product->getPrice();
             $productDto->discountPrice = null;
             $productDto->discountTitle = null;
+            $productDto->isDisabled = $product->isDisabled();
 
             /** @var ?User $userConnected */
             $userConnected = $this->security->getUser();

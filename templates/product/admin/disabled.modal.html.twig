@@ -1,0 +1,12 @@
+{% extends 'base_modal.html.twig' %}
+{# {% set button_href = path('admin_product_delete', {'product' : product.id}) %} #}
+{% block form %}{% set form = form %}{% endblock %}
+{% set action = product.isDisabled ? 'activer' : 'désactiver' %}
+{% block modal_title %}{{ action|capitalize }} le produit{{ product.name }}{% endblock %}
+{% block body %}
+    <p>Etes vous certain de vouloir {{ action }} le produit {{ product.name }} ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = action|capitalize %}
+    {{ parent() }}
+{% endblock %}

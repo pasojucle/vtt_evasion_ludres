@@ -31,4 +31,6 @@ class ProductDto
     public ?string $pathNameForPdf = null;
 
     public array $sizes = [];
+
+    public bool $isDisabled = false;
 }

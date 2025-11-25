@@ -27,9 +27,9 @@ class ProductRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->where(
-                (new Expr())->eq('p.isDisabled', ':isDisabled')
+                (new Expr())->eq('p.deleted', ':isDeleted')
             )
-            ->setParameter('isDisabled', false)
+            ->setParameter('isDeleted', false)
             ->orderBy('p.name', 'ASC')
         ;
     }
