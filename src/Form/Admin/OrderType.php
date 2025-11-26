@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\Enum\OrderLineStateEnum;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
@@ -70,8 +71,8 @@ class OrderType extends AbstractType
         $linesCheked = 0;
         foreach ($orderLines as $orderLine) {
             $isAvailable = match (true) {
-                $orderLine instanceof OrderLine => $orderLine->isAvailable(),
-                array_key_exists('available', $orderLine) => (bool) $orderLine['available'],
+                $orderLine instanceof OrderLine => OrderLineStateEnum::UNAVAILABLE !== $orderLine->getState(),
+                array_key_exists('state', $orderLine) => OrderLineStateEnum::UNAVAILABLE !== OrderLineStateEnum::tryFrom($orderLine['state']),
                 default => null
             };
             if (null === $isAvailable) {

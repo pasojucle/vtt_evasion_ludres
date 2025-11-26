@@ -18,7 +18,7 @@
             <br>
             <ul>
                 {% for line in order.orderLines %}
-                    <li class="row row-align-top block {{ line.available.backgroundColor }}">
+                    <li class="row row-align-top block {{ line.state.appearance.backgroundColor }}">
                         <div class="col-md-2 col-xs-3">
                             <a href="{{ path('product_show', {'product': line.product.id}) }}">
                                 <div class="thumbnail"><img class="" src="{{ line.product.pathName }}" alt=""></div>
@@ -38,7 +38,7 @@
                         <div class="col-md-3 col-xs-2 align-right">{{ line.amount }}</div>
                         <div class="col-md-12 align-right mt-10">
                             {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED or order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED %}
-                                <div class="bs-badge {{ line.available.color }}">{{ line.available.text }}</div>
+                                <div class="bs-badge {{ line.state.appearance.color }}">{{ line.state|trans }}</div>
                             {% endif %}
                         </div>
                     </li>

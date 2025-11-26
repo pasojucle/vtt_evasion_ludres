@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\Enum\OrderLineStateEnum;
 use App\Entity\Enum\OrderStatusEnum;
 use App\Entity\OrderLine;
 use App\Entity\Size;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -38,18 +39,15 @@ class OrderLineType extends AbstractType
                         'class' => 'form-group-inline form-group-small',
                     ],
                 ])
-                ->add('available', ChoiceType::class, [
+                ->add('state', EnumType::class, [
                     'label' => false,
+                    'class' => OrderLineStateEnum::class,
                     'expanded' => true,
                     'block_prefix' => 'btn_radio',
-                    'choices' => [
-                        'En stock' => true,
-                        'En commande' => false,
-                    ],
-                    'choice_attr' => [
-                        'En stock' => array_merge($attrClass, ['data-color' => 'success-color', 'data-icon' => 'check']),
-                        'En commande' => array_merge($attrClass, ['data-color' => 'danger-color', 'data-icon' => 'times']),
-                    ],
+                    'choice_attr' => function ($choice, string $key, mixed $value) use ($attrClass) {
+                        $appearance = $choice->getAppearance();
+                        return array_merge($attrClass, ['data-color' => $appearance['class'], 'data-icon' => $appearance['icon'], ]);
+                    }
                 ]);
         }
     }

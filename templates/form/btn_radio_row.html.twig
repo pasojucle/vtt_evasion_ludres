@@ -4,7 +4,7 @@
             {{ form_widget(child) }}
             <label class="label" for="{{ child.vars.id }}" 
                 {% if child.vars.value == form.vars.value %}style="background-color: var(--{{ child.vars.attr['data-color'] }});"{% endif %}>
-                {{ child.vars.label }}
+                {{ child.vars.label|trans }}
             </label>
         </div>
     {% endfor %}

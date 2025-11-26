@@ -20,6 +20,7 @@ doctrine:
             LicenceState: App\Doctrine\DBAL\Type\LicenceStateEnumType
             LicenceCategory: App\Doctrine\DBAL\Type\LicenceCategoryEnumType
             LicenceMembership: App\Doctrine\DBAL\Type\LicenceMembershipEnumType
+            OrderLineState: App\Doctrine\DBAL\Type\OrderLineStateEnumType
         mapping_types:
             enum: string
     orm:

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Entity\Enum\OrderLineStateEnum;
+
 class OrderLineDto
 {
     public ?int $id;
@@ -20,5 +22,5 @@ class OrderLineDto
 
     public ?string $formName;
 
-    public array $available = [];
+    public OrderLineStateEnum $state = OrderLineStateEnum::IN_STOCK;
 }

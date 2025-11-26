@@ -179,6 +179,11 @@ order:
     valided: Validée
     completed: Cloturée
     canceled: Annulée
+order_line:
+  state:
+    in_stock:  En stock
+    on_order: En commande
+    unavailable: Non disponible
 
 menu:
   group:

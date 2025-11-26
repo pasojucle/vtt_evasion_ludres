@@ -28,7 +28,7 @@ class OrderLineDtoTransformer
         $orderLineDto->amount = $orderLineDto->quantity * $orderLineDto->product->sellingPrice;
         $orderLineDto->amountToString = number_format($orderLineDto->amount, 2) . ' €';
         $orderLineDto->formName = $formName;
-        $orderLineDto->available = $this->getAvailable($orderLine->isAvailable());
+        $orderLineDto->state = $orderLine->getState();
 
         return $orderLineDto;
     }
@@ -50,18 +50,5 @@ class OrderLineDtoTransformer
             return sprintf('%s[%s][%s][lineId]', $formLine->getParent()->getParent()->getName(), $formLine->getParent()->getName(), $key);
         }
         return null;
-    }
-
-    private function getAvailable(?bool $value): array
-    {
-        $available = match ($value) {
-            true => ['color' => 'text-bg-success', 'text' => 'En stock', 'backgroundColor' => 'background-ligth'],
-            false => ['color' => 'text-bg-danger', 'text' => 'En commande', 'backgroundColor' => 'background-disbled'],
-            default => ['backgroundColor' => 'background-ligth'],
-        };
-
-        $available['value'] = $value;
-        
-        return $available;
     }
 }

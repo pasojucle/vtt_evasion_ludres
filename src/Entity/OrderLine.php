@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\OrderLineStateEnum;
 use App\Repository\OrderLineRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,8 +31,8 @@ class OrderLine
     #[ORM\Column(type: 'integer')]
     private int $quantity;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $available = null;
+    #[ORM\Column(type: 'OrderLineState', options:['default' => OrderLineStateEnum::IN_STOCK->value])]
+    private OrderLineStateEnum $state = OrderLineStateEnum::IN_STOCK;
 
     public function getId(): ?int
     {
@@ -86,14 +87,14 @@ class OrderLine
         return $this;
     }
 
-    public function isAvailable(): ?bool
+    public function getState(): OrderLineStateEnum
     {
-        return $this->available;
+        return $this->state;
     }
 
-    public function setAvailable(?bool $available): static
+    public function setState(OrderLineStateEnum $state): static
     {
-        $this->available = $available;
+        $this->state = $state;
 
         return $this;
     }

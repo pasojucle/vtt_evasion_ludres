@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\OrderDto;
 use App\Dto\OrderLineDto;
+use App\Entity\Enum\OrderLineStateEnum;
 use App\Entity\OrderHeader;
 use App\Entity\OrderLine;
 use Doctrine\Common\Collections\Collection;
@@ -56,7 +57,7 @@ class OrderDtoTransformer
         $amount = 0;
         /** @var OrderLineDto $line */
         foreach ($orderLines as $line) {
-            if (false !== $line->available['value']) {
+            if (OrderLineStateEnum::UNAVAILABLE !== $line->state) {
                 $amount += $line->amount;
             }
         }
