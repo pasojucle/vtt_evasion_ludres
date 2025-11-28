@@ -105,4 +105,32 @@ class LicenceRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findOneLicenceByNumerAndsSeason(string $query, int $season): ?Licence
+    {
+        try {
+            return $this->createQueryBuilder('li')
+                ->join('li.user', 'u')
+                ->andWhere(
+                    (new Expr())->eq('li.season', ':season'),
+                    (new Expr())->like('LOWER(u.licenceNumber)', ':query'),
+                    (new Expr())->orx(
+                        (new Expr())->eq('li.state', ':yearlyFileSubmitted'),
+                        (new Expr())->eq('li.state', ':yearlyFileReceive'),
+                        (new Expr())->eq('li.state', ':yearlyFileRegistred'),
+                    )
+                )
+                ->setParameters(new ArrayCollection([
+                    new Parameter('season', $season),
+                    new Parameter('yearlyFileSubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
+                    new Parameter('yearlyFileReceive', LicenceStateEnum::YEARLY_FILE_RECEIVED),
+                    new Parameter('yearlyFileRegistred', LicenceStateEnum::YEARLY_FILE_REGISTRED),
+                    new Parameter('query', '%' . strtolower($query) . '%'),
+                ]))
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch(NonUniqueResultException) {
+            return null;
+        }
+    }
 }

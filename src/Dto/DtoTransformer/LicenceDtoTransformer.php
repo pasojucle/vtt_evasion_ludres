@@ -77,7 +77,7 @@ class LicenceDtoTransformer
             $licenceDto->authorizations = $this->licenceAuthorizationDtoTransformer->fromEntities($licence->getLicenceAuthorizations());
             $licenceDto->isActive = $this->licenceService->isActive($licence);
             if ($licence->getAdditionalFamilyMember()) {
-                $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club';
+                $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club (remise de 10€ incluse)';
             }
             if ($histories) {
                 $this->getDecoratedChanges($histories, $licenceDto);
@@ -195,9 +195,9 @@ class LicenceDtoTransformer
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
                 }
                 if ($licence->getAdditionalFamilyMember()) {
-                    $amountToStr .= "Un membre de votre famille est déja inscrit au club</br>";
+                    $amountToStr .= "Un membre de votre famille est déja inscrit au club (remise de 10€ incluse)</br>";
                 }
-                $amountToStr .= "<b>Le montant de votre inscription pour la formule d'assurance {$coveragesToString} est de <span class=\"licence-amount\">{$amount->toString()}</span></b>";
+                $amountToStr .= "<b>Le montant de votre inscription et de la formule d'assurance {$coveragesToString} est de <span class=\"licence-amount\">{$amount->toString()}</span></b>";
             }
         } else {
             $amountToStr = "Votre inscription aux trois séances consécutives d'essai est gratuite.<br>Votre assurance gratuite est garantie sur la formule Mini-braquet.";

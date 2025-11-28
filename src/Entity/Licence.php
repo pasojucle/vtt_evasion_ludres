@@ -135,10 +135,20 @@ class Licence
     #[ORM\Column(type: 'LicenceCategory')]
     private LicenceCategoryEnum $category = LicenceCategoryEnum::ADULT;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'familyMembers')]
+    private ?self $familyMember = null;
+
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'familyMember')]
+    private Collection $familyMembers;
+
     public function __construct()
     {
         $this->licenceAuthorizations = new ArrayCollection();
         $this->licenceConsents = new ArrayCollection();
+        $this->familyMembers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -406,6 +416,48 @@ class Licence
     public function setCategory(LicenceCategoryEnum $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getFamilyMember(): ?self
+    {
+        return $this->familyMember;
+    }
+
+    public function setFamilyMember(?self $familyMember): static
+    {
+        $this->familyMember = $familyMember;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getFamilyMembers(): Collection
+    {
+        return $this->familyMembers;
+    }
+
+    public function addFamilyMember(self $familyMember): static
+    {
+        if (!$this->familyMembers->contains($familyMember)) {
+            $this->familyMembers->add($familyMember);
+            $familyMember->setFamilyMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFamilyMember(self $familyMember): static
+    {
+        if ($this->familyMembers->removeElement($familyMember)) {
+            // set the owning side to null (unless already changed)
+            if ($familyMember->getFamilyMember() === $this) {
+                $familyMember->setFamilyMember(null);
+            }
+        }
 
         return $this;
     }

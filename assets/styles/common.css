@@ -764,6 +764,7 @@ button[type=submit].btn.btn-primary:disabled, button.add-item-file:disabled {
     overflow: hidden;
     border: 2px solid var(--light-color-darker);
     background-color: var(--white-color);
+    font-size: 15px;
 }
 .inputGroup.long {
     width: 100%;

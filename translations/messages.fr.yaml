@@ -42,7 +42,7 @@ licence:
   option:
     flat_daily_allowance: Indemnité Journalière forfaitaire
     death_disability_supplement: Complément Décès/Invalidité
-    no_additional_option: Ne retenir aucune option
+    no_additional_option: Ne retenir aucune garantie optionnelle
 
   all_users: Tous les utilisateurs
 

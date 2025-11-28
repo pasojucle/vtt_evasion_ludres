@@ -8,11 +8,14 @@
     {% if form.lastLicence is defined %}
         {% set licence = form.lastLicence %}
         {% if licence.additionalFamilyMember is defined %}
-        <div class="form-group">
-            <div class="inputGroup long check">
+            <div class="form-group">
                 {{ form_row(licence.additionalFamilyMember )}}
             </div>
-        </div>
+            <div id="familyMember" class="form-group">
+                {% if licence.familyMember is defined %}
+                    {{ form_row(licence.familyMember )}}
+                {% endif %}
+            </div>
         {% endif %}
     {% endif %}
 </div>

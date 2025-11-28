@@ -79,13 +79,13 @@ class LicenceType extends AbstractType
                 if (UserType::FORM_LICENCE_COVERAGE === $options['current']->getForm()) {
                     $form
                         ->add('coverage', ChoiceType::class, [
-                            'label' => 'Selectionnez une formule d\'assurance',
+                            'label' => 'Selectionnez une formule d\'assurance oblogatoire',
                             'choices' => $choicesCoverage,
                             'expanded' => true,
                             'multiple' => false,
                         ])
                         ->add('options', ChoiceType::class, [
-                            'label' => 'Selectionnez une ou plusieurs options d\'assurance',
+                            'label' => 'Sélectionnez en complément, si besoin, la ou les garanties optionnelles proposée',
                             'choices' => $this->getOptionChoices(),
                             'expanded' => true,
                             'multiple' => true,

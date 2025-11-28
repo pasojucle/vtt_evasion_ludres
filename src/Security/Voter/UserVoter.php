@@ -4,7 +4,7 @@ namespace App\Security\Voter;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
-use App\Entity\Approval;
+use App\Entity\Authorization;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Health;
 use App\Entity\Identity;
@@ -81,7 +81,7 @@ class UserVoter extends Voter
         return $isUserWithPermission;
     }
 
-    private function canShare(TokenInterface $token, User $user, null|User|UserDto|Licence|Approval $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
+    private function canShare(TokenInterface $token, User $user, null|User|UserDto|Licence|Authorization $subject, bool $isActiveUser, bool $isUserWithPermission, bool $isUserWithSharePermission): bool
     {
         if ($this->canEdit($token, $user, $subject, $isActiveUser, $isUserWithPermission)) {
             return true;
