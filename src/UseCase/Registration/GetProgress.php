@@ -120,7 +120,7 @@ class GetProgress
     private function updateStatus(): void
     {
         $licence = $this->seasonLicence;
-        if (in_array($licence->getState(),[LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED]) &&
+        if (in_array($licence->getState(), [LicenceStateEnum::TRIAL_FILE_RECEIVED, LicenceStateEnum::TRIAL_COMPLETED]) &&
             ((0 < count($this->user->getDoneSessions()) && LicenceCategoryEnum::SCHOOL === $licence->getCategory())
             || (0 < count($this->user->getSessions()) && LicenceCategoryEnum::ADULT === $licence->getCategory()))) {
             if (!$this->licenceService->applyTransition($this->seasonLicence, 'start_yearly_registration')) {

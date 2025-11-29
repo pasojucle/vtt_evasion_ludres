@@ -174,6 +174,7 @@ class UserDtoTransformer
         /** @var IdentityDto $mainIdentity */
         $mainIdentity = $this->getMainIdentity($userEntity);
         
+        $userDto->id = $userEntity->getId();
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($this->identityRepository->findOneMemberByUser($userEntity));
         $userDto->mainEmail = $mainIdentity->email;
         $userDto->mainFullName = $mainIdentity->fullName;

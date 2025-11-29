@@ -25,6 +25,7 @@
         <b>Adhérent connecté</b><br>
         <b>Nom : </b>{{ data.user.member.fullName }}<br>
         <b>Numéro de licence : </b>{{ data.user.licenceNumber }}<br>
+        <a href="{{ path('admin_user', {'user': data.user.id}) }}">Lien vers l'adhérent</a>
     {% endif %}
     <br>
 </p>

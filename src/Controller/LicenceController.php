@@ -7,10 +7,10 @@ namespace App\Controller;
 use App\Entity\Licence;
 use App\Repository\LicenceRepository;
 use App\Service\SeasonService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/licence', name: 'licence')]
 class LicenceController extends AbstractController
@@ -24,7 +24,7 @@ class LicenceController extends AbstractController
         $currentSeason = $seasonService->getCurrentSeason();
         $query = $request->query->get('query');
         $results = [];
-        $licence = ($query) 
+        $licence = ($query)
             ? $licenceRepository->findOneLicenceByNumerAndsSeason($query, $currentSeason)
             : null;
         if ($licence) {

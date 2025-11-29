@@ -5,23 +5,22 @@ declare(strict_types=1);
 namespace App\Form\EventListener;
 
 use App\Entity\Licence;
-use Symfony\Component\Form\FormEvent;
 use App\Form\LicenceAutocompleteField;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AdditionalFamilyMemberSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-    )
-    {
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -61,8 +60,8 @@ class AdditionalFamilyMemberSubscriber implements EventSubscriberInterface
     public function preSubmit(FormEvent $event): void
     {
         $data = $event->getData();
-        $additionalFamilyMember = ($data && array_key_exists('additionalFamilyMember', $data)) 
-            ? (bool)$data['additionalFamilyMember'] 
+        $additionalFamilyMember = ($data && array_key_exists('additionalFamilyMember', $data))
+            ? (bool)$data['additionalFamilyMember']
             : false;
 
 

@@ -78,6 +78,7 @@ class LicenceDtoTransformer
             $licenceDto->isActive = $this->licenceService->isActive($licence);
             if ($licence->getAdditionalFamilyMember()) {
                 $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club (remise de 10€ incluse)';
+                $licenceDto->familyMember = $this->getFamilyMember($licence->getFamilyMember());
             }
             if ($histories) {
                 $this->getDecoratedChanges($histories, $licenceDto);
@@ -195,7 +196,11 @@ class LicenceDtoTransformer
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
                 }
                 if ($licence->getAdditionalFamilyMember()) {
-                    $amountToStr .= "Un membre de votre famille est déja inscrit au club (remise de 10€ incluse)</br>";
+                    $familyMember = $licence->getFamilyMember()?->getUser();
+                    $familyMemberStr = ($familyMember)
+                        ? sprintf(' - %s - %s ', $familyMember->getLicenceNumber(), $familyMember->getFullName())
+                        : '';
+                    $amountToStr .= sprintf("Un membre de votre famille est déja inscrit au club %s(remise de 10€ incluse)</br>", $familyMemberStr);
                 }
                 $amountToStr .= "<b>Le montant de votre inscription et de la formule d'assurance {$coveragesToString} est de <span class=\"licence-amount\">{$amount->toString()}</span></b>";
             }
@@ -233,5 +238,18 @@ class LicenceDtoTransformer
             $licenceAutorizationConsents[$licenceAuthorizationConsent->getConsent()->getId()] = $licenceAuthorizationConsent;
         }
         return $licenceAutorizationConsents;
+    }
+
+    private function getFamilyMember(?Licence $familyMember): ?array
+    {
+        $user = $familyMember?->getUser();
+        if ($user) {
+            return [
+                'licenceNumber' => $user->getLicenceNumber(),
+                'fullName' => $user->getFullName(),
+            ];
+        }
+
+        return null;
     }
 }

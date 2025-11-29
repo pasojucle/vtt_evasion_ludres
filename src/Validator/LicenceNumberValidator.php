@@ -2,18 +2,17 @@
 
 namespace App\Validator;
 
-use App\Validator\LicenceNumber;
 use App\Repository\LicenceRepository;
+use App\Validator\LicenceNumber;
+use Symfony\Component\Intl\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Intl\Exception\UnexpectedTypeException;
 
 final class LicenceNumberValidator extends ConstraintValidator
 {
     public function __construct(
         private readonly LicenceRepository $licenceRepository,
-    )
-    {
+    ) {
     }
     public function validate(mixed $value, Constraint $constraint): void
     {

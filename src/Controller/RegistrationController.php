@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
 use App\Security\SelfAuthentication;
+use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
@@ -21,7 +23,6 @@ use App\UseCase\Registration\GetStatusWarning;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -30,7 +31,6 @@ use ZipArchive;
 class RegistrationController extends AbstractController
 {
     public function __construct(
-        private RequestStack $requestStack,
         private GetProgress $getProgress,
         private ContentRepository $contentRepository
     ) {
@@ -115,18 +115,16 @@ class RegistrationController extends AbstractController
         }
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $route = $editRegistration->execute($request, $form, $progress);
-            
-            return $this->redirectToRoute($route, [
-                'step' => $progress->nextStep,
-            ]);
+            [$route, $params] = $editRegistration->execute($request, $form, $progress);
+
+            return $this->redirectToRoute($route, $params);
         }
 
         return $this->render('registration/registrationForm.html.twig', [
             'step' => $step,
             'progress' => $progress,
             'form' => (null !== $form) ? $form->createView() : null,
-            'maxStep' => $this->requestStack->getSession()->get('registrationMaxStep'),
+            'maxStep' => $request->getSession()->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
             'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
             'media' => RegistrationStep::RENDER_VIEW,
@@ -224,6 +222,14 @@ class RegistrationController extends AbstractController
             'message' => $parameterService->getSchoolTestingRegistration()['message'],
             'url' => 'contact',
             'anchor_text' => 'Nous contacter',
+        ]);
+    }
+
+    #[Route('/inscription/error', name: 'registration_error', methods: ['GET'])]
+    public function error(
+    ): Response {
+        return $this->render('registration/unregistrable.html.twig', [
+            'warning' => 'Une erreure s\'est produite pendant l\'enregistrement de l\'inscription.',
         ]);
     }
 }

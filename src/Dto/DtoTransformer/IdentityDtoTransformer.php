@@ -61,6 +61,8 @@ class IdentityDtoTransformer
         $identityDto = new IdentityDto();
 
         $identityDto->id = $identity->getId();
+        $identityDto->name = $identity->getName();
+        $identityDto->firstName = $identity->getFirstName();
         $identityDto->fullName = $identity->getName() . ' ' . $identity->getFirstName();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
 

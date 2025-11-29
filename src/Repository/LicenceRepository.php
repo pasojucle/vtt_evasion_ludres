@@ -129,7 +129,7 @@ class LicenceRepository extends ServiceEntityRepository
                 ]))
                 ->getQuery()
                 ->getOneOrNullResult();
-        } catch(NonUniqueResultException) {
+        } catch (NonUniqueResultException) {
             return null;
         }
     }

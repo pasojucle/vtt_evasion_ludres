@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     club_email: '%env(CLUB_EMAIL)%'
+    webmaster_email: '%env(WEBMASTER_EMAIL)%'
     project_directory: '%kernel.project_dir%/'
     timezone: '%env(APP_TIMEZONE)%'
     public_directory: '%kernel.project_dir%/public'

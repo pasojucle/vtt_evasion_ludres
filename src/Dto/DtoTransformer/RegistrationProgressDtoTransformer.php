@@ -111,6 +111,7 @@ class RegistrationProgressDtoTransformer
             UserType::FORM_LICENCE_AUTHORIZATIONS => 'licenceAuthorizations',
             UserType::FORM_LICENCE_COVERAGE => 'coverage',
             UserType::FORM_REGISTRATION_DOCUMENT => null,
+            UserType:: FORM_OVERVIEW => 'familyMember'
         ];
     }
 }

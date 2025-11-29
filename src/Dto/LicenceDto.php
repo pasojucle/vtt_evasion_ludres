@@ -61,7 +61,8 @@ class LicenceDto
 
     public bool $isActive = false;
 
-    public string $additionalFamilyMember = '';
+    public ?string $additionalFamilyMember = null;
+    public ?array $familyMember = null;
 
     public array $authorizations = [];
 }

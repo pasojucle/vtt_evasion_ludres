@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
-use Error;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -19,6 +18,7 @@ use Symfony\Component\Mime\Part\File;
 class MailerService
 {
     private Address $clubEmail;
+    private Address $webmasterEmail;
 
     public function __construct(
         private MailerInterface $mailer,
@@ -27,6 +27,7 @@ class MailerService
         private ParameterBagInterface $parameterBag,
     ) {
         $this->clubEmail = new Address($this->parameterBag->get('club_email'));
+        $this->webmasterEmail = new Address($this->parameterBag->get('webmaster_email'));
     }
 
     public function sendMailToClub(array $data): bool
@@ -47,8 +48,8 @@ class MailerService
             ])
         ;
 
-        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
-            $email->addBcc(new Address('pasojucle@gmail.com'));
+        if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED') || array_key_exists('error', $data)) {
+            $email->addBcc($this->webmasterEmail);
         }
 
         try {
@@ -64,7 +65,7 @@ class MailerService
     {
         list($userEmail, $fullName) = $this->getUserData($user);
         if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
-            $userEmail = 'contact@vttevasionludres.fr';
+            $userEmail = $this->clubEmail->getAddress();
         }
 
         if ($user instanceof UserDto) {

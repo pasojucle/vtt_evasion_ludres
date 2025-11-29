@@ -48,7 +48,7 @@ class EditRegistration
     ) {
     }
 
-    public function execute(Request $request, FormInterface $form, RegistrationProgressDto $progress): string | false
+    public function execute(Request $request, FormInterface $form, RegistrationProgressDto $progress): array
     {
         $season = $progress->season;
         $user = $form->getData();
@@ -78,16 +78,17 @@ class EditRegistration
         if (UserType::FORM_OVERVIEW === $progress->current->form) {
             /** @var Licence $seasonLicence */
             $seasonLicence = $user->getSeasonLicence($season);
+            $registrationError = ['registration_error', ['id' => $user->getId()]];
             if (LicenceStateEnum::TRIAL_FILE_PENDING === $seasonLicence->getState()) {
                 $seasonLicence->setTestingAt(new DateTimeImmutable());
                 $route = 'registration_form';
                 if (!$this->licenceService->applyTransition($seasonLicence, 'submit_trial_file')) {
-                    return false;
+                    return $this->error($user);
                 }
             } else {
                 $seasonLicence->setCreatedAt(new DateTime());
                 if (!$this->licenceService->applyTransition($seasonLicence, 'submit_yearly_file')) {
-                    return false;
+                    return $this->error($user);
                 }
             }
             $this->sendMailToClub($user);
@@ -100,7 +101,7 @@ class EditRegistration
             $this->selfAuthentication->authenticate($user);
         }
 
-        return $route;
+        return [$route, ['step' => $progress->nextStep]];
     }
 
     private function registerNewUser(User $user, FormInterface $form): Identity
@@ -155,5 +156,23 @@ class EditRegistration
                 'user' => $user->getId(),
             ], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
+    }
+
+    private function error(User $user): array
+    {
+        $message = 'Une erreure s\'est produite pendant l\'enregistrement de l\'inscription.';
+        $userDto = $this->userDtoTransformer->identifiersFromEntity($user);
+        $data = [
+            'subject' => 'Erreur d\'inscription',
+            'message' => $message,
+            'name' => $userDto->member->name,
+            'firstName' => $userDto->member->firstName,
+            'email' => $userDto->mainEmail,
+            'user' => $userDto,
+            'error' => true,
+        ];
+        $this->mailerService->sendMailToClub($data);
+
+        return ['registration_error', []];
     }
 }
