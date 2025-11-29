@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\LicenceDto;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Level;
 use App\Entity\Licence;
 use App\Entity\LicenceConsent;
 use App\Entity\User;
 use App\Model\Currency;
-use App\Repository\HistoryRepository;
 use App\Repository\LicenceRepository;
 use App\Repository\MembershipFeeAmountRepository;
 use App\Service\IndemnityService;
 use App\Service\LicenceService;
 use App\Service\ParameterService;
-use App\Service\ProjectDirService;
 use App\Service\SeasonService;
 use DateTime;
 use DateTimeImmutable;
@@ -28,12 +27,10 @@ class LicenceDtoTransformer
 {
     public function __construct(
         private SeasonService $seasonService,
-        private HistoryRepository $historyRepository,
         private TranslatorInterface $translator,
         private ParameterService $parameterService,
         private MembershipFeeAmountRepository $membershipFeeAmountRepository,
         private IndemnityService $indemnityService,
-        private ProjectDirService $projectDir,
         private readonly LicenceService $licenceService,
         private readonly LicenceRepository $licenceRepository,
         private readonly LicenceAuthorizationDtoTransformer $licenceAuthorizationDtoTransformer
@@ -64,22 +61,21 @@ class LicenceDtoTransformer
             $licenceDto->state = $this->getState($licence->getState());
             $licenceDto->lock = $licence->getSeason() !== $currentSeason;
             $licenceDto->currentSeasonForm = $this->getCurrentSeasonForm($licence, $currentSeason);
-            $licenceDto->isVae = $this->isVae($licence->isVae());
+            $licenceDto->isVae = $this->isVae($licence->isVae(), $licence->getCategory());
             $licenceDto->toValidate = $licence->getState()->toValidate();
             $licenceDto->toRegister = $licence->getState()->toRegister();
             $licenceDto->isRegistered = $licence->getState()->isRegistered();
             $licenceDto->isSeasonLicence = $licence->getSeason() === $currentSeason;
-            $licenceDto->amount = $this->getAmount($licence, $currentSeason);
+            $licenceDto->additionalFamilyMember = $this->getAdditionalFamilyMemberStr($licence);
+            $licenceDto->amount = $this->getAmount($licence, $currentSeason, $licenceDto->additionalFamilyMember);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
             $licenceDto->licenceAuthorizationConsents = $this->getLicenceAuthorizationConsents($licence);
             $licenceDto->licenceHealthConsents = $licence->getLicenceHealthConsents();
             $licenceDto->licenceOvewiewConsents = $licence->getLicenceOverviewConsents();
             $licenceDto->authorizations = $this->licenceAuthorizationDtoTransformer->fromEntities($licence->getLicenceAuthorizations());
             $licenceDto->isActive = $this->licenceService->isActive($licence);
-            if ($licence->getAdditionalFamilyMember()) {
-                $licenceDto->additionalFamilyMember = 'Un membre de votre famille est déjà inscrit au club (remise de 10€ incluse)';
-                $licenceDto->familyMember = $this->getFamilyMember($licence->getFamilyMember());
-            }
+            $licenceDto->familyMember = $this->getFamilyMember($licence->getFamilyMember());
+
             if ($histories) {
                 $this->getDecoratedChanges($histories, $licenceDto);
             }
@@ -130,9 +126,12 @@ class LicenceDtoTransformer
         return $coverageFormStartAt->setTime(0, 0, 0) < new DateTime() && !$licence->getCurrentSeasonForm();
     }
 
-    private function isVae(bool $isVae): string
+    private function isVae(bool $isVae, LicenceCategoryEnum $category): ?string
     {
-        return $isVae ? 'VTT à assistance électrique' : '';
+        if (LicenceCategoryEnum::ADULT === $category) {
+            return $isVae ? 'VTT à assistance électrique' : 'Vélo musculaire';
+        }
+        return null;
     }
 
     private function getSeason(int $season): string
@@ -163,7 +162,7 @@ class LicenceDtoTransformer
         }
     }
 
-    private function getAmount(Licence $licence, $currentSeason): array
+    private function getAmount(Licence $licence, int $currentSeason, ?string $additionalFamilyMemberStr): array
     {
         $membershipFeeAmount = 0;
         $amount = null;
@@ -195,12 +194,8 @@ class LicenceDtoTransformer
                     $amountToStr .= sprintf('Le montent des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
                 }
-                if ($licence->getAdditionalFamilyMember()) {
-                    $familyMember = $licence->getFamilyMember()?->getUser();
-                    $familyMemberStr = ($familyMember)
-                        ? sprintf(' - %s - %s ', $familyMember->getLicenceNumber(), $familyMember->getFullName())
-                        : '';
-                    $amountToStr .= sprintf("Un membre de votre famille est déja inscrit au club %s(remise de 10€ incluse)</br>", $familyMemberStr);
+                if ($additionalFamilyMemberStr) {
+                    $amountToStr .= $additionalFamilyMemberStr . '</br>';
                 }
                 $amountToStr .= "<b>Le montant de votre inscription et de la formule d'assurance {$coveragesToString} est de <span class=\"licence-amount\">{$amount->toString()}</span></b>";
             }
@@ -251,5 +246,16 @@ class LicenceDtoTransformer
         }
 
         return null;
+    }
+
+    private function getAdditionalFamilyMemberStr(Licence $licence): ?string
+    {
+        $familyMember = $licence->getFamilyMember()?->getUser();
+        if (!$licence->getAdditionalFamilyMember() || !$familyMember) {
+            return null;
+        }
+
+        $familyMemberStr = sprintf(' : <b>%s - %s</b> ', $familyMember->getLicenceNumber(), $familyMember->getFullName());
+        return sprintf("Un membre de votre famille est déja inscrit au club %s(remise de 10€ incluse)", $familyMemberStr);
     }
 }

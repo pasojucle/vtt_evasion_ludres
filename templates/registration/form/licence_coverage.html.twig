@@ -27,9 +27,14 @@
         </div>
     {% endif %}
     {% if licence.isVae is defined %}
-        <div class="inputGroup long check">
-            {{ form_widget(licence.isVae) }}
-            {{ form_label(licence.isVae) }}
+        <div class="form-group">
+            <div>{{ form_label(licence.isVae) }}</div>
+            {% for child in licence.isVae.children %}                        
+                <div class="inputGroup {{ child.vars.value ?'ballot' : 'check' }}">
+                    {{ form_widget(child) }}
+                    {{ form_label(child, null) }}
+                </div>
+            {% endfor %}
         </div>
     {% endif %}
     <br>

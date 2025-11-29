@@ -43,9 +43,15 @@ class LicenceType extends AbstractType
                         ],
                         'required' => false,
                     ])
-                    ->add('isVae', CheckboxType::class, [
-                        'label' => 'VTT à assistance électrique',
-                        'required' => false,
+                    ->add('isVae', ChoiceType::class, [
+                        'label' => 'Type de vélo',
+                        'choices' => [
+                            'Vélo musculaire' => false,
+                            'VTT à assistance électrique' => true,
+                        ],
+                        'row_attr' => [
+                            'class' => 'form-group-inline',
+                        ],
                     ])
                     ->add('coverage', ChoiceType::class, [
                         'label' => 'Selectionnez une formule d\'assurance',

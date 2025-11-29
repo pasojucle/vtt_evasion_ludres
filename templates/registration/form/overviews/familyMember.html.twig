@@ -1,12 +1,8 @@
 {% set licence = progress.user.lastLicence %}
-
-{% if licence.additionalFamilyMember is defined %}
+{% if licence.additionalFamilyMember is not null %}
 <ul class="block background-ligth">
     <li class="row">
         <span class="col-md-12 col-sx-12">{{ licence.additionalFamilyMember|raw}}</span>
-        {% if licence.familyMember is defined %}
-            <span class="col-md-12 col-sx-12">{{ licence.familyMember.licenceNumber }} - {{ licence.familyMember.fullName }}</span>
-        {% endif %}
     </li>
 </ul>
 {% endif %}

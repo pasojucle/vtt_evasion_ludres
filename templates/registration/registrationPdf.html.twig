@@ -53,6 +53,9 @@
                     {{ optionEnum|trans }}
                 {% endfor %}
             </p>
+            {% if user.lastLicence.isVae is not null %}
+                <p><b>Type de vélo : </b>{{ user.lastLicence.isVae }}</p>
+            {% endif %}
             <br>
             <p>{{ user.lastLicence.amount.str|raw }}</p>
 

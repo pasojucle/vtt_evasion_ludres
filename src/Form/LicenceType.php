@@ -9,7 +9,6 @@ use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Licence;
 use App\Form\LicenceConsentType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,16 +33,6 @@ class LicenceType extends AbstractType
                 $choicesCoverage = array_flip(Licence::COVERAGES);
                 if (LicenceCategoryEnum::SCHOOL === $options['category']) {
                     array_shift($choicesCoverage);
-                }
-                if (LicenceCategoryEnum::ADULT === $options['category'] && $licence->getState()->isYearly()) {
-                    if (UserType::FORM_LICENCE_TYPE === $options['current']->getForm()) {
-                        $form
-                            ->add('isVae', CheckboxType::class, [
-                                'label' => 'VTT à assistance électrique',
-                                'required' => false,
-                            ])
-                        ;
-                    }
                 }
 
                 if (UserType::FORM_OVERVIEW === $options['current']->getForm()) {
@@ -91,6 +80,19 @@ class LicenceType extends AbstractType
                             'multiple' => true,
                         ])
                     ;
+                    if (LicenceCategoryEnum::ADULT === $options['category'] && $licence->getState()->isYearly()) {
+                        $form
+                            ->add('isVae', ChoiceType::class, [
+                                'label' => 'Type de vélo',
+                                'choices' => [
+                                    'Vélo musculaire' => false,
+                                    'VTT à assistance électrique' => true,
+                                ],
+                                'expanded' => true,
+                                'multiple' => false,
+                            ])
+                        ;
+                    }
                 }
             }
         });

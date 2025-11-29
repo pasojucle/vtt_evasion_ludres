@@ -96,17 +96,10 @@
                     <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
                     {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
-                            {# {% if user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER') %}
-                                <a href="{{ path('admin_user_skill_edit', {'user': user.id}) }}"
-                                    class="btn" title="Modifier">
-                                    <i class="fas fa-edit"></i> 
-                                </a>
-                            {% else %} #}
-                                <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
-                                    class="btn" title="Modifier">
-                                    <i class="fas fa-edit"></i> 
-                                </a>
-                            {# {% endif %} #}
+                            <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"
+                                class="btn" title="Modifier">
+                                <i class="fas fa-edit"></i> 
+                            </a>
                         </div>
                     {% endif %}
                 </div>
@@ -160,7 +153,12 @@
                         {% if licence.coverage is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Assurance : </b></div><div class="col-md-8 col-xs-6">{{ licence.coverageStr|trans }}</div></div></li>
                         {% endif %}
-                        <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
+                        {% if licence.familyMember is not null %}
+                            <li><div class="mt-10 row"><div class="col-md-4 col-xs-6"><b>Membre de la famille </b></div><div class="col-md-8 col-xs-6">{{ licence.familyMember.licenceNumber }} - {{ licence.familyMember.fullName }}</div></div></li>
+                        {% endif %}
+                        {% if licence.isVae is not null %}
+                            <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ licence.isVae }}</div></div></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

@@ -39,7 +39,7 @@ class LicenceDto
 
     public bool $currentSeasonForm = false;
 
-    public string $isVae;
+    public ?string $isVae;
 
     public bool $toValidate = false;
 
