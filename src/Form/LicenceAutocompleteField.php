@@ -15,7 +15,7 @@ class LicenceAutocompleteField extends AbstractType
     {
         $resolver->setDefaults([
             'class' => Licence::class,
-            'placeholder' => 'Saisisez un numéro de licence',
+            'placeholder' => 'Saisisez le numéro de licence de membre de la famille',
             'multiple' => false,
             'required' => false,
         ]);
