@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Licence;
 use App\Entity\MembershipFeeAmount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NoResultException;
@@ -23,7 +24,7 @@ class MembershipFeeAmountRepository extends ServiceEntityRepository
         parent::__construct($registry, MembershipFeeAmount::class);
     }
 
-    public function findOneByLicence(int $coverage, bool $isNewMember, bool $hasFamilyMember): ?MembershipFeeAmount
+    public function findOneByLicence(int $coverage, bool $isNewMember, ?Licence $familyMember): ?MembershipFeeAmount
     {
         try {
             return $this->createQueryBuilder('mfa')
@@ -35,7 +36,7 @@ class MembershipFeeAmountRepository extends ServiceEntityRepository
                 )
                 ->setParameter('isNewMember', $isNewMember)
                 ->setParameter('coverage', $coverage)
-                ->setParameter('hasFamilyMember', $hasFamilyMember)
+                ->setParameter('hasFamilyMember', null !== $familyMember)
                 ->getQuery()
                 ->getOneOrNullResult()
             ;

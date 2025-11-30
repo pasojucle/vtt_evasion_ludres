@@ -91,9 +91,6 @@ class Licence
     private ?float $subscriptionAmount = null;
 
     #[ORM\Column(type: 'boolean')]
-    private bool $additionalFamilyMember = false;
-
-    #[ORM\Column(type: 'boolean')]
     private bool $medicalCertificateRequired = false;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'licences')]
@@ -193,18 +190,6 @@ class Licence
     public function setSubscriptionAmount(float $subscriptionAmount): self
     {
         $this->subscriptionAmount = $subscriptionAmount;
-
-        return $this;
-    }
-
-    public function getAdditionalFamilyMember(): ?bool
-    {
-        return $this->additionalFamilyMember;
-    }
-
-    public function setAdditionalFamilyMember(bool $additionalFamilyMember): self
-    {
-        $this->additionalFamilyMember = $additionalFamilyMember;
 
         return $this;
     }

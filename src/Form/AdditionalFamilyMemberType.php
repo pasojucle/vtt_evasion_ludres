@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Licence;
-use App\Form\EventListener\AdditionalFamilyMemberSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,7 +18,17 @@ class AdditionalFamilyMemberType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventSubscriber(new AdditionalFamilyMemberSubscriber($this->urlGenerator));
+        $builder
+            ->add('familyMember', LicenceAutocompleteField::class, [
+                'label' => 'Un membre de ma famille est déjà inscrit au club (Père, Mère, frères, sœurs, enfants)',
+                'autocomplete_url' => $this->urlGenerator->generate('licence_autocomplete'),
+                'attr' => [
+                    'data-constraint' => 'app-LicenceNumber',
+                ],
+                'row_attr' => [
+                    'class' => 'form-group mt-10',
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

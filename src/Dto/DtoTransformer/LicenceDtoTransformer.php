@@ -56,7 +56,6 @@ class LicenceDtoTransformer
             $licenceDto->coverage = (null !== $licence->getCoverage()) ? $licence->getCoverage() : null;
             $licenceDto->coverageStr = (!empty($licence->getCoverage())) ? $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]) : null;
             $licenceDto->options = $licence->getOptions();
-            $licenceDto->hasFamilyMember = $licence->getAdditionalFamilyMember();
             $licenceDto->category = $licence->getCategory();
             $licenceDto->state = $this->getState($licence->getState());
             $licenceDto->lock = $licence->getSeason() !== $currentSeason;
@@ -172,8 +171,8 @@ class LicenceDtoTransformer
             /** @var User $user */
             $user = $licence->getUser();
             $isNewMember = $this->isNewMember($user, $currentSeason);
-            $membershipFee = (null !== $licence->getCoverage() && null !== $licence->getAdditionalFamilyMember())
-                ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), $isNewMember, $licence->getAdditionalFamilyMember())
+            $membershipFee = (null !== $licence->getCoverage() && $licence->getState()->isYearly())
+                ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), $isNewMember, $licence->getFamilyMember())
                 : null;
             if (null !== $membershipFee) {
                 $membershipFeeAmount = $membershipFee->getAmount();
@@ -251,7 +250,7 @@ class LicenceDtoTransformer
     private function getAdditionalFamilyMemberStr(Licence $licence): ?string
     {
         $familyMember = $licence->getFamilyMember()?->getUser();
-        if (!$licence->getAdditionalFamilyMember() || !$familyMember) {
+        if (!$familyMember) {
             return null;
         }
 

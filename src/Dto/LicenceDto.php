@@ -29,8 +29,6 @@ class LicenceDto
 
     public array $options;
 
-    public ?bool $hasFamilyMember;
-
     public LicenceCategoryEnum $category = LicenceCategoryEnum::ADULT;
 
     public array $state;
