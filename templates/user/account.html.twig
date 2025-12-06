@@ -70,7 +70,7 @@
                                 </div>
                                 <b></b>
                             </li>
-                            {# {% if not user.lastLicence.state.value.isPending and user.lastLicence.isSeasonLicence %} #}
+                            {% if not user.lastLicence.state.value.isPending and user.lastLicence.isSeasonLicence %}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon dossier d'inscription</b></div>
@@ -80,7 +80,7 @@
                                     </div>
                                     <b></b>
                                 </li>
-                            {# {% endif %} #}
+                            {% endif %}
                             {% if user.canRenewRegistration %}
                                 <li>
                                     <div class="row padding-top-5">
