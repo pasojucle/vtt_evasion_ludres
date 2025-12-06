@@ -70,12 +70,23 @@
                                 </div>
                                 <b></b>
                             </li>
-                            {% if not user.lastLicence.state.value.isPending %}
+                            {# {% if not user.lastLicence.state.value.isPending and user.lastLicence.isSeasonLicence %} #}
                                 <li>
                                     <div class="row padding-top-5">
                                         <div class="col-md-5"><b>Mon dossier d'inscription</b></div>
                                         <div class="col-md-7">
                                             <a class="btn btn-primary btn-xs" href="{{ path('registration_file', {'user': user.id})}}"><i class="fas fa-download"></i> Télécharger</a>
+                                        </div>
+                                    </div>
+                                    <b></b>
+                                </li>
+                            {# {% endif %} #}
+                            {% if user.canRenewRegistration %}
+                                <li>
+                                    <div class="row padding-top-5">
+                                        <div class="col-md-5"><b>Renouveller mon inscription</b></div>
+                                        <div class="col-md-7">
+                                            <a class="btn btn-primary btn-xs" href="{{ path('user_registration_form', {'step': 1})}}"><i class="fa-solid fa-pencil"></i> S'incrire pour la saison {{ app.session.get('currentSeason')}}</a>
                                         </div>
                                     </div>
                                     <b></b>

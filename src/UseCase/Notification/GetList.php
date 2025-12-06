@@ -193,7 +193,7 @@ class GetList
     private function addNewSeasonReRgistrationEnabled(array &$notifications): void
     {
         if ($this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED')
-            && in_array($this->userDto->lastLicence->state, [LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED])
+            && in_array($this->userDto->lastLicence->state['value'], [LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED])
             && $this->userDto->lastLicence->season === $this->seasonService->getSeasonForRenew()
         ) {
             $notifications[] = $this->notificationService->getNewSeasonReRegistration();

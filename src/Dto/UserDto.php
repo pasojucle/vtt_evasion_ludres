@@ -53,4 +53,6 @@ class UserDto
     public bool $mustProvideRegistration = false;
 
     public string $seasons = '';
+
+    public bool $canRenewRegistration = false;
 }

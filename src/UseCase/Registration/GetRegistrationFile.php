@@ -43,10 +43,13 @@ class GetRegistrationFile
     ) {
     }
 
-    public function execute(User $user): array
+    public function execute(User $user): array|false
     {
         $season = $this->seasonService->getCurrentSeason();
         $lastLicence = $user->getLastLicence();
+        if ($season !== $lastLicence->getSeason()) {
+            return false;
+        }
         $category = $lastLicence->getCategory();
         $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->getState()->isYearly(), RegistrationStep::RENDER_FILE);
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();

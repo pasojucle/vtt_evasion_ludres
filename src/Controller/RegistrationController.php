@@ -137,7 +137,11 @@ class RegistrationController extends AbstractController
         ProjectDirService $projectDir,
         User $user
     ): Response {
-        $registrationFiles = $getRegistrationFile->execute($user);
+        if (!$registrationFiles = $getRegistrationFile->execute($user)) {
+            return $this->render('registration/unregistrable.html.twig', [
+                'warning' => sprintf('Le dossier %s ne peux plus être téléchargé.', $user->getLastLicence()->getSeason()),
+            ]);
+        }
         $zipName = $projectDir->path('tmp', 'inscription_vtt_evasion_ludres.zip');
         if (file_exists($zipName)) {
             unlink($zipName);

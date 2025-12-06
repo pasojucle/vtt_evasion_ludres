@@ -17,6 +17,8 @@ use App\Entity\User;
 use App\Repository\IdentityRepository;
 use App\Repository\LicenceRepository;
 use App\Repository\SessionRepository;
+use App\Service\ParameterService;
+use App\Service\SeasonService;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -37,6 +39,8 @@ class UserDtoTransformer
         private LicenceRepository $licenceRepository,
         private IdentityRepository $identityRepository,
         private SessionRepository $sessionRepository,
+        private SeasonService $seasonService,
+        private ParameterService $parameterService,
     ) {
     }
 
@@ -67,7 +71,8 @@ class UserDtoTransformer
         $userDto->isEndTesting = $this->isEndTesting($userDto->lastLicence, $userDto->trialSessionsPresent);
         $userDto->testingBikeRides = $this->testingBikeRides($userDto->lastLicence, $user->getSessions()->count());
         $userDto->mustProvideRegistration = $this->mustProvideRegistration($userDto->lastLicence, $user->getLicences()->count());
-
+        $userDto->canRenewRegistration = $this->canRenewRegistration($userDto->lastLicence);
+         
         return $userDto;
     }
 
@@ -266,5 +271,12 @@ class UserDtoTransformer
         }
 
         return implode(' - ', $seasons);
+    }
+
+    private function canRenewRegistration(LicenceDto $lastLicence): bool
+    {
+        return $this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED')
+            && in_array($lastLicence->state['value'], [LicenceStateEnum::YEARLY_FILE_RECEIVED, LicenceStateEnum::YEARLY_FILE_REGISTRED])
+            && $lastLicence->season === $this->seasonService->getSeasonForRenew();
     }
 }
