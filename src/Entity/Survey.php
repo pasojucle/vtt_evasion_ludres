@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
@@ -51,6 +52,7 @@ class Survey
     private bool $isAnonymous = false;
 
     #[OneToOne(inversedBy: 'survey', targetEntity: BikeRide::class, cascade: ['persist', 'remove'])]
+    #[JoinColumn(nullable: true)]
     private ?BikeRide $bikeRide = null;
 
     #[ManyToMany(targetEntity: User::class, inversedBy: 'surveys')]

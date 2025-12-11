@@ -100,6 +100,7 @@ class BikeRideDtoTransformer
             if ($bikeRide->getMinAge()) {
                 $bikeRideDto->minAge = sprintf('A partir de %s ans', $bikeRide->getMinAge());
             }
+            $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
         }
 
         return $bikeRideDto;

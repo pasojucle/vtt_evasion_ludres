@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\BikeRide;
 use App\Entity\Respondent;
 use App\Entity\Survey;
 use App\Entity\User;

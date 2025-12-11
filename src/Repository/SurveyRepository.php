@@ -38,7 +38,7 @@ class SurveyRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findActive(User $member): array
+    public function findActiveByUser(User $member): array
     {
         return $this->createQueryBuilder('s')
             ->leftJoin('s.members', 'm')
@@ -50,6 +50,7 @@ class SurveyRepository extends ServiceEntityRepository
                     (new Expr())->isNull('m'),
                     (new Expr())->eq('m', ':member'),
                 ),
+                (new Expr())->isNull('s.bikeRide')
             )
             ->setParameter('member', $member)
             ->orderBy('s.id', 'ASC')

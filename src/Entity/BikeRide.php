@@ -285,16 +285,6 @@ class BikeRide
 
     public function setSurvey(?Survey $survey): static
     {
-        // unset the owning side of the relation if necessary
-        if (null === $survey && null !== $this->survey) {
-            $this->survey->setBikeRide(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if (null !== $survey && $survey->getBikeRide() !== $this) {
-            $survey->setBikeRide($this);
-        }
-
         $this->survey = $survey;
 
         return $this;
