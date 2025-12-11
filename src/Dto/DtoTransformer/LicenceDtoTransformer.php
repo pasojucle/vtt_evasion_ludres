@@ -190,7 +190,7 @@ class LicenceDtoTransformer
 
                 $coveragesToString = $this->translator->trans(Licence::COVERAGES[$licence->getCoverage()]);
                 if ($user->getLevel()->getType() === Level::TYPE_FRAME) {
-                    $amountToStr .= sprintf('Le montent des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
+                    $amountToStr .= sprintf('Le montant des indemnités pour votre participation active à la vie du club durant la saison %s est de %s<br>', $lastSeason, $indemnities->toString())
                                 . sprintf('Tarif de la licence : %s<br>', (new Currency($membershipFeeAmount))->toString());
                 }
                 if ($additionalFamilyMemberStr) {
