@@ -93,7 +93,9 @@
             {% endif %}
             <div class="block background-ligth">
                 <div class="block-title">
-                    <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
+                    {% if user.level.type %}
+                        <h2>{{ constant('App\\Entity\\Level::TYPES')[user.level.type] | trans }}</h2>
+                    {% endif %}
                     {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
                             <a href="{{ path('admin_user_board_role', {'user': user.id}) }}"

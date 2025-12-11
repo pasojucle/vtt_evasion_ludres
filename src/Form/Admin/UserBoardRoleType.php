@@ -14,8 +14,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -56,7 +54,6 @@ class UserBoardRoleType extends AbstractType
 
                     return 'Encadrement';
                 },
-                'placeholder' => 'Aucun',
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
@@ -64,7 +61,6 @@ class UserBoardRoleType extends AbstractType
                     'class' => 'form-modifier',
                     'data-modifier' => 'framer_container',
                 ],
-                'required' => false,
             ])
             ->add('boardRole', EntityType::class, [
                 'label' => 'Fonction',
