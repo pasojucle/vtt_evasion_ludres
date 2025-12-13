@@ -142,7 +142,7 @@ class DashboardController extends AbstractController
 
         return $this->render('dashboard/crontab.html.twig', [
             'executeAt' => date("d/m/Y H:i:s.", $executeAt),
-            'onError' => $executeAt < (new DateTime())->setTime(12, 0, 0)->sub(new DateInterval('P1D'))->getTimestamp(),
+            'onError' => $executeAt < (new DateTime())->setTime(0, 0, 0)->sub(new DateInterval('P1D'))->getTimestamp(),
         ]);
     }
 }
