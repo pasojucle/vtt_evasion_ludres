@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use DateTime;
+use DateInterval;
 use App\Entity\BikeRide;
-use App\Entity\Enum\OrderStatusEnum;
-use App\Entity\OrderHeader;
 use App\Entity\SecondHand;
-use App\Repository\BikeRideRepository;
-use App\Repository\OrderHeaderRepository;
-use App\Repository\SecondHandRepository;
+use App\Entity\OrderHeader;
 use App\Service\ParameterService;
 use App\UseCase\CronTab\CronTabLog;
+use App\Entity\Enum\OrderStatusEnum;
+use App\Repository\BikeRideRepository;
+use App\Repository\SecondHandRepository;
+use App\Repository\OrderHeaderRepository;
 use App\UseCase\User\GetCurrentSeasonUsers;
-use DateTime;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin/dashboard', name: 'admin_dashboard')]
 class DashboardController extends AbstractController
@@ -141,7 +142,7 @@ class DashboardController extends AbstractController
 
         return $this->render('dashboard/crontab.html.twig', [
             'executeAt' => date("d/m/Y H:i:s.", $executeAt),
-            'onError' => $executeAt < (new DateTime())->setTime(0, 0, 0)->getTimestamp(),
+            'onError' => $executeAt < (new DateTime())->setTime(12, 0, 0)->sub(new DateInterval('P1D'))->getTimestamp(),
         ]);
     }
 }
