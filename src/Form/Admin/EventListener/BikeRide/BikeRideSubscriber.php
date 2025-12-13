@@ -5,25 +5,36 @@ declare(strict_types=1);
 namespace App\Form\Admin\EventListener\BikeRide;
 
 use App\Entity\BikeRide;
+
+use App\Entity\BikeRideType as BikeRideKind;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\User;
 use App\Form\Admin\BikeRideType;
 use App\Form\Admin\UsersAutocompleteField;
+use App\Form\Type\CkeditorType;
+use App\Repository\BikeRideTypeRepository;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
+use App\Service\MessageService;
 use App\Service\SeasonService;
 use App\Validator\RangeAge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class AddRestrictionSubscriber implements EventSubscriberInterface
+class BikeRideSubscriber implements EventSubscriberInterface
 {
     public function __construct(
+        private readonly BikeRideTypeRepository $bikeRideTypeRepository,
+        private readonly MessageService $messageService,
         private readonly LevelService $levelService,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator
@@ -42,21 +53,45 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
     {
         $bikeRide = $event->getData();
 
+        if (null === $bikeRide) {
+            $bikeRide = new BikeRide();
+            $bikeRide->setBikeRideType($this->bikeRideTypeRepository->findDefault());
+            $bikeRide->setRegistrationClosedMessage($this->messageService->getMessageByName('REGISTRATION_CLOSED_DEFAULT_MESSAGE'));
+        }
+        $this->setRestriction($bikeRide);
+
         $userIds = [];
         /** @var User $user */
         foreach ($bikeRide->getUsers() as $user) {
             $userIds[] = $user->getId();
         }
+        $event->setData($bikeRide);
 
-        $this->modifier($event->getForm(), $bikeRide, $bikeRide->getRestriction(), $bikeRide->getLevelFilter(), $userIds);
+        $this->modifier($event->getForm(), $bikeRide->getBikeRideType(), $bikeRide->registrationEnabled(), $bikeRide, $bikeRide->getRestriction(), $bikeRide->getLevelFilter(), $userIds);
     }
 
     public function preSubmit(FormEvent $event): void
     {
-        $bikeRide = $event->getForm()->getData();
-
         $data = $event->getData();
-        
+        $bikeRide = $event->getForm()->getData();
+        $bikeRideTypeId = (array_key_exists('bikeRideType', $data)) ? (int)$data['bikeRideType'] : null;
+        $registrationEnabled = (array_key_exists('registrationEnabled', $data) ? (bool) $data['registrationEnabled'] : true);
+        $bikeRideType = $this->bikeRideTypeRepository->find($bikeRideTypeId);
+        if ($bikeRideType && array_key_exists('bikeRideTypeChanged', $data) && 1 === (int)$data['bikeRideTypeChanged']) {
+            $data['content'] = $bikeRideType->getContent();
+            $data['title'] = $bikeRideType->getName();
+            $data['closingDuration'] = $bikeRideType->getClosingDuration() ?? 0;
+            $data['bikeRideTypeChanged'] = 0;
+            $data['restriction'] = $bikeRide->getRestriction() ?? 0;
+            $data['user'] = $bikeRide->getUsers();
+            $data['levelFilter'] = $bikeRide->getLevelFilter();
+            $data['minAge'] = $bikeRide->getMinAge();
+            $data['maxAge'] = $bikeRide->getMaxAge();
+            $event->setData($data);
+            $bikeRide->setBikeRideType($bikeRideType);
+            $event->getForm()->setData($bikeRide);
+        }
+
         $restriction = (array_key_exists('restriction', $data)) ? (int) $data['restriction'] : null;
 
         $levels = (array_key_exists('levels', $data) && !empty($data['levels'])) ? explode(';', $data['levels']) : [];
@@ -69,12 +104,110 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $event->setData($data);
         $event->getForm()->setData($bikeRide);
 
-        $this->modifier($event->getForm(), $bikeRide, $restriction, $levelFilter, $userIds);
+       
+        $this->modifier($event->getForm(), $bikeRideType, $registrationEnabled, $bikeRide, $restriction, $levelFilter, $userIds);
     }
 
-    private function modifier(FormInterface $form, BikeRide $bikeRide, ?int $restriction, array $levelFilter, array $userIds): void
+    private function modifier(FormInterface $form, ?BikeRideKind $bikeRideType, bool $registrationEnabled, BikeRide $bikeRide, ?int $restriction, array $levelFilter, array $userIds): void
     {
-        $disabled = RegistrationEnum::NONE === $bikeRide->getBikeRideType()->getRegistration();
+        $isDiabled = false;
+        if (RegistrationEnum::NONE === $bikeRideType->getRegistration()) {
+            $registrationEnabled = false;
+            $isDiabled = true;
+        }
+        $form
+            ->add('title', TextType::class, [
+                'label' => 'Titre',
+                'empty_data' => BikeRide::DEFAULT_TITLE,
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
+            ])
+            ->add('content', CkeditorType::class, [
+                'label' => 'Détail (optionnel)',
+                'config_name' => 'full',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group',
+                ],
+            ])
+            ->add('endAt', DateTimeType::class, [
+                'input' => 'datetime_immutable',
+                'label' => 'Date de fin (optionnel)',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'dd/MM/yyyy',
+                'attr' => [
+                    'class' => 'js-datepicker',
+                    'autocomplete' => 'off',
+                ],
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'required' => false,
+                'disabled' => $isDiabled,
+            ])
+            ->add('closingDuration', IntegerType::class, [
+                'label' => 'Fin d\'inscription (nbr de jours avant)',
+                'required' => false,
+                'attr' => [
+                    'min' => 0,
+                    'max' => 90,
+                ],
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+            ])
+            ->add('restriction', ChoiceType::class, [
+                'expanded' => true,
+                'multiple' => false,
+                'choices' => [
+                    'Accessible à tous les membres' => BikeRideType::NO_RESTRICTION,
+                    'Limiter à des participants' => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
+                    'Imposer une tranche d\'âge' => BikeRideType::RESTRICTION_TO_RANGE_AGE,
+                ],
+                'choice_attr' => function () {
+                    return [
+                        'data-modifier' => 'bikeRideRestriction',
+                        'class' => 'form-modifier',
+                        ];
+                },
+                'disabled' => $isDiabled,
+            ])
+            ->add('registrationEnabled', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'required' => false,
+                'data' => $registrationEnabled,
+                'disabled' => $isDiabled,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Les inscriptions et desinscriptions sont activées',
+                    'data-switch-off' => 'Les inscriptions et desinscriptions sont bloquées',
+                ],
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Enregistrer',
+                'attr' => [
+                    'class' => 'btn btn-primary float-right',
+                ],
+            ])
+            ;
+        if ($registrationEnabled) {
+            $form
+                ->add('registrationClosedMessage', CkeditorType::class, [
+                    'label' => 'Message afficher à la cloture lors de l\'inscription',
+                    'config_name' => 'base',
+                    'required' => false,
+                    'row_attr' => [
+                        'class' => 'form-group',
+                    ]
+                ]);
+        } else {
+            $form->remove('registrationClosedMessage');
+        }
+        $disabled = RegistrationEnum::NONE === $bikeRideType->getRegistration();
         $disabledUsers = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction;
         $disabledMinAge = ($disabled) ? $disabled : BikeRideType::RESTRICTION_TO_RANGE_AGE !== $restriction;
         $filters['season'] = SeasonService::MIN_SEASON_TO_TAKE_PART;
@@ -137,6 +270,17 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
             ;
     }
 
+    private function setRestriction(BikeRide &$bikeRide): void
+    {
+        $restriction = match (true) {
+            !$bikeRide->getUsers()->isEmpty() || !empty($bikeRide->getLevelFilter()) => BikeRideType::RESTRICTION_TO_MEMBER_LIST,
+            null !== $bikeRide->getMinAge() => BikeRideType::RESTRICTION_TO_RANGE_AGE,
+            default => BikeRideType::NO_RESTRICTION,
+        };
+
+        $bikeRide->setRestriction($restriction);
+    }
+
     private function cleanData(?int $restriction, array &$data, BikeRide $bikeRide): void
     {
         if (BikeRideType::RESTRICTION_TO_MEMBER_LIST !== $restriction) {
@@ -162,7 +306,7 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
         $levelFilter = [];
         if (array_key_exists('levelFilter', $data)) {
             $levelFilter = array_map(function ($id) {
-                return 1 === preg_match('#(\d+)#', $id) ? (int) $id : $id;
+                return 1 === preg_match('#(\d+)#', (string) $id) ? (int) $id : $id;
             }, $data['levelFilter']);
         }
         $users = [];
