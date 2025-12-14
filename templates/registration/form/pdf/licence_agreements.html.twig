@@ -1,0 +1,10 @@
+<div>
+    {% for  licenceAgreement in licence.healthAgreements %}
+         <p><img src="data:image/png;base64, {{ check_img }}" class="img-check"/>{{ licenceAgreement.agreement.content|raw }}</p>
+    {% endfor %}
+</div>
+<div>
+    {% for  licenceAgreement in licence.ovewiewAgreements %}
+         <p><img src="data:image/png;base64, {{ check_img }}" class="img-check"/>{{ licenceAgreement.agreement.content|raw }}</p>
+    {% endfor %}
+</div>
