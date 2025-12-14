@@ -158,16 +158,13 @@ class ContentController extends AbstractController
     #[Route('/contact', name: 'contact', methods: ['GET', 'POST'])]
     public function contact(
         Request $request,
-        IdentityService $identityService,
         MailerService $mailerService,
         UserDtoTransformer $userDtoTransformer,
         MessageService $messageService,
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
-        $mainContact = (null !== $user)
-            ? $identityService->getMainContact($user)
-            : null;
+        $mainContact = $user?->getMainIdentity();
         
         $data = ($mainContact)
             ? ['name' => $mainContact->getName(), 'firstName' => $mainContact->getFirstName(), 'email' => $mainContact->getEmail()]

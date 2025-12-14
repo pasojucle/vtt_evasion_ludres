@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
+use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
 use App\Form\Type\CkeditorType;
-use App\Form\UserType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -20,17 +20,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationStepType extends AbstractType
 {
-    private TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -57,16 +49,16 @@ class RegistrationStepType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ->add('finalRender', ChoiceType::class, [
+            ->add('yearlyDisplayMode', EnumType::class, [
                 'label' => 'Licence final',
-                'choices' => array_flip(RegistrationStep::RENDERS),
+                'class' => DisplayModeEnum::class,
                 'row_attr' => [
                     'class' => 'form-group',
                 ],
             ])
-            ->add('testingRender', ChoiceType::class, [
+            ->add('trialDisplayMode', EnumType::class, [
                 'label' => '3 séances d\'essai',
-                'choices' => array_flip(RegistrationStep::RENDERS),
+                'class' => DisplayModeEnum::class,
                 'row_attr' => [
                     'class' => 'form-group',
                 ],
@@ -89,13 +81,10 @@ class RegistrationStepType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('form', ChoiceType::class, [
+            ->add('form', EnumType::class, [
                 'label' => 'Nom du formulaire',
                 'placeholder' => 'Aucun',
-                'choices' => array_flip(UserType::FORMS),
-                'choice_label' => function ($choice, $key, $value) {
-                    return $this->translator->trans($key);
-                },
+                'class' => RegistrationFormEnum::class,
                 'row_attr' => [
                     'class' => 'form-group',
                 ],

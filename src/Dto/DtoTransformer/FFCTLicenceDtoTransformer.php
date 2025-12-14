@@ -15,9 +15,9 @@ class FFCTLicenceDtoTransformer
     public function fromEntity(UserDto $user): FFCTLicenceDto
     {
         $subscriber = (LicenceCategoryEnum::SCHOOL === $user->lastLicence->category)
-                ? $user->kinship
+                ? $user->legalGardian
                 : $user->member;
-        $children = ($user->member && $user->kinship) ? $user->member : null;
+        $children = ($user->member && $user->legalGardian) ? $user->member : null;
 
         $FFCTLicenceDto = new FFCTLicenceDto();
         $FFCTLicenceDto->fullName = $this->getFullName($subscriber);

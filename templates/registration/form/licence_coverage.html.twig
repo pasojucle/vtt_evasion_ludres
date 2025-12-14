@@ -1,4 +1,4 @@
-{% if media == constant('App\\Entity\\RegistrationStep::RENDER_VIEW') %}
+{% if media == enum('App\\Entity\\Enum\\DisplayModeEnum').SCREEN %}
     {% set licence = form.children.lastLicence %}
     {% if licence.type is defined %}
         <div class="form-group">

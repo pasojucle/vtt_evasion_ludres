@@ -66,7 +66,7 @@ class SessionDtoTransformer
     {
         $sessionDto = new SessionDto();
         $sessionDto->id = $session->getId();
-        $member = $session->getUser()->getMemberIdentity();
+        $member = $session->getUser()->getIdentity();
         $sessionDto->user = ['id' => $session->getUser()->getId(), 'fullName' => sprintf('%s %s', $member->getname(), $member->getFirstName())];
 
 

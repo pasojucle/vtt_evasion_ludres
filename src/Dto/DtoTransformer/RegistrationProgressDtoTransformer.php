@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\RegistrationProgressDto;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
-use App\Form\UserType;
+use App\Entity\RegistrationStep;
+use App\Service\ParameterService;
+use App\Dto\RegistrationProgressDto;
+use App\Entity\Enum\DisplayModeEnum;
 use App\Repository\HistoryRepository;
 use App\Repository\LicenceRepository;
-use App\Service\ParameterService;
+use App\Entity\Enum\RegistrationFormEnum;
+use App\Service\ProjectDirService;
 
 class RegistrationProgressDtoTransformer
 {
@@ -20,6 +22,7 @@ class RegistrationProgressDtoTransformer
         private HistoryRepository $historyRepository,
         private ParameterService $parameterService,
         private LicenceRepository $licenceRepository,
+        private ProjectDirService $projectDir,
     ) {
     }
 
@@ -33,10 +36,10 @@ class RegistrationProgressDtoTransformer
 
         /** @var RegistrationStep $currentRegistrationStep */
         $currentRegistrationStep = $registrationSteps[$registrationProgressDto->currentIndex];
-        $histories = (UserType::FORM_OVERVIEW === $currentRegistrationStep->getForm()) ? $this->getChanges($user, $season) : null;
+        $histories = (RegistrationFormEnum::OVERVIEW === $currentRegistrationStep->getForm()) ? $this->getChanges($user, $season) : null;
         $userDto = $this->userDtoTransformer->fromEntity($user, $histories);
         $registrationProgressDto->user = $userDto;
-        $registrationProgressDto->current = $this->registrationStepDtoTransformer->fromEntity($currentRegistrationStep, $user, $userDto, $step, registrationStep::RENDER_VIEW);
+        $registrationProgressDto->current = $this->registrationStepDtoTransformer->fromEntity($currentRegistrationStep, $user, $userDto, $step, DisplayModeEnum::SCREEN);
         $registrationProgressDto->season = $season;
 
         $registrationProgressDto->redirecToRoute = $this->validate($registrationProgressDto, $user);
@@ -77,7 +80,7 @@ class RegistrationProgressDtoTransformer
         if (!$this->parameterService->getParameterByName('NEW_SEASON_RE_REGISTRATION_ENABLED') && $this->isAlreadyBeenRegistered($user)) {
             return 'unregistrable_new_saison';
         }
-        if ($progress->user->lastLicence->state['value']->isRegistered() && UserType::FORM_REGISTRATION_FILE !== $progress->current->form) {
+        if ($progress->user->lastLicence->state['value']->isRegistered() && RegistrationFormEnum::REGISTRATION_FILE !== $progress->current->form) {
             return 'registration_existing';
         }
 
@@ -93,25 +96,13 @@ class RegistrationProgressDtoTransformer
         return !empty($this->licenceRepository->findByUserAndPeriod($user, 5));
     }
 
-    private function getOverviewTemplate(int $form): ?string
+    private function getOverviewTemplate(RegistrationFormEnum $form): ?string
     {
-        if (array_key_exists($form, $this->getRegistrationDocumentForms())) {
-            return sprintf('registration/form/overviews/%s.html.twig', $this->getRegistrationDocumentForms()[$form]);
+        $filename = sprintf('registration/form/overviews/%s.html.twig', $form->value);
+        if (file_exists($this->projectDir->path('templates',$filename))) {
+            return $filename;
         }
 
         return null;
-    }
-
-    private function getRegistrationDocumentForms(): array
-    {
-        return [
-            UserType::FORM_MEMBER => 'member',
-            UserType::FORM_KINSHIP => 'kindship',
-            UserType::FORM_HEALTH => 'health',
-            UserType::FORM_LICENCE_AUTHORIZATIONS => 'licenceAuthorizations',
-            UserType::FORM_LICENCE_COVERAGE => 'coverage',
-            UserType::FORM_REGISTRATION_DOCUMENT => null,
-            UserType:: FORM_OVERVIEW => 'familyMember'
-        ];
     }
 }
