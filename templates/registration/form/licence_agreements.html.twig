@@ -1,0 +1,28 @@
+<div class="container">{{ progress.current.content | raw}}</div>
+{% set licence = form.lastLicence %}
+<div>
+    {% for  licenceAuthorization in licence.licenceAuthorizationAgreements %}
+        <h2>
+            <label class="required">
+                {{ licenceAuthorization.vars.value.agreement.title }}
+            </label>
+        </h2>
+        {% if licenceAuthorization.vars.value.agreement.kind == enum('App\\Entity\\Enum\\AgreementKindEnum').AUTHORIZATION %}
+        {{ keywords.replace(licenceAuthorization.vars.value.agreement.content, progress.user)|raw }}
+        <div class="form-group">
+            {% for  value in licenceAuthorization.children %}
+                {% for  child in value.children %}                        
+                    <div class="inputGroup {{ child.vars.value ?'ballot' : 'check' }}">
+                        {{ form_widget(child) }}
+                        {{ form_label(child, null) }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% else %}
+            <div class="form-group">
+                {{ form_widget(licenceAuthorization) }}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
