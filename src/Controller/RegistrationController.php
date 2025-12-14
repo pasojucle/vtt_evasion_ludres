@@ -4,29 +4,32 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use ZipArchive;
 use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\ContentRepository;
-use App\Repository\MembershipFeeRepository;
-use App\Security\SelfAuthentication;
 use App\Service\MailerService;
 use App\Service\MessageService;
+use App\Entity\RegistrationStep;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
-use App\UseCase\Registration\EditRegistration;
+use App\Security\SelfAuthentication;
+use App\Repository\ContentRepository;
+use App\Entity\Enum\RegistrationFormEnum;
 use App\UseCase\Registration\GetProgress;
-use App\UseCase\Registration\GetRegistrationFile;
+use App\Repository\MembershipFeeRepository;
+use App\UseCase\Registration\EditRegistration;
 use App\UseCase\Registration\GetStatusWarning;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\UseCase\Registration\GetRegistrationFile;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use ZipArchive;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
+use App\Entity\Enum\DisplayModeEnum;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RegistrationController extends AbstractController
 {
@@ -102,7 +105,7 @@ class RegistrationController extends AbstractController
 
         $schoolTestingRegistration = $parameterService->getSchoolTestingRegistration();
 
-        if ($step === 1 && !$schoolTestingRegistration['value'] && UserType::FORM_MEMBER === $progress->current->form && !$progress->user->licenceNumber) {
+        if ($step === 1 && !$schoolTestingRegistration['value'] && RegistrationFormEnum::MEMBER === $progress->current->form && !$progress->user->licenceNumber) {
             $message = str_replace(['<p>', '</p>'], '', html_entity_decode($schoolTestingRegistration['message']));
             $this->addFlash('success', $message);
         }
@@ -127,7 +130,7 @@ class RegistrationController extends AbstractController
             'maxStep' => $request->getSession()->get('registrationMaxStep'),
             'all_membership_fee' => $membershipFeeRepository->findAll(),
             'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
-            'media' => RegistrationStep::RENDER_VIEW,
+            'media' => DisplayModeEnum::SCREEN,
         ]);
     }
 
@@ -192,7 +195,6 @@ class RegistrationController extends AbstractController
         }
         return new Response(null, Response::HTTP_NOT_FOUND);
     }
-
 
     #[Route('/inscription/existante', name: 'registration_existing', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]

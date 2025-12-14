@@ -54,7 +54,7 @@ class UserSkillType extends AbstractType
     private function getText(int $type, UserSkill $userSkill): array
     {
         if (self::BY_USERS === $type) {
-            $member = $userSkill->getUser()->getMemberIdentity();
+            $member = $userSkill->getUser()->getIdentity();
             return ['member', sprintf('%s %s', $member->getName(), $member->getFirstName())];
         }
 

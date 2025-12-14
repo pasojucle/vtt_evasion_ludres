@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Dto\AddressDto;
+use App\Entity\Enum\GardianKindEnum;
 
 class IdentityDto
 {
@@ -40,7 +41,7 @@ class IdentityDto
 
     public ?string $picture;
 
-    public ?string $type;
+    public ?GardianKindEnum $kind = null;
 
     public ?int $age;
 }

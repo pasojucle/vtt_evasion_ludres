@@ -179,7 +179,7 @@ class BikeRideRepository extends ServiceEntityRepository
     public function findNotifiable(User $user): array
     {
         $today = (new DateTimeImmutable())->setTime(23, 59, 00);
-        $memberAge = (int) $today->diff($user->getFirstIdentity()->getBirthDate())->format('%Y');
+        $memberAge = (int) $today->diff($user->getIdentity()->getBirthDate())->format('%Y');
 
         $bikeRides = $this->getEntityManager()->createQueryBuilder()
             ->select('bikeRide.id')

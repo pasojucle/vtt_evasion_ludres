@@ -30,7 +30,7 @@ class IdentityType extends AbstractType
             'data_class' => Identity::class,
             'category' => LicenceCategoryEnum::ADULT,
             'is_yearly' => false,
-            'is_kinship' => false,
+            'is_gardian' => false,
         ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Dto\HealthDto;
 use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
+use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\RegistrationStep;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,10 +22,10 @@ class ReplaceKeywordsService
     ) {
     }
 
-    public function replace(?string $content, ?UserDto $user = null, int $render = RegistrationStep::RENDER_VIEW, array $additionalParams = []): null|string|array
+    public function replace(?string $content, ?UserDto $user = null, DisplayModeEnum $render = DisplayModeEnum::SCREEN, array $additionalParams = []): null|string|array
     {
         if (null !== $content) {
-            if (RegistrationStep::RENDER_FILE === $render) {
+            if (DisplayModeEnum::FILE === $render) {
                 $content = $this->createPageBreak($content);
                 $content = $this->removeButton($content);
             }
@@ -91,7 +92,7 @@ class ReplaceKeywordsService
         return [];
     }
 
-    private function getReplace(array $keyWords, ?UserDto $user, int $render, array $additionalParams): array
+    private function getReplace(array $keyWords, ?UserDto $user, DisplayModeEnum $render, array $additionalParams): array
     {
         $replace = [];
         /**
@@ -113,7 +114,7 @@ class ReplaceKeywordsService
                 '{{ date }}' => ($licence->isYearly) ? $licence?->createdAt : $licence?->testingAt,
                 '{{ prenom_nom_parent }}' => $kinship?->fullName,
                 '{{ date_naissance_parent }}' => $kinship?->birthDate,
-                '{{ adresse_parent }}' => $this->getAddress($user->kinship),
+                '{{ adresse_parent }}' => $this->getAddress($user->legalGardian),
                 '{{ prenom_nom_enfant }}' => $user->member->fullName,
                 '{{ saut_page }}', '<p>&nbsp;</p>' => '<br>',
                 '{{ titre_licence }}' => $licence?->registrationTitle,
@@ -138,7 +139,7 @@ class ReplaceKeywordsService
             return [null, null, null];
         }
 
-        return [$this->getDtoProperty($user, 'lastLicence'), $this->getDtoProperty($user, 'kinship'), $this->getDtoProperty($user, 'health'), ];
+        return [$this->getDtoProperty($user, 'lastLicence'), $this->getDtoProperty($user, 'legalGardian'), $this->getDtoProperty($user, 'health'), ];
     }
 
 
@@ -156,14 +157,14 @@ class ReplaceKeywordsService
         return (new ReflectionProperty($dto, $property))->isInitialized($dto) ? $dto->$property : '';
     }
 
-    private function getRightToTheImage(UserDto $user, int $render): string
+    private function getRightToTheImage(UserDto $user, DisplayModeEnum $render): string
     {
         $authorizations = $this->getDtoProperty($user->lastLicence, 'authorizations');
         if (!$authorizations) {
             return '';
         }
 
-        return (RegistrationStep::RENDER_FILE === $render) ? sprintf('<b>%s</b>', $authorizations['rightToTheImage']?->toString) : 'autorise';
+        return (DisplayModeEnum::FILE === $render) ? sprintf('<b>%s</b>', $authorizations['rightToTheImage']?->toString) : 'autorise';
     }
 
     public function replaceCurrentSaison(string|bool|array|int|null $content): string|bool|array|int|null
