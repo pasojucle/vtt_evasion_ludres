@@ -45,16 +45,16 @@
                     <p>* champs obligatoires </p>
                 {% endif %}
                 <div class="block-footer">
-                    {% if progress.prevStep is not null and progress.current.form != constant('App\\Form\\UserType::FORM_REGISTRATION_FILE') %}
+                    {% if progress.prevStep is not null and progress.current.form != enum('App\\Entity\\Enum\\RegistrationFormEnum').REGISTRATION_FILE %}
                         <a class="btn btn-primary float-left" href="{{ path(route, {'step': progress.prevStep }) }}"><i class="fas fa-chevron-circle-left"></i> Précedent</a>
                     {% endif %}
                     {% if progress.nextStep is not null %}
-                        {% if form is null or progress.current.form ==  constant('App\\Form\\UserType::FORM_MEMBERSHIP_FEE') %}
+                        {% if form is null or progress.current.form ==  enum('App\\Entity\\Enum\\RegistrationFormEnum').MEMBERSHIP_FEE %}
                             <a class="btn btn-primary float-right" href="{{ path(route, {'step': progress.nextStep }) }}"><i class="fas fa-chevron-circle-right"></i> Suivant</a>
                         {% else %}
                             {% set btn_class = 'btn btn-primary float-right' %}
                             {% set btn_label = '<i class="fas fa-chevron-circle-right"></i> Enregistrer' %}
-                            {% if progress.current.form == constant('App\\Form\\UserType::FORM_OVERVIEW') %}
+                            {% if progress.current.form == enum('App\\Entity\\Enum\\RegistrationFormEnum').OVERVIEW %}
                                 {% set btn_class = 'btn btn-primary btn-xl float-right' %}
                                 {% set btn_label = '<i class="fas fa-check-circle"></i> Je certifie l\'exactitude des renseignements fournis<br>et VALIDE MON INSCRIPTION' %}
                             {% endif %}

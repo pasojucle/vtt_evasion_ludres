@@ -33,7 +33,7 @@ class LicenceDtoTransformer
         private IndemnityService $indemnityService,
         private readonly LicenceService $licenceService,
         private readonly LicenceRepository $licenceRepository,
-        private readonly LicenceAuthorizationDtoTransformer $licenceAuthorizationDtoTransformer
+        private readonly LicenceAgreementDtoTransformer $licenceAgreementDtoTransformer,
     ) {
     }
 
@@ -68,13 +68,13 @@ class LicenceDtoTransformer
             $licenceDto->additionalFamilyMember = $this->getAdditionalFamilyMemberStr($licence);
             $licenceDto->amount = $this->getAmount($licence, $currentSeason, $licenceDto->additionalFamilyMember);
             $licenceDto->registrationTitle = $this->getRegistrationTitle($licence);
-            $licenceDto->licenceAuthorizationConsents = $this->getLicenceAuthorizationConsents($licence);
-            $licenceDto->licenceHealthConsents = $licence->getLicenceHealthConsents();
-            $licenceDto->licenceOvewiewConsents = $licence->getLicenceOverviewConsents();
-            $licenceDto->authorizations = $this->licenceAuthorizationDtoTransformer->fromEntities($licence->getLicenceAuthorizations());
             $licenceDto->isActive = $this->licenceService->isActive($licence);
             $licenceDto->familyMember = $this->getFamilyMember($licence->getFamilyMember());
-
+            $licenceDto->healthAgreements = $licence->getLicenceHealthAgreements();
+            $licenceDto->ovewiewAgreements = $licence->getLicenceOverviewAgreements();
+            $licenceDto->authorizationAgreements = $this->licenceAgreementDtoTransformer->fromEntities($licence->getLicenceAuthorizationAgreements());
+            $licenceDto->authorizations = $this->licenceAgreementDtoTransformer->fromEntities($licence->getLicenceAuthorizations());
+            
             if ($histories) {
                 $this->getDecoratedChanges($histories, $licenceDto);
             }
@@ -226,23 +226,13 @@ class LicenceDtoTransformer
         ];
     }
 
-    private function getLicenceAuthorizationConsents(Licence $licence): array
-    {
-        $licenceAutorizationConsents = [];
-        /** @var LicenceConsent  $licenceAuthorizationConsent */
-        foreach ($licence->getLicenceAuthorizationConsents() as $licenceAuthorizationConsent) {
-            $licenceAutorizationConsents[$licenceAuthorizationConsent->getConsent()->getId()] = $licenceAuthorizationConsent;
-        }
-        return $licenceAutorizationConsents;
-    }
-
     private function getFamilyMember(?Licence $familyMember): ?array
     {
         $user = $familyMember?->getUser();
         if ($user) {
             return [
                 'licenceNumber' => $user->getLicenceNumber(),
-                'fullName' => $user->getFullName(),
+                'fullName' => $user->getIdentity()->getFullName(),
             ];
         }
 
@@ -256,7 +246,7 @@ class LicenceDtoTransformer
             return null;
         }
 
-        $familyMemberStr = sprintf(' : <b>%s - %s</b> ', $familyMember->getLicenceNumber(), $familyMember->getFullName());
+        $familyMemberStr = sprintf(' : <b>%s - %s</b> ', $familyMember->getLicenceNumber(), $familyMember->getIdentity()->getFullName());
         return sprintf("Un membre de votre famille est déja inscrit au club %s(remise de 10€ incluse)", $familyMemberStr);
     }
 }

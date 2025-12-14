@@ -33,7 +33,7 @@ class IsRegistrable
             return false;
         }
         
-        $member = $this->identityRepository->findOneMemberByUser($user);
+        $member = $user->getIdentity();
         if (!$member) {
             return false;
         }

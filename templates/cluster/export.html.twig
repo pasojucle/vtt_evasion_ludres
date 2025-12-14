@@ -46,32 +46,32 @@
                 {% endif %}
             </table>
         </div>
-        {% if user.kinship %}
+        {% if user.legalGardian %}
             <table class="table-border table-fixed">
                 <tr>
                     <td></td>
-                    <td><b>{{ user.kinship.type | trans  }}</b></td>
-                    <td><b>{{ user.secondKinship.type|trans}}</b></td>
+                    <td><b>{{ user.legalGardian.kind | trans  }}</b></td>
+                    <td><b>{{ user.secondKinship.kind|trans}}</b></td>
                 </tr>
                 <tr>
                     <td style="width: 150px">Nom et prénom</td>
-                    <td>{{ user.kinship.fullName }}</td>
+                    <td>{{ user.legalGardian.fullName }}</td>
                     <td>{{ user.secondKinship.fullName}}</td>
                 </tr>
                 <tr>
                     <td>Téléphone</td>
-                    <td>{{ user.kinship.phone}}</td>
+                    <td>{{ user.legalGardian.phone}}</td>
                     <td>{{ user.secondKinship.phone}}</td>
                 </tr>
                 <tr>
                     <td>Adresse</td>
                     <td colspan="2">
-                        {{ user.kinship.address.street }}<br>{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}
+                        {{ user.legalGardian.address.street }}<br>{{ user.legalGardian.address.postalCode }} {{ user.legalGardian.address.town }}
                     </td>
                 </tr>
                 <tr>
                     <td>Courriel</td>
-                    <td colspan="2">{{ user.kinship.email }}</td>
+                    <td colspan="2">{{ user.legalGardian.email }}</td>
                 </tr>
             </table>
         {% endif %}

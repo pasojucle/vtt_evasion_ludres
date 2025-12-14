@@ -130,9 +130,9 @@ class ExportSurvey
             $content[] = 'Horodateur,Participants - ' . $survey->getRespondents()->count();
             foreach ($survey->getRespondents() as $respondent) {
                 $row = [];
-                $identity = $respondent->getUser()->getFirstIdentity();
+                $identity = $respondent->getUser()->getIdentity();
                 $row[] = $respondent->getCreatedAt()->format('d/m/Y H:i');
-                $row[] = $identity->getName() . ' ' . $identity->getFirstName();
+                $row[] = $identity->getFullName();
                 $content[] = implode(',', $row);
             }
         } else {

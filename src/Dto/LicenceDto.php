@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Dto;
 
 use App\Entity\Enum\LicenceCategoryEnum;
-use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\Licence;
 
 class LicenceDto
 {
@@ -51,16 +49,16 @@ class LicenceDto
 
     public string $registrationTitle = '';
 
-    public array $licenceAuthorizationConsents = [];
+    public array $authorizationAgreements = [];
 
-    public array $licenceHealthConsents = [];
+    public array $authorizations = [];
 
-    public array $licenceOvewiewConsents = [];
+    public array $healthAgreements = [];
+
+    public array $ovewiewAgreements = [];
 
     public bool $isActive = false;
 
     public ?string $additionalFamilyMember = null;
     public ?array $familyMember = null;
-
-    public array $authorizations = [];
 }
