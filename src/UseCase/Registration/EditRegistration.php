@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Dto\RegistrationProgressDto;
-use App\Entity\Enum\LicenceCategoryEnum;
-use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\Identity;
-use App\Entity\Licence;
+use DateTime;
 use App\Entity\User;
-use App\Form\UserType;
-use App\Repository\UserRepository;
-use App\Security\SelfAuthentication;
-use App\Service\IdentityService;
-use App\Service\LicenceService;
+use DateTimeImmutable;
+use App\Entity\Licence;
+use App\Entity\Identity;
 use App\Service\MailerService;
-use App\Service\MessageService;
 use App\Service\StringService;
 use App\Service\UploadService;
-use App\UseCase\Registration\GetRegistrationFile;
-use DateTime;
-use DateTimeImmutable;
+use App\Service\LicenceService;
+use App\Service\MessageService;
+use App\Repository\UserRepository;
+use App\Dto\RegistrationProgressDto;
+use App\Security\SelfAuthentication;
+use App\Entity\Enum\LicenceStateEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Enum\RegistrationFormEnum;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Service\GardianService;
+use App\UseCase\Registration\GetRegistrationFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class EditRegistration
 {
@@ -38,7 +38,7 @@ class EditRegistration
         private UserDtoTransformer $userDtoTransformer,
         private UserPasswordHasherInterface $passwordHasher,
         private UrlGeneratorInterface $urlGenerator,
-        private IdentityService $identityService,
+        private GardianService $gardianService,
         private MailerService $mailerService,
         private LicenceService $licenceService,
         private StringService $stringService,
@@ -61,11 +61,11 @@ class EditRegistration
             $selfAuthenticating = true;
         }
 
-        if (null !== $user->getMemberIdentity()->getBirthDate()) {
+        if (null !== $user->getIdentity()->getBirthDate()) {
             $category = $this->licenceService->getCategory($user);
             $user->getSeasonLicence($season)->setCategory($category);
             if (LicenceCategoryEnum::SCHOOL === $category) {
-                $this->identityService->setAddress($user);
+                $this->gardianService->setAddress($user);
             }
         }
 
@@ -75,7 +75,7 @@ class EditRegistration
 
         $category = $user->getSeasonLicence($season)->getCategory();
 
-        if (UserType::FORM_OVERVIEW === $progress->current->form) {
+        if (RegistrationFormEnum::OVERVIEW === $progress->current->form) {
             /** @var Licence $seasonLicence */
             $seasonLicence = $user->getSeasonLicence($season);
             $registrationError = ['registration_error', ['id' => $user->getId()]];
@@ -114,7 +114,7 @@ class EditRegistration
         );
 
         $nextId = $this->userRepository->findNextId();
-        $identity = $user->getFirstIdentity();
+        $identity = $user->getIdentity();
         $fullName = $this->stringService->clean(strtoupper($identity->getName()) . ucfirst($identity->getFirstName()));
         $user->setLicenceNumber(substr(preg_replace('/[^a-zA-Z0-9]+/', '', $fullName), 0, 20) . $nextId);
 
@@ -135,18 +135,18 @@ class EditRegistration
     private function UploadFile(Request $request, User $user): void
     {
         $requestFile = $request->files->get('user');
-        if (null !== $requestFile && array_key_exists('identities', $requestFile) && !empty($requestFile['identities']) && null !== $requestFile['identities'][0]['pictureFile']) {
-            $pictureFile = $requestFile['identities'][0]['pictureFile'];
+        if (null !== $requestFile && array_key_exists('identity', $requestFile) && !empty($requestFile['identity']) && null !== $requestFile['identity']['pictureFile']) {
+            $pictureFile = $requestFile['identity']['pictureFile'];
             $newFilename = $this->uploadService->uploadFile($pictureFile);
             if (null !== $newFilename) {
-                $user->getIdentities()->first()->setPicture($newFilename);
+                $user->getIdentity()->setPicture($newFilename);
             }
         }
     }
 
     private function sendMailToClub(User $user): void
     {
-        $identity = $user->getFirstIdentity();
+        $identity = $user->getIdentity();
         $this->mailerService->sendMailToClub([
             'name' => $identity->getName(),
             'firstName' => $identity->getFirstName(),

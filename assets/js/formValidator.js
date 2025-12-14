@@ -8,6 +8,7 @@ export class Form {
     dynamicFields = [];
     fieldBlurred;
     alertRemote;
+    timeout = null;
     constructor(form) {
         this.element = form;
         this.submit = document.querySelector('button[type="submit"]');
@@ -21,7 +22,7 @@ export class Form {
             }
         })
     }
-    validate = async() => {
+    executeValidate = async() => {
         if (0 < this.fields.length) {
             this.formData = new FormData();
             const lastFieldFilled = this.fields.findLastIndex((field) => !field.isEmpty());
@@ -31,7 +32,16 @@ export class Form {
             
             await this.fetchData().then(() => {
                 this.disabledSubmit();
-            });
+            }); 
+        }
+    }
+    validate = async() => {
+        if (0 < this.fields.length) {
+            clearTimeout(this.timeout);
+            const self = this;
+            this.timeout = setTimeout(() => {
+                self.executeValidate();
+            }, 700);
         }
     }
     addData = (field, filled) => {

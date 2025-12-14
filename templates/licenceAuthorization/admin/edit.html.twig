@@ -17,7 +17,7 @@
             <div class="wrapper-body">
                 <h2>{{ approval.title }}</h2>
                 <div class="form-group">
-                    {% for  child in form.value.children %}
+                    {% for  child in form.agreed %}
                         <div class="inputGroup {{ child.vars.value ? 'check' : 'ballot' }}">
                             {{ form_widget(child)}}
                             {{ form_label(child)}}

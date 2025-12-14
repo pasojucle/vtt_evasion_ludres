@@ -105,9 +105,9 @@
 </div>
 <div>
     {% set licence = form.lastLicence %}
-    {% for  licenceConsent in licence.licenceHealthConsents %}
+    {% for  licenceAgreement in licence.licenceHealthAgreements %}
         <div class="form-group">
-            {{ form_widget(licenceConsent) }}
+            {{ form_widget(licenceAgreement) }}
         </div>
     {% endfor %}
 </div>

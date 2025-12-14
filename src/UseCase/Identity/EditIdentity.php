@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\UseCase\Identity;
 
-use App\Entity\User;
-use App\Repository\IdentityRepository;
-use App\Service\CommuneService;
-use App\Service\IdentityService;
+use App\Entity\Identity;
 use App\Service\UploadService;
+use App\Service\CommuneService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,32 +15,24 @@ class EditIdentity
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private IdentityRepository $identityRepository,
-        private IdentityService $identityService,
         private UploadService $uploadService,
-        private CommuneService $communeService
+        private CommuneService $communeService,
     ) {
     }
 
-    public function execute(Request $request, ?User $user, FormInterface $form): void
+    public function execute(Request $request, ?Identity $identity, FormInterface $form): void
     {
-        $identities = $form->getData();
-        $this->identityService->setAddress($user);
-
-        if ($request->files->get('identities')) {
-            $pictureFile = $request->files->get('identities')['identities'][0]['pictureFile'];
+        //TODO voir si on peu récupérer file depuis data
+        dump($form->getData());
+        if ($request->files->get('identitiy')) {
+            $pictureFile = $request->files->get('identity')[0]['pictureFile'];
             $newFilename = $this->uploadService->uploadFile($pictureFile);
             if (null !== $newFilename) {
-                foreach ($identities as $identity) {
-                    if (null === $identity[0]->getKinship()) {
-                        $identity[0]->setPicture($newFilename);
-                    }
-                }
+                $identity->setPicture($newFilename);
             }
         }
-        $member = $this->identityRepository->findOneMemberByUser($user);
-        if ($member->getBirthCommune()) {
-            $this->communeService->addIfNotExists($member->getBirthCommune());
+        if ($identity->getBirthCommune()) {
+            $this->communeService->addIfNotExists($identity->getBirthCommune());
         };
 
         $this->entityManager->flush();
