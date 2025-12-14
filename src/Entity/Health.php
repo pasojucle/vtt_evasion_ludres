@@ -8,26 +8,23 @@ use App\Entity\User;
 use App\Repository\HealthRepository;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Entity(repositoryClass: HealthRepository::class)]
+
+#[ORM\Entity(repositoryClass: HealthRepository::class)]
 class Health
 {
-    #[Column(type: 'integer')]
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'date', nullable: true)]
+    #[ORM\Column(type: 'date', nullable: true)]
     private ?DateTimeInterface $medicalCertificateDate = null;
+    
+    #[ORM\OneToOne(inversedBy: 'health', cascade: ['persist', 'remove'])]
+    private ?User $user = null;
 
-    #[OneToOne(targetEntity: User::class, mappedBy: 'health')]
-    private ?User $user;
-
-    #[Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
     private array $consents = [];
@@ -61,12 +58,12 @@ class Health
         return $this;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 

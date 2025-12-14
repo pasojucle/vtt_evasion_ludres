@@ -56,10 +56,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         formValidator = new Form(form);
     }
 
-    document.querySelectorAll('.identity-other-address').forEach((element) => {
-        element.addEventListener('change', updateIdentity);
-    })
-
     document.querySelectorAll('.foreign-born').forEach((element) => {
         element.addEventListener('click', toggleBirthPlace);
     })
@@ -73,25 +69,6 @@ function confirmDeleteUser(e) {
     let anchor = $('<a class="modal-trigger" href="'+route+'" data-toggle="modal" data-type="danger"></a>');
     form.append(anchor);
     anchor.click();
-}
-
-const updateIdentity = (event)  => {
-    const container = document.getElementById(event.target.dataset.modifier);
-    container.querySelectorAll('.address-group').forEach((element) => {
-        element.classList.toggle('hidden');
-    });
-    const elements = container.querySelectorAll('.address-group input, .address-group select');
-    if (event.target.checked) {
-        elements.forEach((element) => {
-            element.required = true;
-        });
-    } else {
-        elements.forEach((element) => {
-            element.required = false;
-            element.value = '';
-        })
-    }
-    formValidator.validate();
 }
 
 const toggleBirthPlace = () => {

@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
+use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Repository\HistoryRepository;
@@ -38,7 +39,7 @@ class CoverageController extends AbstractController
 
         $coverageStep = $registrationStepRepository->findCoverageStep();
 
-        $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $user, $userDto, 1, RegistrationStep::RENDER_FILE);
+        $step = $registrationStepDtoTransformer->fromEntity($coverageStep, $user, $userDto, 1, DisplayModeEnum::FILE);
         $files = [];
         if (null !== $step->pdfFilename) {
             $filename = $step->pdfPath;

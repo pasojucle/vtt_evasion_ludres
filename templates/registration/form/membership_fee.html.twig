@@ -1,4 +1,4 @@
-{% if media == constant('App\\Entity\\RegistrationStep::RENDER_FILE') %}
+{% if media == enum('App\\Entity\\Enum\\DisplayModeEnum').FILE %}
     <h1>{{ progress.current.title }}</h1>
 {% endif %}
 {% include('registration/membership_fee.html.twig') %}

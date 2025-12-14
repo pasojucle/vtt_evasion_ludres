@@ -5,39 +5,51 @@ declare(strict_types=1);
 namespace App\Dto\DtoTransformer;
 
 use App\Dto\IdentityDto;
-use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Identity;
-use App\Repository\HistoryRepository;
+use App\Entity\UserGardian;
 use App\Service\ProjectDirService;
-use App\Service\SeasonService;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\Common\Collections\Collection;
 
 class IdentityDtoTransformer
 {
     public function __construct(
         private AddressDtoTransformer $addressDtoTransformer,
         private ProjectDirService $projectDirService,
-        private HistoryRepository $historyRepository,
-        private SeasonService $seasonService,
     ) {
     }
 
-    public function fromEntity(Identity $identity, ?array $histories = null): IdentityDto
+    private function normamize(Identity|UserGardian $entity): array
+    {
+        if ($entity instanceof UserGardian) {
+            return[
+                $entity->getIdentity(),
+                $entity->getKind(),
+                $entity->getIdentity()->getAddress() ?? $entity->getUser()->getIdentity()->getAddress()
+            ];
+        }
+        return[
+            $entity,
+            null,
+            $entity->getAddress()
+        ];
+    }
+
+    public function fromEntity(Identity|UserGardian $entity, ?array $histories = null): IdentityDto
     {
         $identityDto = new IdentityDto();
-
+        [$identity, $kind, $address] = $this->normamize($entity);
         $bithDate = $identity->getBirthDate();
         $identityDto->id = $identity->getId();
         if ($identity->getName() && $identity->getFirstName()) {
             $identityDto->name = mb_strtoupper($identity->getName());
             $identityDto->firstName = mb_ucfirst($identity->getFirstName());
-            $identityDto->fullName = sprintf('%s %s', mb_strtoupper($identity->getName()), mb_ucfirst($identity->getFirstName()));
+            $identityDto->fullName = $identity->getFullName();
         }
+        $identityDto->kind = $kind;
         $identityDto->birthDate = ($bithDate) ? $bithDate->format('j/n/Y') : null;
         list($identityDto->birthPlace, $identityDto->birthDepartment, $identityDto->birthCountry) = $this->getBirthplace($identity);
-        $identityDto->address = ($identity->getAddress()) ? $this->addressDtoTransformer->fromEntity($identity->getAddress(), $histories) : null;
+        $identityDto->address = $this->addressDtoTransformer->fromEntity($address, $histories);
         $identityDto->email = $identity->getEmail();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
         $identityDto->emergencyPhone = $identity->getEmergencyPhone();
@@ -45,7 +57,6 @@ class IdentityDtoTransformer
         $identityDto->emergencyContact = $identity->getEmergencyContact();
         $identityDto->phonesAnchor = $this->getPhonesAnchor($identity);
         $identityDto->picture = $this->getPicture($identity->getPicture());
-        $identityDto->type = (null !== $identity->getKinShip()) ? Identity::KINSHIPS[$identity->getKinShip()] : null;
 
         $identityDto->age = $this->getAge($bithDate);
 
@@ -70,20 +81,6 @@ class IdentityDtoTransformer
         return $identityDto;
     }
 
-
-    public function fromEntities(Collection $identityEntities, ?array $histories = null): array
-    {
-        $identities = [];
-        /** @var Identity $identity */
-        foreach ($identityEntities as $identity) {
-            $identities[$identity->getKind()->name] = $this->fromEntity($identity, $histories);
-        }
-        $this->setKinshipAddress($identities);
-
-
-        return $identities;
-    }
-
     private function getAge(?DateTimeInterface $birthDate): ? int
     {
         if (null !== $birthDate) {
@@ -94,17 +91,6 @@ class IdentityDtoTransformer
         }
 
         return null;
-    }
-
-    private function setKinshipAddress(array &$identities): void
-    {
-        $kinships = [IdentityKindEnum::KINSHIP->name, IdentityKindEnum::SECOND_CONTACT->name];
-        $memberAddress = $identities[IdentityKindEnum::MEMBER->name]->address;
-        foreach ($kinships as $kinship) {
-            if (array_key_exists($kinship, $identities) && null === $identities[$kinship]->address) {
-                $identities[$kinship]->address = $memberAddress;
-            }
-        }
     }
 
     private function getPicture(?string $picture): string

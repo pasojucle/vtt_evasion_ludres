@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use App\Entity\RegistrationStep;
 use DateTime;
+use Twig\TwigFilter;
 use DateTimeImmutable;
 use IntlDateFormatter;
+use App\Entity\RegistrationStep;
+use App\Entity\Enum\DisplayModeEnum;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 
 class AppExtension extends AbstractExtension
 {
@@ -23,9 +24,9 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function imgPath($content, $media = RegistrationStep::RENDER_VIEW)
+    public function imgPath($content, $media = DisplayModeEnum::SCREEN)
     {
-        if (RegistrationStep::RENDER_FILE === $media) {
+        if (DisplayModeEnum::FILE === $media) {
             $pattern = ['#\/images\/#', '#\/uploads\/#', '#\/logos\/#'];
             $replace = ['./images/', './uploads/', './logos/'];
             $content = preg_replace($pattern, $replace, $content);
