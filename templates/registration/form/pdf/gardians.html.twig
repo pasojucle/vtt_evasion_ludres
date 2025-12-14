@@ -1,0 +1,29 @@
+<h2>Autorisations parentales pour mineur</h2>
+<table>
+    <tr>
+        <td></td>
+        <td><h3>Responsable de l'enfant</h3></td>
+        <td><h3>Second contact</h3></td>
+    </tr>
+    <tr>
+    <td><b>Nom et prénom :</b></td>
+       <td>{{ user.legalGardian.fullName|raw }} ({{ user.legalGardian.kind|trans  }})</td>
+       <td>{{ user.secondKinship.fullName|raw}} ({{ user.secondKinship.kind|trans}})</td>
+       
+    </tr>
+    <tr>
+        <td><b>Téléphone : </b></td>
+        <td> {{ user.legalGardian.phone|raw}}</td>
+        <td>{{ user.secondKinship.phone|raw}}</td>
+    </tr>
+    <tr>
+        <td><b>Adresse :</b></td>
+        <td>{{ user.legalGardian.address.street|raw}}</td>
+        <td>{{ user.secondKinship.address.street|raw }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>{{ user.legalGardian.address.postalCode|raw }} {{ user.legalGardian.address.town |raw}}</td>
+        <td>{{ user.secondKinship.address.postalCode|raw }} {{ user.secondKinship.address.town|raw }}</td>
+    </tr>
+</table>

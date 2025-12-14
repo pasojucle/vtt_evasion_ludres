@@ -1,0 +1,9 @@
+{% set licence = progress.user.lastLicence %}
+
+{% if licence.familyMember is not null %}
+<ul class="block background-ligth">
+    <li class="row">
+        <span class="col-md-12 col-sx-12">{{ licence.additionalFamilyMember|raw}}</span>
+    </li>
+</ul>
+{% endif %}
