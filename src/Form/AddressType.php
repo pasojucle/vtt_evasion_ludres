@@ -26,7 +26,7 @@ class AddressType extends AbstractType
             ->add('street', TextType::class, [
                 'label' => 'Adresse',
                 'row_attr' => [
-                    'class' => 'form-group-inline full-width' . $options['row_class'],
+                    'class' => 'form-group-inline full-width ' . $options['row_class'],
                 ],
                 'attr' => [
                     'data-constraint' => '',
@@ -41,8 +41,8 @@ class AddressType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Address::class,
             'row_class' => '',
-            'required' => '',
-            'row_id' => null,
+            'required' => false,
+            'gardian' => '',
         ]);
     }
 }

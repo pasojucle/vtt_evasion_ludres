@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Enum\LicenceCategoryEnum;
-use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Licence;
-use App\Form\LicenceConsentType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Form\LicenceAgreementType;
 use Symfony\Component\Form\FormEvent;
+use App\Entity\Enum\LicenceOptionEnum;
 use Symfony\Component\Form\FormEvents;
+use App\Entity\Enum\LicenceCategoryEnum;
+use Symfony\Component\Form\AbstractType;
+use App\Entity\Enum\RegistrationFormEnum;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class LicenceType extends AbstractType
 {
@@ -35,37 +36,33 @@ class LicenceType extends AbstractType
                     array_shift($choicesCoverage);
                 }
 
-                if (UserType::FORM_OVERVIEW === $options['current']->getForm()) {
+                if (RegistrationFormEnum::OVERVIEW === $options['current']->getForm()) {
                     $form
-                        ->add('licenceOverviewConsents', CollectionType::class, [
+                        ->add('licenceOverviewAgreements', CollectionType::class, [
                             'label' => false,
-                            'entry_type' => LicenceConsentType::class,
+                            'entry_type' => LicenceAgreementType::class,
                         ])
                     ;
                 }
-                if (UserType::FORM_LICENCE_AUTHORIZATIONS === $options['current']->getForm()) {
+                if (RegistrationFormEnum::LICENCE_AGREEMENTS === $options['current']->getForm()) {
                     $form
-                        ->add('licenceAuthorizations', CollectionType::class, [
+                        ->add('licenceAuthorizationAgreements', CollectionType::class, [
                             'label' => false,
-                            'entry_type' => LicenceAuthorizationType::class,
-                        ])
-                        ->add('licenceAuthorizationConsents', CollectionType::class, [
-                            'label' => false,
-                            'entry_type' => LicenceConsentType::class,
+                            'entry_type' => LicenceAgreementType::class,
                         ])
                     ;
                 }
 
-                if (UserType::FORM_HEALTH_QUESTION === $options['current']->getForm()) {
+                if (RegistrationFormEnum::HEALTH_QUESTION === $options['current']->getForm()) {
                     $form
-                        ->add('licenceHealthConsents', CollectionType::class, [
+                        ->add('licenceHealthAgreements', CollectionType::class, [
                             'label' => false,
-                            'entry_type' => LicenceConsentType::class,
+                            'entry_type' => LicenceAgreementType::class,
                         ])
                     ;
                 }
 
-                if (UserType::FORM_LICENCE_COVERAGE === $options['current']->getForm()) {
+                if (RegistrationFormEnum::LICENCE_COVERAGE === $options['current']->getForm()) {
                     $form
                         ->add('coverage', ChoiceType::class, [
                             'label' => 'Selectionnez une formule d\'assurance oblogatoire',

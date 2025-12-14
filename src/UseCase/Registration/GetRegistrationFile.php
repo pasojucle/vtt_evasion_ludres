@@ -8,7 +8,8 @@ use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
 use App\Dto\UserDto;
-use App\Entity\RegistrationStep;
+use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\User;
 use App\Repository\ContentRepository;
 use App\Repository\HistoryRepository;
@@ -20,7 +21,6 @@ use App\Service\ProjectDirService;
 use App\Service\SeasonService;
 use DateTime;
 use Twig\Environment;
-use ZipArchive;
 
 class GetRegistrationFile
 {
@@ -51,24 +51,24 @@ class GetRegistrationFile
             return false;
         }
         $category = $lastLicence->getCategory();
-        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->getState()->isYearly(), RegistrationStep::RENDER_FILE);
+        $steps = $this->registrationStepRepository->findByCategoryAndFinal($category, $lastLicence->getState()->isYearly(), DisplayModeEnum::FILE);
         $this->allmembershipFee = $this->membershipFeeRepository->findAll();
-        $this->healthService->getHealthConents($user);
+        $this->healthService->getHealthConsents($user);
 
         $histories = $this->historyRepository->findBySeason($user, $season);
         $userDto = $this->userDtoTransformer->fromEntity($user, $histories);
-
         foreach ($steps as $step) {
-            $step = $this->registrationStepDtoTransformer->fromEntity($step, $user, $userDto, 1, RegistrationStep::RENDER_FILE);
+            $step = $this->registrationStepDtoTransformer->fromEntity($step, $user, $userDto, 1, DisplayModeEnum::FILE);
             if (null !== $step->pdfFilename) {
                 $this->files[$step->outputFilename][] = [
                     'filename' => $step->pdfPath,
                     'form' => $step->form,
-                    'final_render' => $step->finalRender,
+                    'final_render' => $step->yearlyDisplayMode,
                 ];
             }
-            if (array_key_exists($step->form, $step->registrationDocumentForms)) {
-                $this->registrationDocumentSteps[$step->form] = $step->content;
+
+            if ($step->overviewTemplate) {
+                $this->registrationDocumentSteps[$step->form->value] = $step->content;
             } elseif (null !== $step->content) {
                 $this->addRegistrationStep($step, $userDto);
             }
@@ -88,16 +88,17 @@ class GetRegistrationFile
     private function addRegistrationStep(RegistrationStepDto $step, UserDto $userDto)
     {
         $html = null;
-        if (null !== $step->form) {
+        if (RegistrationFormEnum::NONE !== $step->form) {
             $form = $step->formObject;
             $html = $this->twig->render('registration/registrationPdf.html.twig', [
                 'user' => $userDto,
                 'all_membership_fee' => $this->allmembershipFee,
                 'membership_fee_content' => $this->contentRepository->findOneByRoute('registration_membership_fee')?->getContent(),
                 'progress' => ['current' => $step],
-                'form' => $form->createView(),
-                'media' => RegistrationStep::RENDER_FILE,
+                'form' => $form?->createView(),
+                'media' => DisplayModeEnum::FILE,
                 'template' => $step->template,
+                'check_img' => base64_encode(file_get_contents($this->projectDir->path('logos', 'check-square-regular.png'))),
             ]);
         } else {
             $html = $step->content;
@@ -120,7 +121,7 @@ class GetRegistrationFile
                 'user_entity' => $userEntity,
                 'registration_document_steps' => $this->registrationDocumentSteps,
                 'licence' => $userDto->lastLicence,
-                'media' => RegistrationStep::RENDER_FILE,
+                'media' => DisplayModeEnum::FILE,
                 'check_img' => base64_encode(file_get_contents($this->projectDir->path('logos', 'check-square-regular.png'))),
             ]);
             $pdfFilepath = $this->pdfService->makePdf($registration, 'registration_temp');

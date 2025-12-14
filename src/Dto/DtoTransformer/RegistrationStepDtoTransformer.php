@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\RegistrationStepDto;
 use App\Dto\UserDto;
-use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Dto\RegistrationStepDto;
+use App\Entity\RegistrationStep;
 use App\Service\ProjectDirService;
+use App\Entity\Enum\DisplayModeEnum;
 use App\Service\ReplaceKeywordsService;
-use Symfony\Component\Form\FormFactoryInterface;
+use App\Entity\Enum\RegistrationFormEnum;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -32,27 +34,29 @@ class RegistrationStepDtoTransformer
         ?User $user = null,
         ?UserDto $userDto = null,
         ?int $step = null,
-        ?int $render = null,
-        ?string $class = null
+        ?DisplayModeEnum $displayMode = DisplayModeEnum::SCREEN,
     ): RegistrationStepDto {
         $registrationStepDto = new RegistrationStepDto();
         if ($registrationStep) {
-            $registrationStepDto->registrationDocumentForms = $this->getRegistrationDocumentForms();
             $registrationStepDto->title = $registrationStep->getTitle();
             $registrationStepDto->form = $registrationStep->getForm();
-            $registrationStepDto->outputFilename = ($registrationStep->isPersonal()) ? RegistrationStepDto::OUTPUT_FILENAME_PERSONAL : RegistrationStepDto::OUTPUT_FILENAME_CLUB;
+            $registrationStepDto->outputFilename = ($registrationStep->isPersonal()) 
+                ? RegistrationStepDto::OUTPUT_FILENAME_PERSONAL 
+                : RegistrationStepDto::OUTPUT_FILENAME_CLUB;
             $filename = $registrationStep->getFilename();
             $registrationStepDto->pdfFilename = $filename;
-            $registrationStepDto->pdfRelativePath = ($registrationStep->getFilename()) ? $this->projectDir->dir('', 'files', $filename) : null;
-            $registrationStepDto->pdfPath = ($registrationStep->getFilename()) ? $this->projectDir->path('files_directory_path', $filename) : null;
-            $registrationStepDto->finalRender = $registrationStep->getFinalRender();
+            $registrationStepDto->pdfRelativePath = ($filename) ? $this->projectDir->dir('', 'files', $filename) : null;
+            $registrationStepDto->pdfPath = ($filename) ? $this->projectDir->path('files_directory_path', $filename) : null;
+            $registrationStepDto->yearlyDisplayMode = $registrationStep->getYearlyDisplayMode();
         }
 
         if (null !== $step) {
             $registrationStepDto->formObject = $this->getForm($registrationStep, $user, $userDto, $step);
             $registrationStepDto->template = $this->getTemplate($registrationStep);
-            $registrationStepDto->content = $this->getContent($userDto, $render, $registrationStep->getContent());
-            $registrationStepDto->overviewTemplate = $this->getOverviewTemplate($registrationStep->getForm());
+            $registrationStepDto->content = $this->getContent($userDto, $displayMode, $registrationStep->getContent());
+            $registrationStepDto->overviewTemplate = (DisplayModeEnum::SCREEN === $displayMode)
+                ? $this->getScreenOverviewTemplate($registrationStep->getForm())
+                : $this->getFileOverviewTemplate($registrationStep->getForm());
             $registrationStepDto->hasRequiredFields = $this->getHasRequiredFields($registrationStepDto);
         }
 
@@ -67,7 +71,7 @@ class RegistrationStepDtoTransformer
 
         $route = ('user_registration_form' === $this->requestStack->getCurrentRequest()->get('_route')) ? 'user_registration_form' : 'registration_form';
 
-        if (null !== $registrationStep->getForm() && UserType::FORM_REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
+        if (null !== $registrationStep->getForm() && RegistrationFormEnum::REGISTRATION_DOCUMENT !== $registrationStep->getForm()) {
             $form = $this->formFactory->create(UserType::class, $user, [
                 'attr' => [
                     'action' => $this->router->generate($route, [
@@ -75,7 +79,7 @@ class RegistrationStepDtoTransformer
                     ]),
                 ],
                 'current' => $registrationStep,
-                'is_kinship' => UserType::FORM_KINSHIP === $registrationStep->getForm(),
+                'is_gardian' => RegistrationFormEnum::GARDIANS === $registrationStep->getForm(),
                 'category' => $seasonLicence?->category,
                 'season_licence' => $seasonLicence,
             ]);
@@ -87,37 +91,36 @@ class RegistrationStepDtoTransformer
     private function getTemplate(RegistrationStep $registrationStep): ?string
     {
         $form = $registrationStep->getForm();
-        if (UserType::FORM_REGISTRATION_DOCUMENT === $form) {
+        if (RegistrationFormEnum::REGISTRATION_DOCUMENT === $form) {
             return null;
         }
 
-        return 'registration/form/' . str_replace('form.', '', UserType::FORMS[$form]) . '.html.twig';
+        return sprintf('registration/form/%s.html.twig', $form->value);
     }
 
-    private function getContent(UserDto $userDto, int $render, ?string $content): null|string|array
+    private function getContent(UserDto $userDto, DisplayModeEnum $displayMode, ?string $content): null|string|array
     {
-        return $this->replaceKeywordsService->replace($content, $userDto, $render);
+        return $this->replaceKeywordsService->replace($content, $userDto, $displayMode);
     }
 
-    private function getOverviewTemplate(int $form): ?string
+    private function getScreenOverviewTemplate(RegistrationFormEnum $form): ?string
     {
-        if (array_key_exists($form, $this->getRegistrationDocumentForms())) {
-            return sprintf('registration/form/overviews/%s.html.twig', $this->getRegistrationDocumentForms()[$form]);
+        $filename = sprintf('registration/form/overviews/%s.html.twig', $form->value);
+        if (file_exists($this->projectDir->path('templates',$filename)) || RegistrationFormEnum::REGISTRATION_DOCUMENT === $form) {
+            return $filename;
         }
 
         return null;
     }
 
-    private function getRegistrationDocumentForms(): array
+    private function getFileOverviewTemplate(RegistrationFormEnum $form): ?string
     {
-        return [
-            UserType::FORM_MEMBER => 'member',
-            UserType::FORM_KINSHIP => 'kindship',
-            UserType::FORM_HEALTH => 'health',
-            UserType::FORM_LICENCE_AUTHORIZATIONS => 'approval',
-            UserType::FORM_LICENCE_COVERAGE => 'coverage',
-            UserType::FORM_REGISTRATION_DOCUMENT => null,
-        ];
+        $filename = sprintf('registration/form/pdf/%s.html.twig', $form->value);
+        if (file_exists($this->projectDir->path('templates',$filename)) || RegistrationFormEnum::REGISTRATION_DOCUMENT === $form) {
+            return $filename;
+        }
+
+        return null;
     }
 
     public function getHasRequiredFields(RegistrationStepDto $registrationStep): bool

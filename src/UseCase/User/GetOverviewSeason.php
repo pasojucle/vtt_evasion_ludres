@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
-use App\Form\Admin\OverviewSaisonMemberType;
+use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Form\Admin\OverviewSaisonMemberType;
+use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class GetOverviewSeason
 {
@@ -116,8 +117,9 @@ class GetOverviewSeason
             default => [],
         };
         $emails = [];
+        /** @var User $user */
         foreach ($users as $user) {
-            $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
+            $emails[] = $user->getMainIdentity()->getEmail();
         }
         return implode(',', $emails);
     }

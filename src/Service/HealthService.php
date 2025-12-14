@@ -13,7 +13,7 @@ class HealthService
     {
     }
     
-    public function getHealthConents(User &$user)
+    public function getHealthConsents(User &$user)
     {
         $consents = $this->requestStack->getSession()->get(sprintf('health_concents_%s', $user->getLicenceNumber()));
         if (empty($consents)) {

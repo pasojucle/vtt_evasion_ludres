@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
-use App\Entity\Enum\IdentityKindEnum;
-use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Enum\PermissionEnum;
 use App\Entity\Identity;
@@ -28,7 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UserDtoTransformer
 {
     public function __construct(
-        private LicenceAuthorizationDtoTransformer $approvalDtoTransformer,
+        private LicenceAgreementDtoTransformer $licenceAgreeementDtoTransformer,
         private IdentityDtoTransformer $identityDtoTransformer,
         private HealthDtoTransformer $healthDtoTransformer,
         private LevelDtoTransformer $levelDtoTransformer,
@@ -46,25 +43,23 @@ class UserDtoTransformer
 
     public function fromEntity(User $user, ?array $histories = null): UserDto
     {
-        $identitiesByType = $this->identityDtoTransformer->fromEntities($user->getIdentities(), $histories);
-
         $userDto = new UserDto();
-
+        $mainIdentity = $user->getMainIdentity();
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
-        $userDto->member = (array_key_exists(IdentityKindEnum::MEMBER->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::MEMBER->name] : null;
-        $userDto->kinship = (array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::KINSHIP->name] : null;
-        $userDto->secondKinship = (array_key_exists(IdentityKindEnum::SECOND_CONTACT->name, $identitiesByType)) ? $identitiesByType[IdentityKindEnum::SECOND_CONTACT->name] : null;
+        $userDto->member = $this->identityDtoTransformer->fromEntity($user->getIdentity());
+        $userDto->legalGardian = ($user->getLegalGardian()) ? $this->identityDtoTransformer->fromEntity($user->getLegalGardian()) : null;
+        $userDto->secondKinship = ($user->getSecondContact()) ? $this->identityDtoTransformer->fromEntity($user->getSecondContact()) : null;
         $userDto->lastLicence = $this->getLastLicence($user, $histories);
         $userDto->prevLicence = $this->getPrevLicence($user);
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
-        $userDto->mainEmail = $this->getMainEmail($identitiesByType, $userDto->lastLicence->category);
-        $userDto->mainFullName = $this->getMainFullName($identitiesByType, $userDto->lastLicence->category);
+        $userDto->mainEmail = $mainIdentity->getEmail();
+        $userDto->mainFullName = $mainIdentity->getFullName();
         $userDto->boardRole = $user->getBoardRole()?->getName();
         $userDto->isBoardMember = null !== $user->getBoardRole();
         $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
-        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAuthorizations());
+        $userDto->agreements = $this->licenceAgreeementDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAgreements());
         $userDto->permissions = $this->getPermissions($user);
 
         $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $user);
@@ -80,7 +75,7 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $this->identityRepository->findOneMemberByUser($user);
+            $member = $user->getIdentity();
         }
         $userDto->id = $user->getId();
         $userDto->licenceNumber = $user->getLicenceNumber();
@@ -100,12 +95,12 @@ class UserDtoTransformer
     {
         $userDto = new UserDto();
         if (!$member) {
-            $member = $this->identityRepository->findOneMemberByUser($user);
+            $member = $user->getIdentity();
         }
         $userDto->id = $user->getId();
         $userDto->member = $this->identityDtoTransformer->headerFromEntity($member, $histories);
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
-        $userDto->approvals = $this->approvalDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAuthorizations());
+        $userDto->agreements = $this->licenceAgreeementDtoTransformer->fromEntities($user->getLastLicence()->getLicenceAgreements());
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
 
         return $userDto;
@@ -136,53 +131,16 @@ class UserDtoTransformer
         });
     }
 
-    private function getMainEmail(array $identitiesByType, LicenceCategoryEnum $category): ?string
-    {
-        if (!empty($identitiesByType)) {
-            $identity = (LicenceCategoryEnum::SCHOOL === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
-                ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
-                : $identitiesByType[IdentityKindEnum::MEMBER->name];
-            return $identity?->email;
-        }
-
-        return '';
-    }
-
-    private function getMainFullName(array $identitiesByType, LicenceCategoryEnum $category): ?string
-    {
-        if (!empty($identitiesByType)) {
-            $identity = (LicenceCategoryEnum::SCHOOL === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
-                ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
-                : $identitiesByType[IdentityKindEnum::MEMBER->name];
-            return $identity?->fullName;
-        }
-
-        return '';
-    }
-
-    private function getMainIdentity(User $userEntity): ?IdentityDto
-    {
-        $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
-        $lastLicence = $this->getLastLicence($userEntity, null);
-        if (!empty($identitiesByType)) {
-            return (LicenceCategoryEnum::SCHOOL === $lastLicence->category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
-            ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
-            : $identitiesByType[IdentityKindEnum::MEMBER->name];
-        }
-
-        return null;
-    }
-
     public function identifiersFromEntity(User $userEntity): UserDto
     {
         $userDto = new UserDto();
-        /** @var IdentityDto $mainIdentity */
-        $mainIdentity = $this->getMainIdentity($userEntity);
+        /** @var Identity $mainIdentity */
+        $mainIdentity = $userEntity->getMainIdentity();
         
         $userDto->id = $userEntity->getId();
-        $userDto->member = $this->identityDtoTransformer->headerFromEntity($this->identityRepository->findOneMemberByUser($userEntity));
-        $userDto->mainEmail = $mainIdentity->email;
-        $userDto->mainFullName = $mainIdentity->fullName;
+        $userDto->member = $this->identityDtoTransformer->headerFromEntity($userEntity->getIdentity());
+        $userDto->mainEmail = $mainIdentity->getEmail();
+        $userDto->mainFullName = $mainIdentity->getFullName();
         $userDto->licenceNumber = $userEntity->getLicenceNumber();
         $userDto->lastLicence = $this->getLastLicence($userEntity, null);
         $userDto->trialSessionsPresent = $this->trialSessionsPresent($userDto->lastLicence, $userEntity);
@@ -253,13 +211,6 @@ class UserDtoTransformer
         }
 
         return (!empty($permissions)) ? implode('<br>', $permissions) : null;
-    }
-
-    public function mainEmailFromEntity(User $userEntity): string
-    {
-        $identitiesByType = $this->identityDtoTransformer->fromEntities($userEntity->getIdentities());
-        $lastLicence = $this->getLastLicence($userEntity, null);
-        return $this->getMainEmail($identitiesByType, $lastLicence->category);
     }
 
     public function getSeasons(?Collection $licences): string

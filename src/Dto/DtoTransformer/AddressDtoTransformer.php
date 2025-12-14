@@ -23,7 +23,6 @@ class AddressDtoTransformer
             }
         }
 
-        
         return $addressDto;
     }
 

@@ -4,33 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Enum\LicenceCategoryEnum;
-use App\Repository\RegistrationStepRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\RegistrationFormEnum;
+use Doctrine\Common\Collections\Collection;
+use App\Repository\RegistrationStepRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: RegistrationStepRepository::class)]
 class RegistrationStep
 {
-    public const RENDER_NONE = 0;
-
-    public const RENDER_VIEW = 1;
-
-    public const RENDER_FILE = 2;
-
-    public const RENDER_FILE_AND_VIEW = 3;
-
-    public const RENDER_FILE_AND_LINK = 4;
-
-    public const RENDERS = [
-        self::RENDER_NONE => 'registration_step.render.none',
-        self::RENDER_VIEW => 'registration_step.render.view',
-        self::RENDER_FILE => 'registration_step.render.file',
-        self::RENDER_FILE_AND_VIEW => 'registration_step.render.file_and_view',
-        self::RENDER_FILE_AND_LINK => 'registration_step.render.file_and_link',
-    ];
-
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
@@ -41,8 +27,8 @@ class RegistrationStep
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $filename;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $form;
+    #[ORM\Column(type: 'RegistrationForm')]
+    private RegistrationFormEnum $form = RegistrationFormEnum::NONE;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $orderBy = null;
@@ -54,20 +40,31 @@ class RegistrationStep
 
     private UploadedFile $file;
 
-    #[ORM\Column(type: 'integer')]
-    private int $testingRender;
-
     #[ORM\ManyToOne(targetEntity: RegistrationStepGroup::class, inversedBy: 'registrationSteps')]
     private RegistrationStepGroup $registrationStepGroup;
-
-    #[ORM\Column(type: 'integer')]
-    private int $finalRender;
 
     #[ORM\Column(type:Types::BOOLEAN, options:['default' => false])]
     private bool $personal = false;
 
     #[ORM\Column(type: 'LicenceCategory', options:['default' => LicenceCategoryEnum::SCHOOL_AND_ADULT->value])]
     private LicenceCategoryEnum $category = LicenceCategoryEnum::SCHOOL_AND_ADULT;
+
+    #[ORM\Column(type: 'DisplayMode')]
+    private DisplayModeEnum $trialDisplayMode = DisplayModeEnum::NONE;
+
+    #[ORM\Column(type: 'DisplayMode')]
+    private DisplayModeEnum $yearlyDisplayMode = DisplayModeEnum::NONE;
+
+    /**
+     * @var Collection<int, Agreement>
+     */
+    #[ORM\ManyToMany(targetEntity: Agreement::class, inversedBy: 'registrationSteps')]
+    private Collection $agreements;
+
+    public function __construct()
+    {
+        $this->agreements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -98,12 +95,12 @@ class RegistrationStep
         return $this;
     }
 
-    public function getForm(): ?int
+    public function getForm(): RegistrationFormEnum
     {
         return $this->form;
     }
 
-    public function setForm(?int $form): static
+    public function setForm(RegistrationFormEnum $form): static
     {
         $this->form = $form;
 
@@ -158,18 +155,6 @@ class RegistrationStep
         return $this;
     }
 
-    public function getTestingRender(): ?int
-    {
-        return $this->testingRender;
-    }
-
-    public function setTestingRender(int $testingRender): static
-    {
-        $this->testingRender = $testingRender;
-
-        return $this;
-    }
-
     public function getRegistrationStepGroup(): ?RegistrationStepGroup
     {
         return $this->registrationStepGroup;
@@ -178,18 +163,6 @@ class RegistrationStep
     public function setRegistrationStepGroup(?RegistrationStepGroup $registrationStepGroup): static
     {
         $this->registrationStepGroup = $registrationStepGroup;
-
-        return $this;
-    }
-
-    public function getFinalRender(): ?int
-    {
-        return $this->finalRender;
-    }
-
-    public function setFinalRender(int $finalRender): static
-    {
-        $this->finalRender = $finalRender;
 
         return $this;
     }
@@ -206,14 +179,62 @@ class RegistrationStep
         return $this;
     }
 
-    public function getCategory(): ?object
+    public function getCategory(): LicenceCategoryEnum
     {
         return $this->category;
     }
 
-    public function setCategory(object $category): static
+    public function setCategory(LicenceCategoryEnum $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getTrialDisplayMode(): DisplayModeEnum
+    {
+        return $this->trialDisplayMode;
+    }
+
+    public function setTrialDisplayMode(DisplayModeEnum $trialDisplayMode): static
+    {
+        $this->trialDisplayMode = $trialDisplayMode;
+
+        return $this;
+    }
+
+    public function getYearlyDisplayMode(): DisplayModeEnum
+    {
+        return $this->yearlyDisplayMode;
+    }
+
+    public function setYearlyDisplayMode(DisplayModeEnum $yearlyDisplayMode): static
+    {
+        $this->yearlyDisplayMode = $yearlyDisplayMode;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Agreement>
+     */
+    public function getAgreements(): Collection
+    {
+        return $this->agreements;
+    }
+
+    public function addAgreement(Agreement $agreement): static
+    {
+        if (!$this->agreements->contains($agreement)) {
+            $this->agreements->add($agreement);
+        }
+
+        return $this;
+    }
+
+    public function removeAgreement(Agreement $agreement): static
+    {
+        $this->agreements->removeElement($agreement);
 
         return $this;
     }

@@ -35,7 +35,7 @@ class AdditionalFamilyMemberType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Licence::class,
-            'is_kinship' => false,
+            'is_gardian' => false,
             'season_licence' => null,
         ]);
     }

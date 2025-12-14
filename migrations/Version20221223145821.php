@@ -6,6 +6,7 @@ namespace DoctrineMigrations;
 
 use App\Form\UserType;
 use Doctrine\DBAL\Schema\Schema;
+use App\Entity\Enum\RegistrationFormEnum;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
@@ -31,7 +32,7 @@ final class Version20221223145821 extends AbstractMigration
     
         $registrationStep = [
             'registrationStepGroup' => 7,
-            'form' => UserType::FORM_HEALTH,
+            'form' => RegistrationFormEnum::HEALTH,
         ];
         $this->addSql('DELETE FROM `registration_step` WHERE registration_step_group_id = :registrationStepGroup AND form = :form', $registrationStep);
 

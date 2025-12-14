@@ -4,30 +4,16 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Enum\IdentityKindEnum;
 use App\Repository\IdentityRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IdentityRepository::class)]
 
 class Identity
 {
-    public const KINSHIP_FATHER = 1;
-
-    public const KINSHIP_MOTHER = 2;
-
-    public const KINSHIP_GUARDIANSHIP = 3;
-
-    public const KINSHIP_OTHER = 4;
-
-    public const KINSHIPS = [
-        self::KINSHIP_FATHER => 'identity.kinship.father',
-        self::KINSHIP_MOTHER => 'identity.kinship.mother',
-        self::KINSHIP_GUARDIANSHIP => 'identity.kinship.guardianship',
-        self::KINSHIP_OTHER => 'identity.kinship.other',
-    ];
-
     #[ORM\Column(type: 'integer')]
     #[ORM\Id, ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
@@ -53,12 +39,6 @@ class Identity
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $profession = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $kinship = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'identities')]
-    private ?User $user;
-
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $email = null;
 
@@ -67,9 +47,6 @@ class Identity
 
     #[ORM\ManyToOne(targetEntity: Address::class, inversedBy: 'identities', cascade: ['persist'])]
     private $address;
-
-    #[ORM\Column(type: 'IdentityKind', options: ['default' => IdentityKindEnum::MEMBER])]
-    private IdentityKindEnum $kind = IdentityKindEnum::MEMBER;
 
     #[ORM\ManyToOne(targetEntity: Commune::class, inversedBy: 'identities')]
     private ?Commune $birthCommune = null;
@@ -82,6 +59,20 @@ class Identity
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $emergencyContact = null;
+
+    /**
+     * @var Collection<int, UserGardian>
+     */
+    #[ORM\OneToMany(targetEntity: UserGardian::class, mappedBy: 'identity')]
+    private Collection $userGardians;
+
+    #[ORM\OneToOne(inversedBy: 'identity', cascade: ['persist', 'remove'])]
+    private ?User $user = null;
+
+    public function __construct()
+    {
+        $this->userGardians = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -110,6 +101,13 @@ class Identity
         $this->firstName = $firstName;
 
         return $this;
+    }
+
+    public function getFullName(): string
+    {
+        return ($this->getName() && $this->getFirstName())
+            ? sprintf('%s %s', mb_strtoupper($this->getName()), mb_ucfirst($this->getFirstName()))
+            : '';
     }
 
     public function getBirthDate(): ?\DateTimeInterface
@@ -172,30 +170,6 @@ class Identity
         return $this;
     }
 
-    public function getKinship(): ?int
-    {
-        return $this->kinship;
-    }
-
-    public function setKinship(?int $kinship): self
-    {
-        $this->kinship = $kinship;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -220,7 +194,7 @@ class Identity
         return $this;
     }
 
-    public function getAddress()
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
@@ -240,18 +214,6 @@ class Identity
     public function isEmpty()
     {
         return null === $this->name && null === $this->firstName;
-    }
-
-    public function getKind(): IdentityKindEnum
-    {
-        return $this->kind;
-    }
-
-    public function setKind(IdentityKindEnum $kind): self
-    {
-        $this->kind = $kind;
-
-        return $this;
     }
 
     public function getBirthCommune(): ?Commune
@@ -298,6 +260,48 @@ class Identity
     public function setEmergencyContact(?string $emergencyContact): static
     {
         $this->emergencyContact = $emergencyContact;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserGardian>
+     */
+    public function getUserGardians(): Collection
+    {
+        return $this->userGardians;
+    }
+
+    public function addUserGardian(UserGardian $userGardian): static
+    {
+        if (!$this->userGardians->contains($userGardian)) {
+            $this->userGardians->add($userGardian);
+            $userGardian->setIdentity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserGardian(UserGardian $userGardian): static
+    {
+        if ($this->userGardians->removeElement($userGardian)) {
+            // set the owning side to null (unless already changed)
+            if ($userGardian->getIdentity() === $this) {
+                $userGardian->setIdentity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

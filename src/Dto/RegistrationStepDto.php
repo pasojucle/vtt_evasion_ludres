@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
+use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\RegistrationStep;
 use Symfony\Component\Form\FormInterface;
 
@@ -36,13 +38,11 @@ class RegistrationStepDto
 
     public ?string $title = '';
 
-    public ?int $form;
-
-    public ?array $registrationDocumentForms;
+    public RegistrationFormEnum $form;
 
     public int $outputFilename = self::OUTPUT_FILENAME_CLUB;
 
-    public int $finalRender;
+    public DisplayModeEnum $yearlyDisplayMode;
 
     public bool $hasRequiredFields = false;
 }

@@ -27,19 +27,23 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
         if (!$constraint instanceof SchoolTestingRegistration) {
             throw new UnexpectedTypeException($constraint, SchoolTestingRegistration::class);
         }
-
+        if ('' === $value) {
+            return;
+        }
         if (is_string($value) && 1 === intval($value)) {
             return;
         }
 
         $birthDate = null;
         $licenceNumber = null;
-        if (is_array($value) && array_key_exists('isTesting', $value) && (bool) $value['isTesting']) {
+        if (is_array($value) && array_key_exists('isYearly', $value) && (bool) !$value['isYearly']) {
             $birthDate = DateTime::createFromFormat('Y-m-d', $value['birthDate']);
         }
 
+        dump($this->context);
         if (!$birthDate) {
-            $identity = $this->context->getObject()?->getParent()->getData();
+            /** @var Identity $identity */
+            $identity = $this->context->getObject()->getParent()?->getData();
             $birthDate = $identity?->getBirthDate();
             $licenceNumber = $identity?->getUser()->getLicenceNumber();
             if ('schoolTestingRegistration' !== $this->context->getObject()?->getName()) {

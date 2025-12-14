@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\BikeRide;
+use App\Entity\User;
 use App\Entity\Session;
+use App\Entity\BikeRide;
 
 class GetEmailMembers
 {
-    public function __construct(private UserDtoTransformer $userDtoTransformer)
-    {
-    }
-
     public function execute(BikeRide $bikeRide): string
     {
         $users = $this->getUsers($bikeRide);
@@ -39,8 +35,9 @@ class GetEmailMembers
     private function getEmails(array $users): array
     {
         $emails = [];
+        /** @var User $user */
         foreach ($users as $user) {
-            $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
+            $emails[] = $user->getMainIdentity()->getEmail();
         }
         return $emails;
     }

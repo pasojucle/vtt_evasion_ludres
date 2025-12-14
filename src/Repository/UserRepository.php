@@ -167,7 +167,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     private function createQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('u')
-            ->join('u.identities', 'i')
+            ->join('u.identity', 'i')
             ->join('u.licences', 'li')
             ->leftJoin('u.level', 'l')
         ;
@@ -176,9 +176,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     private function orderByASC(QueryBuilder $qb): QueryBuilder
     {
         return $qb
-            ->andWhere(
-                $qb->expr()->isNull('i.kinship'),
-            )
             ->orderBy('i.name', 'ASC')
         ;
     }
@@ -515,7 +512,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findByFullName(?string $fullName, ?bool $hasCurrentSeason = false): array
     {
         $qb = $this->createQueryBuilder('u')
-            ->innerJoin('u.identities', 'i')
+            ->innerJoin('u.identity', 'i')
         ;
         if (null !== $fullName) {
             $qb->andWhere(
@@ -536,9 +533,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ;
         }
 
-        return $qb->andWhere(
-            $qb->expr()->isNull('i.kinship')
-        )
+        return $qb
             ->orderBy('i.name')
             ->getQuery()
             ->getResult()
@@ -626,7 +621,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $limit->sub(new DateInterval('P18Y'));
 
         return $qb->andWhere(
-            $qb->expr()->isNull('i.kinship'),
             $qb->expr()->gte('i.birthDate', ':limit'),
             $qb->expr()->gte('l.season', ':season'),
         )
@@ -660,10 +654,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb
             ->andWhere(
                 (new Expr())->eq('l.type', ':levelType'),
-                (new Expr())->eq('i.kind', ':member'),
             )
             ->setParameter('levelType', Level::TYPE_FRAME)
-            ->setParameter('member', IdentityKindEnum::MEMBER)
             ->orderBy('i.name', 'ASC')
             ;
     }
@@ -671,7 +663,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findByNumberLicenceOrFullName(string $query): array
     {
         return $this->createQueryBuilder('u')
-        ->leftJoin('u.identities', 'i')
+        ->leftJoin('u.identity', 'i')
         ->orWhere(
             (new Expr())->like('LOWER(u.licenceNumber)', ':query'),
             (new Expr())->like('LOWER(i.name)', ':query'),
@@ -689,7 +681,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findAllAsc(): array
     {
         return $this->createQueryBuilder('u')
-        ->leftJoin('u.identities', 'i')
+        ->leftJoin('u.identity', 'i')
         ->andWhere(
             (new Expr())->eq('u.protected', 0)
         )
@@ -774,14 +766,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             );
 
         return $this->createQueryBuilder('u')
-            ->join('u.identities', 'i')
+            ->join('u.identity', 'i')
             ->andWhere(
-                (new Expr())->eq('i.kind', ':kind'),
                 (new Expr())->in('u.id', $currentSeasonUsers->getDQL()),
                 (new Expr())->notIn('u.id', $lastSeasonUsers->getDQL()),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('kind', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
                 new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
@@ -818,9 +808,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         );
 
         return $this->createQueryBuilder('u')
-            ->join('u.identities', 'i')
+            ->join('u.identity', 'i')
             ->andWhere(
-                (new Expr())->eq('i.kind', ':kind'),
                 (new Expr())->notIn('u.id', $currentSeasonUsers->getDQL()),
                 (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
             )
@@ -865,14 +854,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         );
 
         return $this->createQueryBuilder('u')
-            ->join('u.identities', 'i')
+            ->join('u.identity', 'i')
             ->andWhere(
-                (new Expr())->eq('i.kind', ':kind'),
                 (new Expr())->in('u.id', $currentSeasonUsers->getDQL()),
                 (new Expr())->in('u.id', $lastSeasonUsers->getDQL()),
             )
             ->setParameters(new ArrayCollection([
-                new Parameter('kind', IdentityKindEnum::MEMBER),
                 new Parameter('season', $season),
                 new Parameter('lastSeason', $season - 1),
                 new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),

@@ -6,10 +6,6 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\SurveyResponseDto;
 
-use App\Entity\Enum\IdentityKindEnum;
-use App\Entity\Enum\LicenceCategoryEnum;
-use App\Entity\Identity;
-use App\Entity\Licence;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
 use App\Entity\User;
@@ -52,40 +48,14 @@ class SurveyResponseDtoTransformer
         $fullName = '';
         $mainEmail = '';
         if ($user instanceof User) {
-            $identities = $this->getIdentities($user);
-            $licence = $user->getLastLicence();
-            $member = $identities[IdentityKindEnum::MEMBER->name];
+            $member = $user->getIdentity();
             $fullName = sprintf('%s %s', mb_strtoupper($member->getName()), mb_ucfirst($member->getFirstName()));
-            $mainEmail = $this->getMainEmail($identities, $licence->getCategory());
+            $mainEmail = $user->getMainIdentity()?->getEmail();
         }
 
         return [
             'fullName' => $fullName,
             'mainEmail' => $mainEmail,
         ];
-    }
-
-    public function getIdentities(User $user): array
-    {
-        $identities = [];
-        /** @var Identity $identity */
-        foreach ($user->getIdentities() as $identity) {
-            $identities[$identity->getKind()->name] = $identity;
-        }
-
-
-        return $identities;
-    }
-
-    private function getMainEmail(array $identitiesByType, LicenceCategoryEnum $category): ?string
-    {
-        if (!empty($identitiesByType)) {
-            $identity = (LicenceCategoryEnum::SCHOOL === $category && array_key_exists(IdentityKindEnum::KINSHIP->name, $identitiesByType))
-                ? $identitiesByType[IdentityKindEnum::KINSHIP->name]
-                : $identitiesByType[IdentityKindEnum::MEMBER->name];
-            return $identity->getEmail();
-        }
-
-        return '';
     }
 }

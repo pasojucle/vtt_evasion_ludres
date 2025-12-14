@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
@@ -39,7 +40,7 @@ class RegistrationStepRepository extends ServiceEntityRepository
     /**
      * @return RegistrationStep[] Returns an array of RegistrationStep objects
      */
-    public function findByCategoryAndFinal(?LicenceCategoryEnum $category, bool $isYearly, int $render): array
+    public function findByCategoryAndFinal(?LicenceCategoryEnum $category, bool $isYearly, DisplayModeEnum $displayMode): array
     {
         $qb = $this->createQueryBuilder('r')
             ->join('r.registrationStepGroup', 'rsg')
@@ -53,18 +54,18 @@ class RegistrationStepRepository extends ServiceEntityRepository
             $qb->setParameter('category', $category);
         }
         $andX->add($orX);
-        $render = (RegistrationStep::RENDER_FILE === $render)
-            ? [RegistrationStep::RENDER_FILE, RegistrationStep::RENDER_FILE_AND_VIEW, RegistrationStep::RENDER_FILE_AND_LINK]
-            : [RegistrationStep::RENDER_VIEW, RegistrationStep::RENDER_FILE_AND_VIEW];
+        $displayModes = (DisplayModeEnum::FILE === $displayMode)
+            ? [DisplayModeEnum::FILE, DisplayModeEnum::SCREN_AND_FILE, DisplayModeEnum::FILE_AND_LINK]
+            : [DisplayModeEnum::SCREEN, DisplayModeEnum::SCREN_AND_FILE];
         if (!$isYearly) {
-            $andX->add($qb->expr()->in('r.testingRender', ':render'));
+            $andX->add($qb->expr()->in('r.trialDisplayMode', ':displayMode'));
         } else {
-            $andX->add($qb->expr()->in('r.finalRender', ':render'));
+            $andX->add($qb->expr()->in('r.yearlyDisplayMode', ':displayMode'));
         }
 
         return $qb
             ->andWhere($andX)
-            ->setParameter('render', $render)
+            ->setParameter('displayMode', $displayModes)
             ->OrderBy('rsg.orderBy', 'ASC')
             ->addOrderBy('r.orderBy', 'ASC')
             ->getQuery()
@@ -93,13 +94,13 @@ class RegistrationStepRepository extends ServiceEntityRepository
                 ->andWhere(
                     (new Expr())->eq('LOWER(rg.title)', ':name'),
                     (new Expr())->eq('r.personal', ':personal'),
-                    (new Expr())->eq('r.testingRender', ':render'),
-                    (new Expr())->eq('r.finalRender', ':render')
+                    (new Expr())->eq('r.trialDisplayMode', ':displayMode'),
+                    (new Expr())->eq('r.yearlyDisplayMode', ':displayMode')
                 )
                 ->setParameters(new ArrayCollection([
                     new Parameter('name', strtolower('Assurance')),
                     new Parameter('personal', false),
-                    new Parameter('render', RegistrationStep::RENDER_FILE)
+                    new Parameter('displayMode', DisplayModeEnum::FILE)
                 ]))
                 ->getQuery()
                 ->getOneOrNullResult()

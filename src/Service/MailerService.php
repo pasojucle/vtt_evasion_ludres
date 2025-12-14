@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Exception;
 use App\Dto\UserDto;
 use App\Entity\RegistrationStep;
-use Exception;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Part\DataPart;
+use App\Entity\Enum\DisplayModeEnum;
 use Symfony\Component\Mime\Part\File;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MailerService
 {
@@ -69,7 +70,7 @@ class MailerService
         }
 
         if ($user instanceof UserDto) {
-            $content = $this->replaceKeywords->replace($content, $user, RegistrationStep::RENDER_FILE, $additionalParams);
+            $content = $this->replaceKeywords->replace($content, $user, DisplayModeEnum::FILE, $additionalParams);
         }
 
         try {

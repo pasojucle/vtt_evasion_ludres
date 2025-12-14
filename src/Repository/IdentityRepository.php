@@ -35,7 +35,6 @@ class IdentityRepository extends ServiceEntityRepository
                 ->andWhere(
                     (new Expr())->like('LOWER(i.name)', ':name'),
                     (new Expr())->like('LOWER(i.firstName)', ':firstName'),
-                    (new Expr())->isNull('i.kinship')
                 )
                 ->setParameter('name', strtolower($name))
                 ->setParameter('firstName', strtolower($firstName))
@@ -47,56 +46,14 @@ class IdentityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneMemberByUser(User $user): ?Identity
-    {
-        try {
-            return $this->createQueryBuilder('i')
-                ->andWhere(
-                    (new Expr())->eq('i.user', ':user'),
-                    (new Expr())->eq('i.kind', ':member')
-                )
-                ->setParameters(new ArrayCollection([
-                    new Parameter('user', $user),
-                    new Parameter('member', IdentityKindEnum::MEMBER),
-                ]))
-                ->getQuery()
-                ->getOneOrNullResult()
-            ;
-        } catch (NonUniqueResultException $e) {
-            return null;
-        }
-    }
-
-    public function findOneKinshipByUser(User $user): ?Identity
-    {
-        try {
-            return $this->createQueryBuilder('i')
-                ->andWhere(
-                    (new Expr())->eq('i.user', ':user'),
-                    (new Expr())->eq('i.kind', ':kinship')
-                )
-                ->setParameters(new ArrayCollection([
-                    new Parameter('user', $user),
-                    new Parameter('kinship', IdentityKindEnum::KINSHIP),
-                ]))
-                ->getQuery()
-                ->getOneOrNullResult()
-            ;
-        } catch (NonUniqueResultException $e) {
-            return null;
-        }
-    }
-
     public function findMembersByUsers(Paginator|array $users): array
     {
         return $this->createQueryBuilder('i')
             ->andWhere(
                 (new Expr())->in('i.user', ':users'),
-                (new Expr())->eq('i.kind', ':member')
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('users', $users),
-                new Parameter('member', IdentityKindEnum::MEMBER),
             ]))
             ->getQuery()
             ->getResult()

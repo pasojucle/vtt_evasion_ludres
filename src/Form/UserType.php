@@ -7,71 +7,24 @@ namespace App\Form;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\User;
 use App\Form\HealthType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use App\Entity\Enum\RegistrationFormEnum;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class UserType extends AbstractType
 {
-    public const FORM_REGISTRATION_DOCUMENT = 0;
-
-    public const FORM_HEALTH_QUESTION = 1;
-
-    public const FORM_IDENTITY = 2;
-
-    public const FORM_HEALTH = 3;
-
-    public const FORM_LICENCE_AUTHORIZATIONS = 4;
-
-    public const FORM_LICENCE_COVERAGE = 5;
-
-    public const FORM_MEMBERSHIP_FEE = 6;
-
-    public const FORM_REGISTRATION_FILE = 7;
-
-    public const FORM_LICENCE_TYPE = 8;
-
-    public const FORM_OVERVIEW = 9;
-
-    public const FORM_MEMBER = 10;
-
-    public const FORM_KINSHIP = 11;
-
-    public const FORMS = [
-        self::FORM_REGISTRATION_DOCUMENT => 'form.registration_document',
-        self::FORM_HEALTH_QUESTION => 'form.health_question',
-        self::FORM_IDENTITY => 'form.identity',
-        self::FORM_HEALTH => 'form.health',
-        self::FORM_LICENCE_AUTHORIZATIONS => 'form.licence_authorizations',
-        self::FORM_LICENCE_COVERAGE => 'form.licence_coverage',
-        self::FORM_MEMBERSHIP_FEE => 'form.membership_fee',
-        self::FORM_REGISTRATION_FILE => 'form.registration_file',
-        self::FORM_LICENCE_TYPE => 'form.licence_type',
-        self::FORM_OVERVIEW => 'form.overview',
-        self::FORM_MEMBER => 'form.member',
-        self::FORM_KINSHIP => 'form.kinship',
-    ];
-
-    public const FORM_CHILDREN_RIGHT_IMAGE = 1;
-
-    public const FORM_CHILDREN_GOING_HOME_ALONE = 2;
-
-    public const FORMS_CHILDREN = [
-        self::FORM_CHILDREN_RIGHT_IMAGE => 'form_children.right_image',
-        self::FORM_CHILDREN_GOING_HOME_ALONE => 'form_children.going_home_alone',
-    ];
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        if (in_array($options['current']->getForm(), [self::FORM_HEALTH_QUESTION, self::FORM_HEALTH], true)) {
+        if (in_array($options['current']->getForm(), [RegistrationFormEnum::HEALTH_QUESTION, RegistrationFormEnum::HEALTH], true)) {
             $builder
                 ->add('health', HealthType::class, [
                     'label' => false,
@@ -80,41 +33,36 @@ class UserType extends AbstractType
             ;
         }
 
-        if (self::FORM_MEMBER === $options['current']->getForm()) {
+        if (RegistrationFormEnum::MEMBER === $options['current']->getForm()) {
             $builder
-                ->add('identities', CollectionType::class, [
+                ->add('identity', IdentityType::class, [
                     'label' => false,
-                    'entry_type' => IdentityType::class,
-                    'entry_options' => [
-                        'label' => false,
-                        'category' => $options['category'],
-                        'is_kinship' => false,
-                        'is_yearly' => $options['season_licence']?->isYearly,
-                    ],
+                    'category' => $options['category'],
+                    'is_gardian' => false,
+                    'is_yearly' => $options['season_licence']?->isYearly,
                 ])
                 ->add('lastLicence', AdditionalFamilyMemberType::class, [
                     'label' => false,
                     'season_licence' => $options['season_licence'],
-                    'is_kinship' => $options['is_kinship']
+                    'is_gardian' => $options['is_gardian']
                 ])
             ;
         }
-        if (self::FORM_KINSHIP === $options['current']->getForm()) {
+        if (RegistrationFormEnum::GARDIANS === $options['current']->getForm()) {
             $builder
-                ->add('identities', CollectionType::class, [
+                ->add('userGardians', CollectionType::class, [
                     'label' => false,
-                    'entry_type' => IdentityType::class,
+                    'entry_type' => GardianType::class,
                     'entry_options' => [
                         'label' => false,
                         'category' => $options['category'],
-                        'is_kinship' => true,
                         'is_yearly' => $options['season_licence']->isYearly,
                     ],
                 ])
                 ;
         }
         
-        if (in_array($options['current']->getForm(), [self::FORM_LICENCE_COVERAGE, self::FORM_LICENCE_TYPE, self::FORM_OVERVIEW, self::FORM_LICENCE_AUTHORIZATIONS, self::FORM_HEALTH_QUESTION], true)) {
+        if (in_array($options['current']->getForm(), [RegistrationFormEnum::LICENCE_COVERAGE, RegistrationFormEnum::OVERVIEW, RegistrationFormEnum::LICENCE_AGREEMENTS, RegistrationFormEnum::HEALTH_QUESTION], true)) {
             $builder
                 ->add('lastLicence', LicenceType::class, [
                     'label' => false,
@@ -129,7 +77,7 @@ class UserType extends AbstractType
             $user = $event->getData();
             $form = $event->getForm();
 
-            if (empty($user->getLicenceNumber()) && self::FORM_MEMBER === $options['current']->getForm()) {
+            if (empty($user->getLicenceNumber()) && RegistrationFormEnum::MEMBER === $options['current']->getForm()) {
                 $form->add('plainPassword', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'invalid_message' => 'Le mot de passe ne correspond pas.',
@@ -176,7 +124,7 @@ class UserType extends AbstractType
         $resolver->setDefaults([
             'data_class' => User::class,
             'current' => null,
-            'is_kinship' => false,
+            'is_gardian' => false,
             'category' => LicenceCategoryEnum::ADULT,
             'season_licence' => null,
         ]);

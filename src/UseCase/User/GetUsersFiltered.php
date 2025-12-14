@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\UseCase\User;
 
-use App\Dto\DtoTransformer\PaginatorDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\User;
+use ReflectionClass;
+use App\Service\SeasonService;
+use Doctrine\ORM\QueryBuilder;
+use App\Service\PaginatorService;
 use App\Form\Admin\UserFilterType;
 use App\Repository\UserRepository;
-use App\Service\PaginatorService;
-use App\Service\SeasonService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
-use ReflectionClass;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Dto\DtoTransformer\PaginatorDtoTransformer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class GetUsersFiltered
@@ -105,7 +106,7 @@ abstract class GetUsersFiltered
         $emails = [];
 
         foreach ($users as $user) {
-            $emails[] = $this->userDtoTransformer->mainEmailFromEntity($user);
+            $emails[] = $user->getMainIdentity()->getEmail();
         }
 
 
@@ -122,11 +123,11 @@ abstract class GetUsersFiltered
         $users = $query->getQuery()->getResult();
 
         $results = [];
-
+        /** @var User $user */
         foreach ($users as $user) {
             $results[] = [
                 'value' => $user->getId(),
-                'text' => $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName(),
+                'text' => $user->getMainIdentity()->getFullName(),
             ];
         }
 

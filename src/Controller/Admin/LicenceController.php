@@ -40,11 +40,8 @@ class LicenceController extends AbstractController
 
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            foreach ($licence->getLicenceAuthorizations() as $licenceAuthorization) {
-                $this->entityManager->remove($licenceAuthorization);
-            }
-            foreach ($licence->getLicenceConsents() as $licenceConsent) {
-                $this->entityManager->remove($licenceConsent);
+            foreach ($licence->getLicenceAgreements() as $licenceAgreement) {
+                $this->entityManager->remove($licenceAgreement);
             }
             $this->entityManager->remove($licence);
             $this->entityManager->flush();
@@ -72,7 +69,7 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
+        $fullName = $user->getIdentity()->getFirstName();
 
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
@@ -115,7 +112,7 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
+        $fullName = $user->getIdentity()->getFirstName();
         $content = 'Le dossier d\'inscription au club est incomplet ou non conforme. Merci de le transmettre à nouveau, signé, en tenant compte des modifications suivantes :';
 
         $form = $this->createForm(LicenceRejectType::class, ['content' => $content], [
@@ -156,7 +153,7 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getFirstIdentity()->getName() . ' ' . $user->getFirstIdentity()->getFirstName();
+        $fullName = $user->getIdentity()->getFirstName();
         $data = [
             'licenceNumber' => $user->getLicenceNumber(),
             'medicalCertificateDate' => $user->getHealth()->getMedicalCertificateDate(),

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Dto\RegistrationStepDto;
-use App\Entity\Enum\LicenceOptionEnum;
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
-use App\Entity\User;
-use App\Form\UserType;
 use DateTime;
 use Dompdf\Dompdf;
+use App\Entity\User;
+use App\Entity\Licence;
 use setasign\Fpdi\Fpdi;
+use App\Dto\RegistrationStepDto;
+use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\LicenceOptionEnum;
+use App\Entity\Enum\RegistrationFormEnum;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 
 class PdfService
 {
@@ -24,12 +24,11 @@ class PdfService
     ) {
     }
 
-    public function makePdf(string $html, string $filename, ?string $directory = null, string $paper = 'A4')
+    public function makePdf(string $html, string $filename, ?string $directory = null, string $paper = 'A4'): string
     {
         if (null === $directory) {
             $directory = $this->projectDir->path('tmp', 'licences');
         }
-
         $dompdf = new Dompdf();
         $dompdf->getOptions()->setChroot($this->projectDir->path('public'));
         $dompdf->loadHtml($html);
@@ -194,10 +193,10 @@ class PdfService
 
                 // use the imported page
                 $pdf->useTemplate($templateId);
-                if (null !== $user && RegistrationStepDto::OUTPUT_FILENAME_CLUB === $key && UserType::FORM_LICENCE_COVERAGE === $file['form']) {
+                if (null !== $user && RegistrationStepDto::OUTPUT_FILENAME_CLUB === $key && RegistrationFormEnum::LICENCE_COVERAGE === $file['form']) {
                     $this->writeCoverage($pdf, $user);
                 }
-                if (RegistrationStepDto::OUTPUT_FILENAME_PERSONAL === $key && UserType::FORM_HEALTH_QUESTION === $file['form'] && RegistrationStep::RENDER_FILE === $file['final_render']) {
+                if (RegistrationStepDto::OUTPUT_FILENAME_PERSONAL === $key && RegistrationFormEnum::HEALTH_QUESTION === $file['form'] && DisplayModeEnum::FILE === $file['final_render']) {
                     $this->writeHealthQuestion($pdf);
                 }
             }

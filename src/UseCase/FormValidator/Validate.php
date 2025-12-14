@@ -32,10 +32,12 @@ class Validate
         foreach ($fields as $id => $field) {
             $value = $field['value'];
             $value = $this->getValue($value, $id);
-
             $constraintClass = $field['constraint'];
             $required = array_key_exists('required', $field) ? (bool)$field['required'] : false;
             $filled = array_key_exists('filled', $field) ? (bool)$field['filled'] : false;
+            if (!$filled) {
+                continue;
+            }
 
             $constraints = $this->getConstraints($constraintClass, $required);
 
@@ -107,16 +109,15 @@ class Validate
         $values = [];
         $idToArray = explode('_', $id);
         $name = array_pop($idToArray);
-
         foreach ($value as $index => $val) {
-            if ($name === $index && empty($val)) {
+            $isEmptyVal = null === $val || '' === $val;
+            if ($name === $index && $isEmptyVal) {
                 return $val;
             }
-            if ($name === $index || !empty($val)) {
+            if ($name === $index || !$isEmptyVal) {
                 $values[$index] = $val;
             }
         }
-
         if (1 < count($values)) {
             return $values;
         }

@@ -142,7 +142,7 @@ class SurveyDtoTransformer
         $members = [];
         foreach ($collectionMembers as $user) {
             /** @var Identity $member */
-            $member = $user->getFirstIdentity();
+            $member = $user->getIdentity();
             $members[] = sprintf('%s %s', $member->getName(), $member->getFirstName());
         }
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Entity\Enum\LicenceOptionEnum;
-use App\Entity\Licence;
-use App\Entity\RegistrationStep;
+
 use Doctrine\DBAL\Schema\Schema;
+use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\LicenceOptionEnum;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
@@ -38,11 +38,11 @@ final class Version20251108070452 extends AbstractMigration
         $registrationSteps = [
             [
                 'title' => 'Questionnaire de santé ffvélo',
-                'testingRender' => RegistrationStep::RENDER_VIEW
+                'testingRender' => 1
             ],        
             [
                 'title' => 'Questionnaire de santé ffvélo [pdf)',
-                'testingRender' => RegistrationStep::RENDER_FILE
+                'testingRender' => 2
             ],
         ];            
         foreach ($registrationSteps as $registrationStep) {

@@ -1,11 +1,5 @@
-{% if identity.children|length > 1 %}
     {% if identity.isTesting is defined %}
         <div class="form-group">{{ form_row(identity.isTesting) }}</div>
-    {% endif %}
-    {% set kind = 'identity.kind.' ~ identity.vars.value.kind.value %}
-    <b>{{ kind|trans }}</b>
-    {% if identity.kinship is defined %}
-        <div class="form-group">{{ form_row(identity.kinship) }}</div>
     {% endif %}
     {% set first_block %}
         {{ form_row(identity.name) }}
@@ -21,28 +15,31 @@
             </div>
             <div class="align-center">
                 {% set picture = identity.vars.value.picture %}
-                <img class="user-picture" src="{% if picture %}/uploads/{{ picture }}{% endif %}" alt="{{ picture }}">            
-                {{ form_row(identity.pictureFile) }}
+                <div class="form-group form-group-file">
+                    <img class="user-picture" src="{% if picture %}/uploads/{{ picture }}{% endif %}" alt="{{ picture }}">            
+                    <p id="filename">{{ picture }}</p>
+                    {{ form_row(identity.pictureFile) }}
+                </div>
             </div>
         </div>
     {% else %}
         {{ first_block }}
     {% endif %}
-        <div class="form-row">
-            {% if identity.birthCommune is defined %}
-                {{ form_row(identity.birthCommune) }}
-                {{ form_row(identity.birthPlace) }}
-                {{ form_row(identity.birthCountry) }}
-                {{ form_row(identity.foreignBorn) }}
-            {% endif %}
-        </div>
-    <div class="form-group">
-        {{ form_row(identity.mobile) }}
-        {% if identity.phone is defined %}
-            {{ form_row(identity.phone) }}
+    <div class="form-row">
+        {% if identity.birthCommune is defined %}
+            {{ form_row(identity.birthCommune) }}
+            {{ form_row(identity.birthPlace) }}
+            {{ form_row(identity.birthCountry) }}
+            {{ form_row(identity.foreignBorn) }}
         {% endif %}
-    </div>  
-    <div id="adultContainer">
+    </div>
+    <div id="categoryContainer">
+        <div class="form-group">
+            {{ form_row(identity.mobile) }}
+            {% if identity.phone is defined %}
+                {{ form_row(identity.phone) }}
+            {% endif %}
+        </div>  
         {% if identity.profession is defined %}
             <div class="form-group">{{ form_row(identity.profession) }}</div>
         {% endif %}
@@ -53,10 +50,10 @@
                 {{ form_row(identity.emergencyContact) }}
             </div>
         {% endif %}
+        {% if identity.email is defined %}
+            <div class="form-group">{{ form_row(identity.email) }}</div>
+        {% endif %}
     </div>
-    {% if identity.email is defined %}
-        <div class="form-group">{{ form_row(identity.email) }}</div>
-    {% endif %}
     <div id="address-container-{{ identity.vars.name}}">
     {% if identity.otherAddress is defined %}
         <div class="form-group">
@@ -66,8 +63,7 @@
             </div>
         </div>
     {% endif %}
-
-        <div id="address-{{ identity.vars.name}}" class="address-group{% if identity.otherAddress is defined and identity.otherAddress.vars.data is same as false %} hidden{% endif %}">
+        <div {% if gardian is defined %}id="address-container-{{ gardian }}"{% endif %} class="address-group">
             {% if identity.address is defined %}
                 <div class="form-group">{{ form_row(identity.address.street) }}</div>
                 <div class="form-group">
@@ -76,6 +72,4 @@
                 </div>
             {% endif %}
         </div>
-
     </div>
-{% endif %}

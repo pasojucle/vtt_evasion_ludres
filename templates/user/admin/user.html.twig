@@ -20,7 +20,7 @@
                     <h2>Adhérent</h2>
                     {% if is_granted('USER_EDIT', user) %}
                         <div class="tools">
-                            <a href="{{ path('admin_identity_edit', {'user': user.id}) }}"
+                            <a href="{{ path('admin_identity_edit', {'identity': user.member.id}) }}"
                                 class="btn" title="Modifier">
                                 <i class="fas fa-edit"></i> 
                             </a>
@@ -61,13 +61,13 @@
                     {% endif %}
                 </div>
 
-            {% if user.kinship is not empty and user.secondKinship is not empty %}
+            {% if user.legalGardian is not empty and user.secondKinship is not empty %}
                 <div class="block background-ligth">
                     <div class="block-title">
                         <h2>Parents</h2>
                         {% if is_granted('USER_EDIT', user) and (user.secondKinship is not empty or user.secondKinship is not empty) %}
                             <div class="tools">
-                            <a href="{{ path('admin_identity_edit', {'user': user.id, 'isKinship': 1}) }}"
+                            <a href="{{ path('admin_gardians_edit', {'user': user.id}) }}"
                                     class="btn" title="Modifier">
                                     <i class="fas fa-edit"></i> 
                                 </a>
@@ -76,17 +76,17 @@
                     </div>
                     <div class="block-body">
                         <ul>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ user.kinship.type | trans  }}</b></div><div class="col-md-8 col-xs-6">{{ user.kinship.fullName }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.address.street }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ user.kinship.address.postalCode }} {{ user.kinship.address.town }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.email }}</div></div></li>
-                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.kinship.phonesAnchor|raw }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ user.legalGardian.kind | trans  }}</b></div><div class="col-md-8 col-xs-6">{{ user.legalGardian.fullName }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse : </b></div><div class="col-md-8 col-xs-6">{{ user.legalGardian.address.street }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">{{ user.legalGardian.address.postalCode }} {{ user.legalGardian.address.town }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Adresse mail : </b></div><div class="col-md-8 col-xs-6">{{ user.legalGardian.email }}</div></div></li>
+                            <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.legalGardian.phonesAnchor|raw }}</div></div></li>
                         
                         </ul>
                     </div>
                     <div class="separator"></div>
                     <ul>
-                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ user.secondKinship.type | trans  }} : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.fullName }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ user.secondKinship.kind | trans  }} : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.fullName }}</div></div></li>
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.phonesAnchor|raw }}</div></div></li>
                     </ul>
                 </div>
@@ -181,7 +181,12 @@
                     <ul>
                         {% for licenceAuthorization in licence.authorizations %}
                             <li style="position: relative">
-                                <div><b>{{ licenceAuthorization.toHtml.message }}</b></div>
+                                <div> 
+                                    <span class="bs-badge rounded-circle border border-white d-flex align-items-center mx-1 align-content-center text-bg-{{ licenceAuthorization.toHtml.color }}">
+                                        {{ licenceAuthorization.toHtml.icon|raw }}
+                                    </span>
+                                    <b>{{ licenceAuthorization.toHtml.message }}</b>
+                                </div>
                                 <div style="position: absolute; right: 0; top: 0;">
                                     <a href="{{ path('admin_licence_authorization_edit', {'licenceAuthorization': licenceAuthorization.id}) }}" class="btn" style="padding: unset; font-size: 20px" title="Modifier"><i class="fas fa-edit"></i></a>
                                 </div>

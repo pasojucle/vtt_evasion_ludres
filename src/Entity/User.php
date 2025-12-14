@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Enum\IdentityKindEnum;
-use App\Entity\Enum\PermissionEnum;
 use App\Entity\Licence;
 use App\Entity\UserPermission;
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
+use App\Entity\Enum\PermissionEnum;
+use App\Entity\Enum\GardianKindEnum;
+use App\Entity\Enum\IdentityKindEnum;
+use App\Entity\Enum\LicenceCategoryEnum;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -76,17 +78,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $active = true;
 
-    /**
-     * @var ArrayCollection <Identity>
-     */
-    #[ORM\OneToMany(targetEntity: Identity::class, mappedBy: 'user')]
-    private Collection $identities;
-
-    #[ORM\OneToOne(targetEntity: Health::class, inversedBy: 'user', cascade: ['persist', 'remove'])]
-
-    // #[ORM\OneToOne(targetEntity: Health::class, cascade: ['persist', 'remove'])]
-    private ?Health $health;
-
     #[ORM\OneToMany(targetEntity: Licence::class, mappedBy: 'user')]
     private Collection $licences;
 
@@ -144,13 +135,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private array $permissions = [];
 
+    /**
+     * @var ArrayCollection<UserGardian>
+     */
+    #[ORM\OneToMany(targetEntity: UserGardian::class, mappedBy: 'user')]
+    private Collection $userGardians;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Health $health = null;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Identity $identity = null;
+
     public function __construct()
     {
-        $this->identities = new ArrayCollection();
         $this->licences = new ArrayCollection();
         $this->sessions = new ArrayCollection();
         $this->orderHeaders = new ArrayCollection();
-        $this->health = null;
         $this->respondents = new ArrayCollection();
         $this->surveys = new ArrayCollection();
         $this->bikeRides = new ArrayCollection();
@@ -159,11 +160,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userSkills = new ArrayCollection();
         $this->userPermissions = new ArrayCollection();
         $this->permissions = [];
+        $this->userGardians = new ArrayCollection();
     }
 
     public function __toString(): string
     {
-        return $this->GetFirstIdentity()->getName() . ' ' . $this->GetFirstIdentity()->getFirstName();
+        return $this->getIdentity()->getName() . ' ' . $this->getIdentity()->getFirstName();
     }
 
     public function getId(): ?int
@@ -290,79 +292,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Identity[]
-     */
-    public function getIdentities(): Collection
-    {
-        return $this->identities;
-    }
-
-    public function addIdentity(Identity $identity): self
-    {
-        if (!$this->identities->contains($identity)) {
-            $this->identities[] = $identity;
-            $identity->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdentity(Identity $identity): self
-    {
-        if ($this->identities->removeElement($identity)) {
-            // set the owning side to null (unless already changed)
-            if ($identity->getUser() === $this) {
-                $identity->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getFirstIdentity(): ?Identity
-    {
-        if (!$this->identities->isEmpty()) {
-            return $this->identities->first();
-        }
-
-        return null;
-    }
-
-    public function getMemberIdentity(): Identity|false
-    {
-        $criteria = Criteria::create()
-            ->andWhere(
-                Criteria::expr()->eq('kind', IdentityKindEnum::MEMBER),
-            )
-        ;
-
-        return $this->identities->matching($criteria)->first();
-    }
-
-    public function getKinshipIdentity(): Identity|false
-    {
-        $criteria = Criteria::create()
-            ->andWhere(
-                Criteria::expr()->eq('kind', IdentityKindEnum::KINSHIP),
-            )
-        ;
-
-        return $this->identities->matching($criteria)->first();
-    }
-    
-    public function getHealth(): ?Health
-    {
-        return $this->health;
-    }
-
-    public function setHealth(?Health $health): self
-    {
-        $this->health = $health;
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Licence[]
      */
     public function getLicences(): Collection
@@ -478,11 +407,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->passwordMustBeChanged = $passwordMustBeChanged;
 
         return $this;
-    }
-
-    public function getFullName(): string
-    {
-        return $this->getFirstIdentity()->getName() . ' ' . $this->getFirstIdentity()->getfirstName();
     }
 
     /**
@@ -786,5 +710,107 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
         return false;
+    }
+
+    /**
+     * @return Collection<int, UserGardian>
+     */
+    public function getUserGardians(): Collection
+    {
+        return $this->userGardians;
+    }
+
+    public function getLegalGardian(): ?UserGardian
+    {
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq('kind', GardianKindEnum::LEGAL_GARDIAN))
+        ;
+
+        return $this->userGardians->matching($criteria)->first() ?: null;
+    }
+
+    public function getSecondContact(): ?UserGardian
+    {
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq('kind', GardianKindEnum::SECOND_CONTACT))
+        ;
+
+        return $this->userGardians->matching($criteria)->first() ?: null;
+    }
+
+
+    public function addUserGardian(UserGardian $userGardian): static
+    {
+        if (!$this->userGardians->contains($userGardian)) {
+            $this->userGardians->add($userGardian);
+            $userGardian->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserGardian(UserGardian $userGardian): static
+    {
+        if ($this->userGardians->removeElement($userGardian)) {
+            // set the owning side to null (unless already changed)
+            if ($userGardian->getUser() === $this) {
+                $userGardian->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getHealth(): ?Health
+    {
+        return $this->health;
+    }
+
+    public function setHealth(?Health $health): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($health === null && $this->health !== null) {
+            $this->health->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($health !== null && $health->getUser() !== $this) {
+            $health->setUser($this);
+        }
+
+        $this->health = $health;
+
+        return $this;
+    }
+
+    public function getMainIdentity(): ?Identity
+    {
+            $identity = (LicenceCategoryEnum::SCHOOL === $this->getLastLicence()->getCategory())
+                ? $this->getLegalGardian()->getIdentity()
+                : $this->getIdentity();
+
+            return $identity;
+    }
+
+    public function getIdentity(): ?Identity
+    {
+        return $this->identity;
+    }
+
+    public function setIdentity(?Identity $identity): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($identity === null && $this->identity !== null) {
+            $this->identity->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($identity !== null && $identity->getUser() !== $this) {
+            $identity->setUser($this);
+        }
+
+        $this->identity = $identity;
+
+        return $this;
     }
 }

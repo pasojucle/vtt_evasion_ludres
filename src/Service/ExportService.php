@@ -14,7 +14,7 @@ class ExportService
 
         if (!empty($users)) {
             foreach ($users as $user) {
-                $identity = $user->getFirstIdentity();
+                $identity = $user->getIdentity();
                 $licence = $user->getLastLicence();
                 $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->getState()->isYearly()];
                 $content[] = implode(',', $row);

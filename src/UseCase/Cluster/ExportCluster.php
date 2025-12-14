@@ -7,6 +7,7 @@ namespace App\UseCase\Cluster;
 use App\Dto\ClusterDto;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\Cluster;
+use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\RegistrationStep;
 use App\Service\PdfService;
 use App\Service\ProjectDirService;
@@ -51,7 +52,7 @@ class ExportCluster
             if ($session['isPresent']) {
                 $render = $this->twig->render('cluster/export.html.twig', [
                     'user' => $session['user'],
-                    'media' => RegistrationStep::RENDER_FILE,
+                    'media' => DisplayModeEnum::FILE,
                 ]);
                 $tmp = $session['user']->id . '_tmp';
                 $pdfFilepath = $this->pdfService->makePdf($render, $tmp, $this->dirName, 'B6');

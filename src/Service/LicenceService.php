@@ -24,7 +24,7 @@ class LicenceService
     }
     public function getCategory(User $user): LicenceCategoryEnum
     {
-        return $this->getCategoryByBirthDate($user->getMemberIdentity()->getBirthDate());
+        return $this->getCategoryByBirthDate($user->getIdentity()->getBirthDate());
     }
 
     public function getCategoryByBirthDate(DateTimeInterface $birthDate): LicenceCategoryEnum

@@ -11,6 +11,9 @@ doctrine:
         types:
             Registration: App\Doctrine\DBAL\Type\RegistrationEnumType
             IdentityKind: App\Doctrine\DBAL\Type\IdentityKindEnumType
+            RegistrationForm: App\Doctrine\DBAL\Type\RegistrationFormEnumType
+            Kinship: App\Doctrine\DBAL\Type\KinshipEnumType
+            GardianKind: App\Doctrine\DBAL\Type\GardianKindEnumType
             OrderStatus: App\Doctrine\DBAL\Type\OrderStatusEnumType
             Practice: App\Doctrine\DBAL\Type\PracticeEnumType
             Availability: App\Doctrine\DBAL\Type\AvailabilityEnumType
@@ -20,6 +23,8 @@ doctrine:
             LicenceState: App\Doctrine\DBAL\Type\LicenceStateEnumType
             LicenceCategory: App\Doctrine\DBAL\Type\LicenceCategoryEnumType
             LicenceMembership: App\Doctrine\DBAL\Type\LicenceMembershipEnumType
+            DisplayMode: App\Doctrine\DBAL\Type\DisplayModeEnumType
+            AgreementKind: App\Doctrine\DBAL\Type\AgreementKindEnumType
             OrderLineState: App\Doctrine\DBAL\Type\OrderLineStateEnumType
         mapping_types:
             enum: string

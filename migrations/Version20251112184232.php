@@ -10,6 +10,7 @@ use App\Entity\RegistrationStep;
 use Doctrine\DBAL\Schema\Schema;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
+use App\Entity\Enum\RegistrationFormEnum;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
@@ -131,7 +132,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'J\'ai bien pris note de ces questions et comprends que certaines situations ou symptômes peuvent entraîner un risque pour ma santé et/ou pour mes performances.',
                 'category' => LicenceCategoryEnum::ADULT->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_HEALTH_QUESTION,
+                'registrationForm' => 1,
                 'swornCertificationId' => 1,
             ], 
             [
@@ -140,7 +141,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'J\'atteste sur l\'honneur avoir déjà pris, ou prendre les dispositions nécessaires selon les recommandations données en cas de réponse positive à l\'une des questions des différents questionnaires.',
                 'category' => LicenceCategoryEnum::ADULT->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_HEALTH_QUESTION,
+                'registrationForm' => 1,
                 'swornCertificationId' => 2,
             ],
             [
@@ -149,7 +150,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'Je fournis un certificat médical de moins de 6 mois (cyclotourisme) <b>OU</b> J\'atteste sur l\'honneur avoir renseigné le questionnaire de santé qui m\'a été remis par mon club.',
                 'category' => LicenceCategoryEnum::SCHOOL->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_HEALTH_QUESTION,
+                'registrationForm' => 1,
                 'swornCertificationId' => 3,
             ],
             [
@@ -158,7 +159,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'J\'atteste sur l\'honneur avoir répondu par la négative à toutes les rubriques du questionnaire de santé et je reconnais expressément que les réponses apportées relèvent de ma responsabilité exclusive.',
                 'category' => LicenceCategoryEnum::SCHOOL->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_HEALTH_QUESTION,
+                'registrationForm' => 1,
                 'swornCertificationId' => 4,
             ], 
             [
@@ -167,7 +168,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'Je m\'engage à respecter scrupuleusement le Code de la route, les statuts et règlements de la Fédération française de cyclotourisme, ainsi que les statuts et les règlements du VTT Evasion Ludres consultable sur le site www.vttevasionludres.fr',
                 'category' => LicenceCategoryEnum::SCHOOL_AND_ADULT->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_OVERVIEW,
+                'registrationForm' => 9,
                 'swornCertificationId' => 5,
             ],
             [
@@ -176,7 +177,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'Je soussigné {{ prenom_nom_parent }} Inscrit et autorise l\'enfant {{ prenom_nom_enfant }} à participer aux séances pédagogiques et à vélo de l’Ecole VTT Evasion Ludres.',
                 'category' => LicenceCategoryEnum::SCHOOL->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_LICENCE_AUTHORIZATIONS,
+                'registrationForm' => 4,
             ],
             [
                 'id' => 'EMERGENCY_CARE_SCHOOL',
@@ -184,7 +185,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'Je soussigné {{ prenom_nom_parent }} autorise les moniteurs fédéraux ainsi que les initiateurs fédéraux ou tout autre futurs moniteurs et/ou initiateurs, à prendre toute décision concernant les soins d’urgences qui s’avéreraient nécessaires et/ou obligatoires concernant mon enfant lors des activités organisées par le club. Je les autorise à transmettre aux services médicaux compétents les renseignements médicaux relatifs à mon enfant.',
                 'category' => LicenceCategoryEnum::SCHOOL->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_LICENCE_AUTHORIZATIONS,
+                'registrationForm' => 4,
             ],
             [
                 'id' => 'EMERGENCY_CARE_ADULT',
@@ -192,7 +193,7 @@ final class Version20251112184232 extends AbstractMigration
                 'content' => 'J’autorise les moniteurs fédéraux ainsi que les initiateurs fédéraux ou tout autre futurs moniteurs et/ou initiateurs, à prendre toute décision concernant les soins d’urgences qui s’avéreraient nécessaires et/ou obligatoires me concernant lors des activités organisées par le club. Je les autorise à transmettre aux services médicaux compétents les renseignements médicaux me concernant.',
                 'category' => LicenceCategoryEnum::ADULT->value,
                 'membership' => LicenceMembershipEnum::TRIAL_AND_YEARLY->value,
-                'registrationForm' => UserType::FORM_LICENCE_AUTHORIZATIONS,
+                'registrationForm' => 4,
             ],
         ];
         foreach($consents as $consent) {
@@ -266,16 +267,17 @@ final class Version20251112184232 extends AbstractMigration
             [
                 'id' => 15,
                 'title' => 'Reconnaître les symptômes cardiaques',
-                'testingRender' => RegistrationStep::RENDER_FILE_AND_LINK,
+                'testingRender' => 4,
             ],
             [
                 'id' => 16,
                 'title' => 'Facteurs de risques et pathologies cardiaques',
-                'testingRender' => RegistrationStep::RENDER_FILE_AND_LINK,],
+                'testingRender' => 4,
+            ],
             [
                 'id' => 17,
                 'title' => 'Les problématiques liées au sport',
-                'testingRender' => RegistrationStep::RENDER_FILE_AND_LINK,
+                'testingRender' => 4,
             ],
         ];
         foreach($registrationSteps as $registrationStep) {

@@ -20,7 +20,7 @@ class UserDto
 
     public ?IdentityDto $member;
 
-    public ?IdentityDto $kinship;
+    public ?IdentityDto $legalGardian;
 
     public ?IdentityDto $secondKinship;
 
@@ -36,7 +36,7 @@ class UserDto
 
     public ?string $mainFullName;
 
-    public array $approvals = [];
+    public array $agreements = [];
 
     public bool $isBoardMember = false;
 

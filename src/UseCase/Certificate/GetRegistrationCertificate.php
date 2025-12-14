@@ -6,6 +6,7 @@ namespace App\UseCase\Certificate;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
+use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
@@ -52,7 +53,7 @@ class GetRegistrationCertificate
             ? $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_ADULT')
             : $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_SCHOOL');
 
-        return $this->replaceKeywordsService->replace($content, $user, RegistrationStep::RENDER_FILE);
+        return $this->replaceKeywordsService->replace($content, $user, DisplayModeEnum::FILE);
     }
     
     private function makePdf(string $content): string
