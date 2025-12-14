@@ -1,0 +1,14 @@
+<ul class="block background-ligth">
+    {% for authorization in progress.user.lastLicence.authorizationAgreements %}
+        {% if authorization.kind == enum('App\\Entity\\Enum\\AgreementKindEnum').AUTHORIZATION %}
+            <li class="row">
+                <span class="col-md-4 col-sx-6"><b>{{ authorization.title }} :</b></span>
+                <span class="col-md-8 col-sx-6">
+                    <div class="bs-badge rounded-circle border border-white d-flex align-items-center mx-1 align-content-center text-bg-{{ authorization.toHtml.color }}">{{ authorization.toHtml.icon|raw }}</div>
+                    {{ authorization.toHtml.message|raw }}
+                </span>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
