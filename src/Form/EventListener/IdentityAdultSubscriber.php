@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Form\EventListener;
 
-use App\Entity\Enum\ContentKindEnum;
-use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
@@ -21,10 +19,8 @@ use DateInterval;
 use DateTime;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -56,100 +52,71 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
         /**@var Identity $identity */
         $identity = $event->getData();
         $form = $event->getForm();
-        $kind = $identity->getKind();
-        $kinship = $kind !== IdentityKindEnum::MEMBER;
-        $disabled = $this->haspreviousLicence($identity->getUser()) && IdentityKindEnum::MEMBER === $identity->getKind();
-        $row_class = ($kinship) ? 'form-group-inline' : 'form-group';
+        $disabled = $this->haspreviousLicence($identity->getUser());
+        $row_class = 'form-group';
         $foreignBorn = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
         list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
-        $isTesting = (!$kinship) ? (int) empty($identity->getUser()->getLicenceNumber()) : 0;
-        $addressClass = ($kinship) ? ' identity-address' : '';
-        $addressRequired = ($kinship && !$identity->hasAddress()) ? '' : 'required';
         $options = $form->getConfig()->getOptions();
-
-        if ($options['is_kinship'] === $kinship) {
-            $form
-                ->add('kind', EnumType::class, [
-                        'label' => false,
-                        'class' => IdentityKindEnum::class,
-                        'attr' => [
-                            'class' => 'hidden',
-                        ],
-                    ])
-                ->add('name', TextType::class, [
-                    'label' => 'Nom',
-                    'row_attr' => [
-                        'class' => $row_class,
-                    ],
-                    'constraints' => [
-                        new NotNull(),
-                        new NotBlank(),
-                        new UniqueMember()
-                    ],
-                    'attr' => (IdentityKindEnum::MEMBER === $kind && !$disabled)
-                        ? [
-                            'data-constraint' => 'app-UniqueMember',
-                        ]
-                        : ['data-constraint' => ''],
-                    'disabled' => $disabled,
-                ])
-                ->add('firstName', TextType::class, [
-                    'label' => 'Prénom',
-                    'row_attr' => [
-                        'class' => $row_class,
-                    ],
-                    'constraints' => [
-                        new NotNull(),
-                        new NotBlank(),
-                        new UniqueMember()
-                    ],
-                    'attr' => (IdentityKindEnum::MEMBER === $kind && !$disabled)
-                        ? [
-                            'data-constraint' => 'app-UniqueMember',
-                            'data-multiple-fields' => 1,
-                            'data-alert-route' => 'unique_member',
-                            'autocomplete' => 'off',
-                        ]
-                        : ['data-constraint' => '', 'autocomplete' => 'off', ],
-                    'disabled' => $disabled,
-                ])
-                ->add('mobile', TextType::class, [
-                    'label' => 'Téléphone mobile',
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
-                    'constraints' => [
-                        new Phone(),
-                    ],
-                    'attr' => [
-                        'data-constraint' => 'app-Phone',
-                        'autocomplete' => 'off',
-                        'class' => 'phone-number',
-                    ],
-                ])
-                ->add('email', EmailType::class, [
-                    'label' => (IdentityKindEnum::KINSHIP === $kind && LicenceCategoryEnum::SCHOOL === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
-                    'row_attr' => [
-                        'class' => 'form-group-inline',
-                    ],
-                    'constraints' => [
-                        new Email(),
-                    ],
-                    'attr' => [
-                        'data-constraint' => 'symfony-Email',
+        $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
+        $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
+        $form
+            ->add('name', TextType::class, [
+                'label' => 'Nom',
+                'row_attr' => [
+                    'class' => $row_class,
+                ],
+                'constraints' => [
+                    new NotNull(),
+                    new NotBlank(),
+                    new UniqueMember()
+                ],
+                'attr' => ($disabled)
+                    ? ['data-constraint' => '']
+                    : ['data-constraint' => 'app-UniqueMember',],
+                'disabled' => $disabled,
+            ])
+            ->add('firstName', TextType::class, [
+                'label' => 'Prénom',
+                'row_attr' => [
+                    'class' => $row_class,
+                ],
+                'constraints' => [
+                    new NotNull(),
+                    new NotBlank(),
+                    new UniqueMember()
+                ],
+                'attr' => $disabled
+                    ? ['data-constraint' => '', 'autocomplete' => 'off']
+                    : [
+                        'data-constraint' => 'app-UniqueMember',
+                        'data-multiple-fields' => 1,
+                        'data-alert-route' => 'unique_member',
                         'autocomplete' => 'off',
                     ],
-                ])
-                ->add('address', AddressType::class, [
-                    'row_class' => $addressClass,
-                    'required' => $addressRequired,
-                ])
-            ;
-
-            if (IdentityKindEnum::SECOND_CONTACT !== $kind) {
-                $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
-                $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
-                $birthDateAttr = [
+                'disabled' => $disabled,
+            ])
+            ->add('address', AddressType::class, [
+                'row_class' => '',
+                'required' => true,
+            ])
+            ->add('phone', TextType::class, [
+                'label' => 'Téléphone fixe',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'constraints' => [
+                    new Phone(),
+                ],
+                'attr' => [
+                    'data-constraint' => 'app-Phone',
+                    'autocomplete' => 'off',
+                    'class' => 'phone-number',
+                ],
+            ])
+            ->add('birthDate', DateType::class, [
+                'label' => 'Date de naissance',
+                'attr' => [
                     'nin' => $dateMin->format('Y-m-d'),
                     'max' => $dateMax->format('Y-m-d'),
                     'data-max-date' => $dateMax->format('Y-m-d'),
@@ -157,207 +124,179 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-year-range' => $dateMin->format('Y') . ':' . $dateMax->format('Y'),
                     'autocomplete' => 'off',
                     'data-constraint' => 'app-BirthDate;app-SchoolTestingRegistration',
-                    'data-extra-param-name' => 'isTesting',
-                    'data-extra-value' => $isTesting,
+                    'data-extra-param-name' => 'isYearly',
+                    'data-extra-value' => $identity->getUser()->getLastLicence()->getState()->isYearly() ? 1 : 0,
                     'data-alert-route' => 'registration_scholl_testing_disabled',
-                ];
-                if (!$kinship) {
-                    $birthDateAttr['class'] = 'form-modifier';
-                    $birthDateAttr['data-modifier'] = 'adultContainer';
-                }
-                $form
-                    ->add('phone', TextType::class, [
-                        'label' => 'Téléphone fixe',
-                        'required' => false,
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
+                    'class'=> 'form-modifier',
+                    'data-modifier' => 'categoryContainer'
+                ],
+                'row_attr' => [
+                    'class' => $row_class,
+                ],
+                'disabled' => $disabled,
+                'constraints' => [
+                    new BirthDate(),
+                ],
+            ])
+            ->add('birthCommune', CommuneAutocompleteField::class, [
+                'label' => 'Lieu de naissance',
+                'row_attr' => [
+                    'class' => $birthCommuneClass,
+                ],
+                'attr' => [
+                    'data-constraint' => '',
+                ],
+                'required' => !$foreignBorn,
+            ])
+            ->add('birthPlace', TextType::class, [
+                'label' => 'Lieu de naissance',
+                'row_attr' => [
+                    'class' => $birthPlaceClass,
+                ],
+                'attr' => [
+                    'data-constraint' => '',
+                ],
+                'required' => $foreignBorn,
+            ])
+            ->add('birthCountry', TextType::class, [
+                'label' => 'Pays de naissance',
+                'row_attr' => [
+                    'class' => $birthPlaceClass,
+                ],
+                'attr' => [
+                    'data-constraint' => '',
+                ],
+                'required' => $foreignBorn,
+            ])
+            ->add('foreignBorn', CheckboxType::class, [
+                'label' => 'Je suis né à l\'étranger',
+                'mapped' => false,
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'class' => 'foreign-born',
+                ],
+                'data' => $foreignBorn,
+            ])
+            ->add('pictureFile', FileType::class, [
+                'label' => 'Photo d\'itentité',
+                'mapped' => false,
+                'required' => false,
+                'block_prefix' => 'custom_file',
+                'attr' => [
+                    'accept' => '.bmp,.jpeg,.jpg,.png',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/bmp',
+                            'image/jpeg',
+                            'image/png',
                         ],
-                        'constraints' => [
-                            new Phone(),
-                        ],
-                        'attr' => [
-                            'data-constraint' => 'app-Phone',
-                            'autocomplete' => 'off',
-                            'class' => 'phone-number',
-                        ],
-                    ])
-                    ->add('birthDate', DateType::class, [
-                        'label' => 'Date de naissance',
-                        'attr' => $birthDateAttr,
-                        'row_attr' => [
-                            'class' => $row_class,
-                        ],
-                        'disabled' => $disabled,
-                        'constraints' => [
-                            new BirthDate(),
-                        ],
-                    ])
-                    ;
-            }
+                        'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
+                    ]),
+                ],
+            ])
+            ->add('schoolTestingRegistration', HiddenType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new SchoolTestingRegistration(),
+                ],
+            ])
+            ;
+    
 
-            $this->modifier($form, $kinship, $options['category']);
-
-            if ($kinship) {
-                $kinshipChoices = Identity::KINSHIPS;
-                if (IdentityKindEnum::SECOND_CONTACT !== $kind) {
-                    unset($kinshipChoices[Identity::KINSHIP_OTHER]);
-                }
-                $form
-                    ->add('otherAddress', CheckboxType::class, [
-                        'label' => 'Réside à une autre adresse que l\'enfant',
-                        'required' => false,
-                        'mapped' => false,
-                        'attr' => [
-                            'class' => 'identity-other-address',
-                            'data-modifier' => sprintf('address-container-%s', $form->getName())
-                        ],
-                        'data' => ($identity->hasAddress()) ? true : false,
-                    ])
-                    ->add('kinship', ChoiceType::class, [
-                        'label' => 'Parenté',
-                        'choices' => array_flip($kinshipChoices),
-                        'placeholder' => 'Choisir le lien de parenté',
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                        'attr' => [
-                            'data-constraint' => '',
-                        ],
-                    ])
-                ;
-            } else {
-                $form
-                    ->add('birthCommune', CommuneAutocompleteField::class, [
-                        'label' => 'Lieu de naissance',
-                        'row_attr' => [
-                            'class' => $birthCommuneClass,
-                        ],
-                        'attr' => [
-                            'data-constraint' => '',
-                        ],
-                        'required' => !$foreignBorn,
-                    ])
-                    ->add('birthPlace', TextType::class, [
-                        'label' => 'Lieu de naissance',
-                        'row_attr' => [
-                            'class' => $birthPlaceClass,
-                        ],
-                        'attr' => [
-                            'data-constraint' => '',
-                        ],
-                        'required' => $foreignBorn,
-                    ])
-                    ->add('birthCountry', TextType::class, [
-                        'label' => 'Pays de naissance',
-                        'row_attr' => [
-                            'class' => $birthPlaceClass,
-                        ],
-                        'attr' => [
-                            'data-constraint' => '',
-                        ],
-                        'required' => $foreignBorn,
-                    ])
-                    ->add('foreignBorn', CheckboxType::class, [
-                        'label' => 'Je suis né à l\'étranger',
-                        'mapped' => false,
-                        'required' => false,
-                        'row_attr' => [
-                            'class' => 'form-group-inline',
-                        ],
-                        'attr' => [
-                            'class' => 'foreign-born',
-                        ],
-                        'data' => $foreignBorn,
-                    ])
-                    ->add('pictureFile', FileType::class, [
-                        'label' => 'Photo d\'itentité',
-                        'mapped' => false,
-                        'required' => false,
-                        'block_prefix' => 'custom_file',
-                        'attr' => [
-                            'accept' => '.bmp,.jpeg,.jpg,.png',
-                        ],
-                        'constraints' => [
-                            new File([
-                                'maxSize' => '1024k',
-                                'mimeTypes' => [
-                                    'image/bmp',
-                                    'image/jpeg',
-                                    'image/png',
-                                ],
-                                'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
-                            ]),
-                        ],
-                    ])
-                    ->add('schoolTestingRegistration', HiddenType::class, [
-                        'mapped' => false,
-                        'constraints' => [
-                            new SchoolTestingRegistration(),
-                        ],
-                    ])
-                    ;
-                ;
-            }
-        }
+        $this->modifier($form, $options['category']);
     }
 
     public function preSubmit(FormEvent $event): void
     {
         $data = $event->getData();
-        $options = $event->getForm()->getConfig()->getOptions();
-        $kind = ($data && array_key_exists('kind', $data)) ? ContentKindEnum::tryFrom($data['kind']) : null;
-        $kinship = $kind && $kind !== IdentityKindEnum::MEMBER;
-        if ($data && false === $options['is_kinship'] && false === $kinship) {
+        if ($data) {
             $birthDate = (array_key_exists('birthDate', $data)) ? new dateTime($data['birthDate']) : null;
             $category = ($birthDate) ? $this->licenceService->getCategoryByBirthDate($birthDate) : LicenceCategoryEnum::ADULT;
-            $this->modifier($event->getForm(), $kinship, $category);
+            $this->modifier($event->getForm(), $category);
         }
     }
 
-    private function modifier(FormInterface $form, ?bool $isKindship, LicenceCategoryEnum $category): void
+    private function modifier(FormInterface $form, LicenceCategoryEnum $category): void
     {
-        if (!$isKindship) {
-            $hidden = LicenceCategoryEnum::ADULT !== $category;
-            $class = ($hidden) ? 'hidden' : 'form-group-inline';
-            $form
-                ->add('profession', TextType::class, [
-                    'label' => 'Profession',
-                    'row_attr' => [
-                        'class' => $class,
-                    ],
-                    'attr' => [
-                        'data-constraint' => '',
-                    ],
-                    'required' => false,
-                ])
-                ->add('emergencyPhone', TextType::class, [
-                    'label' => 'Télephone de la personne à prévenir en cas d\'urgence',
-                    'row_attr' => [
-                        'class' => $class,
-                    ],
-                    'constraints' => [
-                        new Phone(),
-                    ],
-                    'attr' => [
-                        'data-constraint' => 'app-Phone',
-                        'data-multiple-fields' => 1,
-                        'autocomplete' => 'off',
-                        'class' => 'phone-number',
-                    ],
-                    'required' => !$hidden,
-                ])
-                ->add('emergencyContact', TextType::class, [
-                    'label' => 'Lien de parenté (Mari, Femme, Fils, Fille, Frère, Sœur, Oncle, Tante, Grand parents.....)',
-                    'row_attr' => [
-                        'class' => $class,
-                    ],
-                    'attr' => [
-                        'data-constraint' => '',
-                    ],
-                    'required' => !$hidden,
-                ])
-            ;
-        }
+        $hidden = LicenceCategoryEnum::ADULT !== $category;
+        $class = ($hidden) ? 'hidden' : 'form-group-inline';
+        $form
+            ->add('email', EmailType::class, [
+                'label' => LicenceCategoryEnum::SCHOOL === $category
+                    ? '<p>Adresse mail (de l\'enfant)<br> Le mail de contact avec le club sera celui du parent</p>' 
+                    : 'Adresse mail',
+                'label_html' => true,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'constraints' => [
+                    new Email(),
+                ],
+                'attr' => [
+                    'data-constraint' => 'symfony-Email',
+                    'autocomplete' => 'off',
+                ],
+            ])
+            ->add('mobile', TextType::class, [
+                'label' => LicenceCategoryEnum::SCHOOL === $category
+                    ? 'Téléphone mobile (de l\'enfant)' 
+                    : 'Téléphone mobile',
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'constraints' => [
+                    new Phone(),
+                ],
+                'attr' => [
+                    'data-constraint' => 'app-Phone',
+                    'autocomplete' => 'off',
+                    'class' => 'phone-number',
+                ],
+            ])
+            ->add('profession', TextType::class, [
+                'label' => 'Profession',
+                'row_attr' => [
+                    'class' => $class,
+                ],
+                'attr' => [
+                    'data-constraint' => '',
+                ],
+                'required' => false,
+            ])
+            ->add('emergencyPhone', TextType::class, [
+                'label' => 'Télephone de la personne à prévenir en cas d\'urgence',
+                'row_attr' => [
+                    'class' => $class,
+                ],
+                'constraints' => [
+                    new Phone(),
+                ],
+                'attr' => [
+                    'data-constraint' => 'app-Phone',
+                    'data-multiple-fields' => 1,
+                    'autocomplete' => 'off',
+                    'class' => 'phone-number',
+                ],
+                'required' => !$hidden,
+            ])
+            ->add('emergencyContact', TextType::class, [
+                'label' => 'Lien de parenté (Mari, Femme, Fils, Fille, Frère, Sœur, Oncle, Tante, Grand parents.....)',
+                'row_attr' => [
+                    'class' => $class,
+                ],
+                'attr' => [
+                    'data-constraint' => '',
+                ],
+                'required' => !$hidden,
+            ])
+        ;
+
     }
 
     private function haspreviousLicence(?User $user): bool

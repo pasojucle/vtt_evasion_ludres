@@ -52,9 +52,10 @@ identity:
     mother: Mère
     guardianship: Réprésentant légal
     other: Autre
+gardian:
   kind:
     member: Adhérent
-    kinship: Responsable de l'enfant
+    legal_gardian: Responsable de l'enfant
     second_contact: Second contact
 
 registration_step:
@@ -64,25 +65,26 @@ registration_step:
     minor: Bulletin d'inscription Mineur
     school: Bulletin d'inscription Mineur
     testing: Bulletin de pré-inscription pour 3 séances concécutives d'essai gratuites
-  render:
-    none: Jamais
-    view: A l'écran seul
-    file: Au téléchargement seul
-    file_and_view: A l'affichage et téléchargement
-    file_and_link: En lien et téléchargement
+display_mode:
+  none: Jamais
+  screen: A l'écran seul
+  file: Au téléchargement seul
+  screen_and_file: A l'affichage et téléchargement
+  file_and_link: En lien et téléchargement
 
 form:
+  none: Aucune
   registration_document: Dossier d'inscription
   health_question: Questionaire de santé
   identity: Identité
   health: Fiche sanitaire
-  approval_right_image: Autorisations
+  authorizations: Autorisations
   licence_coverage: Assurance
   membership_fee: Tarifs
   registration_file: Téléchargement du pdf
   licence_type: Type de licence
   member: Informations de l'adhérent
-  kinship: Informations des parents
+  gardians: Informations des parents
   overview: Validation
 
 bike_ride:

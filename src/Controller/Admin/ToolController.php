@@ -64,8 +64,8 @@ class ToolController extends AbstractController
             ]);
 
             $fullname = $user->getLicenceNumber();
-            if (null !== $user->GetFirstIdentity()) {
-                $fullname .= ' ' . $user->GetFirstIdentity()->getName() . ' ' . $user->GetFirstIdentity()->getFirstName();
+            if ($user->getIdentity()) {
+                $fullname .= ' ' . $user->getIdentity()->getFullName();
             }
             $form->handleRequest($request);
             if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
@@ -145,7 +145,7 @@ class ToolController extends AbstractController
 
         if (!empty($users)) {
             foreach ($users as $user) {
-                $identity = $user->getFirstIdentity();
+                $identity = $user->getIdentity();
                 $licence = $user->getLastLicence();
                 $row = [$identity->getFirstName(), $identity->getName(), $identity->getEmail(), $identity->getBirthDate()->format('d/m/Y'), $user->getLicenceNumber(), $licence->getSeason(), !$licence->getState()->isYearly()];
                 $content[] = implode(',', $row);
