@@ -1,0 +1,13 @@
+{% block collection_check_row %}
+<div class="form-group">
+    {{ form_label(form) }}
+    <div class="row bg-light p-3">
+        {% for  child in form %}
+            <div class="col-md-6">
+                {{ form_widget(child) }}
+                {{ form_label(child, null) }}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
