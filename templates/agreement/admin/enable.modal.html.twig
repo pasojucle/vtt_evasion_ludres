@@ -1,0 +1,11 @@
+{% extends 'base_modal.html.twig' %}
+{% block form %}{% set form = form %}{% endblock %}
+{% set action = agreement.isDisabled ? 'activer' : 'désactiver' %}
+{% block modal_title %}{{ action|capitalize }} l' autorisation {{ agreement.title }}{% endblock %}
+{% block body %}
+    <p>Etes vous certain de vouloir {{ action }} l' autorisation {{ agreement.title }} ?</p>
+{% endblock %}
+{% block footer %}
+    {% set button_text = action|capitalize %}
+    {{ parent() }}
+{% endblock %}

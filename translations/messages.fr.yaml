@@ -45,6 +45,10 @@ licence:
     no_additional_option: Ne retenir aucune garantie optionnelle
 
   all_users: Tous les utilisateurs
+  membership:
+    trial: Periode d'essai
+    yearly: Annuelle
+    trial_and_yearly: Periode d'essai et annuelle
 
 identity:
   kinship:
@@ -230,3 +234,8 @@ user_skill:
   unacquired: non acquis
   pending: en cours
   acquired: acquis
+
+agreement:
+  kind:
+    authorization: Autorisations
+    consent: Consentement

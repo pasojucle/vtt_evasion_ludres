@@ -29,6 +29,7 @@ class AgreementRepository extends ServiceEntityRepository
         $this->addCategoryCriteria($andX, $parameters, LicenceCategoryEnum::SCHOOL);
         $this->addMembershipCriteria($andX, $parameters, $membership);
         $this->addExistingConsentsCriteria($andX, $parameters, $existingLicenceConsents);
+        $this->addEnabledCriteria($andX, $parameters);
 
         return $this->createQueryBuilder('a')
             ->andWhere($andX)
@@ -45,6 +46,7 @@ class AgreementRepository extends ServiceEntityRepository
         $this->addCategoryCriteria($andX, $parameters, LicenceCategoryEnum::ADULT);
         $this->addMembershipCriteria($andX, $parameters, $membership);
         $this->addExistingConsentsCriteria($andX, $parameters, $existingLicenceConsents);
+        $this->addEnabledCriteria($andX, $parameters);
 
         return $this->createQueryBuilder('a')
             ->andWhere($andX)
@@ -80,5 +82,28 @@ class AgreementRepository extends ServiceEntityRepository
             $andX->add((new Expr())->notIn('a.id', ':existingConsents'));
             $parameters[] = new Parameter('existingConsents', $existingConsents);
         }
+    }
+
+    private function addEnabledCriteria(Andx &$andX, array &$parameters): void
+    {
+        $andX->add((new Expr())->eq('a.enable', ':enable'));
+        $parameters[] = new Parameter('enable', true);
+    }
+
+    public function findNexOrder(): int
+    {
+        $nexOrder = 0;
+        $maxOrder = $this->createQueryBuilder('a')
+            ->select('MAX(a.orderBy)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        if (null !== $maxOrder) {
+            $maxOrder = (int) $maxOrder;
+            $nexOrder = $maxOrder + 1;
+        }
+
+        return $nexOrder;
     }
 }

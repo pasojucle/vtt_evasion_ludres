@@ -14,6 +14,7 @@ twig:
         - 'form/checkbox_row.html.twig'
         - 'form/ckeditor_row.html.twig'
         - 'form/btn_radio_row.html.twig'
+        - 'form/collection_check_row.html.twig'
 
     globals:
         menu_service: '@App\Service\MenuService'

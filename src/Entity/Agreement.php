@@ -57,6 +57,12 @@ class Agreement
     #[ORM\OneToMany(targetEntity: LicenceAgreement::class, mappedBy: 'agreement')]
     private Collection $licenceAgreements;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $orderBy = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $enabled = true;
+
     public function __construct()
     {
         $this->registrationSteps = new ArrayCollection();
@@ -229,6 +235,30 @@ class Agreement
                 $licenceAgreement->setAgreement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOrderBy(): ?int
+    {
+        return $this->orderBy;
+    }
+
+    public function setOrderBy(?int $orderBy): static
+    {
+        $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function isEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): static
+    {
+        $this->enabled = $enabled;
 
         return $this;
     }

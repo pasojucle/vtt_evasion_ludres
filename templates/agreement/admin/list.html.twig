@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Autorisations{% endblock %}
+
+{% block body %}
+ <div class="wrapper">
+    <div class="wrapper-title">
+        <h1>Gestion des Autorisations</h1>
+        <div class="tool-group">
+            <a href="{{ path('admin_registrations', {'filtered': 1}) }}"
+                class="btn btn-ico" title="Retour à la liste des inscriptions">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+    </div>
+    <div class="wrapper-body">
+        <a href="{{ path('admin_agreement_add') }}" class="btn btn-primary" title="Ajouter une autorisation"><i class="fas fa-plus"></i> Ajouter une autorisation</a>
+        <ul class="list-group sortable" data-route="admin_agreement_order" data-parameter="agrement">
+            {% for agreement in agreements %}     
+                <li class="list-group-item col-list" data-id="{{ agreement.id }}">
+                    <div>{{ agreement.title }}</div>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                            <div class="dropdown-menu" data-target="dropdown-tools">
+                                <ul class="dropdown-body">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('admin_agreement_edit', {'agreement': agreement.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                    </li>
+                                    <li>
+                                        {% if agreement.enabled %}
+                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_agreement_enable', {'agreement': agreement.id})}}" title="Désactiver" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Désactiver</a>
+                                        {% else %}
+                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_agreement_enable', {'agreement': agreement.id})}}" title="Activer" data-toggle="modal" data-type="primary"><i class="fas fa-times"></i> Activer</a>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
