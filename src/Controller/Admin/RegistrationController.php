@@ -32,6 +32,7 @@ class RegistrationController extends AbstractController
             'parameters' => $parameterService->getParametersByParameterGroupName('REGISTRATION'),
             'routes' => [
                 ['name' => 'admin_registration_step_list', 'label' => 'Étapes des inscriptions'],
+                ['name' => 'admin_agreement_list', 'label' => 'Gestions des autorisations'],
             ],
             'messages' => $messageService->getMessagesBySectionName('REGISTRATION'),
         ];

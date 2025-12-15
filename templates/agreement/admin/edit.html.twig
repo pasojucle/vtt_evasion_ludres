@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% set title = (agreement is null) ? 'Ajouter une autorisation' : 'Modifier une autorisation' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper">
+        {{ form_start(form) }}
+            <div class="wrapper-title">
+                <h1>{{ title }}</h1>
+                <span class="tools">
+                    <a href="{{ path('admin_agreement_list') }}" class="btn btn-ico" title="Retour à la liste des autorisations"><i class="fas fa-chevron-left"></i></a>
+                </span>
+            </div>
+            <div class="wrapper-body">
+                <div class="form-group">
+                    {{ form_row(form.id) }}
+                    {{ form_row(form.title) }}
+                </div>
+                {{ form_row(form.content) }}
+                <div class="form-group">
+                    {{ form_row(form.category) }}
+                    {{ form_row(form.membership) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.kind) }}
+                </div>
+                <div id="autorization-container">
+                    {% if form.authorizationMessage is defined %}
+                        <div class="form-group">
+                            {{ form_row(form.authorizationMessage) }}
+                            {{ form_row(form.authorizationIcon) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.rejectionMessage) }}
+                            {{ form_row(form.rejectionIcon) }}
+                        </div>
+                    {% endif %}
+                </div>
+                {{ form_row(form.registrationSteps) }}
+            </div>
+            <div class="wrapper-footer">
+                {{ form_widget(form.save) }}
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
