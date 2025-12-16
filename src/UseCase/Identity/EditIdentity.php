@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\UseCase\Identity;
 
 use App\Entity\Identity;
-use App\Service\UploadService;
 use App\Service\CommuneService;
+use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;

@@ -6,7 +6,6 @@ namespace App\Dto;
 
 use App\Entity\Enum\AgreementKindEnum;
 
-
 class LicenceAgreementDto
 {
     public ?int $id = null;
