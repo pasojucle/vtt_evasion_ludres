@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use DateTime;
-use Dompdf\Dompdf;
-use App\Entity\User;
-use App\Entity\Licence;
-use setasign\Fpdi\Fpdi;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\RegistrationStepDto;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\LicenceOptionEnum;
 use App\Entity\Enum\RegistrationFormEnum;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Licence;
+use App\Entity\User;
+use DateTime;
+use Dompdf\Dompdf;
+use setasign\Fpdi\Fpdi;
 
 class PdfService
 {

@@ -13,8 +13,7 @@ class AddAgreement
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly AgreementRepository $agreementRepository,
-    )
-    {
+    ) {
     }
 
     public function execute(FormInterface $form): void

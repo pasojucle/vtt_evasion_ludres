@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Licence;
-use App\Form\IdentityType;
-use App\Entity\UserGardian;
-use App\Service\LicenceService;
-use App\Entity\Enum\KinshipEnum;
-use App\Form\GardianIdentityType;
 use App\Entity\Enum\GardianKindEnum;
+use App\Entity\Enum\KinshipEnum;
+use App\Entity\Licence;
+use App\Entity\UserGardian;
+use App\Form\GardianIdentityType;
+use App\Form\IdentityType;
+use App\Service\LicenceService;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
 class GardianType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {        
+    {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $gardian = $event->getData();
             $form = $event->getForm();
@@ -36,12 +36,12 @@ class GardianType extends AbstractType
                     'class' => KinshipEnum::class,
                     'placeholder' => 'Choisir le lien de parenté',
                     'choice_filter' => ChoiceList::filter(
-                            $this,
-                            function (KinshipEnum $kinship) use ($notAllowedKinship): bool {
+                        $this,
+                        function (KinshipEnum $kinship) use ($notAllowedKinship): bool {
                                 return  $notAllowedKinship !== $kinship;
                             },
-                            $notAllowedKinship
-                        ),
+                        $notAllowedKinship
+                    ),
                     'row_attr' => [
                         'class' => 'form-group-inline',
                     ],
@@ -57,7 +57,6 @@ class GardianType extends AbstractType
                 ])
             ;
         });
-        
     }
 
     public function configureOptions(OptionsResolver $resolver): void
