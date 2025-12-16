@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\LicenceAgreement;
-use Symfony\Component\Form\FormEvent;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\AgreementKindEnum;
-use Symfony\Component\Form\FormEvents;
+use App\Entity\LicenceAgreement;
 use App\Service\ReplaceKeywordsService;
 use Symfony\Component\Form\AbstractType;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LicenceAgreementType extends AbstractType
 {
