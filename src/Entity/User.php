@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Licence;
-use App\Entity\UserPermission;
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\UserRepository;
-use App\Entity\Enum\PermissionEnum;
 use App\Entity\Enum\GardianKindEnum;
 use App\Entity\Enum\IdentityKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Enum\PermissionEnum;
+use App\Entity\Licence;
+use App\Entity\UserPermission;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -785,11 +785,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getMainIdentity(): ?Identity
     {
-            $identity = (LicenceCategoryEnum::SCHOOL === $this->getLastLicence()->getCategory())
+        $identity = (LicenceCategoryEnum::SCHOOL === $this->getLastLicence()->getCategory())
                 ? $this->getLegalGardian()->getIdentity()
                 : $this->getIdentity();
 
-            return $identity;
+        return $identity;
     }
 
     public function getIdentity(): ?Identity
