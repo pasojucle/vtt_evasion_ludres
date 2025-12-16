@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Validator;
 
 use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Identity;
 use App\Entity\Licence;
 use App\Service\LicenceService;
 use App\Service\ParameterService;
@@ -44,8 +45,8 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
         if (!$birthDate) {
             /** @var Identity $identity */
             $identity = $this->context->getObject()->getParent()?->getData();
-            $birthDate = $identity?->getBirthDate();
-            $licenceNumber = $identity?->getUser()->getLicenceNumber();
+            $birthDate = $identity->getBirthDate();
+            $licenceNumber = $identity->getUser()->getLicenceNumber();
             if ('schoolTestingRegistration' !== $this->context->getObject()?->getName()) {
                 return;
             }

@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\KinshipEnum;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Enum\GardianKindEnum;
+use App\Entity\Enum\KinshipEnum;
 use App\Repository\UserGardianRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserGardianRepository::class)]
 class UserGardian

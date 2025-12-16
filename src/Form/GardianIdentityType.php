@@ -7,16 +7,15 @@ namespace App\Form;
 use App\Entity\Enum\GardianKindEnum;
 use App\Entity\Identity;
 use App\Entity\Licence;
+use App\Form\EventListener\GardianIdentitySubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Form\EventListener\GardianIdentitySubscriber;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GardianIdentityType extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {        
+    {
         $builder->addEventSubscriber(new GardianIdentitySubscriber());
     }
 
