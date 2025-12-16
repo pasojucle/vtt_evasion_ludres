@@ -18,7 +18,11 @@
         <ul class="list-group sortable" data-route="admin_agreement_order" data-parameter="agrement">
             {% for agreement in agreements %}     
                 <li class="list-group-item col-list" data-id="{{ agreement.id }}">
-                    <div>{{ agreement.title }}</div>
+                    <div class="row{% if not agreement.enabled %} disabled{% endif %}">
+                        <div class="col-md-6">{{ agreement.title }}</div>
+                        <div class="col-md-3" title="{{ agreement.category.title }}">{{ agreement.category.icon|raw }}</div>
+                        <div class="col-md-3" title="{{ agreement.membership.title }}">{{ agreement.membership.icon|raw }}</div>
+                    </div>
                     {% if is_granted('ROLE_ADMIN') %}
                         <div class="dropdown">
                             <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>

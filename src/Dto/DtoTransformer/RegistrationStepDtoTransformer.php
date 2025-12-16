@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
+use App\Dto\RegistrationStepDto;
 use App\Dto\UserDto;
+use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\RegistrationFormEnum;
+use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
-use App\Dto\RegistrationStepDto;
-use App\Entity\RegistrationStep;
 use App\Service\ProjectDirService;
-use App\Entity\Enum\DisplayModeEnum;
 use App\Service\ReplaceKeywordsService;
-use App\Entity\Enum\RegistrationFormEnum;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -40,8 +40,8 @@ class RegistrationStepDtoTransformer
         if ($registrationStep) {
             $registrationStepDto->title = $registrationStep->getTitle();
             $registrationStepDto->form = $registrationStep->getForm();
-            $registrationStepDto->outputFilename = ($registrationStep->isPersonal()) 
-                ? RegistrationStepDto::OUTPUT_FILENAME_PERSONAL 
+            $registrationStepDto->outputFilename = ($registrationStep->isPersonal())
+                ? RegistrationStepDto::OUTPUT_FILENAME_PERSONAL
                 : RegistrationStepDto::OUTPUT_FILENAME_CLUB;
             $filename = $registrationStep->getFilename();
             $registrationStepDto->pdfFilename = $filename;
@@ -106,7 +106,7 @@ class RegistrationStepDtoTransformer
     private function getScreenOverviewTemplate(RegistrationFormEnum $form): ?string
     {
         $filename = sprintf('registration/form/overviews/%s.html.twig', $form->value);
-        if (file_exists($this->projectDir->path('templates',$filename)) || RegistrationFormEnum::REGISTRATION_DOCUMENT === $form) {
+        if (file_exists($this->projectDir->path('templates', $filename)) || RegistrationFormEnum::REGISTRATION_DOCUMENT === $form) {
             return $filename;
         }
 
@@ -116,7 +116,7 @@ class RegistrationStepDtoTransformer
     private function getFileOverviewTemplate(RegistrationFormEnum $form): ?string
     {
         $filename = sprintf('registration/form/pdf/%s.html.twig', $form->value);
-        if (file_exists($this->projectDir->path('templates',$filename)) || RegistrationFormEnum::REGISTRATION_DOCUMENT === $form) {
+        if (file_exists($this->projectDir->path('templates', $filename)) || RegistrationFormEnum::REGISTRATION_DOCUMENT === $form) {
             return $filename;
         }
 

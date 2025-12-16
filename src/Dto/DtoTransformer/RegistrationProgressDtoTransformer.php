@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Dto\DtoTransformer;
 
-use App\Entity\User;
-use App\Entity\RegistrationStep;
-use App\Service\ParameterService;
 use App\Dto\RegistrationProgressDto;
 use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\RegistrationFormEnum;
+use App\Entity\RegistrationStep;
+use App\Entity\User;
 use App\Repository\HistoryRepository;
 use App\Repository\LicenceRepository;
-use App\Entity\Enum\RegistrationFormEnum;
+use App\Service\ParameterService;
 use App\Service\ProjectDirService;
 
 class RegistrationProgressDtoTransformer
@@ -99,7 +99,7 @@ class RegistrationProgressDtoTransformer
     private function getOverviewTemplate(RegistrationFormEnum $form): ?string
     {
         $filename = sprintf('registration/form/overviews/%s.html.twig', $form->value);
-        if (file_exists($this->projectDir->path('templates',$filename))) {
+        if (file_exists($this->projectDir->path('templates', $filename))) {
             return $filename;
         }
 

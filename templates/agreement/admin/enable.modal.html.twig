@@ -1,6 +1,6 @@
 {% extends 'base_modal.html.twig' %}
 {% block form %}{% set form = form %}{% endblock %}
-{% set action = agreement.isDisabled ? 'activer' : 'désactiver' %}
+{% set action = agreement.enabled ? 'désactiver' : 'activer' %}
 {% block modal_title %}{{ action|capitalize }} l' autorisation {{ agreement.title }}{% endblock %}
 {% block body %}
     <p>Etes vous certain de vouloir {{ action }} l' autorisation {{ agreement.title }} ?</p>
