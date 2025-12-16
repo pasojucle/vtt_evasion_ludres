@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceOptionEnum;
+use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Licence;
 use App\Form\LicenceAgreementType;
-use Symfony\Component\Form\FormEvent;
-use App\Entity\Enum\LicenceOptionEnum;
-use Symfony\Component\Form\FormEvents;
-use App\Entity\Enum\LicenceCategoryEnum;
 use Symfony\Component\Form\AbstractType;
-use App\Entity\Enum\RegistrationFormEnum;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LicenceType extends AbstractType
 {

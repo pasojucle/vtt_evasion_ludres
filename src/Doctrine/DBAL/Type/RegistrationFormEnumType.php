@@ -6,7 +6,6 @@ namespace App\Doctrine\DBAL\Type;
 
 use App\Entity\Enum\RegistrationFormEnum;
 
-
 class RegistrationFormEnumType extends EnumType
 {
     protected function getEnum(): string

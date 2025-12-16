@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\UseCase\BikeRide;
 
-use App\Entity\User;
-use App\Entity\Session;
 use App\Entity\BikeRide;
+use App\Entity\Session;
+use App\Entity\User;
 
 class GetEmailMembers
 {

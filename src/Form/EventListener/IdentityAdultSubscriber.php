@@ -72,7 +72,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'attr' => ($disabled)
                     ? ['data-constraint' => '']
-                    : ['data-constraint' => 'app-UniqueMember',],
+                    : ['data-constraint' => 'app-UniqueMember', ],
                 'disabled' => $disabled,
             ])
             ->add('firstName', TextType::class, [
@@ -127,7 +127,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'data-extra-param-name' => 'isYearly',
                     'data-extra-value' => $identity->getUser()->getLastLicence()->getState()->isYearly() ? 1 : 0,
                     'data-alert-route' => 'registration_scholl_testing_disabled',
-                    'class'=> 'form-modifier',
+                    'class' => 'form-modifier',
                     'data-modifier' => 'categoryContainer'
                 ],
                 'row_attr' => [
@@ -229,7 +229,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
         $form
             ->add('email', EmailType::class, [
                 'label' => LicenceCategoryEnum::SCHOOL === $category
-                    ? '<p>Adresse mail (de l\'enfant)<br> Le mail de contact avec le club sera celui du parent</p>' 
+                    ? '<p>Adresse mail (de l\'enfant)<br> Le mail de contact avec le club sera celui du parent</p>'
                     : 'Adresse mail',
                 'label_html' => true,
                 'row_attr' => [
@@ -245,7 +245,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
             ])
             ->add('mobile', TextType::class, [
                 'label' => LicenceCategoryEnum::SCHOOL === $category
-                    ? 'Téléphone mobile (de l\'enfant)' 
+                    ? 'Téléphone mobile (de l\'enfant)'
                     : 'Téléphone mobile',
                 'row_attr' => [
                     'class' => 'form-group-inline',
@@ -296,7 +296,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 'required' => !$hidden,
             ])
         ;
-
     }
 
     private function haspreviousLicence(?User $user): bool

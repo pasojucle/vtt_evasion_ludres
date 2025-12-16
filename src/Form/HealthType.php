@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\DiseaseKind;
+use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Health;
 use App\Validator\Phone;
-use App\Entity\DiseaseKind;
 use Symfony\Component\Form\AbstractType;
-use App\Entity\Enum\RegistrationFormEnum;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class HealthType extends AbstractType
 {

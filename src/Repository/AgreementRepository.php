@@ -3,14 +3,14 @@
 namespace App\Repository;
 
 use App\Entity\Agreement;
+use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceMembershipEnum;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Andx;
 use Doctrine\ORM\Query\Parameter;
-use App\Entity\Enum\LicenceCategoryEnum;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Entity\Enum\LicenceMembershipEnum;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Agreement>

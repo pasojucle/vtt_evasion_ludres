@@ -141,7 +141,7 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                     ],
                 ])
                 ;
-            }
+        }
         $this->modifier($form, $otherAddress);
     }
 

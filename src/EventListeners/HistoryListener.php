@@ -81,7 +81,7 @@ class HistoryListener
         if (empty($changeSet)) {
             return;
         }
-        $user = match(true) {
+        $user = match (true) {
             $reflexionClass->hasMethod('getUserGardians') => $entity->getUserGardians()->first()->getUser(),
             $reflexionClass->hasMethod('getIdentities') => $entity->getIdentities()->first()->getUser(),
             $reflexionClass->hasMethod('getUser') => $entity->getUser(),

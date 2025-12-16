@@ -4,32 +4,32 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use ZipArchive;
+use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Enum\DisplayModeEnum;
+use App\Entity\Enum\RegistrationFormEnum;
+use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\ContentRepository;
+use App\Repository\MembershipFeeRepository;
+use App\Security\SelfAuthentication;
 use App\Service\MailerService;
 use App\Service\MessageService;
-use App\Entity\RegistrationStep;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
-use App\Security\SelfAuthentication;
-use App\Repository\ContentRepository;
-use App\Entity\Enum\RegistrationFormEnum;
-use App\UseCase\Registration\GetProgress;
-use App\Repository\MembershipFeeRepository;
 use App\UseCase\Registration\EditRegistration;
+use App\UseCase\Registration\GetProgress;
+use App\UseCase\Registration\GetRegistrationFile;
 use App\UseCase\Registration\GetStatusWarning;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\UseCase\Registration\GetRegistrationFile;
-use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Entity\Enum\DisplayModeEnum;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use ZipArchive;
 
 class RegistrationController extends AbstractController
 {

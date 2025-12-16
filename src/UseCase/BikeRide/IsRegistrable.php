@@ -9,7 +9,6 @@ use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Identity;
 use App\Entity\Level;
 use App\Entity\User;
-use App\Repository\IdentityRepository;
 use DateInterval;
 use DateTime;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -18,7 +17,6 @@ class IsRegistrable
 {
     public function __construct(
         private readonly Security $security,
-        private readonly IdentityRepository $identityRepository,
     ) {
     }
     

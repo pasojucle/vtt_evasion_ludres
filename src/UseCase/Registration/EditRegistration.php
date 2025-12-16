@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace App\UseCase\Registration;
 
-use DateTime;
-use App\Entity\User;
-use DateTimeImmutable;
-use App\Entity\Licence;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Dto\RegistrationProgressDto;
+use App\Entity\Enum\LicenceCategoryEnum;
+use App\Entity\Enum\LicenceStateEnum;
+use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\Identity;
+use App\Entity\Licence;
+use App\Entity\User;
+use App\Repository\UserRepository;
+use App\Security\SelfAuthentication;
+use App\Service\GardianService;
+use App\Service\LicenceService;
 use App\Service\MailerService;
+use App\Service\MessageService;
 use App\Service\StringService;
 use App\Service\UploadService;
-use App\Service\LicenceService;
-use App\Service\MessageService;
-use App\Repository\UserRepository;
-use App\Dto\RegistrationProgressDto;
-use App\Security\SelfAuthentication;
-use App\Entity\Enum\LicenceStateEnum;
-use App\Entity\Enum\LicenceCategoryEnum;
+use App\UseCase\Registration\GetRegistrationFile;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Enum\RegistrationFormEnum;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Service\GardianService;
-use App\UseCase\Registration\GetRegistrationFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EditRegistration
 {

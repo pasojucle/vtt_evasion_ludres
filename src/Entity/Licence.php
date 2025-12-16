@@ -320,7 +320,7 @@ class Licence
     {
         $licenceAgreementsByRegistrationForm = [];
         foreach ($this->licenceAgreements as $licenceAgreement) {
-            foreach($licenceAgreement->getAgreement()->getRegistrationSteps() as $registrationStep) {
+            foreach ($licenceAgreement->getAgreement()->getRegistrationSteps() as $registrationStep) {
                 if ($kind && $kind !== $licenceAgreement->getAgreement()->getKind()) {
                     continue;
                 }

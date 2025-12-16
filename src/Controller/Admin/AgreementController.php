@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\DtoTransformer\AgreementDtoTransformer;
 use App\Entity\Agreement;
 use App\Form\Admin\AgreementType;
-use App\Service\OrderByService;
 use App\Repository\AgreementRepository;
+use App\Service\OrderByService;
 use App\UseCase\Agreement\AddAgreement;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin', name: 'admin_agreement_')]
 class AgreementController extends AbstractController
@@ -24,16 +25,16 @@ class AgreementController extends AbstractController
         private readonly AgreementRepository $agreementRepository,
         private readonly OrderByService $orderByService,
         private readonly EntityManagerInterface $entityManager,
-    )
-    {
+    ) {
     }
 
     #[Route('/autorisations', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function list(): Response {
-
+    public function list(
+        AgreementDtoTransformer $agreementDtoTransformer,
+    ): Response {
         return $this->render('agreement/admin/list.html.twig', [
-            'agreements' => $this->agreementRepository->findAll(),
+            'agreements' => $agreementDtoTransformer->fromEntities($this->agreementRepository->findAll()),
         ]);
     }
 
@@ -47,7 +48,7 @@ class AgreementController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $addAgreement->execute($form, $request);
+            $addAgreement->execute($form);
 
             return $this->redirectToRoute('admin_agreement_list');
         }
@@ -116,5 +117,4 @@ class AgreementController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
 }

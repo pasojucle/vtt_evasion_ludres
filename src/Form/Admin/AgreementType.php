@@ -3,23 +3,23 @@
 namespace App\Form\Admin;
 
 use App\Entity\Agreement;
-use App\Form\Type\CkeditorType;
-use App\Entity\RegistrationStep;
-use Symfony\Component\Form\FormEvent;
 use App\Entity\Enum\AgreementKindEnum;
-use Symfony\Component\Form\FormEvents;
 use App\Entity\Enum\LicenceCategoryEnum;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
 use App\Entity\Enum\LicenceMembershipEnum;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Entity\RegistrationStep;
+use App\Form\Type\CkeditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints\Unique;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Unique;
 
 class AgreementType extends AbstractType
 {
@@ -91,7 +91,7 @@ class AgreementType extends AbstractType
                 ],
                 'block_prefix' => 'collection_check',
                 'required' => false,
-            ])                
+            ])
             ->add('save', SubmitType::class, [
                     'label' => 'Enregister',
                     'attr' => [
@@ -99,7 +99,7 @@ class AgreementType extends AbstractType
                     ],
                 ])
         ;
-        $formModifier = function (FormInterface $form, AgreementKindEnum $agreement) use ($options) {
+        $formModifier = function (FormInterface $form, AgreementKindEnum $agreement) {
             if (AgreementKindEnum::AUTHORIZATION === $agreement) {
                 $form->add('authorizationMessage', TextType::class, [
                     'label' => 'Message d\'autorisation',
@@ -140,10 +140,12 @@ class AgreementType extends AbstractType
             $formModifier($event->getForm(), $agreement->getKind());
         });
 
-        $builder->get('kind')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($formModifier) {
-                $kind = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $kind);
-            }
+        $builder->get('kind')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) use ($formModifier) {
+            $kind = $event->getForm()->getData();
+            $formModifier($event->getForm()->getParent(), $kind);
+        }
         );
     }
 
