@@ -43,7 +43,7 @@ class RegistrationProgressDtoTransformer
         $registrationProgressDto->season = $season;
 
         $registrationProgressDto->redirecToRoute = $this->validate($registrationProgressDto, $user);
-        
+
         return $registrationProgressDto;
     }
 
@@ -98,7 +98,7 @@ class RegistrationProgressDtoTransformer
 
     private function getOverviewTemplate(RegistrationFormEnum $form): ?string
     {
-        $filename = sprintf('registration/form/overviews/%s.html.twig', $form->value);
+        $filename = sprintf('registration/form/screen/%s.html.twig', $form->value);
         if (file_exists($this->projectDir->path('templates', $filename))) {
             return $filename;
         }

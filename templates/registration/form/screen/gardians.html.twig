@@ -1,22 +1,22 @@
 <h3>Responsable de l'enfant</h3>
 <ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.kinship.fullName|raw }} ({{ progress.user.kinship.type | trans  }})</span>
+        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.legalGardian.fullName|raw }} ({{ progress.user.legalGardian.kind | trans  }})</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.kinship.address.street|raw }}, {{ progress.user.kinship.address.postalCode|raw }} {{ progress.user.kinship.address.town|raw }}</span>
+        <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.legalGardian.address.street|raw }}, {{ progress.user.legalGardian.address.postalCode|raw }} {{ progress.user.legalGardian.address.town|raw }}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.kinship.email|raw }}</span>
+        <span class="col-md-4 col-sx-6"><b>Courriel : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.legalGardian.email|raw }}</span>
     </li>
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ progress.user.kinship.phone|raw }}</span>
+        <span class="col-md-4 col-sx-6"><b>Téléphone :</b></span><span class="col-md-8 col-sx-6">{{ progress.user.legalGardian.phone|raw }}</span>
     </li>
 </ul>
 <h3>Second contact</h3>
 <ul class="block background-ligth">
     <li class="row">
-        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.secondKinship.fullName|raw }} ({{ progress.user.secondKinship.type|trans}})</span>
+        <span class="col-md-4 col-sx-6"><b>Nom et prénom : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.secondKinship.fullName|raw }} ({{ progress.user.secondKinship.kind|trans}})</span>
     <li class="row">
         <span class="col-md-4 col-sx-6"><b>Adresse : </b></span><span class="col-md-8 col-sx-6">{{ progress.user.secondKinship.address.street|raw }}, {{ progress.user.secondKinship.address.postalCode|raw }} {{ progress.user.secondKinship.address.town|raw }}</span>
     </li>
