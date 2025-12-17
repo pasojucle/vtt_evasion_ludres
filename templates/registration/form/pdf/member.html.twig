@@ -34,7 +34,7 @@
     <tr>
         <td colspan="5" ></td>
     </tr>
-    {% if user.member.emergencyPhone is not null %}
+    {% if user.lastLicence.category == enum('App\\Entity\\Enum\\LicenceCategoryEnum').ADULT %}
         <tr>
             <td colspan="5"><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone|raw}}</td>
         </tr>
