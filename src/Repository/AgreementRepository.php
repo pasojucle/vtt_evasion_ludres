@@ -86,8 +86,8 @@ class AgreementRepository extends ServiceEntityRepository
 
     private function addEnabledCriteria(Andx &$andX, array &$parameters): void
     {
-        $andX->add((new Expr())->eq('a.enable', ':enable'));
-        $parameters[] = new Parameter('enable', true);
+        $andX->add((new Expr())->eq('a.enabled', ':enabled'));
+        $parameters[] = new Parameter('enabled', true);
     }
 
     public function findNexOrder(): int
