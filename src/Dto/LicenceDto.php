@@ -31,7 +31,7 @@ class LicenceDto
 
     public LicenceCategoryEnum $category = LicenceCategoryEnum::ADULT;
 
-    public array $state;
+    public array $state = ['value' => 'draft'];
 
     public ?bool $lock;
 
