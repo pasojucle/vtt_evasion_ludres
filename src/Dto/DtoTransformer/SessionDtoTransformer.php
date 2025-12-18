@@ -119,7 +119,7 @@ class SessionDtoTransformer
 
     private function getUserIsOnSiteToStr(bool $isPresent): string
     {
-        return ($isPresent) ? 'Présent' : 'Absent';
+        return ($isPresent) ? 'Présent' : '-';
     }
 
     private function getUserIsOnSiteToHtml(Session $session): string

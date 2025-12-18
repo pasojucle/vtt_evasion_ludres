@@ -176,7 +176,7 @@ class GetParticipations
             foreach ($bikeRide['sessions'] as $session) {
                 $participation = '-';
                 if ($session instanceof SessionDto) {
-                    $participation = $session->practice ?? $session->userIsOnSiteToStr;
+                    $participation = ($session->userIsOnSite) ? $session->practice : $session->userIsOnSiteToStr;
                 }
                 $row[] = $participation;
             }
