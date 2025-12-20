@@ -6,6 +6,9 @@ framework:
     handle_all_throwables: true
     annotations: false
 
+    property_info:
+        with_constructor_extractor: true
+
     # Note that the session will be started ONLY if you read or write from it.
     session:
         # ID of the service used for session storage
