@@ -2,13 +2,14 @@
 
 namespace App\Security\Voter;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Enum\PermissionEnum;
-use App\Entity\Skill;
 use App\Entity\User;
+use App\Entity\Skill;
+use App\Entity\Enum\PermissionEnum;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SkillVoter extends Voter
 {
@@ -31,7 +32,7 @@ class SkillVoter extends Voter
         return self::EDIT === $attribute && $subject instanceof Skill;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();

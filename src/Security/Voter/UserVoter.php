@@ -2,18 +2,19 @@
 
 namespace App\Security\Voter;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
-use App\Entity\Agreement;
-use App\Entity\Enum\PermissionEnum;
-use App\Entity\Health;
-use App\Entity\Identity;
-use App\Entity\Licence;
-use App\Entity\LicenceAgreement;
 use App\Entity\User;
+use App\Entity\Health;
+use App\Entity\Licence;
+use App\Entity\Identity;
+use App\Entity\Agreement;
+use App\Entity\LicenceAgreement;
+use App\Entity\Enum\PermissionEnum;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class UserVoter extends Voter
 {
@@ -42,7 +43,7 @@ class UserVoter extends Voter
         && ($subject instanceof User || $subject instanceof UserDto || $subject instanceof Licence || $subject instanceof Identity || $subject instanceof Health || $subject instanceof LicenceAgreement);
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
