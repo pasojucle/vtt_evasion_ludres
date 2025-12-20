@@ -7,6 +7,6 @@ services:
     # Uncomment any lines below to activate that Twig extension
     #Twig\Extensions\ArrayExtension: ~
     #Twig\Extensions\DateExtension: ~
-    Twig\Extensions\IntlExtension: ~
-    Twig\Extensions\MarkdownExtension: ~
+    #Twig\Extensions\IntlExtension: ~
+    #Twig\Extensions\MarkdownExtension: ~
     #Twig\Extensions\TextExtension: ~
