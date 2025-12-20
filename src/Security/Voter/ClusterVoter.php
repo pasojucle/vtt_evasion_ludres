@@ -2,17 +2,18 @@
 
 namespace App\Security\Voter;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Cluster;
-use App\Entity\Enum\PermissionEnum;
-use App\Entity\Session;
-use App\Entity\User;
-use App\Repository\SessionRepository;
 use DateTime;
+use App\Entity\User;
+use App\Entity\Cluster;
+use App\Entity\Session;
+use App\Entity\Enum\PermissionEnum;
+use App\Repository\SessionRepository;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ClusterVoter extends Voter
 {
@@ -36,7 +37,7 @@ class ClusterVoter extends Voter
         return $attribute === self::EDIT && $subject instanceof Cluster;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
