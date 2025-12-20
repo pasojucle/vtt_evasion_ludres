@@ -2,15 +2,16 @@
 
 namespace App\Security\Voter;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
-use App\Entity\Enum\PermissionEnum;
-use App\Entity\SlideshowDirectory;
-use App\Entity\SlideshowImage;
 use App\Entity\User;
+use App\Entity\SlideshowImage;
+use App\Entity\SlideshowDirectory;
+use App\Entity\Enum\PermissionEnum;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SlideShowVoter extends Voter
 {
@@ -35,7 +36,7 @@ class SlideShowVoter extends Voter
         return in_array($attribute, [self::EDIT, self::VIEW]) && ($subject instanceof SlideshowDirectory || $subject instanceof SlideshowImage);
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();

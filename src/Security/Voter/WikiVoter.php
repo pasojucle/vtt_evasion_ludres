@@ -2,11 +2,12 @@
 
 namespace App\Security\Voter;
 
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\User;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class WikiVoter extends Voter
 {
@@ -22,7 +23,7 @@ class WikiVoter extends Voter
         return $attribute === self::VIEW && !$subject;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
