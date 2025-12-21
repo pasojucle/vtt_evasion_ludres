@@ -24,7 +24,6 @@ class BikeRideControllerTest extends AbstractTestController
 {
     public function testAdminBikeRide()
     {
-        $this->init();
         $this->cleanDataBase();
         $this->testAdminSchedule();
         $bikeRideType = $this->testAdminAddBikeRide(2);
