@@ -13,7 +13,6 @@ class RegistrationController extends AbstractTestController
 {
     public function testRegistration()
     {
-        $this->init();
         $name = 'Roue';
         $firstName = 'Libre';
         $this->testAdultTestingRegistration($name, $firstName);
