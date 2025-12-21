@@ -16,8 +16,10 @@ abstract class AbstractTestController extends WebTestCase
     public KernelBrowser $client;
     public UserRepository $userRepository;
 
-    public function init()
+    protected function setUp(): void
     {
+        parent::setUp();
+        
         $this->client = static::createClient([], ['REMOTE_ADDR' => '11.11.11.11']);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
     }

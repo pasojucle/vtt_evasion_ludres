@@ -32,7 +32,7 @@ final class Version20221223145821 extends AbstractMigration
     
         $registrationStep = [
             'registrationStepGroup' => 7,
-            'form' => RegistrationFormEnum::HEALTH,
+            'form' => RegistrationFormEnum::HEALTH->value,
         ];
         $this->addSql('DELETE FROM `registration_step` WHERE registration_step_group_id = :registrationStepGroup AND form = :form', $registrationStep);
 
