@@ -338,7 +338,7 @@ class GetProgress
     {
         foreach ($this->user->getIdentities() as $identity) {
             if (IdentityKindEnum::MEMBER !== $identity->getKind()) {
-                if ($identity->isEmpty()) {
+                if (!$identity->isEmpty()) {
                     $address = $identity->getAddress();
                     if (null !== $address) {
                         $identity->setAddress(null);

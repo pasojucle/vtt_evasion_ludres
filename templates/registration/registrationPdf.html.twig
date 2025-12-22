@@ -18,8 +18,6 @@
             {% if registration_document_steps[key] is defined %}
                 {% include('registration/form/pdf/health.html.twig') %}
             {% endif %}
-            {% set key = constant('App\\Form\\UserType::FORM_LICENCE_AUTHORIZATIONS') %}
-
             {% if user.kinship %}
                 {% set key = constant('App\\Form\\UserType::FORM_KINSHIP') %}
                 {% if registration_document_steps[key] is defined %}
@@ -31,6 +29,7 @@
                 {% endif %}
                 <br>
             {% endif %}
+            {% set key = constant('App\\Form\\UserType::FORM_LICENCE_AUTHORIZATIONS') %}
             {% if registration_document_steps[key]is defined %}
                 {{ registration_document_steps[key]|raw }}
                 {% include('registration/form/pdf/licence_authorizations.html.twig') %}
