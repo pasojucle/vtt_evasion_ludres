@@ -4,28 +4,43 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\UserDto;
 use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ParameterService
 {
+    private array $arrayParameterCache = [];
+
     public function __construct(
         private ParameterRepository $parameterRepository,
         private MessageService $messageService,
         private ReplaceKeywordsService $replaceKeywordsService,
+        private RequestStack $requestStack,
     ) {
     }
 
     public function getParameterByName(string $name): string|bool|array|int|null
     {
-        $parameter = $this->parameterRepository->findOneByName($name);
+        $request = $this->requestStack->getCurrentRequest();
+        $session = ($request && $request->hasSession()) ? $request->getSession() : null;
 
-        if ($parameter) {
-            return $this->replaceKeywordsService->replaceCurrentSaison($parameter->getValue());
+        if ($session && $session->has($name)) {
+            return $session->get($name);
         }
 
-        return null;
+        $parameter = $this->parameterRepository->findOneByName($name);
+        if (!$parameter) {
+            return null;
+        }
+
+        $value = $parameter->getValue();
+
+        if ($session) {
+            $session->set($name, $value);
+        }
+
+        return $value;
     }
 
     public function getParametersByParameterGroupName(string $name): array
