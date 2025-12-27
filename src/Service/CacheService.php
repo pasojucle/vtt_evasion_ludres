@@ -18,7 +18,7 @@ class CacheService
 
     public function getCache(): FilesystemAdapter
     {
-        return new FilesystemAdapter($databaseName = $this->entityManager->getConnection()->getParams()['dbname']);
+        return new FilesystemAdapter($this->entityManager->getConnection()->getParams()['dbname']);
     }
     
     public function getCacheIndex(Cluster $entity): string
