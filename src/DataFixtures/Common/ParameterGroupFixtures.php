@@ -32,18 +32,18 @@ class ParameterGroupFixtures extends AbstractFixture implements FixtureGroupInte
     public function load(ObjectManager $manager): void
     {
         $parameterGroups = [
-            self::PARAMETER_GROUP_CONTENT => ["CONTENT","Contenu","NONE"],
-            self::PARAMETER_GROUP_REGISTRATION => ["REGISTRATION","Inscription","NONE"],
-            self::PARAMETER_GROUP_USER => ["USER","Adhérent","NONE"],
-            self::PARAMETER_GROUP_TOOLS => ["TOOLS","Journal des erreurs","NONE"],
-            self::PARAMETER_GROUP_MAINTENANCE=> ["MAINTENANCE","Maintenance","ROLE_SUPER_ADMIN"],
-            self::PARAMETER_GROUP_SECOND_HAND => ["SECOND_HAND","Occasion","NONE"],
-            self::PARAMETER_GROUP_BIKE_RIDE => ["BIKE_RIDE","Rando","NONE"],
-            self::PARAMETER_GROUP_ORDER => ["ORDER","Commande","NONE"],
-            self::PARAMETER_GROUP_MODAL => ["MODAL","Pop'up","NONE"],
-            self::PARAMETER_GROUP_SLIDESHOW => ["SLIDESHOW","Diaporama","NONE"],
-            self::PARAMETER_GROUP_BIKE_RIDE_TYPE => ["BIKE_RIDE_TYPE","Type d'événement","NONE"],
-            self::PARAMETER_GROUP_DOCUMENTATION => ["DOCUMENTATION","Documentation","NONE"]
+            self::PARAMETER_GROUP_CONTENT => ['CONTENT','Contenu','NONE'],
+            self::PARAMETER_GROUP_REGISTRATION => ['REGISTRATION','Inscription','NONE'],
+            self::PARAMETER_GROUP_USER => ['USER','Adhérent','NONE'],
+            self::PARAMETER_GROUP_TOOLS => ['TOOLS','Journal des erreurs','NONE'],
+            self::PARAMETER_GROUP_MAINTENANCE=> ['MAINTENANCE','Maintenance','ROLE_SUPER_ADMIN'],
+            self::PARAMETER_GROUP_SECOND_HAND => ['SECOND_HAND','Occasion','NONE'],
+            self::PARAMETER_GROUP_BIKE_RIDE => ['BIKE_RIDE','Rando','NONE'],
+            self::PARAMETER_GROUP_ORDER => ['ORDER','Commande','NONE'],
+            self::PARAMETER_GROUP_MODAL => ['MODAL','Pop\'up','NONE'],
+            self::PARAMETER_GROUP_SLIDESHOW => ['SLIDESHOW','Diaporama','NONE'],
+            self::PARAMETER_GROUP_BIKE_RIDE_TYPE => ['BIKE_RIDE_TYPE','Type d\'événement','NONE'],
+            self::PARAMETER_GROUP_DOCUMENTATION => ['DOCUMENTATION','Documentation','NONE']
         ];
 
         foreach ($parameterGroups as $ref => [$name, $label, $role]) {

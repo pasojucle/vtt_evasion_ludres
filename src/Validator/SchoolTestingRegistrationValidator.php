@@ -41,7 +41,6 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
             $birthDate = DateTime::createFromFormat('Y-m-d', $value['birthDate']);
         }
 
-        dump($this->context);
         if (!$birthDate) {
             /** @var Identity $identity */
             $identity = $this->context->getObject()->getParent()?->getData();

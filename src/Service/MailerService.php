@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
-use App\Entity\RegistrationStep;
 use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -18,21 +17,27 @@ use Symfony\Component\Mime\Part\File;
 
 class MailerService
 {
-    private Address $clubEmail;
-    private Address $webmasterEmail;
-
     public function __construct(
         private MailerInterface $mailer,
         private ReplaceKeywordsService $replaceKeywords,
         private ParameterService $parameterService,
         private ParameterBagInterface $parameterBag,
     ) {
-        $this->clubEmail = new Address($this->parameterBag->get('club_email'));
-        $this->webmasterEmail = new Address($this->parameterBag->get('webmaster_email'));
+
+    }
+
+    private function getClubAndWebmasterEmails(): array
+    {
+        return [
+            new Address($this->parameterBag->get('club_email')),
+            new Address($this->parameterBag->get('webmaster_email'))
+        ];
     }
 
     public function sendMailToClub(array $data): bool
     {
+        [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
+
         try {
             $replyTo = new Address($data['email']);
         } catch (Exception) {
@@ -40,7 +45,7 @@ class MailerService
         }
         
         $email = (new TemplatedEmail())
-            ->to($this->clubEmail)
+            ->to($clubEmail)
             ->replyTo($replyTo)
             ->subject($data['subject'])
             ->htmlTemplate('email/toClub.html.twig')
@@ -50,7 +55,7 @@ class MailerService
         ;
 
         if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED') || array_key_exists('error', $data)) {
-            $email->addBcc($this->webmasterEmail);
+            $email->addBcc($webmasterEmail);
         }
 
         try {
@@ -65,8 +70,10 @@ class MailerService
     public function sendMailToMember(array|UserDto $user, string $subject, string $content, ?array $attachements = null, ?array $additionalParams = []): array
     {
         list($userEmail, $fullName) = $this->getUserData($user);
+        [$clubEmail, $webmasterEmail] = $this->getClubAndWebmasterEmails();
+
         if (true === $this->parameterService->getParameterByName('TEST_MODE')) {
-            $userEmail = $this->clubEmail->getAddress();
+            $userEmail = $clubEmail->getAddress();
         }
 
         if ($user instanceof UserDto) {
@@ -84,7 +91,7 @@ class MailerService
 
         $email = (new TemplatedEmail())
             ->to($email)
-            ->replyTo($this->clubEmail)
+            ->replyTo($clubEmail)
             ->subject($subject)
             ->htmlTemplate('email/toMember.html.twig')
             ->context([
@@ -100,7 +107,7 @@ class MailerService
         }
 
         if ($this->parameterService->getParameterByName('DEDUPLICATION_MAILER_ENABLED')) {
-            $email->addBcc(new Address('pasojucle@gmail.com'));
+            $email->addBcc($webmasterEmail);
         }
 
         try {

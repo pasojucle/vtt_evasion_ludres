@@ -9,7 +9,6 @@ use App\Dto\IdentityDto;
 use App\Dto\LicenceDto;
 use App\Dto\UserDto;
 use App\Entity\Enum\DisplayModeEnum;
-use App\Entity\RegistrationStep;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
