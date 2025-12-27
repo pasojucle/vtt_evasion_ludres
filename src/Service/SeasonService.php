@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Licence;
+use App\Repository\ParameterRepository;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -12,18 +13,30 @@ use DateTimeImmutable;
 class SeasonService
 {
     public const MIN_SEASON_TO_TAKE_PART = 'minSeasonToTakepart';
-    private ?array $seasonStartAt;
 
-    public function __construct(private ParameterService $parameterService)
+    public function __construct(
+        private ParameterService $parameterService,
+        private ParameterRepository $parameterRepository,
+    )
     {
-        $this->seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT');
+
+    }
+
+    private function getSeasonStartAt(): array
+    {
+        if (!$seasonStartAt = $this->parameterService->getParameterByName('SEASON_START_AT')) {
+            throw new \LogicException('Parameter SEASON_START_AT is missing or invalid.');
+        }
+
+        return $seasonStartAt;
     }
 
     public function getCurrentSeason(): int
     {
         $today = new DateTime();
+        $seasonStartAt = $this->getSeasonStartAt();
 
-        return ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
+        return ($seasonStartAt['month'] <= (int) $today->format('m') && $seasonStartAt['day'] <= (int) $today->format('d'))
             ? (int) $today->format('Y') + 1
             : (int) $today->format('Y');
     }
@@ -41,8 +54,9 @@ class SeasonService
     
     public function getSeasonPeriod(int $season): array
     {
-        $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
-        $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $this->seasonStartAt['month'], $this->seasonStartAt['day']]));
+        $seasonStartAt = $this->getSeasonStartAt();
+        $startAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season - 1, $seasonStartAt['month'], $seasonStartAt['day']]));
+        $endAt = DateTimeImmutable::createFromFormat('Y-m-d', implode('-', [$season, $seasonStartAt['month'], $seasonStartAt['day']]));
 
         $interval = [
             'startAt' => $startAt->setTime(0, 0, 0, ),
@@ -71,14 +85,14 @@ class SeasonService
     {
         $today = new DateTime();
         $currentSeason = $this->getCurrentSeason();
-
+        $seasonStartAt = $this->getSeasonStartAt();
         $seasonsStatus = [];
 
-        $seasonsStatus[Licence::FILTER_NONE] = ((int) $today->format('m') <= $this->seasonStartAt['month'] && (int) $today->format('d') <= $this->seasonStartAt['day'])
+        $seasonsStatus[Licence::FILTER_NONE] = ((int) $today->format('m') <= $seasonStartAt['month'] && (int) $today->format('d') <= $seasonStartAt['day'])
             ? $currentSeason - 2
             : $currentSeason - 1;
 
-        $seasonsStatus[Licence::FILTER_WAITING_RENEW] = ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
+        $seasonsStatus[Licence::FILTER_WAITING_RENEW] = ($seasonStartAt['month'] <= (int) $today->format('m') && $seasonStartAt['day'] <= (int) $today->format('d'))
             ? $currentSeason - 1
             : 1970;
 
@@ -89,8 +103,8 @@ class SeasonService
     {
         $today = new DateTime();
         $currentSeason = $this->getCurrentSeason();
-
-        return ($this->seasonStartAt['month'] <= (int) $today->format('m') && $this->seasonStartAt['day'] <= (int) $today->format('d'))
+        $seasonStartAt = $this->getSeasonStartAt();
+        return ($seasonStartAt['month'] <= (int) $today->format('m') && $seasonStartAt['day'] <= (int) $today->format('d'))
             ? $currentSeason - 1
             : 1970;
     }
