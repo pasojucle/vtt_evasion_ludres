@@ -24,7 +24,6 @@ class BikeRideControllerTest extends AbstractTestController
 {
     public function testAdminBikeRide()
     {
-        // $this->cleanDataBase();
         // $this->testAdminSchedule();
         // $bikeRideType = $this->testAdminAddBikeRide(2);
         // $bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
@@ -37,19 +36,7 @@ class BikeRideControllerTest extends AbstractTestController
         // $this->testBikeRideUser($user);
     }
 
-    private function cleanDataBase():void
-    {
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $connection = $entityManager->getConnection();
-        $connection->executeQuery("SET FOREIGN_KEY_CHECKS=0;");
-        foreach(['session', 'cluster', 'bike_ride'] as $table) {
-            $query = sprintf("TRUNCATE TABLE `%s`", $table);
-            $connection->executeQuery($query);
-        }
-        $connection->executeQuery("SET FOREIGN_KEY_CHECKS=1;");
-    }
-
-    private function testAdminSchedule(): void
+    private function validateAdminSchedule(): void
     {
         $this->loginAdmin();
         $this->assertResponseRedirects();
