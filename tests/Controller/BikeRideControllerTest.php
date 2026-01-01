@@ -24,7 +24,7 @@ class BikeRideControllerTest extends AbstractTestController
 {
     public function testAdminBikeRide()
     {
-        // $this->testAdminSchedule();
+        $this->validateAdminSchedule();
         // $bikeRideType = $this->testAdminAddBikeRide(2);
         // $bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
         // $bikeRide = $bikeRideRepository->find(1);
