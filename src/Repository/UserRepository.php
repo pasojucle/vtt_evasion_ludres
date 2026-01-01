@@ -372,6 +372,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     $qb->expr()->eq('userLicence.state', ':stateSubmitted'),
                     $qb->expr()->eq('userLicence.state', ':stateValidated'),
                     $qb->expr()->eq('userLicence.state', ':stateSentToFederation'),
+                    $qb->expr()->eq('userLicence.state', ':stateExpired'),
                 )
             );
 
@@ -389,6 +390,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('stateSubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
             ->setParameter('stateValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED)
             ->setParameter('stateSentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED)
+            ->setParameter('stateExpired', LicenceStateEnum::EXPIRED)
             ->orderBy('i.name', 'ASC')
         ;
     }
@@ -808,6 +810,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->eq('lls.state', ':yearlySubmitted'),
                 (new Expr())->eq('lls.state', ':yearlyValidated'),
                 (new Expr())->eq('lls.state', ':yearlySentToFederation'),
+                (new Expr())->eq('lls.state', ':expired'),
             )
         );
 
@@ -825,6 +828,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
                 new Parameter('yearlyValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED),
                 new Parameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
+                new Parameter('expired', LicenceStateEnum::EXPIRED),
+
             ]))
             ->groupBy('u.id')
             ->getQuery()
