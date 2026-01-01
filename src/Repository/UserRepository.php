@@ -254,19 +254,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere(
                 $qb->expr()->eq('li.season', ':season'),
                 $qb->expr()->orX(
-                    $qb->expr()->eq('li.state', ':trialSubmited'),
-                    $qb->expr()->eq('li.state', ':trialValid'),
-                    $qb->expr()->eq('li.state', ':yearlySubmitted'),
-                    $qb->expr()->eq('li.state', ':yearlyValid'),
-                    $qb->expr()->eq('li.state', ':yearlySentToFederation'),
+                    $qb->expr()->neq('li.state', ':trialPending'),
+                    $qb->expr()->neq('li.state', ':yearlyPending'),
                 )
             )
             ->setParameter('season', $season)
-            ->setParameter('trialSubmited', LicenceStateEnum::TRIAL_FILE_SUBMITTED)
-            ->setParameter('trialValid', LicenceStateEnum::TRIAL_FILE_RECEIVED)
-            ->setParameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED)
-            ->setParameter('yearlyValid', LicenceStateEnum::YEARLY_FILE_RECEIVED)
-            ->setParameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED)
+            ->setParameter('trialPending', LicenceStateEnum::TRIAL_FILE_PENDING)
+            ->setParameter('yearlyPending', LicenceStateEnum::YEARLY_FILE_PENDING)
         ;
     }
 
@@ -311,10 +305,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $qb->expr()->orX(
                     $qb->expr()->eq('li.state', ':yearlyValid'),
                     $qb->expr()->eq('li.state', ':yearlySentToFederation'),
+                    $qb->expr()->eq('li.state', ':expired'),
                 )
             )
             ->setParameter('yearlyValid', LicenceStateEnum::YEARLY_FILE_RECEIVED)
             ->setParameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED)
+            ->setParameter('expired', LicenceStateEnum::EXPIRED)
         ;
     }
 

@@ -45,6 +45,7 @@ enum LicenceStateEnum: string implements TranslatableInterface
             self::YEARLY_FILE_SUBMITTED,
             self::YEARLY_FILE_RECEIVED,
             self::YEARLY_FILE_REGISTRED,
+            self::EXPIRED,
         ];
         
         return in_array($this, $yearlyStates);
