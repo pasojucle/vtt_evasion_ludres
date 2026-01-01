@@ -372,7 +372,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     $qb->expr()->eq('userLicence.state', ':stateSubmitted'),
                     $qb->expr()->eq('userLicence.state', ':stateValidated'),
                     $qb->expr()->eq('userLicence.state', ':stateSentToFederation'),
-                    $qb->expr()->eq('userLicence.state', ':stateExpired'),
                 )
             );
 
@@ -381,6 +380,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $qb->expr()->orX(
                     $qb->expr()->eq('li.state', ':stateValidated'),
                     $qb->expr()->eq('li.state', ':stateSentToFederation'),
+                    $qb->expr()->eq('li.state', ':stateExpired'),
                 ),
                 $qb->expr()->eq('li.season', ':previousSeason'),
                 $qb->expr()->notIn('u', $usersWhithCurrentSeasonLicence->getDQL()),
