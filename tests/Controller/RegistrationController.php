@@ -11,7 +11,7 @@ use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 class RegistrationController extends AbstractTestController
 {
-    public function testRegistration()
+    public function testRegistration(): void
     {
         $name = 'Roue';
         $firstName = 'Libre';

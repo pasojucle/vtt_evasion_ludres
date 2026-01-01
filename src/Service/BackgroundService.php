@@ -13,7 +13,7 @@ class BackgroundService
     {
     }
 
-    public function getDefaults(): Collection
+    public function getDefaults(): ?Collection
     {
         return $this->contentRepository->findOneByRoute('default')?->getBackgrounds();
     }
