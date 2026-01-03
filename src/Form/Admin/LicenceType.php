@@ -6,6 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
+use App\Service\SeasonService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,11 +19,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LicenceType extends AbstractType
 {
+    public function __construct(
+        private readonly SeasonService $seasonService,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $licence = $event->getData();
             $form = $event->getForm();
+            $currentSeason = $this->seasonService->getCurrentSeason();
+
             if ($licence === $options['season_licence']) {
                 $notAllowedState = LicenceStateEnum::DRAFT;
                 $form
@@ -59,6 +67,14 @@ class LicenceType extends AbstractType
                         'row_attr' => [
                             'class' => 'form-group-inline',
                         ],
+                    ])
+                    ->add('currentSeasonForm', CheckboxType::class, [
+                        'block_prefix' => 'switch',
+                        'attr' => [
+                            'data-switch-on' => sprintf('Assurance %s validée', $currentSeason),
+                            'data-switch-off' => sprintf('Assurance %s manquante', $currentSeason),
+                        ],
+                        'required' => false,
                     ])
                     ;
             }
