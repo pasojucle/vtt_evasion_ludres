@@ -37,6 +37,7 @@ class LicenceRepository extends ServiceEntityRepository
                     (new Expr())->orX(
                         (new Expr())->eq('li.state', ':stateValided'),
                         (new Expr())->eq('li.state', ':stateFederation'),
+                        (new Expr())->eq('li.state', ':stateExpired'),
                     ),
                     (new Expr())->eq('li.season', ':lastSeason'),
                 )
@@ -44,6 +45,7 @@ class LicenceRepository extends ServiceEntityRepository
                     new Parameter('user', $user),
                     new Parameter('stateValided', LicenceStateEnum::YEARLY_FILE_RECEIVED),
                     new Parameter('stateFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
+                    new Parameter('stateExpired', LicenceStateEnum::EXPIRED),
                     new Parameter('lastSeason', $this->request->getSession()->get('currentSeason') - 1)
                 ]))
                 ->getQuery()

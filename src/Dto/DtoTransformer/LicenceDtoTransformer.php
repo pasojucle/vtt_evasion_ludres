@@ -170,9 +170,9 @@ class LicenceDtoTransformer
         if ($licence->getState()->isYearly()) {
             /** @var User $user */
             $user = $licence->getUser();
-            $isNewMember = $this->isNewMember($user, $currentSeason);
+            $isRenovating = $this->isRenovating($user, $currentSeason);
             $membershipFee = (null !== $licence->getCoverage() && $licence->getState()->isYearly())
-                ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), $isNewMember, $licence->getFamilyMember())
+                ? $this->membershipFeeAmountRepository->findOneByLicence($licence->getCoverage(), !$isRenovating, $licence->getFamilyMember())
                 : null;
             if (null !== $membershipFee) {
                 $membershipFeeAmount = $membershipFee->getAmount();
@@ -208,11 +208,13 @@ class LicenceDtoTransformer
         ];
     }
 
-    private function isNewMember(User $user, $currentSeason): bool
+    private function isRenovating(User $user, $currentSeason): bool
     {
-        $previousLicence = $this->licenceRepository->findOneByUserAndLastSeason($user);
+        $lastLicence = $this->licenceRepository->findOneByUserAndLastSeason($user);
 
-        return !$previousLicence || $currentSeason - 1 !== $previousLicence->getSeason() || !$previousLicence->getState()->isYearly() || Licence::FILTER_VALID > $previousLicence->getState();
+        return  $lastLicence
+            && ($currentSeason - 1) === $lastLicence->getSeason()
+            && $lastLicence->getState()->isYearly();
     }
 
     private function getState(LicenceStateEnum $state): array

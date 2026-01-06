@@ -589,6 +589,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             if (isset($filters['user'])) {
                 $this->addCriteriaByUser($qb, $filters['user']);
             }
+            if (isset($filters['query'])) {
+                $this->addCriteriaByName($qb, $filters['query']);
+            }
             if (isset($filters['levels'])) {
                 $this->addCriteriaByLevel($qb, $filters['levels']);
             }
@@ -857,6 +860,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 (new Expr())->eq('lls.state', ':yearlySubmitted'),
                 (new Expr())->eq('lls.state', ':yearlyValidated'),
                 (new Expr())->eq('lls.state', ':yearlySentToFederation'),
+                (new Expr())->eq('lls.state', ':expired'),
             )
         );
 
@@ -874,6 +878,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 new Parameter('yearlySubmitted', LicenceStateEnum::YEARLY_FILE_SUBMITTED),
                 new Parameter('yearlyValidated', LicenceStateEnum::YEARLY_FILE_RECEIVED),
                 new Parameter('yearlySentToFederation', LicenceStateEnum::YEARLY_FILE_REGISTRED),
+                new Parameter('expired', LicenceStateEnum::EXPIRED),
             ]))
             ->groupBy('u.id')
             ->getQuery()
