@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Licence;
-use App\Repository\ParameterRepository;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -16,7 +15,6 @@ class SeasonService
 
     public function __construct(
         private ParameterService $parameterService,
-        private ParameterRepository $parameterRepository,
     )
     {
 
@@ -39,6 +37,11 @@ class SeasonService
         return ($seasonStartAt['month'] <= (int) $today->format('m') && $seasonStartAt['day'] <= (int) $today->format('d'))
             ? (int) $today->format('Y') + 1
             : (int) $today->format('Y');
+    }
+
+    public function getPreviousSeason(): int
+    {
+        return $this->getCurrentSeason() - 1;
     }
 
     public function getMinSeasonToTakePart(): int
