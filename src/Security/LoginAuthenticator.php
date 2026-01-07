@@ -93,6 +93,8 @@ class LoginAuthenticator extends AbstractAuthenticator
             $route = 'admin_home';
         }
 
+        dump($route);
+
         $response = new RedirectResponse($this->urlGenerator->generate($route, $params));
 
         $login = $request->request->all('login');
