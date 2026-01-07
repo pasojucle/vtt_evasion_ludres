@@ -25,7 +25,7 @@ class LicenceController extends AbstractController
         $query = $request->query->get('query');
         $results = [];
         $licence = ($query)
-            ? $licenceRepository->findOneLicenceByNumerAndsSeason($query, $currentSeason)
+            ? $licenceRepository->findOneLicenceByNumerAndSeason($query, $currentSeason)
             : null;
         if ($licence) {
             $results[] = [

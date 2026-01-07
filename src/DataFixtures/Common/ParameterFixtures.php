@@ -14,7 +14,7 @@ class ParameterFixtures extends AbstractFixture implements FixtureGroupInterface
 {
     public const PARAMETER_MAINTENANCE_MODE = 'parameter_maintenance_mode';
     public const SPARAMETER_CHOOL_TESTING_REGISTRATION = 'sparameter_chool_testing_registration';
-    public const PARAMETER_ERROR_USER_AGENT_IGNORE = 'sparameter_chool_testing_registration';
+    public const PARAMETER_ERROR_USER_AGENT_IGNORE = 'sparameter_error_user_agent_ignore';
     public const PARAMETER_ERROR_URL_IGNORE = 'parameter_error_url_ignore';
     public const PARAMETER_TEST_MODE = 'parameter_test_mode';
     public const PARAMETER_SEASON_START_AT = 'parameter_season_start_at';

@@ -10,8 +10,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ParameterService
 {
-    private array $arrayParameterCache = [];
-
     public function __construct(
         private ParameterRepository $parameterRepository,
         private MessageService $messageService,
