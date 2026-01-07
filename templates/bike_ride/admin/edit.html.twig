@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set title = (bikeRide is null) ? 'Ajouter une sortie' : 'Modifier une sortie' %}
+{% set title = (bikeRide.id is null) ? 'Ajouter une sortie' : 'Modifier une sortie' %}
 
 {% block title %}{{ title }}{% endblock %}
 

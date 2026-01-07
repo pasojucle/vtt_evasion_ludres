@@ -9,7 +9,7 @@ use DateTimeImmutable;
 
 class BikeRideDto
 {
-    public ?int $id;
+    public ?int $id = null;
 
     public ?string $type;
 
