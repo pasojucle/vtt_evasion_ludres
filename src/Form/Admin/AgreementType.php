@@ -143,9 +143,9 @@ class AgreementType extends AbstractType
         $builder->get('kind')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) use ($formModifier) {
-            $kind = $event->getForm()->getData();
-            $formModifier($event->getForm()->getParent(), $kind);
-        }
+                $kind = $event->getForm()->getData();
+                $formModifier($event->getForm()->getParent(), $kind);
+            }
         );
     }
 

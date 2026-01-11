@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use App\Entity\User;
 use App\Entity\Level;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class UserAdminFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {

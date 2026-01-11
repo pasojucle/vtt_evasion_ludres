@@ -2,19 +2,19 @@
 
 namespace App\Security\Voter;
 
-use DateTime;
-use App\Entity\User;
-use App\Entity\Session;
-use App\Entity\Summary;
+use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Enum\PermissionEnum;
+use App\Entity\Session;
+use App\Entity\Summary;
+use App\Entity\User;
 use App\Repository\SessionRepository;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use DateTime;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authorization\Voter\Vote;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SummaryVoter extends Voter
 {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\DataFixtures\Common;
 
 use App\Entity\ParameterGroup;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class ParameterGroupFixtures extends AbstractFixture implements FixtureGroupInterface
 {
@@ -16,12 +16,12 @@ class ParameterGroupFixtures extends AbstractFixture implements FixtureGroupInte
     public const PARAMETER_GROUP_TOOLS = 'parameter_group_tools';
     public const PARAMETER_GROUP_MAINTENANCE = 'parameter_group_maintenance';
     public const PARAMETER_GROUP_SECOND_HAND = 'parameter_group_second_hand';
-    public const PARAMETER_GROUP_BIKE_RIDE= 'parameter_group_bike_ride';
+    public const PARAMETER_GROUP_BIKE_RIDE = 'parameter_group_bike_ride';
     public const PARAMETER_GROUP_ORDER = 'parameter_group_order';
     public const PARAMETER_GROUP_MODAL = 'parameter_group_modal';
     public const PARAMETER_GROUP_SLIDESHOW = 'parameter_group_slideshow';
     public const PARAMETER_GROUP_BIKE_RIDE_TYPE = 'parameter_group_bike_ride_type';
-    public const PARAMETER_GROUP_DOCUMENTATION= 'parameter_group_documentation';
+    public const PARAMETER_GROUP_DOCUMENTATION = 'parameter_group_documentation';
 
 
     public static function getGroups(): array
@@ -32,18 +32,18 @@ class ParameterGroupFixtures extends AbstractFixture implements FixtureGroupInte
     public function load(ObjectManager $manager): void
     {
         $parameterGroups = [
-            self::PARAMETER_GROUP_CONTENT => ['CONTENT','Contenu','NONE'],
-            self::PARAMETER_GROUP_REGISTRATION => ['REGISTRATION','Inscription','NONE'],
-            self::PARAMETER_GROUP_USER => ['USER','Adhérent','NONE'],
-            self::PARAMETER_GROUP_TOOLS => ['TOOLS','Journal des erreurs','NONE'],
-            self::PARAMETER_GROUP_MAINTENANCE=> ['MAINTENANCE','Maintenance','ROLE_SUPER_ADMIN'],
-            self::PARAMETER_GROUP_SECOND_HAND => ['SECOND_HAND','Occasion','NONE'],
-            self::PARAMETER_GROUP_BIKE_RIDE => ['BIKE_RIDE','Rando','NONE'],
-            self::PARAMETER_GROUP_ORDER => ['ORDER','Commande','NONE'],
-            self::PARAMETER_GROUP_MODAL => ['MODAL','Pop\'up','NONE'],
-            self::PARAMETER_GROUP_SLIDESHOW => ['SLIDESHOW','Diaporama','NONE'],
-            self::PARAMETER_GROUP_BIKE_RIDE_TYPE => ['BIKE_RIDE_TYPE','Type d\'événement','NONE'],
-            self::PARAMETER_GROUP_DOCUMENTATION => ['DOCUMENTATION','Documentation','NONE']
+            self::PARAMETER_GROUP_CONTENT => ['CONTENT', 'Contenu', 'NONE'],
+            self::PARAMETER_GROUP_REGISTRATION => ['REGISTRATION', 'Inscription', 'NONE'],
+            self::PARAMETER_GROUP_USER => ['USER', 'Adhérent', 'NONE'],
+            self::PARAMETER_GROUP_TOOLS => ['TOOLS', 'Journal des erreurs', 'NONE'],
+            self::PARAMETER_GROUP_MAINTENANCE => ['MAINTENANCE', 'Maintenance', 'ROLE_SUPER_ADMIN'],
+            self::PARAMETER_GROUP_SECOND_HAND => ['SECOND_HAND', 'Occasion', 'NONE'],
+            self::PARAMETER_GROUP_BIKE_RIDE => ['BIKE_RIDE', 'Rando', 'NONE'],
+            self::PARAMETER_GROUP_ORDER => ['ORDER', 'Commande', 'NONE'],
+            self::PARAMETER_GROUP_MODAL => ['MODAL', 'Pop\'up', 'NONE'],
+            self::PARAMETER_GROUP_SLIDESHOW => ['SLIDESHOW', 'Diaporama', 'NONE'],
+            self::PARAMETER_GROUP_BIKE_RIDE_TYPE => ['BIKE_RIDE_TYPE', 'Type d\'événement', 'NONE'],
+            self::PARAMETER_GROUP_DOCUMENTATION => ['DOCUMENTATION', 'Documentation', 'NONE']
         ];
 
         foreach ($parameterGroups as $ref => [$name, $label, $role]) {
