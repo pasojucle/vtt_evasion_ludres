@@ -15,9 +15,7 @@ class SeasonService
 
     public function __construct(
         private ParameterService $parameterService,
-    )
-    {
-
+    ) {
     }
 
     private function getSeasonStartAt(): array

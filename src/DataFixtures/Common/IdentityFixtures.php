@@ -8,9 +8,9 @@ use App\Entity\Commune;
 use App\Entity\Identity;
 use App\Entity\User;
 use DateTime;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class IdentityFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
