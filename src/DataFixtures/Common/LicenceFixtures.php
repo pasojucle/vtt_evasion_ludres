@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use DateTime;
-use App\Entity\User;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceStateEnum;
 use App\Entity\Licence;
+use App\Entity\User;
 use App\Service\SeasonService;
-use Doctrine\Persistence\ObjectManager;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class LicenceFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
@@ -20,8 +20,7 @@ class LicenceFixtures extends AbstractFixture implements FixtureGroupInterface, 
 
     public function __construct(
         private SeasonService $seasonService,
-    )
-    {
+    ) {
     }
 
     public static function getGroups(): array

@@ -7,6 +7,7 @@ namespace App\Tests\Controller;
 use DOMDocument;
 use App\Entity\User;
 use App\Repository\BikeRideRepository;
+use App\Repository\ClusterRepository;
 use App\Service\SeasonService;
 use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
@@ -30,6 +31,7 @@ abstract class AbstractTestController extends WebTestCase
     public SeasonService $seasonService;
     public LevelRepository $levelRepository;
     public BikeRideRepository $bikeRideRepository;
+    public ClusterRepository $clusterRepository;
 
     protected function setUp(): void
     {
@@ -45,6 +47,7 @@ abstract class AbstractTestController extends WebTestCase
         $this->seasonService = static::getContainer()->get(SeasonService::class);
         $this->levelRepository = static::getContainer()->get(LevelRepository::class);
         $this->bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
+        $this->clusterRepository = static::getContainer()->get(ClusterRepository::class);
     }
     
     public function addAutocompleteField(Form &$form, string $name): void
@@ -75,5 +78,12 @@ abstract class AbstractTestController extends WebTestCase
     protected function getEntityManager(): \Doctrine\ORM\EntityManagerInterface
     {
         return static::getContainer()->get('doctrine')->getManager();
+    }
+
+    public function getUserFromIdentity(array $identity): User
+    {
+        $userIdentity = $this->identityRepository->findOneBy(['name' => $identity['name'], 'firstName' => $identity['firstName']]);
+        return $userIdentity->getUser();        
+        
     }
 }

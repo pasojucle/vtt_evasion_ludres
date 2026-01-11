@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\DataFixtures\Common;
 
 use App\Entity\Department;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class DepartmentFixtures extends AbstractFixture implements FixtureGroupInterface
 {

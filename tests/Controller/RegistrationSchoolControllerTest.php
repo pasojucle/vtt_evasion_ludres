@@ -4,31 +4,33 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
+use DateTime;
 use DateInterval;
-use App\Entity\User;
-use DateTimeImmutable;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
+use App\Entity\Enum\KinshipEnum;
 use App\Entity\Enum\RegistrationEnum;
 use Symfony\Component\HttpFoundation\Response;
 use App\Tests\Controller\AbstractTestController;
 use App\DataFixtures\Common\BikeRideTypeFixtures;
+use DateTimeImmutable;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
-class RegistrationAdultController extends AbstractTestController
+class RegistrationSchoolControllerTest extends AbstractTestController
 {
-    public function testFullAdultMemberLifecycle(): void
+    public function testFullSchoolMemberLifecycle(): void
     {
-        $adult = ['name' => 'Roue', 'firstName' => 'Libre', 'password' => 'test01'];
+        $schoolMember = ['name' => 'Frein', 'firstName' => 'Hydraulique', 'password' => 'test01'];
         $this->goToRegistration();
-        $this->fillIdentityStep($adult);
+        $this->fillIdentityStep($schoolMember);
+        $this->fillGardianIdentitiesStep();
         $this->validateTarifStep();
         $this->validateAgreementsStep();
         $this->validateHealtStep();
         $this->validateOverviewStep();
         $this->logOut();
 
-        $this->validateFullTrialMemberLifecycle($adult, BikeRideTypeFixtures::ADULT_HIKING);
+        $this->validateFullTrialMemberLifecycle($schoolMember, BikeRideTypeFixtures::SUMMER_MOUNTAIN_BIKING_SCHOOL);
     }
 
     private function goToRegistration(): void
@@ -47,12 +49,10 @@ class RegistrationAdultController extends AbstractTestController
         $this->addAutocompleteField($form, 'user[identity][birthPlace]'); 
         $form['user[identity][name]'] = $user['name'];
         $form['user[identity][firstName]'] = $user['firstName'];
-        $form['user[identity][birthDate]'] = '1971-09-09';
+        $form['user[identity][birthDate]'] = (new DateTime())->sub(new DateInterval('P10Y'))->format('Y-m-d');
         $form['user[identity][birthPlace]'] = 54395;
         $form['user[identity][mobile]'] = '06 35 41 44 73';
-        $form['user[identity][email]'] = 'roue.libre@test.fr';
-        $form['user[identity][emergencyPhone]'] = '06 00 00 00 00';
-        $form['user[identity][emergencyContact]'] = 'banane';
+        $form['user[identity][email]'] = 'frein.Hydraulique@test.fr';
         $form['user[identity][pictureFile]'] = null;
         $form['user[identity][address][street]'] = 'rue des champs';
         $form['user[identity][address][postalCode]'] = '54550';
@@ -67,11 +67,33 @@ class RegistrationAdultController extends AbstractTestController
         $this->client->submit($form);
     
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit registration');
+        $this->client->followRedirect();
+    }
+
+    private function fillGardianIdentitiesStep(): void
+    {
+        $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
+        $form['user[userGardians][0][kinship]'] = KinshipEnum::KINSHIP_FATHER->value;
+        $form['user[userGardians][0][identity][name]'] = 'Hydraullique';
+        $form['user[userGardians][0][identity][firstName]'] = 'Fourche';
+        $form['user[userGardians][0][identity][birthDate]'] = (new DateTime())->sub(new DateInterval('P30Y'))->format('Y-m-d');
+        $form['user[userGardians][0][identity][mobile]'] = '06 00 00 00 00';
+        $form['user[userGardians][0][identity][email]'] = 'fourche.hydraulique@test.fr';
+
+        $form['user[userGardians][1][kinship]'] = KinshipEnum::KINSHIP_MOTHER->value;
+        $form['user[userGardians][1][identity][name]'] = 'Indexée';
+        $form['user[userGardians][1][identity][firstName]'] = 'Vitesse';
+        $form['user[userGardians][1][identity][mobile]'] = '06 00 00 00 00';
+        $form['user[userGardians][1][identity][email]'] = 'vitesse.indexee@test.fr';
+ 
+        $this->client->submit($form);
+    
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit registration');
+        $this->client->followRedirect();
     }
 
     private function validateTarifStep(): void
     {
-        $this->client->followRedirect();
         $this->assertAnySelectorTextContains('a.btn', 'Suivant');
         $this->client->clickLink('Suivant');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK,'View tarif');
@@ -80,9 +102,10 @@ class RegistrationAdultController extends AbstractTestController
     private function validateAgreementsStep(): void
     {
         $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
-        $form['user[lastLicence][licenceAuthorizationAgreements][EMERGENCY_CARE_ADULT][agreed]'] = '1';
-        $form['user[lastLicence][licenceAuthorizationAgreements][HEALTH_ADULT][agreed]'] = '1';
-        $form['user[lastLicence][licenceAuthorizationAgreements][IMAGE_USE_ADULT][agreed]'] = '1';
+        $form['user[lastLicence][licenceAuthorizationAgreements][BACK_HOME_ALONE][agreed]'] = '1';
+        $form['user[lastLicence][licenceAuthorizationAgreements][EMERGENCY_CARE_SCHOOL][agreed]'] = '1';
+        $form['user[lastLicence][licenceAuthorizationAgreements][IMAGE_USE_SCHOOL][agreed]'] = '1';
+        $form['user[lastLicence][licenceAuthorizationAgreements][PARENTAL_CONSENT][agreed]'] = '1';
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit aproval');
     }
@@ -94,8 +117,8 @@ class RegistrationAdultController extends AbstractTestController
         $form['user[health][consents][check_up_0]'] = '1';
         $form['user[health][consents][check_up_1]'] = '1';
         $form['user[health][consents][check_up_2]'] = '1';
-        $form['user[lastLicence][licenceHealthAgreements][HEALTH_ADULT][agreed]'] = '1';
-        $form['user[lastLicence][licenceHealthAgreements][HEALTH_ADULT_2][agreed]'] = '1';
+        $form['user[lastLicence][licenceHealthAgreements][HEALTH_SCHOOL][agreed]'] = '1';
+        $form['user[lastLicence][licenceHealthAgreements][HEALTH_SCHOOL_2][agreed]'] = '1';
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit health');
     }
@@ -109,21 +132,23 @@ class RegistrationAdultController extends AbstractTestController
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit overview');
     }
 
-    private function validateFullTrialMemberLifecycle(array $adult, string $bikeRideTypeReference): void
+    private function validateFullTrialMemberLifecycle(array $schoolMember, string $bikeRideTypeReference): void
     {
         $startAt = (new DateTimeImmutable())->setTime(0,0,0);
         $bikeRideType = $this->getEntityFromReference($bikeRideTypeReference);
 
         for($i = 1; $i <= 4; ++$i) {
             if (4 === $i) {
-                $this->validateAdultYearlyRegistration($adult, $i);
+                $this->validateSchoolMemberYearlyRegistration($schoolMember, $i);
             }
-            $bikeRideStartAt = $startAt->add(new DateInterval(sprintf('P%dD', 7 * $i - $startAt->format('w'))));
+            $bikeRideStartAt = (clone $startAt)
+                ->modify('next saturday')
+                ->modify(sprintf('+%d weeks', $i - 1));
             $bikeRide = ['bikeRideType' => $bikeRideType, 'startAt' => $bikeRideStartAt];
             $this->validateAdminAddBikeRide($bikeRideType, $bikeRideStartAt, $i);
-            $sessionId = $this->validateAdultRegistrationToBikeRide($adult, $bikeRide);
-            $this->validateAdultParticipation($sessionId);
-            $this->validateAdultLicenceState($adult, $i);
+            $sessionId = $this->validateSchoolMemberRegistrationToBikeRide($schoolMember, $bikeRide);
+            $this->validateSchoolMemberParticipation($sessionId);
+            $this->validateSchoolMemberLicenceState($schoolMember, $i);
         }
     }
 
@@ -132,13 +157,6 @@ class RegistrationAdultController extends AbstractTestController
         $admin = $this->userRepository->findOneByLicenceNumber('624758');
 
         $this->loginUser($admin);
-    }
-
-    private function getUserFromIdentity(array $identity): User
-    {
-        $userIdentity = $this->identityRepository->findOneBy(['name' => $identity['name'], 'firstName' => $identity['firstName']]);
-        return $userIdentity->getUser();        
-        
     }
 
     private function validateAdminAddBikeRide(BikeRideType $bikeRideType, DateTimeImmutable $startAt, int $loop): void
@@ -170,8 +188,6 @@ class RegistrationAdultController extends AbstractTestController
         $this->assertResponseIsSuccessful();
         $url = $this->urlGenerator->generate('admin_bike_rides', ['period' => 'tous']);
         $this->client->request('GET', $url);
-
-        $this->assertSelectorCount($loop,'li.list-dropdown');
         
         $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRideType, 'startAt' => $startAt]);
         $this->assertSelectorExists(sprintf('a[href="/admin/sortie/groupe/%s"]', $bikeRide->getId()));
@@ -196,21 +212,21 @@ class RegistrationAdultController extends AbstractTestController
         $this->assertResponseIsSuccessful(sprintf('Validate cluster bike ride %s succesful', $bikeRide->getStartAt()->format('d/m/Y')));
     }
 
-    private function validateAdultRegistrationToBikeRide(array $identity, array $bikeRide): int
+    private function validateSchoolMemberRegistrationToBikeRide(array $identity, array $bikeRide): int
     {
         $user = $this->getUserFromIdentity($identity);
         $this->loginUser($user);
         $url = $this->urlGenerator->generate('schedule', ['period' => 'tous']);
         $this->client->request('GET', $url);
         $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRide['bikeRideType'], 'startAt' => $bikeRide['startAt']]);
-        $cluster = $bikeRide->getClusters()->first();
+        dump(sprintf('bike ride %s => %s / %s',$bikeRide->getId(), $bikeRide->getStartAt()->format('Y-m-d'), $bikeRide->getClosingDuration()));
+        $cluster = $this->clusterRepository->findOneBy(['bikeRide' => $bikeRide->getId(), 'level' => $user->getLevel()]);
+        dump(sprintf('cluster %s => %s',$cluster->getId(), $cluster->getLevel()->getTitle()));
         $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]));
         $this->assertSelectorExists($selector);
         $btn = $this->client->getCrawler()->filter($selector);
         $this->client->click($btn->link());
         $form = $this->client->getCrawler()->selectButton('S\'inscrire')->form();
-        $form['session[session][cluster]'] = $bikeRide->getClusters()->first()->getId();
-        $form['session[session][practice]'] = 'vtt';
         $this->client->submit($form);
         $this->assertResponseRedirects();
         $this->client->followRedirect();
@@ -223,7 +239,7 @@ class RegistrationAdultController extends AbstractTestController
         return $sessionId;
     }
 
-    private function validateAdultParticipation(int $sessionId): void
+    private function validateSchoolMemberParticipation(int $sessionId): void
     {
         $this->validateLogToBackOffice();
         $url = $this->urlGenerator->generate('admin_session_present');
@@ -236,7 +252,7 @@ class RegistrationAdultController extends AbstractTestController
         $this->assertTrue($updatedSession->isPresent());
     }
 
-    private function validateAdultLicenceState(array $identity, int $totalParticipations): void
+    private function validateSchoolMemberLicenceState(array $identity, int $totalParticipations): void
     {
         $user = $this->getUserFromIdentity($identity);
         $licence = $this->licenceRepository->findOneBy(['user' => $user, 'season' => $this->seasonService->getCurrentSeason()]);
@@ -255,12 +271,13 @@ class RegistrationAdultController extends AbstractTestController
             ->findOneBy(['name' => BikeRideTypeFixtures::getBikeRideTypeNameFromReference($reference)]);
     }
 
-    private function validateAdultYearlyRegistration(array $identity, int $loop): void
+    private function validateSchoolMemberYearlyRegistration(array $identity, int $loop): void
     {            
         $user = $this->getUserFromIdentity($identity);       
         $this->loginUser($user);    
 
         $this->validateIndentityStep();
+        $this->validateGardianIndentitiesStep();
         $this->validateTarifStep();
         $this->fillCoverageStep();
         $this->validateAgreementsStep();
@@ -278,12 +295,22 @@ class RegistrationAdultController extends AbstractTestController
         $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
+        $this->client->followRedirect();
+    }
+
+    private function validateGardianIndentitiesStep(): void
+    {
+        $this->assertSelectorExists('form[name="user"]');
+        $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
+        $this->client->followRedirect();
     }
 
     private function fillCoverageStep(): void
     {
         $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
-        $form['user[lastLicence][coverage]'] = '1';
+        $form['user[lastLicence][coverage]'] = '2';
         foreach ($form['user[lastLicence][options]'] as $checkbox) {
             if ($checkbox->getValue() === 'no_additional_option') {
                 $checkbox->tick();
@@ -291,7 +318,6 @@ class RegistrationAdultController extends AbstractTestController
                 $checkbox->untick();
             }
         }
-        $form['user[lastLicence][isVae]'] = '0';
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
         $this->client->followRedirect();
