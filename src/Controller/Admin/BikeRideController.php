@@ -4,26 +4,29 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Dto\DtoTransformer\BikeRideDtoTransformer;
-use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Form\Admin\BikeRideType;
+use App\UseCase\BikeRide\GetFilters;
+use App\UseCase\BikeRide\GetSchedule;
 use App\Repository\BikeRideRepository;
 use App\UseCase\BikeRide\EditBikeRide;
 use App\UseCase\BikeRide\ExportBikeRide;
 use App\UseCase\BikeRide\GetBikeRideFile;
 use App\UseCase\BikeRide\GetEmailMembers;
-use App\UseCase\BikeRide\GetFilters;
-use App\UseCase\BikeRide\GetSchedule;
+
+
 use App\UseCase\User\GetFramersFiltered;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\JsonResponse;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
+use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/admin')]
 class BikeRideController extends AbstractController
@@ -48,7 +51,6 @@ class BikeRideController extends AbstractController
         ?int $day
     ): Response {
         $response = $this->getSchedule->execute($request, $period, $year, $month, $day);
-
         if (array_key_exists('redirect', $response)) {
             return $this->redirectToRoute($response['redirect'], $response['filters']);
         }
@@ -84,7 +86,6 @@ class BikeRideController extends AbstractController
             'bike_rides_filters' => ($filters) ? $filters : [],
         ]);
     }
-
 
     #[Route('/sortie/{bikeRide}', name: 'admin_bike_ride_edit', methods: ['GET', 'POST'], requirements:['bikeRide' => '\d+'])]
     #[IsGranted('BIKE_RIDE_EDIT', 'bikeRide')]
@@ -141,7 +142,6 @@ class BikeRideController extends AbstractController
     ): Response {
         return $exportBikeRide->execute($bikeRide);
     }
-
 
     #[Route('/sortie_choices', name: 'admin_bike_ride_choices', methods: ['GET'])]
     public function bikeRideChoices(
