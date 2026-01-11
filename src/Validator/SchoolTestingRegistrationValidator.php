@@ -37,7 +37,11 @@ class SchoolTestingRegistrationValidator extends ConstraintValidator
 
         $birthDate = null;
         $licenceNumber = null;
-        if (is_array($value) && array_key_exists('isYearly', $value) && (bool) !$value['isYearly']) {
+        if (is_array($value) && array_key_exists('isYearly', $value)) {
+            if ((bool) $value['isYearly']) {
+                return;
+            }
+
             $birthDate = DateTime::createFromFormat('Y-m-d', $value['birthDate']);
         }
 

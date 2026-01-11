@@ -7,13 +7,9 @@ namespace App\Tests\Controller;
 use DateInterval;
 use App\Entity\User;
 use DateTimeImmutable;
-use App\Entity\Session;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
-use App\Repository\LevelRepository;
 use App\Entity\Enum\RegistrationEnum;
-use App\Repository\CommuneRepository;
-use App\Repository\BikeRideRepository;
 use Symfony\Component\HttpFoundation\Response;
 use App\Tests\Controller\AbstractTestController;
 use App\DataFixtures\Common\BikeRideTypeFixtures;
@@ -37,8 +33,8 @@ class RegistrationAdultController extends AbstractTestController
 
     private function goToRegistration(): void
     {
-    
-        $this->client->request('GET', '/inscription');
+        $url = $this->urlGenerator->generate('registration_form');
+        $this->client->request('GET', $url);
         $this->client->followRedirect();
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -49,8 +45,6 @@ class RegistrationAdultController extends AbstractTestController
     {
         $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
         $this->addAutocompleteField($form, 'user[identity][birthPlace]'); 
-        $communeRepository = static::getContainer()->get(CommuneRepository::class);
-        $communes = $communeRepository->findByPostalCode('54000');
         $form['user[identity][name]'] = $user['name'];
         $form['user[identity][firstName]'] = $user['firstName'];
         $form['user[identity][birthDate]'] = '1971-09-09';
@@ -62,7 +56,6 @@ class RegistrationAdultController extends AbstractTestController
         $form['user[identity][pictureFile]'] = null;
         $form['user[identity][address][street]'] = 'rue des champs';
         $form['user[identity][address][postalCode]'] = '54550';
-        $communes = $communeRepository->findByPostalCode('54550');
         /** @var ChoiceFormField $formaddressCommune */
         $formaddressCommune = $form['user[identity][address][commune]'];
         $formaddressCommune->disableValidation()->setValue('54043');
@@ -121,19 +114,23 @@ class RegistrationAdultController extends AbstractTestController
         $startAt = (new DateTimeImmutable())->setTime(0,0,0);
         $bikeRideType = $this->getEntityFromReference($bikeRideTypeReference);
 
-        for($i = 1; $i <= 3; ++$i) {
+        for($i = 1; $i <= 4; ++$i) {
+            if (4 === $i) {
+                $this->validateAdultYearlyRegistration($adult, $i);
+            }
             $bikeRideStartAt = $startAt->add(new DateInterval(sprintf('P%dD', 7 * $i - $startAt->format('w'))));
             $bikeRide = ['bikeRideType' => $bikeRideType, 'startAt' => $bikeRideStartAt];
             $this->validateAdminAddBikeRide($bikeRideType, $bikeRideStartAt, $i);
-            $session = $this->validateRegistrationToBikeRide($adult, $bikeRide);
-            $this->validateParticipation($session);
-            $this->validateLicenceState($adult, $i);
+            $sessionId = $this->validateAdultRegistrationToBikeRide($adult, $bikeRide);
+            $this->validateAdultParticipation($sessionId);
+            $this->validateAdultLicenceState($adult, $i);
         }
     }
 
     private function validateLogToBackOffice(): void
     {
         $admin = $this->userRepository->findOneByLicenceNumber('624758');
+
         $this->loginUser($admin);
     }
 
@@ -147,7 +144,8 @@ class RegistrationAdultController extends AbstractTestController
     private function validateAdminAddBikeRide(BikeRideType $bikeRideType, DateTimeImmutable $startAt, int $loop): void
     {
         $this->validateLogToBackOffice();
-        $this->client->request('GET', '/admin/calendrier');
+        $url = $this->urlGenerator->generate('admin_bike_rides');
+        $this->client->request('GET', $url);
         $this->assertSelectorTextContains('.wrapper h1', 'Programme des sorties');
         $this->client->clickLink('Ajouter une sortie');
         $this->assertSelectorTextContains('.wrapper h1', 'Ajouter une sortie');
@@ -165,12 +163,17 @@ class RegistrationAdultController extends AbstractTestController
         $form['bike_ride[closingDuration]'] = (string) $closingDuration;
 
         $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
+
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
+        $url = $this->urlGenerator->generate('admin_bike_rides', ['period' => 'tous']);
+        $this->client->request('GET', $url);
+
         $this->assertSelectorCount($loop,'li.list-dropdown');
-        $bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
-        $bikeRide = $bikeRideRepository->findOneBy(['bikeRideType' => $bikeRideType, 'startAt' => $startAt]);
+        
+        $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRideType, 'startAt' => $startAt]);
         $this->assertSelectorExists(sprintf('a[href="/admin/sortie/groupe/%s"]', $bikeRide->getId()));
         $this->validateAdminBikeRideClusters($bikeRide);
         $this->logOut();
@@ -190,15 +193,16 @@ class RegistrationAdultController extends AbstractTestController
             ++$totalClusters;
         }
         $this->assertTrue($totalClusters === $bikeRide->getClusters()->count());
+        $this->assertResponseIsSuccessful(sprintf('Validate cluster bike ride %s succesful', $bikeRide->getStartAt()->format('d/m/Y')));
     }
 
-    private function validateRegistrationToBikeRide(array $identity, array $bikeRide): Session
+    private function validateAdultRegistrationToBikeRide(array $identity, array $bikeRide): int
     {
         $user = $this->getUserFromIdentity($identity);
         $this->loginUser($user);
-        $this->client->request('GET', '/programme');
-        $bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
-        $bikeRide = $bikeRideRepository->findOneBy(['bikeRideType' => $bikeRide['bikeRideType'], 'startAt' => $bikeRide['startAt']]);
+        $url = $this->urlGenerator->generate('schedule', ['period' => 'tous']);
+        $this->client->request('GET', $url);
+        $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRide['bikeRideType'], 'startAt' => $bikeRide['startAt']]);
         $cluster = $bikeRide->getClusters()->first();
         $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]));
         $this->assertSelectorExists($selector);
@@ -211,30 +215,32 @@ class RegistrationAdultController extends AbstractTestController
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $session = $this->sessionRepository->findOneBy(['user' => $user, 'cluster' => $cluster]);
-        $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_delete', ['session' => $session->getId()]));
+        $sessionId = $session->getId();
+        $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_delete', ['session' => $sessionId]));
         $this->assertSelectorExists($selector);
         $this->logOut();
 
-        return $session;
+        return $sessionId;
     }
 
-    private function validateParticipation(Session $session): void
+    private function validateAdultParticipation(int $sessionId): void
     {
         $this->validateLogToBackOffice();
         $url = $this->urlGenerator->generate('admin_session_present');
-        $this->client->request('POST', $url, ['sessionId' => $session->getId()]);
-        $this->getEntityManager()->clear();
-        $updatedSession = $this->sessionRepository->find($session->getId());
+        $this->client->request('POST', $url, ['sessionId' => $sessionId]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
 
-        $this->assertTrue($updatedSession->isPresent());
         $this->logOut();
+
+        $updatedSession = $this->sessionRepository->find($sessionId);
+        $this->assertTrue($updatedSession->isPresent());
     }
 
-    private function validateLicenceState(array $identity, int $totalParticipations): void
+    private function validateAdultLicenceState(array $identity, int $totalParticipations): void
     {
         $user = $this->getUserFromIdentity($identity);
-        $this->getEntityManager()->clear();
         $licence = $this->licenceRepository->findOneBy(['user' => $user, 'season' => $this->seasonService->getCurrentSeason()]);
+
         $licenceIsYearly = $licence->getState()->isYearly();
         $this->assertTrue(($totalParticipations <= 3) ? !$licenceIsYearly : $licenceIsYearly);
     }
@@ -249,18 +255,47 @@ class RegistrationAdultController extends AbstractTestController
             ->findOneBy(['name' => BikeRideTypeFixtures::getBikeRideTypeNameFromReference($reference)]);
     }
 
+    private function validateAdultYearlyRegistration(array $identity, int $loop): void
+    {            
+        $user = $this->getUserFromIdentity($identity);       
+        $this->loginUser($user);    
 
-    // private function validateCoverageStep(): void
-    // {
-    //     $this->client->followRedirect();
-    //     dump($this->client->getRequest()->getUri()); 
-    //     dump($this->client->getResponse()->getStatusCode());
-    //     $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
-    //     dump(array_keys($form->all()));
-    //     $form['user[lastLicence][2][coverage]'] = '1';
-    //     $this->client->submit($form);
-    //     $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
-    // }
+        $this->validateIndentityStep();
+        $this->validateTarifStep();
+        $this->fillCoverageStep();
+        $this->validateAgreementsStep();
+        $this->validateHealtStep();
+        $this->validateOverviewStep();
+        
+        $this->logOut();
+    }
+
+    private function validateIndentityStep(): void
+    {
+        $url = $this->urlGenerator->generate('user_registration_form', ['step' => 1]);
+        $this->client->request('GET', $url);
+        $this->assertSelectorExists('form[name="user"]');
+        $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
+    }
+
+    private function fillCoverageStep(): void
+    {
+        $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
+        $form['user[lastLicence][coverage]'] = '1';
+        foreach ($form['user[lastLicence][options]'] as $checkbox) {
+            if ($checkbox->getValue() === 'no_additional_option') {
+                $checkbox->tick();
+            } else {
+                $checkbox->untick();
+            }
+        }
+        $form['user[lastLicence][isVae]'] = '0';
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
+        $this->client->followRedirect();
+    }
 
     // private function testDeleteUser(string $name): void
     // {

@@ -6,6 +6,7 @@ namespace App\Tests\Controller;
 
 use DOMDocument;
 use App\Entity\User;
+use App\Repository\BikeRideRepository;
 use App\Service\SeasonService;
 use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
@@ -28,12 +29,14 @@ abstract class AbstractTestController extends WebTestCase
     public UrlGeneratorInterface $urlGenerator;
     public SeasonService $seasonService;
     public LevelRepository $levelRepository;
+    public BikeRideRepository $bikeRideRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
         
         $this->client = static::createClient([], ['REMOTE_ADDR' => '11.11.11.11']);
+        $this->client->disableReboot();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->identityRepository = static::getContainer()->get(IdentityRepository::class);
         $this->sessionRepository = static::getContainer()->get(SessionRepository::class);
@@ -41,6 +44,7 @@ abstract class AbstractTestController extends WebTestCase
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->seasonService = static::getContainer()->get(SeasonService::class);
         $this->levelRepository = static::getContainer()->get(LevelRepository::class);
+        $this->bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
     }
     
     public function addAutocompleteField(Form &$form, string $name): void
@@ -58,13 +62,13 @@ abstract class AbstractTestController extends WebTestCase
         $this->client->getCookieJar()->clear();
         $this->client->request('GET', '/login');
         $this->client->loginUser($user);
-        $this->getEntityManager()->refresh($user);
     }
 
     public function logOut():void
     {
         $this->client->request('GET', '/logout');
         $this->client->getCookieJar()->clear();
+        $this->getEntityManager()->clear();
         $this->client->followRedirect();
     }
 
