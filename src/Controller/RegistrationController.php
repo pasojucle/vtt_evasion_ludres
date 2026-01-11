@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\DtoTransformer\RegistrationStepDtoTransformer;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\Enum\DisplayModeEnum;
 use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
-use App\Form\UserType;
 use App\Repository\ContentRepository;
 use App\Repository\MembershipFeeRepository;
 use App\Security\SelfAuthentication;
-use App\Service\MailerService;
 use App\Service\MessageService;
 use App\Service\ParameterService;
 use App\Service\ProjectDirService;
@@ -25,9 +22,8 @@ use App\UseCase\Registration\GetStatusWarning;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use ZipArchive;
 
