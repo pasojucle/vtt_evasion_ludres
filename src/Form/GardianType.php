@@ -38,8 +38,8 @@ class GardianType extends AbstractType
                     'choice_filter' => ChoiceList::filter(
                         $this,
                         function (KinshipEnum $kinship) use ($notAllowedKinship): bool {
-                                return  $notAllowedKinship !== $kinship;
-                            },
+                            return  $notAllowedKinship !== $kinship;
+                        },
                         $notAllowedKinship
                     ),
                     'row_attr' => [

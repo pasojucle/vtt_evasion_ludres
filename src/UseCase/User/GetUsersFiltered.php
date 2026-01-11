@@ -148,7 +148,7 @@ abstract class GetUsersFiltered
 
     private function setRedirect(Request $request): void
     {
-        $request->getSession()->set('admin_user_redirect', $this->urlGenerator->generate($request->get('_route'), [
+        $request->getSession()->set('admin_user_redirect', $this->urlGenerator->generate($request->attributes->get('_route'), [
             'filtered' => true,
             'p' => $request->query->get('p'),
         ]));

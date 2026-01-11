@@ -23,7 +23,6 @@ class MailerService
         private ParameterService $parameterService,
         private ParameterBagInterface $parameterBag,
     ) {
-
     }
 
     private function getClubAndWebmasterEmails(): array
