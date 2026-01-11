@@ -38,7 +38,7 @@ class GetSchedule
 
     public function execute(Request $request, ?string $period, ?int $year, ?int $month, ?int $day): array
     {
-        $route = $request->get('_route');
+        $route = $request->attributes->get('_route');
         $filters = $this->getFiltersByParam($period, $year, $month, $day, $route);
         $form = $this->formFactory->create(BikeRideFilterType::class, $filters);
         $form->handleRequest($request);
