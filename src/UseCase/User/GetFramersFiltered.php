@@ -132,7 +132,7 @@ class GetFramersFiltered
 
     private function setRedirect(Request $request, BikeRide $bikeRide): void
     {
-        $request->getSession()->set('admin_user_redirect', $this->urlGenerator->generate($request->get('_route'), [
+        $request->getSession()->set('admin_user_redirect', $this->urlGenerator->generate($request->attributes->get('_route'), [
             'bikeRide' => $bikeRide->getId(),
             'filtered' => true,
             'p' => $request->query->get('p'),

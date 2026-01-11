@@ -54,8 +54,8 @@ class UserDtoTransformer
         $userDto->prevLicence = $this->getPrevLicence($user);
         $userDto->health = $this->healthDtoTransformer->fromEntity($user->getHealth());
         $userDto->level = $this->levelDtoTransformer->fromEntity($user->getLevel());
-        $userDto->mainEmail = $mainIdentity->getEmail();
-        $userDto->mainFullName = $mainIdentity->getFullName();
+        $userDto->mainEmail = $mainIdentity?->getEmail();
+        $userDto->mainFullName = $mainIdentity?->getFullName();
         $userDto->boardRole = $user->getBoardRole()?->getName();
         $userDto->isBoardMember = null !== $user->getBoardRole();
         $userDto->ffctLicence = $this->FFCTLicenceDtoTransformer->fromEntity($userDto);
