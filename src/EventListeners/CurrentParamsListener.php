@@ -2,10 +2,10 @@
 
 namespace App\EventListeners;
 
-use Throwable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Throwable;
 
 class CurrentParamsListener
 {

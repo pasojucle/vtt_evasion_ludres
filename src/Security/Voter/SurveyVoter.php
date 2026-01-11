@@ -2,18 +2,18 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
-use App\Entity\Survey;
+use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\Enum\PermissionEnum;
 use App\Entity\Respondent;
+use App\Entity\Survey;
 use App\Entity\SurveyIssue;
 use App\Entity\SurveyResponse;
-use App\Entity\Enum\PermissionEnum;
-use App\Dto\DtoTransformer\UserDtoTransformer;
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authorization\Voter\Vote;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SurveyVoter extends Voter
 {

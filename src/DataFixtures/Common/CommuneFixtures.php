@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
+use App\DataFixtures\Common\DepartmentFixtures;
 use App\Entity\Commune;
 use App\Entity\Department;
-use Doctrine\Persistence\ObjectManager;
-use App\DataFixtures\Common\DepartmentFixtures;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class CommuneFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
@@ -33,16 +33,16 @@ class CommuneFixtures extends AbstractFixture implements FixtureGroupInterface, 
     }
 
     public function load(ObjectManager $manager): void
-    {        
+    {
         $department = $this->getReference(DepartmentFixtures::DEPT_54, Department::class);
     
         $communes = [
             self::COMMUNE_NANCY => ['54395', 'Nancy', '54000'],
             self::COMMUNE_LUDRES => ['54328', 'Ludres', '54710'],
-            self::COMMUNE_BAINVILLE => ['54043',"Bainville-sur-Madon",'54550'],
-            self::COMMUNE_MAIZIERES => ['54336',"Maizières",'54550'],
-            self::COMMUNE_PONT_SAINT_VINCENT => ['54432',"Pont-Saint-Vincent",'54550'],
-            self::COMMUNE_SEXEY_AUX_FORGES => ['54505',"Sexey-aux-Forges",'54550'],
+            self::COMMUNE_BAINVILLE => ['54043', "Bainville-sur-Madon", '54550'],
+            self::COMMUNE_MAIZIERES => ['54336', "Maizières", '54550'],
+            self::COMMUNE_PONT_SAINT_VINCENT => ['54432', "Pont-Saint-Vincent", '54550'],
+            self::COMMUNE_SEXEY_AUX_FORGES => ['54505', "Sexey-aux-Forges", '54550'],
         ];
 
         foreach ($communes as $ref => [$id,$name, $postalCode]) {

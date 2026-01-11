@@ -6,48 +6,36 @@ namespace App\Tests\Controller;
 
 use App\Service\ProjectDirService;
 use App\Repository\CategoryRepository;
+use Symfony\Component\HttpFoundation\Response;
 
 class SecondHandControllerTest extends AbstractTestController
 {
-    // public function testAdminSecondHand()
-    // {
-    //     $this->init();
-    //     $this->cleanDataBase();
-    //     $this->testSecondHandList();
-    //     $this->testAddSecondHand();
-    //     $this->testValidateSecondHand();
-    //     $this->testContactSeller();
-    // }
+    public function testAdminSecondHand()
+    {
+        $this->testSecondHandList();
+        // $this->testAddSecondHand();
+        // $this->testValidateSecondHand();
+        // $this->testContactSeller();
+    }
 
-    // private function cleanDataBase():void
-    // {
-    //     $entityManager = static::getContainer()->get('doctrine')->getManager();
-    //     $connection = $entityManager->getConnection();
-    //     $connection->executeQuery("SET FOREIGN_KEY_CHECKS=0;");
-    //     foreach(['second_hand'] as $table) {
-    //         $query = sprintf("TRUNCATE TABLE `%s`", $table);
-    //         $connection->executeQuery($query);
-    //     }
-    //     $connection->executeQuery("SET FOREIGN_KEY_CHECKS=1;");
-    // }
 
-    // private function loginUser(): void
-    // {
-    //     $users = $this->userRepository->findAllMemberByCurrentSeason();
-    //     $user = $users[rand(0, count($users) - 1)];
-    //     $this->client->loginUser($user);
-    // }
+    private function testSecondHandList(): void
+    {
+        $this->client->request('GET', '/');
+        $this->assertResponseStatusCodeSame(Response::HTTP_MOVED_PERMANENTLY,'Home');
 
-    // private function testSecondHandList(): void
-    // {
-    //     $this->client->request('GET', '/mon-compte/occasions');
-    //     $this->loginUser();
-    //     $this->assertResponseRedirects();
-    //     $this->client->followRedirect();
-    //     $this->assertResponseIsSuccessful();
-    //     $this->assertSelectorTextContains('a', '', 'Déposer une annonce');
-    //     $this->client->clickLink('Déposer une annonce');
-    // }
+
+        // $identity = ['name' => 'Roue', 'firstName' => 'Libre', 'password' => 'test01'];
+
+        // $this->client->request('GET', '/mon-compte/occasions');
+        // $user = $this->getUserFromIdentity($identity);
+        // $this->loginUser($user);
+        // $this->assertResponseRedirects();
+        // $this->client->followRedirect();
+        // $this->assertResponseIsSuccessful();
+        // $this->assertSelectorTextContains('a', '', 'Déposer une annonce');
+        // $this->client->clickLink('Déposer une annonce');
+    }
 
     // private function testAddSecondHand(): void
     // {

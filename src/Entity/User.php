@@ -786,7 +786,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getMainIdentity(): ?Identity
     {
         $identity = (LicenceCategoryEnum::SCHOOL === $this->getLastLicence()->getCategory())
-                ? $this->getLegalGardian()->getIdentity()
+                ? $this->getLegalGardian()?->getIdentity()
                 : $this->getIdentity();
 
         return $identity;
