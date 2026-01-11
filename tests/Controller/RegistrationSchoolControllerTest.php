@@ -311,6 +311,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
     {
         $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
         $form['user[lastLicence][coverage]'] = '2';
+        /** @var ChoiceFormField $checkbox */
         foreach ($form['user[lastLicence][options]'] as $checkbox) {
             if ($checkbox->getValue() === 'no_additional_option') {
                 $checkbox->tick();
