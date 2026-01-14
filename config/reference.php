@@ -1716,6 +1716,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  */
 final class App
 {
+    /**
+     * @param ConfigType $config
+     *
+     * @psalm-return ConfigType
+     */
     public static function config(array $config): array
     {
         return AppReference::config($config);

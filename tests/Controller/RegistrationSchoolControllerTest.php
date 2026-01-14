@@ -20,9 +20,9 @@ class RegistrationSchoolControllerTest extends AbstractTestController
 {
     public function testFullSchoolMemberLifecycle(): void
     {
-        $schoolMember = ['name' => 'Frein', 'firstName' => 'Hydraulique', 'password' => 'test01'];
+        dump('RegistrationSchoolControllerTest');
         $this->goToRegistration();
-        $this->fillIdentityStep($schoolMember);
+        $this->fillIdentityStep();
         $this->fillGardianIdentitiesStep();
         $this->validateTarifStep();
         $this->validateAgreementsStep();
@@ -30,7 +30,8 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->validateOverviewStep();
         $this->logOut();
 
-        $this->validateFullTrialMemberLifecycle($schoolMember, BikeRideTypeFixtures::SUMMER_MOUNTAIN_BIKING_SCHOOL);
+        $this->validateFullTrialMemberLifecycle(BikeRideTypeFixtures::SUMMER_MOUNTAIN_BIKING_SCHOOL);
+        $this->validateAdminAddSession();
     }
 
     private function goToRegistration(): void
@@ -43,8 +44,9 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->assertSelectorExists('form[name="user"]');
     }
 
-    private function fillIdentityStep(array $user): void
+    private function fillIdentityStep(): void
     {
+        $user = self::SCHOOL_MEMBER;
         $form = $this->client->getCrawler()->filter('form[name="user"]')->form();
         $this->addAutocompleteField($form, 'user[identity][birthPlace]'); 
         $form['user[identity][name]'] = $user['name'];
@@ -65,8 +67,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->addAutocompleteField($form, 'user[lastLicence][familyMember]'); 
         $form['user[lastLicence][familyMember]'] = null;
         $this->client->submit($form);
-    
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit registration');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit school registration');
         $this->client->followRedirect();
     }
 
@@ -132,10 +133,11 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit overview');
     }
 
-    private function validateFullTrialMemberLifecycle(array $schoolMember, string $bikeRideTypeReference): void
+    private function validateFullTrialMemberLifecycle(string $bikeRideTypeReference): void
     {
+        $schoolMember = self::SCHOOL_MEMBER;
         $startAt = (new DateTimeImmutable())->setTime(0,0,0);
-        $bikeRideType = $this->getEntityFromReference($bikeRideTypeReference);
+        $bikeRideType = $this->getBikeRideTypeFromReference($bikeRideTypeReference);
 
         for($i = 1; $i <= 4; ++$i) {
             if (4 === $i) {
@@ -152,16 +154,9 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         }
     }
 
-    private function validateLogToBackOffice(): void
-    {
-        $admin = $this->userRepository->findOneByLicenceNumber('624758');
-
-        $this->loginUser($admin);
-    }
-
     private function validateAdminAddBikeRide(BikeRideType $bikeRideType, DateTimeImmutable $startAt, int $loop): void
     {
-        $this->validateLogToBackOffice();
+        $this->loginAdmin();
         $url = $this->urlGenerator->generate('admin_bike_rides');
         $this->client->request('GET', $url);
         $this->assertSelectorTextContains('.wrapper h1', 'Programme des sorties');
@@ -214,14 +209,16 @@ class RegistrationSchoolControllerTest extends AbstractTestController
 
     private function validateSchoolMemberRegistrationToBikeRide(array $identity, array $bikeRide): int
     {
+        $this->getEntityManager()->clear();
         $user = $this->getUserFromIdentity($identity);
+        $level = $user->getLevel();
+        $levelTitle = $level ? $level->getTitle() : 'Sans niveau';
         $this->loginUser($user);
         $url = $this->urlGenerator->generate('schedule', ['period' => 'tous']);
         $this->client->request('GET', $url);
         $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRide['bikeRideType'], 'startAt' => $bikeRide['startAt']]);
-        dump(sprintf('bike ride %s => %s / %s',$bikeRide->getId(), $bikeRide->getStartAt()->format('Y-m-d'), $bikeRide->getClosingDuration()));
-        $cluster = $this->clusterRepository->findOneBy(['bikeRide' => $bikeRide->getId(), 'level' => $user->getLevel()]);
-        dump(sprintf('cluster %s => %s',$cluster->getId(), $cluster->getLevel()->getTitle()));
+        $cluster = $this->clusterRepository->findOneBy(['bikeRide' => $bikeRide->getId(), 'level' => $level]);
+        $this->assertNotNull($cluster, sprintf('Aucun groupe %s trouvée pour la rando', $levelTitle, $bikeRide->getStartAt()->format('d/m/Y')));
         $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]));
         $this->assertSelectorExists($selector);
         $btn = $this->client->getCrawler()->filter($selector);
@@ -231,6 +228,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->assertResponseRedirects();
         $this->client->followRedirect();
         $session = $this->sessionRepository->findOneBy(['user' => $user, 'cluster' => $cluster]);
+        $this->assertNotNull($session, sprintf('Aucune session trouvée pour l\'utilisateur %s %s dans le groupe %s', $identity['name'], $identity['firstName'], $cluster->getLevel()->getTitle()));
         $sessionId = $session->getId();
         $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_delete', ['session' => $sessionId]));
         $this->assertSelectorExists($selector);
@@ -241,7 +239,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
 
     private function validateSchoolMemberParticipation(int $sessionId): void
     {
-        $this->validateLogToBackOffice();
+        $this->loginAdmin();
         $url = $this->urlGenerator->generate('admin_session_present');
         $this->client->request('POST', $url, ['sessionId' => $sessionId]);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -259,16 +257,6 @@ class RegistrationSchoolControllerTest extends AbstractTestController
 
         $licenceIsYearly = $licence->getState()->isYearly();
         $this->assertTrue(($totalParticipations <= 3) ? !$licenceIsYearly : $licenceIsYearly);
-    }
-
-    private function getEntityFromReference(string $reference): object
-    {
-
-        return $this->client->getContainer()
-            ->get('doctrine')
-            ->getManager()
-            ->getRepository(BikeRideType::class)
-            ->findOneBy(['name' => BikeRideTypeFixtures::getBikeRideTypeNameFromReference($reference)]);
     }
 
     private function validateSchoolMemberYearlyRegistration(array $identity, int $loop): void
@@ -322,6 +310,29 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND,'Submit coverage');
         $this->client->followRedirect();
+    }
+
+    private function validateAdminAddSession(): void
+    {
+        $bikeRideType = $this->getBikeRideTypeFromReference(BikeRideTypeFixtures::SUMMER_MOUNTAIN_BIKING_SCHOOL);
+        $schoolBikeRides = $this->bikeRideRepository->findBY(['bikeRideType' => $bikeRideType]);
+        $bikeRide = $schoolBikeRides[0];
+        $identity = self::ADULT;
+        $user = $this->getUserFromIdentity($identity);
+
+        $this->loginAdmin();
+        $url = $this->urlGenerator->generate('admin_session_add', ['bikeRide' => $bikeRide->getId()]);
+        $this->client->request('GET', $url);
+
+        $form = $this->client->getCrawler()->selectButton('Ajouter')->form();
+        /** @var ChoiceFormField $formUserSession */
+        $formUserSession = $form['session[user]'];
+        $formUserSession->disableValidation()->setValue((string) $user->getId());
+        $this->client->submit($form);
+        $cluster = $this->clusterRepository->findOneBy(['bikeRide' => $bikeRide, 'role' => 'ROLE_FRAME']);
+        $this->assertNotNull($cluster, sprintf('Aucun groupe d\'encadrement trouvée pour la rando', $bikeRide->getStartAt()->format('d/m/Y')));
+        $session = $this->sessionRepository->findOneBy(['user' => $user, 'cluster' => $cluster]);
+        $this->assertNotNull($session, sprintf('Aucune session trouvée pour l\'utilisateur %s %s dans le groupe des encadrants', $identity['name'], $identity['firstName']));
     }
 
     // private function testDeleteUser(string $name): void
