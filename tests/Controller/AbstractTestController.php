@@ -6,15 +6,17 @@ namespace App\Tests\Controller;
 
 use DOMDocument;
 use App\Entity\User;
-use App\Repository\BikeRideRepository;
-use App\Repository\ClusterRepository;
+use App\Entity\BikeRideType;
 use App\Service\SeasonService;
 use App\Repository\UserRepository;
 use App\Repository\LevelRepository;
+use App\Repository\ClusterRepository;
 use App\Repository\LicenceRepository;
 use App\Repository\SessionRepository;
+use App\Repository\BikeRideRepository;
 use App\Repository\IdentityRepository;
 use Symfony\Component\DomCrawler\Form;
+use App\DataFixtures\Common\BikeRideTypeFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\TextareaFormField;
@@ -22,6 +24,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class AbstractTestController extends WebTestCase
 {
+    public const SCHOOL_MEMBER = ['name' => 'Frein', 'firstName' => 'Hydraulique', 'password' => 'test01'];
+    PUBLIC CONST ADULT = ['name' => 'Roue', 'firstName' => 'Libre', 'password' => 'test01'];
+
     public KernelBrowser $client;
     public UserRepository $userRepository;
     public IdentityRepository $identityRepository;
@@ -83,7 +88,26 @@ abstract class AbstractTestController extends WebTestCase
     public function getUserFromIdentity(array $identity): User
     {
         $userIdentity = $this->identityRepository->findOneBy(['name' => $identity['name'], 'firstName' => $identity['firstName']]);
+        $this->assertNotNull($userIdentity, sprintf('Aucun utilisateur trouvé pour %s %s', $identity['name'], $identity['firstName']));
+
         return $userIdentity->getUser();        
-        
+    }
+
+    public function loginAdmin(): void
+    {
+        $licenceNumber = '624758';
+        $admin = $this->userRepository->findOneByLicenceNumber($licenceNumber);
+        $this->assertNotNull($admin, sprintf('Aucun admin trouvé pour le numéro de licence %s', $licenceNumber));
+
+        $this->loginUser($admin);
+    }
+
+    public function getBikeRideTypeFromReference(string $reference): object
+    {
+        return $this->client->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository(BikeRideType::class)
+            ->findOneBy(['name' => BikeRideTypeFixtures::getBikeRideTypeNameFromReference($reference)]);
     }
 }
