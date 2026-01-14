@@ -161,13 +161,17 @@ class GetParticipations
 
     private function addExportContent(array &$content, array $users, array $sessions): void
     {
-        $row = [''];
+        $licenceNumbers = ['Licence'];
+        $fullNames = ['Nom'];
         /** @var UserDto $user */
         foreach ($users as $user) {
-            $row[] = $user->member->fullName;
+            $licenceNumbers[] = $user->licenceNumber;
+            $fullNames[] = $user->member->fullName;
         }
-        $content[] = implode(',', $row);
-
+        $content[] = implode(',', $licenceNumbers);
+        $content[] = implode(',', $fullNames);
+        $content[] = '';
+        
         $participationsByBikeRide = $this->getParticipationsByBikeRide($users, $sessions);
 
         /** @var BikeRideDto $bikeRide */
