@@ -17,6 +17,15 @@ use Doctrine\Persistence\ObjectManager;
 class LicenceFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
     public const LICENCE_ADMIN = 'licence_admin';
+    public const LICENCE_ADULT = 'licence_adult';
+    public const LICENCE_SCHOLL_MEMBER = 'licence_school_member';
+    
+    public const LICENCES = [
+        self::LICENCE_ADMIN => [UserFixtures::USER_ADMIN, 3, LicenceCategoryEnum::ADULT, LicenceStateEnum::YEARLY_FILE_REGISTRED],
+        self::LICENCE_ADULT => [UserFixtures::USER_ADULT, 2, LicenceCategoryEnum::ADULT, LicenceStateEnum::YEARLY_FILE_REGISTRED],
+        self::LICENCE_SCHOLL_MEMBER => [UserFixtures::USER_SCHOLL_MEMBER, 2, LicenceCategoryEnum::SCHOOL, LicenceStateEnum::YEARLY_FILE_REGISTRED],
+    ];
+    
 
     public function __construct(
         private SeasonService $seasonService,
@@ -31,24 +40,26 @@ class LicenceFixtures extends AbstractFixture implements FixtureGroupInterface, 
     public function getDependencies(): array
     {
         return [
-            UserAdminFixtures::class,
+            UserFixtures::class,
             ParameterFixtures::class,
         ];
     }
 
     public function load(ObjectManager $manager): void
     {
-        $lastSeason = $this->seasonService->getCurrentSeason() - 1;
-        $licence = new Licence();
-        $licence->setUser($this->getReference(UserAdminFixtures::USER_ADMIN, User::class))
-            ->setCoverage(3)
-            ->setCategory(LicenceCategoryEnum::ADULT)
-            ->setSeason($lastSeason)
-            ->setCreatedAt(new DateTime(sprintf('%s-09-01', $lastSeason)))
-            ->setState(LicenceStateEnum::YEARLY_FILE_REGISTRED);
+        foreach(self::LICENCES  as $ref => [$user, $coverage, $category, $state]) {
+            $currentSeason = $this->seasonService->getCurrentSeason();
+            $licence = new Licence();
+            $licence->setUser($this->getReference($user, User::class))
+                ->setCoverage($coverage)
+                ->setCategory($category)
+                ->setSeason($currentSeason)
+                ->setCreatedAt(new DateTime(sprintf('%s-09-01', $currentSeason)))
+                ->setState($state);
 
-        $manager->persist($licence);
-        $this->addReference(self::LICENCE_ADMIN, $licence);
+            $manager->persist($licence);
+            $this->addReference($ref, $licence);
+        }
 
         $manager->flush();
     }

@@ -17,6 +17,7 @@ use App\Repository\BikeRideRepository;
 use App\Repository\IdentityRepository;
 use Symfony\Component\DomCrawler\Form;
 use App\DataFixtures\Common\BikeRideTypeFixtures;
+use App\DataFixtures\Common\UserFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\TextareaFormField;
@@ -95,7 +96,7 @@ abstract class AbstractTestController extends WebTestCase
 
     public function loginAdmin(): void
     {
-        $licenceNumber = '624758';
+        $licenceNumber = UserFixtures::getLicenceNumberFromReference(UserFixtures::USER_ADMIN);
         $admin = $this->userRepository->findOneByLicenceNumber($licenceNumber);
         $this->assertNotNull($admin, sprintf('Aucun admin trouvé pour le numéro de licence %s', $licenceNumber));
 

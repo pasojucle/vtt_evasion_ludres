@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use App\DataFixtures\Common\DepartmentFixtures;
+use Exception;
 use App\Entity\Commune;
 use App\Entity\Department;
+use Doctrine\Persistence\ObjectManager;
+use App\DataFixtures\Common\DepartmentFixtures;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
 
 class CommuneFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
@@ -19,6 +20,15 @@ class CommuneFixtures extends AbstractFixture implements FixtureGroupInterface, 
     public const COMMUNE_MAIZIERES = 'commune_maizieres';
     public const COMMUNE_PONT_SAINT_VINCENT = 'commune_pont_saint_vincent';
     public const COMMUNE_SEXEY_AUX_FORGES = 'commune_sexey_aux_forges';
+
+    public const COMMUNES = [
+            self::COMMUNE_NANCY => ['54395', 'Nancy', '54000'],
+            self::COMMUNE_LUDRES => ['54328', 'Ludres', '54710'],
+            self::COMMUNE_BAINVILLE => ['54043', "Bainville-sur-Madon", '54550'],
+            self::COMMUNE_MAIZIERES => ['54336', "Maizières", '54550'],
+            self::COMMUNE_PONT_SAINT_VINCENT => ['54432', "Pont-Saint-Vincent", '54550'],
+            self::COMMUNE_SEXEY_AUX_FORGES => ['54505', "Sexey-aux-Forges", '54550'],
+        ];
 
     public static function getGroups(): array
     {
@@ -36,16 +46,7 @@ class CommuneFixtures extends AbstractFixture implements FixtureGroupInterface, 
     {
         $department = $this->getReference(DepartmentFixtures::DEPT_54, Department::class);
     
-        $communes = [
-            self::COMMUNE_NANCY => ['54395', 'Nancy', '54000'],
-            self::COMMUNE_LUDRES => ['54328', 'Ludres', '54710'],
-            self::COMMUNE_BAINVILLE => ['54043', "Bainville-sur-Madon", '54550'],
-            self::COMMUNE_MAIZIERES => ['54336', "Maizières", '54550'],
-            self::COMMUNE_PONT_SAINT_VINCENT => ['54432', "Pont-Saint-Vincent", '54550'],
-            self::COMMUNE_SEXEY_AUX_FORGES => ['54505', "Sexey-aux-Forges", '54550'],
-        ];
-
-        foreach ($communes as $ref => [$id,$name, $postalCode]) {
+        foreach (self::COMMUNES as $ref => [$id,$name, $postalCode]) {
             $commune = new Commune();
             $commune->setId($id)
                 ->setDepartment($department)
@@ -57,5 +58,14 @@ class CommuneFixtures extends AbstractFixture implements FixtureGroupInterface, 
         }
 
         $manager->flush();
+    }
+
+    public static function getCommuneIdFromReference(string $reference): string
+    {
+        if (array_key_exists($reference, self::COMMUNES)) {
+            return self::COMMUNES[$reference][0];
+        }
+
+        throw new Exception("Référence inconnue");
     }
 }
