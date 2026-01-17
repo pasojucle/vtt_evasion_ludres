@@ -7,7 +7,6 @@ namespace App\UseCase\Session;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
 use App\Entity\BikeRide;
-use App\Entity\Licence;
 use App\Entity\User;
 use App\Repository\SessionRepository;
 use App\Service\MessageService;
