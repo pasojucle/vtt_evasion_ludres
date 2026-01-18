@@ -12,8 +12,6 @@ use Exception;
 
 class BikeRideTypeFixtures extends AbstractFixture implements FixtureGroupInterface
 {
-    public const DEPT_54 = 'department_54';
-
     public const OCCASIONAL_OUTING = 'occasional_outing';
     public const ADULT_HIKING = 'adult_hiking';
     public const SCHOOL_HOLIDAYS = 'school_holidays';
