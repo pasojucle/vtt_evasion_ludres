@@ -47,7 +47,7 @@ class LicenceFixtures extends AbstractFixture implements FixtureGroupInterface, 
 
     public function load(ObjectManager $manager): void
     {
-        foreach(self::LICENCES  as $ref => [$user, $coverage, $category, $state]) {
+        foreach (self::LICENCES  as $ref => [$user, $coverage, $category, $state]) {
             $currentSeason = $this->seasonService->getCurrentSeason();
             $licence = new Licence();
             $licence->setUser($this->getReference($user, User::class))

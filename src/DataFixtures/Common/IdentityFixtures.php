@@ -27,10 +27,10 @@ class IdentityFixtures extends AbstractFixture implements FixtureGroupInterface,
             'Cadre',
             'Carbone',
             'P60Y',
-            '06 00 00 00 00', 
-            'Retraité', 
+            '06 00 00 00 00',
+            'Retraité',
             'cadre.carbon@test.fr',
-            CommuneFixtures::COMMUNE_NANCY, 
+            CommuneFixtures::COMMUNE_NANCY,
             '06 00 00 00 01',
             'Épouse'
         ],
@@ -38,25 +38,25 @@ class IdentityFixtures extends AbstractFixture implements FixtureGroupInterface,
             UserFixtures::USER_ADULT,
             AddressesFixtures::ADDRESS_ADULT,
             'Pédale',
-            'Auto', 
-            'P40Y', 
-            '06 00 00 00 00', 
-            'Imprimeur', 
-            'pedale.auto@test.fr', 
-            CommuneFixtures::COMMUNE_LUDRES,  
-            '06 00 00 00 01', 
+            'Auto',
+            'P40Y',
+            '06 00 00 00 00',
+            'Imprimeur',
+            'pedale.auto@test.fr',
+            CommuneFixtures::COMMUNE_LUDRES,
+            '06 00 00 00 01',
             'Épouse'
         ],
         self::IDENTITY_SCHOLL_MEMBER => [
-            UserFixtures::USER_SCHOLL_MEMBER, 
+            UserFixtures::USER_SCHOLL_MEMBER,
             AddressesFixtures::ADDRESS_SCHOLL_MEMBER,
             'Pneu',
-            'Tubeless', 
-            'P10Y', 
-            '06 00 00 00 00', 
-            null, 
+            'Tubeless',
+            'P10Y',
+            '06 00 00 00 00',
+            null,
             'pneu.tubuless@test.fr',
-            CommuneFixtures::COMMUNE_NANCY, 
+            CommuneFixtures::COMMUNE_NANCY,
             null,
             null
         ],
@@ -78,14 +78,14 @@ class IdentityFixtures extends AbstractFixture implements FixtureGroupInterface,
 
     public function load(ObjectManager $manager): void
     {
-        foreach(self::IDENTITIES as $ref => [$user, $address, $name, $firstName, $dateInterval, $mobile, $profession, $email, $birthCommune, $emergencyPhone, $emergencyContact]) {
+        foreach (self::IDENTITIES as $ref => [$user, $address, $name, $firstName, $dateInterval, $mobile, $profession, $email, $birthCommune, $emergencyPhone, $emergencyContact]) {
             $identity = new Identity();
             $identity
                 ->setUser($this->getReference($user, User::class))
                 ->setAddress($this->getReference($address, Address::class))
                 ->setName($name)
                 ->setFirstName($firstName)
-                ->setBirthDate((new DateTime())->sub(New DateInterval($dateInterval)))
+                ->setBirthDate((new DateTime())->sub(new DateInterval($dateInterval)))
                 ->setMobile($mobile)
                 ->setProfession($profession)
                 ->setEmail($email)

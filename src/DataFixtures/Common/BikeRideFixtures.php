@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use DateTimeImmutable;
+use App\DataFixtures\Common\BikeRideTypeFixtures;
 use App\Entity\BikeRide;
 use App\Entity\BikeRideType;
-use Doctrine\Persistence\ObjectManager;
-use App\DataFixtures\Common\BikeRideTypeFixtures;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class BikeRideFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
-
     public const BIKE_RIDE_1 = 'bike_ride_1';
     public const BIKE_RIDE_2 = 'bike_ride_2';
     public const BIKE_RIDE_3 = 'bike_ride_3';
@@ -41,7 +40,7 @@ class BikeRideFixtures extends AbstractFixture implements FixtureGroupInterface,
 
     public function load(ObjectManager $manager): void
     {
-        $startAt = (new DateTimeImmutable())->setTime(0,0,0);
+        $startAt = (new DateTimeImmutable())->setTime(0, 0, 0);
 
         $i = 1;
         foreach (self::BIKE_RIDES as $ref => [$bikeRideTypeRef]) {
@@ -49,7 +48,7 @@ class BikeRideFixtures extends AbstractFixture implements FixtureGroupInterface,
                 ->modify('next saturday')
                 ->modify(sprintf('+%d weeks', $i - 1));
             $bikeRide = new BikeRide();
-            $startAt = (new DateTimeImmutable())->setTime(0,0,0);
+            $startAt = (new DateTimeImmutable())->setTime(0, 0, 0);
             $bikeRideType = $this->getReference($bikeRideTypeRef, BikeRideType::class);
 
             $bikeRide->setBikeRideType($bikeRideType)
