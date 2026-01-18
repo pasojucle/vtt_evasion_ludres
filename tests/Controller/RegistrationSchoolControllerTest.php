@@ -20,7 +20,6 @@ class RegistrationSchoolControllerTest extends AbstractTestController
 {
     public function testFullSchoolMemberLifecycle(): void
     {
-        dump('RegistrationSchoolControllerTest');
         $this->goToRegistration();
         $this->fillIdentityStep();
         $this->fillGardianIdentitiesStep();
@@ -218,7 +217,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->client->request('GET', $url);
         $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRide['bikeRideType'], 'startAt' => $bikeRide['startAt']]);
         $cluster = $this->clusterRepository->findOneBy(['bikeRide' => $bikeRide->getId(), 'level' => $level]);
-        $this->assertNotNull($cluster, sprintf('Aucun groupe %s trouvée pour la rando', $levelTitle, $bikeRide->getStartAt()->format('d/m/Y')));
+        $this->assertNotNull($cluster, sprintf('Aucun groupe %s trouvée pour la rando %s', $levelTitle, $bikeRide->getStartAt()->format('d/m/Y')));
         $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]));
         $this->assertSelectorExists($selector);
         $btn = $this->client->getCrawler()->filter($selector);
@@ -330,7 +329,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $formUserSession->disableValidation()->setValue((string) $user->getId());
         $this->client->submit($form);
         $cluster = $this->clusterRepository->findOneBy(['bikeRide' => $bikeRide, 'role' => 'ROLE_FRAME']);
-        $this->assertNotNull($cluster, sprintf('Aucun groupe d\'encadrement trouvée pour la rando', $bikeRide->getStartAt()->format('d/m/Y')));
+        $this->assertNotNull($cluster, sprintf('Aucun groupe d\'encadrement trouvée pour la rando %s', $bikeRide->getStartAt()->format('d/m/Y')));
         $session = $this->sessionRepository->findOneBy(['user' => $user, 'cluster' => $cluster]);
         $this->assertNotNull($session, sprintf('Aucune session trouvée pour l\'utilisateur %s %s dans le groupe des encadrants', $identity['name'], $identity['firstName']));
     }

@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\UseCase\Session;
 
 use App\Entity\User;
-use DateTimeImmutable;
 use App\Entity\Cluster;
 use App\Entity\Session;
-use App\Entity\BikeRide;
 use App\Repository\UserRepository;
 use App\Entity\Enum\LicenceStateEnum;
+use App\Repository\ClusterRepository;
+use App\Repository\BikeRideRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\DataFixtures\Common\UserFixtures;
 use App\Repository\BikeRideTypeRepository;
 use App\DataFixtures\Common\BikeRideTypeFixtures;
+use App\Service\SeasonService;
 use App\UseCase\Session\UnregistrableSessionMessage;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -35,7 +36,7 @@ class UnregistrableSessionMessageTest extends KernelTestCase
 
         $user = $this->getUser();
         $container->get('security.token_storage')->setToken(new UsernamePasswordToken($user, 'none', $user->getRoles()));
-        $bikeRides = $this->getBikeRides($user);
+        $bikeRides = $this->getBikeRides();
         $this->addSessions($user, $bikeRides);
         $this->entityManager->flush();
 
@@ -81,6 +82,14 @@ class UnregistrableSessionMessageTest extends KernelTestCase
             },
             null
         ];
+
+        yield 'Utilisateur avec dossier de l\'année précédente' => [
+            function (User $user) {
+                $seasonService = static::getContainer()->get(SeasonService::class);
+                $user->getLastLicence()->setSeason($seasonService->getPreviousSeason());
+            },
+            'Inscription impossible'
+        ];
     }
 
     private function getUser(): User
@@ -92,46 +101,27 @@ class UnregistrableSessionMessageTest extends KernelTestCase
         return $user;
     }
 
-    private function getBikeRides(User $user): array
+    private function getBikeRides(): array
     {
         $bikeRideTypeRepository = static::getContainer()->get(BikeRideTypeRepository::class);
-        $bikeRideType = $bikeRideTypeRepository->findOneBy(['name' => BikeRideTypeFixtures::getBikeRideTypeNameFromReference(BikeRideTypeFixtures::WINTER_MOUNTAIN_BIKING_SCHOOL)]);
-        
-        $bikeRides = [];
-        $startAt = (new DateTimeImmutable())->setTime(0,0,0);
-        for($i = 1; $i <= 4; ++$i) {
-            $bikeRideStartAt = (clone $startAt)
-                ->modify('next saturday')
-                ->modify(sprintf('+%d weeks', $i - 1));
-            $bikeRide = new BikeRide();
-            $startAt = (new DateTimeImmutable())->setTime(0,0,0);
+        $bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
+        $bikeRideType = $bikeRideTypeRepository->findBy(['name' => BikeRideTypeFixtures::getBikeRideTypeNameFromReference(BikeRideTypeFixtures::WINTER_MOUNTAIN_BIKING_SCHOOL)]);
 
-            $bikeRide->setBikeRideType($bikeRideType)
-                ->setStartAt($bikeRideStartAt)
-                ->setTitle($bikeRideType->getName())
-                ->setContent($bikeRideType->getContent())
-                ->setDisplayDuration(8 * $i)
-                ->setClosingDuration($bikeRideType->getClosingDuration() ?? 0);
-            $this->entityManager->persist($bikeRide);
-
-            $cluster = new Cluster();
-            $cluster->setBikeRide($bikeRide)
-                ->setTitle($user->getLevel()->getTitle())
-                ->setLevel($user->getLevel());
-            $bikeRide->addCluster($cluster);
-            $this->entityManager->persist($cluster);
-            $bikeRides[] = $bikeRide;
-        }
-
-        return $bikeRides;
+        return $bikeRideRepository->findBy(['bikeRideType' => $bikeRideType]);
     }
 
-    private function addSessions(User$user, array $bikeRides): void
+    private function addSessions(User $user, array $bikeRides): void
     {
+        $clusterRepository = static::getContainer()->get(ClusterRepository::class);
         for ($i = 0; $i < 3; $i++) {
+            $cluster = $clusterRepository->findOneBy([
+                'bikeRide' => $bikeRides[$i],
+                'level' => $user->getLevel(),
+            ]);
+
             $session = new Session();
             $session->setUser($user)
-                ->setCluster($bikeRides[$i]->getClusters()->first())
+                ->setCluster($cluster)
                 ->setIsPresent(true);
             $this->entityManager->persist($session);
             $user->addSession($session);
