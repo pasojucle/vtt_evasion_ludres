@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Entity\User;
-use App\Service\ProjectDirService;
 use App\Repository\CategoryRepository;
-use App\Dto\DtoTransformer\UserDtoTransformer;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecondHandControllerTest extends AbstractTestController
