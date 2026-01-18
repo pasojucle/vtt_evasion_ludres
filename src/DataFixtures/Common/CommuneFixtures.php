@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use Exception;
+use App\DataFixtures\Common\DepartmentFixtures;
 use App\Entity\Commune;
 use App\Entity\Department;
-use Doctrine\Persistence\ObjectManager;
-use App\DataFixtures\Common\DepartmentFixtures;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
+use Exception;
 
 class CommuneFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {

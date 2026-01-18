@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use Exception;
-use App\Entity\User;
 use App\Entity\Level;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
+use Exception;
 
 class UserFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
@@ -37,7 +37,7 @@ class UserFixtures extends AbstractFixture implements FixtureGroupInterface, Dep
 
     public function load(ObjectManager $manager): void
     {
-        foreach(self::USERS as $ref => [$licenceNumber, $password, $roles, $active, $level, $passWordMustChanged, $loginSend, $protected]) {
+        foreach (self::USERS as $ref => [$licenceNumber, $password, $roles, $active, $level, $passWordMustChanged, $loginSend, $protected]) {
             $admin = new User();
             $admin->setLicenceNumber($licenceNumber)
                 ->setPassword($password)
