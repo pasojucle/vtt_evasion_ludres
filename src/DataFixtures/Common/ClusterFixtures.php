@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use App\Entity\Level;
-use App\Entity\Cluster;
-use App\Entity\BikeRide;
-use Doctrine\Persistence\ObjectManager;
 use App\DataFixtures\Common\BikeRideFixtures;
+use App\Entity\BikeRide;
+use App\Entity\Cluster;
+use App\Entity\Level;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
-class ClusterFixtures extends AbstractFixture  implements FixtureGroupInterface, DependentFixtureInterface
+class ClusterFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
-
     public const CLUSTER_1 = 'cluster_1';
     public const CLUSTER_2 = 'cluster_2';
     public const CLUSTER_3 = 'cluster_3';
@@ -42,8 +41,8 @@ class ClusterFixtures extends AbstractFixture  implements FixtureGroupInterface,
 
     public function load(ObjectManager $manager): void
     {
-        foreach(self::CLUSTERS as $ref => [$bikeRide]) {
-            foreach(LevelFixtures::SCHOOL_LEVELS as $levelRef) {
+        foreach (self::CLUSTERS as $ref => [$bikeRide]) {
+            foreach (LevelFixtures::SCHOOL_LEVELS as $levelRef) {
                 $level = $this->getReference($levelRef, Level::class);
                 $cluster = new Cluster();
                 $cluster->setBikeRide($this->getReference($bikeRide, BikeRide::class))
