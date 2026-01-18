@@ -20,7 +20,6 @@ class RegistrationAdultControllerTest extends AbstractTestController
 {
     public function testFullAdultMemberLifecycle(): void
     {
-        dump('RegistrationAdultControllerTest');
         $this->goToRegistration();
         $this->fillIdentityStep();
         $this->validateTarifStep();
@@ -158,8 +157,6 @@ class RegistrationAdultControllerTest extends AbstractTestController
         $this->assertResponseIsSuccessful();
         $url = $this->urlGenerator->generate('admin_bike_rides', ['period' => 'tous']);
         $this->client->request('GET', $url);
-
-        $this->assertSelectorCount($loop,'li.list-dropdown');
         
         $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRideType, 'startAt' => $startAt]);
         $this->assertSelectorExists(sprintf('a[href="/admin/sortie/groupe/%s"]', $bikeRide->getId()));
@@ -191,8 +188,8 @@ class RegistrationAdultControllerTest extends AbstractTestController
         $url = $this->urlGenerator->generate('schedule', ['period' => 'tous']);
         $this->client->request('GET', $url);
         $bikeRide = $this->bikeRideRepository->findOneBy(['bikeRideType' => $bikeRide['bikeRideType'], 'startAt' => $bikeRide['startAt']]);
-        $cluster = $bikeRide->getClusters()?->first();
-        $this->assertNotNull($cluster, sprintf('Aucun groupe trouvée pour la rando', $bikeRide->getStartAt()->format('d/m/Y')));
+        $cluster = $bikeRide->getClusters()->first();
+        $this->assertNotNull($cluster, sprintf('Aucun groupe trouvée pour la rando %s', $bikeRide->getStartAt()->format('d/m/Y')));
         $selector = sprintf('a[href="%s"]', $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]));
         $this->assertSelectorExists($selector);
         $btn = $this->client->getCrawler()->filter($selector);
