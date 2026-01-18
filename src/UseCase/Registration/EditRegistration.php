@@ -146,7 +146,7 @@ class EditRegistration
 
     private function sendMailToClub(User $user): void
     {
-        $identity = $user->getIdentity();
+        $identity = $user->getMainIdentity();
         $this->mailerService->sendMailToClub([
             'name' => $identity->getName(),
             'firstName' => $identity->getFirstName(),
