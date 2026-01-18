@@ -121,4 +121,19 @@ abstract class AbstractTestController extends WebTestCase
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         return $parameterBag->get('club_email');
     }
+
+    public function validateEmailRegistration(array $identity): void
+    {
+        $user = $this->getUserFromIdentity($identity);
+        $mainIdentity = $user->getMainIdentity();
+        $this->assertEmailCount(2);
+        $email = $this->getMailerMessage(0);
+        $this->assertEmailAddressContains($email, 'Reply-To', $mainIdentity->getEmail());
+        $this->assertEmailAddressContains($email, 'To', $this->getClubEmail());
+        $this->assertEmailHeaderSame($email, 'Subject', 'Nouvelle Inscription sur le site VTT Evasion Ludres');
+        $email = $this->getMailerMessage(1);
+        $this->assertEmailAddressContains($email, 'Reply-To', $this->getClubEmail());
+        $this->assertEmailAddressContains($email, 'To', $mainIdentity->getEmail());
+        $this->assertEmailHeaderSame($email, 'Subject', 'Votre inscription sur le site VTT Evasion Ludres');
+    }
 }
