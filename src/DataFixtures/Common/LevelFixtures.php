@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\DataFixtures\Common;
 
-use Exception;
 use App\Entity\Level;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Persistence\ObjectManager;
+use Exception;
 
 class LevelFixtures extends AbstractFixture implements FixtureGroupInterface
 {
