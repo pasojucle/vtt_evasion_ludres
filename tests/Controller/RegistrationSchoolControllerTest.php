@@ -27,6 +27,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->validateAgreementsStep();
         $this->validateHealtStep();
         $this->validateOverviewStep();
+        $this->validateEmailRegistration(self::SCHOOL_MEMBER);
         $this->logOut();
 
         $this->validateFullTrialMemberLifecycle(BikeRideTypeFixtures::SUMMER_MOUNTAIN_BIKING_SCHOOL);
@@ -270,7 +271,7 @@ class RegistrationSchoolControllerTest extends AbstractTestController
         $this->validateAgreementsStep();
         $this->validateHealtStep();
         $this->validateOverviewStep();
-        
+        $this->validateEmailRegistration(self::SCHOOL_MEMBER);
         $this->logOut();
     }
 
