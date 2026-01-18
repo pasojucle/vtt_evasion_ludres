@@ -6,9 +6,9 @@ namespace App\DataFixtures\Common;
 
 use App\Entity\Address;
 use App\Entity\Commune;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class AddressesFixtures extends AbstractFixture implements FixtureGroupInterface, DependentFixtureInterface
 {
@@ -36,7 +36,7 @@ class AddressesFixtures extends AbstractFixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
-        foreach(self::ADDRESSES as $ref => [$street, $commune]) {
+        foreach (self::ADDRESSES as $ref => [$street, $commune]) {
             $communeRef = $this->getReference($commune, Commune::class);
             $address = new Address();
             $address
