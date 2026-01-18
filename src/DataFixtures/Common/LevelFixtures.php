@@ -37,6 +37,14 @@ class LevelFixtures extends AbstractFixture implements FixtureGroupInterface
         self::LEVEL_ADULT => ['Adulte hors encadrement', 'Adulte hors encadrement', null, '6', '3', '1', '0', '0'],
     ];
 
+    public const SCHOOL_LEVELS = [
+        self::LEVEL_LITTLE_WOLVES,
+        self::LEVEL_CHAMOIS,
+        self::LEVEL_IBEX,
+        self::LEVEL_LYNX,
+        self::LEVEL_FOXES,
+    ];
+
     public static function getGroups(): array
     {
         return ['test'];
