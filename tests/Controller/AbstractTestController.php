@@ -16,10 +16,12 @@ use App\Repository\SessionRepository;
 use App\Repository\BikeRideRepository;
 use App\Repository\IdentityRepository;
 use Symfony\Component\DomCrawler\Form;
-use App\DataFixtures\Common\BikeRideTypeFixtures;
+use App\Repository\SecondHandRepository;
 use App\DataFixtures\Common\UserFixtures;
+use App\DataFixtures\Common\BikeRideTypeFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\DomCrawler\Field\TextareaFormField;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -38,6 +40,7 @@ abstract class AbstractTestController extends WebTestCase
     public LevelRepository $levelRepository;
     public BikeRideRepository $bikeRideRepository;
     public ClusterRepository $clusterRepository;
+    public SecondHandRepository $secondHandRepository;
 
     protected function setUp(): void
     {
@@ -54,6 +57,7 @@ abstract class AbstractTestController extends WebTestCase
         $this->levelRepository = static::getContainer()->get(LevelRepository::class);
         $this->bikeRideRepository = static::getContainer()->get(BikeRideRepository::class);
         $this->clusterRepository = static::getContainer()->get(ClusterRepository::class);
+        $this->secondHandRepository = static::getContainer()->get(SecondHandRepository::class);
     }
     
     public function addAutocompleteField(Form &$form, string $name): void
@@ -110,5 +114,11 @@ abstract class AbstractTestController extends WebTestCase
             ->getManager()
             ->getRepository(BikeRideType::class)
             ->findOneBy(['name' => BikeRideTypeFixtures::getBikeRideTypeNameFromReference($reference)]);
+    }
+
+    public function getClubEmail(): string
+    {
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        return $parameterBag->get('club_email');
     }
 }
