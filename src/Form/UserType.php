@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Licence;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\User;
 use App\Form\HealthType;
 use Symfony\Component\Form\AbstractType;
@@ -177,7 +177,7 @@ class UserType extends AbstractType
             'data_class' => User::class,
             'current' => null,
             'is_kinship' => false,
-            'category' => Licence::CATEGORY_ADULT,
+            'category' => LicenceCategoryEnum::ADULT,
             'season_licence' => null,
         ]);
     }

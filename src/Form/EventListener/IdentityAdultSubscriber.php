@@ -128,7 +128,7 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     ],
                 ])
                 ->add('email', EmailType::class, [
-                    'label' => (IdentityKindEnum::KINSHIP === $kind && Licence::CATEGORY_MINOR === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
+                    'label' => (IdentityKindEnum::KINSHIP === $kind && LicenceCategoryEnum::SCHOOL === $options['category']) ? 'Adresse mail (contact principal)' : 'Adresse mail',
                     'row_attr' => [
                         'class' => 'form-group-inline',
                     ],

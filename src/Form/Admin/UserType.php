@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Admin;
 
-use App\Entity\Licence;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -46,7 +46,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'category' => Licence::CATEGORY_ADULT,
+            'category' => LicenceCategoryEnum::ADULT,
             'season_licence' => null,
         ]);
     }

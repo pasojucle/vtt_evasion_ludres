@@ -113,7 +113,7 @@ class LicenceType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Licence::class,
             'season_licence' => null,
-            'category' => Licence::CATEGORY_ADULT,
+            'category' => LicenceCategoryEnum::ADULT,
             'current' => null,
         ]);
     }

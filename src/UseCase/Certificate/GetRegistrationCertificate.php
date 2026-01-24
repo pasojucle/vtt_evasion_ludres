@@ -6,7 +6,7 @@ namespace App\UseCase\Certificate;
 
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Dto\UserDto;
-use App\Entity\Licence;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\User;
 use App\Service\MessageService;
@@ -48,11 +48,9 @@ class GetRegistrationCertificate
 
     private function getContent(UserDto $user)
     {
-        if (Licence::CATEGORY_ADULT === $user->lastLicence->category) {
-            $content = $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_ADULT');
-        } else {
-            $content = $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_SCHOOL');
-        }
+        $content = (LicenceCategoryEnum::ADULT === $user->lastLicence->category)
+            ? $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_ADULT')
+            : $this->messageService->getMessageByName('REGISTRATION_CERTIFICATE_SCHOOL');
 
         return $this->replaceKeywordsService->replace($content, $user, RegistrationStep::RENDER_FILE);
     }

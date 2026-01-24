@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Identity;
-use App\Entity\Licence;
 use App\Form\EventListener\IdentityAdultSubscriber;
 use App\Service\LicenceService;
 use Symfony\Component\Form\AbstractType;
@@ -28,7 +28,7 @@ class IdentityType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Identity::class,
-            'category' => Licence::CATEGORY_ADULT,
+            'category' => LicenceCategoryEnum::ADULT,
             'is_yearly' => false,
             'is_kinship' => false,
         ]);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Entity\Licence;
+use App\Entity\Enum\LicenceCategoryEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -38,7 +38,7 @@ class IdentitiesType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'category' => Licence::CATEGORY_ADULT,
+            'category' => LicenceCategoryEnum::ADULT,
             'is_yearly' => null,
             'is_kinship' => false,
         ]);
