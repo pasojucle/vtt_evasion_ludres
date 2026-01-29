@@ -1,3 +1,5 @@
+import './stimulus_bootstrap.js';
+
 import * as bootstrap from 'bootstrap';
 
-import './styles/wiki.scss';
+import './styles/wiki.css';

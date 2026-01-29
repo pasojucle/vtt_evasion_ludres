@@ -281,7 +281,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         }>,
  *     },
  *     asset_mapper?: bool|array{ // Asset Mapper configuration
- *         enabled?: bool, // Default: false
+ *         enabled?: bool, // Default: true
  *         paths?: array<string, scalar|null>,
  *         excluded_patterns?: list<scalar|null>,
  *         exclude_dotfiles?: bool, // If true, any files starting with "." will be excluded from the asset mapper. // Default: true
@@ -1609,23 +1609,18 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     throttle_limit?: int, // Another password reset cannot be made faster than this throttle time in seconds. // Default: 3600
  *     enable_garbage_collection?: bool, // Enable/Disable automatic garbage collection. // Default: true
  * }
- * @psalm-type WebpackEncoreConfig = array{
- *     output_path: scalar|null, // The path where Encore is building the assets - i.e. Encore.setOutputPath()
- *     crossorigin?: false|"anonymous"|"use-credentials", // crossorigin value when Encore.enableIntegrityHashes() is used, can be false (default), anonymous or use-credentials // Default: false
- *     preload?: bool, // preload all rendered script and link tags automatically via the http2 Link header. // Default: false
- *     cache?: bool, // Enable caching of the entry point file(s) // Default: false
- *     strict_mode?: bool, // Throw an exception if the entrypoints.json file is missing or an entry is missing from the data // Default: true
- *     builds?: array<string, scalar|null>,
- *     script_attributes?: array<string, scalar|null>,
- *     link_attributes?: array<string, scalar|null>,
- * }
  * @psalm-type StimulusConfig = array{
  *     controller_paths?: list<scalar|null>,
  *     controllers_json?: scalar|null, // Default: "%kernel.project_dir%/assets/controllers.json"
  * }
- * @psalm-type VueConfig = array{
- *     controllers_path?: scalar|null, // The path to the directory where Vue controller components are stored - relevant only when using symfony/asset-mapper. // Default: "%kernel.project_dir%/assets/vue/controllers"
- *     name_glob?: list<scalar|null>,
+ * @psalm-type SymfonycastsTailwindConfig = array{
+ *     input_css?: list<scalar|null>,
+ *     config_file?: scalar|null, // Path to the tailwind.config.js file // Default: "%kernel.project_dir%/tailwind.config.js"
+ *     binary?: scalar|null, // The tailwind binary to use instead of downloading a new one // Default: null
+ *     binary_version?: scalar|null, // Tailwind CLI version to download - null means the latest version // Default: null
+ *     binary_platform?: "auto"|"linux-arm64"|"linux-arm64-musl"|"linux-x64"|"linux-x64-musl"|"macos-arm64"|"macos-x64"|"windows-x64", // Tailwind CLI platform to download - "auto" will try to detect the platform automatically // Default: "auto"
+ *     postcss_config_file?: scalar|null, // Path to PostCSS config file which is passed to the Tailwind CLI // Default: null
+ *     strict_mode?: bool|null, // When enabled, an exception will be thrown if there are no built assets (default: false in `test` env, true otherwise) // Default: null
  * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
@@ -1642,9 +1637,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     fos_js_routing?: FosJsRoutingConfig,
  *     ewz_recaptcha?: EwzRecaptchaConfig,
  *     symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
- *     webpack_encore?: WebpackEncoreConfig,
  *     stimulus?: StimulusConfig,
- *     vue?: VueConfig,
+ *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1663,9 +1657,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         fos_js_routing?: FosJsRoutingConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
- *         webpack_encore?: WebpackEncoreConfig,
  *         stimulus?: StimulusConfig,
- *         vue?: VueConfig,
+ *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1682,9 +1675,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         fos_js_routing?: FosJsRoutingConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
- *         webpack_encore?: WebpackEncoreConfig,
  *         stimulus?: StimulusConfig,
- *         vue?: VueConfig,
+ *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1702,9 +1694,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         fos_js_routing?: FosJsRoutingConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
- *         webpack_encore?: WebpackEncoreConfig,
  *         stimulus?: StimulusConfig,
- *         vue?: VueConfig,
+ *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

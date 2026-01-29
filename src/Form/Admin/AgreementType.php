@@ -7,7 +7,7 @@ use App\Entity\Enum\AgreementKindEnum;
 use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\LicenceMembershipEnum;
 use App\Entity\RegistrationStep;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -45,7 +45,7 @@ class AgreementType extends AbstractType
                     new NotBlank(),
                 ]
             ])
-            ->add('content', CkeditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'base',
                 'row_attr' => [

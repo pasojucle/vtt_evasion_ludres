@@ -1,6 +1,4 @@
-const { async } = require("regenerator-runtime");
-import Routing from 'fos-router';
-import { showModal } from './modal';
+import { showModal } from './modal.js';
 
 export class Form {
     formData;

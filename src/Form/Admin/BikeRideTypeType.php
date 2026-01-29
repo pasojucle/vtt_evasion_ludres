@@ -6,7 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\BikeRideType;
 use App\Entity\Enum\RegistrationEnum;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use App\Validator\NotEmptyArray;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -38,7 +38,7 @@ class BikeRideTypeType extends AbstractType
                 ],
                 'empty_data' => 'Nouveau type de sortie',
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'base',
                 'row_attr' => [

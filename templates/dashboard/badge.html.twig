@@ -7,8 +7,8 @@
             <ul>
                 {% for type, items in data %}
                     <li class="flex">
-                        <div class="flex-label">{{ type|trans }}</div>
-                        <div class="auto-margin"><span class="badge small">{{ items|length }}</span></div>
+                        <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ type|trans }}</div>
+                        <div class="ml-auto"><span class="badge small">{{ items|length }}</span></div>
                     </li>
                 {% endfor %}
             </ul>
@@ -16,8 +16,8 @@
                 <ul class="mt-10">
                     {% for parameter in parameters %}
                         <li class="flex">
-                            <div class="flex-label">{{ parameter.label }}</div>
-                            <div class="auto-margin"><span class="{% if parameter.value %}toggle-on{% else %}toggle-off{% endif %}"></span></div>
+                            <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ parameter.label }}</div>
+                            <div class="ml-auto"><span class="{% if parameter.value %}toggle-on{% else %}toggle-off{% endif %}"></span></div>
                         </li>
                     {% endfor %}
                 </ul>

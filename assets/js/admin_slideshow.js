@@ -1,5 +1,3 @@
-import Routing from 'fos-router';
-
 document.addEventListener("DOMContentLoaded", function(event) {
     if(document.getElementById('slideshow-space')) {
         fetchSlideshowDirectorySize();

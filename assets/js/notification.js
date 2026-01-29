@@ -1,7 +1,6 @@
 import { initModal, buildContent, closeModal } from './modal.js';
 import { disableScroll, enableScroll } from './toggleScroll.js';
 import { hideNav} from './navigation.js';
-import Routing from 'fos-router';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.novelty').forEach((element) => {

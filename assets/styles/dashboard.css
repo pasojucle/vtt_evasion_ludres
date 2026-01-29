@@ -1,16 +1,3 @@
-.flex {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    .flex-label {
-        max-width: calc(100% - 35px);
-        text-overflow: ellipsis;
-    }
-    .auto-margin {
-        margin-left: auto;
-    }
-}
-
 .dashboard-item {
     background-color: var(--light-color);
     flex: 1 1 0px;

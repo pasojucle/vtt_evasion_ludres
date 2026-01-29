@@ -3,7 +3,7 @@
 namespace App\Form\Admin;
 
 use App\Entity\Summary;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -32,7 +32,7 @@ class SummaryType extends AbstractType
                 'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
                 'required' => true,
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Détail',
                 'config_name' => 'full',
                 'required' => true,

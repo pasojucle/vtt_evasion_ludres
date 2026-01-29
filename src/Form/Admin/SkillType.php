@@ -5,7 +5,7 @@ namespace App\Form\Admin;
 use App\Entity\Level;
 use App\Entity\Skill;
 use App\Entity\SkillCategory;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use App\Form\Type\VueChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,7 +31,7 @@ class SkillType extends AbstractType
                     'class' => 'col-md-12',
                 ],
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Descriptif',
                 'config_name' => 'base',
                 'row_attr' => [
