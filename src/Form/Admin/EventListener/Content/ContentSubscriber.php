@@ -8,7 +8,7 @@ use App\Entity\Content;
 use App\Entity\Enum\ContentKindEnum;
 use App\Form\Admin\ContentType;
 use App\Form\Type\BackgroundsType;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use App\Repository\ContentRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
@@ -54,7 +54,7 @@ class ContentSubscriber implements EventSubscriberInterface
 
         if (ContentKindEnum::BACKGROUND_ONLY !== $content->getKind()) {
             $form
-                ->add('content', CKEditorType::class, [
+                ->add('content', TiptapType::class, [
                     'label' => 'Contenu',
                     'config_name' => 'full',
                     'required' => false,

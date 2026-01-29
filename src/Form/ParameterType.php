@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Parameter;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use App\Service\ReplaceKeywordsService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -45,7 +45,7 @@ class ParameterType extends AbstractType
                         ];
                         break;
                     case Parameter::TYPE_HTML:
-                        $classType = CKEditorType::class;
+                        $classType = TiptapType::class;
                         $fieldOptions = [
                             'config_name' => 'base',
                         ];

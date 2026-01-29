@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace App\Form\Admin\EventListener\BikeRide;
 
-use App\Entity\BikeRide;
-
-use App\Entity\BikeRideType as BikeRideKind;
-use App\Entity\Enum\RegistrationEnum;
 use App\Entity\User;
-use App\Form\Admin\BikeRideType;
-use App\Form\Admin\UsersAutocompleteField;
-use App\Form\Type\CkeditorType;
-use App\Repository\BikeRideTypeRepository;
-use App\Repository\UserRepository;
-use App\Service\LevelService;
-use App\Service\MessageService;
-use App\Service\SeasonService;
+
+use App\Entity\BikeRide;
 use App\Validator\RangeAge;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Form\Type\TiptapType;
+use App\Service\LevelService;
+use App\Service\SeasonService;
+use App\Service\MessageService;
+use App\Form\Admin\BikeRideType;
+use App\Repository\UserRepository;
+use App\Entity\Enum\RegistrationEnum;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use App\Form\Admin\UsersAutocompleteField;
+use App\Repository\BikeRideTypeRepository;
+use App\Entity\BikeRideType as BikeRideKind;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BikeRideSubscriber implements EventSubscriberInterface
 {
@@ -123,7 +123,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     'class' => 'form-group',
                 ],
             ])
-            ->add('content', CkeditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Détail (optionnel)',
                 'config_name' => 'full',
                 'required' => false,
@@ -196,7 +196,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
             ;
         if ($registrationEnabled) {
             $form
-                ->add('registrationClosedMessage', CkeditorType::class, [
+                ->add('registrationClosedMessage', TiptapType::class, [
                     'label' => 'Message afficher à la cloture lors de l\'inscription',
                     'config_name' => 'base',
                     'required' => false,

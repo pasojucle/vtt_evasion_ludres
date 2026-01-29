@@ -9,7 +9,7 @@ use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Enum\RegistrationFormEnum;
 use App\Entity\RegistrationStep;
 use App\Entity\RegistrationStepGroup;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -89,7 +89,7 @@ class RegistrationStepType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'full',
                 'required' => false,

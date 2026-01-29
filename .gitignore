@@ -1,4 +1,3 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -34,12 +33,6 @@ data/documentation
 data/licences
 data/slideshow
 data/crontab.log
-###> symfony/webpack-encore-bundle ###
-/node_modules/
-npm-debug.log
-yarn-error.log
-###< symfony/webpack-encore-bundle ###
-
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
@@ -48,3 +41,8 @@ phpstan.neon
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###

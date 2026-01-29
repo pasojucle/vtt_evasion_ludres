@@ -6,7 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Product;
 use App\Entity\Size;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use App\Validator\NotEmptyFile;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -30,7 +30,7 @@ class ProductType extends AbstractType
                     'class' => 'form-group',
                 ],
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Détail (optionnel)',
                 'config_name' => 'base',
                 'required' => false,

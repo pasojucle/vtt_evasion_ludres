@@ -8,13 +8,12 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CkeditorType extends AbstractType
+class TiptapType extends AbstractType
 {
     protected ObjectManager $em;
 
@@ -44,19 +43,19 @@ class CkeditorType extends AbstractType
         $view->vars['compound'] = false;
         $view->vars['enable'] = true;
         $view->vars['async'] = true;
-        $view->vars['block_prefix'] = 'ckeditor';
+        $view->vars['block_prefix'] = 'tiptap';
         $view->vars['toolbar'] = $this->getToolbar($options['config_name']);
         $view->vars['environment'] = $this->kernel->getEnvironment();
     }
 
     public function getName(): string
     {
-        return 'ckeditor';
+        return 'tiptap';
     }
 
     public function getBlockPrefix(): string
     {
-        return 'ckeditor';
+        return 'tiptap';
     }
 
     private function getUploadUrl(): string

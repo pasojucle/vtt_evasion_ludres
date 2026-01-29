@@ -1,7 +1,6 @@
-import './bootstrap.js';
-import { registerVueControllerComponents } from '@symfony/ux-vue';
+import './stimulus_bootstrap.js';
+import 'tom-select/dist/css/tom-select.default.css';
 
-registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -10,32 +9,32 @@ registerVueControllerComponents(require.context('./vue/controllers', true, /\.vu
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
+import './styles/app.css';
 import './styles/admin.css';
-
 import './styles/paginator.css';
 import './styles/common.css';
 import './styles/modal.css';
-import './styles/dropdown.scss';
+import './styles/dropdown.css';
 
 import './styles/switch-button.css';
 import './styles/radio.css';
-import './styles/component/checkbox.scss';
-import './styles/component/radio-group.scss';
-import './styles/health.scss';
-import './styles/list-group.scss';
-import './styles/loader.scss';
-import './styles/bootstrap.scss';
+import './styles/component/checkbox.css';
+import './styles/component/radio-group.css';
+import './styles/health.css';
+import './styles/list-group.css';
+import './styles/loader.css';
+import './styles/bootstrap.css';
+
 
 import './js/app.js';
 import './js/navigation.js';
 import './js/form.js';
-import './js/input-file';
-import './js/modal';
-import './js/media_position';
-import './js/switch';
+import './js/input-file.js';
+import './js/modal.js';
+import './js/media_position.js';
+import './js/switch.js';
 import './js/dropdown.js';
 import './js/js-datepicker.js';
-import './js/input-file.js';
 import './js/clipboard.js';
 import './js/line_chart.js';
 import './js/dashboard.js';

@@ -1,6 +1,5 @@
 import { openModal, handleHideModal, closeModal } from './modal.js';
-import Routing from 'fos-router';
-import { checkStatus, isJsonResponse } from './fetch.js'
+import { checkStatus } from './fetch.js'
 
 document.addEventListener("DOMContentLoaded", (event) => {
     getClusters()

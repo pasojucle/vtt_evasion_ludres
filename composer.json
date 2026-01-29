@@ -23,6 +23,7 @@
         "setasign/fpdi": "^2.3",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "7.4.*",
+        "symfony/asset-mapper": "7.4.*",
         "symfony/cache": "7.4.*",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
@@ -51,13 +52,12 @@
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "^7.2",
         "symfony/ux-autocomplete": "^2.16",
-        "symfony/ux-vue": "^2.16",
         "symfony/validator": "7.4.*",
         "symfony/web-link": "7.4.*",
-        "symfony/webpack-encore-bundle": "^2.2",
         "symfony/workflow": "7.4.*",
         "symfony/yaml": "7.4.*",
         "symfonycasts/reset-password-bundle": "^1.9",
+        "symfonycasts/tailwind-bundle": "^0.12.0",
         "twig/cssinliner-extra": "^3.3",
         "twig/extra-bundle": "^3.8",
         "twig/intl-extra": "^3.3",
@@ -111,7 +111,8 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"

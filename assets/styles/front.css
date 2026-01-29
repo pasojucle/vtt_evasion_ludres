@@ -1,0 +1,537 @@
+nav {
+    background-color: var(--light-color);
+    width: 100%;
+    z-index: 10;
+    text-align: center;
+    position: relative;
+}
+nav:not(.paginator)::after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 1px;
+    box-shadow: 0 4px 2px gray;
+    bottom: 4px;
+    z-index: 11;
+}
+nav.fixed {
+    top: 0;
+    left: 0;
+    position: fixed;
+}
+
+.nav-sub > a > div, .nav-bar-title > a > div {
+    position: relative;
+    display: inline-block;
+    padding: 12px 18px;
+    white-space: nowrap;
+}
+
+.badge.novelty {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    /* z-index: -1; */
+    min-width: unset;
+}
+.novelty {
+    background-color: var(--primary-color);
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    font-size: 8px;
+    line-height: 15px;
+    color: var(--white-color);
+    text-align: center;
+}
+
+nav > ul > li > div.nav-bar-title > a {
+    display: block;
+    position: relative;
+    color: var(--background-color);
+}
+
+nav > ul > li {
+    display: inline-block;
+    margin: 0 -4px;
+    position: relative;
+}
+nav > ul> li > div.nav-bar-title > a:hover, nav > ul> li > div.nav-bar-title > a.active {
+    color: var(--white-color);
+    background-color: var(--primary-color);
+    cursor: pointer;
+}
+nav > ul > li:hover  ul {
+    display: block;
+}
+.header-front {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    overflow: hidden;
+    width: 100%;
+    background-color: var(--background-color);
+    position: relative;
+    padding: 0 15px 15px 15px;
+    box-sizing: border-box;
+}
+.header:not(.admin) > .logo {
+    position: absolute;
+    left: 25px;
+    top: 5px;
+}
+.header:not(.admin) > .logo.logo-ludres {
+    right: 25px;
+    left: unset;
+}
+.header-front > a.logo {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+.header-front > a.logo img.logo-club {
+    height: 120px;
+}
+.header-front > a.logo img.logo-ecole{
+    height: 50px;
+}
+nav:not(.admin) > a.logo {
+    position: absolute;
+    left: 25px;
+    top: 3px;
+}
+nav:not(.admin) > a.logo img {
+    height: 40px;
+}
+ul.dropdown-menu {
+    display: none;
+    top: var(--nav-height);
+    background-color: var(--white-color);
+    min-width: 100%;
+    text-align: left;
+    position: absolute;
+    z-index: 12;
+    padding: 5px;
+    box-sizing: border-box;
+}
+ul.dropdown-menu a {
+    color: var(--background-color);
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+ul.dropdown-menu a:hover, ul.dropdown-menu a.active {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}
+.header {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+    background-color: var(--background-color);
+}
+.header .grayscale-container {
+    height: 130px;
+    width: max-content;
+    position: absolute;
+    left: calc((100% - 100vw) /2);
+}
+.grayscale-container img {
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+
+}
+.header .grayscale-container img {
+    margin: auto -2.5px;
+    height: 100%;
+}
+footer {
+    background-color: var(--background-color);
+    text-align: center;
+    color: var(--white-color);
+}
+footer a {
+    color: var(--white-color);
+}
+footer li {
+    display: inline;
+    line-height: 50px;
+}
+footer li:not(:first-child) {
+    margin-left: 25px;
+}
+footer li:not(:first-child)::before {
+    content: "|";
+    margin-right: 25px;
+}
+h1 {
+    color: var(--light-color);
+}
+.wrapper .progress-container h1 {
+    font-size: 24px;
+}
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+h2:not(:first-child), h3:not(:first-child) {
+    margin-top: 15px;
+}
+h4 {
+    display: inline;
+}
+ul.list-outside, .text-2-col ul, .col-content > .wrapper-content > ul > li {
+    margin-left: 18px;
+}
+.list-outside li, .text-2-col ul li, .col-content > .wrapper-content > ul > li  {
+    list-style: disc outside;
+    margin-top: 8px;
+}
+p {
+    text-align: justify;
+}
+p + p {
+    margin-top: 5px;
+}
+.wrapper.col-1fr-5fr {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    column-gap: 10%;
+    margin: 100px 25%;
+}
+.content-container {
+    background-color: var(--white-color);
+    padding: 25px;
+}
+.content-title {
+    margin-bottom: 15px;
+    display: none;
+}
+.block-body .container:not(:last-child), .content-container .container:not(:last-child) {
+    margin-bottom: 15px;
+}
+.block-footer:not(:first-child) {
+    margin-top: 25px;
+    min-height: 35px;
+}
+.block-footer::after {
+    content: '';
+    clear: both;
+}
+
+.wrapper.min-content {
+    width: min-content;
+    min-width: 400px;
+}
+.background-ligth h1 {
+    color: var(--background-color);
+}
+.background-ligth h2 {
+    color: var(--primary-color-darker);
+}
+.background-ligth .btn-primary {
+    background-color: var(--primary-color-darker);
+}
+.throughed-price {
+    color: var(--background-color);
+    text-decoration-line: line-through;
+}
+.text-col-2 {
+    column-count: 2;
+    column-gap: 50px;
+}
+
+.qs-sport .value {
+    width: 120px;
+}
+.qs-sport table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.qs-sport table:not(:first-child) {
+    margin-top: 25px;
+}
+.qs-sport table th, .qs-sport table td {
+    border: 1px solid black;
+    padding: 5px
+}
+.qs-sport .center {
+    text-align: center;
+}
+.qs-sport .title {
+    background-color: #c00100;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--light-color);
+}
+.qs-sport .alert {
+    color: #c00100;
+}
+.qs-sport h1, .qs-sport h2 {
+    color: black;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.wrapper h1, .wrapper.background-color h1 {
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+.wrapper h2 {
+    font-size: 30px;
+    text-shadow: unset;
+}
+.wrapper .content-footer {
+    text-align: center;
+    margin-top: 25px;
+}
+.wrapper-full-width {
+    width: 100%;
+    margin: unset;
+    padding: 5% 10%;
+    box-sizing: border-box;
+}
+.wrapper-medium-width {
+    width: 100%;
+    margin: unset;
+    padding: 5% 20%;
+    box-sizing: border-box;
+}
+.wrapper-small-width {
+    width: 100%;
+    margin: unset;
+    padding: 5% 25%;
+    box-sizing: border-box;
+}
+.wrapper-home {
+    display: grid;
+    grid-template-areas: "news events"
+                         "links events";
+    grid-template-columns: 1fr 270px;
+    grid-template-rows: 1fr 100px;
+    gap: 10%;
+    padding-top: 150px;
+    padding-bottom: 150px;
+}
+.wrapper:not(.wrapper-maintenance), .wrapper .wrapper-content {
+    min-height: calc(100vh - 200px);
+}
+.wrapper-maintenance {
+    min-height: 100vh;
+}
+.wrapper-full-width.wrapper-maintenance h1 {
+    color: var(--primary-color-darker);
+}
+.news-container {
+    grid-area: news;
+}
+.bike-rides-container {
+    grid-area: events;
+}
+.bike-rides-container li:not(:last-child) {
+    margin-bottom: 5px;
+}
+.bike-rides-container li > a {
+    color: var(--background-color);
+}
+.links-container {
+    grid-area: links;
+}
+.wrapper .wrapper-title {
+    text-align: left;
+}
+.wrapper .wrapper-title h2 {
+    text-shadow: unset;
+    font-size: 30px;
+}
+.wrapper .wrapper-footer {
+    overflow: hidden;
+}
+button[type="submit"] {
+    font-size: 16px;
+}
+.user-picture {
+    max-height: 200px;
+    margin: 10px;
+}
+.table-border {
+    border: 2px solid var(--background-color);
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.table-border th, .table-border td {
+    border: 2px solid var(--background-color);
+    padding: 5px;
+}
+.bike-rides {
+    display: grid;
+    grid-template-columns: 2fr 5fr ;
+    row-gap: 25px;
+    align-items: center;
+}
+.bike-rides > div:not(.badge-members) {
+    padding: 15px;
+    box-sizing: border-box;
+    height: 100%;
+}
+.bike-rides .bike-ride-date {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.bike-rides .bike-ride-detail {
+    background-color: var(--white-color);
+}
+.bike-rides .bike-ride-detail .row {
+    align-items: self-start;
+}
+.bike-rides .bike-ride-date, .bike-rides .bike-ride-btn{
+    background-color: var(--green-color);
+    color: var(--white-color);
+    font-weight: 700;
+    font-size: 18px;
+}
+.bike-rides .bike-ride-date.active, .bike-rides .bike-ride-btn, .block-title.bike-ride-date.active {
+    background-color: var(--primary-color);
+}
+.block-title.bike-ride-date.active {
+    color: var(--white-color);
+    padding: 25px;
+    margin: -25px -25px 20px -25px;
+}
+.block-title.bike-ride-date.active h2 {
+    color: var(--white-color);
+}
+.bike-rides .bike-ride-date.disable {
+    background-color: var(--clear-color);
+}
+.bike-rides .bike-ride-detail.disable, .bike-rides .bike-ride-detail.disable .info {
+    color: var(--clear-color);
+}
+.bike-rides .bike-ride-btn {
+    display: none;
+}
+.wrapper-full-background h1, .wrapper-medium-width h1, .wrapper-full-width h1 {
+    margin-bottom: 100px;
+    color: rgba(255,255,255,0.4);
+    text-align: left;
+    font-size: 75px;
+    font-style: oblique;
+}
+.card-img-only:not(:first-child) {
+    margin-top: 25px;
+}
+.card.card-full-img {
+    background-color: var(--white-color);
+    padding: 5px;
+    height: 100%;
+    box-sizing: border-box;
+}
+.card.card-full-img > div {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.links-container .card {
+    height: 100px;
+}
+.text-2-col {
+    column-count: 2;
+    column-gap: 5%;
+}
+
+
+@media screen and (max-width: 1024px) {
+    .header-front {
+        display: none;
+    }
+    .wrapper-medium-width, .wrapper-small-width {
+        padding: 5%;
+    }
+    .card-link .card-img {
+        height: 100px;
+        background-size: 50% auto;
+    }
+    .wrapper-content h1 {
+        font-size: 40px;
+    }
+    .content-container form {
+        width: calc(100VW - 50px);
+    }
+    .content-container table {
+        font-size: 12px;
+    }
+    .wrapper-img {
+        height: 450px;
+    }
+    nav > ul > li > div.nav-bar-title > a {
+        color: var(--background-color);
+        background-color: var(--light-color);
+    }
+    nav > ul > li > div.nav-bar-title > a.btn-logger {
+        display: block;
+    }
+    nav > ul > li > .nav-bar-title > a:hover, nav > ul> li > div.nav-bar-title > a.active {
+        color: var(--white-color);
+        background-color: var(--primary-color);
+    }
+    nav > ul > li {
+        display: block;
+        margin: unset;
+    }
+    nav {
+        text-align: left;
+    }
+    ul.dropdown-menu  {
+        position: unset;
+    }
+    .progress-container {
+        display: none;
+    }
+    nav.fixed {
+        position: absolute;
+        top: 50px;
+        left: -100vh;
+    }
+    .full-background h1 {
+        font-size: 30px;
+        margin-bottom: 30px;
+    }
+    .bike-rides .bike-ride-btn {
+        display: block;
+    }
+    .bike-rides .bike-ride-date-btn {
+        display: none;
+    }
+    .bike-rides-container, .links-container {
+        margin-top: 25px;
+    }
+    .bike-rides, .filters, .wrapper-home {
+        display: block;
+    }
+    .bike-rides .bike-ride-date:not(:first-child) {
+        margin-top: 25px;
+    }
+}
+@media screen and (max-width: 414px) {
+    .wrapper-img {
+        height: 230px;
+    }
+    .wrapper-full-background h1, .wrapper-medium-width h1, .wrapper-full-width h1 {
+        font-size: 48px;
+        margin-bottom: 48px;
+    }
+}
