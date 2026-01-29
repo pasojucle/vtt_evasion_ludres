@@ -4,6 +4,7 @@
 .radio-group input[type="radio"] + label {
   position: relative;
   padding-left: 1.3rem;
+  line-height: 16px;
 }
 .radio-group input[type="radio"] + label::before,
 .radio-group input[type="radio"] + label::after {
@@ -19,7 +20,6 @@
 }
 .radio-group input[type="radio"] + label::before {
   border: 2px solid var(--primary-color-darker);
-  /* background-color: #eee; */
 }
 .radio-group input[type=radio]:disabled+label:before,
 .radio-group input[type=radio].like-disabled +label:before {

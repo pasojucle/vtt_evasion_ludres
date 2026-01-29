@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Form\Admin;
 
 use App\Entity\Link;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -42,7 +42,7 @@ class LinkType extends AbstractType
                 ],
                 'required' => false,
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Détail (optionnel)',
                 'config_name' => 'full',
                 'required' => false,

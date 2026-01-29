@@ -7,7 +7,7 @@ namespace App\Form\Admin;
 use App\Entity\Level;
 use App\Entity\Message;
 use App\Entity\ParameterGroup;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -24,7 +24,7 @@ class MessageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'base',
                 'row_attr' => [

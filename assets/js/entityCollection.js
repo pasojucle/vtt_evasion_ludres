@@ -1,4 +1,4 @@
-import { previewFile } from './input-file';
+import { previewFile } from './input-file.js';
 
 const addDeleteLink = () => {
     const collectionItems = document.querySelectorAll('.collection_container .form-group-collection:not(.not-deleted)');

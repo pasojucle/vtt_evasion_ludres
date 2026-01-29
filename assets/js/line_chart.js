@@ -1,4 +1,4 @@
-import Routing from 'fos-router';
+import moment from 'moment';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.line-chart').forEach(canvas => {

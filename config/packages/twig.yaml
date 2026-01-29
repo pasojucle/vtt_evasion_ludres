@@ -12,7 +12,7 @@ twig:
         - 'form/custom_thumbnail_row.html.twig'
         - 'form/money_widget.html.twig'
         - 'form/checkbox_row.html.twig'
-        - 'form/ckeditor_row.html.twig'
+        - 'form/tiptap_row.html.twig'
         - 'form/btn_radio_row.html.twig'
         - 'form/collection_check_row.html.twig'
 

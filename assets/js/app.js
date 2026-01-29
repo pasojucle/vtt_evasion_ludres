@@ -2,9 +2,8 @@
 import { handleCheckChange, formToggle } from './form.js';
 import { Form } from './formValidator.js';
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
-import { initInputFile } from './input-file';
+import { initInputFile } from './input-file.js';
 import { switchEventListener } from './switch.js';
-import Routing from 'fos-router';
 
 var formValidator;
 

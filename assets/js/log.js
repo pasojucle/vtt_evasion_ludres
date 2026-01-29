@@ -1,5 +1,3 @@
-import Routing from 'fos-router';
-
 document.addEventListener("DOMContentLoaded", (event) => {
     document.querySelectorAll('[data-trigger="write-log"]').forEach((element) => {
         element.addEventListener('click', writeLog)

@@ -6,7 +6,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Survey;
 use App\Form\Admin\EventListener\Survey\AddRestrictionSubscriber;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use App\Repository\BikeRideRepository;
 use App\Repository\UserRepository;
 use App\Service\LevelService;
@@ -46,7 +46,7 @@ class SurveyType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'base',
                 'row_attr' => [

@@ -3,7 +3,7 @@
 namespace App\Form\Admin;
 
 use App\Entity\Notification;
-use App\Form\Type\CkeditorType;
+use App\Form\Type\TiptapType;
 use App\Validator\Period;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -25,7 +25,7 @@ class NotificationType extends AbstractType
                     'class' => 'form-group-inline',
                 ],
             ])
-            ->add('content', CKEditorType::class, [
+            ->add('content', TiptapType::class, [
                 'label' => 'Contenu',
                 'config_name' => 'full',
                 'required' => false,

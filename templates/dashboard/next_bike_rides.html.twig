@@ -8,8 +8,8 @@
                 <ul>
                     {% for cluster in item.clusters %}
                         <li class="flex">
-                            <div class="flex-label">{{ cluster.title }}</div>
-                            <div class="auto-margin"><span class="badge small" style="background-color:{{ cluster.level.colors.background }}; color:{{ cluster.level.colors.color }}">{{ cluster.sessions|length }}</span></div>
+                            <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ cluster.title }}</div>
+                            <div class="ml-auto"><span class="badge small" style="background-color:{{ cluster.level.colors.background }}; color:{{ cluster.level.colors.color }}">{{ cluster.sessions|length }}</span></div>
                         </li>
                     {% endfor %}
                 </ul>

@@ -240,6 +240,21 @@
     "symfony/asset": {
         "version": "v5.2.7"
     },
+    "symfony/asset-mapper": {
+        "version": "7.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.4",
+            "ref": "5ad1308aa756d58f999ffbe1540d1189f5d7d14a"
+        },
+        "files": [
+            "assets/app.js",
+            "assets/styles/app.css",
+            "config/packages/asset_mapper.yaml",
+            "importmap.php"
+        ]
+    },
     "symfony/browser-kit": {
         "version": "v5.2.7"
     },
@@ -589,18 +604,6 @@
             "config/routes/ux_autocomplete.yaml"
         ]
     },
-    "symfony/ux-vue": {
-        "version": "2.16",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "2.9",
-            "ref": "7a6b5e211acc7b10b7190e704b40f6d2bca01adf"
-        },
-        "files": [
-            "assets/vue/controllers/Hello.vue"
-        ]
-    },
     "symfony/validator": {
         "version": "7.0",
         "recipe": {
@@ -635,22 +638,6 @@
             "config/routes/web_profiler.yaml"
         ]
     },
-    "symfony/webpack-encore-bundle": {
-        "version": "2.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "2.0",
-            "ref": "9ef5412a4a2a8415aca3a3f2b4edd3866aab9a19"
-        },
-        "files": [
-            "assets/app.js",
-            "assets/styles/app.css",
-            "config/packages/webpack_encore.yaml",
-            "package.json",
-            "webpack.config.js"
-        ]
-    },
     "symfony/workflow": {
         "version": "7.3",
         "recipe": {
@@ -676,6 +663,18 @@
         },
         "files": [
             "config/packages/reset_password.yaml"
+        ]
+    },
+    "symfonycasts/tailwind-bundle": {
+        "version": "0.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.8",
+            "ref": "d0bd0276f74de90adfaa4c6cd74cc0caacd77e0a"
+        },
+        "files": [
+            "config/packages/symfonycasts_tailwind.yaml"
         ]
     },
     "symplify/easy-coding-standard": {
