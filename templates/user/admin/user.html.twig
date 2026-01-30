@@ -149,10 +149,12 @@
                         {% if licence.state is not null %}
                             <li><div class="row"><div class="col-md-4 col-xs-6"><b>Statut :</b></div><div class="col-md-8 col-xs-6">{{ licence.state.value|trans }}</div></div></li>
                             <li><div class="row"><div class="col-md-4 col-xs-6"></div><div class="col-md-8 col-xs-6">
-                            {% if not licence.currentSeasonForm %}
-                                <span class="success"></span><span>Assurance {{ app.session.get('currentSeason')}} validée</span>
-                            {% else %}
-                                <span class="danger"></span><span>Assurance {{ app.session.get('currentSeason')}} manquante</span>
+                            {% if licence.isSeasonLicence %}
+                                {% if not licence.currentSeasonForm %}
+                                    <span class="success"></span><span>Assurance {{ app.session.get('currentSeason')}} validée</span>
+                                {% else %}
+                                    <span class="danger"></span><span>Assurance {{ app.session.get('currentSeason')}} manquante</span>
+                                {% endif %}
                             {% endif %}
                             </div></div></li>
                         {% endif %}
