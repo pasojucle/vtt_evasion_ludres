@@ -67,7 +67,7 @@ return [
         'version' => '0.23.2',
     ],
     '@tiptap/core' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/starter-kit' => [
         'version' => '3.17.1',
@@ -88,25 +88,25 @@ return [
         'version' => '3.3.0',
     ],
     '@tiptap/pm/transform' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/pm/commands' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/pm/state' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/pm/model' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/pm/schema-list' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/pm/view' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/pm/keymap' => [
-        'version' => '3.17.1',
+        'version' => '3.18.0',
     ],
     '@tiptap/extension-blockquote' => [
         'version' => '3.17.1',
@@ -796,5 +796,8 @@ return [
     'prosemirror-gapcursor/style/gapcursor.min.css' => [
         'version' => '1.4.0',
         'type' => 'css',
+    ],
+    '@tiptap/extension-youtube' => [
+        'version' => '3.18.0',
     ],
 ];

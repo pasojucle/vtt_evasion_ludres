@@ -11,7 +11,7 @@ import './styles/health.css';
 import './styles/loader.css';
 import './styles/listInfoGrid.css';
 import './styles/bootstrap.css';
-import './styles/ck-content-styles.css';
+import './styles/tiptap.css';
 import './styles/notification.css';
 import './styles/reveal.css';
 import './styles/carrousel.css';
