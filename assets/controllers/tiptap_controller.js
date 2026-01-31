@@ -9,6 +9,12 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Youtube from '@tiptap/extension-youtube';
 import Highlight from '@tiptap/extension-highlight';
 import { common, createLowlight } from 'lowlight';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-color';
 
 
 export default class extends Controller {
@@ -56,11 +62,16 @@ export default class extends Controller {
             element: this.editorTarget,
             extensions: [
                 StarterKit.configure({
-                codeBlock: false,
-                link: false,
-                
-            }),
-            Link.configure({ openOnClick: false }),
+                    codeBlock: false,
+                    link: false,
+                }),
+                TextStyle,
+                Color,
+                Table.configure({ resizable: true }),
+                TableRow,
+                TableHeader,
+                TableCell,
+                Link.configure({ openOnClick: false }),
                 TextAlign.configure({ types: ['heading', 'paragraph'] }),
                 CustomImage,
                 CustomYoutube,
@@ -116,7 +127,7 @@ export default class extends Controller {
         const container = document.createElement('div');
         container.className = 'relative inline-block';
         const btnContent = document.createElement('div');
-        btnContent.classList.add('flex', 'gap-2', 'items-center');
+        btnContent.classList.add('flex', 'gap-1', 'items-center');
         btnContent.append(this.createIconEl(data.icon));
         btnContent.append(this.createIconEl('chevron_down'));
 
@@ -176,9 +187,21 @@ export default class extends Controller {
             { action: 'toggleItalic', item: {icon: 'italic', isActive: this.editor.isActive('italic') }},
             { action: 'toggleStrike', item: {icon: 'strike', isActive: this.editor.isActive('strike') }},
             { action: 'toggleUnderline', item: {icon: 'underline', isActive: this.editor.isActive('underline') }},
+            { action: 'setTextColor', icon: 'color', isActive: this.editor.isActive('textStyle'), enabled: true, items: [
+                { icon: 'square_red', value: '#fb2c36', isActive: this.editor.getAttributes('textStyle').color === '#fb2c36' },
+                { icon: 'square_orange', value: '#ff6900', isActive: this.editor.getAttributes('textStyle').color === '#ff6900' },
+                { icon: 'square_yellow', value: '#f0b100', isActive: this.editor.getAttributes('textStyle').color === '#f0b100' },
+                { icon: 'square_green', value: '#00c950', isActive: this.editor.getAttributes('textStyle').color === '#00c950' },
+                { icon: 'square_cyan', value: '#00b8db', isActive: this.editor.getAttributes('textStyle').color === '#00b8db' },
+                { icon: 'square_blue', value: '#2b7fff', isActive: this.editor.getAttributes('textStyle').color === '#2b7fff' },
+                { icon: 'square_violet', value: '#8e51ff', isActive: this.editor.getAttributes('textStyle').color === '#8e51ff' },
+                { icon: 'square_fuchsia', value: '#e12afb', isActive: this.editor.getAttributes('textStyle').color === '#e12afb' },
+                { icon: 'square_pink', value: '#f6339a', isActive: this.editor.getAttributes('textStyle').color === '#f6339a' },
+                { icon: 'eraser', value: '', isActive: false }
+            ]},
             { action: 'toggleHighlight', icon: 'highlighter', isActive: this.editor.isActive('highlight'), enabled: true, items: [
-                { icon: 'square_yellow', value: '#feff66', isActive: this.editor.getAttributes('highlight').color === '#feff66' },
-                { icon: 'square_green', value: '#bbf7d0', isActive: this.editor.getAttributes('highlight').color === '#bbf7d0' },
+                { icon: 'square_yellow', value: '#f0b100', isActive: this.editor.getAttributes('highlight').color === '#f0b100' },
+                { icon: 'square_green', value: '#00c950', isActive: this.editor.getAttributes('highlight').color === '#00c950' },
                 { icon: 'eraser', value: null, isActive: false }
             ]},            
             { action: 'toggleHeader', icon: 'heading', isActive: this.editor.isActive('heading'), enabled: true, items: [
@@ -197,6 +220,12 @@ export default class extends Controller {
             { action: 'toggleOrderedList', item: { icon: 'ordered_list', isActive: this.editor.isActive('orderedList') }},
             { action: 'addLink', item: { icon: 'link', isActive: this.editor.isActive('link') }},
             { action: 'toggleBlockquote', item: { icon: 'blockquote', isActive: this.editor.isActive('blockquote') }},
+            { action: 'manageTable', icon: 'table', isActive: this.editor.isActive('table'), enabled: true, items: [
+                { label: 'Insérer Tableau', value: 'insert', isActive: false },
+                { label: 'Ajouter Colonne', value: 'addColumn', isActive: false },
+                { label: 'Ajouter Ligne', value: 'addRow', isActive: false },
+                { label: 'Supprimer Tableau', value: 'delete', isActive: false },
+            ]},
             { action: 'addImage', item: { icon: 'image', isActive: false }},
             { action: 'setImageSize', icon: 'image_upscale', isActive: ['25%', '50%', '75%'].includes(this.editor.getAttributes('image').width), enabled: this.editor.isActive('image'), items: [
                 { label: 'Petit (25%)', isActive: this.editor.getAttributes('image').width ==='25%', value: '25%' },
@@ -341,9 +370,37 @@ export default class extends Controller {
         if (url) {
             this.editor.commands.setYoutubeVideo({
                 src: url,
-                width: '100%', // Tu peux aussi forcer une largeur par défaut
+                width: '100%', 
             });
         }
+    }
+    setTextColor(color) {
+        if (!color) {
+            this.editor.chain().focus().unsetColor().run();
+        } else {
+            this.editor.chain().focus().setColor(color).run();
+        }
+        this.renderToolbar();
+    }
+
+    manageTable(type) {
+        const chain = this.editor.chain().focus();
+        
+        switch (type) {
+            case 'insert':
+                chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+                break;
+            case 'addColumn':
+                chain.addColumnAfter().run();
+                break;
+            case 'addRow':
+                chain.addRowAfter().run();
+                break;
+            case 'delete':
+                chain.deleteTable().run();
+                break;
+        }
+        this.renderToolbar();
     }
 
     disconnect() {

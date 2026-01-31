@@ -8,3 +8,36 @@
 .tiptap img {
     cursor: pointer;
 }
+
+.tiptap table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.tiptap td, .tiptap th {
+    min-width: 1em;
+    border: 2px solid #ced4da;
+    padding: 3px 5px;
+    vertical-align: top;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.tiptap th {
+    font-weight: bold;
+    text-align: left;
+    background-color: #f8f9fa;
+}
+
+/* Bordure bleue quand on sélectionne une cellule */
+.tiptap .selectedCell:after {
+    z-index: 2;
+    position: absolute;
+    content: "";
+    left: 0; right: 0; top: 0; bottom: 0;
+    background: rgba(200, 200, 255, 0.4);
+    pointer-events: none;
+}
