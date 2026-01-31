@@ -6,6 +6,7 @@ import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import Youtube from '@tiptap/extension-youtube';
 import { common, createLowlight } from 'lowlight';
 
 // Si tu as toujours ton helper d'upload
@@ -22,6 +23,36 @@ export default class extends Controller {
     connect() {
         const lowlight = createLowlight(common);
 
+        const CustomImage = Image.configure({
+            inline: true,
+            allowBase64: true,
+        }).extend({
+            addAttributes() {
+                return {
+                    ...this.parent?.(),
+                    width: {
+                        default: '100%',
+                        parseHTML: element => element.style.width || element.getAttribute('width') || '100%',
+                        renderHTML: attributes => {
+                            return {
+                                style: `width: ${attributes.width}; height: auto; display: block;`,
+                                width: attributes.width
+                            };
+                        },
+                    },
+                };
+            },
+        });
+
+        const CustomYoutube = Youtube.configure({
+            controls: true,
+            nocookie: true,
+            allowFullscreen: true,
+            HTMLAttributes: {
+                class: 'youtube', // Ta classe spécifique
+            },
+        });
+
         this.editor = new Editor({
             element: this.editorTarget,
             extensions: [
@@ -31,7 +62,8 @@ export default class extends Controller {
             }),
             Link.configure({ openOnClick: false }),
                 TextAlign.configure({ types: ['heading', 'paragraph'] }),
-                Image,
+                CustomImage,
+                CustomYoutube,
                 CodeBlockLowlight.configure({ lowlight }),
             ],
             content: this.contentValue,
@@ -55,11 +87,14 @@ export default class extends Controller {
         btn.className = [btnBase, active ? btnActive : btnInactive].join(' ');;
 
         btn.innerHTML = ICONS[name];
-        if (value) {
-            btn.addEventListener('click', () => this[action](value));
-            return btn;
+        if(action) {
+            if (value) {
+                btn.addEventListener('click', () => this[action](value));
+                return btn;
+            }
+            btn.addEventListener('click', () => this[action]());
         }
-        btn.addEventListener('click', () => this[action]());
+        
         return btn;
     }
 
@@ -70,6 +105,52 @@ export default class extends Controller {
         inputFile.dataset.tiptapTarget="imageUploader";
         inputFile.dataset.action = "change->tiptap#uploadImage";
         return inputFile;
+    }
+
+    createSizeDropdown() {
+        const container = document.createElement('div');
+        container.className = 'relative inline-block';
+        const btn = this.createButton({ name: 'image_upscale', action: null, active: false });
+        const menu = document.createElement('div');
+        menu.className = 'hidden absolute z-25 mt-1 w-24 bg-white border border-gray-200 rounded-md shadow-lg px-1';
+
+        const currentWidth = this.editor.getAttributes('image').width;
+
+        const sizes = [
+            { label: 'Petit (25%)', value: '25%' },
+            { label: 'Moyen (50%)', value: '50%' },
+            { label: 'Large (75%)', value: '75%' },
+            { label: 'Full (100%)', value: '100%' },
+        ];
+
+        sizes.forEach(size => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            const isActive = currentWidth === size.value;
+            if (this.editor.getAttributes('image').width === size.value) {
+                item.setAttribute("selected", true);
+            }
+            item.className = `w-full text-left px-3 py-1.5 text-xs transition-colors ${
+                isActive ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-blue-50'
+            }`;
+            item.innerText = size.label;
+            item.onclick = () => {
+                this.editor.chain().focus().updateAttributes('image', { width: size.value }).run();
+                menu.classList.add('hidden');
+            };
+            menu.appendChild(item);
+        });
+
+        btn.onclick = () => menu.classList.toggle('hidden');
+        
+        // Fermer le menu si on clique ailleurs
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) menu.classList.add('hidden');
+        });
+
+        container.appendChild(btn);
+        container.appendChild(menu);
+        return container;
     }
 
     // Cette fonction remplace le composant TiptapToolbar
@@ -92,6 +173,7 @@ export default class extends Controller {
             { name: 'link', action: 'addLink', active: this.editor.isActive('link') },
             { name: 'blockquote', action: 'toggleBlockquote', active: this.editor.isActive('blockquote') },
             { name: 'image', action: 'addImage', active: false },
+            { name: 'youtube', action: 'addYoutubeVideo', active: this.editor.isActive('youtube') },
             { name: 'undo', action: 'undo', active: false },
             { name: 'redo', action: 'redo', active: false },
         ];
@@ -101,8 +183,8 @@ export default class extends Controller {
             const button = this.createButton(data);
             this.toolbarTarget.appendChild(button);
             if ("addImage" === data.action) {
-                const inputFile = this.createImageUploader();
-                this.toolbarTarget.appendChild(inputFile)
+                this.toolbarTarget.appendChild(this.createImageUploader());
+                this.toolbarTarget.appendChild(this.createSizeDropdown());
             }
         });
         
@@ -184,9 +266,36 @@ export default class extends Controller {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Utilisation de ton helper existant
-        const url = await imageUpload(file, this.tokenValue);
-        this.editor.chain().focus().setImage({ src: url }).run();
+        const formData = new FormData()
+            formData.append('upload', file)
+
+        try {
+            const response = await fetch(this.uploadUrlValue, {
+                method: 'POST',
+                body: formData,
+            })
+            const result = await response.json();
+            if (result['url']) {
+                const url =  decodeURIComponent(result['url']);
+                this.editor.chain().focus().setImage({ src: url }).run();
+            } else {
+                alert('Erreur : URL manquante')
+            }
+        } catch (err) {
+            console.error(err)
+            alert('Échec de l’envoi')
+        }
+    }
+
+    addYoutubeVideo() {
+        const url = window.prompt('Entrez l\'URL de la vidéo YouTube :');
+
+        if (url) {
+            this.editor.commands.setYoutubeVideo({
+                src: url,
+                width: '100%', // Tu peux aussi forcer une largeur par défaut
+            });
+        }
     }
 
     disconnect() {
