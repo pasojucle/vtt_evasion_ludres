@@ -24,7 +24,7 @@ import './styles/health.css';
 import './styles/list-group.css';
 import './styles/loader.css';
 import './styles/bootstrap.css';
-
+import './styles/tiptap.css';
 
 import './js/app.js';
 import './js/navigation.js';
