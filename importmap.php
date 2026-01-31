@@ -800,4 +800,35 @@ return [
     '@tiptap/extension-youtube' => [
         'version' => '3.18.0',
     ],
+    '@tiptap/extension-highlight' => [
+        'version' => '3.18.0',
+    ],
+    '@tiptap/extension-table' => [
+        'version' => '3.18.0',
+    ],
+    '@tiptap/pm/tables' => [
+        'version' => '3.18.0',
+    ],
+    'prosemirror-tables' => [
+        'version' => '1.8.5',
+    ],
+    'prosemirror-tables/style/tables.min.css' => [
+        'version' => '1.8.5',
+        'type' => 'css',
+    ],
+    '@tiptap/extension-table-row' => [
+        'version' => '3.18.0',
+    ],
+    '@tiptap/extension-table-header' => [
+        'version' => '3.18.0',
+    ],
+    '@tiptap/extension-table-cell' => [
+        'version' => '3.18.0',
+    ],
+    '@tiptap/extension-text-style' => [
+        'version' => '3.18.0',
+    ],
+    '@tiptap/extension-color' => [
+        'version' => '3.18.0',
+    ],
 ];
