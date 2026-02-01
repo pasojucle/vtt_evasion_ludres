@@ -1,3 +1,7 @@
+.tiptap.ProseMirror-focused {
+    outline: none;
+}
+
 .tiptap img.ProseMirror-selectednode,
 .tiptap [data-youtube-video].ProseMirror-selectednode iframe {
     outline: 3px solid #3b82f6;

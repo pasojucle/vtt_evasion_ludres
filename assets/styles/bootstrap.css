@@ -232,10 +232,6 @@
     border-radius: 50%;
 }
 
-.border {
-    border: 2px solid #dee2e6;
-}
-
 .border.border-white {
     border-color: #fff;
 }
