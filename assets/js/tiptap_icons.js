@@ -35,5 +35,5 @@ export const ICONS = {
     square_fuchsia: `<svg viewBox="0 0 24 24" class="size-5"><rect x="3" y="3" width="18" height="18" rx="4" fill="#e12afb" stroke="#e12afb" stroke-width="1"/></svg>`,
     square_pink: `<svg viewBox="0 0 24 24" class="size-5"><rect x="3" y="3" width="18" height="18" rx="4" fill="#f6339a" stroke="#f6339a" stroke-width="1"/></svg>`,
     table: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 lucide lucide-table-icon lucide-table"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>`,
-    color: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fb2c36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 lucide lucide-baseline-icon lucide-baseline"><path d="M4 20h16"/><path d="m6 16 6-12 6 12"/><path d="M8 12h8"/></svg>`
+    color: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 lucide lucide-baseline-icon lucide-baseline"><path d="M4 20h16"/><path d="m6 16 6-12 6 12"/><path d="M8 12h8"/></svg>`
 };
