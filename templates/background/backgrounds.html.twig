@@ -2,7 +2,7 @@
     {% set backgrounds = background_service.defaults %}
 {% endif %}
 {% if backgrounds is defined %}
-    <div is="my-carrousel" class="full-background">
+    <div data-controller="carrousel" class="full-background">
         {% for key, background in backgrounds %}
             <picture class="{% if key == 0 %}playing{% else %}loaded{% endif %}">
                 <source media="(max-width: 400px) and (orientation: landscape)" srcset="{{ app.request.getSchemeAndHttpHost() }}/images/background/landscape_xs/{{ background.filename }}">

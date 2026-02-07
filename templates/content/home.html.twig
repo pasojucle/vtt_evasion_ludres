@@ -12,7 +12,7 @@
             {% set flash = enum('App\\Entity\\Enum\\ContentKindEnum').HOME_FLASH.name %}
             {% if home_contents[flash] is defined %}
                 {% for content in home_contents[flash]%}
-                    <div class="block background-color background-primary block-flash reveal" data-toggle="block-body">   
+                    <div class="block background-color background-primary block-flash reveal" data-controller="reveal" data-toggle="block-body">   
                         <div class="block-title">
                             <h2>{{ content.title }}</h2>
                             <span class="tools">
@@ -28,7 +28,7 @@
             {% set content = enum('App\\Entity\\Enum\\ContentKindEnum').HOME_CONTENT.name %}
             {% if home_contents[content] is defined %}
                 {% for content in home_contents[content] %}
-                    <div class="block reveal{% if not(content.content matches '/iframe/') %} background-clear{% endif %}">        
+                    <div class="block reveal{% if not(content.content matches '/iframe/') %} background-clear{% endif %}" data-controller="reveal">        
                         <div class="block-body">
                             {% include('content/body_content.html.twig') %}
                         </div>
@@ -37,7 +37,7 @@
             {% endif %}
         </div>
         <div class="bike-rides-container">
-            <div class="block background-clear reveal">
+            <div class="block background-clear reveal" data-controller="reveal">
                 {% if bikeRides is not empty %}
                     <div class="block-footer">
                         <div class="block-body">
@@ -64,7 +64,7 @@
                 </div>
             </div>
             {% for link in links_bike_ride %}
-            <div class="card card-img-only reveal">
+            <div class="card card-img-only reveal" data-controller="reveal">
                 <a href="{{ link.url }}" target="_blank" title="{{ link.title }}">
                     {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
                     <img src="{{ src }}" alt="">
@@ -74,7 +74,7 @@
         </div>
         <div class="links-container col-4">
             {% for link in links_footer %}
-            <a href="{{ link.url }}" target="_blank" title="{{ link.title }}" class="reveal">
+            <a href="{{ link.url }}" target="_blank" title="{{ link.title }}" class="reveal" data-controller="reveal">
                 <div class="card card-full-img">
                     {% set src = link.image matches '/^http/' or  link.image is null ? link.image : '../../uploads/' ~ link.image%}
                     <div style="background-image:url({{ src }}"></div>

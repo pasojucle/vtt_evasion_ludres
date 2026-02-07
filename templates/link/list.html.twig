@@ -13,7 +13,7 @@
         </div>
         <div class="wrapper-body col-4">
             {% for link in links %}
-            <div class="card card-link reveal" data-toggle="card-body">
+            <div class="card card-link reveal" data-controller="reveal" data-toggle="card-body">
                 <a href="{{ link.btnShow.url }}" target="{{ link.btnShow.target}}">
                     {% if link.novelty %}<div class="badge novelty">N</div>{% endif %}
                     <div class="card-img" style="background-image:url({{ link.image }}"></div>

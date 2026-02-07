@@ -9,7 +9,7 @@
 }
 
 .slider picture, .full-background picture {
-    overflow: hidden;
+    /* overflow: hidden; */
     position: absolute;
     transition: all 1s ease;
 }
@@ -31,7 +31,6 @@
 .slider picture.back, .full-background picture.back {
     z-index: 1;
 }
-
 .full-background picture.loaded, .full-background picture.back, .slider picture.rewind {
     opacity: 0;
 }
