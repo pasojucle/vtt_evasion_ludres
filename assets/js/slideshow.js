@@ -14,15 +14,25 @@ class Slideshow extends HTMLDivElement {
 
     constructor() {
         super();
+        this.images = [];
+    }
+
+    connectedCallback() {
         this.frameEl = this.querySelector('.frame');
         this.latestView = this.dataset.latestView;
-        this.addImages();
-        this.resize();
-        this.slideWith = this.offsetWidth;
-        screen.orientation.addEventListener("change", (event) => {
-            this.resize();
-        });
         this.formLog = document.querySelector('form[name="log"]');
+        
+        this.addImages();
+        
+        this.slideWith = this.offsetWidth;
+        this.resizeListener = () => this.resize();
+        screen.orientation.addEventListener("change", this.resizeListener);
+    }
+
+    disconnectedCallback() {
+        // Nettoyage pour éviter les fuites de mémoire (très important avec Turbo)
+        screen.orientation.removeEventListener("change", this.resizeListener);
+        this.stop();
     }
     init = () => {
         if (this.images.length > 0) {

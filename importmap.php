@@ -831,4 +831,7 @@ return [
     '@tiptap/extension-color' => [
         'version' => '3.18.0',
     ],
+    '@hotwired/turbo' => [
+        'version' => '7.3.0',
+    ],
 ];

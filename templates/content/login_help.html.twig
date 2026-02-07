@@ -8,15 +8,7 @@
 
 {% block body %}
     <div class="wrapper background-red background-color col-content">
-        <div is="my-carrousel" class="wrapper-img slider">
-            {% for background in content.backgrounds %}
-                <picture>
-                    <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">
-                    <source media="(max-width: 800px)" srcset="../images/background/landscape_md/{{ background.filename }}">
-                    <img src="../images/background/square/{{ background.filename }}" alt="le club">
-                </picture>
-            {% endfor %}
-        </div>
+        {{ include('component/carrousel.html.twig') }}
         <div class="wrapper-content">
             <h1>Aide à la connexion</h1>
             {{ content.content | raw}}

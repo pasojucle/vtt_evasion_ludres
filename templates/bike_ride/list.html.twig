@@ -17,7 +17,7 @@
         <div class="wrapper-body">
 
             {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
-            <div class="bike-rides  reveal">
+            <div class="bike-rides reveal" data-controller="reveal" data-reveal-threshold-value="0.05">
                 {% for bikeRide in bikeRides %}
                     {% if bikeRide.display %}
                         <div class="bike-ride-date {{ bikeRide.displayClass }}">
