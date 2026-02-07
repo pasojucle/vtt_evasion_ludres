@@ -1622,6 +1622,28 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     postcss_config_file?: scalar|null, // Path to PostCSS config file which is passed to the Tailwind CLI // Default: null
  *     strict_mode?: bool|null, // When enabled, an exception will be thrown if there are no built assets (default: false in `test` env, true otherwise) // Default: null
  * }
+ * @psalm-type TurboConfig = array{
+ *     broadcast?: bool|array{
+ *         enabled?: bool, // Default: true
+ *         entity_template_prefixes?: list<scalar|null>,
+ *         doctrine_orm?: bool|array{ // Enable the Doctrine ORM integration
+ *             enabled?: bool, // Default: true
+ *         },
+ *     },
+ *     default_transport?: scalar|null, // Default: "default"
+ * }
+ * @psalm-type TwigComponentConfig = array{
+ *     defaults?: array<string, string|array{ // Default: ["__deprecated__use_old_naming_behavior"]
+ *         template_directory?: scalar|null, // Default: "components"
+ *         name_prefix?: scalar|null, // Default: ""
+ *     }>,
+ *     anonymous_template_directory?: scalar|null, // Defaults to `components`
+ *     profiler?: bool|array{ // Enables the profiler for Twig Component
+ *         enabled?: bool, // Default: "%kernel.debug%"
+ *         collect_components?: bool, // Collect components instances // Default: true
+ *     },
+ *     controllers_json?: scalar|null, // Deprecated: The "twig_component.controllers_json" config option is deprecated, and will be removed in 3.0. // Default: null
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1639,6 +1661,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     stimulus?: StimulusConfig,
  *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
+ *     turbo?: TurboConfig,
+ *     twig_component?: TwigComponentConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1659,6 +1683,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *         stimulus?: StimulusConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
+ *         turbo?: TurboConfig,
+ *         twig_component?: TwigComponentConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1677,6 +1703,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *         stimulus?: StimulusConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
+ *         turbo?: TurboConfig,
+ *         twig_component?: TwigComponentConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1696,6 +1724,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *         stimulus?: StimulusConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
+ *         turbo?: TurboConfig,
+ *         twig_component?: TwigComponentConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

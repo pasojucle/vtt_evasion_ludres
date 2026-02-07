@@ -4,17 +4,9 @@
 
 {% block body %}
     <div class="wrapper background-green background-color col-content">
-        <div is="my-carrousel" class="wrapper-img slider">
-            {% for background in backgrounds %}
-                <picture>
-                    <source media="(max-width: 400px)" srcset="../images/background/landscape_xs/{{ background.filename }}">
-                    <source media="(max-width: 800px)" srcset="../images/background/landscape_md/{{ background.filename }}">
-                    <img src="../images/background/square/{{ background.filename }}" alt="le club">
-                </picture>
-            {% endfor %}
-        </div>
+        {{ include('component/carrousel.html.twig', {'content': {'backgrounds': backgrounds}}) }}
         <div class="wrapper-content">
-            <div class="reveal">
+            <div class="reveal" data-controller="reveal">
                 <img src="{{ link.image }}"/>
                 <h2>{{ link.description }}</h2>
                 <div>{{ link.content|raw }}</div>

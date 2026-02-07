@@ -20,15 +20,12 @@ import './styles/youtube.css';
 
 import './js/app.js';
 import './js/navigation.js';
-import './js/carrousel.js';
 import './js/input-file.js';
 import './js/modal.js';
-import './js/reveal.js';
 import './js/js-datepicker.js';
 import './js/form.js';
 import './js/slideshow.js';
 import './js/notification.js';
 import './js/extraToggle.js';
-import './js/wrapper-youtube.js';
 import './js/log.js';
 import './js/coverage.js';

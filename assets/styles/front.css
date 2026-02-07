@@ -423,7 +423,7 @@ button[type="submit"] {
     display: none;
 }
 .wrapper-full-background h1, .wrapper-medium-width h1, .wrapper-full-width h1 {
-    margin-bottom: 100px;
+    margin-bottom: 80px;
     color: rgba(255,255,255,0.4);
     text-align: left;
     font-size: 75px;

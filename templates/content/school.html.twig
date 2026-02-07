@@ -12,13 +12,19 @@
         {% if content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').CARROUSEL_AND_TEXT %}
             {{ include('component/carrousel.html.twig') }}
         {% elseif content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').VIDEO_AND_TEXT %}
-            <div class="wrapper-youtube">
-                <iframe src="{{ content.url }}?autoplay=1&mute=1" frameborder="0"  scrolling="no" class="youtube"></iframe>
+            <div class="wrapper-youtube" data-controller="youtube-center">
+                <iframe 
+                    src="{{ content.url }}?autoplay=1&mute=1" 
+                    frameborder="0"  
+                    scrolling="no" 
+                    class="youtube"
+                    data-youtube-center-target="iframe"
+                ></iframe>
             </div>
         {% endif %}
 
         <div class="wrapper-content">
-            <div class="reveal">
+            <div class="reveal" data-controller="reveal">
                 {{ content.content | raw}}
                 {% if app.request.get('_route') == 'school_practices' %}
                     <h3>A l'école VTT de Ludres il y a {{levels|length}} groupes</h3>

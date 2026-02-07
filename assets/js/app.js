@@ -88,9 +88,11 @@ const toggleBirthPlace = () => {
 }
 
 function submitFom() {
-    $(this).closest('form').submit()
+    const form = $(this).closest('form')[0];
+    if (form) {
+        form.requestSubmit();
+    }
 }
-
 
 function buildSortable() {
     let error = false;
