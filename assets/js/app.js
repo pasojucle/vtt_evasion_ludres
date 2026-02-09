@@ -22,10 +22,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
     }
 
-    if ($('.sortable').length > 0) {
-        buildSortable();
-    }
-
     $(document).on('change', '.filters select, .filters .btn, .filters input', submitFom);
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', 'button.form-modifier', formModifier);
@@ -92,48 +88,6 @@ function submitFom() {
     if (form) {
         form.requestSubmit();
     }
-}
-
-function buildSortable() {
-    let error = false;
-    $("ul.sortable").sortable({
-        connectWith: ".connectedSortable",
-        helper: "clone",
-        cursor: "move",
-        zIndex: 99999,
-        items: "> li.ui-state-default",
-        over: function (event, ui) {
-            ui.item.addClass('sortable-over');
-        },
-        start: function (event, ui) {
-            ui.item.data('old-order', ui.item.index());
-            ui.item.addClass('sortable-over');
-        },
-        update: function (event, ui) {
-            updateLinkOrder(ui.item);
-        },
-    });
-}
-
-function updateLinkOrder(item) {
-    const id = item.data('id');
-    const newOrder = item.index();
-    const sortable = $(item).closest("ul.sortable");
-    const parameters = {};
-    parameters[sortable.data('parameter')] = id;
-    const route = Routing.generate(sortable.data('route'), parameters);
-    const data = {'newOrder' : newOrder};
-    $.ajax({
-        url : route,
-        type: 'POST',
-        data : data,
-        success: function(html) {
-            if(html) {
-                sortable.replaceWith($(html).find('ul.sortable[data-target="'+sortable.data('target')+'"]'));
-                buildSortable();
-            }
-        }
-    });
 }
 
 function formModifier(event) {

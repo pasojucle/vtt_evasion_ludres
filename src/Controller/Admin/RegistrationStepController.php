@@ -54,7 +54,7 @@ class RegistrationStepController extends AbstractController
         $newOrder = $request->request->get('newOrder');
         $regitrationStepGroups = $this->registrationStepGroupRepository->findAll();
 
-        $this->orderByService->setNewOrders($group, $regitrationStepGroups, $newOrder);
+        $this->orderByService->setNewOrders($group, $regitrationStepGroups, (int) $newOrder);
 
         return $this->redirectToRoute('admin_registration_step_list');
     }
