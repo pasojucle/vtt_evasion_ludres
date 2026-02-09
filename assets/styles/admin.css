@@ -55,13 +55,13 @@ nav > .nav-group > .block-body > ul> li > a:hover, nav > .nav-group > .block-bod
     background-color: var(--primary-color);
 }
 
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+.sortable-state-default, .ui-widget-content .sortable-state-default, .ui-widget-header .sortable-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
     border: unset;
     background: unset;
     font-weight: normal;
     color: unset;
 }
-.ui-state-default .sortable-cursor:hover {
+.sortable-state-default .sortable-cursor:hover {
     cursor: move;
 }
 .nav-group .block-body.up, .up[data-target] {

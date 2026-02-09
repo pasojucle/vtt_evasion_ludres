@@ -21,9 +21,13 @@
     <div class="wrapper-body">
         <a href="{{ path('admin_level_edit') }}" class="btn btn-primary" title="Ajouter un niveau"><i class="fas fa-plus"></i> Ajouter un niveau</a>
         {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
-        <ul class="list-group sortable" data-route="admin_level_order" data-parameter="level">
+        <ul 
+            class="list-group sortable"
+            data-controller="sortable"
+            data-sortable-route-value="{{ path('admin_level_order', {'level': 0}) }}"
+        >
             {% for level in levels %}     
-                <li class="list-group-item {% if not level.isProtected %}ui-state-default {% endif %}col-list col-list-2btn" {% if not level.isProtected %}data-id="{{ level.id }}"{% endif %}>
+                <li class="list-group-item {% if not level.isProtected %}sortable-state-default {% endif %}col-list col-list-2btn" {% if not level.isProtected %}data-id="{{ level.id }}"{% endif %}>
                     <div>{{ level.title }}</div>
                     {% if is_granted('ROLE_ADMIN') %}
                         <div class="dropdown">

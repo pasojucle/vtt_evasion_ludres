@@ -11,9 +11,13 @@
         <div class="wrapper-body">
             <a href="{{ path('admin_documentation_add') }}" class="btn btn-primary" title="Ajouter un documentation"><i class="fas fa-plus"></i> Ajouter une documentation</a>
             {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
-            <ul class="sortable" data-route="admin_documentation_order" data-parameter="documentation">
+            <ul 
+                class="sortable"
+                data-controller="sortable"
+                data-sortable-route-value="{{ path('admin_documentation_order', {'documentation': 0}) }}"
+            >
                 {% for documentation in documentations %}     
-                    <li class="ui-state-default col-list col-list-2btn" data-id="{{ documentation.id }}">
+                    <li class="sortable-state-default col-list col-list-2btn" data-id="{{ documentation.id }}">
                         <div class="list-item">{{ documentation.name }}</div>
                         <div>
                             <a class="btn btn-primary btn-ico" href="{{ path('admin_documentation_edit', {'documentation': documentation.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>

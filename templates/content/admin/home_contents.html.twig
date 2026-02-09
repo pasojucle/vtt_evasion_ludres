@@ -4,7 +4,6 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-{% set class_ul ='' %}
     <div class="wrapper">
         <div class="wrapper-title">
             <h1>{{ title }}</h1>
@@ -17,11 +16,17 @@
         <div class="wrapper-body">
             {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
             {% if kind == enum('App\\Entity\\Enum\\ContentKindEnum').HOME_FLASH or kind == enum('App\\Entity\\Enum\\ContentKindEnum').HOME_CONTENT %}
-            {% set class_ul ='sortable' %}
                 <a href="{{ path('admin_home_content_edit') }}" class="btn btn-primary" title="Ajouter un contenu"><i class="fas fa-plus"></i> Ajouter un contenu</a>
-                <ul class="{{ class_ul }}" data-route="admin_content_order" data-parameter="content">
+                <ul 
+                    class="sortable"
+                    data-controller="sortable"
+                    data-sortable-route-value="{{ path('admin_content_order', {'content': 0}) }}"
+                >
                     {% for content in contents %} 
-                        <li class="ui-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" data-id="{{ content.id }}">
+                        <li 
+                            class="sortable-state-default col-list {% if current_route == 'home' %}col-list-2btn{% else %}col-list-1btn{% endif %}" 
+                            data-id="{{ content.id }}"
+                        >
                             {% set title = content.title %}
                             {% if content.title is null %}
                                 {% set title = constant('App\\Entity\\Content::ROUTES')[content.route] | trans %}

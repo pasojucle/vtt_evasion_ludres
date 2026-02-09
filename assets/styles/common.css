@@ -444,7 +444,7 @@ body > script {display: none !important;}
 .btn-xxxl::after {
     top: 20px;
 }
-.btn-primary , .ui-state-default a.btn-primary{
+.btn-primary , .sortable-state-default a.btn-primary{
     background-color: var(--primary-color);
     color: var(--white-color);
     border: 2px solid var(--primary-color);
@@ -464,7 +464,7 @@ body > script {display: none !important;}
     background-color: var(--success-color);
     border: 2px solid var(--success-color);
 }
-.btn-danger, .ui-state-default a.btn-danger{
+.btn-danger, .sortable-state-default a.btn-danger{
     background-color: var(--danger-color);
     color: var(--white-color);
     border: 2px solid var(--danger-color);
@@ -1111,6 +1111,9 @@ ul > li.list {
     background-color: var(--white-color);
     min-height: 45px;
 }
+.sortable .list-dropdown {
+    background-color: unset;
+}
 .list-dropdown.flex-align-center {
     display: flex;
     align-items: center;
@@ -1266,8 +1269,8 @@ nav.nav-tab a {
     border-left: 1px solid var(--gray-color);
     border-right: 1px solid var(--gray-color);
     border-radius: 5px 5px 0 0;
-    line-height: 30px;
-    height: 30px;
+    /* line-height: 30px;
+    height: 30px; */
     background-color: var(--white-color);
     z-index: 2;
 }
@@ -1440,7 +1443,7 @@ h3 + ul.block.background-ligth {
 
 .nav-group .block-title .tools,
 .wrapper .wrapper-title .tools {
-    top: 8px;
+    /* top: 8px; */
 }
 
 .nav-group .block-title .btn,

@@ -58,18 +58,29 @@
                     </div>
                 </div>
             </div>
-            <ul class="sortable" data-route="admin_registration_step_group_order" data-parameter="group" data-target="goups">
+            <ul 
+                {# class="sortable"
+                data-controller="sortable"
+                data-sortable-route-value="{{ path('admin_registration_step_group_order', {'group': 0}) }}"
+                data-sortable-target-value="groups" #}
+            >
                 {% for group in registrationStepGroups %}
                     {% set  is_last_item = loop.last %}
-                    <li class="row ui-state-default border-bottom{% if group.orderBy is not divisible by(2) %} background-ligth{% endif %}"
+                    <li class="row sortable-state-default border-bottom{% if loop.index0 is not divisible by(2) %} background-ligth{% endif %}"
                         data-id="{{ group.id }}">
-                        <div class="col-md-1 col-xs-1 sortable-cursor">
-                            {{ group.orderBy + 1 }}
+                        <div class="col-md-1 col-xs-1 flex justify-center">
+                            {{ loop.index }}
                         </div>
                         <div class="col-md-11 col-xs-11">
-                            <ul class="sortable" data-route="admin_registration_step_order" data-parameter="step" data-target="goup-{{ group.id }}">
+                            <div class="children-container" data-children="{{ group.id }}"></div>
+                            <ul 
+                                class="sortable"
+                                data-controller="sortable"
+                                data-sortable-route-value="{{ path('admin_registration_step_order', {'registrationStep': 0}) }}"
+                                data-sortable-target-value="group-{{ group.id }}"
+                            >
                             {% for step in group.registrationSteps %}
-                                <li class=" row ui-state-default" data-id="{{ step.id }}">
+                                <li class="row sortable-state-default" data-id="{{ step.id }}">
                                     <div class="col-md-6 col-xs-6 no-padding-vertical position-relative {% if group.registrationSteps|length > 1 %}sortable-cursor{% endif %}">
                                         <div class="list-dropdown flex-align-center">
                                             {{ step.title }}
