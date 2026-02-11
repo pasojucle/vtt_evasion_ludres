@@ -12,7 +12,10 @@
         </div>
         <div class="wrapper-body">
             <a href="{{ path('admin_notification_add') }}" class="btn btn-primary" title="Ajouter une info"><i class="fas fa-plus"></i> Ajouter une info</a>
-            <ul class="sortable padding-10" data-route="admin_level_order" data-parameter="level">
+            <ul class="sortable padding-10" 
+                data-controller="sortable"
+                data-sortable-route-value="{{ path('admin_level_order', {'level': 0}) }}"
+            >
                 {% for notification in notification_list %}     
                     <li class="col-list col-list-2btn">  
                         <div class="list-item">{{ notification.title }}</div>

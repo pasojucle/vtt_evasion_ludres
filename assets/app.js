@@ -17,6 +17,7 @@ import './styles/reveal.css';
 import './styles/carrousel.css';
 import './styles/verticalStepProgress.css';
 import './styles/youtube.css';
+import './styles/slideshow.css';
 
 import './js/app.js';
 import './js/navigation.js';
@@ -24,7 +25,6 @@ import './js/input-file.js';
 import './js/modal.js';
 import './js/js-datepicker.js';
 import './js/form.js';
-import './js/slideshow.js';
 import './js/notification.js';
 import './js/extraToggle.js';
 import './js/log.js';
