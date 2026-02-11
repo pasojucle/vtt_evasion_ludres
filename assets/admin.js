@@ -40,5 +40,4 @@ import './js/line_chart.js';
 import './js/dashboard.js';
 import './js/clusters.js';
 import './js/isGranted.js';
-import './js/admin_slideshow.js';
 import './js/uploadFile.js'
