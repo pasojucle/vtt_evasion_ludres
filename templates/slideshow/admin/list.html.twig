@@ -12,15 +12,9 @@
         <div class="d-flex align-items-center gap-2">
             <a class="btn btn-primary mb-20" href="{{ path('admin_slideshow_directory_add') }}" title="Ajouter un répertoire" data-toggle="modal" data-type="primary">Ajouter un répertoire</a>
             <div id="slideshow-space" class="ms-auto  mb-20 gap-2">
-                <span>Espace disque </span>
-                <div 
-                    class="d-flex flex-column justify-content-center" 
-                    data-controller="slideshow-directory-size"
-                    data-slideshow-directory-size-url-value="{{ path('admin_slideshow_directory_size') }}"
-                >
-                    <progress data-slideshow-directory-size-target="progress" max=100 value=0></progress>
-                    <div data-slideshow-directory-size-target="size" class="progress-label"></div>
-                </div>
+                <turbo-frame id="directory_size" src="{{ path('admin_slideshow_directory_size') }}">
+                    <p>Calcul de l'espace disque...</p>
+                </turbo-frame>
             </div>
         </div>
 
