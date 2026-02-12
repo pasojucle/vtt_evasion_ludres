@@ -80,8 +80,8 @@ class SlideshowController extends AbstractController
     #[IsGranted('SLIDESHOW_LIST')]
     public function adminSlideshowDirectorySize(
         SlideshowService $slideshowService
-    ): JsonResponse {
-        return new JsonResponse(['response' => $slideshowService->getSpace()]);
+    ): Response {
+        return $this->render('slideshow/admin/_directory_size.html.twig', $slideshowService->getSpace());
     }
 
     #[Route('/directory/add', name: 'directory_add', methods: ['GET', 'POST'])]
