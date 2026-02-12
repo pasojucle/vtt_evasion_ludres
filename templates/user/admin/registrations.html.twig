@@ -13,7 +13,12 @@
                     <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                     <div class="dropdown-menu" data-target="dropdown-tools">
                         <ul class="dropdown-body">
-                            <li><a href="{{ path('admin_registrations_email_to_clipboard') }}" class="dropdown-item email-to-clipboard" title="Copier les emails de la séléction"><i class="fas fa-copy"></i> Copier les emails de la séléction</a></œli>
+                            <li><a 
+                                class="dropdown-item" 
+                                data-controller="email-to-clipboard" 
+                                data-email-to-clipboard-url-value="{{ path('admin_registrations_email_to_clipboard') }}"
+                                title="Copier les emails de la séléction"
+                            ><i class="fas fa-copy"></i> Copier les emails de la séléction</a></œli>
                             <li><a href="{{ path('admin_registrations_export') }}" class="dropdown-item" title="Exporter la sélection"><i class="fas fa-file-csv"></i> Exporter la sélection</a></li>
                         </ul>
                     </div>

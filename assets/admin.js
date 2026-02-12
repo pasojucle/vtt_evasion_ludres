@@ -35,7 +35,6 @@ import './js/media_position.js';
 import './js/switch.js';
 import './js/dropdown.js';
 import './js/js-datepicker.js';
-import './js/clipboard.js';
 import './js/line_chart.js';
 import './js/dashboard.js';
 import './js/clusters.js';
