@@ -48,7 +48,6 @@ class ParticipationController extends AbstractController
         $filters = ['period' => ['startAt' => $today->sub(new DateInterval('P6M')), 'endAt' => $today], 'isSchool' => (bool) $isSchool];
         
         return new JsonResponse([
-            'format' => 'card',
             'membersPrecences' => [
                 ['data' => $this->sessionRepository->findMemberpresence($filters), 'color' => "rgba(230,132,27,1)"],
             ],
