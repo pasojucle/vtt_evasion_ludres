@@ -1,27 +1,20 @@
-<div class="dashboard-item">
-    <a href="{{ link }}">
-        <div class="dashboard-item-title">
-            <h2>{{ title }}</h2>
-        </div>
-        <div class="dashboard-item-body">
-            <ul>
-                {% for type, items in data %}
-                    <li class="flex">
-                        <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ type|trans }}</div>
-                        <div class="ml-auto"><span class="badge small">{{ items|length }}</span></div>
-                    </li>
-                {% endfor %}
-            </ul>
-            {% if parameters is defined %}
-                <ul class="mt-10">
-                    {% for parameter in parameters %}
-                        <li class="flex">
-                            <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ parameter.label }}</div>
-                            <div class="ml-auto"><span class="{% if parameter.value %}toggle-on{% else %}toggle-off{% endif %}"></span></div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-    </a>
-</div>
+<turbo-frame id="{{ frameId }}" class="block !mt-0 dashboard-item-body">
+    <ul>
+        {% for type, items in data %}
+            <li class="flex">
+                <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ type|trans }}</div>
+                <div class="ml-auto"><span class="badge small">{{ items|length }}</span></div>
+            </li>
+        {% endfor %}
+    </ul>
+    {% if parameters is defined %}
+        <ul class="mt-10">
+            {% for parameter in parameters %}
+                <li class="flex">
+                    <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ parameter.label }}</div>
+                    <div class="ml-auto"><span class="{% if parameter.value %}toggle-on{% else %}toggle-off{% endif %}"></span></div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</turbo-frame>

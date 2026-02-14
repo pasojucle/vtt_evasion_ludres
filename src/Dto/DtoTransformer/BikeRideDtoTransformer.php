@@ -17,7 +17,6 @@ use App\Service\ProjectDirService;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use DateInterval;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;

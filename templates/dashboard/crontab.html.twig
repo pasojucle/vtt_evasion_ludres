@@ -1,5 +1,5 @@
-<div class="dashboard-item w-100 flex-auto">
-    <a href="{{ path('admin_crontab_logs')}}">
+<turbo-frame id="crontab" class="w-100 flex-auto">
+    <a href="{{ path('admin_crontab_logs')}}" data-turbo-frame="_top">
         <div class="dashboard-item-body">
             <div>
                 <span class="{{ onError ? 'danger' : 'success' }}"></span>
@@ -7,4 +7,4 @@
             </div>
         </div>
     </a>
-</div>
+</turbo-frame>

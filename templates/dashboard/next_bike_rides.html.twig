@@ -1,19 +1,10 @@
- {% for item in bike_rides %}
-    <div class="dashboard-item">
-        <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': item.bikeRide.id})}}">
-            <div class="dashboard-item-title">
-                <h2>{{ item.bikeRide.shortTitle }} du {{ item.bikeRide.period }}</h2>
-            </div>
-            <div class="dashboard-item-body">
-                <ul>
-                    {% for cluster in item.clusters %}
-                        <li class="flex">
-                            <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ cluster.title }}</div>
-                            <div class="ml-auto"><span class="badge small" style="background-color:{{ cluster.level.colors.background }}; color:{{ cluster.level.colors.color }}">{{ cluster.sessions|length }}</span></div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </a>
-    </div>
-{% endfor %}
+<turbo-frame id="dashboard-bike-ride-{{ bikeRideId }}" class="dashboard-item-body">
+    <ul>
+        {% for cluster in clusters %}
+            <li class="flex">
+                <div class="overflow-hidden text-ellipsis max-w-[calc(100%-35px)]">{{ cluster.title }}</div>
+                <div class="ml-auto"><span class="badge small" style="background-color:{{ cluster.level.colors.background }}; color:{{ cluster.level.colors.color }}">{{ cluster.sessions|length }}</span></div>
+            </li>
+        {% endfor %}
+    </ul>
+</turbo-frame
