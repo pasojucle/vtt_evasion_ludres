@@ -8,6 +8,7 @@ use App\Entity\Licence;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SeasonService
 {
@@ -15,6 +16,7 @@ class SeasonService
 
     public function __construct(
         private ParameterService $parameterService,
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -29,12 +31,24 @@ class SeasonService
 
     public function getCurrentSeason(): int
     {
+        $request = $this->requestStack->getCurrentRequest();
+        $session = ($request && $request->hasSession()) ? $request->getSession() : null;
+        $name = 'currentSeason';
+        if ($session && $session->has($name)) {
+            return $session->get($name);
+        }
+
         $today = new DateTime();
         $seasonStartAt = $this->getSeasonStartAt();
-
-        return ($seasonStartAt['month'] <= (int) $today->format('m') && $seasonStartAt['day'] <= (int) $today->format('d'))
+        $currentSeason = ($seasonStartAt['month'] <= (int) $today->format('m') && $seasonStartAt['day'] <= (int) $today->format('d'))
             ? (int) $today->format('Y') + 1
             : (int) $today->format('Y');
+
+        if ($session) {
+            $session->set($name, $currentSeason);
+        }
+
+        return $currentSeason;
     }
 
     public function getPreviousSeason(): int

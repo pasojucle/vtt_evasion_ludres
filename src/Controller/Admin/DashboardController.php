@@ -34,12 +34,22 @@ class DashboardController extends AbstractController
 {
     #[Route('/', name:'', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function dashboard(): Response
+    public function dashboard(
+        BikeRideRepository $bikeRideRepository,
+        BikeRideDtoTransformer $bikeRideDtoTransformer,
+    ): Response
     {
-        return $this->render('dashboard/index.html.twig');
+        $nextBikeRides = [];
+        /** @var BikeRide $nextBikeRides */
+        foreach ($bikeRideRepository->findNextBikeRides() as $nextBikeRide) {
+            $nextBikeRides[] = $bikeRideDtoTransformer->getHeaderFromEntity($nextBikeRide);
+        }
+        return $this->render('dashboard/index.html.twig', [
+            'next_bike_rides' => $nextBikeRides,
+        ]);
     }
 
-    #[Route('/nextBikeRides', name: '_next_bike_rides', methods: ['GET'], options:['expose' => true])]
+    #[Route('/bikeRide/{bikeRide}', name: '_next_bike_rides', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function nextSchoolBikeRide(
         BikeRideDtoTransformer $bikeRideDtoTransformer,
@@ -80,7 +90,8 @@ class DashboardController extends AbstractController
         }
 
         return $this->render('dashboard/next_bike_rides.html.twig', [
-            'bike_rides' => $bikeRides,
+            'bikeRideId' => $bikeRide->getId(),
+            'clusters' => $clusterDtoTransformer->fromBikeRide($bikeRide)
         ]);
     }
 
@@ -105,10 +116,9 @@ class DashboardController extends AbstractController
         ];
 
         return $this->render('dashboard/badge.html.twig', [
-            'title' => sprintf('Saison %s', $season),
             'data' => $getCurentSeasonUsers->execute(),
             'parameters' => $parameters,
-            'link' => $this->generateUrl('admin_users'),
+            'frameId' => 'dashboard-season',
         ]);
     }
 
@@ -132,9 +142,8 @@ class DashboardController extends AbstractController
         ksort($ordersByType);
 
         return $this->render('dashboard/badge.html.twig', [
-            'title' => 'Commandes',
             'data' => $ordersByType,
-            'link' => $this->generateUrl('admin_orders', ['filtered' => true]),
+            'frameId' => 'dashboard-orders',
         ]);
     }
 
@@ -155,9 +164,8 @@ class DashboardController extends AbstractController
         }
 
         return $this->render('dashboard/badge.html.twig', [
-            'title' => 'Annonces d\'occasion',
             'data' => $secondHandsByType,
-            'link' => $this->generateUrl('admin_second_hand_list'),
+            'frameId' => 'dashboard-second-hands',
         ]);
     }
 

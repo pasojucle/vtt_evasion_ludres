@@ -22,6 +22,7 @@ twig:
         parameter_service: '@App\Service\ParameterService'
         background_service: '@App\Service\BackgroundService'
         keywords: '@App\Service\ReplaceKeywordsService'
+        season: '@App\Service\SeasonService'
 
     paths:
         # point this wherever your css files live

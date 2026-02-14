@@ -9,16 +9,49 @@
         </div>
         <div class="wrapper-body">
             <div class="flex flex-wrap gap-3 mb-20">
-                <div class="dashboard-item" data-route="admin_dashboard_crontab"></div>
-                <div class="dashboard-item" data-route="admin_dashboard_next_bike_rides"></div>
+                <turbo-frame id="crontab" src="{{ path('admin_dashboard_crontab') }}"  class="w-full flex-auto">
+                    <div class="animate-pulse">
+                        <div class="h-10 w-full bg-neutral-200"></div>
+                    </div>
+                </turbo-frame>
+                {% for bikeRide in next_bike_rides %}
+                    <div class="dashboard-item">
+                        <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id})}}">
+                            <div class="dashboard-item-title">
+                                <h2>{{ bikeRide.shortTitle }} du {{ bikeRide.period }}</h2>
+                            </div>
+                            <turbo-frame 
+                                id="dashboard-bike-ride-{{ bikeRide.id}}" 
+                                src="{{ path('admin_dashboard_next_bike_rides', {'bikeRide' : bikeRide.id}) }}"  
+                                class="block !mt-0 dashboard-item-body"
+                            >
+                                <div class="animate-pulse flex flex-col gap-2">
+                                    <div class="h-4 w-full bg-neutral-200"></div>
+                                    <div class="h-4 w-full bg-neutral-200"></div>
+                                    <div class="h-4 w-full bg-neutral-200"></div>
+                                    <div class="h-4 w-full bg-neutral-200"></div>
+                                    <div class="h-4 w-full bg-neutral-200"></div>
+                                    <div class="h-4 w-full bg-neutral-200"></div>
+                                </div>
+                            </turbo-frame>
+                        </a>
+                    </div>
+                {% endfor %}
                 <div class="dashboard-item">
                     <div class="dashboard-item-title">
                         <h2>Participation école VTT</h2>
                     </div>
                     <div class="dashboard-item-body">
-                        <div class="content-center">
-                            {% set route_params = {'isScool': true} %}
-                            <canvas id="school_line_chart" class="line-chart" data-route="admin_participation_monthly" data-is-school="1"</canvas>
+                        <div class="content-center"
+                            data-controller="line-chart"
+                            data-line-chart-url-value="{{ path('admin_participation_monthly', {'isSchool': 1})}}"
+                            data-line-chart-format-value="card"
+                        >
+                            <canvas 
+                                id="school_line_chart" 
+                                class="line-chart"
+                                data-line-chart-target="canvas"
+                            ></canvas>
                         </div>
                     </div>
                 </div>
@@ -27,14 +60,58 @@
                         <h2>Participation Adultes</h2>
                     </div>
                     <div class="dashboard-item-body">
-                        <div class="content-center">
-                            <canvas id="adult_line_chart" class="line-chart" data-route="admin_participation_monthly" data-is-school="0"></canvas>
+                    <div class="content-center"
+                            data-controller="line-chart"
+                            data-line-chart-url-value="{{ path('admin_participation_monthly', {'isSchool': 0})}}"
+                            data-line-chart-format-value="card"
+                        >
+                            <canvas 
+                                id="school_line_chart" 
+                                class="line-chart"
+                                data-line-chart-target="canvas"
+                            ></canvas>
                         </div>
                     </div>
                 </div>
-                <div class="dashboard-item" data-route="admin_dashboard_orders"></div>
-                <div class="dashboard-item" data-route="admin_dashboard_second_hands"></div>
-                <div class="dashboard-item" data-route="admin_dashboard_saison_detail"></div>
+                <div class="dashboard-item">
+                    <a href="{{ path('admin_dashboard_orders', {'filtered': true}) }}">
+                        <div class="dashboard-item-title">
+                            <h2>Commandes</h2>
+                        </div>
+                        <turbo-frame id="dashboard-orders" src="{{ path('admin_dashboard_orders') }}" class="block !mt-0 dashboard-item-body">
+                            <div class="animate-pulse flex flex-col gap-2">
+                                <div class="h-4 w-full bg-neutral-200"></div>
+                                <div class="h-4 w-full bg-neutral-200"></div>
+                            </div>
+                        </turbo-frame>
+                    </a>
+                </div>
+                <div class="dashboard-item">
+                    <a href="{{ path('admin_second_hand_list') }}">
+                        <div class="dashboard-item-title">
+                            <h2>Annonces d'occasion</h2>
+                        </div>
+                        <turbo-frame id="dashboard-second-hands" src="{{ path('admin_dashboard_second_hands') }}" class="block !mt-0 dashboard-item-body">
+                            <div class="animate-pulse flex flex-col gap-2">
+                                <div class="h-4 w-full bg-neutral-200"></div>
+                                <div class="h-4 w-full bg-neutral-200"></div>
+                            </div>
+                        </turbo-frame>
+                    </a>
+                </div>
+                <div class="dashboard-item">
+                    <a href="{{ path('admin_users') }}">
+                        <div class="dashboard-item-title">
+                            <h2>Saison {{season.currentSeason}}</h2>
+                        </div>
+                        <turbo-frame id="dashboard-season" src="{{ path('admin_dashboard_saison_detail') }}" class="block !mt-0 dashboard-item-body">
+                            <div class="animate-pulse flex flex-col gap-2">
+                                <div class="h-4 w-full bg-neutral-200"></div>
+                                <div class="h-4 w-full bg-neutral-200"></div>
+                            </div>
+                        </turbo-frame>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
