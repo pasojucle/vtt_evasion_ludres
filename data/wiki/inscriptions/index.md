@@ -8,8 +8,7 @@ Lister et administrer les inscriptions au club.
 
 ## Gestion des inscriptions
 
-Afficher la liste des inscriptions en fonction du filtre.
-
+Afficher la liste des inscriptions en fonction des filtres.
 ### Filtres
 
 * **3 séances en cours** : membre inscrit pour la première fois au club, ayant participé à **moins de 3 séances**.
