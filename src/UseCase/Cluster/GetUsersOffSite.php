@@ -63,6 +63,7 @@ class GetUsersOffSite
                         'form' => $form->createView(),
                         'users_off_site' => $usersOffSite['fullnames'],
                         'cluster' => $cluster,
+                        'type' => 'warning'
                     ]),
                 ]);
             }

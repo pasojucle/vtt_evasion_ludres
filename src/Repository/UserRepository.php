@@ -613,7 +613,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findMinorAndTesting(): array
     {
         $qb = $this->createQueryBuilder('u')
-            ->innerJoin('u.identities', 'i')
+            ->innerJoin('u.identitiy', 'i')
             ->innerJoin('u.licences', 'l')
         ;
 
@@ -637,7 +637,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb = $this->createQueryBuilder('u')
             ->leftJoin('u.sessions', 's')
             ->leftJoin('u.level', 'l')
-            ->join('u.identities', 'i')
+            ->join('u.identity', 'i')
             ->join('u.licences', 'li');
 
         if (!empty($filters)) {
