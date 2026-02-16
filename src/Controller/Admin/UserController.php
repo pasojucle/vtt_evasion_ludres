@@ -54,7 +54,10 @@ class UserController extends AbstractController
             ],
             'messages' => $messageService->getMessagesBySectionName('USER'),
         ];
-
+        if ($request->isMethod('POST')) {
+            return $this->render('user/admin/_member_list.html.twig', $params);
+        }
+        
         return $this->render('user/admin/users.html.twig', $params);
     }
 

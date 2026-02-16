@@ -84,6 +84,7 @@ const toggleBirthPlace = () => {
 }
 
 function submitFom() {
+    console.log("submitFom")
     const form = $(this).closest('form')[0];
     if (form) {
         form.requestSubmit();
@@ -91,6 +92,7 @@ function submitFom() {
 }
 
 function formModifier(event) {
+    console.log("formModifier")
     event.preventDefault();
     const form = event.target.closest('form');
     const target = event.target.dataset.modifier;
