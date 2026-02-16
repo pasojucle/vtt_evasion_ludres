@@ -28,35 +28,6 @@
                 </div>
             </div>
         </div>
-        {% include('user/admin/filters.html.twig') %}
-
-        <div class="wrapper-body">
-            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
-            <ul>
-                {% for user in users %}
-                    <li class="list-dropdown"> 
-                        <a href="{{ path('admin_user', {'user': user.id})}}"
-                            {% if user.level.colors is not null %}style="background-color: {{ user.level.colors.background }}"{% endif %}>
-                            <div class="row">
-                                <div class="col-md-4 col-xs-12">{{ user.member.fullName }}</div>
-                                <div class="col-md-4 col-xs-12">
-                                    {% if user.lastLicence.isYearly is same as(false) %}
-                                        {{ user.trialSessionsPresent }}/{{ user.testingBikeRides }} séances d'essai
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-3 col-xs-10">
-                                    {{ user.level.title }}
-                                </div>
-                                <div class="col-md-1 col-xs-2">
-                                    {% if user.isBoardMember %}<i class="fa-solid fa-crown"></i>{% endif %}
-                                </div>
-                            </div>
-                        </a> 
-                        {% include('user/admin/dropdown.html.twig') %}
-                    </li>
-                {% endfor %}
-            </ul>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
-        </div>
+        {% include('user/admin/_member_list.html.twig') %}
     </div>
 {% endblock %}
