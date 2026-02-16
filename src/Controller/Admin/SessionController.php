@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
+use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Session;
@@ -19,11 +20,11 @@ use App\Service\SessionService;
 use App\Service\SurveyService;
 use App\UseCase\Session\SetSession;
 use Doctrine\ORM\EntityManagerInterface;
+use Error;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -42,16 +43,18 @@ class SessionController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/seance', name: 'admin_session_present', methods: ['POST'], options:['expose' => true])]
+    #[Route('/admin/seance', name: 'admin_session_present', methods: ['POST'])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function adminPresent(
         Request $request,
         SessionRepository $sessionRepository,
         LicenceService $licenceService,
+        ClusterDtoTransformer $clusterDtoTransformer,
+        UserDtoTransformer $userDtoTransformer,
     ): Response {
-        $codeError = 1;
         $sessionId = $request->request->get('sessionId');
         $session = ($sessionId) ? $sessionRepository->find($sessionId) : null;
+
         if ($session) {
             $cachePool = new FilesystemAdapter();
             $cachePool->deleteItem(sprintf('cluster.%s', $session->getCluster()->getId()));
@@ -68,10 +71,21 @@ class SessionController extends AbstractController
             }
 
             $this->cacheService->deleteCacheIndex($session->getCluster());
-            $codeError = 0;
+            $cluster = $session->getCluster();
+
+            return $this->render('session/admin/_present.stream.html.twig', [
+                'cluster' => $clusterDtoTransformer->fromEntity($cluster),
+                'session' => [
+                    'id' => $session->getId(),
+                    'availability' => $session->getAvailability(),
+                    'userIsOnSite' => $session->isPresent(),
+                ],
+                'user' => $userDtoTransformer->fromEntity($session->getUser()),
+                'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
+            ]);
         }
 
-        return new JsonResponse(['codeError' => $codeError]);
+        throw new Error('session manquante');
     }
 
     #[Route('/admin/session/message/{session}', name: 'admin_session_message', methods: ['GET'], options:['expose' => true])]
@@ -96,12 +110,10 @@ class SessionController extends AbstractController
             $message = $messageService->getMessageByName('BIKE_RIDE_END_TESTING', $user);
         }
 
-        return new JsonResponse([
-            'codeError' => 0,
-            'modal' => $this->renderView('session/admin/message.html.twig', [
-                'message' => $message,
-                'form' => $form->createView(),
-            ]),
+        return $this->render('session/admin/message.html.twig', [
+            'session' => $session,
+            'message' => $message,
+            'form' => $form->createView(),
         ]);
     }
 

@@ -1,10 +1,15 @@
-{% extends 'base_modal.html.twig' %}
-{% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %} Rappel inscription{% endblock %}
+{% extends 'base_modal_form.html.twig' %}
+{% block modal_title %}Rappel inscription{% endblock %}
 {% block body %}
     <p>{{ message|raw }}</p>
 {% endblock %}
-{% block footer %}
-    {% set button_text = 'Valider sa participation' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        data-action="click->modal#handleAction" 
+        data-modal-event-name-value="participation:toggle"
+        data-modal-payload-value="{{ session.id }}"
+        class="btn btn-warning"
+    >
+        Valider sa participation
+    </button>
 {% endblock %}
