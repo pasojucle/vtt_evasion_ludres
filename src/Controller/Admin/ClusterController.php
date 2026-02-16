@@ -8,7 +8,6 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Dto\DtoTransformer\ClusterDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
-use App\Entity\User;
 use App\Form\Admin\ClusterType;
 use App\Service\CacheService;
 use App\Service\LogService;
@@ -53,14 +52,19 @@ class ClusterController extends AbstractController
         $this->cacheService->deleteCacheIndex($cluster);
         $mailerSendUsersOffSite->execute($usersOffSite, $bikeRide);
 
-        return new JsonResponse([
-            'codeError' => 0,
-            'html' => $this->renderView('cluster/show.html.twig', [
-                'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
-                'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
-                'cluster_entity' => $cluster,
-            ]),
-        ]);
+        return new JsonResponse(['codeError' => 0]);
+    }
+
+    #[Route('/admin/groupe/unlock/{cluster}', name: 'admin_cluster_unlock', methods: ['POST'])]
+    #[IsGranted('BIKE_RIDE_EDIT', 'cluster')]
+    public function adminClusterUnlock(
+        Cluster $cluster
+    ): Response {
+        $cluster->setIsComplete(false);
+        $this->entityManager->flush();
+        $this->cacheService->deleteCacheIndex($cluster);
+
+        return new JsonResponse(['codeError' => 0]);
     }
 
     #[Route('/admin/groupe/ajoute/{bikeRide}', name: 'admin_cluster_add', methods: ['GET', 'POST'])]
@@ -116,12 +120,11 @@ class ClusterController extends AbstractController
     public function adminClusterShow(
         Cluster $cluster
     ): Response {
-        $html = $this->renderView('cluster/show.html.twig', [
+        return $this->render('cluster/show.html.twig', [
             'bikeRide' => $this->bikeRideDtoTransformer->getHeaderFromEntity($cluster->getBikeRide()),
             'cluster' => $this->clusterDtoTransformer->fromEntity($cluster),
             'cluster_entity' => $cluster,
         ]);
-        return new JsonResponse(['codeError' => 0, 'html' => $html]);
     }
 
     #[Route('/admin/groupe/export/{cluster}', name: 'admin_cluster_export', methods: ['GET'])]

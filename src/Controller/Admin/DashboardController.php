@@ -33,10 +33,9 @@ class DashboardController extends AbstractController
     public function dashboard(
         BikeRideRepository $bikeRideRepository,
         BikeRideDtoTransformer $bikeRideDtoTransformer,
-    ): Response
-    {
+    ): Response {
         $nextBikeRides = [];
-        /** @var BikeRide $nextBikeRides */
+        /** @var BikeRide $nextBikeRide */
         foreach ($bikeRideRepository->findNextBikeRides() as $nextBikeRide) {
             $nextBikeRides[] = $bikeRideDtoTransformer->getHeaderFromEntity($nextBikeRide);
         }

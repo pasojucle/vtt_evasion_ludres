@@ -1,0 +1,16 @@
+{% extends 'base_modal_form.html.twig' %}
+{% block modal_title %}Valider un groupe{% endblock %}
+{% block body %}
+    <p>{{ users_off_site|join(', ') }} {% if users_off_site|length > 1 %}sont absents.{% else %}est absent.{% endif %}</p>
+    <p>Êtes-vous sûre de vouloir valider le groupe ?</p>
+{% endblock %}
+{% block action %}
+    <button 
+        data-action="click->modal#handleAction" 
+        data-modal-event-name-value="cluster:confirm-complete"
+        data-modal-payload-value="{{ cluster.id }}"
+        class="btn btn-warning"
+    >
+        Valider le groupe
+    </button>
+{% endblock %}

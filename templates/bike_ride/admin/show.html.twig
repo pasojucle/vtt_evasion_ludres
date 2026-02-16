@@ -13,14 +13,39 @@
                     <div class="dropdown-menu" data-target="dropdown-tools">
                         <ul class="dropdown-body">
                             {% if bikeRide.bikeRideType.isNeedFramers %}
-                                <li><a href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.id})}}"  class="dropdown-item" title="Voir l'encadrement"><i class="fa-solid fa-user-tie"></i> Voir l'encadrement</a></li>
+                                <li>
+                                    <a 
+                                        href="{{ path('admin_bike_ride_framer_list', {'bikeRide': bikeRide.id})}}"
+                                        class="dropdown-item" 
+                                        title="Voir l'encadrement"
+                                    >
+                                        <i class="fa-solid fa-user-tie"></i> Voir l'encadrement
+                                    </a>
+                                </li>
                             {% endif %}
-                            <li><a href="{{ path('admin_session_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un participant"><i class="fa-solid fa-user"></i> Ajouter un participant</a></li>
-                            <li><a href="{{ path('admin_cluster_add', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Ajouter un goupe"><i class="fa-solid fa-users"></i> Ajouter un groupe</a></li>
+                            <li>
+                                <a 
+                                    href="{{ path('admin_session_add', {'bikeRide': bikeRide.id}) }}" 
+                                    class="dropdown-item" 
+                                    title="Ajouter un participant"
+                                >
+                                    <i class="fa-solid fa-user"></i> Ajouter un participant
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    href="{{ path('admin_cluster_add', {'bikeRide': bikeRide.id}) }}" 
+                                    class="dropdown-item" 
+                                    title="Ajouter un goupe"
+                                >
+                                    <i class="fa-solid fa-users"></i> Ajouter un groupe
+                                </a>
+                            </li>
                             <li><a
                                 class="dropdown-item" 
                                 data-email-to-clipboard-url-value="{{ path('admin_bike_ride_members_email_to_clipboard', {'bikeRide': bikeRide.id}) }}" 
-                                data-controller="email-to-clipboard" 
+                                data-controller="email-to-clipboard"
+                                data-action="click->email-to-clipboard#emailToClipboard"
                                 title="Copier les emails des participants"><i class="fas fa-copy"
                             ></i> Copier les emails des participants</a></li>
                         </ul>
@@ -29,16 +54,49 @@
             {% endif %}
         </div>
     </div>
-    <div id="clusters_container" class="wrapper-body">
+    <div id="clusters_container" class="wrapper-body flex flex-col gap-3">
         {% for cluster in clusters %}
-            <div id="cluster-{{ cluster.id }}" data-route="{{ path('admin_cluster_show', {'cluster': cluster.id })}}" class="cluster-container mb-20">
+            <turbo-frame
+                class="cluster-container"
+                id="cluster-{{ cluster.id }}" 
+                src="{{ path('admin_cluster_show', {'cluster': cluster.id })}}"
+                data-controller="cluster"
+                data-cluster-refresh-interval-value="60000"
+                data-cluster-complete-value="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}"
+                data-cluster-unlock-value="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}"
+                data-cluster-export-value="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}"
+                data-cluster-cluster-id-value="{{ cluster.id }}"
+                data-action="participation:status-changed->cluster#updateTotal"
+            >
                 <div class="cluster-title">
-                    <h2>{{ cluster.title }} - <span class="badge badge-info">0</span></h2>
+                    <h2>{{ cluster.title }} - <span class="badge badge-info" data-cluster-target="countBadge">0</span></h2>
                 </div>
-                <div class="loader-container">
-                    <div class="loader"></div>
+                <div class="block !mt-0">
+                    <div class="animate-pulse flex flex-col gap-2">
+                        <div class="block !mt-0">
+                            <div class="animate-pulse flex flex-col gap-2">
+                                <div class="flex gap-2">
+                                    <div class="h-12 flex-1 bg-neutral-200"></div>
+                                    <div class="h-12 w-8 bg-neutral-200"></div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <div class="h-12 flex-1 bg-neutral-200"></div>
+                                    <div class="h-12 w-8 bg-neutral-200"></div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <div class="h-12 flex-1 bg-neutral-200"></div>
+                                    <div class="h-12 w-8 bg-neutral-200"></div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <div class="h-12 flex-1 bg-neutral-200"></div>
+                                    <div class="h-12 w-8 bg-neutral-200"></div>
+                                </div>
+                                <div class="h-10 w-full bg-neutral-200"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </turbo-frame>
         {% endfor %}
     </div>
 {% endblock %}

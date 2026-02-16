@@ -5,14 +5,6 @@ export default class extends Controller {
         url: String,
     }
 
-    connect() {
-        this.element.addEventListener('click', this.emailToClipboard)
-    }
-
-    disconnect() {
-        this.emailToClipboardTarget.removeEventListener('click', this.emailToClipboard)
-    }
-
     emailToClipboard = (event) => {
         event.preventDefault();
         const url = this.urlValue;

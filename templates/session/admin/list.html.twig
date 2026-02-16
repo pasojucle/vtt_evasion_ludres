@@ -1,7 +1,13 @@
 <li id="session-{{ session.id }}" class="col-list col-list-1btn">
     <div class="list-dropdown">
-        <a href="{{ path('admin_bike_rides_user', {'user': user.id})}}"{% if not bikeRide.isEditable %} class="disabled"{% endif %}
-            {% if user.level.colors is not null and bikeRide.bikeRideType.useLevels %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
+        <a href="{{ path('admin_bike_rides_user', {'user': user.id})}}"
+            data-turbo-frame="_top"
+            {% if not bikeRide.isEditable %} 
+                class="disabled"
+            {% endif %}
+            {% if user.level.colors is not null and bikeRide.bikeRideType.useLevels %} 
+                style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"
+            {% endif %}>
             <div class="row">
                 <div class="col-md-9 col-xs-10">
                     <div class="row">
@@ -35,26 +41,5 @@
         </a>
         {% include 'user/admin/dropdown.html.twig' with {'session' : session} %}
     </div>
-    {% if not cluster.isComplete %}
-        {% if not session.userIsOnSite %}
-            {% if  user.mustProvideRegistration or user.isEndTesting %}
-                <a href="{{ path('admin_session_message', {'session': session.id}) }}" data-toggle="modal" data-type="danger" data-session="{{ session.id }}" data-must-provide-registration="{{ user.mustProvideRegistration or user.isEndTesting }}"
-                    class="btn btn-danger admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Absent">
-                    <i class="fas fa-question-circle"></i>
-                </a>
-            {% else %}
-                <a href="{{ path('admin_session_present') }}" data-session="{{ session.id }}" data-must-provide-registration="{{ user.mustProvideRegistration or user.isEndTesting }}"
-                    class="btn btn-light admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Absent">
-                    <i class="fas fa-check"></i>
-                </a>
-            {% endif %}
-        {% else %}
-            <a href="{{ path('admin_session_present') }}" data-session="{{ session.id }}" data-must-provide-registration="{{ user.mustProvideRegistration or user.isEndTesting }}"
-            class="btn btn-success admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Présent"><i class="fas fa-check-circle"></i></a>
-        {% endif %}
-    {% else %}
-        {% if session.userIsOnSite %}
-            <div class="success-ico xl-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
-        {% endif %}
-    {% endif %}
+    {% include 'session/admin/_present.html.twig' %}
 </li>

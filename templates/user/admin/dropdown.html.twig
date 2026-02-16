@@ -13,27 +13,79 @@
         {% endif %}
         {% if bikeRide.isEditable and not cluster.isComplete and (session.availability is empty or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').AVAILABLE or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').REGISTERED ) %}
           <li>
-            <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" class="dropdown-item" title="Changer de groupe">
+            <a 
+              href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" 
+              class="dropdown-item" title="Changer de groupe"
+              data-turbo-frame="_top"
+            >
               <i class="fa-solid fa-rotate"></i> Changer de groupe
             </a>
           </li>
         {% endif %}
         {% if bikeRide.isEditable and not cluster.isComplete %}
-            <li><a class="dropdown-item" href="{{ path('admin_session_delete', {'session' : session.id}) }}" title="Supprimer"><i class="fas fa-times"></i> Supprimer de la sortie</a></li>
+            <li>
+              <a 
+                class="dropdown-item" 
+                href="{{ path('admin_session_delete', {'session' : session.id}) }}" 
+                title="Supprimer"
+                data-turbo-frame="_top"
+              >
+                <i class="fas fa-times"></i> Supprimer de la sortie
+              </a>
+            </li>
         {% endif %}
       {% endif %}
       {% if is_granted('USER_LIST') and user.level.type == constant('App\\Entity\\Level::TYPE_SCHOOL_MEMBER')%}
-        <li><a class="dropdown-item" href="{{ path('admin_user_skill_edit', {'user': user.id}) }}"><i class="fa-solid fa-graduation-cap"></i> Compétences</a></li>
+        <li>
+          <a 
+            class="dropdown-item" 
+            href="{{ path('admin_user_skill_edit', {'user': user.id}) }}"
+            data-turbo-frame="_top"
+          >
+            <i class="fa-solid fa-graduation-cap"></i> Compétences
+          </a>
+        </li>
       {% endif %}
       {% if is_granted('ROLE_ADMIN') %}
-        <li><a class="dropdown-item" href="{{ path('admin_user_participation', {'user': user.id}) }}"><i class="fas fa-chart-line"></i> Participation</a></li>
-        <li><a class="dropdown-item" href="{{ path('admin_user_certificate', {'user': user.id}) }}"><i class="fas fa-file-contract"></i> Attestation d'inscription CE</a></li>
+        <li>
+          <a 
+            class="dropdown-item" 
+            href="{{ path('admin_user_participation', {'user': user.id}) }}"
+            data-turbo-frame="_top"
+          >
+            <i class="fas fa-chart-line"></i> Participation
+          </a>
+        </li>
+        <li>
+          <a 
+            class="dropdown-item" 
+            href="{{ path('admin_user_certificate', {'user': user.id}) }}"
+            data-turbo-frame="_top"
+          >
+            <i class="fas fa-file-contract"></i> Attestation d'inscription CE
+          </a>
+        </li>
         {% if user.level.accompanyingCertificat %}
-          <li><a class="dropdown-item" href="{{ path('admin_user_accompanying_certificate', {'user': user.id}) }}"><i class="fas fa-file-contract"></i> Attestation adulte accompagnateur</a></li>
+          <li>
+            <a 
+              class="dropdown-item" 
+              href="{{ path('admin_user_accompanying_certificate', {'user': user.id}) }}"
+              data-turbo-frame="_top"
+            >
+              <i class="fas fa-file-contract"></i> Attestation adulte accompagnateur
+            </a>
+          </li>
         {% endif %}
       {% endif %}      
       {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}
-        <li><a class="dropdown-item" href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"><i class="fas fa-exchange-alt"></i> Se connecter en tant que</a></li>
+        <li>
+          <a class="dropdown-item" 
+            href="{{ path('home', {'_switch_user': user.licenceNumber}) }}"
+            data-turbo-frame="_top"
+          >
+            <i class="fas fa-exchange-alt"></i> Se connecter en tant que
+          </a>
+        </li>
       {% endif %}
       {% if app.request.get('_route') == 'admin_registrations' and user.lastLicence.toValidate %}
         <li><a class="dropdown-item" href="{{ path('admin_registration_reject', {'licence': user.lastLicence.id})}}" data-toggle="modal" data-type="danger"><i class="fa-solid fa-circle-exclamation"></i> Inscription incompète</a></li>

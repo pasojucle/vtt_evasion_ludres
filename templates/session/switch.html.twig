@@ -13,7 +13,7 @@
             {{ form_start(form) }}
             <div class="block-body">
                 <p>{{ bikeRide.title }}</p>
-                <p>{{ session.user.firstIdentity.name }}</p>
+                <p>{{ session.user.identity.name }}</p>
                 {{ form_row(form.cluster) }}
             </div>
             <div class="block-footer">

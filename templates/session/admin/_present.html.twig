@@ -1,0 +1,31 @@
+<turbo-frame id="session-presence-frame-{{ session.id }}">
+    <div data-controller="participation"
+        class="h-full"
+         data-participation-session-id-value="{{ session.id }}"
+         data-participation-toggle-value="{{ path('admin_session_present') }}">
+         
+        {% if not cluster.isComplete %}
+            {% if not session.userIsOnSite %}
+                {% if user.mustProvideRegistration or user.isEndTesting %}
+                    <a href="{{ path('admin_session_message', {'session': session.id}) }}"
+                       class="btn btn-danger"
+                       data-turbo-frame="modal_content">
+                        <i class="fas fa-question-circle"></i>
+                    </a>
+                {% else %}
+                    <button data-action="click->participation#toggle" class="btn btn-light">
+                        <i class="fas fa-check"></i>
+                    </button>
+                {% endif %}
+            {% else %}
+                <button data-action="click->participation#toggle" class="btn btn-success">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            {% endif %}
+        {% else %}
+            {% if session.userIsOnSite %}
+                <div id="session-present-{{ session.id }}" class="success-ico xl-ico" title="Présent"><i class="fas fa-check-circle"></i></div>
+            {% endif %}
+        {% endif %}
+    </div>
+</turbo-frame>
