@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+@theme {
+  --color-warning: oklch(79.5% 0.184 86.047);
+  --color-success: oklch(72.3% 0.219 149.579);
+  --color-destructive: oklch(63.7% 0.237 25.331);
+}
+
+@layer utilities {
+  .bg-warning { background-color: var(--color-warning); }
+  .bg-success { background-color: var(--color-success); }
+  .bg-destructive { background-color: var(--color-destructive); }
+}

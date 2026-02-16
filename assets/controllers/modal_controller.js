@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ["frame", "dialog"];
+    static targets = ["frame", "container", "dialog"];
     static values = {
         eventName: String
     }
@@ -26,6 +26,11 @@ export default class extends Controller {
 
         if (!this.dialogTarget.open) {
             this.dialogTarget.showModal();
+
+            setTimeout(() => {
+                this.containerTarget.classList.remove('-translate-y-full');
+                this.containerTarget.classList.add('translate-y-0');
+            }, 10);
         }
     }
 
@@ -37,12 +42,17 @@ export default class extends Controller {
             this.frameTarget.innerHTML = content;
         }
 
-        this.dialogTarget.showModal();
+        this.open();
     }
 
     close() {
-        this.dialogTarget.close();
-        this.frameTarget.innerHTML = "";
+        this.containerTarget.classList.replace('translate-y-0', '-translate-y-full');
+
+        setTimeout(() => {
+            this.dialogTarget.close();
+            this.frameTarget.src = "";
+            this.frameTarget.innerHTML = "";
+        }, 500);
     }
 
     handleAction(event) {
