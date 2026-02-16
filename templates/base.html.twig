@@ -57,6 +57,13 @@
             {% if display_nav %}
                 {% include 'component/footer.html.twig' %}
             {% endif %}
+            <dialog data-controller="modal" data-modal-target="dialog" class="modal">
+                <turbo-frame 
+                    id="modal_content" 
+                    data-modal-target="frame"
+                    data-action="turbo:frame-render->modal#open"
+                ></turbo-frame>
+            </dialog>
         </main>
     </body>
     {% block javascripts %}

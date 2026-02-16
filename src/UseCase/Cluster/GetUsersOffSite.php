@@ -59,9 +59,10 @@ class GetUsersOffSite
             if ($request->isMethod('GET')) {
                 $response = new JsonResponse([
                     'codeError' => 0,
-                    'modal' => $this->twig->render('cluster/export.modal.html.twig', [
+                    'modal' => $this->twig->render('cluster/complete.modal.html.twig', [
                         'form' => $form->createView(),
                         'users_off_site' => $usersOffSite['fullnames'],
+                        'cluster' => $cluster,
                     ]),
                 ]);
             }

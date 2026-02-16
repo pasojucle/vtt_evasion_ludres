@@ -1,7 +1,11 @@
-<div id="cluster-{{ cluster.id }}" data-route="{{ path('admin_cluster_show', {'cluster': cluster.id })}}" class="cluster-container mb-20">
+<turbo-frame
+    class="cluster-container mb-20"
+    id="cluster-{{ cluster.id }}"
+    data-controller="cluster"
+>  
     <div class="cluster-title">
         <h2>{{ cluster.title }} - 
-            <span class="badge badge-info">{{ cluster.usersOnSiteCount }}</span>
+            <span class="badge badge-info" data-cluster-target="countBadge">{{ cluster.usersOnSiteCount }}</span>
             {% if cluster.hasSkills %}
                 <span class="badge badge-info"><i class="fa-solid fa-graduation-cap"></i></span>
             {% endif %}
@@ -12,13 +16,39 @@
                 <div class="dropdown-menu" data-target="dropdown-tools">
                     <ul class="dropdown-body">
                         {% if bikeRide.isEditable %}
-                            <li><a href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.id, 'cluster': cluster.id}) }}" class="dropdown-item" title="Renomer"><i class="fa-solid fa-pen-to-square"></i> Renommer</a></li>
+                            <li>
+                                <a 
+                                    href="{{ path('admin_cluster_edit', {'bikeRide': bikeRide.id, 'cluster': cluster.id}) }}" 
+                                    class="dropdown-item" title="Renomer"
+                                    data-turbo-frame="_top"
+                                >
+                                    <i class="fa-solid fa-pen-to-square"></i> Renommer
+                                </a>
+                            </li>
                         {% endif %}
                         {% if bikeRide.bikeRideType.useLevels %}
-                            <li><a href="{{ path('admin_cluster_evaluations', {'cluster': cluster.id}) }}" class="dropdown-item" title="Évaluations"><i class="fa-solid fa-graduation-cap"></i> Évaluation</a></li>
+                            <li>
+                                <a 
+                                    href="{{ path('admin_cluster_evaluations', {'cluster': cluster.id}) }}" 
+                                    class="dropdown-item" 
+                                    title="Évaluations"
+                                    data-turbo-frame="_top"
+                                >
+                                    <i class="fa-solid fa-graduation-cap"></i> Évaluation
+                                </a>
+                            </li>
                         {% endif %}
                         {% if 0 == cluster.sessions|length and bikeRide.isEditable %}
-                            <li><a href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" class="dropdown-item" title="Supprimer"><i class="fa-solid fa-circle-xmark"></i> Supprimer</a></li>
+                            <li>
+                                <a 
+                                    href="{{ path('admin_cluster_delete', {'cluster': cluster.id}) }}" 
+                                    class="dropdown-item" 
+                                    title="Supprimer"
+                                    data-turbo-frame="_top"
+                                >
+                                    <i class="fa-solid fa-circle-xmark"></i> Supprimer
+                                </a>
+                            </li>
                         {% endif %}
                     </ul>
                 </div>
@@ -34,18 +64,29 @@
         {% if cluster.isEditable and cluster.title != constant('App\\Entity\\Cluster::CLUSTER_FRAME') %}
             <div>
                 {% if not cluster.isComplete %}
-                    <a href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success cluster-complete{% if not bikeRide.isEditable %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}" >
+                    <a 
+                        href="#" 
+                        class="btn btn-100 btn-success cluster-complete{% if not bikeRide.isEditable %} disabled{% endif %}" 
+                        data-action="click->cluster#complete"
+                    >
                         <i class="fas fa-check"></i> Valider le groupe
                     </a>
                 {% else %}
                     <div class="row row-list">
                         <div class="col-md-9 col-xs-8">
-                            <a href="{{ path('admin_cluster_complete', {'cluster': cluster.id}) }}" class="btn btn-100 btn-danger cluster-complete{% if not bikeRide.isEditable %} disabled{% endif %}" data-cluster-id="{{ cluster.id }}">
+                            <a href="#" 
+                                class="btn btn-100 btn-danger cluster-complete{% if not bikeRide.isEditable %} disabled{% endif %}" 
+                                data-action="click->cluster#unlock"
+                            >
                                 <i class="fas fa-unlock-alt"></i> Déverrouiller le groupe
                             </a>
                         </div>
                         <div class="col-md-3 col-xs-4">
-                            <a id="cluster_export_{{ cluster.id }}" href="{{ path('admin_cluster_export', {'cluster': cluster.id}) }}" class="btn btn-100 btn-success{% if not bikeRide.isEditable %} disabled{% endif %}">
+                            <a 
+                                href="#" 
+                                class="btn btn-100 btn-success{% if not bikeRide.isEditable %} disabled{% endif %}"
+                                data-action="click->cluster#exportCluster"
+                            >
                                 <i class="fas fa-file-pdf"></i> Exporter
                             </a>
                         </div>
@@ -56,4 +97,4 @@
     {% else %}
         <p class="padding-10">Aucun inscrit</p>
     {% endif %}
-</div>
+</turbo-frame>
