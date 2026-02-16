@@ -57,7 +57,7 @@
             {% if display_nav %}
                 {% include 'component/footer.html.twig' %}
             {% endif %}
-            <dialog data-controller="modal" data-modal-target="dialog" class="modal">
+            <dialog data-controller="modal" data-modal-target="dialog" class="modal p-0 overflow-hidden bg-transparent">
                 <turbo-frame 
                     id="modal_content" 
                     data-modal-target="frame"
