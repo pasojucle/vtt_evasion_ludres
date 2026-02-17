@@ -36,6 +36,7 @@ class IndemnityType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Indemnity::class,
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
     }
 }

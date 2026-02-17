@@ -21,10 +21,10 @@
                             <div class="dropdown-menu" data-target="dropdown-tools">
                                 <ul class="dropdown-body">
                                     <li>
-                                        <a  class="dropdown-item" href="{{ path('admin_category_edit', {'category': category.id})}}" title="modifier" data-toggle="modal" data-type="primary"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                                        <a  class="dropdown-item" href="{{ path('admin_category_edit', {'category': category.id})}}" title="modifier" data-turbo-frame="modal_content"><i class="fas fa-pencil-alt"></i> Modifier</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ path('admin_category_delete', {'category': category.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
+                                        <a class="dropdown-item" href="{{ path('admin_category_delete', {'category': category.id})}}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Supprimer</a>
                                     </li>
                                 </ul>
                             </div>

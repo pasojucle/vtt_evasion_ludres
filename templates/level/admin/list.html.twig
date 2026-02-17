@@ -39,7 +39,7 @@
                                     </li>
                                     {% if not level.isProtected %}
                                         <li>
-                                        <a class="dropdown-item modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
+                                        <a class="dropdown-item modal-trigger" href="{{ path('admin_level_delete', {'level': level.id})}}" title="Supprimer" data-turbo-frame="modal_content"imes"></i> Supprimer</a>
                                         </li>
                                     {% endif %}
                                 </ul>

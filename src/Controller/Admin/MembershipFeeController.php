@@ -40,27 +40,28 @@ class MembershipFeeController extends AbstractController
         Request $request,
         MembershipFeeAmount $amount
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(MembershipFeeAmountType::class, $amount, [
             'action' => $this->generateUrl(
-                'admin_membership_fee_edit',
-                [
-                    'amount' => $amount->getId(),
-                ]
+                'admin_membership_fee_edit',['amount' => $amount->getId(),]
             ),
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $amount = $form->getData();
-            $this->entityManager->persist($amount);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $amount = $form->getData();
+                $this->entityManager->persist($amount);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_membership_fee');
+                return $this->redirectToRoute('admin_membership_fee');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('membershipFee/admin/edit.modal.html.twig', [
             'amount' => $amount,
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 }

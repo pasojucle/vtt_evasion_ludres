@@ -33,7 +33,7 @@
                                         <a class="dropdown-item" href="{{ path('admin_board_role_edit', {'boardRole': boardRole.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item modal-trigger" href="{{ path('admin_board_role_delete', {'boardRole': boardRole.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
+                                        <a class="dropdown-item modal-trigger" href="{{ path('admin_board_role_delete', {'boardRole': boardRole.id})}}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Supprimer</a>
                                     </li>
                                 </ul>
                             </div>

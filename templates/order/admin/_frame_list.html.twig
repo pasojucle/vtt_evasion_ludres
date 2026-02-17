@@ -37,7 +37,7 @@
                     </div>
                     <div>
                         {% if order.status not in [enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED, enum('App\\Entity\\Enum\\OrderStatusEnum').CANCELED] %}
-                            <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-toggle="modal" data-type="danger" title="Annuler">
+                            <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-turbo-frame="modal_content" title="Annuler">
                                 <i class="fas fa-times"></i>
                             </a>
                         {% endif %}

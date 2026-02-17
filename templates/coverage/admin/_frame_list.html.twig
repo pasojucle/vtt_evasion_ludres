@@ -21,7 +21,7 @@
                     </div>
                     <div>
                         {% if user.lastLicence is not empty %}
-                            <a class="btn btn-success" href="{{ path('admin_coverage_validate', {'licence': user.lastLicence.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
+                            <a class="btn btn-success" href="{{ path('admin_coverage_validate', {'licence': user.lastLicence.id})}}" title="Valider" data-turbo-frame="modal_content"><div><i class="fas fa-check"></i> Valider</div></a>
                         {% endif %}
                     </div>
                 </li>

@@ -89,7 +89,7 @@
                                                 <div class="dropdown-menu" data-target="dropdown-tools">
                                                     <ul class="dropdown-body">
                                                         <li><a href="{{ path('admin_registration_step_edit', {'registrationStep': step.id})}}" class="dropdown-item"><i class="fas fa-pencil-alt"></i> Modifier</a></li>
-                                                        <li><a class="dropdown-item"  data-toggle="modal" data-type="danger" href="{{ path('admin_registration_step_delete', {'registrationStep' : step.id}) }}"> Supprimer</a></li>
+                                                        <li><a class="dropdown-item"  data-turbo-frame="modal_content" href="{{ path('admin_registration_step_delete', {'registrationStep' : step.id}) }}"> Supprimer</a></li>
                                                     </ul>
                                                 </div>
                                             </div>

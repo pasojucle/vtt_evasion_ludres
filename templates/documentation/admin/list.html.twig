@@ -23,7 +23,7 @@
                             <a class="btn btn-primary btn-ico" href="{{ path('admin_documentation_edit', {'documentation': documentation.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
                         </div>
                         <div>
-                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_documentation_delete', {'documentation': documentation.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                            <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_documentation_delete', {'documentation': documentation.id})}}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i></a>
                         </div>
                     </li>
                 {% endfor %}

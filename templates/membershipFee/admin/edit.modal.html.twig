@@ -1,18 +1,22 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_membership_fee_edit', {'amount' : amount.id}) %}
-{% block form %}{% set form = null%}{% endblock %}
-{% block modal_title %}Modifier{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set title = 'Modifier' %}
+{% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
     <div class="form-group-medium-width">
         <h3>{{ amount.membershipFee.title }}
-        {% if amount.coverage is not null %}
-            <br>{{ constant('App\\Entity\\Licence::COVERAGES')[amount.coverage]|trans }}
-        {% endif %}
+            {% if amount.coverage is not null %}
+                <br>{{ constant('App\\Entity\\Licence::COVERAGES')[amount.coverage]|trans }}
+            {% endif %}
         </h3>
         {{ form_row(form.amount) }}
+        {{ form_errors(form) }}
     </div>
 {% endblock %}
-{% block footer %}
-    {% set button_text = '<i class="fas fa-check"></i> Modifier' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="btn text-primary bg-neutral-200"
+    >
+        <i class="fas fa-check"></i> {{ title }}
+    </button>
 {% endblock %}

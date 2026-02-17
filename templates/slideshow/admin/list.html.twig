@@ -10,7 +10,7 @@
     </div>
     <div class="wrapper-body">
         <div class="d-flex align-items-center gap-2">
-            <a class="btn btn-primary mb-20" href="{{ path('admin_slideshow_directory_add') }}" title="Ajouter un répertoire" data-toggle="modal" data-type="primary">Ajouter un répertoire</a>
+            <a class="btn btn-primary mb-20" href="{{ path('admin_slideshow_directory_add') }}" title="Ajouter un répertoire" data-turbo-frame="modal_content">Ajouter un répertoire</a>
             <div id="slideshow-space" class="ms-auto  mb-20 gap-2">
                 <turbo-frame id="directory_size" src="{{ path('admin_slideshow_directory_size') }}">
                     <p>Calcul de l'espace disque...</p>
@@ -42,17 +42,17 @@
                         <a href="{{ path('admin_slideshow_list', {'directory': directory.id}) }}">
                             <i class="fa-solid fa-folder"></i>
                         </a>
-                        <a class="name" href="{{ path('admin_slideshow_directory_edit', {'directory': directory.id}) }}" title="Mofifier un répertoire" data-toggle="modal" data-type="primary">
+                        <a class="name" href="{{ path('admin_slideshow_directory_edit', {'directory': directory.id}) }}" title="Mofifier un répertoire" data-turbo-frame="modal_content">
                             {{ directory.name }}
                         </a>
-                        <a class="btn-delete" href="{{ path('admin_slideshow_directory_delete', {'directory': directory.id}) }}" title="Supprimer un répertoire" data-toggle="modal" data-type="danger"><i class="fa-solid fa-circle-xmark"></i></a>
+                        <a class="btn-delete" href="{{ path('admin_slideshow_directory_delete', {'directory': directory.id}) }}" title="Supprimer un répertoire" data-turbo-frame="modal_content"><i class="fa-solid fa-circle-xmark"></i></a>
                     </div>
                 {% endfor %}
                 {% for image in images %}
                     <div class="slideshow-element">
                         <div class="slideshow-thumbnail">
                             <img src="{{ image.url }}" alt="">
-                            <a class="btn-delete" href="{{ path('admin_slideshow_image_delete', {'image': image.id}) }}" title="Supprimer une image" data-toggle="modal" data-type="danger"><i class="fa-solid fa-circle-xmark"></i></a>
+                            <a class="btn-delete" href="{{ path('admin_slideshow_image_delete', {'image': image.id}) }}" title="Supprimer une image" data-turbo-frame="modal_content"><i class="fa-solid fa-circle-xmark"></i></a>
                         </div>
                         <div class="name">{{ image.name }}</div>
                     </div>  

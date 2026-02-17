@@ -30,7 +30,7 @@
                 <h3>Categorie</h3>
                 <p>{{ second_hand.category }}<p>
             </div>
-            <a class="btn btn-primary" href="{{path('second_hand_message', {'secondHand': second_hand.id})}}" data-toggle="modal" data-type="primary">Contacter le vendeur</a>
+            <a class="btn btn-primary" href="{{path('second_hand_message', {'secondHand': second_hand.id})}}" data-turbo-frame="modal_content">Contacter le vendeur</a>
         </div>         
     </div>
 </div>

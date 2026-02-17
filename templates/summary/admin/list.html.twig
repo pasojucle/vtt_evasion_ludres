@@ -28,7 +28,7 @@
                                 <div class="dropdown-menu" data-target="dropdown-{{ summary.id }}">
                                     <ul class="dropdown-body">
                                         {% if is_granted('SUMMARY_LIST') %}
-                                            <li><a href="{{ path('admin_summary_delete', {'summary': summary.id}) }}" class="dropdown-item" title="supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a></li>
+                                            <li><a href="{{ path('admin_summary_delete', {'summary': summary.id}) }}" class="dropdown-item" title="supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Supprimer</a></li>
                                         {% endif %}
                                     </ul>
                                 </div>

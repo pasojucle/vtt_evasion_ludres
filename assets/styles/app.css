@@ -1,12 +1,15 @@
 @import "tailwindcss";
 
 @theme {
+  --color-primary: oklch(0.7705 0.1548 63.51);
   --color-warning: oklch(79.5% 0.184 86.047);
   --color-success: oklch(72.3% 0.219 149.579);
   --color-destructive: oklch(63.7% 0.237 25.331);
 }
 
 @layer utilities {
+  .text-primary { color: var(--color-primary); }
+  .bg-primary { background-color: var(--color-primary); }
   .bg-warning { background-color: var(--color-warning); }
   .bg-success { background-color: var(--color-success); }
   .bg-destructive { background-color: var(--color-destructive); }
