@@ -5,12 +5,30 @@
             <ul class="dropdown-body">
             {% if settings.routes is defined %}
                 {% for route in settings.routes %}
-                    <li><a href="{{ path(route.name) }}" class="dropdown-item" title="{{ route.label }}"><i class="fas fa-sliders-h"></i> {{ route.label|raw  }}</a></li>
+                    <li>
+                        <a 
+                            href="{{ path(route.name) }}" 
+                            class="dropdown-item" 
+                            title="{{ route.label }}"
+                            data-turbo-frame="_top"
+                        >
+                            <i class="fas fa-sliders-h"></i> {{ route.label|raw  }}
+                        </a>
+                    </li>
                 {% endfor %}
             {% endif %}
             {% if settings.actions is defined %}
                 {% for action in settings.actions %}
-                    <li><a href="{{ path(action.name, action.params) }}" class="dropdown-item" title="{{ action.label }}">{{ action.label|raw  }}</a></li>
+                    <li>
+                        <a 
+                            href="{{ path(action.name, action.params) }}" 
+                            class="dropdown-item" 
+                            title="{{ action.label }}"
+                            data-turbo-frame="_top"
+                        >
+                            {{ action.label|raw  }}
+                        </a>
+                    </li>
                 {% endfor %}
             {% endif %}
             {% if settings.parameters is defined %}

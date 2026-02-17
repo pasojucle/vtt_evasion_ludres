@@ -5,7 +5,7 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>{{ survey.title }}</h1>
+            <h1 class="font-bold text-3xl">{{ survey.title }}</h1>
             <div class="dropdown">
                 <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
                 <div class="dropdown-menu" data-target="dropdown-tools">
@@ -24,29 +24,6 @@
                 <a href="{{ path('admin_surveys') }}" class="btn btn-ico" title="Retour à la liste des surveys"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
-        <div>
-        <div class="wrapper-body">
-            
-        <div class="filters">
-            {{ form_start(form) }}
-                <div class="row">
-                    <div class="col-md-9 col-xs-12">{{ form_widget(form.issue)}}</div>
-                    <div class="col-md-3 col-xs-12">{{ form_widget(form.value)}}</div>
-                </div>
-            {{ form_end(form) }}
-        </div>
-            
-        {% if responses is not empty %}
-            <ul class="padding-10">
-                {% for response in responses %}
-                    <li class="row row-list  light-separator">
-                        <div class="col-md-6 col-xs-6">{{ response.user.fullName }}</div>
-                        <div class="col-md-6 col-xs-6">
-                            {{ response.value }}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
+        {% include('survey/admin/_frame_show.html.twig') %}
+    </div>        
 {% endblock %}

@@ -1,4 +1,28 @@
-<turbo-frame id="members-list">
+<turbo-frame id="member-list">
+    <div class="wrapper-title">
+        <h1 class="font-bold text-3xl">Gestion des adhérents - <span class="badge badge-info">{{ paginator.total }}</span></h1>
+        <div class="tool-group">
+            <a href="{{ path('wiki_show', {'directory': 'adhérents'})}}" target="_blank" title="wiki" class="btn-wiki"></a>
+            {% include 'component/dropdown_settings.html.twig' %}
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
+                <div class="dropdown-menu" data-target="dropdown-tools">
+                    <ul class="dropdown-body">
+                        <li><a 
+                            class="dropdown-item" 
+                            data-controller="email-to-clipboard"
+                            data-action="click->email-to-clipboard#emailToClipboard"
+                            data-email-to-clipboard-url-value="{{ path('admin_members_email_to_clipboard') }}" 
+                            title="Copier les emails de la séléction"
+                        ><i class="fas fa-copy"></i> Copier les emails de la séléction</a></li>
+                        <li><a href="{{ path('admin_members_export') }}" class="dropdown-item" title="Exporter la sélection"><i class="fas fa-file-csv"></i> Exporter la sélection</a></li>
+                        <li><a href="{{ path('admin_user_skill_export') }}" class="dropdown-item" title="Exporter les évaluations de la sélection"><i class="fas fa-file-csv"></i> Exporter les évaluations de la sélection</a></li>
+                        <li><a href="{{ path('admin_overview_season') }}" class="dropdown-item" title="Synthèse par saison"><i class="fa-solid fa-users-rectangle"></i> Synthèse par saison</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     {% include('user/admin/filters.html.twig') %}
     <div class="wrapper-body">
         {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
