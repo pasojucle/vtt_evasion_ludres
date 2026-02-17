@@ -1,0 +1,16 @@
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = 'destructive' %}
+{% block modal_title %}{{ title }}{% endblock %}
+{% block body %}
+    <p>{{ content|raw }}</p>
+{% endblock %}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+    <div class="flex gap-3 items-center ">
+        {{ ux_icon('lucide:x', {class: 'size-6'}) }} {{ btn_label }}
+    </div>
+    </button>
+{% endblock %}

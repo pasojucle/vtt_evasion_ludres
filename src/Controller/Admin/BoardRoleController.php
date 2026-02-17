@@ -75,31 +75,33 @@ class BoardRoleController extends AbstractController
         UserRepository $userRepository,
         BoardRole $boardRole
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_board_role_delete',
-                [
-                    'boardRole' => $boardRole->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $userRepository->removeBoardRole($boardRole);
-            $this->entityManager->remove($boardRole);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $userRepository->removeBoardRole($boardRole);
+                $this->entityManager->remove($boardRole);
+                $this->entityManager->flush();
 
-            $boardRoles = $this->boardRoleRepository->findAllOrdered();
-            $this->orderByService->ResetOrders($boardRoles);
+                $boardRoles = $this->boardRoleRepository->findAllOrdered();
+                $this->orderByService->ResetOrders($boardRoles);
 
-            return $this->redirectToRoute('admin_board_role_list');
+                return $this->redirectToRoute('admin_board_role_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('board_role/admin/delete.modal.html.twig', [
-            'boardRole' => $boardRole,
+        return $this->render('component/destructive.modal.html.twig', [
             'form' => $form->createView(),
-        ]);
+            'title' => 'Supprimer un role',
+            'content' => sprintf('Etes vous certain de supprimer le role %s', $boardRole->getName()),
+            'btn_label' => 'Supprimer',
+        ], $response);
     }
 
     #[Route('/ordonner/{boardRole}', name: '_order', methods: ['POST'], options:['expose' => true])]

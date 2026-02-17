@@ -88,10 +88,11 @@ class BackgroundController extends AbstractController
             $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('background/admin/delete.modal.html.twig', [
-            'background' => $background,
+        return $this->render('component/destructive.modal.html.twig', [
             'form' => $form->createView(),
-            'type' => 'destructive',
+            'title' => 'Supprimer une image de fond',
+            'content' => sprintf('Etes vous certain de supprimer l\'image de fond %s', $background->getFilename()),
+            'btn_label' => 'Supprimer',
         ], $response);
     }
 }

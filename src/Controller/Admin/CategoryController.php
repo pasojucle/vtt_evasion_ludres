@@ -61,26 +61,28 @@ class CategoryController extends AbstractController
         Request $request,
         Category $category
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_category_delete',
-                [
-                    'category' => $category->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $category->setDeleted(true);
-            $this->categoryRepository->save($category, true);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $category->setDeleted(true);
+                $this->categoryRepository->save($category, true);
 
-            return $this->redirectToRoute('admin_category_list');
+                return $this->redirectToRoute('admin_category_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('category/admin/delete.modal.html.twig', [
-            'category' => $category,
+        return $this->render('component/destructive.modal.html.twig', [
             'form' => $form->createView(),
-        ]);
+            'title' => 'Supprimer une cathégorie',
+            'content' => sprintf('Etes vous certain de supprimer la catégorie %s', $category->getName()),
+            'btn_label' => 'Supprimer',
+        ], $response);
     }
 }
