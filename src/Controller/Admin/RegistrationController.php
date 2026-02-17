@@ -36,6 +36,10 @@ class RegistrationController extends AbstractController
             ],
             'messages' => $messageService->getMessagesBySectionName('REGISTRATION'),
         ];
+       if ($request->isMethod('POST')) {
+            return $this->render('user/admin/_registration_list.html.twig', $params);
+        }
+
         return $this->render('user/admin/registrations.html.twig', $params);
     }
 
