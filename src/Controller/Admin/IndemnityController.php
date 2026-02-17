@@ -11,6 +11,7 @@ use App\Form\Admin\IndemnityType;
 use App\UseCase\Indemnity\GetIndemnities;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -39,6 +40,7 @@ class IndemnityController extends AbstractController
         Request $request,
         Indemnity $indemnity
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(IndemnityType::class, $indemnity, [
             'action' => $this->generateUrl('admin_indemnity_edit', [
                 'indemnity' => $indemnity->getId(),
@@ -46,19 +48,22 @@ class IndemnityController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $amount = $form->getData();
-            $this->entityManager->persist($amount);
-            $this->entityManager->flush();
-
-            return $this->redirectToRoute('admin_indemnity_list');
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $amount = $form->getData();
+                $this->entityManager->persist($amount);
+                $this->entityManager->flush();
+            
+                return $this->redirectToRoute('admin_indemnity_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('indemnity/admin/edit.modal.html.twig', [
             'level' => $indemnity->getLevel(),
             'bikeRideType' => $indemnity->getBikeRideType(),
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/add/{level}/{bikeRideType}', name: '_add', methods: ['GET', 'POST'])]

@@ -1,11 +1,13 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_background_delete', {'background' : background.id}) %}
-{% block form %}{% set form = form %}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
 {% block modal_title %}Supprimer une image de fond{% endblock %}
 {% block body %}
     <p>Etes vous certain de supprimer l'image de fond <br>{{ background.filename }} ?</p>
 {% endblock %}
-{% block footer %}
-    {% set button_text = 'Supprimer' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="btn text-white bg-{{ type}}"
+    >
+        <i class="fas fa-check"></i> Supprimer
+    </button>
 {% endblock %}

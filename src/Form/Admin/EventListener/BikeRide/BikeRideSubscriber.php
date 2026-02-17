@@ -77,7 +77,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
         $bikeRideTypeId = (array_key_exists('bikeRideType', $data)) ? (int)$data['bikeRideType'] : null;
         $registrationEnabled = (array_key_exists('registrationEnabled', $data) ? (bool) $data['registrationEnabled'] : true);
         $bikeRideType = $this->bikeRideTypeRepository->find($bikeRideTypeId);
-        if ($bikeRideType && array_key_exists('bikeRideTypeChanged', $data) && 1 === (int)$data['bikeRideTypeChanged']) {
+        if ($bikeRideType && array_key_exists('handler', $data) && 'bike_ride[bikeRideType]' === $data['handler']) {
             $data['content'] = $bikeRideType->getContent();
             $data['title'] = $bikeRideType->getName();
             $data['closingDuration'] = $bikeRideType->getClosingDuration() ?? 0;

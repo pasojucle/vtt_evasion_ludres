@@ -27,7 +27,7 @@
                                     </li>
                                     <li>
                              {# {% if not bikeRideType.isProtected %}
-                                    <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_bikeRideType_delete', {'bikeRideType': bikeRideType.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                    <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_bikeRideType_delete', {'bikeRideType': bikeRideType.id})}}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i></a>
                                 {% endif %} #}                                    </li>
                                 </ul>
                             </div>

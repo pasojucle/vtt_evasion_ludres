@@ -105,6 +105,7 @@ class ParameterType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Parameter::class,
             'referer' => null,
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit'],
         ]);
     }
 }

@@ -25,7 +25,7 @@
                             <div class="list-item">{{ link.title }}</div>
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a class="btn btn-primary btn-ico" href="{{ path('admin_link_edit', {'link': link.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                                <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_link_delete', {'link': link.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a>
+                                <a class="btn btn-danger btn-ico modal-trigger" href="{{ path('admin_link_delete', {'link': link.id})}}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i></a>
                             {% endif %}
 
                     </li>

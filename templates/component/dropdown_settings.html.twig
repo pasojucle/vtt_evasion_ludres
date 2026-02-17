@@ -34,14 +34,28 @@
             {% if settings.parameters is defined %}
                 {% for parameter in settings.parameters %}
                     <li>
-                        <a class="dropdown-item" href="{{ path('admin_parameter_edit', {'name': parameter.name })}}" title="{{ parameter.label }}" data-toggle="modal" data-type="primary"><i class="fas fa-sliders-h"></i> {{ parameter.label }}</a>
+                        <a 
+                            class="dropdown-item" 
+                            href="{{ path('admin_parameter_edit', {'name': parameter.name })}}" 
+                            title="{{ parameter.label }}" 
+                            data-turbo-frame="modal_content"
+                        >
+                            <i class="fas fa-sliders-h"></i> {{ parameter.label }}
+                        </a>
                     </li>
                 {% endfor %}
             {% endif %}
             {% if settings.messages is defined %}
                 {% for message in settings.messages %}
                     <li>
-                        <a class="dropdown-item" href="{{ path('admin_message_edit_content', {'message': message.id })}}" title="{{ message.label }}" data-toggle="modal" data-type="primary"><i class="fa-regular fa-message"></i> {{ message.label }}</a>
+                        <a 
+                            class="dropdown-item" 
+                            href="{{ path('admin_message_edit_content', {'message': message.id })}}" 
+                            title="{{ message.label }}" 
+                            data-turbo-frame="modal_content"
+                        >
+                            <i class="fa-regular fa-message"></i> {{ message.label }}
+                        </a>
                     </li>
                 {% endfor %}
             {% endif %}

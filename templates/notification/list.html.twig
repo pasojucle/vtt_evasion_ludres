@@ -12,9 +12,9 @@
                     <div class="notification-text">{{ notification.title}}</div>
                     <div class="notification-footer">
                         {% if notification.modalLink %}
-                            <a class="btn btn-secondary btn-xs" data-toggle="modal" data-type="primary" href="{{ notification.modalLink }}">Consulter</a>
+                            <a class="btn btn-secondary btn-xs" data-turbo-frame="modal_content" href="{{ notification.modalLink }}">Consulter</a>
                         {% else %}
-                            <a class="btn btn-secondary btn-xs" data-type="primary" href="{{ notification.url }}">{{ notification.labelButton}}</a>
+                            <a class="btn btn-secondary btn-xs" href="{{ notification.url }}">{{ notification.labelButton}}</a>
                         {% endif %}
                     </div>
                 </li>

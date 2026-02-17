@@ -1,17 +1,20 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = form.vars.action %}
+{% extends 'base_modal_stimulus.html.twig' %}
 {% set title = (indemnity is defined) ? 'Ajouter' : 'Modifier' %}
-{% block form %}{% set form = null%}{% endblock %}
 {% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
     <div class="form-group-medium-width">
-            <h3>
-                {{ level.title }} pour les randos {{ bikeRideType.name }}
-            </h3>
+        <h3>
+            {{ level.title }} pour les randos {{ bikeRideType.name }}
+        </h3>
         {{ form_row(form.amount) }}
+        {{ form_errors(form) }}
     </div>
 {% endblock %}
-{% block footer %}
-    {% set button_text = '<i class="fas fa-check"></i> ' ~ title %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="btn text-primary bg-neutral-200"
+    >
+        <i class="fas fa-check"></i> {{ title }}
+    </button>
 {% endblock %}
