@@ -72,7 +72,7 @@ class BikeRideController extends AbstractController
             $this->addFlash('success', 'La sortie à bien été enregistrée');
 
             $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
-dump("add bikeRide");
+
             return $this->redirectToRoute('admin_bike_rides', $filters);
         }
 
@@ -187,18 +187,22 @@ dump("add bikeRide");
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted()) {
             if ($form->isValid()) {
-            $bikeRide->setDeleted(true);
-            $this->entityManager->flush();
+                $bikeRide->setDeleted(true);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_bike_rides');
+                return $this->redirectToRoute('admin_bike_rides');
             }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('bike_ride/admin/delete.modal.html.twig', [
-            'bike_ride' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
+        $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
+
+        return $this->render('component/destructive.modal.html.twig', [
             'form' => $form->createView(),
-            'type' => 'destructive',
-        ]);
+            'title' => 'Supprimer une sortie',
+            'content' => sprintf('<p>Etes vous certain de supprimer<br>la sortie %s du %s', $bikeRideDto->title, $bikeRideDto->period),
+            'btn_label' => 'Supprimer',
+        ], $response);
     }
 
     #[Route('/emails/adherents/{bikeRide}', name: 'admin_bike_ride_members_email_to_clipboard', methods: ['GET'])]

@@ -144,34 +144,36 @@ class ContentController extends AbstractController
         Request $request,
         Content $content
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_content_delete',
-                [
-                    'content' => $content->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $route = $content->getRoute();
         $kind = $content->getKind();
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->remove($content);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->entityManager->remove($content);
+                $this->entityManager->flush();
 
-            $contents = $this->contentRepository->findByRoute($route, $kind);
-            $this->orderByService->ResetOrders($contents);
+                $contents = $this->contentRepository->findByRoute($route, $kind);
+                $this->orderByService->ResetOrders($contents);
 
-            return $this->redirectToRoute('admin_home_contents', [
+                return $this->redirectToRoute('admin_home_contents', [
                 'kind' => $kind->value,
             ]);
+            }
+
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('content/admin/delete.modal.html.twig', [
             'content' => $content,
             'form' => $form->createView(),
-        ]);
+            'type' => 'destructive',
+        ], $response);
     }
 
     #[Route('/ordonner/contenu/{content}', name: 'admin_content_order', methods: ['POST'], options:['expose' => true])]
