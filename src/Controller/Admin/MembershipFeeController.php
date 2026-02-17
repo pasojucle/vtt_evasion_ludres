@@ -43,7 +43,8 @@ class MembershipFeeController extends AbstractController
         $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(MembershipFeeAmountType::class, $amount, [
             'action' => $this->generateUrl(
-                'admin_membership_fee_edit',['amount' => $amount->getId(),]
+                'admin_membership_fee_edit',
+                ['amount' => $amount->getId(), ]
             ),
         ]);
 

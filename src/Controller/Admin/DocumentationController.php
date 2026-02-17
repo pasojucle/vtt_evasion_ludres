@@ -102,30 +102,32 @@ class DocumentationController extends AbstractController
         Request $request,
         Documentation $documentation
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_documentation_delete',
-                [
-                    'documentation' => $documentation->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->remove($documentation);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->entityManager->remove($documentation);
+                $this->entityManager->flush();
 
-            $documentations = $this->documentationRepository->findAll();
-            $this->orderByService->ResetOrders($documentations);
+                $documentations = $this->documentationRepository->findAll();
+                $this->orderByService->ResetOrders($documentations);
 
-            return $this->redirectToRoute('admin_documentation_list');
+                return $this->redirectToRoute('admin_documentation_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('documentation/admin/delete.modal.html.twig', [
-            'documentation' => $documentation,
+        return $this->render('component/destructive.modal.html.twig', [
             'form' => $form->createView(),
-        ]);
+            'title' => 'Supprimer une documentation',
+            'content' => sprintf('Etes vous certain de supprimer la documentation %s', $documentation->getName()),
+            'btn_label' => 'Supprimer',
+        ], $response);
     }
 
     #[Route('/ordonner/{documentation}', name: 'order', methods: ['POST'], options:['expose' => true])]

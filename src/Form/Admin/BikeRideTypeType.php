@@ -79,7 +79,7 @@ class BikeRideTypeType extends AbstractType
                 ],
             ])
             ->add('messages', MessageAutocompleteField::class, [
-                'label' => 'Adhérent',
+                'label' => 'Message envoyé à l\'inscription au participant',
                 'autocomplete_url' => $this->urlGenerator->generate('admin_message_autocomplete'),
             ])
             ->add('useLevels', CheckboxType::class, [
