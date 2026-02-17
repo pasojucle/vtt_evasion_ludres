@@ -8,7 +8,7 @@
  <div class="wrapper">
     {{ form_start(form) }}
         <div class="wrapper-title">
-            <h1>{{ title }}</h1>
+            <h1 class="font-bold text-3xl">{{ title }}</h1>
             {% set position = (link is not null) ? link.position : constant('App\\Entity\\Link::POSITION_LINK_PAGE') %}
             <span class="tools">
                 <a href="{{ path('admin_links', {'position': position}) }}" class="btn btn-ico" title="Retour à la liste des liens"><i class="fas fa-chevron-left"></i></a>

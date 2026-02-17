@@ -34,6 +34,9 @@ class UserFilterType extends AbstractType
                 'choices' => $this->levelService->getLevelChoices(),
                 'required' => false,
                 'autocomplete' => true,
+                'attr' => [
+                    'placeholder' => 'Sélectionnez un niveau',
+                ],
             ])
             ;
 

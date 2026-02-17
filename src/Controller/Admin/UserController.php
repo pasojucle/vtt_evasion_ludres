@@ -224,7 +224,7 @@ class UserController extends AbstractController
         $results = [];
         foreach ($users as $user) {
             $text = $user->getLicenceNumber();
-            if (null !== $user->GetFirstIdentity()) {
+            if (null !== $user->getIdentity()) {
                 $text .= ' ' . $user->__toString();
             }
             $results[] = [

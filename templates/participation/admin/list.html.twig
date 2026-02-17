@@ -5,7 +5,7 @@
 {% block body %}
     <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Participation</h1>
+            <h1 class="font-bold text-3xl">Participation</h1>
              <div class="tool-group">
             <a href="{{ referer is defined ? referer : path('admin_users', {'filtered': 1}) }}" class="btn btn-ico" title="Retour à la liste des adhérents"><i class="fas fa-chevron-left"></i></a>
             <div class="dropdown">
@@ -19,7 +19,7 @@
         </div>
         </div>
         <div class="wrapper-body">
-            {% include('participation/admin/_participation_list.html.twig') %}
+            {% include('participation/admin/_frame_list.html.twig') %}
         </div>
     </div>
 {% endblock %}

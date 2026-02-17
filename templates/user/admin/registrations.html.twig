@@ -4,58 +4,6 @@
 
 {% block body %}
     <div class="wrapper">
-        <div class="wrapper-title">
-            <h1>Gestion des inscriptions {{ app.session.get('currentSeason') }} - <span class="badge badge-info">{{ paginator.total }}</span></h1>
-            <div class="tool-group">
-                <a href="{{ path('wiki_show', {'directory': 'inscriptions'})}}" target="_blank" title="wiki" class="btn-wiki"></a>
-                {% include 'component/dropdown_settings.html.twig' %}
-                <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                    <div class="dropdown-menu" data-target="dropdown-tools">
-                        <ul class="dropdown-body">
-                            <li><a 
-                                class="dropdown-item" 
-                                data-controller="email-to-clipboard" 
-                                data-action="click->email-to-clipboard#emailToClipboard"
-                                data-email-to-clipboard-url-value="{{ path('admin_registrations_email_to_clipboard') }}"
-                                title="Copier les emails de la séléction"
-                            ><i class="fas fa-copy"></i> Copier les emails de la séléction</a></œli>
-                            <li><a href="{{ path('admin_registrations_export') }}" class="dropdown-item" title="Exporter la sélection"><i class="fas fa-file-csv"></i> Exporter la sélection</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% include('user/admin/filters.html.twig') %}
-        <div class="wrapper-body">
-            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
-            <ul>
-                {% for user in users %}
-                    <li class="col-list col-1md-btn">
-                        <div class="list-dropdown">
-                            <a href="{{ path('admin_registration_user', {'user': user.id})}}"
-                                {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
-                                <div class="row">
-                                    <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
-                                    {% if user.lastLicence.isYearly is same as(false) %}
-                                        <div class="col-md-5 col-xs-12">
-                                            {{ user.trialSessionsPresent }}/{{ user.testingBikeRides }} séances d'essai
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </a>
-                            {% include('user/admin/dropdown.html.twig') %}
-                        </div>
-                        {% if user.lastLicence.toValidate %}
-                            <a class="btn btn-success" href="{{ path('admin_registration_receive', {'licence': user.lastLicence.id})}}" title="Réceptionner le dossier d'inscription" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Reçu</a>
-                        {% endif %}
-                        {% if user.lastLicence.toRegister %}
-                            <a class="btn btn-success" href="{{ path('admin_registration_register', {'licence': user.lastLicence.id})}}" title="Inscrire à la FFvélo" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Inscrit</a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
-        </div>
+        {% include('user/admin/_registration_list.html.twig') %}
     </div>
 {% endblock %}

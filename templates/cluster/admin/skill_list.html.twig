@@ -5,7 +5,7 @@
 {% block body %}
 <div class="wrapper">
     <div class="wrapper-title">
-        <h1>Evaluations du groupe {{ cluster.title }}</h1>
+        <h1 class="font-bold text-3xl">Evaluations du groupe {{ cluster.title }}</h1>
         <div class="tool-group">
             <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': cluster.bikeRide.id}) }}"
                 class="btn btn-ico" title="Retour à la rando">

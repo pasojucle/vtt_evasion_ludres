@@ -1,0 +1,32 @@
+<turbo-frame id="coverage-list">
+    {% include('user/admin/filters.html.twig') %}
+    <div class="wrapper-body">
+        {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %} 
+        <ul>
+            {% for user in users %}
+                <li class="col-list col-1md-btn">
+                    <div class="list-dropdown">
+                        <a href="{{ path('admin_coverage_user', {'user': user.id})}}"
+                            {% if user.level.colors is not null %}style="background-color: {{ user.level.colors.background }}"{% endif %}>
+                            <div class="row">
+                                <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>
+                                {% if user.lastLicence is not empty and user.lastLicence.isYearly is same as(false) %}
+                                    <div class="col-md-5 col-xs-12">
+                                        {{ user.trialSessionsPresent }}/{{ user.testingBikeRides }} séances d'essai
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% include('user/admin/dropdown.html.twig') %}
+                    </div>
+                    <div>
+                        {% if user.lastLicence is not empty %}
+                            <a class="btn btn-success" href="{{ path('admin_coverage_validate', {'licence': user.lastLicence.id})}}" title="Valider" data-toggle="modal" data-type="primary"><div><i class="fas fa-check"></i> Valider</div></a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
+    </div>
+</turbo-frame>

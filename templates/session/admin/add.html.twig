@@ -6,7 +6,7 @@
  <div class="wrapper">
     {{ form_start(form) }}
     <div class="wrapper-title">
-        <h1>{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
+        <h1 class="font-bold text-3xl">{{ bikeRide.title }} - {{ bikeRide.period }}</h1>
         <span class="tools">
             <a href="{{ path('admin_bike_ride_cluster_show', {'bikeRide': bikeRide.id}) }}" class="btn btn-ico" title="Retour à la liste des sorties">
                 <i class="fas fa-chevron-left"></i>

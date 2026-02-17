@@ -5,41 +5,8 @@
 {% block body %}
  <div class="wrapper">
         <div class="wrapper-title">
-            <h1>Gestion des messages</h1>
+            <h1 class="font-bold text-3xl">Gestion des messages</h1>
         </div>
-        <div class="wrapper-body">
-            <a href="{{ path('admin_message_add') }}" class="btn btn-primary" title="Ajouter un message"><i class="fas fa-plus"></i> Ajouter un message</a>
-            <div class="filters mb-20">
-                {{ form_start(form) }}
-                {{ form_row(form.section) }}
-                {{ form_end(form) }}
-            </div>
-            {% include 'component/pagination.html.twig' with {'margin': 'bottom'} %}
-            <ul>
-                {% for message in messages %}     
-                    <li class="list-dropdown">
-                        <div>{{ message.label }}</div>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <div class="dropdown">
-                                <button class="dropdown-toggle" type="button" data-toggle="dropdown-tools"></button>
-                                <div class="dropdown-menu" data-target="dropdown-tools">
-                                    <ul class="dropdown-body">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ path('admin_message_edit', {'message': message.id})}}" title="Modifier"><i class="fas fa-pencil-alt"></i> Modifier</a>
-                                        </li>
-                                        {% if not message.isProtected %}
-                                            <li>
-                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_message_delete', {'message': message.id})}}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a>
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-            {% include 'component/pagination.html.twig' with {'margin': 'top'} %}
-        </div>
+        {% include('message/admin/_frame_list.html.twig' )%}
     </div>
 {% endblock %}
