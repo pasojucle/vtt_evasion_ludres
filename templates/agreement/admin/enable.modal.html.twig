@@ -1,11 +1,14 @@
-{% extends 'base_modal.html.twig' %}
-{% block form %}{% set form = form %}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
 {% set action = agreement.enabled ? 'désactiver' : 'activer' %}
 {% block modal_title %}{{ action|capitalize }} l' autorisation {{ agreement.title }}{% endblock %}
 {% block body %}
     <p>Etes vous certain de vouloir {{ action }} l' autorisation {{ agreement.title }} ?</p>
 {% endblock %}
-{% block footer %}
-    {% set button_text = action|capitalize %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="btn text-white bg-{{ type}}"
+    >
+        <i class="fas fa-check"></i> {{ action|capitalize }}
+    </button>
 {% endblock %}

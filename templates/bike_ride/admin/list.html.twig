@@ -48,7 +48,7 @@
                                             </li>
                                             {% if bikeRide.startAt > date() %}
                                             <li>
-                                                <a class="dropdown-item  modal-trigger" data-toggle="modal" data-type="danger" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
+                                                <a class="dropdown-item  modal-trigger" data-turbo-frame="modal_content" href="{{ path('admin_bike_ride_delete', {'bikeRide' : bikeRide.id}) }}" title="Modifier">
                                                     <i class="fas fa-times"></i> Annuler
                                                 </a>
                                             </li>

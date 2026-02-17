@@ -43,7 +43,7 @@
                             <li>
                                 <div class="d-flex gap-2 align-items-center">
                                     {% if documentation.link %}
-                                        <a class="outside-link" data-trigger="write-log" data-entity-id="{{ documentation.id}}" data-toggle="modal" href="{{ documentation.link }}" target="_blank">{{ documentation.name }}</a>
+                                        <a class="outside-link" data-trigger="write-log" data-entity-id="{{ documentation.id}}" data-turbo-frame="modal_content" href="{{ documentation.link }}" target="_blank">{{ documentation.name }}</a>
                                     {% else %}
                                         <a href="{{ documentation.source }}" data-trigger="write-log" data-entity-id="{{ documentation.id}}" target="_blank">{{ documentation.name }}</a>
                                     {% endif %}

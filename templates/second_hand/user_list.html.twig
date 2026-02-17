@@ -28,7 +28,7 @@
                                             <a href="{{ path('second_hand_enabled',{'secondHand': second_hand.id}) }}" class="btn btn-primary" title="Activer">Activer</a>
                                         {% else %}
                                             <a href="{{ path('second_hand_edit',{'secondHand': second_hand.id}) }}" class="btn btn-primary" title="Modifier l'annonce">Modifier</a>
-                                            <a href="{{ path('second_hand_delete',{'secondHand': second_hand.id}) }}" class="btn btn-danger btn-ico" data-toggle="modal" data-type="danger" title="Annuler">
+                                            <a href="{{ path('second_hand_delete',{'secondHand': second_hand.id}) }}" class="btn btn-danger btn-ico" data-turbo-frame="modal_content" title="Annuler">
                                                 <i class="fas fa-times-circle"></i>
                                             </a>
                                         {% endif %}

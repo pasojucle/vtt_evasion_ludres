@@ -54,10 +54,10 @@
                         {% include('user/admin/dropdown.html.twig') %}
                     </div>
                     {% if user.lastLicence.toValidate %}
-                        <a class="btn btn-success" href="{{ path('admin_registration_receive', {'licence': user.lastLicence.id})}}" title="Réceptionner le dossier d'inscription" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Reçu</a>
+                        <a class="btn btn-success" href="{{ path('admin_registration_receive', {'licence': user.lastLicence.id})}}" title="Réceptionner le dossier d'inscription" data-turbo-frame="modal_content"><i class="fas fa-check"></i> Reçu</a>
                     {% endif %}
                     {% if user.lastLicence.toRegister %}
-                        <a class="btn btn-success" href="{{ path('admin_registration_register', {'licence': user.lastLicence.id})}}" title="Inscrire à la FFvélo" data-toggle="modal" data-type="primary"><i class="fas fa-check"></i> Inscrit</a>
+                        <a class="btn btn-success" href="{{ path('admin_registration_register', {'licence': user.lastLicence.id})}}" title="Inscrire à la FFvélo" data-turbo-frame="modal_content"><i class="fas fa-check"></i> Inscrit</a>
                     {% endif %}
                 </li>
             {% endfor %}

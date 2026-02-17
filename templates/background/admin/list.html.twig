@@ -20,13 +20,13 @@
                             <div class="card-body">{{ background.filename }} </div>
                         </a>
                         <span class="tools">
-                            <a class="btn btn-danger" href="{{ path('admin_background_delete', {'background' : background.id}) }}"  title="Supprimer" data-toggle="modal" data-type="danger">
+                            <a class="btn btn-danger" href="{{ path('admin_background_delete', {'background' : background.id}) }}"  title="Supprimer" data-turbo-frame="modal_content">
                                 <i class="fas fa-times-circle"></i>
                             </a>
                         </span>
                     </li>
                     {# <a class="btn btn-primary btn-ico" href="{{ path('admin_product', {'product' : product.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i></a>
-                    <a class="btn btn-danger btn-ico" href="{{ path('admin_product_delete', {'product' : product.id}) }}" title="Supprimer" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i></a> #}
+                    <a class="btn btn-danger btn-ico" href="{{ path('admin_product_delete', {'product' : product.id}) }}" title="Supprimer" data-turbo-frame="modal_content"><i class="fas fa-times"></i></a> #}
                 {% endfor %}
             </ul>
             {% include 'component/pagination.html.twig' with {'margin': 'top'} %} 

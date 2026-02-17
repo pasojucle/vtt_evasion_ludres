@@ -23,7 +23,6 @@ export default class extends Controller {
 
     open() {
         console.log("open modal")
-
         if (!this.dialogTarget.open) {
             this.dialogTarget.showModal();
 
@@ -69,5 +68,15 @@ export default class extends Controller {
         }
 
         this.close();
+    }
+
+    handleFormSubmit(event) {
+        console.log("handleFormSubmit");
+        if (event.detail.success) {
+            this.close();
+            Turbo.visit(window.location.href, { action: "replace" });
+        } else {
+            this.frameTarget.scrollTop = 0;
+        }
     }
 }

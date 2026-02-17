@@ -93,23 +93,26 @@ class MessageController extends AbstractController
         Request $request,
         Message $message
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(MessageType::class, $message, [
             'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
             'referer' => $request->headers->get('referer'),
             'modal' => true,
         ]);
         $form->handleRequest($request);
-
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
-            return $this->redirect($request->request->all('message')['referer']);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->entityManager->flush();
+                return $this->redirect($request->request->all('message')['referer']);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('message/admin/edit.modal.html.twig', [
             'message' => $message,
             'section' => $message->getSection(),
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/{message}', name: 'edit', methods: ['GET', 'POST'], requirements:['message' => '\d+'])]

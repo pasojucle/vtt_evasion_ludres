@@ -28,13 +28,17 @@
                         {% for bikeRideTypeId, bikeRideType in level.bikeRideTypes %}
                             <div class="col-md-3 col-xs-3">
                                 {% if bikeRideType.indemnity is not null %}
-                                    <a class="btn btn-light btn-pencil" href="{{ path('admin_indemnity_edit', {'indemnity' : bikeRideType.indemnity.id}) }}" 
-                                        title="Modifier" data-toggle="modal" data-type="primary">
+                                    <a 
+                                        class="btn btn-light btn-pencil" 
+                                        href="{{ path('admin_indemnity_edit', {'indemnity' : bikeRideType.indemnity.id}) }}" 
+                                        title="Modifier" 
+                                        data-turbo-frame="modal_content" 
+                                    >
                                         {{ bikeRideType.indemnity.amount }}
                                     </a>
                                 {% else %}
                                     <a class="btn btn-light btn-ico" href="{{ path('admin_indemnity_add', {'level': levelId, 'bikeRideType': bikeRideTypeId}) }}" 
-                                        title="Ajouter" data-toggle="modal" data-type="primary"><i class="fas fa-plus"></i>
+                                        title="Ajouter" data-turbo-frame="modal_content"><i class="fas fa-plus"></i>
                                     </a>
                                 {% endif %}
                             </div>

@@ -33,9 +33,9 @@
                                     </li>
                                     <li>
                                         {% if agreement.enabled %}
-                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_agreement_enable', {'agreement': agreement.id})}}" title="Désactiver" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Désactiver</a>
+                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_agreement_enable', {'agreement': agreement.id})}}" title="Désactiver" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Désactiver</a>
                                         {% else %}
-                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_agreement_enable', {'agreement': agreement.id})}}" title="Activer" data-toggle="modal" data-type="primary"><i class="fas fa-times"></i> Activer</a>
+                                            <a class="dropdown-item modal-trigger" href="{{ path('admin_agreement_enable', {'agreement': agreement.id})}}" title="Activer" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Activer</a>
                                         {% endif %}
                                     </li>
                                 </ul>

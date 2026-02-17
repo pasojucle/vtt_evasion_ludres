@@ -54,21 +54,26 @@ class ParameterController extends AbstractController
         $referer = $request->headers->get('referer');
         $parameter = $parameterRepository->findOneByName($name);
         if ($parameter) {
+            $response = new Response("OK", Response::HTTP_OK);
             $form = $this->createForm(ParameterType::class, $parameter, [
                 'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
                 'referer' => $referer,
             ]);
             $form->handleRequest($request);
-            if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-                $entityManager->flush();
-                return $this->redirect($request->request->all('parameter')['referer']);
+            if ($request->isMethod('POST') && $form->isSubmitted()) {
+                if ($form->isValid()) {
+                    $entityManager->flush();
+                    return $this->redirect($request->request->all('parameter')['referer']);
+                }
+                $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             return $this->render('parameter/edit.modal.html.twig', [
                 'parameter' => $parameter,
                 'form' => $form->createView(),
-            ]);
+            ], $response);
         }
+
         return new Response(null, Response::HTTP_BAD_REQUEST);
     }
 }

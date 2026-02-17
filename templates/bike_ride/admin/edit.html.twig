@@ -5,26 +5,24 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    
     <div class="wrapper">
-        {{ form_start(form) }}
         <div class="wrapper-title">
             <h1 class="font-bold text-3xl">{{ title }}</h1>
             <span class="tools">
                 <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
-        <div id="bike_ride_container" class="wrapper-body">
-                {{ form_row(form.bikeRideType) }}
-                {{ form_row(form.bikeRideTypeChanged) }}
-                {{ form_row(form.title) }}
-                {{ form_row(form.content) }}
-                <div class="form-group">
-                    {{ form_row(form.file) }}
-                        <div class="form-group-inline">
-                        <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">   
-                    </div>
+        {{ form_start(form) }}
+        <div class="wrapper-body" data-form-modifier-target="container" data-id="bike-ride">
+            {{ form_row(form.bikeRideType) }}
+            {{ form_row(form.title) }}
+            {{ form_row(form.content) }}
+            <div class="form-group">
+                {{ form_row(form.file) }}
+                    <div class="form-group-inline">
+                    <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">   
                 </div>
+            </div>
             <div class="form-group">
                 {{ form_row(form.private) }}
             </div>

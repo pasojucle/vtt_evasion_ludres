@@ -99,22 +99,28 @@ class AgreementController extends AbstractController
         Request $request,
         Agreement $agreement
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $agreement->setEnabled(!$agreement->isEnabled());
-            $this->entityManager->persist($agreement);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $agreement->setEnabled(!$agreement->isEnabled());
+                $this->entityManager->persist($agreement);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_agreement_list');
+                return $this->redirectToRoute('admin_agreement_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('agreement/admin/enable.modal.html.twig', [
             'agreement' => $agreement,
             'form' => $form->createView(),
-        ]);
+            'type' => $agreement->isEnabled() ? 'destructive' : 'success',
+        ], $response);
     }
 }

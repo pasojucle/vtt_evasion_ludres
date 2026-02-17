@@ -24,15 +24,25 @@
                             </div>
                             {% for membershipFeeAmount in membership_fee.membershipFeeAmounts %}
                                 <div class="col-md-2 col-xs-2">
-                                    <a class="btn btn-light btn-pencil" href="{{ path('admin_membership_fee_edit', {'amount' : membershipFeeAmount.id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
-                                        {{ membershipFeeAmount.amount }} €
+                                    <a 
+                                        class="btn btn-light btn-pencil" 
+                                        href="{{ path('admin_membership_fee_edit', {'amount' : membershipFeeAmount.id}) }}" 
+                                        title="Modifier" 
+                                        data-turbo-frame="modal_content" 
+                                    >
+                                        {{ membershipFeeAmount.amount }}
                                     </a>
                                 </div>
                             {% endfor %}
                         {% else %}
                             <div class="col-md-10 col-xs-10">{{ membership_fee.title }} : </div>
                             <div class="col-md-2 col-xs-2">
-                                <a class="btn btn-light btn-pencil" href="{{ path('admin_membership_fee_edit', {'amount' : membership_fee.membershipFeeAmounts[0].id}) }}" title="Modifier" data-toggle="modal" data-type="primary">
+                                <a 
+                                    class="btn btn-light btn-pencil" 
+                                    href="{{ path('admin_membership_fee_edit', {'amount' : membership_fee.membershipFeeAmounts[0].id}) }}" 
+                                    title="Modifier" 
+                                    data-turbo-frame="modal_content" 
+                                >
                                     {{ membership_fee.membershipFeeAmounts[0].amount }} €/an
                                 </a>
                             </div>

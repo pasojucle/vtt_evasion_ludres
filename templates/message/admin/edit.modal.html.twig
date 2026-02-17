@@ -1,11 +1,22 @@
-{% extends 'base_modal.html.twig' %}
-{% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Modifier un message{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set title = (indemnity is defined) ? 'Ajouter' : 'Modifier' %}
+{% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
-    {{ form_row(form.content) }}
-    {{ form_row(form.referer) }}
+    <div class="form-group-medium-width">
+        <h3>Modifier le message</h3>
+        <blockquote class="border-l-4 border-gray-300 pl-4 italic text-gray-700">{{ message.label }}</blockquote>
+        <div class="mb-2">
+            {{ form_row(form.content) }}
+            {{ form_row(form.referer) }}
+            {{ form_errors(form) }}
+        </div>
+    </div>
 {% endblock %}
-{% block footer %}
-    {% set button_text = 'Modifier' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="btn text-primary bg-neutral-200"
+    >
+        <i class="fas fa-check"></i> Modifier
+    </button>
 {% endblock %}

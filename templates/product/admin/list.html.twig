@@ -28,11 +28,11 @@
                                 <div class="dropdown-menu" data-target="dropdown-{{ product.id }}">
                                     <ul class="dropdown-body">
                                         {% if product.isDisabled %}
-                                            <li><a class="dropdown-item" href="{{ path('admin_product_disable', {'product' : product.id})}}" data-toggle="modal" data-type="success"><i class="fa-solid fa-toggle-off"></i> Activer</a></li>
+                                            <li><a class="dropdown-item" href="{{ path('admin_product_disable', {'product' : product.id})}}" data-turbo-frame="modal_content" data-type="success"><i class="fa-solid fa-toggle-off"></i> Activer</a></li>
                                         {% else %}
-                                            <li><a class="dropdown-item" href="{{ path('admin_product_disable', {'product' : product.id})}}" data-toggle="modal" data-type="danger"><i class="fa-solid fa-toggle-on"></i> Désactiver</a></li>
+                                            <li><a class="dropdown-item" href="{{ path('admin_product_disable', {'product' : product.id})}}" data-turbo-frame="modal_content"><i class="fa-solid fa-toggle-on"></i> Désactiver</a></li>
                                         {% endif %}
-                                        <li><a class="dropdown-item" href="{{ path('admin_product_delete', {'product' : product.id})}}" data-toggle="modal" data-type="danger"><i class="fas fa-times"></i> Supprimer</a></li>
+                                        <li><a class="dropdown-item" href="{{ path('admin_product_delete', {'product' : product.id})}}" data-turbo-frame="modal_content"><i class="fas fa-times"></i> Supprimer</a></li>
                                     </ul>
                                 </div>
                             </div>

@@ -71,26 +71,27 @@ class BackgroundController extends AbstractController
         Request $request,
         Background $background
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_background_delete',
-                [
-                    'background' => $background->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->remove($background);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->entityManager->remove($background);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_background_list');
+                return $this->redirectToRoute('admin_background_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('background/admin/delete.modal.html.twig', [
             'background' => $background,
             'form' => $form->createView(),
-        ]);
+            'type' => 'destructive',
+        ], $response);
     }
 }

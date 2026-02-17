@@ -34,6 +34,7 @@ class MembershipFeeAmountType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => MembershipFeeAmount::class,
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit'],
         ]);
     }
 }

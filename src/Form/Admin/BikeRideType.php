@@ -15,9 +15,8 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -55,13 +54,9 @@ class BikeRideType extends AbstractType
                     'class' => 'form-group',
                 ],
                 'attr' => [
-                    'class' => 'form-modifier',
-                    'data-modifier' => 'bike_ride_container',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'bike-ride'
                 ],
-            ])
-            ->add('bikeRideTypeChanged', HiddenType::class, [
-                'mapped' => false,
-                'data' => 0,
             ])
             ->add('file', FileType::class, [
                 'label' => 'Fichier (optionnel)',
@@ -87,16 +82,16 @@ class BikeRideType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('startAt', DateTimeType::class, [
+            ->add('startAt', DateType::class, [
                 'input' => 'datetime_immutable',
                 'label' => 'Date de départ',
                 'widget' => 'single_text',
-                'html5' => false,
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'js-datepicker',
-                    'autocomplete' => 'off',
-                ],
+                'html5' => true,
+                // 'format' => 'dd/MM/yyyy',
+                // 'attr' => [
+                //     'class' => 'js-datepicker',
+                //     'autocomplete' => 'off',
+                // ],
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
@@ -145,6 +140,9 @@ class BikeRideType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => BikeRide::class,
+            'attr' => [
+                'data-controller' => 'form-modifier'
+            ]
         ]);
     }
 }

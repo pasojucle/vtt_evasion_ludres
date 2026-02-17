@@ -72,7 +72,7 @@ class BikeRideController extends AbstractController
             $this->addFlash('success', 'La sortie à bien été enregistrée');
 
             $filters = $this->getFilters->execute(BikeRide::PERIOD_MONTH, $bikeRide->getStartAt());
-
+dump("add bikeRide");
             return $this->redirectToRoute('admin_bike_rides', $filters);
         }
 
@@ -178,26 +178,26 @@ class BikeRideController extends AbstractController
         Request $request,
         BikeRide $bikeRide
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_level_delete',
-                [
-                    'level' => $bikeRide->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
             $bikeRide->setDeleted(true);
             $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_bike_rides');
+            }
         }
 
         return $this->render('bike_ride/admin/delete.modal.html.twig', [
             'bike_ride' => $this->bikeRideDtoTransformer->fromEntity($bikeRide),
             'form' => $form->createView(),
+            'type' => 'destructive',
         ]);
     }
 

@@ -1,34 +1,40 @@
-{% extends 'base_modal.html.twig' %}
-{% block form %}{% set form = form %}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
 {% block modal_title %}Modifier un paramètre{% endblock %}
 {% block body %}
-    {% if form.vars.value.type == constant('App\\Entity\\parameter::TYPE_BOOL') %}
-    <div class="switch-group">
-        {{ form_row(form.value) }}
-    </div>
-    {% elseif form.vars.value.type == constant('App\\Entity\\parameter::TYPE_ARRAY') %}
-    <div>
-        <b>{{ form_label(form) }}</b>
-        <div class="row row-align-top">
-            <div class="col-md-8">
-                <div class="collection_container"
-                data-index="{{ form|length > 0 ? form|last.vars.value|length + 1 : 0 }}" 
-                data-prototype="{{ form_row(form.children.value.vars.prototype)|e('html_attr') }}">
-                        {{ form_widget(form) }}
+    <div class="form-group-medium-width">
+        {% if form.vars.value.type == constant('App\\Entity\\parameter::TYPE_BOOL') %}
+            <div class="switch-group">
+                {{ form_row(form.value) }}
+            </div>
+        {% elseif form.vars.value.type == constant('App\\Entity\\parameter::TYPE_ARRAY') %}
+            <div>
+                <b>{{ form_label(form) }}</b>
+                <div class="row row-align-top">
+                    <div class="col-md-8">
+                        <div class="collection_container"
+                        data-index="{{ form|length > 0 ? form|last.vars.value|length + 1 : 0 }}" 
+                        data-prototype="{{ form_row(form.children.value.vars.prototype)|e('html_attr') }}">
+                                {{ form_widget(form) }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.vars.id }}">
+                        <i class="fas fa-plus-circle"></i> Ajouter une valeur
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <button type="button" class="btn btn-success add_item_link" data-collection-holder-class="{{ form.vars.id }}">
-                <i class="fas fa-plus-circle"></i> Ajouter une valeur
-                </button>
-            </div>
-        </div>
+        {% else %}
+            {{ form_row(form.value) }}
+        {% endif %}
+        {{ form_errors(form) }}
     </div>
-    {% else %}
-        {{ form_row(form.value) }}
-    {% endif %}
 {% endblock %}
-{% block footer %}
-    {% set button_text = 'Modifier' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="btn text-primary bg-neutral-200"
+    >
+        <i class="fas fa-check"></i> Modifier
+    </button>
 {% endblock %}

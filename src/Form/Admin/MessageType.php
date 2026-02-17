@@ -90,6 +90,7 @@ class MessageType extends AbstractType
             'data_class' => Message::class,
             'referer' => null,
             'modal' => false,
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit'],
         ]);
     }
 }
