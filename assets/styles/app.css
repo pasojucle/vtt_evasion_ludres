@@ -95,7 +95,7 @@ nav > ul > li:hover  ul {
     height: 120px;
 }
 .header-front > a.logo img.logo-ecole{
-    height: 50px;
+    height: 65px;
 }
 nav:not(.admin) > a.logo {
     position: absolute;
