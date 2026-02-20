@@ -26,7 +26,7 @@ licence:
     testing_complete: 3 séances d'essai terminées
     new: Nouvelles inscriptions à valider
     renew: Renouvellements à valider
-    to_register: Inscrire à la ffvélo
+    to_register: À inscrire à la ffvélo
   state:
     trial_file_pending: Licence de test cours de création
     trial_file_submitted: Licence de test enregistrée
