@@ -41,6 +41,7 @@ class IdentityDtoTransformer
         $identityDto->email = $identity->getEmail();
         $identityDto->phone = implode(' - ', array_filter([$identity->getMobile(), $identity->getPhone()]));
         $identityDto->emergencyPhone = $identity->getEmergencyPhone();
+        $identityDto->emergencyPhoneAnchor = $this->getPhoneAnchor($identity->getEmergencyPhone());
         $identityDto->emergencyContact = $identity->getEmergencyContact();
         $identityDto->phonesAnchor = $this->getPhonesAnchor($identity);
         $identityDto->picture = $this->getPicture($identity->getPicture());

@@ -55,7 +55,7 @@
                     {% if user.member.emergencyPhone is not null %}
                         <div class="separator"></div>
                         <ul>
-                            <li><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhone}}</li>
+                            <li><b>Téléphone de la personne à prévenir en cas d'urgence: </b>{{ user.member.emergencyPhoneAnchor|raw }}</li>
                             <li><b>Lien de parenté: </b>{{ user.member.emergencyContact}}</li>
                         </ul>
                     {% endif %}
@@ -87,7 +87,7 @@
                     <div class="separator"></div>
                     <ul>
                         <li><div class="row"><div class="col-md-4 col-xs-6"><b>{{ user.secondKinship.type | trans  }} : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.fullName }}</div></div></li>
-                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.phone }}</div></div></li>
+                        <li><div class="row"><div class="col-md-4 col-xs-6"><b>Téléphone : </b></div><div class="col-md-8 col-xs-6">{{ user.secondKinship.phonesAnchor|raw }}</div></div></li>
                     </ul>
                 </div>
             {% endif %}

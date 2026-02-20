@@ -32,6 +32,8 @@ class IdentityDto
 
     public ?string $emergencyPhone;
 
+    public ?string $emergencyPhoneAnchor;
+
     public ?string $emergencyContact;
 
     public ?string $phonesAnchor;
