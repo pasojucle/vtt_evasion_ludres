@@ -81,33 +81,35 @@ class LevelController extends AbstractController
         Request $request,
         Level $level
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_level_delete',
-                [
-                    'level' => $level->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $type = $level->getType();
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $level->setIsDeleted(true);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $level->setIsDeleted(true);
+                $this->entityManager->flush();
 
-            $levels = $this->levelRepository->findByType($type);
-            $this->orderByService->ResetOrders($levels);
+                $levels = $this->levelRepository->findByType($type);
+                $this->orderByService->ResetOrders($levels);
 
-            return $this->redirectToRoute('admin_levels', [
-                'type' => $type,
-            ]);
+                return $this->redirectToRoute('admin_levels', [
+                    'type' => $type,
+                ]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('level/admin/delete.modal.html.twig', [
-            'level' => $level,
+        return $this->render('component/destructive.modal.html.twig', [
             'form' => $form->createView(),
-        ]);
+            'title' => 'Supprimer un niveau',
+            'content' => sprintf('Etes vous certain de supprimer le niveau %s', $level->getTitle()),
+            'btn_label' => 'Supprimer',
+        ], $response);
     }
 
     #[Route('/ordonner/{level}', name: '_order', methods: ['POST'], options:['expose' => true])]

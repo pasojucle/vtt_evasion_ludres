@@ -1,10 +1,15 @@
-{% extends 'base_modal.html.twig' %}
-{% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Modifier un répertoire{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
     {{ form_row(form.name)}}
 {% endblock %}
-{% block footer %}
-    {% set button_text = 'Modifier' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-primary"
+    >
+    <div class="flex gap-3 items-center ">
+        {{ ux_icon(icon, {class: 'size-6'}) }} {{ btn_label}}
+    </div>
+    </button>
 {% endblock %}

@@ -89,21 +89,29 @@ class SlideshowController extends AbstractController
     public function adminSlideshowDirectory_add(
         Request $request
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(SlideshowDirectoryType::class, null, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $directory = $form->getData();
-            $directory->setCeratedAt(new DateTimeImmutable());
-            $this->entityManager->persist($directory);
-            $this->entityManager->flush();
-            return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $directory = $form->getData();
+                $directory->setCeratedAt(new DateTimeImmutable());
+                $this->entityManager->persist($directory);
+                $this->entityManager->flush();
+                return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('slideshow/admin/add.modal.html.twig', [
+        return $this->render('slideshow/admin/directory_edit.modal.html.twig', [
             'form' => $form->createView(),
-        ]);
+            'title' => 'Ajouter un répertoire',
+            'btn_label' => 'Ajouter',
+            'icon' => 'lucide:plus'
+        ], $response);
     }
 
     #[Route('/directory/edit/{directory}', name: 'directory_edit', methods: ['GET', 'POST'])]
@@ -112,18 +120,26 @@ class SlideshowController extends AbstractController
         Request $request,
         SlideshowDirectory $directory,
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(SlideshowDirectoryType::class, $directory, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
-            return $this->redirect($this->generateUrl('admin_slideshow_list'));
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->entityManager->flush();
+                return $this->redirect($this->generateUrl('admin_slideshow_list'));
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('slideshow/admin/directory_edit.modal.html.twig', [
             'form' => $form->createView(),
-        ]);
+            'title' => 'Modifier un répertoire',
+            'btn_label' => 'Modifier',
+            'icon' => 'lucide:edit'
+        ], $response);
     }
 
     #[Route('/directory/delete/{directory}', name: 'directory_delete', methods: ['GET', 'POST'])]
@@ -132,28 +148,38 @@ class SlideshowController extends AbstractController
         Request $request,
         SlideshowDirectory $directory,
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            foreach ($directory->getSlideshowImages() as $image) {
-                $this->entityManager->remove($image);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                foreach ($directory->getSlideshowImages() as $image) {
+                    $this->entityManager->remove($image);
+                }
+
+                $filesystem = new Filesystem();
+                $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId()));
+
+                $this->entityManager->remove($directory);
+                $this->entityManager->flush();
+                return $this->redirect($this->generateUrl('admin_slideshow_list'));
             }
-
-            $filesystem = new Filesystem();
-            $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId()));
-
-            $this->entityManager->remove($directory);
-            $this->entityManager->flush();
-            return $this->redirect($this->generateUrl('admin_slideshow_list'));
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('slideshow/admin/directory_delete.modal.html.twig', [
+        $message = $directory->getSlideshowImages()->isEmpty()
+            ? 'Etes vous certain de supprimer le répetroire %s ?'
+            : 'Etes vous certain de supprimer le répetroire %s et tous les fichiers qu\'il contient ?';
+
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer un répertoire',
+            'content' => sprintf($message, $directory->getName()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-            'directory' => $directory,
-            'has_images' => !$directory->getSlideshowImages()->isEmpty(),
-        ]);
+        ], $response);
     }
 
     #[Route('/image/delete/{image}', name: 'image_delete', methods: ['GET', 'POST'])]
@@ -163,22 +189,29 @@ class SlideshowController extends AbstractController
         SlideshowImage $image,
     ): Response {
         $directory = $image->getDirectory();
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params'), ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $filesystem = new Filesystem();
-            $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId(), $image->getFilename()));
-            $this->entityManager->remove($image);
-            $this->entityManager->flush();
-            return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $filesystem = new Filesystem();
+                $filesystem->remove($this->projectDir->path('slideshow', (string) $directory->getId(), $image->getFilename()));
+                $this->entityManager->remove($image);
+                $this->entityManager->flush();
+                return $this->redirect($this->generateUrl('admin_slideshow_list', ['directory' => $directory->getId()]));
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('slideshow/admin/image_delete.modal.html.twig', [
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer un image',
+            'content' => sprintf('Etes vous certain de supprimer l\'image %s', $image->getFilename()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-            'image' => $image,
-        ]);
+        ], $response);
     }
 
     #[Route('/image/upload/{directory}', name: 'image_upload', defaults:['directory' => null], methods: ['GET', 'POST'])]

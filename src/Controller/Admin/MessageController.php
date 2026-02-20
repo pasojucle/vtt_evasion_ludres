@@ -145,26 +145,31 @@ class MessageController extends AbstractController
         Request $request,
         Message $message
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl('admin_message_delete', [
-                'message' => $message->getId(),
-            ]),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $section = $message->getSection();
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->remove($message);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->entityManager->remove($message);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_message_list', [
-                'section' => $section,
-            ]);
+                return $this->redirectToRoute('admin_message_list', [
+                    'section' => $section,
+                ]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        return $this->render('message/admin/delete.modal.html.twig', [
-            'message' => $message,
+        
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer un message',
+            'content' => sprintf('Etes vous certain de supprimer le message  %s ?', $message->getLabel()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/autocomplete', name: 'autocomplete', methods: ['GET'])]

@@ -1,13 +1,19 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_registration_reject', {'licence' : licence.id}) %}
-{% block form %}{% set form = form %}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = 'warning' %}
 {% block modal_title %}L'inscription de {{ fullname }} est incomplète{% endblock %}
 {% block body %}
     <p>Ce message sera envoyé automatiquement à l'adhérent, à la validation du formulaire. Précisez clairement les informations manquantes ou erronées.</p>
     </br>
     <p>{{ form_row(form.content)}}</p>
 {% endblock %}
-{% block footer %}
-    {% set button_text = '<i class="fas fa-times"></i> Envoyer' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+    <div class="flex gap-3 items-center ">
+        {{ ux_icon('lucide:x', {class: 'size-6'}) }} 
+        <div>Envoyer</div>
+    </div>
+    </button>
 {% endblock %}

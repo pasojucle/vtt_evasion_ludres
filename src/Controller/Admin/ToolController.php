@@ -41,7 +41,11 @@ class ToolController extends AbstractController
     public function adminDeleteUser(): Response
     {
         $form = $this->createForm(UserSearchType::class, null, [
-            'action' => $this->generateUrl('admin_tool_confirm_delete_user'),
+            'attr' => [
+                'data-controller' => 'modal-trigger',
+                'data-action' => 'submit->modal-trigger#deleteUser',
+                'data-modal-trigger-url-value' => $this->generateUrl('admin_tool_confirm_delete_user', ['user' => 0]),
+            ],
         ]);
 
         return $this->render('tool/delete_user.html.twig', [
@@ -49,39 +53,40 @@ class ToolController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/tool/confirm/delete/user/{user}', name: 'admin_tool_confirm_delete_user', defaults: ['user' => null], methods: ['GET', 'POST'], options:['expose' => true])]
+    #[Route('/admin/tool/confirm/delete/user/{user}', name: 'admin_tool_confirm_delete_user', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function adminConfirmDeleteUser(
         Request $request,
         UserService $userService,
-        ?User $user
+        ?User $user,
     ): Response {
-        if (null !== $user) {
-            $form = $this->createForm(FormType::class, null, [
-                'action' => $this->generateUrl('admin_tool_confirm_delete_user', [
-                    'user' => $user->getId(),
-                ]),
-            ]);
+        $response = new Response("OK", Response::HTTP_OK);
+        $form = $this->createForm(FormType::class, $user, [
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
+        ]);
 
-            $fullname = $user->getLicenceNumber();
-            if ($user->getIdentity()) {
-                $fullname .= ' ' . $user->getIdentity()->getFullName();
-            }
-            $form->handleRequest($request);
-            if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
+        $fullname = $user->getLicenceNumber();
+        if ($user->getIdentity()) {
+            $fullname .= ' - ' . $user->getIdentity()->getFullName();
+        }
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
                 $userService->deleteUser($user);
                 $this->addFlash('success', "Les données de l'utilisateur {$fullname} ont bien été supprimées");
 
                 return $this->redirectToRoute('admin_tool_delete_user');
             }
-
-            return $this->render('tool/delete_user_modal.html.twig', [
-                'form' => $form->createView(),
-                'fullname' => $fullname,
-                'user' => $user,
-            ]);
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return new Response(null, 400);
+
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer un adhérent',
+            'content' => sprintf('Etes vous certain de supprimer l\'utilisateur <b>%s</b> ?', $fullname),
+            'btn_label' => 'Supprimer',
+            'form' => $form->createView(),
+        ], $response);
     }
 
     #[Route('/admin/registration/error', name: 'admin_registration_error', methods: ['GET', 'POST'])]
