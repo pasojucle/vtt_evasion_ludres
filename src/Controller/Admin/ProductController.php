@@ -96,23 +96,30 @@ class ProductController extends AbstractController
         Request $request,
         Product $product
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $product->setDeleted(true);
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $product->setDeleted(true);
+                $this->entityManager->persist($product);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_products');
+                return $this->redirectToRoute('admin_products');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('product/admin/delete.modal.html.twig', [
-            'product' => $this->productDtoTransformer->fromEntity($product),
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer un article',
+            'content' => sprintf('Etes vous certain de supprimer l\'article %s ?', $product->getName()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/admin/desactiver/produit/{product}', name: 'admin_product_disable', methods: ['GET', 'POST'])]
@@ -121,22 +128,27 @@ class ProductController extends AbstractController
         Request $request,
         Product $product
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $product->setDisabled(!$product->isDisabled());
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $product->setDisabled(!$product->isDisabled());
+                $this->entityManager->persist($product);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_products');
+                return $this->redirectToRoute('admin_products');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('product/admin/disabled.modal.html.twig', [
             'product' => $this->productDtoTransformer->fromEntity($product),
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 }

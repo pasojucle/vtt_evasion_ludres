@@ -29,36 +29,41 @@ class LicenceController extends AbstractController
     #[IsGranted('USER_EDIT', 'licence')]
     public function adminDeleteLicence(
         Request $request,
-        UserDtoTransformer $userDtoTransformer,
         Licence $licence
     ): Response {
-        $userDto = $userDtoTransformer->fromEntity($licence->getUser());
-        $fullName = $userDto->member->fullName;
+        $response = new Response("OK", Response::HTTP_OK);
+        $user = $licence->getUser();
+        $fullName = $user->getIdentity()->getFullName();
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            foreach ($licence->getLicenceAgreements() as $licenceAgreement) {
-                $this->entityManager->remove($licenceAgreement);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                foreach ($licence->getLicenceAgreements() as $licenceAgreement) {
+                    $this->entityManager->remove($licenceAgreement);
+                }
+                $this->entityManager->remove($licence);
+                $this->entityManager->flush();
+
+                $this->addFlash('success', "La licence de l'utilisateur {$fullName} a bien été supprimée");
+
+                return $this->redirectToRoute('admin_registrations', [
+                    'filtered' => true,
+                    'p' => $request->query->get('p'),
+                ]);
             }
-            $this->entityManager->remove($licence);
-            $this->entityManager->flush();
-
-            $this->addFlash('success', "La licence de l'utilisateur {$fullName} a bien été supprimée");
-
-            return $this->redirectToRoute('admin_registrations', [
-                'filtered' => true,
-                'p' => $request->query->get('p'),
-            ]);
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('licence/admin/delete.modal.html.twig', [
-            'licence' => $licence,
-            'fullname' => $fullName,
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer une inscription',
+            'content' => sprintf('Etes vous certain de supprimer l\'inscription de %s ?', $fullName),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/admin/inscription/receive/{licence}', name: 'admin_registration_receive', methods: ['GET', 'POST'])]
@@ -69,25 +74,28 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getIdentity()->getFirstName();
-
+        $fullName = $user->getIdentity()->getFullName();
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $tansition = ($licence->getState()->isYearly()) ? 'receive_yearly_file' : 'receive_trial_file';
-            if ($licenceService->applyTransition($licence, $tansition)) {
-                $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $tansition = ($licence->getState()->isYearly()) ? 'receive_yearly_file' : 'receive_trial_file';
+                if ($licenceService->applyTransition($licence, $tansition)) {
+                    $this->entityManager->flush();
 
-                $this->addFlash('success', "Le dossier de {$fullName} a bien été reçu");
+                    $this->addFlash('success', "Le dossier de {$fullName} a bien été reçu");
 
-                return $this->redirectToRoute('admin_registrations', [
-                    'filtered' => true,
-                    'p' => $request->query->get('p'),
-                ]);
+                    return $this->redirectToRoute('admin_registrations', [
+                        'filtered' => true,
+                        'p' => $request->query->get('p'),
+                    ]);
+                }
             }
- 
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->addFlash('danger', "Une erreur est survenue lors de la réception du dossier de {$fullName}");
         }
 
@@ -98,7 +106,7 @@ class LicenceController extends AbstractController
             'message' => ($licence->getState()->isYearly())
                 ? 'Réception du dossier d\'inscription signé avec le paiement.'
                 : 'Réception du dossier d\'inscription signé'
-        ]);
+        ], $response);
     }
 
 
@@ -112,37 +120,41 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getIdentity()->getFirstName();
+        $fullName = $user->getIdentity()->getFullName();
         $content = 'Le dossier d\'inscription au club est incomplet ou non conforme. Merci de le transmettre à nouveau, signé, en tenant compte des modifications suivantes :';
-
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(LicenceRejectType::class, ['content' => $content], [
             'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $subject = 'Votre inscription au club de Vtt Évasion Ludres';
-            $data = $form->getData();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $subject = 'Votre inscription au club de Vtt Évasion Ludres';
+                $data = $form->getData();
 
-            $result = $mailerService->sendMailToMember($userDtoTransformer->fromEntity($licence->getUser()), $subject, $data['content']);
-            $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
-            if ($result['success'] && $licenceService->applyTransition($licence, $tansition)) {
-                $this->entityManager->persist($licence);
-                $this->entityManager->flush();
-                $this->addFlash('success', "Le message a bien été envoyé");
-            } else {
-                $this->addFlash('danger', "Une erreur est survenue");
+                $result = $mailerService->sendMailToMember($userDtoTransformer->fromEntity($licence->getUser()), $subject, $data['content']);
+                $tansition = ($licence->getState()->isYearly()) ? 'reject_yearly_file' : 'reject_trial_file';
+                if ($result['success'] && $licenceService->applyTransition($licence, $tansition)) {
+                    $this->entityManager->persist($licence);
+                    $this->entityManager->flush();
+                    $this->addFlash('success', "Le message a bien été envoyé");
+                } else {
+                    $this->addFlash('danger', "Une erreur est survenue");
+                }
+                return $this->redirectToRoute('admin_registrations', [
+                    'filtered' => true,
+                    'p' => $request->query->get('p'),
+                ]);
             }
-            return $this->redirectToRoute('admin_registrations', [
-                'filtered' => true,
-                'p' => $request->query->get('p'),
-            ]);
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('licence/admin/reject.modal.html.twig', [
             'form' => $form->createView(),
             'licence' => $licence,
             'fullname' => $fullName,
-        ]);
+        ], $response);
     }
 
     #[Route('/admin/inscription/register/{licence}', name: 'admin_registration_register', methods: ['GET', 'POST'])]
@@ -153,7 +165,8 @@ class LicenceController extends AbstractController
         Licence $licence
     ): Response {
         $user = $licence->getUser();
-        $fullName = $user->getIdentity()->getFirstName();
+        $fullName = $user->getIdentity()->getFullName();
+        $response = new Response("OK", Response::HTTP_OK);
         $data = [
             'licenceNumber' => $user->getLicenceNumber(),
             'medicalCertificateDate' => $user->getHealth()->getMedicalCertificateDate(),
@@ -161,23 +174,27 @@ class LicenceController extends AbstractController
         $form = $this->createForm(LicenceRegisterType::class, $data, [
             'is_yearly' => $licence->getState()->isYearly(),
             'licences' => $user->getLicences(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $validateLicence->execute($request, $licence);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $validateLicence->execute($request, $licence);
 
-            $this->addFlash('success', "Le dossier de {$fullName} a bien été inscrit à la fédération");
+                $this->addFlash('success', "Le dossier de {$fullName} a bien été inscrit à la fédération");
 
-            return $this->redirectToRoute('admin_registrations', [
-                'filtered' => true,
-                'p' => $request->query->get('p'),
-            ]);
+                return $this->redirectToRoute('admin_registrations', [
+                    'filtered' => true,
+                    'p' => $request->query->get('p'),
+                ]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('licence/admin/register.modal.html.twig', [
             'form' => $form->createView(),
             'licence' => $licence,
             'fullname' => $fullName,
-        ]);
+        ], $response);
     }
 }

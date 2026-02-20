@@ -38,8 +38,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     addDeleteLink();
 
     document.querySelectorAll('object.sizing').forEach(object => resize(object));
-    
-    $(document).on('click', '#user_search_submit', confirmDeleteUser)
 
     document.querySelectorAll('.check-toggle').forEach(element => {
         element.addEventListener('change', handleCheckChange);
@@ -55,15 +53,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     })
 });
 
-function confirmDeleteUser(e) {
-    e.preventDefault();
-    let form = $(this).closest('form');
-    let user = form.find('#user_search_user').val();
-    let route = Routing.generate('admin_tool_confirm_delete_user', {'user': user});
-    let anchor = $('<a class="modal-trigger" href="'+route+'" data-toggle="modal" data-type="danger"></a>');
-    form.append(anchor);
-    anchor.click();
-}
 
 const toggleBirthPlace = () => {
     document.querySelectorAll('input[name$="[birthPlace]"], input[name$="[birthCountry]"], select[name$="[birthCommune]"]').forEach((element) => {
@@ -120,7 +109,6 @@ function formModifier(event) {
         });
         initAddItemLink();
         initInputFile();
-        // addBikeRideTypeChangeListener();
         switchEventListener();
         targetEl.querySelectorAll('.form-modifier').forEach((element) => {
             element.addEventListener('change', formModifier);
@@ -214,13 +202,3 @@ function resize(object) {
     object.width = width;
     object.height = parent.dataset.ratio * width;
 }
-
-// const addBikeRideTypeChangeListener = () => {
-//     if (document.querySelector('select#bike_ride_bikeRideType')){
-//         document.querySelector('select#bike_ride_bikeRideType').addEventListener('change', handleChangeBikeRideType)
-//     }
-// }
-
-// const handleChangeBikeRideType = () => {
-//     document.querySelector('#bike_ride_bikeRideTypeChanged').value = 1;
-// }

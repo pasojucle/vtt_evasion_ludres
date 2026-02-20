@@ -51,10 +51,6 @@ h4.modal-title {
     background-color: var(--light-color);
     color: var(--primary-color);
 }
-.bg-primary {
-    background-color: var(--light-color);
-    color: var(--primary-color);
-}
 .modal-header, .modal-footer, .modal .modal-body {
     padding: 10px;
 }

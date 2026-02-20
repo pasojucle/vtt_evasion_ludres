@@ -107,33 +107,35 @@ class LinkController extends AbstractController
         Request $request,
         Link $link
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_link_delete',
-                [
-                    'link' => $link->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $position = $link->getPosition();
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->remove($link);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->entityManager->remove($link);
+                $this->entityManager->flush();
 
-            $links = $this->linkRepository->findByPosition($position);
-            $this->orderByService->ResetOrders($links);
+                $links = $this->linkRepository->findByPosition($position);
+                $this->orderByService->ResetOrders($links);
 
-            return $this->redirectToRoute('admin_links', [
-                'position' => $position,
-            ]);
+                return $this->redirectToRoute('admin_links', [
+                    'position' => $position,
+                ]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('link/admin/delete.modal.html.twig', [
-            'link' => $link,
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer un lien',
+            'content' => sprintf('Etes vous certain de supprimer le lien  %s ?', $link->getTitle()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/ordonner/{link}', name: '_order', methods: ['POST'], options:['expose' => true])]

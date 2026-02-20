@@ -1,6 +1,13 @@
 <turbo-frame id="message-list">
     <div class="wrapper-body">
-        <a href="{{ path('admin_message_add') }}" class="btn btn-primary" title="Ajouter un message"><i class="fas fa-plus"></i> Ajouter un message</a>
+        <a 
+            href="{{ path('admin_message_add') }}" 
+            class="btn btn-primary" 
+            title="Ajouter un message"
+            data-turbo-frame="_top"
+        >
+        <i class="fas fa-plus"> </i> Ajouter un message
+        </a>
         <div class="filters mb-20">
             {{ form_start(form) }}
             {{ form_row(form.section) }}
