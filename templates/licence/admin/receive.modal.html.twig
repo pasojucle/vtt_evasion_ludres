@@ -1,6 +1,5 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_registration_receive', {'licence' : licence.id}) %}
-{% block form %}{% set form = form %}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = 'success' %}
 {% block modal_title %}Inscription de {{ fullname }}{% endblock %}
 {% block body %}
     <p>{{ message }}</p>
@@ -12,7 +11,14 @@
         {{ form_row(form.medicalCertificateDate) }}
     {% endif %}
 {% endblock %}
-{% block footer %}
-    {% set button_text = '<i class="fas fa-check"></i> Réceptionner' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+    <div class="flex gap-3 items-center ">
+        {{ ux_icon('lucide:check-check', {class: 'size-6'}) }} 
+        <div>Réceptionner</div>
+    </div>
+    </button>
 {% endblock %}

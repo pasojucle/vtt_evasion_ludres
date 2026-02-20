@@ -11,7 +11,6 @@ use App\Entity\SecondHand;
 use App\Entity\User;
 use App\Form\SecondHandType;
 use App\Repository\ContentRepository;
-use App\Repository\LogRepository;
 use App\Repository\SecondHandRepository;
 use App\Service\LogService;
 use App\Service\MailerService;
@@ -40,7 +39,6 @@ class SecondHandController extends AbstractController
     public function list(
         PaginatorService $paginator,
         PaginatorDtoTransformer $paginatorDtoTransformer,
-        LogRepository $logRepository,
         Request $request,
     ): Response {
         /** @var ?User $user */
@@ -140,24 +138,28 @@ class SecondHandController extends AbstractController
         Request $request,
         SecondHand $secondHand
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'second_hand_delete',
-                ['secondHand' => $secondHand->getId(), ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->secondHandRepository->remove($secondHand, true);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->secondHandRepository->remove($secondHand, true);
 
-            return $this->redirectToRoute('second_hand_user_list');
+                return $this->redirectToRoute('second_hand_user_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('second_hand/delete.modal.html.twig', [
-            'second_hand' => $this->secondHandDtoTransformer->fromEntity($secondHand),
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer une annonce',
+            'content' => sprintf('Etes vous certain de supprimer l\'annonce %s ?', $secondHand->getName()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/occasion/enabled/{secondHand}', name: 'enabled', methods: ['GET'])]

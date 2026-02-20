@@ -1,11 +1,15 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_survey_disable', {'survey' : survey.id}) %}
-{% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Cloturer un vote{{ survey.title }}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% block modal_title %}Cloturer un vote{% endblock %}
 {% block body %}
     <p>Etes-vous certain de clôturer le vote {{ survey.title }} ?</p>
 {% endblock %}
-{% block footer %}
-    {% set button_text = '<i class="fas fa-times"></i> Clôturer' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+    <div class="flex gap-3 items-center ">
+        {{ ux_icon('lucide:x', {class: 'size-6'}) }} Clôturer
+    </div>
+    </button>
 {% endblock %}

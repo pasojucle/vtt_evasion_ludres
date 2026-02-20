@@ -100,24 +100,31 @@ class RegistrationStepController extends AbstractController
         Request $request,
         RegistrationStep $registrationStep
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl($request->attributes->get('_route'), $request->attributes->get('_route_params')),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $group = $registrationStep->getRegistrationStepGroup();
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $this->registrationStepRepository->remove($registrationStep, true);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->registrationStepRepository->remove($registrationStep, true);
 
-            $registrationSteps = $this->registrationStepRepository->findByGroup($group);
-            $this->orderByService->ResetOrders($registrationSteps);
+                $registrationSteps = $this->registrationStepRepository->findByGroup($group);
+                $this->orderByService->ResetOrders($registrationSteps);
 
-            return $this->redirectToRoute('admin_registration_step_list');
+                return $this->redirectToRoute('admin_registration_step_list');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('registration/admin/delete.modal.html.twig', [
-            'registrationStep' => $registrationStep,
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer une étape',
+            'content' => sprintf('Etes vous certain de supprimer l\'étape %s ?', $registrationStep->getTitle()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 }

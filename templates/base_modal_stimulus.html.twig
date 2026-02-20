@@ -1,10 +1,18 @@
 <turbo-frame id="modal_content">
-    {% if type is not defined %}{% set type = 'neutral-200'%}{% endif %}
+    {% if type is not defined %}
+        {% set type = 'primary'%}
+    {% endif %}
+    {% set title_text = 'text-white'%}
+    {% set title_bg = 'bg-' ~ type %}
+    {% if type == 'primary' %}
+        {% set title_bg = 'neutral-200'%}
+        {% set title_text = 'text-primary'%}
+    {% endif %}
     {% if form is defined and form is not null %}
         {{ form_start(form)}}
     {% endif %}
-    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 bg-{{ type }}">
-        <h3 class="!mt-0 !mb-0 text-xl font-semibold text-gray-900 dark:text-white">
+    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 {{ title_bg }}">
+        <h3 class="!mt-0 !mb-0 text-xl font-semibold {{ title_text }}">
             {% block modal_title %}{% endblock %}
         </h3>
         <button 

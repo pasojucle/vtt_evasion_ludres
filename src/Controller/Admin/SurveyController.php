@@ -76,7 +76,7 @@ class SurveyController extends AbstractController
         }
 
         return $this->render('survey/admin/edit.html.twig', [
-            'survey' => $this->surveyDtoTransformer->fromEntity($survey),
+            'survey' => $survey,
             'form' => $form->createView(),
         ]);
     }
@@ -207,28 +207,28 @@ class SurveyController extends AbstractController
     #[IsGranted('SURVEY_EDIT', 'survey')]
     public function disable(Request $request, Survey $survey): Response
     {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_survey_disable',
-                [
-                    'survey' => $survey->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $survey->setDisabled(true);
-            $this->entityManager->persist($survey);
-            $this->entityManager->flush();
- 
-            return $this->redirectToRoute('admin_surveys');
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $survey->setDisabled(true);
+                $this->entityManager->persist($survey);
+                $this->entityManager->flush();
+    
+                return $this->redirectToRoute('admin_surveys');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('survey/admin/disable.modal.html.twig', [
             'survey' => $survey,
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/history/notify/{survey}', name: 'admin_survey_history_notify', methods: ['GET'])]
@@ -252,23 +252,26 @@ class SurveyController extends AbstractController
     #[IsGranted('SURVEY_EDIT', 'survey')]
     public function delete(Request $request, SurveyService $surveyService, Survey $survey): Response
     {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_survey_delete',
-                ['survey' => $survey->getId(), ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
-
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $surveyService->deleteSurvey($survey);
- 
-            return $this->redirectToRoute('admin_surveys');
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $surveyService->deleteSurvey($survey);
+    
+                return $this->redirectToRoute('admin_surveys');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('survey/admin/delete.modal.html.twig', [
-            'survey' => $survey,
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer un vote',
+            'content' => sprintf('<p>Toutes les données relative à ce vote seront supprimées.</p><p>Etes-vous certain de supprimer le vote %s ?</p>', $survey->getTitle()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 }

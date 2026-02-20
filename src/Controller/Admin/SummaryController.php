@@ -88,24 +88,30 @@ class SummaryController extends AbstractController
         Request $request,
         Summary $summary
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
             'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
-
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $bikeRide = $summary->getBikeRide();
-            $this->entityManager->remove($summary);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $bikeRide = $summary->getBikeRide();
+                $this->entityManager->remove($summary);
+                $this->entityManager->flush();
 
-            return $this->redirectToRoute('admin_summary_list', [
-                'bikeRide' => $bikeRide->getId(),
-            ]);
+                return $this->redirectToRoute('admin_summary_list', [
+                    'bikeRide' => $bikeRide->getId(),
+                ]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->render('summary/admin/delete.modal.html.twig', [
-            'summary' => $summary,
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer une actualité',
+            'content' => sprintf('Etes vous certain de supprimer l\'actualité %s', $summary->getTitle()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 }

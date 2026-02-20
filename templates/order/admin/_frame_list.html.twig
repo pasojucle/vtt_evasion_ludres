@@ -14,7 +14,7 @@
             {% for order in orders %}
                 <li class="col-list col-1md-1sx-btn">
                     <div class="list-dropdown">
-                        <a href="{{ path('admin_order', {'orderHeader': order.id})}}" class="btn btn-list btn-light" title="Voir la commande">
+                        <a href="{{ path('admin_order', {'orderHeader': order.id})}}" class="btn btn-list btn-light" title="Voir la commande" data-turbo-frame="_top">
                             <div class="row">
                                 <div class="col-md-3 col-xs-12">{{ order.createdAt }}</div>
                                 <div class="col-md-4 col-xs-12">{{ order.user.member.fullName }}</div>
@@ -25,12 +25,12 @@
                     </div>
                     <div>
                         {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').ORDERED %}
-                            <a class="btn btn-success btn-fixed" href="{{ path('admin_order', {'orderHeader': order.id})}}" title="Valider">
+                            <a class="btn btn-success btn-fixed" href="{{ path('admin_order', {'orderHeader': order.id})}}" title="Valider" data-turbo-frame="_top">
                                 <div><i class="fas fa-check"></i> Valider</div>
                             </a>
                         {% endif %}
                         {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED %}
-                            <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED.value})}}" title="Cloturer">
+                            <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED.value})}}" title="Cloturer" data-turbo-frame="_top">
                                 <div><i class="fas fa-check"></i> Cloturer</div>
                             </a>
                         {% endif %}

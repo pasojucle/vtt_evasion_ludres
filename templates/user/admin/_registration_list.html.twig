@@ -40,7 +40,7 @@
             {% for user in users %}
                 <li class="col-list col-1md-btn">
                     <div class="list-dropdown">
-                        <a href="{{ path('admin_registration_user', {'user': user.id})}}"
+                        <a href="{{ path('admin_registration_user', {'user': user.id})}}" data-turbo-frame="_top"
                             {% if user.level.colors is not null %} style="background-color: {{ user.level.colors.background }}; color: {{ user.level.colors.color }}"{% endif %}>
                             <div class="row">
                                 <div class="col-md-7 col-xs-12">{{ user.member.fullName }}</div>

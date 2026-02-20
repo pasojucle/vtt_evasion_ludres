@@ -123,28 +123,30 @@ class OrderController extends AbstractController
         Request $request,
         OrderHeader $orderHeader
     ): Response {
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'order_delete',
-                [
-                    'orderHeader' => $orderHeader->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
 
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $orderHeader->setStatus(OrderStatusEnum::CANCELED);
-            $this->entityManager->persist($orderHeader);
-            $this->entityManager->flush();
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $orderHeader->setStatus(OrderStatusEnum::CANCELED);
+                $this->entityManager->persist($orderHeader);
+                $this->entityManager->flush();
 
-            return $this->redirect($this->requestStack->getSession()->get('order_return'));
+                return $this->redirect($this->requestStack->getSession()->get('order_return'));
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        return $this->render('order/delete.modal.html.twig', [
-            'order_header' => $this->orderDtoTransformer->fromEntity($orderHeader),
+        
+        return $this->render('component/destructive.modal.html.twig', [
+            'title' => 'Supprimer une commande',
+            'content' => sprintf('Etes vous certain de supprimer la commande  %s ?', $orderHeader->getId()),
+            'btn_label' => 'Supprimer',
             'form' => $form->createView(),
-        ]);
+        ], $response);
     }
 
     #[Route('/mon-compte/commandes', name: 'user_orders', methods: ['GET'])]
