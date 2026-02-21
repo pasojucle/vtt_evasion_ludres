@@ -27,14 +27,14 @@
                         <div class="form-group">
                 {{ form_row(form.image) }}
             </div>
-            <div class="form-group form-group-file">
+            <div class="form-group form-group-file" data-controller="input-file">
                 {{ form_row(form.imageFile) }}
                 <div class="form-group-inline">
                     {% set src = '' %}
                     {% if link is not null %}
                         {% set src =  link.image matches '/^http/' or  link.image is null ? link.image : '/uploads/' ~ link.image %}
                     {% endif %}
-                    <img class="user-picture" src="{{ src }}" alt="{{ src }}">   
+                    <img class="user-picture" src="{{ src }}" alt="{{ src }}" data-input-file-target="media">   
                 </div>
             </div>
             {{ form_row(form.description) }}

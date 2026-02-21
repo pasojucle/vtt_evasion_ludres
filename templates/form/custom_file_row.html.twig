@@ -1,8 +1,15 @@
 {% block custom_file_row %}
     {% set class = (form.vars.row_attr.class is defined) ? form.vars.row_attr.class : 'form-group' %}
     <div class="{{ class }}">
-        <button class="input-file-button btn btn-secondary" type="button"><i class="fa-solid fa-file-arrow-up"></i> {{ form.vars.label}}</button>
-        {{ form_widget(form, {'attr':{'class': 'input-file'}}) }}   
+        <button 
+            class="input-file-button btn btn-secondary" 
+            type="button"
+            data-input-file-target="trigger" 
+            data-action="click->input-file#selectFile"
+        >
+        <i class="fa-solid fa-file-arrow-up"></i> {{ form.vars.label}}
+        </button>
+        {{ form_widget(form, {'attr':{'class': 'input-file', 'data-input-file-target': 'input', 'data-action': 'change->input-file#previewFile'}}) }}   
         {{ form_errors(form) }} 
     </div>
 {% endblock %}

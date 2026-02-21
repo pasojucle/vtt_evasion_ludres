@@ -21,7 +21,6 @@ import './styles/slideshow.css';
 
 import './js/app.js';
 import './js/navigation.js';
-import './js/input-file.js';
 import './js/modal.js';
 import './js/js-datepicker.js';
 import './js/form.js';

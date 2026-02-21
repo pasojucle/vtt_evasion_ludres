@@ -25,13 +25,19 @@
                 </div>
                 <div class="col-md-2"></div>
                 <div class="col-md-4">
-                    <div class="form-group form-group-file">
-                        <div class="form-group"  data-ratio="1.41">
-                            <object class="sizing" width="100%" type="application/pdf" data="{{ registrationStep.pdfRelativePath }}">
+                    <div class="form-group form-group-file" data-controller="input-file">
+                        <div class="form-group" data-pdf-size-ratio-value="1.41" data-controller="pdf-size">
+                            <object
+                                width="100%" 
+                                type="application/pdf" 
+                                data="{{ registrationStep.pdfRelativePath }}"
+                                data-input-file-target="media"
+                                data-pdf-size-target="media"
+                            >
                                 <p>Le fichier PDF ne peut pas être affiché avec ce navigateur.</p>
                             </object>
                         </div>
-                        <p id="filename">{{ registrationStep.pdfFilename }}</p>
+                        <p data-input-file-target="filename">{{ registrationStep.pdfFilename }}</p>
                         {{ form_row(form.pdfFile) }}
                     </div>
                 </div>

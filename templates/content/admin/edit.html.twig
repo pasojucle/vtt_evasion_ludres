@@ -31,10 +31,10 @@
                 {% endif %}
             </div>
             {% if form.file is defined %}
-                <div class="form-group form-group-file">
+                <div class="form-group form-group-file" data-controller="input-file">
                     {{ form_row(form.file) }}
                     <div class="form-group-inline group-picture">
-                        <img class="user-picture" src="{{ content.fileName }}" alt="{{ content.fileName }}">
+                        <img class="user-picture" src="{{ content.fileName }}" alt="{{ content.fileName }}" data-input-file-target="media">
                         {% if content.fileName is not null %}
                             <a class="btn-danger" href="{{ path('admin_content_file_delete', {'content': content.id})}}" title="Supprimer"><i class="fa-solid fa-circle-xmark"></i></a>
                         {% endif %}

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\EventListeners;
 
-use ReflectionClass;
 use DateTimeImmutable;
-use Doctrine\ORM\Events;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Events;
+use ReflectionClass;
 
 #[AsDoctrineListener(event: Events::prePersist)]
 #[AsDoctrineListener(event: Events::preUpdate)]
