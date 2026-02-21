@@ -12,12 +12,12 @@
         {% if content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').CARROUSEL_AND_TEXT %}
             {{ include('component/carrousel.html.twig') }}
         {% elseif content.kind == enum('App\\Entity\\Enum\\ContentKindEnum').VIDEO_AND_TEXT %}
-            <div class="wrapper-youtube" data-controller="youtube-center">
+            <div class="wrapper-youtube lg:min-h-full w-full" data-controller="youtube-center">
                 <iframe 
                     src="{{ content.url }}?autoplay=1&mute=1" 
                     frameborder="0"  
                     scrolling="no" 
-                    class="youtube"
+                    class="mt-8 lg:mt-0 opacity-100 lg:opacity-0 lg:fixed w-full lg:w-auto transition-opacity h-[calc(100vw*0.5)] lg:h-[calc(100vw*0.25)]"
                     data-youtube-center-target="iframe"
                 ></iframe>
             </div>

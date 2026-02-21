@@ -1,15 +1,16 @@
-document.addEventListener("DOMContentLoaded", () => {
-    initInputFile();
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//     initInputFile();
+// });
 
-export const initInputFile = () => {
-    document.querySelectorAll('input[type="file"].input-file').forEach((element) => {
-        element.addEventListener('change', previewFile);
-    })
-    document.querySelectorAll('.input-file-button').forEach((element) => {
-        element.addEventListener('click', getFile);
-    })
-}
+// export const initInputFile = () => {
+//     document.querySelectorAll('input[type="file"].input-file').forEach((element) => {
+//         element.addEventListener('change', previewFile);
+//     })
+//     document.querySelectorAll('.input-file-button').forEach((element) => {
+//         element.addEventListener('click', getFile);
+//     })
+// }
+
 
 export const previewFile = (event) => {
     const previews = event.currentTarget.parentElement.parentElement.querySelectorAll('img, canvas, object, video');

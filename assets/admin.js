@@ -30,7 +30,6 @@ import './styles/dashboard.css';
 import './js/app.js';
 import './js/navigation.js';
 import './js/form.js';
-import './js/input-file.js';
 import './js/modal.js';
 import './js/media_position.js';
 import './js/switch.js';

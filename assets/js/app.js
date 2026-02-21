@@ -2,26 +2,11 @@
 import { handleCheckChange, formToggle } from './form.js';
 import { Form } from './formValidator.js';
 import { addDeleteLink, initAddItemLink } from './entityCollection.js'
-import { initInputFile } from './input-file.js';
 import { switchEventListener } from './switch.js';
 
 var formValidator;
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    if ($('ul.StepProgress').length > 0) {
-        const stepProgressMargingTop = parseInt($('ul.StepProgress').css('margin-top').replace('px', ''));
-        const offsetTop = $('ul.StepProgress').offset().top-100;
-        let marginTop = stepProgressMargingTop;
-        $( window ).scroll(function() {
-            if ($(window).scrollTop() >= offsetTop) {
-                marginTop = $(window).scrollTop() - 200;
-            } else {
-                marginTop = stepProgressMargingTop;
-            }
-            $('ul.StepProgress').css('margin-top', marginTop+'px');
-        });
-    }
-
     $(document).on('change', '.filters select, .filters .btn, .filters input', submitFom);
     $(document).on('change', '.form-modifier', formModifier);
     $(document).on('click', 'button.form-modifier', formModifier);
@@ -36,8 +21,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     
     initAddItemLink();
     addDeleteLink();
-
-    document.querySelectorAll('object.sizing').forEach(object => resize(object));
 
     document.querySelectorAll('.check-toggle').forEach(element => {
         element.addEventListener('change', handleCheckChange);
@@ -108,7 +91,6 @@ function formModifier(event) {
             format: 'yyyy-mm-dd hh:ii',
         });
         initAddItemLink();
-        initInputFile();
         switchEventListener();
         targetEl.querySelectorAll('.form-modifier').forEach((element) => {
             element.addEventListener('change', formModifier);
@@ -193,12 +175,4 @@ function addDown(e) {
 
 function addUp(e) {
     $(this).closest('div.block').find('i').addClass('fa-caret-square-up').removeClass('fa-caret-square-down');
-}
-
-function resize(object) {
-    const parent = object.parentNode;
-    const computedStyle = getComputedStyle(parent);
-    const width = parent.clientWidth - parseFloat(computedStyle.paddingLeft) - parseFloat(computedStyle.paddingRight);
-    object.width = width;
-    object.height = parent.dataset.ratio * width;
 }
