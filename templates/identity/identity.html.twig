@@ -15,9 +15,14 @@
             </div>
             <div class="align-center">
                 {% set picture = identity.vars.value.picture %}
-                <div class="form-group form-group-file">
-                    <img class="user-picture" src="{% if picture %}/uploads/{{ picture }}{% endif %}" alt="{{ picture }}">            
-                    <p id="filename">{{ picture }}</p>
+                <div class="form-group form-group-file" data-controller="input-file">
+                    <img 
+                        class="user-picture" 
+                        src="{% if picture %}/uploads/{{ picture }}{% endif %}" 
+                        alt="{{ picture }}" 
+                        data-input-file-target="media"
+                    >            
+                    <p data-input-file-target="filename">{{ picture }}</p>
                     {{ form_row(identity.pictureFile) }}
                 </div>
             </div>
