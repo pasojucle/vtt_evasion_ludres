@@ -18,9 +18,9 @@
                         {% if app.request.get('_route') matches menu.pattern %} class="active"{% endif %}>
                         <div class="position-relative">
                             {{ menu.label }}
-                            {% if menu.badge is defined %}
-                                <div class="badge novelty hidden"{% if menu.badge is not null %} data-route="{{ menu.badge }}"{% endif %}>N</div>
-                            {% endif %}  
+                            {% if menu.badge is defined and menu.badge is not null %}
+                                <turbo-frame id="notification-{{ menu.badge }}" src="{{ path(menu.badge) }}"></turbo-frame>
+                            {% endif %}
                         </div>
                     </a>
                     {% if menu.subMenus is not empty %}
@@ -38,8 +38,8 @@
                                         {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
                                         <div class="position-relative">
                                             {{ sub_menu.label }}
-                                            {% if sub_menu.badge is defined %}
-                                                <div class="badge novelty hidden" data-route="{{ sub_menu.badge }}">N</div>
+                                            {% if sub_menu.badge is defined and sub_menu.badge is not null %}
+                                                <turbo-frame id="notification-{{ sub_menu.badge }}" src="{{ path(sub_menu.badge) }}"></turbo-frame>
                                             {% endif %}
                                         </div>
                                     </a>
@@ -64,8 +64,8 @@
                         <li class="nav-sub">
                             <a href="{{ path(menu.route) }}">
                                 <div class="position-relative">{{ menu.label }}
-                                    {% if menu.badge is defined %}
-                                        <div class="badge novelty hidden" data-route="{{ menu.badge }}">N</div>
+                                    {% if menu.badge is defined and menu.badge is not null %}
+                                        <turbo-frame id="notification-{{ menu.badge }}" src="{{ path(menu.badge) }}"></turbo-frame>
                                     {% endif %}
                                 </div>
                             </a>
@@ -105,7 +105,12 @@
             {% else %}
                 <li class="nav-bar-xs">
                     <div class="nav-bar-title">
-                    <a class="btn-logger modal-trigger" href="{{ path('check_logout') }}" title="Se déconnecter" data-turbo-frame="modal_content">
+                    <a 
+                        class="btn-logger modal-trigger" 
+                        href="{{ path('check_logout') }}" 
+                        title="Se déconnecter" 
+                        data-turbo-frame="modal_content"
+                    >
                         <div class="position-relative"><i class="fas fa-power-off"></i> <span class="xs-display">Se connecter</span></div>
                     </a>
                     </div>

@@ -9,39 +9,43 @@
             <h1>Mon panier</h1>
         </div>
         <div class="wrapper-body">
-            <ul>
-            {% set orderLine = form.children.orderLines.children %}
-                {% for key, line in order.orderLines %}
-                    <li class="row row-list row-align-top block background-ligth">
-                        <div class="col-md-2 col-xs-3">
-                            <a href="{{ path('product_show', {'product': line.product.id}) }}">
-                                <div class="thumbnail"><img class="" src="{{ line.product.pathName }}" alt=""></div>
-                            </a>
-                        </div>
-                        <div class="col-md-5 col-xs-4">
-                            {{ line.product.name }}<br>
-                            {{ line.product.ref }}<br>
-                            Taille : {{ line.size }}<br>
-                            {% if line.product.discountPrice %}{{ line.product.discountTitle }}<br>{% endif %}
-                            Prix/unitaire : <span class="{{ line.product.priceClass }}">{{ line.product.price }}</span>
-                            {% if line.product.discountPrice %} <span class="price">{{ line.product.discountPrice }}</span>{% endif %}
-                        </div>
-                        <div class="col-md-2 col-xs-2 align-right form-group" data-line-name="{{ line.formName }}" data-line-id="{{ orderLine[key].vars.value.id }}">
-                            {{ form_widget(orderLine[key].quantity) }}
-                            {{ form_errors(orderLine[key].quantity) }}
-                        </div>
-                        <div class="col-md-2 col-xs-2 align-right form-group">
-                           <div>{{ line.amountToString }}</div>
-                           <br>
-                           <div data-line-name="{{ line.formName }}" data-line-id="{{ orderLine[key].vars.value.id }}">{{ form_widget(orderLine[key].remove) }}</div>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-            <div class="row">
-                <div class="col-md-10 col-xs-10 align-right">Total :</div>
-                <div class="col-md-2 col-xs-10  align-right">{{ order.amount }}</div>
-            </div>
+            {% if orderLines is defined %}
+                <ul>
+                    {% set orderLine = form.children.orderLines.children %}
+                    {% for key, line in order.orderLines %}
+                        <li class="row row-list row-align-top block background-ligth">
+                            <div class="col-md-2 col-xs-3">
+                                <a href="{{ path('product_show', {'product': line.product.id}) }}">
+                                    <div class="thumbnail"><img class="" src="{{ line.product.pathName }}" alt=""></div>
+                                </a>
+                            </div>
+                            <div class="col-md-5 col-xs-4">
+                                {{ line.product.name }}<br>
+                                {{ line.product.ref }}<br>
+                                Taille : {{ line.size }}<br>
+                                {% if line.product.discountPrice %}{{ line.product.discountTitle }}<br>{% endif %}
+                                Prix/unitaire : <span class="{{ line.product.priceClass }}">{{ line.product.price }}</span>
+                                {% if line.product.discountPrice %} <span class="price">{{ line.product.discountPrice }}</span>{% endif %}
+                            </div>
+                            <div class="col-md-2 col-xs-2 align-right form-group" data-line-name="{{ line.formName }}" data-line-id="{{ orderLine[key].vars.value.id }}">
+                                {{ form_widget(orderLine[key].quantity) }}
+                                {{ form_errors(orderLine[key].quantity) }}
+                            </div>
+                            <div class="col-md-2 col-xs-2 align-right form-group">
+                            <div>{{ line.amountToString }}</div>
+                            <br>
+                            <div data-line-name="{{ line.formName }}" data-line-id="{{ orderLine[key].vars.value.id }}">{{ form_widget(orderLine[key].remove) }}</div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="row">
+                    <div class="col-md-10 col-xs-10 align-right">Total :</div>
+                    <div class="col-md-2 col-xs-10  align-right">{{ order.amount }}</div>
+                </div>
+            {% else %}
+                <p>Auncun article</p>
+            {% endif %}
         </div>
         <div class="wrapper-footer">
             {% if form.save is defined %}{{ form_widget(form.save)}}{% endif %}

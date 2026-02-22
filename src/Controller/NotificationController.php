@@ -32,11 +32,10 @@ class NotificationController extends AbstractController
     public function list(GetList $showNotification): JsonResponse
     {
         list($modalNotification, $notifications, $repeat) = $showNotification->execute();
-
         return new JsonResponse([
             'modal' => ($modalNotification)
                 ? $this->renderView('notification/show.modal.html.twig', [
-                    'modal' => $modalNotification,
+                    'data' => $modalNotification,
                 ])
                 : null,
             'notifications' => [
@@ -50,11 +49,14 @@ class NotificationController extends AbstractController
     }
 
     #[Route('/slideshow', name: 'slideshow', methods: ['GET'], options:['expose' => true])]
-    public function slideshow(): JsonResponse
+    public function slideshow(): Response
     {
         $slideshowImages = $this->getNews->getSlideShowImages();
 
-        return new JsonResponse(['hasNewItem' => !empty($slideshowImages)]);
+        return $this->render('notification/_frame_novelty.html.twig', [
+            'hasNewItem' => !empty($slideshowImages),
+            'route' => 'notification_slideshow',
+        ]);
     }
 
     #[Route('/summary/list', name: 'summary_list', methods: ['GET'], options:['expose' => true])]
@@ -62,15 +64,35 @@ class NotificationController extends AbstractController
     {
         $summaries = $this->getNews->getSummaries();
 
-        return new JsonResponse(['hasNewItem' => !empty($summaries)]);
+        return $this->render('notification/_frame_novelty.html.twig', [
+            'hasNewItem' => !empty($summaries),
+            'route' => 'notification_summary_list',
+        ]);
     }
+
+    #[Route('/club/menu', name: 'club_menu', methods: ['GET'], options:['expose' => true])]
+    public function clubMenu(): Response
+    {
+        $summaries = $this->getNews->getSummaries();
+        $slideshowImages = $this->getNews->getSlideShowImages();
+
+        return $this->render('notification/_frame_novelty.html.twig', [
+            'hasNewItem' => !empty($summaries) && !empty($slideshowImages),
+            'route' => 'notification_club_menu',
+        ]);
+    }
+
+
 
     #[Route('/user/skill/list', name: 'user_skill_list', methods: ['GET'], options:['expose' => true])]
     public function userSkillList(): Response
     {
         $userSkills = $this->getNews->getUserSkill();
 
-        return new JsonResponse(['hasNewItem' => !empty($userSkills)]);
+        return $this->render('notification/_frame_novelty.html.twig', [
+            'hasNewItem' => !empty($userSkills),
+            'route' => 'notification_user_skill_list',
+        ]);
     }
 
     #[Route('/secondHand', name: 'second_hand', methods: ['GET'], options:['expose' => true])]
@@ -78,7 +100,10 @@ class NotificationController extends AbstractController
     {
         $secondHands = $this->getNews->getSecondHands();
 
-        return new JsonResponse(['hasNewItem' => !empty($secondHands)]);
+        return $this->render('notification/_frame_novelty.html.twig', [
+            'hasNewItem' => !empty($secondHands),
+            'route' => 'notification_second_hand',
+        ]);
     }
 
     #[Route('/link', name: 'link', methods: ['GET'], options:['expose' => true])]
@@ -86,7 +111,10 @@ class NotificationController extends AbstractController
     {
         $links = $this->getNews->getLinks();
 
-        return new JsonResponse(['hasNewItem' => !empty($links)]);
+        return $this->render('notification/_frame_novelty.html.twig', [
+            'hasNewItem' => !empty($links),
+            'route' => 'notification_link',
+        ]);
     }
 
     #[Route('/documentation', name: 'documentation', methods: ['GET'], options:['expose' => true])]
@@ -94,7 +122,10 @@ class NotificationController extends AbstractController
     {
         $documentations = $this->getNews->getDocumentatons();
 
-        return new JsonResponse(['hasNewItem' => !empty($documentations)]);
+        return $this->render('notification/_frame_novelty.html.twig', [
+            'hasNewItem' => !empty($documentations),
+            'route' => 'notification_documentation',
+        ]);
     }
 
     #[Route('/show/{entityName}/{entityId}', name: 'show', methods: ['GET'], defaults:['entityId' => null])]
@@ -116,7 +147,7 @@ class NotificationController extends AbstractController
         };
 
         return $this->render('notification/show.modal.html.twig', [
-            'modal' => $this->notificationDtoTransformer->fromEntity($notification),
+            'data' => $this->notificationDtoTransformer->fromEntity($notification),
         ]);
     }
 
@@ -124,7 +155,7 @@ class NotificationController extends AbstractController
     public function outsideLink(Documentation $documentation): Response
     {
         return $this->render('notification/show.modal.html.twig', [
-            'modal' => $this->notificationDtoTransformer->fromEntity($this->notificationService->getDocumentation($documentation)),
+            'data' => $this->notificationDtoTransformer->fromEntity($this->notificationService->getDocumentation($documentation)),
         ]);
     }
 }

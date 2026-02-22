@@ -20,11 +20,7 @@ class NotificationDto
 
     public ?string $modalLink = null;
 
-    public ?string $labelButton = null;
+    public ?string $btnLabel = null;
 
-    public ?FormView $form = null;
-
-    public ?string $toggle = null;
-
-    public bool $closeAfter = false;
+    public ?array $action = null;
 }

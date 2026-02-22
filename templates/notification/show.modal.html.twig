@@ -1,28 +1,37 @@
-{% extends 'base_modal.html.twig' %}
-{% set form = modal.form %}
-{% if modal.form %}
-    {% set button_href = modal.form.vars.action %}
-    {% set button_text = modal.labelButton %}
-    {% set async = true %}
-{% endif %}
-{% block modal_title %}{{ modal.title }}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = 'primary' %}
+{% block modal_title %}{{ data.title }}{% endblock %}
 {% block body %}
-    {{ modal.content|raw }}
+    <p>{{ data.content|raw }}</p>
 {% endblock %}
-{% block footer %}
-    {% set button_close = 'Fermer' %}
-    {% if modal.url is not null %}
-        {% set anchor_text = modal.labelButton %}
-        {% set url = modal.url %}
+{% block action %}
+    {% if data.url is not null %}
+        <a
+            class="flex justify-center text-white bg-{{ type}}"
+            href="{{ data.url }}"
+            data-action="click->modal#close"
+            {% if data.target is not null %}
+                target={{ data.target }}
+            {% else %}
+                data-turbo-frame="_top"
+            {% endif %}
+        >
+            <div class="flex gap-3 items-center ">
+                {{ data.btnLabel }}
+            </div>
+        </a>
+    {% elseif data.action is not null %}
+        <button 
+            type="button"
+            class="flex justify-center text-white bg-{{ type}}"
+            data-action={{ data.action.name }}
+            {% if data.action.url is defined %}data-modal-url-value="{{ data.action.url }}"{% endif %}
+        >
+            <div class="flex gap-3 items-center ">
+                {{ data.btnLabel }}
+            </div>
+        </button>
     {% endif %}
-    {% if modal.target is not null %}
-        {% set target = modal.target %}
-    {% endif %}
-    {% if modal.toggle is not null %}
-        {% set toggle = modal.toggle %}
-    {% endif %}
-    {% if modal.closeAfter is not null %}
-        {% set close_after = modal.closeAfter %}
-    {% endif %}
-    {{ parent() }}
 {% endblock %}
+
+

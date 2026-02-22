@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Form\LoginType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,16 +38,24 @@ class SecurityController extends AbstractController
     #[Route('/deconnexion', name: 'check_logout', methods: ['GET', 'POST'])]
     public function checkLogout(
         Request $request,
-        FormFactoryInterface $formFactory
     ) {
-        $form = $formFactory->create();
-        if ($request->isXmlHttpRequest()) {
-            return $this->render('security/logout.modal.html.twig', [
-                'form' => $form->createView(),
-            ]);
+        $response = new Response("OK", Response::HTTP_OK);
+        $form = $this->createForm(FormType::class, null, [
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
+        ]);
+
+        $form->handleRequest($request);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $request->getSession()->remove('user_fullName');
+                return $this->redirectToRoute('app_logout');
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $request->getSession()->remove('user_fullName');
-        return $this->redirectToRoute('app_logout');
+        return $this->render('security/logout.modal.html.twig', [
+                'form' => $form->createView()
+        ], $response);
     }
 }

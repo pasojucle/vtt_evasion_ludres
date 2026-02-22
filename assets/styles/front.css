@@ -35,7 +35,7 @@ nav.fixed {
     /* z-index: -1; */
     min-width: unset;
 }
-.novelty {
+.novelty, .badge.novelty {
     background-color: var(--primary-color);
     height: 15px;
     width: 15px;

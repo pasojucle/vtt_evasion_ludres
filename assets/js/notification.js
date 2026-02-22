@@ -2,19 +2,14 @@ import { initModal, buildContent, closeModal } from './modal.js';
 import { disableScroll, enableScroll } from './toggleScroll.js';
 import { hideNav} from './navigation.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.novelty').forEach((element) => {
-        if (element.dataset.route !== undefined) {
-            hasNews(element.dataset.route)
-        }
-    })
-    modalBuilded().then(() => {
-        setNotificationList();
-    });
-    document.querySelectorAll('.badge.notifications').forEach((element) => {
-        element.parentElement.addEventListener('click', toggleNotifications);
-    });
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//     modalBuilded().then(() => {
+//         setNotificationList();
+//     });
+//     document.querySelectorAll('.badge.notifications').forEach((element) => {
+//         element.parentElement.addEventListener('click', toggleNotifications);
+//     });
+// });
 
 const modalBuilded = () => {
     return new Promise((resolve, reject) => {
@@ -65,28 +60,9 @@ export const setNotificationList = async() => {
 const setNavigationsTop = () => {
     let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
     if (1024 < vw) {
-            const nav = document.querySelector('nav');
+        const nav = document.querySelector('nav');
         document.querySelector('div.dropdown-notifications').style.top = nav.getBoundingClientRect().top + nav.offsetHeight + 'px';
     }
-}
-
-const hasNews = async(route) => {
-    await fetch( Routing.generate(route))
-    .then((response) => {
-        if (response.status !== 500) {
-            return response.json();
-        }
-        throw new Error('Something went wrong.');    
-    })
-    .then((json)=> {
-        if (json.hasNewItem) {
-            const element = document.querySelector(`[data-route="${route}"]`);
-            element.classList.remove('hidden');
-            if (element.parentElement.parentElement.parentElement.classList.contains('nav-sub')) {
-                element.closest('li.nav-bar-xs').querySelector('.novelty').classList.remove('hidden');
-            }
-        }
-    });
 }
 
 const toggleNotifications = () => {
