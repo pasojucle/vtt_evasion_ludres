@@ -1,20 +1,26 @@
-<div class="dropdown-notifications block">
+<div class="dropdown-notifications block" data-notifications-target="dropdown">
     <div class="block-title">
         <h2>Notifications</h2>
         <div class="tools">
-            <a class="btn btn-xs btn-default" title="Fermer"><i class="fa-solid fa-xmark"></i></a>
+            <a class="btn btn-xs btn-default" title="Fermer" data-action="click->notifications#toggleNotifications">{{ ux_icon('lucide:x') }}</a>
         </div>
     </div>
     <ul>
         {% if notifications is defined %}
             {% for notification in notifications %}
+                {% dump(notification) %}
                 <li class="notification-body">
                     <div class="notification-text">{{ notification.title}}</div>
                     <div class="notification-footer">
                         {% if notification.modalLink %}
-                            <a class="btn btn-secondary btn-xs" data-turbo-frame="modal_content" href="{{ notification.modalLink }}">Consulter</a>
+                            <a 
+                                class="btn btn-secondary btn-xs" 
+                                data-turbo-frame="modal_content"
+                                data-action="click->notifications#toggleNotifications"
+                                href="{{ notification.modalLink }}"
+                            >Consulter</a>
                         {% else %}
-                            <a class="btn btn-secondary btn-xs" href="{{ notification.url }}">{{ notification.labelButton}}</a>
+                            <a class="btn btn-secondary btn-xs" href="{{ notification.url }}" data-turbo-frame="_top">{{ notification.btnLabel}}</a>
                         {% endif %}
                     </div>
                 </li>

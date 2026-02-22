@@ -59,8 +59,8 @@ class DocumentationDtoTransformer
     private function getLink(?Documentation $documentation): ?string
     {
         return ($documentation->getLink())
-        ? $this->router->generate('notification_outside_link', ['documentation' => $documentation->getId()])
-        : null;
+            ? $this->router->generate('notification_outside_link', ['documentation' => $documentation->getId()])
+            : null;
     }
 
     private function getMimeType(?string $filePath): ?string

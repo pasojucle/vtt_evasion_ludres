@@ -1,11 +1,16 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = path('check_logout') %}
-{% block form %}{% set form = null%}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = 'primary' %}
 {% block modal_title %}Déconnexion{% endblock %}
 {% block body %}
     <p>Etes-vous sûr de vouloir vous déconnecter ?</p>
 {% endblock %}
-{% block footer %}
-    {% set button_text = 'Se déconnecter' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+    <div class="flex gap-3 items-center ">
+        {{ ux_icon('lucide:log-out', {class: 'size-6'}) }} Se déconnecter
+    </div>
+    </button>
 {% endblock %}

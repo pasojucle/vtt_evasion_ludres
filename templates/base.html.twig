@@ -19,6 +19,11 @@
         {% endblock %}
     </head>
     <body {% if parameter_service.getParameterByName('TEST_MODE') %}class="testing"{% endif %}>
+        <turbo-frame 
+            id="notifications" 
+            data-controller="notifications"
+            data-notifications-url-value="{{ path('notification_list') }}"
+        ></turbo-frame>
         {% block background %}{% endblock %}
         {% set display_nav =  not isAdmin and app.request.get('_route') != 'splash' %}
         {% if display_nav %}
@@ -26,7 +31,6 @@
             {% include 'navigation/front.html.twig' %}
             {% include 'navigation/navbar.html.twig' %}
         {% endif %}
-        <a href="{{ path('notification_list') }}" data-toggle="notification"></a>
         <main{% if isAdmin %} class="admin"{% endif %}>
             {% if isAdmin %}
                 <div class="security" data-role="ROLE_USER"></div>

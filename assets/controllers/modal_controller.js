@@ -3,12 +3,15 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static targets = ["frame", "container", "dialog"];
     static values = {
-        eventName: String
+        eventName: String,
+        url: String,
     }
 
     connect() {
         this.openWithContentHandler = this.openWithContent.bind(this);
         document.addEventListener("modal:openWithContent", this.openWithContentHandler);
+        // this.followLinkHandler = this.followLink.bind(this);
+        // document.addEventListener("modal:followLink", this.followLinkHandler);
 
         this.dialogTarget.addEventListener('click', (event) => {
             if (event.target === this.dialogTarget) {
@@ -19,6 +22,7 @@ export default class extends Controller {
 
     disconnect() {
         document.removeEventListener("modal:openWithContent", this.openWithContentHandler);
+        // document.removeEventListener("modal:followLink", this.followLinkHandler);
     }
 
     open() {
@@ -27,8 +31,9 @@ export default class extends Controller {
             this.dialogTarget.showModal();
 
             setTimeout(() => {
-                this.containerTarget.classList.remove('-translate-y-full');
-                this.containerTarget.classList.add('translate-y-0');
+                // this.containerTarget.classList.remove('-translate-y-full');
+                this.containerTarget.classList.replace('-translate-y-full', 'translate-y-0');
+                this.containerTarget.classList.add('lg:translate-y-20');
             }, 10);
         }
     }
@@ -46,6 +51,7 @@ export default class extends Controller {
 
     close() {
         this.containerTarget.classList.replace('translate-y-0', '-translate-y-full');
+        this.containerTarget.classList.remove('lg:translate-y-20');
 
         setTimeout(() => {
             this.dialogTarget.close();
@@ -77,6 +83,14 @@ export default class extends Controller {
             Turbo.visit(window.location.href, { action: "replace" });
         } else {
             this.frameTarget.scrollTop = 0;
+        }
+    }
+
+    followLink(event) {
+        const url = event.currentTarget.dataset.modalUrlValue;
+        if (url) {
+            this.close();
+            window.location.href = url;
         }
     }
 }

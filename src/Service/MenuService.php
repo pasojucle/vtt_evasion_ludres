@@ -35,7 +35,7 @@ class MenuService
                 'pattern' => '/club/',
                 'subMenus' => $this->setSubMenusStatus($this->getClubSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
-                'badge' => null,
+                'badge' => 'notification_club_menu',
             ],
             [
                 'label' => 'L\'école VTT',
@@ -43,7 +43,7 @@ class MenuService
                 'pattern' => '/school/',
                 'subMenus' => $this->setSubMenusStatus($this->getSchoolSubMenu()),
                 'role' => 'PUBLIC_ACCESS',
-                'badge' => null,
+                'badge' => 'notification_documentation',
             ],
             [
                 'label' => 'Programme du club',

@@ -37,7 +37,9 @@
         <div class="block-body">
             <ul>
                 <li>
-                    <a  href="{{ path('app_logout') }}">Se déconnecter</a>
+                    <a href="{{ path('check_logout') }}"  title="Se déconnecter" data-turbo-frame="modal_content">
+                        Se déconnecter
+                    </a>
                 </li>
                 <li>
                     <a href="{{ path('home') }}">Retour au site</a>

@@ -79,9 +79,9 @@ class NotificationService
             'index' => 'NEW_SEASON_RE_REGISTRATION_ENABLED',
             'title' => sprintf('Inscription à la saison %s', $season),
             'content' => $this->messageService->getMessageByName('NEW_SEASON_RE_REGISTRATION_ENABLED_MESSAGE'),
-            'route' => 'user_registration_form',
-            'routeParams' => ['step' => 1],
-            'labelBtn' => 'S\'incrire'
+            'url' => $this->urlGenerator->generate('user_registration_form', ['step' => 1]),
+            'btnLabel' => 'S\'incrire',
+            'modalLink' => $this->urlGenerator->generate('notification_show', ['entityName' => 'NEW_SEASON_RE_REGISTRATION_ENABLED']),
         ];
     }
 
@@ -93,9 +93,11 @@ class NotificationService
             'index' => sprintf('NOTIFY_SURVEY_CHANGED_%s', $survey->getId()),
             'title' => 'Notifier les changements du sondage',
             'content' => sprintf('Le sondage <b>%s</b> a été modifié alors que certain adhérents ont déja répondu.</p><p>Voulez vous leur notifier les changements ?</p>', $survey->getTitle()),
-            'route' => 'admin_survey_history_notify',
-            'routeParams' => ['survey' => $survey->getId()],
-            'labelBtn' => 'Notifier les changements',
+            'url' => $this->urlGenerator->generate('admin_survey_history_notify', ['survey' => $survey->getId()]),
+            'btnLabel' => 'Notifier les changements',
+            'modalLink' => $this->urlGenerator->generate('notification_show', [
+                'entityName' => 'NOTIFY_SURVEY_CHANGED',
+            ]),
         ];
     }
 
@@ -109,10 +111,12 @@ class NotificationService
             'index' => sprintf('SURVEY_CHANGED_%s', $survey->getId()),
             'title' => sprintf('Modification du sondage %s', $survey->getTitle()),
             'content' => str_replace('{{ sondage }}', $survey->getTitle(), $this->messageService->getMessageByName('SURVEY_CHANGED_MESSAGE')),
-            'route' => 'survey',
-            'routeParams' => ['survey' => $survey->getId()],
-            'labelBtn' => 'Consulter',
-            'modalLink' => $this->getModalLinkFromEntity($survey),
+            'url' => $this->urlGenerator->generate('survey', ['survey' => $survey->getId()]),
+            'btnLabel' => 'Consulter',
+            'modalLink' => $this->urlGenerator->generate('notification_show', [
+                'entityName' => 'SURVEY_CHANGED',
+                'entityId' => $survey->getId(),
+            ]),
         ];
     }
 
@@ -122,11 +126,12 @@ class NotificationService
             'index' => sprintf('CLUSTER_EXPORT_%s', $cluster->getId()),
             'title' => sprintf('Export la liste %s', $cluster->getTitle()),
             'content' => str_replace('{{ groupe }}', $cluster->getTitle(), $this->messageService->getMessageByName('CLUSTER_EXPORT_MESSAGE')),
-            'route' => 'admin_cluster_export',
-            'routeParams' => ['cluster' => $cluster->getId()],
-            'labelBtn' => 'Télécharger',
+            'btnLabel' => 'Télécharger',
             'modalLink' => $this->getModalLinkFromEntity($cluster),
-            'closeAfter' => true,
+            'action' => [
+                'name' => 'click->modal#followLink',
+                'url' => $this->urlGenerator->generate('admin_cluster_export', ['cluster' => $cluster->getId()]),
+            ],
         ];
     }
 
@@ -163,9 +168,10 @@ class NotificationService
             'index' => 'pending',
             'title' => 'Notifications en attentes',
             'content' => sprintf('Vous avez %d notifications en attente de traitement', $total),
-            'url' => '#',
-            'labelBtn' => 'Voir Les notifications',
-            'toggle' => 'notifications',
+            'btnLabel' => 'Voir Les notifications',
+            'action' => [
+                'name' => 'click->notifications#toggleNotifications',
+            ],
         ];
     }
 
@@ -175,13 +181,14 @@ class NotificationService
             'index' => sprintf('documentation-%s', $documentation->getId()),
             'title' => $documentation->getName(),
             'content' => $this->messageService->getMessageByName('DOCUMENTATION_LINK_WARNING_MESSAGE'),
-            'labelBtn' => 'Consulter',
+            'btnLabel' => 'Consulter',
             'url' => $documentation->getLink(),
             'target' => '_blank',
+            'modalLink' => $this->getModalLinkFromEntity($documentation),
         ];
     }
 
-    public function getModalLinkFromEntity(string|Survey|Notification|Licence|OrderHeader|BikeRide|Cluster|Session $entity): string
+    public function getModalLinkFromEntity(Survey|Notification|Licence|OrderHeader|BikeRide|Cluster|Session|Documentation $entity): string
     {
         return $this->urlGenerator->generate('notification_show', [
             'entityName' => (new ReflectionClass($entity))->getShortName(),
