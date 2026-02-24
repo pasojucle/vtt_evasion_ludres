@@ -44,25 +44,26 @@
                                 <div class="d-flex gap-2 align-items-center">
                                     {% if documentation.link %}
                                         <a 
-                                            data-trigger="write-log"
-                                            data-entity-id="{{ documentation.id}}" 
+                                            {# data-entity-id="{{ documentation.id}}"  #}
                                             data-turbo-frame="modal_content"
                                             href="{{ documentation.link }}"
                                         >{{ documentation.name }}</a>
                                     {% else %}
-                                        <a href="{{ documentation.source }}" data-trigger="write-log" data-entity-id="{{ documentation.id}}" target="_blank">{{ documentation.name }}</a>
+                                        <a 
+                                            href="{{ documentation.source }}" 
+                                            target="_blank"
+                                            data-controller="refresh-frame"
+                                            data-refresh-frame-frame-id-value="notification-documentation-{{ documentation.id }}"
+                                            data-action="click->refresh-frame#refresh"
+                                        >{{ documentation.name }}</a>
                                     {% endif %}
-                                    {% if documentation.novelty %}<div class="novelty">N</div>{% endif %}
+                                    <turbo-frame id="notification-documentation-{{ documentation.id }}" src="{{ path('documentation_novelty', {'documentation': documentation.id}) }}"></turbo-frame>
                                 </div>
                             </li>
                         {% endfor %}
-                    </ul>
+                    </ul>                
                 {% endif %}
             </div>
-            {% if form is defined %}
-                {{ form_start(form) }}
-                {{ form_end(form) }}
-            {% endif %}
         </div>
     </div>
 {% endblock %}

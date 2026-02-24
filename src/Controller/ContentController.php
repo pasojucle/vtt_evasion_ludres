@@ -146,12 +146,11 @@ class ContentController extends AbstractController
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
-        $form = $this->logService->getForm(['entityName' => 'Documentation']);
+
         return $this->render('content/school.html.twig', [
             'content' => $this->contentRepository->findOneByRoute('school_documentation'),
-            'documentations' => $documentationDtoTransformer->fromEntities($documentationRepository->findAllAsc(), $documentationRepository->findNoveltiesByUserIds($user)),
+            'documentations' => $documentationDtoTransformer->fromEntities($documentationRepository->findAllAsc()),
             'background_color' => 'red',
-            'form' => $form->createView(),
         ]);
     }
 

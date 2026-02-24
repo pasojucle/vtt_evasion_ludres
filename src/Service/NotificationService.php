@@ -31,6 +31,7 @@ class NotificationService
         private readonly EntityManagerInterface $entityManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ReplaceKeywordsService $replaceKeywordsService,
+        private readonly LogService $logService,
     ) {
     }
 
@@ -170,7 +171,7 @@ class NotificationService
             'content' => sprintf('Vous avez %d notifications en attente de traitement', $total),
             'btnLabel' => 'Voir Les notifications',
             'action' => [
-                'name' => 'click->notifications#toggleNotifications',
+                'name' => 'click->notifications#toggleNotifications click->modal#close',
             ],
         ];
     }
@@ -182,9 +183,17 @@ class NotificationService
             'title' => $documentation->getName(),
             'content' => $this->messageService->getMessageByName('DOCUMENTATION_LINK_WARNING_MESSAGE'),
             'btnLabel' => 'Consulter',
-            'url' => $documentation->getLink(),
-            'target' => '_blank',
             'modalLink' => $this->getModalLinkFromEntity($documentation),
+            'form' => $this->logService->getForm([
+                'entityName' => 'Documentation',
+                'entityId' => $documentation->getId(),
+            ]),
+            'action' => [
+                'name' => 'click->modal#followLink',
+                'url' => $documentation->getLink(),
+                'target' => '_blank',
+                'frameId' => sprintf('notification-documentation-%s', $documentation->getId())
+            ],
         ];
     }
 

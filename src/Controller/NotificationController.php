@@ -34,9 +34,10 @@ class NotificationController extends AbstractController
         list($modalNotification, $notifications, $repeat) = $showNotification->execute();
         return new JsonResponse([
             'modal' => ($modalNotification)
-                ? $this->renderView('notification/show.modal.html.twig', [
-                    'data' => $modalNotification,
-                ])
+                ? $this->renderView(
+                    'notification/show.modal.html.twig',
+                    get_object_vars($modalNotification),
+                )
                 : null,
             'notifications' => [
                 'total' => count($notifications),
@@ -146,16 +147,18 @@ class NotificationController extends AbstractController
             default => $entityManager->getRepository($entity->getName())->find($entityId)
         };
 
-        return $this->render('notification/show.modal.html.twig', [
-            'data' => $this->notificationDtoTransformer->fromEntity($notification),
-        ]);
+        return $this->render(
+            'notification/show.modal.html.twig',
+            get_object_vars($this->notificationDtoTransformer->fromEntity($notification)),
+        );
     }
 
     #[Route('/outside/link/{documentation}', name: 'outside_link', methods: ['GET', 'POST'])]
     public function outsideLink(Documentation $documentation): Response
     {
-        return $this->render('notification/show.modal.html.twig', [
-            'data' => $this->notificationDtoTransformer->fromEntity($this->notificationService->getDocumentation($documentation)),
-        ]);
+        return $this->render(
+            'notification/show.modal.html.twig',
+            get_object_vars($this->notificationDtoTransformer->fromEntity($this->notificationService->getDocumentation($documentation))),
+        );
     }
 }

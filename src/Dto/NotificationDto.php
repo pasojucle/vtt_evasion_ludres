@@ -22,5 +22,7 @@ class NotificationDto
 
     public ?string $btnLabel = null;
 
-    public ?array $action = null;
+    public array $action = ['name' => 'click->modal#close'];
+
+    public ?FormView $form = null;
 }
