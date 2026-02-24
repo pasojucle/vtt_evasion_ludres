@@ -10,8 +10,6 @@ export default class extends Controller {
     connect() {
         this.openWithContentHandler = this.openWithContent.bind(this);
         document.addEventListener("modal:openWithContent", this.openWithContentHandler);
-        // this.followLinkHandler = this.followLink.bind(this);
-        // document.addEventListener("modal:followLink", this.followLinkHandler);
 
         this.dialogTarget.addEventListener('click', (event) => {
             if (event.target === this.dialogTarget) {
@@ -22,7 +20,6 @@ export default class extends Controller {
 
     disconnect() {
         document.removeEventListener("modal:openWithContent", this.openWithContentHandler);
-        // document.removeEventListener("modal:followLink", this.followLinkHandler);
     }
 
     open() {
@@ -87,10 +84,31 @@ export default class extends Controller {
     }
 
     followLink(event) {
-        const url = event.currentTarget.dataset.modalUrlValue;
+        const url = event.currentTarget.dataset.modalUrl;
+        const target = event.currentTarget.dataset.modalLinkTarget || '_self';
+        const frameId = event.currentTarget.dataset.modalFrameId;
+        console.log("frameId", frameId)
         if (url) {
             this.close();
-            window.location.href = url;
+            if (target === '_blank') {
+                window.open(url, '_blank');
+            } else {
+                window.location.href = url;
+            }
+        }
+        if (frameId) {
+            const frame = document.getElementById(frameId);
+            console.log("frame", frame)
+            if (frame) {
+                setTimeout(() => {
+                    try {
+                        frame.reload();
+                        console.log("Appel de reload() effectué");
+                    } catch (e) {
+                        console.error("Erreur lors du reload :", e);
+                    }
+                }, 500);
+            }
         }
     }
 }

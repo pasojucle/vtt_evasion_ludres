@@ -8,7 +8,6 @@
     <ul>
         {% if notifications is defined %}
             {% for notification in notifications %}
-                {% dump(notification) %}
                 <li class="notification-body">
                     <div class="notification-text">{{ notification.title}}</div>
                     <div class="notification-footer">

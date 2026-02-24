@@ -7,6 +7,7 @@ use App\Entity\Log;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
@@ -108,15 +109,52 @@ class DocumentationRepository extends ServiceEntityRepository
        ;
     }
 
-    /**
-     * @return int[] Returns an array of integer
-     */
-    public function findNoveltiesByUserIds(User $user): array
+    // /**
+    //  * @return int[] Returns an array of integer
+    //  */
+    // public function findNoveltiesByUserIds(User $user): array
+    // {
+    //     return $this->quertNoveltiesByUser($user)
+    //         ->select('d.id')
+    //         ->getQuery()
+    //         ->getSingleColumnResult()
+    //    ;
+    // }
+
+    public function isNoveltyByUser(User $user, Documentation $documentation): bool
     {
-        return $this->quertNoveltiesByUser($user)
-            ->select('d.id')
-            ->getQuery()
-            ->getSingleColumnResult()
-       ;
+        try {
+            $result = $this->createQueryBuilder('d')
+                ->leftjoin(
+                    Log::class,
+                    'log',
+                    'WITH',
+                    (new Expr())->andX(
+                        (new Expr())->eq('d.id', 'log.entityId'),
+                        (new Expr())->eq('log.entity', ':entityName'),
+                        (new Expr())->eq('log.user', ':user')
+                    )
+                )
+                ->andWhere(
+                    (new Expr())->isNotNull('d.updateAt'),
+                    (new Expr())->eq('d.id', ':entityId'),
+                    (new Expr())->orX(
+                        (new Expr())->isNull('log.id'),
+                        (new Expr())->lt('log.viewAt', 'd.updateAt'),
+                    ),
+                )
+                ->setParameters(new ArrayCollection([
+                    new Parameter('user', $user),
+                    new Parameter('entityName', 'Documentation'),
+                    new Parameter('entityId', $documentation->getId()),
+                ]))
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } catch (NonUniqueResultException) {
+            $result = null;
+        }
+
+        return $result !== null;
     }
 }

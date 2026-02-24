@@ -20,40 +20,39 @@ class DocumentationDtoTransformer
     ) {
     }
 
-    public function fromEntity(?Documentation $documentation, bool $novelty = false): DocumentationDto
+    public function fromEntity(?Documentation $documentation): DocumentationDto
     {
         $fileName = $documentation?->getFilename();
-        $filePath = ($documentation?->getFilename()) ? $this->projectDirService->path('documentation', $fileName) : null;
+        $filePath = ($fileName) ? $this->projectDirService->path('documentation', $fileName) : null;
 
         $documentationDto = new DocumentationDto();
         if ((new ReflectionProperty($documentation, 'id'))->isInitialized($documentation)) {
             $documentationDto->id = $documentation->getId();
             $documentationDto->name = $documentation->getName();
             $documentationDto->filename = $fileName;
-            $documentationDto->source = $this->getSource($filePath);
+            $documentationDto->source = $this->getSource($documentation);
             $documentationDto->mimeType = $this->getMimeType($filePath);
             $documentationDto->link = $this->getLink($documentation);
-            $documentationDto->novelty = $novelty;
         }
 
         return $documentationDto;
     }
 
-    public function fromEntities(Paginator|Collection|array $documentationEntities, array $linkViewedIds = []): array
+    public function fromEntities(Paginator|Collection|array $documentationEntities): array
     {
         $documentations = [];
         foreach ($documentationEntities as $documentationEntity) {
-            $documentations[] = $this->fromEntity($documentationEntity, in_array($documentationEntity->getId(), $linkViewedIds));
+            $documentations[] = $this->fromEntity($documentationEntity);
         }
 
         return $documentations;
     }
 
-    private function getSource(?string $filePath): ?string
+    private function getSource(?Documentation $documentation): ?string
     {
-        return ($filePath)
-        ? $this->router->generate('get_file', ['filename' => base64_encode($filePath)])
-        : null;
+        return ($documentation->getFilename())
+            ? $this->router->generate('documentation_show', ['documentation' => $documentation->getId()])
+            : null;
     }
 
     private function getLink(?Documentation $documentation): ?string

@@ -36,8 +36,10 @@ class NotificationDtoTransformer
         $notificationDto->title = $notification->getTitle();
         $notificationDto->content = $notification->getContent();
         $notificationDto->action = [
-            'name' => 'click->modal#writeLlog',
+            'name' => 'click->modal#writeLog click->modal#close',
             'url' => $this->urlGenerator->generate('log_write'),
+            'entityName' => 'Notification',
+            'entityId' => $notification->getId(),
         ];
         
         $notificationDto->btnLabel = 'J\'ai compris';
@@ -131,6 +133,9 @@ class NotificationDtoTransformer
         }
         if (array_key_exists('action', $data)) {
             $notificationDto->action = $data['action'];
+        }
+        if (array_key_exists('form', $data)) {
+            $notificationDto->form = $data['form']->createView();
         }
         
         return $notificationDto;

@@ -1,35 +1,30 @@
 {% extends 'base_modal_stimulus.html.twig' %}
 {% set type = 'primary' %}
-{% block modal_title %}{{ data.title }}{% endblock %}
+{% block modal_title %}{{ title }}{% endblock %}
 {% block body %}
-    <p>{{ data.content|raw }}</p>
+    <p>{{ content|raw }}</p>
 {% endblock %}
 {% block action %}
-    {% if data.url is not null %}
+    {% if url is not null %}
         <a
-            class="flex justify-center text-white bg-{{ type}}"
-            href="{{ data.url }}"
-            data-action="click->modal#close"
-            {% if data.target is not null %}
-                target={{ data.target }}
-            {% else %}
-                data-turbo-frame="_top"
-            {% endif %}
-        >
-            <div class="flex gap-3 items-center ">
-                {{ data.btnLabel }}
-            </div>
-        </a>
-    {% elseif data.action is not null %}
+            href="{{ url }}"
+            data-turbo-frame="_top"
+    {% else %}
         <button 
-            type="button"
+            type={{form is not null ? 'submit' : 'button'}}
+    {% endif %}
             class="flex justify-center text-white bg-{{ type}}"
-            data-action={{ data.action.name }}
-            {% if data.action.url is defined %}data-modal-url-value="{{ data.action.url }}"{% endif %}
+            data-action="{{ action.name }}"
+            {% if action.target is not null %}data-modal-link-target={{ action.target }}{% endif %}
+            {% if action.url is defined %}data-modal-url="{{ action.url }}"{% endif %}
+            {% if action.frameId is defined %}data-modal-frame-id="{{ action.frameId }}"{% endif %}
         >
             <div class="flex gap-3 items-center ">
-                {{ data.btnLabel }}
+                {{ btnLabel }}
             </div>
+    {% if url is not null %}
+        </a>
+    {% else %}
         </button>
     {% endif %}
 {% endblock %}
