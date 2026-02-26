@@ -37,19 +37,21 @@ class GetFramersFiltered
     {
         $session = $request->getSession();
         $filters = $this->getFilters($request, $bikeRide, $filtered);
-        $form = $this->createForm($filters);
+        $form = $this->createForm($bikeRide, $filters);
         $form->handleRequest($request);
         if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
             $filters = $form->getData();
             $filtered = true;
             $request->query->set('p', 1);
-            $form = $this->createForm($filters);
+            $session->set(self::FILTER_NAME, $filters);
+            return ['redirect' => true];
         }
         $session->set(self::FILTER_NAME, $filters);
         $users = $this->userRepository->findFramers($filters)->getQuery()->getResult();
         $this->setRedirect($request, $bikeRide);
 
         return [
+            'redirect' => false,
             'framers' => $this->addUserAvailability($this->userDtoTransformer->fromEntities($users), $filters),
             'form' => $form->createView(),
         ];
@@ -71,10 +73,12 @@ class GetFramersFiltered
             $availability = (array_key_exists($userId, $sessionsByUser))
                 ? $sessionsByUser[$userId]->availability
                 : [
+                    'enum' => AvailabilityEnum::UNDEFINE,
                     'class' => ['badge' => 'person person-rays', 'icon' => '<i class="fa-solid fa-person-rays"></i>'],
                     'text' => $this->translator->trans('session.availability.undefined'),
                     'value' => 0,
                 ];
+            dump($this->availabilityIsInCriteria($filters['availability'], $availability));
 
             if ($this->availabilityIsInCriteria($filters['availability'], $availability)) {
                 $userWithAvailability[] = [
@@ -87,7 +91,7 @@ class GetFramersFiltered
         return $userWithAvailability;
     }
 
-    private function availabilityIsInCriteria(null|int|string $filter, array $availability)
+    private function availabilityIsInCriteria(null|int|string|AvailabilityEnum $filter, array $availability)
     {
         if (null === $filter) {
             return true;
@@ -95,7 +99,7 @@ class GetFramersFiltered
         if ($filter === $availability['value']) {
             return true;
         }
-        if (is_string($filter) && array_key_exists('enum', $availability) && AvailabilityEnum::tryFrom($filter) === $availability['enum']) {
+        if ($filter instanceof AvailabilityEnum && array_key_exists('enum', $availability) && $filter === $availability['enum']) {
             return true;
         }
         return false;
@@ -116,14 +120,14 @@ class GetFramersFiltered
         foreach ($framers as $framer) {
             $results[] = [
                 'value' => $framer['user']->getId(),
-                'text' => $framer['user']->GetFirstIdentity()->getName() . ' ' . $framer['user']->GetFirstIdentity()->getFirstName(),
+                'text' => $framer['user']->getIdentity()->getName() . ' ' . $framer['user']->getIdentity()->getFirstName(),
             ];
         }
 
         return $results;
     }
 
-    private function createForm(array $filters): FormInterface
+    private function createForm(BikeRide $bikeRide, array $filters): FormInterface
     {
         return $this->formFactory->create(FramerFilterType::class, $filters, [
             'filters' => $filters,

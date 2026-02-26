@@ -8,6 +8,7 @@ use App\Entity\ParameterGroup;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MessageFilterType extends AbstractType
 {
@@ -22,8 +23,22 @@ class MessageFilterType extends AbstractType
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
+                'attr' => [
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
+                ],
                 'required' => false,
             ])
             ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'issues' => [],
+            'attr' => [
+                'data-controller' => "filter",
+            ],
+        ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Entity\Enum\OrderStatusEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderFilterType extends AbstractType
 {
@@ -20,9 +21,20 @@ class OrderFilterType extends AbstractType
                 'class' => OrderStatusEnum::class,
                 'attr' => [
                     'class' => 'btn',
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
                 ],
                 'required' => false,
             ])
             ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'attr' => [
+                'data-controller' => "filter",
+            ],
+        ]);
     }
 }

@@ -5,20 +5,22 @@
     <img src="/logos/logo.jpg" alt="VTT EVASION LUDRES">
 </div>
 
-<nav class="admin">
+<nav class="admin" data-controller="nav-groups">
     {% for key, group in groups %}
         {% if group.subMenus is not empty %}
-            {% set angle = (key == menu_actived) ? 'fas fa-angle-up' : 'fas fa-angle-down' %}
             {% set body_class = (key == menu_actived) ? 'down' : 'up' %}
-            <div class="nav-group block" data-group="{{ key }}" data-toggle="block-body">
-            <a href="" data-action="toggle-down">
-                <div class="block-title">
+            <div class="nav-group block" data-group="{{ key }}" data-nav-groups-target="group">
+            <a href="" data-action="click->nav-groups#toggle">
+                <div class="block-title flex items-center">
                     <h2>{{ group.label|trans }}</h2>
-                    <span class="tools angle">
-                        <i class="{{ angle }}"></i>
+                    <span
+                        data-nav-groups-target="chevron"
+                        {% if key == menu_actived%}class="ml-auto rotate-90"{% else %}class="ml-auto rotate-0"{% endif %}
+                    >
+                        {{ ux_icon('lucide:chevron-down', {class: 'size-6'}) }}
                     </span>
                 </div></a>
-                <div class="block-body {{ body_class }}" data-target="block-body">
+                <div class="block-body {{ body_class }}" data-nav-groups-target="content">
                     <ul>
                     {% for menu in group.subMenus %}
                         <li>
