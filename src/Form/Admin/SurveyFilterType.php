@@ -21,7 +21,10 @@ class SurveyFilterType extends AbstractType
                 'choices' => $options['issues'],
                 'choice_label' => 'content',
                 'autocomplete' => true,
-
+                'attr' => [
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
+                ],
             ])
             ->add('value', ChoiceType::class, [
                 'label' => 'Réponse',
@@ -29,7 +32,10 @@ class SurveyFilterType extends AbstractType
                 'placeholder' => 'Toutes',
                 'autocomplete' => true,
                 'required' => false,
-
+                'attr' => [
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
+                ],
             ])
         ;
     }
@@ -38,6 +44,9 @@ class SurveyFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'issues' => [],
+            'attr' => [
+                'data-controller' => "filter",
+            ],
         ]);
     }
 }

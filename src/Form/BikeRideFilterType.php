@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BikeRideFilterType extends AbstractType
 {
@@ -23,6 +24,8 @@ class BikeRideFilterType extends AbstractType
                 'choices' => array_flip(BikeRide::PERIODS),
                 'attr' => [
                     'class' => 'btn',
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
                 ],
             ])
             ->add('date', HiddenType::class)
@@ -52,5 +55,14 @@ class BikeRideFilterType extends AbstractType
                 ;
             }
         });
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'attr' => [
+                'data-controller' => "filter",
+            ],
+        ]);
     }
 }

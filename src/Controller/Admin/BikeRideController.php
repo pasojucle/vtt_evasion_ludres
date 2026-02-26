@@ -168,7 +168,14 @@ class BikeRideController extends AbstractController
         bool $filtered
     ) {
         $params = $getFramersFiltered->list($request, $bikeRide, $filtered);
+        if ($params['redirect']) {
+            return $this->redirectToRoute('admin_bike_ride_framer_list', [
+                'bikeRide' => $bikeRide->getId(),
+                'filtered' => true,
+            ]);
+        }
         $params['bike_ride'] = $this->bikeRideDtoTransformer->fromEntity($bikeRide);
+
         return $this->render('bike_ride/admin/framer_list.html.twig', $params);
     }
 
