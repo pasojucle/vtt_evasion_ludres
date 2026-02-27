@@ -26,7 +26,11 @@ class UserFilterType extends AbstractType
     {
         $builder
             ->add('user', UserAutocompleteField::class, [
-                'autocomplete_url' => $this->urlGenerator->generate($options['remote_route'], $options['filters'])
+                'autocomplete_url' => $this->urlGenerator->generate($options['remote_route'], $options['filters']),
+                'attr' => [
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
+                ],
             ])
             ->add('levels', ChoiceType::class, [
                 'label' => false,
@@ -36,6 +40,8 @@ class UserFilterType extends AbstractType
                 'autocomplete' => true,
                 'attr' => [
                     'placeholder' => 'Sélectionnez un niveau',
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
                 ],
             ])
             ;
@@ -51,6 +57,10 @@ class UserFilterType extends AbstractType
                         'choices' => $options['status_choices'],
                         'autocomplete' => true,
                         'required' => $options['status_is_require'],
+                        'attr' => [
+                            'data-controller' => "filter",
+                            'data-action' => 'change->filter#change'
+                        ],
                     ])
                 ;
             }
@@ -64,7 +74,9 @@ class UserFilterType extends AbstractType
                         'autocomplete' => true,
                         'required' => false,
                         'attr' => [
-                           'placeholder' => 'Selectionnez une permission',
+                            'placeholder' => 'Selectionnez une permission',
+                            'data-controller' => "filter",
+                            'data-action' => 'change->filter#change'
                         ],
                     ])
                 ;
@@ -81,6 +93,9 @@ class UserFilterType extends AbstractType
             'status_placeholder' => '',
             'filters' => [],
             'remote_route' => '',
+            'attr' => [
+                'data-controller' => "filter",
+            ],
         ]);
     }
 }

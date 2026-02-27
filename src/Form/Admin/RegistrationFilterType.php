@@ -7,6 +7,7 @@ namespace App\Form\Admin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RegistrationFilterType extends AbstractType
 {
@@ -22,6 +23,8 @@ class RegistrationFilterType extends AbstractType
                 ],
                 'attr' => [
                     'class' => 'btn',
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
                 ],
                 'required' => false,
             ])

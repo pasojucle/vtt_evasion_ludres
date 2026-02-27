@@ -34,6 +34,8 @@ class ParticipationFilterType extends AbstractType
                 'attr' => [
                     'class' => 'js-datepicker',
                     'autocomplete' => 'off',
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
                 ],
                 'row_attr' => [
                     'class' => 'form-group-inline',
@@ -47,38 +49,49 @@ class ParticipationFilterType extends AbstractType
                 'attr' => [
                     'class' => 'js-datepicker',
                     'autocomplete' => 'off',
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
                 ],
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
                 'constraints' => [new Period()],
             ])
-            ->add('bikeRideType', BikeRideTypeAutocompleteField::class)
+            ->add('bikeRideType', BikeRideTypeAutocompleteField::class, [
+                'attr' => [
+                    'data-controller' => "filter",
+                    'data-action' => 'change->filter#change'
+                ],
+            ])
             ;
 
         if (null === $options['user']) {
             $builder
-                    ->add('levels', ChoiceType::class, [
-                        'label' => false,
-                        'multiple' => true,
-                        'choices' => $this->levelService->getLevelChoices(),
-                        'required' => false,
-                        'autocomplete' => true,
-                        'attr' => [
-                            'data-width' => '100%',
-                            'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
-                        ],
-                    ])
-                    ->add('practice', EnumType::class, [
-                        'label' => false,
-                        'class' => PracticeEnum::class,
-                        'autocomplete' => true,
-                        'attr' => [
-                            'data-width' => '100%',
-                            'data-placeholder' => 'Sélectionnez une pratique',
-                        ],
-                        'required' => false,
-                    ]);
+                ->add('levels', ChoiceType::class, [
+                    'label' => false,
+                    'multiple' => true,
+                    'choices' => $this->levelService->getLevelChoices(),
+                    'required' => false,
+                    'autocomplete' => true,
+                    'attr' => [
+                        'data-width' => '100%',
+                        'data-placeholder' => 'Sélectionnez un ou plusieurs niveaux',
+                        'data-controller' => "filter",
+                        'data-action' => 'change->filter#change'
+                    ],
+                ])
+                ->add('practice', EnumType::class, [
+                    'label' => false,
+                    'class' => PracticeEnum::class,
+                    'autocomplete' => true,
+                    'attr' => [
+                        'data-width' => '100%',
+                        'data-placeholder' => 'Sélectionnez une pratique',
+                        'data-controller' => "filter",
+                        'data-action' => 'change->filter#change'
+                    ],
+                    'required' => false,
+                ]);
         }
     }
 
@@ -86,6 +99,9 @@ class ParticipationFilterType extends AbstractType
     {
         $resolver->setDefaults([
             'user' => null,
+            'attr' => [
+                'data-controller' => "filter",
+            ],
         ]);
     }
 }

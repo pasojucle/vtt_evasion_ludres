@@ -23,7 +23,7 @@ class NotificationController extends AbstractController
     {
     }
 
-    #[Route('s', name: 'list', methods: ['GET'])]
+    #[Route('', name: 'list', methods: ['GET'])]
     #[IsGranted('MODAL_WINDOW_LIST')]
     public function list(
         NotificationRepository $notificationRepository,

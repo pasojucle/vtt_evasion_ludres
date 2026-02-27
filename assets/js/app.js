@@ -7,33 +7,33 @@ import { switchEventListener } from './switch.js';
 var formValidator;
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    $(document).on('change', '.filters select, .filters .btn, .filters input', submitFom);
-    $(document).on('change', '.form-modifier', formModifier);
-    $(document).on('click', 'button.form-modifier', formModifier);
-    $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
-    $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
-    $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
+    // $(document).on('change', '.filters select, .filters .btn, .filters input', submitFom);
+    // $(document).on('change', '.form-modifier', formModifier);
+    // $(document).on('click', 'button.form-modifier', formModifier);
+    // $(document).on('click', '.orderline-quantity, .orderline-remove', setOrderLineQuantity);
+    // $(document).on('click', '.order-status, .delete-error', anchorAsynchronous);
+    // $(document).on('click', '*[data-action="toggle-down"]', toggleDown);
 
-    if (window.matchMedia("(min-width: 800px)").matches) {
-        $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
-        $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
-    }
+    // if (window.matchMedia("(min-width: 800px)").matches) {
+    //     $(document).on('mouseenter', '.block-flash .block-title, .block-flash .block-body', addUp);
+    //     $(document).on('mouseleave', '.block-flash .block-title, .block-flash .block-body', addDown);
+    // }
     
-    initAddItemLink();
-    addDeleteLink();
+    // initAddItemLink();
+    // addDeleteLink();
 
-    document.querySelectorAll('.check-toggle').forEach(element => {
-        element.addEventListener('change', handleCheckChange);
-        formToggle(element);
-    })
-    const form = document.querySelector('form');
-    if (form) {
-        formValidator = new Form(form);
-    }
+    // document.querySelectorAll('.check-toggle').forEach(element => {
+    //     element.addEventListener('change', handleCheckChange);
+    //     formToggle(element);
+    // })
+    // const form = document.querySelector('form');
+    // if (form) {
+    //     formValidator = new Form(form);
+    // }
 
-    document.querySelectorAll('.foreign-born').forEach((element) => {
-        element.addEventListener('click', toggleBirthPlace);
-    })
+    // document.querySelectorAll('.foreign-born').forEach((element) => {
+    //     element.addEventListener('click', toggleBirthPlace);
+    // })
 });
 
 
@@ -54,13 +54,6 @@ const toggleBirthPlace = () => {
     formValidator.validate();
 }
 
-function submitFom() {
-    console.log("submitFom")
-    const form = $(this).closest('form')[0];
-    if (form) {
-        form.requestSubmit();
-    }
-}
 
 function formModifier(event) {
     console.log("formModifier")
@@ -139,35 +132,8 @@ function anchorAsynchronous(e) {
       });
 }
 
-function toggleDown(e) {
-    e.preventDefault();
-    const icon = $(this).find('i');
-    const block = $(this).closest('[data-toggle]');
-    const blockBody = block.find('.block-body, *[data-target="'+block.data('toggle')+'"]');
-    blockBody.toggleClass('down').toggleClass('up');
-    $('.down[data-target="'+block.data('toggle')+'"]').each(function() {
-        if (!$(this).is(blockBody)) {
-            $(this).removeClass('down').addClass('up');
-        }
-    });
-    const regex = /up|down|fas|far|\s/g;
-    const className = icon.attr('class').replace(regex, '');
-    icon.toggleClass(className+'up').toggleClass(className+'down');
-    $('.'+className+'up').each(function() {
-        if (!$(this).is(icon)) {
-            $(this).removeClass(className+'up').addClass(className+'down');
-        }
-    });
-    const cookieValue =  (block.hasClass('nav-group') && blockBody.hasClass('down')) ? block.data('group') : null;
-    // document.cookie = "admin_menu_actived = "+cookieValue;
-    setCookie('admin_menu_actived', cookieValue, 30);
-}
-function setCookie(cName, cValue, expDays) {
-    let date = new Date();
-    date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
-    const expires = "expires=" + date.toUTCString();
-    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/; url=" + location.hostname;
-}
+
+
 
 function addDown(e) {
     $(this).closest('div.block').find('i').removeClass('fa-caret-square-up').addClass('fa-caret-square-down');

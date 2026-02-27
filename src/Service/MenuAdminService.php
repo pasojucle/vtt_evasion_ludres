@@ -107,7 +107,7 @@ class MenuAdminService
             [
                 'label' => 'Pop up',
                 'route' => 'admin_notification_list',
-                'pattern' => '/modal/',
+                'pattern' => '/notification/',
                 'role' => 'MODAL_WINDOW_LIST',
             ],
             [
