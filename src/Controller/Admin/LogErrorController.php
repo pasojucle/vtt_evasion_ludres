@@ -46,28 +46,28 @@ class LogErrorController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/log/error/delete/{error}/{total}', name: 'admin_log_error_delete', methods: ['GET'])]
+    #[Route('/admin/log/error/delete/{error}', name: 'admin_log_error_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function delete(
         EntityManagerInterface $entityManager,
         Request $request,
         LogError $error,
-        int $total
     ): Response {
         $statusCode = $error->getStatusCode();
-
         $entityManager->remove($error);
         $entityManager->flush();
 
+        $total = (int) $request->request->get('total', 1);
         --$total;
-        $currentPage = (int) $request->query->get('p');
+        $currentPage = (int) $request->request->get('p', 1);
         if (0 === $total % PaginatorService::PAGINATOR_PER_PAGE && $total / PaginatorService::PAGINATOR_PER_PAGE < $currentPage) {
-            $request->query->set('p', --$currentPage);
+            --$currentPage;
         }
 
-        $params = $this->getLogErrors->execute($statusCode, $request);
-
-        return $this->render('log_error/admin/list.html.twig', $params);
+        return $this->redirectToRoute('admin_log_errors', [
+            'statusCode' => $statusCode,
+            'p' => $currentPage,
+        ], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/admin/log/errors/delete/{statusCode}', name: 'admin_log_errors_delete', methods: ['GET'])]

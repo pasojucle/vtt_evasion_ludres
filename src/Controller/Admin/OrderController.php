@@ -74,7 +74,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['GET'], requirements:['status' => OrderStatusEnum::VALIDED->value . '|' . OrderStatusEnum::COMPLETED->value])]
+    #[Route('/admin/command/status/{orderHeader}/{status}', name: 'admin_order_status', methods: ['POST'], requirements:['status' => OrderStatusEnum::VALIDED->value . '|' . OrderStatusEnum::COMPLETED->value])]
     #[IsGranted('PRODUCT_EDIT', 'orderHeader')]
     public function adminOrderValidate(
         Request $request,
@@ -85,13 +85,8 @@ class OrderController extends AbstractController
         $request->query->set('p', $filters['p']);
         $orderHeader->setStatus($status);
         $this->entityManager->flush();
-        $query = $this->orderHeaderRepository->findOrdersQuery($filters);
-        $orders = $this->paginator->paginate($query, $request, PaginatorService::PAGINATOR_PER_PAGE);
 
-        return $this->render('order/admin/list.html.twig', [
-            'orders' => $this->orderDtoTransformer->fromEntities($orders),
-            'paginator' => $this->paginatorDtoTransformer->fromEntities($orders, array_merge($filters, ['filtered' => true]), 'admin_orders'),
-        ]);
+        return $this->redirectToRoute('admin_orders', ['filtered' => 1], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/admin/commande/{orderHeader}', name: 'admin_order', methods: ['GET', 'POST'])]

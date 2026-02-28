@@ -1,11 +1,17 @@
-{% extends 'base_modal.html.twig' %}
-{% set button_href = path('admin_coverage_validate', {'licence' : licence.id}) %}
-{% block form %}{% set form = form %}{% endblock %}
-{% block modal_title %}Valider l'assurance {{ app.session.get('currentSeason') }} de {{ fullname }}{% endblock %}
+{% extends 'base_modal_stimulus.html.twig' %}
+{% set type = 'success' %}
+{% block modal_title %}Valider une assurance{% endblock %}
 {% block body %}
-
+    <p>Confirmez-vous la validation de l'assurence {{ app.session.get('currentSeason') }} de {{ fullname }} ?</p>
 {% endblock %}
-{% block footer %}
-    {% set button_text = '<i class="fas fa-check"></i> Valider' %}
-    {{ parent() }}
+{% block action %}
+    <button 
+        type="submit"
+        class="flex justify-center text-white bg-{{ type}}"
+    >
+        <div class="flex gap-3 items-center ">
+            {{ ux_icon('lucide:check-check', {class: 'size-6'}) }} 
+            <div>Valider</div>
+        </div>
+    </button>
 {% endblock %}
