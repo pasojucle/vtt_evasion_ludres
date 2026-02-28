@@ -34,6 +34,7 @@ class OrderType extends AbstractType
                         'label_html' => true,
                         'attr' => [
                             'class' => 'btn btn-primary float-right',
+                            'data-turbo-frame' => '_top'
                         ],
                     ]);
             }

@@ -23,6 +23,7 @@ class OrderLineType extends AbstractType
                 'attr' => [
                     'class' => 'orderline-quantity',
                     'min' => 1,
+                    'onchange' => 'this.form.requestSubmit()',
                 ],
             ])
             ->add('remove', SubmitType::class, [
