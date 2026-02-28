@@ -42,31 +42,31 @@ class CoverageController extends AbstractController
     ): Response {
         $userDto = $userDtoTransformer->fromEntity($licence->getUser());
         $fullName = $userDto->member->fullName;
+        $response = new Response("OK", Response::HTTP_OK);
         $form = $this->createForm(FormType::class, null, [
-            'action' => $this->generateUrl(
-                'admin_coverage_validate',
-                [
-                    'licence' => $licence->getId(),
-                ]
-            ),
+            'action' => $request->getUri(),
+            'attr' => ['data-action' => 'turbo:submit-end->modal#handleFormSubmit']
         ]);
         $form->handleRequest($request);
-        if ($request->isMethod('POST') && $form->isSubmitted() && $form->isValid()) {
-            $validateCoverage->execute($request, $licence);
+        if ($request->isMethod('POST') && $form->isSubmitted()) {
+            if ($form->isValid()) {
+                $validateCoverage->execute($request, $licence);
 
-            $this->addFlash('success', "L'assance de {$fullName} a bien été validée");
+                $this->addFlash('success', "L'assance de {$fullName} a bien été validée");
 
-            return $this->redirectToRoute('admin_coverage_list', [
-                'filtered' => true,
-                'p' => $request->query->get('p'),
-            ]);
+                return $this->redirectToRoute('admin_coverage_list', [
+                    'filtered' => true,
+                    'p' => $request->query->get('p'),
+                ]);
+            }
+            $response = new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $this->render('coverage/admin/validate.modal.html.twig', [
             'form' => $form->createView(),
             'licence' => $licence,
             'fullname' => $fullName,
-        ]);
+        ], $response);
     }
 
     #[Route('/export', name: 's_export', methods: ['GET'])]

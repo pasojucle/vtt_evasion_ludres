@@ -30,14 +30,25 @@
                             </a>
                         {% endif %}
                         {% if order.status == enum('App\\Entity\\Enum\\OrderStatusEnum').VALIDED %}
-                            <a class="btn btn-primary order-status btn-fixed" href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED.value})}}" title="Cloturer" data-turbo-frame="_top">
+                            <a 
+                                class="btn btn-primary order-status btn-fixed" 
+                                href="{{ path('admin_order_status', {'orderHeader': order.id, 'status': enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED.value})}}" 
+                                title="Cloturer" 
+                                data-turbo-method="post"
+                                data-turbo-frame="order-list"
+                            >
                                 <div><i class="fas fa-check"></i> Cloturer</div>
                             </a>
                         {% endif %}
                     </div>
                     <div>
                         {% if order.status not in [enum('App\\Entity\\Enum\\OrderStatusEnum').COMPLETED, enum('App\\Entity\\Enum\\OrderStatusEnum').CANCELED] %}
-                            <a class="btn btn-danger" href="{{ path('order_delete', {'orderHeader': order.id}) }}" data-turbo-frame="modal_content" title="Annuler">
+                            <a 
+                                class="btn btn-danger" 
+                                href="{{ path('order_delete', {'orderHeader': order.id}) }}" 
+                                data-turbo-frame="modal_content" 
+                                title="Annuler"
+                            >
                                 <i class="fas fa-times"></i>
                             </a>
                         {% endif %}
