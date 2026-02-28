@@ -19,6 +19,7 @@ use App\Repository\SessionRepository;
 use App\Service\LevelService;
 use App\Service\ParameterService;
 use App\UseCase\CronTab\CronTabLog;
+use App\UseCase\Dashboard\GetSchoolBikeRideClusters;
 use App\UseCase\User\GetCurrentSeasonUsers;
 use DateInterval;
 use DateTime;
@@ -51,46 +52,12 @@ class DashboardController extends AbstractController
     #[Route('/bikeRide/{bikeRide}', name: '_next_bike_rides', methods: ['GET'], options:['expose' => true])]
     #[IsGranted('BIKE_RIDE_LIST')]
     public function nextSchoolBikeRide(
-        BikeRideDtoTransformer $bikeRideDtoTransformer,
-        BikeRideRepository $bikeRideRepository,
-        SessionRepository $sessionRepository,
-        LevelService $levelService,
+        GetSchoolBikeRideClusters $getSchoolBikeRideClusters,
+        BikeRide $bikeRide,
     ): Response {
-        $bikeRides = [];
-        /** @var BikeRide $bikeRide */
-        foreach ($bikeRideRepository->findNextBikeRides() as $bikeRide) {
-            $isSchoolBikeRide = RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration();
-            $sessionsByClusters = [];
-            /** @var Session $session */
-            foreach ($sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
-                $clusterId = ($isSchoolBikeRide && Level::TYPE_FRAME === $session->getUser()->getLevel()->getType())
-                    ? 'framers'
-                    : $session->getCluster()->getId();
-                $sessionsByClusters[$clusterId][] = $session;
-            }
-            $clusters = [];
-            foreach ($bikeRide->getClusters() as $clusterEntity) {
-                $clusterId = ($isSchoolBikeRide && !$clusterEntity->getLevel())
-                    ? 'framers'
-                    : $clusterEntity->getId();
-                $sessions = (array_key_exists($clusterId, $sessionsByClusters))
-                    ? $sessionsByClusters[$clusterId]
-                    : [];
-                $clusters[] = [
-                    'title' => $clusterEntity->getTitle(),
-                    'level' => ['colors' => $levelService->getColors($clusterEntity->getLevel()?->getColor())],
-                    'sessions' => $sessions];
-            }
-
-            $bikeRides[] = [
-                'bikeRide' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
-                'clusters' => $clusters,
-            ];
-        }
-
         return $this->render('dashboard/next_bike_rides.html.twig', [
             'bikeRideId' => $bikeRide->getId(),
-            'clusters' => $clusterDtoTransformer->fromBikeRide($bikeRide)
+            'clusters' => $getSchoolBikeRideClusters->execute($bikeRide),
         ]);
     }
 

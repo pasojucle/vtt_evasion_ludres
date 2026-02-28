@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\UseCase\Order;
 
-use DateTime;
-use App\Service\MailerService;
 use App\Entity\Enum\OrderStatusEnum;
+use App\Service\MailerService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -20,7 +21,6 @@ class OrderEdit
         private MailerService $mailerService,
         private UrlGeneratorInterface $urlGenerator
     ) {
-
     }
 
     public function execute(FormInterface $form): string | false
@@ -69,7 +69,9 @@ class OrderEdit
     private function deleteLine(FormInterface $form): string|false
     {
         foreach ($form->get('orderLines') as $lineForm) {
-            if ($lineForm->get('remove')->isClicked()) {
+            /** @var ?SubmitButton  $remove */
+            $remove = ($form->has('remove') && $form->get('remove') instanceof ClickableInterface) ? $form->get('remove') : null;
+            if ($remove && $remove->isClicked()) {
                 $orderLine = $lineForm->getData();
                 
                 $this->entityManager->remove($orderLine);
