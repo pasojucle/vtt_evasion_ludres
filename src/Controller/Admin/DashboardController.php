@@ -50,17 +50,18 @@ class DashboardController extends AbstractController
         $bikeRides = [];
         /** @var BikeRide $bikeRide */
         foreach ($bikeRideRepository->findNextBikeRides() as $bikeRide) {
+            $isSchoolBikeRide = RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration();
             $sessionsByClusters = [];
             /** @var Session $session */
             foreach ($sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
-                $clusterId = (Level::TYPE_FRAME === $session->getUser()->getLevel()->getType())
+                $clusterId = ($isSchoolBikeRide && Level::TYPE_FRAME === $session->getUser()->getLevel()->getType())
                     ? 'framers'
                     : $session->getCluster()->getId();
                 $sessionsByClusters[$clusterId][] = $session;
             }
             $clusters = [];
             foreach ($bikeRide->getClusters() as $clusterEntity) {
-                $clusterId = (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration() && !$clusterEntity->getLevel())
+                $clusterId = ($isSchoolBikeRide && !$clusterEntity->getLevel())
                     ? 'framers'
                     : $clusterEntity->getId();
                 $sessions = (array_key_exists($clusterId, $sessionsByClusters))
