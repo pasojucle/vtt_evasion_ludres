@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCase\Dashboard;
 
 use App\Entity\BikeRide;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\Session;
 use App\Repository\SessionRepository;
@@ -20,10 +21,11 @@ class GetSchoolBikeRideClusters
 
     public function execute(BikeRide $bikeRide): array
     {
+        $isSchoolBikeRide = RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration();
         $sessionsByClusters = [];
         /** @var Session $session */
         foreach ($this->sessionRepository->findByBikeRideId($bikeRide->getId()) as $session) {
-            $clusterId = (Level::TYPE_FRAME === $session->getUser()->getLevel()->getType())
+            $clusterId = ($isSchoolBikeRide && Level::TYPE_FRAME === $session->getUser()->getLevel()->getType())
                 ? 'framers'
                 : $session->getCluster()->getId();
             $sessionsByClusters[$clusterId][] = $session;
@@ -31,7 +33,9 @@ class GetSchoolBikeRideClusters
 
         $clusters = [];
         foreach ($bikeRide->getClusters() as $clusterEntity) {
-            $clusterId = ($clusterEntity->getLevel()) ? $clusterEntity->getId() : 'framers';
+            $clusterId = ($isSchoolBikeRide && !$clusterEntity->getLevel())
+                    ? 'framers'
+                    : $clusterEntity->getId();
             $sessions = (array_key_exists($clusterId, $sessionsByClusters))
                 ? $sessionsByClusters[$clusterEntity->getId()]
                 : [];
