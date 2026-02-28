@@ -65,12 +65,7 @@ class OrderHeader
 
     public function removeOrderLine(OrderLine $orderLine): self
     {
-        if ($this->orderLines->removeElement($orderLine)) {
-            // set the owning side to null (unless already changed)
-            if ($orderLine->getOrderHeader() === $this) {
-                $orderLine->setOrderHeader(null);
-            }
-        }
+        $this->orderLines->removeElement($orderLine);
 
         return $this;
     }

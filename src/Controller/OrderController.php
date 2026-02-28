@@ -4,28 +4,27 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Dto\DtoTransformer\OrderDtoTransformer;
-use App\Entity\Enum\OrderStatusEnum;
-use App\Entity\OrderHeader;
 use App\Entity\User;
 use App\Form\OrderType;
-use App\Repository\OrderHeaderRepository;
+use App\Entity\OrderHeader;
 use App\Service\LogService;
-use App\Service\MessageService;
-use App\Service\Order\OrderLinesSetService;
-use App\Service\Order\OrderValidateService;
-use App\Service\PaginatorService;
 use App\Service\PdfService;
+use App\Service\MessageService;
+use App\Service\PaginatorService;
+use App\Entity\Enum\OrderStatusEnum;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\HeaderUtils;
+use App\Repository\OrderHeaderRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Dto\DtoTransformer\OrderDtoTransformer;
+use App\UseCase\Order\OrderEdit;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class OrderController extends AbstractController
 {
@@ -41,26 +40,18 @@ class OrderController extends AbstractController
     #[Route('/mon-compte/panier', name: 'order_edit', methods: ['GET', 'POST'])]
     #[IsGranted('PRODUCT_LIST')]
     public function orderEdit(
-        OrderLinesSetService $orderLinesSetService,
-        OrderValidateService $orderValidateService,
+        OrderEdit $orderEdit,
         Request $request
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
         $orderHeader = $this->orderHeaderRepository->findOneOrderInProgressByUser($user);
-        if ($request->isXmlHttpRequest()) {
-            $orderLinesSetService->execute($request);
-        }
         $form = $this->createForm(OrderType::class, $orderHeader);
 
-        if (!$request->isXmlHttpRequest() && $request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $orderValidateService->execute($form);
-
-                return $this->redirectToRoute('order', [
-                    'orderHeader' => $orderHeader->getId(),
-                ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($url = $orderEdit->execute($form)) {
+                return $this->redirect($url);
             }
         }
 
