@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Enum\OrderStatusEnum;
+use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\OrderHeader;
 use App\Entity\SecondHand;
@@ -57,10 +58,11 @@ class DashboardController extends AbstractController
                     : $session->getCluster()->getId();
                 $sessionsByClusters[$clusterId][] = $session;
             }
-
             $clusters = [];
             foreach ($bikeRide->getClusters() as $clusterEntity) {
-                $clusterId = ($clusterEntity->getLevel()) ? $clusterEntity->getId() : 'framers';
+                $clusterId = (RegistrationEnum::SCHOOL === $bikeRide->getBikeRideType()->getRegistration() && !$clusterEntity->getLevel())
+                    ? 'framers'
+                    : $clusterEntity->getId();
                 $sessions = (array_key_exists($clusterId, $sessionsByClusters))
                     ? $sessionsByClusters[$clusterId]
                     : [];
@@ -69,6 +71,7 @@ class DashboardController extends AbstractController
                     'level' => ['colors' => $levelService->getColors($clusterEntity->getLevel()?->getColor())],
                     'sessions' => $sessions];
             }
+
             $bikeRides[] = [
                 'bikeRide' => $bikeRideDtoTransformer->getHeaderFromEntity($bikeRide),
                 'clusters' => $clusters,
