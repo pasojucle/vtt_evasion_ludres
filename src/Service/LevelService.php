@@ -84,6 +84,6 @@ class LevelService
             return ['color' => $color, 'background' => $background];
         }
 
-        return null;
+        return ['background' => '#aaaaaa', 'color' => '#ffffff'];
     }
 }
