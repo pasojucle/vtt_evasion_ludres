@@ -76,7 +76,7 @@ class SurveyController extends AbstractController
         }
 
         return $this->render('survey/admin/edit.html.twig', [
-            'survey' => $this->surveyDtoTransformer->fromEntity($survey),
+            'survey' => $survey,
             'form' => $form->createView(),
         ]);
     }

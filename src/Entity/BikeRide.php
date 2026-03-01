@@ -80,7 +80,7 @@ class BikeRide
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $filename = null;
 
-    #[ORM\OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'bikeRide', targetEntity: Survey::class)]
     private ?Survey $survey = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
