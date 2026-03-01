@@ -91,7 +91,6 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                 ->add('bikeRide', BikeRideAutocompleteField::class, [
                     'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
                     'required' => true,
-                    'disabled' => $options['display_disabled'],
                     'attr' => [
                         'data-modifier' => 'surveyRestriction',
                         'class' => 'form-modifier',

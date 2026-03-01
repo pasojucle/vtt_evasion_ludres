@@ -86,7 +86,7 @@ class SurveyType extends AbstractType
             ])
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             /** @var Survey $survey */
             $survey = $event->getData();
@@ -105,10 +105,10 @@ class SurveyType extends AbstractType
                         'Afficher le sondage à l\'inscription à une sortie' => self::DISPLAY_BIKE_RIDE,
                         'Afficher le sondage à une liste d\'adhérents' => self::DISPLAY_MEMBER_LIST,
                     ],
-                    'choice_attr' => function () use ($options) {
+                    'choice_attr' => function () {
                         return [
                             'data-modifier' => 'surveyRestriction',
-                            'class' => ($options['display_disabled']) ? 'like-disabled' : 'form-modifier',
+                            'class' => 'form-modifier',
                         ];
                     },
                 ]);
