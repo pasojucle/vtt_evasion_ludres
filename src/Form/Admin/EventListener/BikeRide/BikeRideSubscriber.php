@@ -87,6 +87,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
             $data['levelFilter'] = $bikeRide->getLevelFilter();
             $data['minAge'] = $bikeRide->getMinAge();
             $data['maxAge'] = $bikeRide->getMaxAge();
+            $data['notify'] = $bikeRideType->isNotify();
             $event->setData($data);
             $bikeRide->setBikeRideType($bikeRideType);
             $event->getForm()->setData($bikeRide);
@@ -172,7 +173,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                         'class' => 'form-modifier',
                         ];
                 },
-                'disabled' => $isDiabled,
+                'disabled' => $isDiabled || $bikeRideType->isPublic(),
             ])
             ->add('registrationEnabled', CheckboxType::class, [
                 'block_prefix' => 'switch',
@@ -266,6 +267,17 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'required' => false,
                 'disabled' => $disabledMinAge,
                 'constraints' => [new RangeAge()]
+            ])
+            ->add('notify', CheckboxType::class, [
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-off' => 'Pas de notification',
+                    'data-switch-on' => 'Afficher une une pop up pour notifier l\'activité',
+                ],
             ])
             ;
     }

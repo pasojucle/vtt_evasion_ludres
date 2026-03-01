@@ -59,9 +59,10 @@
         "symfony/yaml": "7.3.*",
         "symfonycasts/reset-password-bundle": "^1.9",
         "twig/cssinliner-extra": "^3.3",
-        "twig/extra-bundle": "^3.8",
+        "twig/extra-bundle": "^3.23",
         "twig/intl-extra": "^3.3",
         "twig/markdown-extra": "^3.8",
+        "twig/string-extra": "^3.23",
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {

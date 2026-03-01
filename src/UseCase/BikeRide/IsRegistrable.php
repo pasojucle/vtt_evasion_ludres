@@ -24,6 +24,10 @@ class IsRegistrable
     
     public function execute(BikeRide $bikeRide, ?User $user): bool
     {
+        if ($bikeRide->getBikeRideType()->isPublic() && $bikeRide->registrationEnabled()) {
+            return $this->isWithinDisplayPeriod($bikeRide);
+        }
+    
         if (!$user || !$this->security->isGranted('BIKE_RIDE_VIEW', $bikeRide) || RegistrationEnum::NONE === $bikeRide->getBikeRideType()->getRegistration()) {
             return false;
         }
@@ -42,13 +46,7 @@ class IsRegistrable
             return false;
         }
         
-        $today = new DateTime();
-        $intervalDisplay = new DateInterval('P' . $bikeRide->GetDisplayDuration() . 'D');
-
-        $displayAt = $bikeRide->getStartAt()->setTime(0, 0, 0);
-        $closingAt = $bikeRide->getStartAt()->setTime(23, 59, 59);
- 
-        return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt;
+        return $this->isWithinDisplayPeriod($bikeRide);
     }
 
     private function canParticipateByAge(BikeRide $bikeRide, User $user, Identity $member): bool
@@ -63,5 +61,16 @@ class IsRegistrable
         }
 
         return true;
+    }
+
+    private function isWithinDisplayPeriod(BikeRide $bikeRide): bool
+    {
+        $today = new DateTime();
+        $intervalDisplay = new DateInterval('P' . $bikeRide->GetDisplayDuration() . 'D');
+
+        $displayAt = $bikeRide->getStartAt()->setTime(0, 0, 0);
+        $closingAt = $bikeRide->getStartAt()->setTime(23, 59, 59);
+ 
+        return $displayAt->sub($intervalDisplay) <= $today && $today <= $closingAt;
     }
 }

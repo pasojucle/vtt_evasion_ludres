@@ -322,13 +322,18 @@ p + p {
     padding-bottom: 150px;
 }
 .wrapper:not(.wrapper-maintenance), .wrapper .wrapper-content {
-    min-height: calc(100vh - 200px);
+    min-height: calc(100vh - 406px);
 }
 .wrapper-maintenance {
     min-height: 100vh;
 }
 .wrapper-full-width.wrapper-maintenance h1 {
     color: var(--primary-color-darker);
+}
+.img-center {
+    display: flex;
+    padding: 20px;
+    justify-content: center;
 }
 .news-container {
     grid-area: news;

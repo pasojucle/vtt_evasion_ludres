@@ -35,15 +35,17 @@
                             <div class="badge-members">{{ bikeRide.members }}</div>
                         </div>
                         <div class="bike-ride-detail {{ bikeRide.displayClass }}">
-                            <h3>{{ bikeRide.title }}</h3>
-                            {% if bikeRide.rangeAge is not null %}
-                                <p class='info'>{{ bikeRide.rangeAge }}</p>
-                            {% endif %}
                             {% if bikeRide.filename is not null %}
                                 <div class="row">
-                                    <div class="col-md-7 col-xs-12">{{ bikeRide.content | raw}}</div>
+                                    <div class="col-md-9 col-xs-12">
+                                        <h3>{{ bikeRide.title }}</h3>
+                                        {% if bikeRide.rangeAge is not null %}
+                                            <p class='info'>{{ bikeRide.rangeAge }}</p>
+                                        {% endif %}
+                                        {{ bikeRide.content | raw}}
+                                    </div>
                                     <div class="col-md-1"></div>
-                                    <div class="col-md-4 col-xs-12">
+                                    <div class="col-md-2 col-xs-12">
                                         <img src="{{ bikeRide.filename }}">
                                     </div>
                                 </div>

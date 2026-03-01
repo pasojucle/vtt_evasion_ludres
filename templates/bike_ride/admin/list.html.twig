@@ -62,6 +62,18 @@
                                         {% if is_granted('SUMMARY_LIST') %}
                                             <li><a href="{{ path('admin_summary_list', {'bikeRide': bikeRide.id}) }}" class="dropdown-item" title="Actualités"><i class="fa-solid fa-rectangle-list"></i> Actualités</a></li>
                                         {% endif %}
+                                        {% if bikeRide.isPublic %}
+                                            <li>
+                                                <a 
+                                                    class="dropdown-item" 
+                                                    href="{{ absolute_url(path('bike_ride_detail', {'bikeRide': bikeRide.id, 'slug': bikeRide.title|slug} ))}}" 
+                                                    title="Copier l'url" 
+                                                    data-clipboard="1"
+                                                >
+                                                    <i class="fas fa-clipboard"></i> Copier l'url
+                                                </a>
+                                            </li>                                        
+                                        {% endif %}
                                     </ul>
                                 </div>
                             </div>

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ bikeRide.title }}{% endblock %}
+
+{% block body %}
+    <div class="wrapper background-green background-color col-content">
+        <div class="img-center">
+            <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}"/>
+        </div>
+        <div class="wrapper-content">
+            <div class="reveal">
+                <h1>{{ bikeRide.title }}</h1>
+                <h2>{{ bikeRide.period }}</h2>
+                {{ bikeRide.content | raw}}
+                <div class="content-footer">
+                    {% if isRegistrationEnabled %}
+                        <a href="#" class="btn btn-primary">S'incrire</a>
+                    {% else %}
+                        <p><b>Inscription prochainement</b></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

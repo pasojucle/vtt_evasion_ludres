@@ -23,6 +23,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class BikeRideDtoTransformer
 {
@@ -77,6 +78,7 @@ class BikeRideDtoTransformer
             $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
             $bikeRideDto->btnRegistration = $this->getBtnRegistration($bikeRide, $user, $userAvailableSessions);
+            $bikeRideDto->isPublic = $bikeRide->getBikeRideType()->isPublic();
         }
 
         return $bikeRideDto;
@@ -238,8 +240,14 @@ class BikeRideDtoTransformer
         }
 
         if ($isRegistrable || $isWritableAvailability) {
+            $slugger = new AsciiSlugger();
             return [
-                'link' => $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]),
+                'link' => ($bikeRide->getBikeRideType()->isPublic())
+                    ? $this->urlGenerator->generate('bike_ride_detail', [
+                        'bikeRide' => $bikeRide->getId(),
+                        'slug' => $slugger->slug($bikeRide->getTitle())
+                    ])
+                    : $this->urlGenerator->generate('session_add', ['bikeRide' => $bikeRide->getId()]),
                 'btnLabel' => sprintf('<i class="fas fa-chevron-circle-right"></i> %s', ($isWritableAvailability) ? 'Disponibilité' : 'S\'incrire'),
                 'modal' => false,
             ];
@@ -248,13 +256,13 @@ class BikeRideDtoTransformer
         return null;
     }
 
-    private function registrationClosed(BikeRide $bikeRide, User $user): bool
+    private function registrationClosed(BikeRide $bikeRide, ?User $user): bool
     {
         if (!$bikeRide->registrationEnabled()) {
             return true;
         }
 
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_ADULT_MEMBER === $user->getLevel()->getType()) {
+        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_ADULT_MEMBER === $user?->getLevel()->getType()) {
             return false;
         }
 

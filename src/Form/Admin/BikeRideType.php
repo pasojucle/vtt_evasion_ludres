@@ -123,19 +123,6 @@ class BikeRideType extends AbstractType
                     'data-switch-on' => 'Publication privée',
                 ],
             ])
-            
-            ->add('notify', CheckboxType::class, [
-                'block_prefix' => 'switch',
-                'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-                'attr' => [
-                    'data-switch-off' => 'Pas de notification',
-                    'data-switch-on' => 'Afficher une une pop up pour notifier l\'activité',
-                ],
-            ])
-            
         ;
 
         $builder->addEventSubscriber(new BikeRideSubscriber($this->bikeRideTypeRepository, $this->messageService, $this->levelService, $this->userRepository, $this->urlGenerator));

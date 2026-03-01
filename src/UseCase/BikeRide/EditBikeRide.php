@@ -30,8 +30,8 @@ class EditBikeRide
             $this->createClusters->execute($bikeRide);
         }
 
-        if ($request->files->get('bike_ride')) {
-            $file = $request->files->get('bike_ride')['file'];
+        $file = $request->files->get('bike_ride')['file'] ?? null;
+        if ($file) {
             $bikeRide->setFileName($this->uploadService->uploadFile($file));
         }
 

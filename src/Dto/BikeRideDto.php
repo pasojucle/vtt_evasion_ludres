@@ -53,6 +53,8 @@ class BikeRideDto
 
     public bool $isEditable = false;
 
+    public bool $isPublic = false;
+
     public ?string $minAge = null;
 
     public bool $isMultiClusters = false;

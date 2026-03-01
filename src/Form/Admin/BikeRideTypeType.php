@@ -106,6 +106,42 @@ class BikeRideTypeType extends AbstractType
                     'data-switch-off' => 'Ne pas afficher la liste des participants à l\'inscription',
                 ],
             ])
+            ->add('public', CheckboxType::class, [
+                'label_html' => true,
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Ouvert au public',
+                    'data-switch-off' => 'Seul les adhérents peuvent s\'inscrire',
+                ],
+            ])
+            ->add('requireDisponibility', CheckboxType::class, [
+                'label_html' => true,
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Demander la participation ou non à l\'inscription',
+                    'data-switch-off' => 'Ne pas demander la participation à l\'inscription',
+                ],
+            ])
+            ->add('notify', CheckboxType::class, [
+                'label_html' => true,
+                'block_prefix' => 'switch',
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-switch-on' => 'Envoyer une notification à la création de la rando',
+                    'data-switch-off' => 'Pas de notification à la création de la rando',
+                ],
+            ])
             ->add('displayBikeKind', CheckboxType::class, [
                 'label_html' => true,
                 'block_prefix' => 'switch',

@@ -6,6 +6,7 @@ use App\Entity\Enum\RegistrationEnum;
 use App\Repository\BikeRideTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BikeRideTypeRepository::class)]
@@ -54,6 +55,15 @@ class BikeRideType
 
     #[ORM\ManyToMany(targetEntity: Message::class)]
     private Collection $messages;
+
+    #[ORM\Column(type: Types::BOOLEAN, options:['default' => false])]
+    private bool $public = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options:['default' => false])]
+    private bool $requireDisponibility = false;
+
+    #[ORM\Column(type: Types::BOOLEAN, options:['default' => false])]
+    private bool $notify = false;
 
     public function __construct()
     {
@@ -272,6 +282,42 @@ class BikeRideType
     public function removeMessage(Message $message): static
     {
         $this->messages->removeElement($message);
+
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): static
+    {
+        $this->public = $public;
+
+        return $this;
+    }
+
+    public function isRequireDisponibility(): bool
+    {
+        return $this->requireDisponibility;
+    }
+
+    public function setRequireDisponibility(bool $requireDisponibility): static
+    {
+        $this->requireDisponibility = $requireDisponibility;
+
+        return $this;
+    }
+
+    public function isNotify(): bool
+    {
+        return $this->notify;
+    }
+
+    public function setNotify(bool $notify): static
+    {
+        $this->notify = $notify;
 
         return $this;
     }
