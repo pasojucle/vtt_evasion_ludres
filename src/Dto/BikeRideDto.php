@@ -60,4 +60,6 @@ class BikeRideDto
     public bool $isMultiClusters = false;
 
     public ?array $btnRegistration = null;
+
+    public bool $showFramerAndMemberList = false;
 }

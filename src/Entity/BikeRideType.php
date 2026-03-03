@@ -60,10 +60,10 @@ class BikeRideType
     private bool $public = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options:['default' => false])]
-    private bool $requireDisponibility = false;
+    private bool $notify = false;
 
     #[ORM\Column(type: Types::BOOLEAN, options:['default' => false])]
-    private bool $notify = false;
+    private bool $requireAvailability = false;
 
     public function __construct()
     {
@@ -298,18 +298,6 @@ class BikeRideType
         return $this;
     }
 
-    public function isRequireDisponibility(): bool
-    {
-        return $this->requireDisponibility;
-    }
-
-    public function setRequireDisponibility(bool $requireDisponibility): static
-    {
-        $this->requireDisponibility = $requireDisponibility;
-
-        return $this;
-    }
-
     public function isNotify(): bool
     {
         return $this->notify;
@@ -318,6 +306,18 @@ class BikeRideType
     public function setNotify(bool $notify): static
     {
         $this->notify = $notify;
+
+        return $this;
+    }
+
+    public function isRequireAvailability(): bool
+    {
+        return $this->requireAvailability;
+    }
+
+    public function setRequireAvailability(bool $requireAvailability): static
+    {
+        $this->requireAvailability = $requireAvailability;
 
         return $this;
     }

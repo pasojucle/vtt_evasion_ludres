@@ -16,8 +16,6 @@ use App\Service\BikeRideService;
 use App\Service\ProjectDirService;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
-use DateInterval;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -28,11 +26,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 class BikeRideDtoTransformer
 {
     private DateTimeImmutable $today;
-    
-    private DateTimeImmutable $displayAt;
-    
-    private DateTimeImmutable $closingAt;
-
+        
     public function __construct(
         private Security $security,
         private IsWritableAvailability $isWritableAvailability,
@@ -66,16 +60,15 @@ class BikeRideDtoTransformer
             $bikeRideDto->displayDuration = $bikeRide->getDisplayDuration();
             $bikeRideDto->rangeAge = $this->getRangeAge($bikeRide);
 
-            $this->displayAt = $bikeRideDto->startAt->setTime(0, 0, 0);
-            $this->closingAt = $bikeRideDto->startAt->setTime(23, 59, 59);
-            $bikeRideDto->displayClass = $this->getDisplayClass($bikeRide->getDisplayDuration());
+            $dateTimePeriod = $this->bikeRideService->getDateTimePeriod($bikeRide);
+            $bikeRideDto->displayClass = $this->getDisplayClass($dateTimePeriod);
             $bikeRideDto->period = $this->bikeRideService->getPeriod($bikeRide);
 
             $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
             $bikeRideDto->members = $this->getMembers($bikeRideDto->startAt, $bikeRideDto->bikeRideType, $bikeRide->getClusters());
 
             $bikeRideDto->filename = $this->getFilename($bikeRide->getFileName());
-            $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user);
+            $bikeRideDto->display = $this->display($bikeRide->isPrivate(), $user, $dateTimePeriod);
             $bikeRideDto->isEditable = $this->security->isGranted('BIKE_RIDE_EDIT', $bikeRide);
             $bikeRideDto->btnRegistration = $this->getBtnRegistration($bikeRide, $user, $userAvailableSessions);
             $bikeRideDto->isPublic = $bikeRide->getBikeRideType()->isPublic();
@@ -103,6 +96,7 @@ class BikeRideDtoTransformer
                 $bikeRideDto->minAge = sprintf('A partir de %s ans', $bikeRide->getMinAge());
             }
             $bikeRideDto->survey = ($bikeRide->getSurvey()) ? $this->surveyDtoTransformer->fromEntity($bikeRide->getSurvey()) : null;
+            $bikeRideDto->showFramerAndMemberList = $this->getShowFramerAndMemberList($bikeRide);
         }
 
         return $bikeRideDto;
@@ -129,24 +123,22 @@ class BikeRideDtoTransformer
         return $title;
     }
 
-    public function isOver(): bool
+    public function isOver(array $dateTimePeriod): bool
     {
-        return $this->closingAt < $this->today;
+        return $dateTimePeriod['closingAt'] < $this->today;
     }
 
-    public function isNext(int $displayDuration): bool
+    public function isNext(array $dateTimePeriod): bool
     {
-        $interval = new DateInterval('P' . $displayDuration . 'D');
-
-        return $this->displayAt->sub($interval) <= $this->today && $this->today <= $this->closingAt;
+        return $dateTimePeriod['displayAt'] <= $this->today && $this->today <= $dateTimePeriod['closingAt'];
     }
 
-    private function getDisplayClass(int $displayDuration): string
+    private function getDisplayClass(array $dateTimePeriod): string
     {
-        if ($this->isNext($displayDuration)) {
+        if ($this->isNext($dateTimePeriod)) {
             return ' active';
         }
-        if ($this->isOver()) {
+        if ($this->isOver($dateTimePeriod)) {
             return ' disable';
         }
 
@@ -177,9 +169,9 @@ class BikeRideDtoTransformer
 
         return '';
     }
-    private function display(bool $private, ?User $user): bool
+    private function display(bool $private, ?User $user, array $dateTimePeriod): bool
     {
-        if ($this->isOver()) {
+        if ($this->isOver($dateTimePeriod)) {
             return true;
         }
 
@@ -194,7 +186,7 @@ class BikeRideDtoTransformer
         /** @var Session $session */
         foreach ($userAvailableSessions as $session) {
             if ($session->getCluster()->getBikeRide() === $bikeRide) {
-                return ($session->getAvailability())
+                return (AvailabilityEnum::NONE !== $session->getAvailability())
                 ? [
                     'link' => $this->urlGenerator->generate('session_availability_edit', ['session' => $session->getId()]),
                     'btnLabel' => '<i class="fas fa-edit"></i> Modifier sa disponibilité',
@@ -230,8 +222,7 @@ class BikeRideDtoTransformer
 
         $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
         $isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
-
-        if (!$isWritableAvailability && $isRegistrable && $this->registrationClosed($bikeRide, $user)) {
+        if (!$isWritableAvailability && $isRegistrable && $this->bikeRideService->registrationClosed($bikeRide, $user)) {
             return [
                 'link' => $this->urlGenerator->generate('registration_closed', ['bikeRide' => $bikeRide->getId()]),
                 'modal' => true,
@@ -256,17 +247,11 @@ class BikeRideDtoTransformer
         return null;
     }
 
-    private function registrationClosed(BikeRide $bikeRide, ?User $user): bool
+    private function getShowFramerAndMemberList(BikeRide $bikeRide): bool
     {
-        if (!$bikeRide->registrationEnabled()) {
-            return true;
-        }
+        /** @var User $user */
+        $user = $this->security->getUser();
 
-        if ($bikeRide->getBikeRideType()->isNeedFramers() && Level::TYPE_ADULT_MEMBER === $user?->getLevel()->getType()) {
-            return false;
-        }
-
-        $intervalClosing = new DateInterval('P' . $bikeRide->getClosingDuration() . 'D');
-        return $this->closingAt->sub($intervalClosing) < $this->today;
+        return $bikeRide->getBikeRideType()->isNeedFramers() && $user->getLevel()->getType() === Level::TYPE_FRAME;
     }
 }

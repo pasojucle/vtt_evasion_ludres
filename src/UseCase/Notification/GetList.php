@@ -104,7 +104,8 @@ class GetList
 
     private function getUserNotifications(array $notificationsConsumed): array
     {
-        if ($this->routeInfos['_route'] && str_contains($this->routeInfos['_route'], 'admin')) {
+        $routesNotAllowed = ['admin', 'registration_form'];
+        if ($this->routeInfos['_route'] && 1 === preg_match(sprintf('#%s#', implode('|', $routesNotAllowed)), $this->routeInfos['_route'])) {
             return [null, [], false];
         }
 

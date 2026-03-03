@@ -43,7 +43,7 @@
                         {{ form_widget(form.session.practice) }}
                     {% endif %}
                     {% include 'session/survey_responses.html.twig' %}
-                    {% if form.session.availability is defined %}
+                    {% if bikeRide.showFramerAndMemberList  %}
                         <div class="separator"></div>
                         {% include('session/registered_list_by_type.html.twig') %}
                     {% endif %}

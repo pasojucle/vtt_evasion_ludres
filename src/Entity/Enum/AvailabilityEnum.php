@@ -16,6 +16,8 @@ enum AvailabilityEnum: string implements TranslatableInterface
 
     case UNAVAILABLE = 'unavailable';
 
+    case NONE = 'none';
+
     use EnumTrait;
 
 

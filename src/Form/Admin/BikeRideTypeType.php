@@ -118,7 +118,7 @@ class BikeRideTypeType extends AbstractType
                     'data-switch-off' => 'Seul les adhérents peuvent s\'inscrire',
                 ],
             ])
-            ->add('requireDisponibility', CheckboxType::class, [
+            ->add('requireAvailability', CheckboxType::class, [
                 'label_html' => true,
                 'block_prefix' => 'switch',
                 'required' => false,

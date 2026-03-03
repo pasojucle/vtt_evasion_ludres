@@ -10,6 +10,7 @@ use App\Entity\Enum\PracticeEnum;
 use App\Entity\Session;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -25,10 +26,22 @@ class SessionEditType extends AbstractType
             $form = $event->getForm();
 
             if (true === $options['is_writable_availability']) {
+                $notAllowedAvailabilities = [AvailabilityEnum::NONE];
+                if (!$session->getCluster()->getBikeRide()->getBikeRideType()->isNeedFramers()) {
+                    $notAllowedAvailabilities[] = AvailabilityEnum::AVAILABLE;
+                }
+
                 $form
                     ->add('availability', EnumType::class, [
                         'label' => false,
                         'class' => AvailabilityEnum::class,
+                        'choice_filter' => ChoiceList::filter(
+                            $this,
+                            function (AvailabilityEnum $availability) use ($notAllowedAvailabilities): bool {
+                                return !in_array($availability, $notAllowedAvailabilities);
+                            },
+                            $notAllowedAvailabilities
+                        ),
                         'expanded' => true,
                         'multiple' => false,
                         'block_prefix' => 'customcheck',

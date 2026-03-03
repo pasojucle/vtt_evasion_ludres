@@ -17,6 +17,7 @@ use App\Service\SeasonService;
 use App\UseCase\BikeRide\IsRegistrable;
 use App\UseCase\BikeRide\IsWritableAvailability;
 use DateTime;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UnregistrableSessionMessage
 {
@@ -28,35 +29,54 @@ class UnregistrableSessionMessage
         private ReplaceKeywordsService $replaceKeywordsService,
         private SessionRepository $sessionRepository,
         private UserDtoTransformer $userDtoTransformer,
-        private SeasonService $seasonService
+        private SeasonService $seasonService,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
-    public function execute(User $user, BikeRide $bikeRide): ?string
+    public function execute(User $user, BikeRide $bikeRide): ?array
     {
         $isRegistrable = $this->isRegistrable->execute($bikeRide, $user);
         $isWritableAvailability = $this->isWritableAvailability->execute($bikeRide, $user);
         $userDto = $this->userDtoTransformer->fromEntity($user);
 
+        $registration = [
+            'url' => $this->urlGenerator->generate('user_registration_form', ['step' => 1]),
+            'label' => 'S\'inscrire',
+        ];
+
         if (!$isRegistrable && !$isWritableAvailability) {
-            return 'Inscription impossible';
+            return [
+                'message' => 'Inscription impossible'
+            ];
         }
 
         $currentSeason = $this->seasonService->getCurrentSeason();
         if (!$this->registrationIsComplete($userDto, $currentSeason)) {
-            return 'Vous avez un dossier d\'inscription non finalisé. Vous terminer et valider votre inscription pour vous inscrir à une sortie';
+            return [
+                'message' => 'Vous avez un dossier d\'inscription non finalisé. Vous terminer et valider votre inscription pour vous inscrir à une sortie',
+                'action' => $registration,
+            ];
         }
 
         if (!$this->checkSeasonLicence($userDto, $currentSeason)) {
-            return $this->replaceKeywordsService->replace($this->messageService->getMessageByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'), $userDto);
+            return [
+                'message' => $this->replaceKeywordsService->replace($this->messageService->getMessageByName('REQUIREMENT_SEASON_LICENCE_MESSAGE'), $userDto),
+                'action' => $registration,
+            ];
         }
 
         if (null !== $this->sessionRepository->findOneByUserAndBikeRide($user, $bikeRide)) {
-            return 'Votre inscription a déjà été prise en compte !';
+            return [
+                'message' => 'Votre inscription a déjà été prise en compte !',
+            ];
         }
 
         if ($userDto->isEndTesting) {
-            return 'La période d\'essai est limité à 3 séances ! Pour continuer à participer aux sorties, inscrivez-vous.';
+            return [
+                'message' => 'La période d\'essai est limité à 3 séances ! Pour continuer à participer aux sorties, inscrivez-vous.',
+                'action' => $registration,
+            ];
         }
 
         return null;

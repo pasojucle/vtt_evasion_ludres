@@ -55,8 +55,8 @@ class Session
     #[ORM\Column(type: 'boolean')]
     private bool $isPresent = false;
 
-    #[ORM\Column(type: 'Availability', nullable: true)]
-    private ?AvailabilityEnum $availability = null;
+    #[ORM\Column(type: 'Availability')]
+    private AvailabilityEnum $availability = AvailabilityEnum::NONE;
 
     #[ORM\Column(type: 'Practice')]
     private PracticeEnum $practice = PracticeEnum::VTT;
@@ -102,7 +102,7 @@ class Session
         return $this;
     }
 
-    public function getAvailability(): ?AvailabilityEnum
+    public function getAvailability(): AvailabilityEnum
     {
         return $this->availability;
     }

@@ -83,23 +83,21 @@ class SessionDtoTransformer
         return $sessions;
     }
 
-    private function getAvailability(?AvailabilityEnum $availability): array
+    private function getAvailability(AvailabilityEnum $availability): array
     {
         $availbilityClass = [
             AvailabilityEnum::REGISTERED->name => ['badge' => 'person person-check', 'icon' => '<i class="fa-solid fa-person-circle-check"></i>', 'color' => 'success-color'],
             AvailabilityEnum::AVAILABLE->name => ['badge' => 'person person-question', 'icon' => '<i class="fa-solid fa-person-circle-question"></i>', 'color' => 'warning-color'],
             AvailabilityEnum::UNAVAILABLE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
+            AvailabilityEnum::NONE->name => ['badge' => 'person person-xmark', 'icon' => '<i class="fa-solid fa-person-circle-xmark"></i>', 'color' => 'alert-danger-color'],
         ];
 
-        $availabilityView = [];
-        if (null !== $availability) {
-            $availabilityView = [
-                'class' => $availbilityClass[$availability->name],
-                'text' => $availability->trans($this->translator),
-                'value' => $availability->name,
-                'enum' => $availability,
-            ];
-        }
+        $availabilityView = [
+            'class' => $availbilityClass[$availability->name],
+            'text' => $availability->trans($this->translator),
+            'value' => $availability->name,
+            'enum' => $availability,
+        ];
 
         return $availabilityView;
     }

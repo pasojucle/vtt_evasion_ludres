@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\BikeRideDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
 use App\Entity\Documentation;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Licence;
 use App\Entity\Notification;
 use App\Entity\OrderHeader;
@@ -134,7 +135,7 @@ class NotificationService
         if (is_int($session)) {
             $session = $this->entityManager->getRepository(Session::class)->find($session);
         }
-        $messageName = ($session->getAvailability()) ? 'NEW_SESSION_FRAMER' : 'NEW_SESSION_MEMBER';
+        $messageName = (AvailabilityEnum::NONE !== $session->getAvailability()) ? 'NEW_SESSION_FRAMER' : 'NEW_SESSION_MEMBER';
         $content = $this->messageService->getMessageByName($messageName);
         $bikeRideDto = $this->bikeRideDtoTransformer->fromEntity($session->getCluster()->getBikeRide());
         $additionalParams = [

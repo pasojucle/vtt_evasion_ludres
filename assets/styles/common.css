@@ -553,6 +553,9 @@ nav > ul > li > div.nav-bar-title > a.btn-logger {
     display: inline-block;
     color: var(--success-color);
 }
+.line-through {
+    text-decoration: line-through;
+}
 .success-ico.xl-ico i {
     font-size: 36px;
 }

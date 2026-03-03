@@ -1,3 +1,5 @@
+{% set unavailable = enum('App\\Entity\\Enum\\AvailabilityEnum').UNAVAILABLE %}
+{% set noneAvailability = enum('App\\Entity\\Enum\\AvailabilityEnum').NONE %}
 <li id="session-{{ session.id }}" class="col-list col-list-1btn">
     <div class="list-dropdown">
         <a href="{{ path('admin_bike_rides_user', {'user': user.id})}}"{% if not bikeRide.isEditable %} class="disabled"{% endif %}
@@ -5,7 +7,7 @@
             <div class="row">
                 <div class="col-md-9 col-xs-10">
                     <div class="row">
-                        <div class="col-md-6 col-xs-12">
+                        <div class="col-md-6 col-xs-12{% if session.availability.enum == unavailable %} line-through{% endif %}">
                             {{ user.member.fullName }}
                         </div>
                         <div class="col-md-6 col-xs-12">
@@ -23,7 +25,7 @@
                         {% if user.health.content is not null %}
                             <div class="medical-plus"></div>
                         {% endif %}
-                        {% if session.availability is not empty %}
+                        {% if session.availability.enum != noneAvailability %}
                             <div class="{{ session.availability.class.badge }}"></div>
                         {% endif %}
                         {% if user.isEndTesting %}
@@ -42,7 +44,7 @@
                     class="btn btn-danger admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Absent">
                     <i class="fas fa-question-circle"></i>
                 </a>
-            {% else %}
+            {% elseif session.availability.enum != enum('App\\Entity\\Enum\\AvailabilityEnum').UNAVAILABLE %}
                 <a href="{{ path('admin_session_present') }}" data-session="{{ session.id }}" data-must-provide-registration="{{ user.mustProvideRegistration or user.isEndTesting }}"
                     class="btn btn-light admin-session-present{% if not bikeRide.isEditable %} disabled{% endif %}" title="Absent">
                     <i class="fas fa-check"></i>

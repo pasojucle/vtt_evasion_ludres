@@ -61,11 +61,11 @@ class SessionController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $unregistrableMessage = $unregistrableSessionMessage->execute($user, $bikeRide);
-        if (null !== $unregistrableMessage) {
+        $unregistrable = $unregistrableSessionMessage->execute($user, $bikeRide);
+        if (null !== $unregistrable) {
             return $this->render('session/unregistrable.html.twig', [
                 'bikeRide' => $bikeRide,
-                'unregistrableMessage' => $unregistrableMessage,
+                'unregistrable' => $unregistrable,
             ]);
         }
 

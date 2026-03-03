@@ -8,6 +8,7 @@ use App\Dto\DtoTransformer\SessionDtoTransformer;
 use App\Dto\DtoTransformer\UserDtoTransformer;
 use App\Entity\BikeRide;
 use App\Entity\Cluster;
+use App\Entity\Enum\AvailabilityEnum;
 use App\Entity\Enum\RegistrationEnum;
 use App\Entity\Level;
 use App\Entity\User;
@@ -39,7 +40,7 @@ class SessionService
         $sessions = $this->sessionRepository->findByBikeRide($bikeRide);
 
         foreach ($sessions as $session) {
-            if (null === $session->getAvailability()) {
+            if (AvailabilityEnum::NONE === $session->getAvailability()) {
                 $level = $session->getUser()->getLevel();
                 $levelId = (null !== $level) ? $level->getId() : 0;
                 $levelTitle = (null !== $level) ? $level->getTitle() : 'non renseigné';

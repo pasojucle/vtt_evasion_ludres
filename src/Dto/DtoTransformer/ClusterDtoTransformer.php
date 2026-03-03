@@ -52,7 +52,7 @@ class ClusterDtoTransformer
             $clusterDto->role = $cluster->getRole();
             $clusterDto->isComplete = $cluster->isComplete();
             $clusterDto->memberSessions = $this->clusterService->getMemberSessions($cluster);
-            $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities);
+            $clusterDto->availableSessions = $this->getAvailableSessions($sessionEntities, $cluster->getBikeRide()->getBikeRideType()->isRequireAvailability());
             $clusterDto->usersOnSiteCount = $this->getUsersOnSiteCount($sessionEntities, $cluster->getBikeRide());
             $clusterDto->hasSkills = !$cluster->getSkills()->isEmpty();
             $clusterCache->set($clusterDto);
@@ -115,13 +115,16 @@ class ClusterDtoTransformer
         return $sessions;
     }
 
-    private function getAvailableSessions(Collection $sessionEntities): ArrayCollection
+    private function getAvailableSessions(Collection $sessionEntities, bool $isRequireAvailability): ArrayCollection
     {
         $sortedSessions = [];
+        $allowedAvailabilities = ($isRequireAvailability)
+            ? [AvailabilityEnum::UNAVAILABLE, AvailabilityEnum::REGISTERED]
+            : [AvailabilityEnum::NONE, AvailabilityEnum::AVAILABLE, AvailabilityEnum::REGISTERED];
 
         /** @var Session $session */
         foreach ($sessionEntities as $session) {
-            if (in_array($session->getAvailability(), [null, AvailabilityEnum::AVAILABLE, AvailabilityEnum::REGISTERED])) {
+            if (in_array($session->getAvailability(), $allowedAvailabilities)) {
                 $sortedSessions[] = $this->sessionDtoTransformer->fromEntity($session);
             }
         }

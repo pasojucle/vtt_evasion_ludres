@@ -24,7 +24,7 @@
                                     <div class="grid-content">
                                         <h2>{{ session.bikeRide.period }}</h2>
                                         <b>{{ session.bikeRide.title }}</b>
-                                        {% if session.availability is not empty %}
+                                        {% if session.availability.enum != enum('App\\Entity\\Enum\\AvailabilityEnum').NONE %}
                                             <p class="{{ session.availability.class.color }}">{{ session.availability.class.icon|raw }} {{ session.availability.enum|trans }}</p>
                                         {% endif %}
                                         {% if session.bikeRide.bikeRideType.displayPractice %}
@@ -39,7 +39,7 @@
                                         {% endif %}
                                     </div>
                                     <div class="grid-btn">
-                                        {% if session.availability is empty %}
+                                        {% if session.availability.enum == enum('App\\Entity\\Enum\\AvailabilityEnum').NONE %}
                                             <a href="{{ path('session_delete',{'session': session.sessionId}) }}" class="btn btn-primary" title="Se désinscrire"><i class="fas fa-times-circle"></i> Se désinscrire</a>
                                         {% else %}
                                             <a href="{{ path('session_availability_edit',{'session': session.sessionId}) }}" class="btn btn-primary" title="Modifier la disponibilité"><i class="fas fa-pencil-alt"></i> Modifier</a>

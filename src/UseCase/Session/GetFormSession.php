@@ -62,9 +62,13 @@ class GetFormSession
         $isWritableAvailability = true;
         $sessions = $this->sessionService->getSessionsBytype($bikeRide, $session->getUser());
 
-        $surveyResponses = ($bikeRide->getSurvey()) ? $this->surveyService->getResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey()) : null;
+        $surveyResponses = ($bikeRide->getSurvey())
+            ? $this->surveyService->getResponsesByUserAndSurvey($session->getUser(), $bikeRide->getSurvey())
+            : null;
 
-        $surveyHistories = ($surveyResponses) ? $this->surveyService->getHistory($bikeRide->getSurvey(), $session->getUser()) : null;
+        $surveyHistories = ($surveyResponses)
+            ? $this->surveyService->getHistory($bikeRide->getSurvey(), $session->getUser())
+            : null;
         $form = $this->getForm($session, $bikeRide, $clusters, $isWritableAvailability, $surveyResponses);
 
         $this->setParams($form, $bikeRide, $sessions, $surveyHistories);

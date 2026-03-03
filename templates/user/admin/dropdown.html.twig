@@ -5,13 +5,13 @@
     <div class="dropdown-title">{{ user.member.fullName }}</div>
     <ul class="dropdown-body">
       {% if session is defined %}
-        {% if session.availability is not empty %}
+        {% if session.availability.enum != enum('App\\Entity\\Enum\\AvailabilityEnum').NONE %}
           <li class="info">{{ session.availability.class.icon|raw }} {{ session.availability.text }}</li>
         {% endif %}
         {% if user.approvals.goingHomeAlone is defined %}
           <li class="info ">{{ user.approvals.goingHomeAlone.toHtml.class.icon|raw }} {{ user.approvals.goingHomeAlone.toHtml.message }}</li>
         {% endif %}
-        {% if bikeRide.isEditable and not cluster.isComplete and (session.availability is empty or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').AVAILABLE or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').REGISTERED ) %}
+        {% if bikeRide.isEditable and not cluster.isComplete and (session.availability == enum('App\\entity\\Enum\\AvailabilityEnum').NONE or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').AVAILABLE or session.availability.enum == enum('App\\entity\\Enum\\AvailabilityEnum').REGISTERED ) %}
           <li>
             <a href="{{ path('admin_bike_ride_switch_cluster', {'session': session.id}) }}" class="dropdown-item" title="Changer de groupe">
               <i class="fa-solid fa-rotate"></i> Changer de groupe

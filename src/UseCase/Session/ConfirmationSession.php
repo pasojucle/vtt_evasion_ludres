@@ -43,13 +43,13 @@ class ConfirmationSession
         $this->mailerService->sendMailToMember($user, $subject, $content, null, $additionalParams);
     }
 
-    private function availabilityToString(?AvailabilityEnum $availability): ?string
+    private function availabilityToString(AvailabilityEnum $availability): ?string
     {
-        if ($availability) {
+        if (AvailabilityEnum::NONE !== $availability) {
             $availabilities = [
                 AvailabilityEnum::REGISTERED->name => 'session.availability_status.presence',
                 AvailabilityEnum::AVAILABLE->name => 'session.availability_status.availability',
-                AvailabilityEnum::UNAVAILABLE->name => 'session.availability_status.absence'
+                AvailabilityEnum::UNAVAILABLE->name => 'session.availability_status.absence',
             ];
             
             return $this->translator->trans($availabilities[$availability->name]);

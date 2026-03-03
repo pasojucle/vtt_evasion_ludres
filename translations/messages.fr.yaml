@@ -104,7 +104,7 @@ session:
   availability:
     registered: Sera présent
     available: Dispo. si besoin
-    unavailable: Absent
+    unavailable: Sera absent
     undefined: Non défini
   availability_status:
     presence: précence
