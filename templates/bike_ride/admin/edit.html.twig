@@ -14,7 +14,7 @@
         </div>
         <div id="bike_ride_container" class="wrapper-body">
             <div class="d-flex gap-2 mb-20">
-                <div class="form-group-file flex-1 {% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}">
+                <div class="form-group-file flex-1 {% if form.vars.row_attr.class is defined %}{{ form.vars.row_attr.class }}{% endif %}" data-controller="input-file">
                     <div class="input-file-button h-full">
                         {% if bikeRide.filename is null %}
                             <div data-placeholder="placeholder" class="d-flex flex-col align-items-center justify-content-center gap-2 h-full bg-gray-200 border">
@@ -41,16 +41,16 @@
                 {% if bikeRide.isPublic %}
                     <b>Réglement et sécutité</b>
                     <div class="card-border">
-                        <div class="form-group form-group-file form-group-inline">
+                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
                             {{ form_row(form.rulesFile) }}
                         </div>
-                        <div class="form-group form-group-file form-group-inline">
+                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
                             {{ form_row(form.rulesFileThumbnail) }}
                         </div>
-                        <div class="form-group form-group-file form-group-inline">
+                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
                             {{ form_row(form.securityGuidelinesFile) }}
                         </div>
-                        <div class="form-group form-group-file form-group-inline">
+                        <div class="form-group form-group-file form-group-inline" data-controller="input-file">
                             {{ form_row(form.securityGuidelinesFileThumbnail) }}
                         </div>
                     </div>

@@ -12,7 +12,7 @@
                        data-turbo-frame="modal_content">
                         <i class="fas fa-question-circle"></i>
                     </a>
-                {% else %}
+                {% elseif session.availability.enum != enum('App\\Entity\\Enum\\AvailabilityEnum').UNAVAILABLE %}
                     <button data-action="click->participation#toggle" class="btn btn-light">
                         <i class="fas fa-check"></i>
                     </button>

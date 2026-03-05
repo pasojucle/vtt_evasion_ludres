@@ -153,12 +153,14 @@ class NotificationService
             'title' => 'Inscription à une sortie',
             'content' => $this->replaceKeywordsService->replaceWhithParams($content, $additionalParams),
             'modalLink' => $this->getModalLinkFromEntity($session),
+            'btnLabel' => 'J\'ai compris',
         ];
     }
 
     public function sessionToArray(string $name): array
     {
         $session = $this->requestStack->getSession();
+        dump($session);
         $value = $session->get($name);
         return (null !== $value) ? json_decode($value, true) : [];
     }

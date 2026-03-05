@@ -230,7 +230,7 @@ class GetList
     private function fromReferer(): ?array
     {
         $refererNotification = $this->notificationService->sessionToArray('notification');
-
+        dump($refererNotification);
         if (!$refererNotification) {
             return null;
         }

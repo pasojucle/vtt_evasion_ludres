@@ -4,11 +4,11 @@
 
 {% block body %}
     <div class="wrapper background-green background-color col-content">
-        <div class="img-center">
+        <div class="flex justify-center p-4">
             <img src="{{ bikeRide.filename }}" alt="{{ bikeRide.filename }}"/>
         </div>
         <div class="wrapper-content">
-            <div class="reveal" data-reveal-threshold="0.05">
+            <div class="reveal" data-controller="reveal" data-reveal-threshold="0.05">
                 <h1>{{ bikeRide.title }}</h1>
                 <h2>{{ bikeRide.period }}</h2>
                 {{ bikeRide.content | raw}}

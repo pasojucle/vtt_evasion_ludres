@@ -65,10 +65,11 @@
                                         {% if bikeRide.isPublic %}
                                             <li>
                                                 <a 
+                                                    href=""
                                                     class="dropdown-item" 
-                                                    href="{{ absolute_url(path('bike_ride_detail', {'bikeRide': bikeRide.id, 'slug': bikeRide.title|slug} ))}}" 
+                                                    data-clipboard-url-value="{{ absolute_url(path('bike_ride_detail', {'bikeRide': bikeRide.id, 'slug': bikeRide.title|slug} ))}}" 
                                                     title="Copier l'url" 
-                                                    data-clipboard="1"
+                                                    data-controller="clipboard"
                                                 >
                                                     <i class="fas fa-clipboard"></i> Copier l'url
                                                 </a>

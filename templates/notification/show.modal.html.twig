@@ -14,10 +14,12 @@
             type={{form is not null ? 'submit' : 'button'}}
     {% endif %}
             class="flex justify-center text-white bg-{{ type}}"
-            data-action="{{ action.name }}"
-            {% if action.target is not null %}data-modal-link-target={{ action.target }}{% endif %}
-            {% if action.url is defined %}data-modal-url="{{ action.url }}"{% endif %}
-            {% if action.frameId is defined %}data-modal-frame-id="{{ action.frameId }}"{% endif %}
+            {% if action is defined %}
+                data-action="{{ action.name }}"
+                {% if action.target is defined %}data-modal-link-target={{ action.target }}{% endif %}
+                {% if action.url is defined %}data-modal-url="{{ action.url }}"{% endif %}
+                {% if action.frameId is defined %}data-modal-frame-id="{{ action.frameId }}"{% endif %}
+            {% endif %}
         >
             <div class="flex gap-3 items-center ">
                 {{ btnLabel }}

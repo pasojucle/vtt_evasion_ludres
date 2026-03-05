@@ -111,7 +111,7 @@ session:
     registered: Sera présent
     available: Dispo. si besoin
     unavailable: Sera absent
-    undefined: Non défini
+    none: Non défini
   availability_status:
     presence: précence
     absence: absence
