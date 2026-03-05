@@ -152,8 +152,8 @@ class ContentSubscriber implements EventSubscriberInterface
                         'class' => 'form-group-inline',
                     ],
                     'attr' => [
-                        'class' => 'form-modifier',
-                        'data-modifier' => 'content_container',
+                        'data-action' => 'change->form-modifier#change',
+                        'data-container-id' => 'content-container',
                     ],
                     'auto_initialize' => false
                 ]);

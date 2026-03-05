@@ -44,8 +44,8 @@ class SessionType extends AbstractType
                 'choices' => $this->getSeasonChoices(),
                 'autocomplete' => true,
                 'attr' => [
-                    'class' => 'form-modifier',
-                    'data-modifier' => 'admin_session_add',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'admin-session-add',
                     'data-width' => '100%',
                     'data-placeholder' => 'Sélectionnez une saison',
                     'data-language' => 'fr',
@@ -131,6 +131,9 @@ class SessionType extends AbstractType
         $resolver->setDefaults([
             'filters' => null,
             'bikeRide' => null,
+            'attr' => [
+                'data-controller' => 'form-modifier'
+            ],
         ]);
     }
 

@@ -42,6 +42,9 @@ class ContentType extends AbstractType
             'data_class' => Content::class,
             'route' => null,
             'allowed_kinds' => null,
+            'attr' => [
+                'data-controller' => 'form-modifier'
+            ]
         ]);
     }
 }
