@@ -92,8 +92,8 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                     'autocomplete_url' => $this->urlGenerator->generate('admin_bike_ride_autocomplete'),
                     'required' => true,
                     'attr' => [
-                        'data-modifier' => 'surveyRestriction',
-                        'class' => 'form-modifier',
+                        'data-action' => 'change->form-modifier#change',
+                        'data-container-id' => 'survey-restriction',
                     ],
                 ]);
         } else {
@@ -135,8 +135,8 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                     'required' => true,
                     'disabled' => $disabledMembers,
                     'attr' => [
-                        'data-modifier' => 'surveyRestriction',
-                        'class' => 'form-modifier',
+                        'data-action' => 'change->form-modifier#change',
+                        'data-container-id' => 'survey-restriction',
                         'data-memberIds' => ($memberIds) ? implode(';', $memberIds) : '',
                         'data-add-to-fetch' => 'memberIds',
                     ],
@@ -147,8 +147,8 @@ class AddRestrictionSubscriber implements EventSubscriberInterface
                     'choices' => $this->levelService->getLevelChoices(),
                     'autocomplete' => true,
                     'attr' => [
-                        'data-modifier' => 'surveyRestriction',
-                        'class' => 'form-modifier',
+                        'data-action' => 'change->form-modifier#change',
+                        'data-container-id' => 'survey-restriction',
                         'data-width' => '100%',
                         'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
                         'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',

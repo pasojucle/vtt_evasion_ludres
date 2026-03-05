@@ -107,8 +107,8 @@ class SurveyType extends AbstractType
                     ],
                     'choice_attr' => function () {
                         return [
-                            'data-modifier' => 'surveyRestriction',
-                            'class' => 'form-modifier',
+                            'data-action' => 'change->form-modifier#change',
+                            'data-container-id' => 'survey-restriction',
                         ];
                     },
                 ]);
@@ -123,6 +123,9 @@ class SurveyType extends AbstractType
             'data_class' => Survey::class,
             'filters' => [],
             'display_disabled' => false,
+            'attr' => [
+                'data-controller' => 'form-modifier'
+            ]
         ]);
     }
 }

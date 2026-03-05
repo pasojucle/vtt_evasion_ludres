@@ -175,7 +175,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
                     return [
                         'data-action' => 'change->form-modifier#change',
                         'data-container-id' => 'bike-ride-restriction',
-                        ];
+                    ];
                 },
                 'disabled' => $isDiabled || $bikeRideType->isPublic(),
             ])

@@ -21,8 +21,8 @@ class OrderLineType extends AbstractType
     {
         if (OrderStatusEnum::ORDERED === $options['order_status']) {
             $attrClass = [
-                'class' => 'form-modifier',
-                'data-modifier' => 'order',
+                'data-action' => 'change->form-modifier#change',
+                'data-container-id' => 'order-detail'
             ];
 
             $builder

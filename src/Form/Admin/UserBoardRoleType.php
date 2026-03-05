@@ -57,10 +57,6 @@ class UserBoardRoleType extends AbstractType
                 'row_attr' => [
                     'class' => 'form-group-inline',
                 ],
-                'attr' => [
-                    'class' => 'form-modifier',
-                    'data-modifier' => 'framer_container',
-                ],
             ])
             ->add('boardRole', EntityType::class, [
                 'label' => 'Fonction',
@@ -115,21 +111,12 @@ class UserBoardRoleType extends AbstractType
 
             $formModifier($form, $data);
         });
-
-
-        $builder->get('level')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
-                $user = $event->getForm()->getParent()->getData();
-                $formModifier($event->getForm()->getParent(), $user);
-            }
-        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => User::class,            
         ]);
     }
 }

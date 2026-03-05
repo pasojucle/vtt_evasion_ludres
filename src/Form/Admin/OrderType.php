@@ -135,6 +135,9 @@ class OrderType extends AbstractType
         $resolver->setDefaults([
             'data_class' => OrderHeader::class,
             'status' => OrderStatusEnum::IN_PROGRESS,
+            'attr' => [
+                'data-controller' => 'form-modifier'
+            ]
         ]);
     }
 }

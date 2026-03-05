@@ -37,6 +37,9 @@ class DocumentationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Documentation::class,
+            'attr' => [
+                'data-controller' => 'form-modifier'
+            ]
         ]);
     }
 }
