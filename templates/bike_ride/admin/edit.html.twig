@@ -12,67 +12,67 @@
                 <a href="{{ path('admin_bike_rides', bike_rides_filters) }}" class="btn btn-ico" title="Retour à la liste des sorties"><i class="fas fa-chevron-left"></i></a>
             </span>
         </div>
-        <div id="bike_ride_container" class="wrapper-body">
-                {{ form_row(form.bikeRideType) }}
-                {{ form_row(form.bikeRideTypeChanged) }}
-                {{ form_row(form.title) }}
-                {{ form_row(form.content) }}
-                <div class="form-group form-group-file">
-                    {{ form_row(form.file) }}
-                        <div class="form-group-inline">
-                        <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}">   
+        {{ form_start(form) }}
+            <div data-id="bike-ride" data-form-modifier-target="container" class="wrapper-body">
+                    {{ form_row(form.bikeRideType) }}
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.content) }}
+                    <div class="form-group form-group-file" data-controller="input-file">
+                        {{ form_row(form.file) }}
+                            <div class="form-group-inline">
+                            <img class="user-picture" src="{{ bikeRide.filename }}" alt="{{ bikeRide.title }}" data-input-file-target="media">   
+                        </div>
                     </div>
-                </div>
-            <div class="form-group">
-                {{ form_row(form.private) }}
-            </div>
-            <div class="form-group">
-                {{ form_row(form.notify) }}
-            </div>
-            {% if form.registrationEnabled is defined %}
                 <div class="form-group">
-                    {{ form_row(form.registrationEnabled) }}
+                    {{ form_row(form.private) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.notify) }}
+                </div>
+                {% if form.registrationEnabled is defined %}
+                    <div class="form-group">
+                        {{ form_row(form.registrationEnabled) }}
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    {{ form_row(form.startAt) }}
+                    {{ form_row(form.endAt) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.displayDuration) }}
+                    {{ form_row(form.closingDuration) }}
+                </div>
+                {% if form.registrationClosedMessage is defined %}
+                    {{ form_row(form.registrationClosedMessage) }}
+                {% endif %}
+                <br>
+                <div data-id="bike-ride-restriction" data-form-modifier-target="container">
+                    {% for restriction in form.restriction %}
+                        <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
+                        {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_MEMBER_LIST') %}
+                            <div class="row row-align-top">
+                                <div class="form-group radio-group col-md-8">{{ form_row(form.users) }}</div>
+                                <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
+                            </div>
+                        {% endif %}
+                        {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_RANGE_AGE') %}
+                            <div class="form-group">
+                                {{ form_row(form.minAge) }}
+                                {{ form_row(form.maxAge) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% if bikeRide.survey %}
+                <div class="d-flex mx-20">
+                    <div><a class="btn btn-xs btn-primary" href="{{ path('admin_survey', {'survey': bikeRide.survey.id})}}"><i class="fa-solid fa-up-right-from-square"></i></a></div>
+                    <div class="ms-20">Sondage lié : {{ bikeRide.survey.title }}</div>
                 </div>
             {% endif %}
-            <div class="form-group">
-                {{ form_row(form.startAt) }}
-                {{ form_row(form.endAt) }}
+            <div class="wrapper-footer">
+                {{ form_row(form.save) }}
             </div>
-            <div class="form-group">
-                {{ form_row(form.displayDuration) }}
-                {{ form_row(form.closingDuration) }}
-            </div>
-            {% if form.registrationClosedMessage is defined %}
-                {{ form_row(form.registrationClosedMessage) }}
-            {% endif %}
-            <br>
-            <div id="bikeRideRestriction">
-                {% for restriction in form.restriction %}
-                    <div class="form-group radio-group">{{ form_widget(restriction) }} {{ form_label(restriction) }}</div>
-                    {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_MEMBER_LIST') %}
-                        <div class="row row-align-top">
-                            <div class="form-group radio-group col-md-8">{{ form_row(form.users) }}</div>
-                            <div class="form-group col-md-4">{{ form_row(form.levelFilter) }}</div>
-                        </div>
-                    {% endif %}
-                    {% if restriction.vars.value == constant('App\\Form\\Admin\\BikeRideType::RESTRICTION_TO_RANGE_AGE') %}
-                        <div class="form-group">
-                            {{ form_row(form.minAge) }}
-                            {{ form_row(form.maxAge) }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-        {% if bikeRide.survey %}
-            <div class="d-flex mx-20">
-                <div><a class="btn btn-xs btn-primary" href="{{ path('admin_survey', {'survey': bikeRide.survey.id})}}"><i class="fa-solid fa-up-right-from-square"></i></a></div>
-                <div class="ms-20">Sondage lié : {{ bikeRide.survey.title }}</div>
-            </div>
-        {% endif %}
-        <div class="wrapper-footer">
-            {{ form_row(form.save) }}
-        </div>
         {{ form_end(form) }}
     </div>
 {% endblock %}

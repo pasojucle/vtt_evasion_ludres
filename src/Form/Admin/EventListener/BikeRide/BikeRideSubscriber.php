@@ -81,7 +81,7 @@ class BikeRideSubscriber implements EventSubscriberInterface
             $data['content'] = $bikeRideType->getContent();
             $data['title'] = $bikeRideType->getName();
             $data['closingDuration'] = $bikeRideType->getClosingDuration() ?? 0;
-            $data['bikeRideTypeChanged'] = 0;
+            // $data['bikeRideTypeChanged'] = 0;
             $data['restriction'] = $bikeRide->getRestriction() ?? 0;
             $data['user'] = $bikeRide->getUsers();
             $data['levelFilter'] = $bikeRide->getLevelFilter();
@@ -169,8 +169,8 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 ],
                 'choice_attr' => function () {
                     return [
-                        'data-modifier' => 'bikeRideRestriction',
-                        'class' => 'form-modifier',
+                        'data-action' => 'change->form-modifier#change',
+                        'data-container-id' => 'bike-ride-restriction',
                         ];
                 },
                 'disabled' => $isDiabled || $bikeRideType->isPublic(),
@@ -225,8 +225,8 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'required' => !$disabledUsers,
                 'disabled' => $disabledUsers,
                 'attr' => [
-                    'data-modifier' => 'bikeRideRestriction',
-                    'class' => 'form-modifier',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'bike-ride-restriction',
                     'data-userids' => ($userIds) ? implode(';', $userIds) : '',
                     'data-add-to-fetch' => 'userids',
                 ],
@@ -237,8 +237,8 @@ class BikeRideSubscriber implements EventSubscriberInterface
                 'choices' => $this->levelService->getLevelChoices(),
                 'autocomplete' => true,
                 'attr' => [
-                    'data-modifier' => 'bikeRideRestriction',
-                    'class' => 'form-modifier',
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'bike-ride-restriction',
                     'data-width' => '100%',
                     'data-placeholder' => 'Ajouter un ou plusieurs niveaux',
                     'data-levels' => ($levelFilter) ? implode(';', $levelFilter) : '',

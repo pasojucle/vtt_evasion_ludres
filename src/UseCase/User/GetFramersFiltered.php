@@ -73,12 +73,11 @@ class GetFramersFiltered
             $availability = (array_key_exists($userId, $sessionsByUser))
                 ? $sessionsByUser[$userId]->availability
                 : [
-                    'enum' => AvailabilityEnum::UNDEFINE,
+                    'enum' => AvailabilityEnum::NONE,
                     'class' => ['badge' => 'person person-rays', 'icon' => '<i class="fa-solid fa-person-rays"></i>'],
                     'text' => $this->translator->trans('session.availability.undefined'),
                     'value' => 0,
                 ];
-            dump($this->availabilityIsInCriteria($filters['availability'], $availability));
 
             if ($this->availabilityIsInCriteria($filters['availability'], $availability)) {
                 $userWithAvailability[] = [

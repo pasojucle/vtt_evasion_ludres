@@ -65,6 +65,7 @@ class SetSession
         $this->cacheService->deleteCacheIndex($session->getCluster());
         $this->confirmationSession->execute($session);
         $this->writeLog($bikeRide, $user);
+        $this->notificationService->notify($session);
     }
 
     public function addFromdmin(array $data, User $user, BikeRide $bikeRide): void

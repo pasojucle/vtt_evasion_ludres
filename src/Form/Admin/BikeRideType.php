@@ -17,6 +17,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -58,6 +59,10 @@ class BikeRideType extends AbstractType
                     'data-container-id' => 'bike-ride'
                 ],
             ])
+            // ->add('bikeRideTypeChanged', HiddenType::class, [
+            //     'mapped' => false,
+            //     'data' => 0,
+            // ])
             ->add('file', FileType::class, [
                 'label' => 'Fichier (optionnel)',
                 'mapped' => false,
