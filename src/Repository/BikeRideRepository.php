@@ -231,7 +231,7 @@ class BikeRideRepository extends ServiceEntityRepository
                 (new Expr())->gte('br.startAt', ':firstJan')
             )
             ->setParameter('isPublic', true)
-            ->setParameter('firstJan', new DateTime('January 1st')->format(DateTime::ATOM))
+            ->setParameter('firstJan', (new DateTime('January 1st'))->format(DateTime::ATOM))
             ->getQuery()
             ->getResult();
     }
