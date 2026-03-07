@@ -98,8 +98,8 @@ class GardianIdentitySubscriber implements EventSubscriberInterface
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
-                    'class' => 'form-modifier',
-                    'data-modifier' => sprintf('address-container-%s', $options['gardian']->value)
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => sprintf('address-container-%s', $options['gardian']->value)
                 ],
                 'data' => $otherAddress,
             ])

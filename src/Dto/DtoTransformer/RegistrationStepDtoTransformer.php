@@ -77,6 +77,7 @@ class RegistrationStepDtoTransformer
                     'action' => $this->router->generate($route, [
                         'step' => $step,
                     ]),
+                    'data-controller' => 'form-modifier'
                 ],
                 'current' => $registrationStep,
                 'is_gardian' => RegistrationFormEnum::GARDIANS === $registrationStep->getForm(),

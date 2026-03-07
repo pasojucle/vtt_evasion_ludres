@@ -42,8 +42,8 @@ class AddMediaSubscriber implements EventSubscriberInterface
                         'class' => 'form-group-inline',
                     ],
                     'attr' => [
-                        'class' => 'form-modifier',
-                        'data-modifier' => 'mediaContainer',
+                        'data-action' => 'change->form-modifier#change',
+                        'data-container-id' => 'media-container',
                     ],
                     'data' => $media,
                     'mapped' => false,

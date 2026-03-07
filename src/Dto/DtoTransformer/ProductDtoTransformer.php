@@ -6,6 +6,7 @@ namespace App\Dto\DtoTransformer;
 
 use App\Dto\ProductDto;
 use App\Dto\UserDto;
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Service\ProjectDirService;
@@ -48,7 +49,8 @@ class ProductDtoTransformer
             }
             
             if (null !== $user && $user instanceof UserDto) {
-                if (!empty($user->member) && $product->getCategory() === $user->lastLicence->category) {
+                dump($product->getCategory(), $user->lastLicence->category);
+                if (!empty($user->member) && $product->getCategory() === 1 && LicenceCategoryEnum::SCHOOL === $user->lastLicence->category) {
                     $productDto->sellingPrice = $product->getDiscountPrice();
                     $productDto->discountPrice = number_format($product->getDiscountPrice(), 2) . ' €';
                     $productDto->priceClass = 'throughed-price';
