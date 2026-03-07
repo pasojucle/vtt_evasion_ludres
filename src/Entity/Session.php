@@ -55,7 +55,7 @@ class Session
     #[ORM\Column(type: 'boolean')]
     private bool $isPresent = false;
 
-    #[ORM\Column(type: 'Availability')]
+    #[ORM\Column(type: 'Availability', options: ['default' => AvailabilityEnum::NONE->value])]
     private AvailabilityEnum $availability = AvailabilityEnum::NONE;
 
     #[ORM\Column(type: 'Practice')]

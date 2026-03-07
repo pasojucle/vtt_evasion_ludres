@@ -147,7 +147,7 @@ class MenuService
             'role' => 'PUBLIC_ACCESS',
         ];
         $slugger = new AsciiSlugger();
-        foreach($this->bikeRideRepository->findYearlyPublics() as $bikeRide) {
+        foreach ($this->bikeRideRepository->findYearlyPublics() as $bikeRide) {
             $club[] = [
                 'label' => $bikeRide->getTitle(),
                 'route' => 'bike_ride_detail',

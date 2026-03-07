@@ -16,6 +16,8 @@ enum LicenceCategoryEnum: string implements TranslatableInterface
 
     case SCHOOL_AND_ADULT = 'school_and_adult';
 
+    case UNDEFINED = 'undefined';
+
     use EnumTrait;
 
 

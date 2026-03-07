@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Enum\LicenceCategoryEnum;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -48,8 +49,8 @@ class Product
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $discountTitle = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $category = null;
+    #[ORM\Column(type: 'string', enumType:LicenceCategoryEnum::class, options:['default' => LicenceCategoryEnum::UNDEFINED->value])]
+    private LicenceCategoryEnum $category = LicenceCategoryEnum::UNDEFINED;
 
     #[ORM\Column(type: 'boolean', options:['default' => false])]
     private bool $deleted = false;
@@ -215,12 +216,12 @@ class Product
         return $this;
     }
 
-    public function getCategory(): ?int
+    public function getCategory(): LicenceCategoryEnum
     {
         return $this->category;
     }
 
-    public function setCategory(?int $category): self
+    public function setCategory(LicenceCategoryEnum $category): self
     {
         $this->category = $category;
 
