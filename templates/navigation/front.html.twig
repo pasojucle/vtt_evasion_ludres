@@ -34,7 +34,7 @@
                         <ul class="dropdown-menu">
                             {% for sub_menu in menu.subMenus %}
                                 <li class="nav-sub">
-                                    <a {% if sub_menu.class is defined %}class="{{ sub_menu.class }}"{% else %}href="{{ path(sub_menu.route) }}"{% endif %}
+                                    <a {% if sub_menu.class is defined %}class="{{ sub_menu.class }}"{% else %}href="{{ path(sub_menu.route, sub_menu.params) }}"{% endif %}
                                         {% if app.request.get('_route') matches sub_menu.pattern %} class="active"{% endif %}>
                                         <div class="position-relative">
                                             {{ sub_menu.label }}

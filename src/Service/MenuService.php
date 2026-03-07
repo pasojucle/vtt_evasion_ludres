@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\OrderHeader;
-use App\Entity\User;
+use App\Repository\BikeRideRepository;
 use App\Service\Order\OrderGetService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class MenuService
 {
@@ -21,6 +22,7 @@ class MenuService
         private MenuAdminService $menuAdminService,
         private OrderGetService $orderGetService,
         private Security $security,
+        private BikeRideRepository $bikeRideRepository,
     ) {
     }
 
@@ -136,28 +138,42 @@ class MenuService
 
     public function getClubSubMenu(): array
     {
-        return [
-            [
-                'label' => 'Présentation',
-                'route' => 'club_overview',
-                'pattern' => '/club_overview/',
-                'role' => 'PUBLIC_ACCESS',
-            ],
-            [
-                'label' => 'Diaporama',
-                'route' => 'club_slideshow',
-                'pattern' => '/club_slideshow/',
-                'role' => 'SLIDESHOW_LIST',
-                'badge' => 'notification_slideshow',
-            ],
-            [
-                'label' => 'Actualités',
-                'route' => 'club_summary',
-                'pattern' => '/club_summary/',
-                'role' => 'SUMMARY_LIST',
-                'badge' => 'notification_summary_list',
-            ],
+        $club = [];
+        $club[] = [
+            'label' => 'Présentation',
+            'route' => 'club_overview',
+            'params' => [],
+            'pattern' => '/club_overview/',
+            'role' => 'PUBLIC_ACCESS',
         ];
+        $slugger = new AsciiSlugger();
+        foreach($this->bikeRideRepository->findYearlyPublics() as $bikeRide) {
+            $club[] = [
+                'label' => $bikeRide->getTitle(),
+                'route' => 'bike_ride_detail',
+                'params' => ['bikeRide' => $bikeRide->getId(), 'slug' => $slugger->slug($bikeRide->getTitle())],
+                'pattern' => '/bike_ride_detail/',
+                'role' => 'PUBLIC_ACCESS',
+            ];
+        }
+        $club[] = [
+            'label' => 'Diaporama',
+            'route' => 'club_slideshow',
+            'params' => [],
+            'pattern' => '/club_slideshow/',
+            'role' => 'SLIDESHOW_LIST',
+            'badge' => 'notification_slideshow',
+        ];
+        $club[] = [
+            'label' => 'Actualités',
+            'route' => 'club_summary',
+            'params' => [],
+            'pattern' => '/club_summary/',
+            'role' => 'SUMMARY_LIST',
+            'badge' => 'notification_summary_list',
+        ];
+
+        return $club;
     }
 
     public function getSchoolSubMenu(): array
@@ -166,30 +182,35 @@ class MenuService
             [
                 'label' => 'Présentation',
                 'route' => 'school_overview',
+                'params' => [],
                 'pattern' => '/school_overview/',
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Les disciplines',
                 'route' => 'school_practices',
+                'params' => [],
                 'pattern' => '/school_practices/',
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Fonctionnement',
                 'route' => 'school_operating',
+                'params' => [],
                 'pattern' => '/school_operating/',
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Équipement',
                 'route' => 'school_equipment',
+                'params' => [],
                 'pattern' => '/school_equipment/',
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Documentation',
                 'route' => 'school_documentation',
+                'params' => [],
                 'pattern' => '/school_documentation/',
                 'role' => 'DOCUMENTATION_LIST',
                 'badge' => 'notification_documentation',
@@ -203,18 +224,21 @@ class MenuService
             [
                 'label' => 'S\'inscrire',
                 'route' => 'registration_detail',
+                'params' => [],
                 'pattern' => '/registration_detail/',
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Les tarifs',
                 'route' => 'registration_membership_fee',
+                'params' => [],
                 'pattern' => '/registration_membership_fee/',
                 'role' => 'PUBLIC_ACCESS',
             ],
             [
                 'label' => 'Tuto',
                 'route' => 'registration_tuto',
+                'params' => [],
                 'pattern' => '/registration_tuto/',
                 'role' => 'PUBLIC_ACCESS',
             ],
@@ -227,6 +251,7 @@ class MenuService
             [
                 'label' => 'Déposer une annonce',
                 'route' => 'second_hand_add',
+                'params' => [],
                 'pattern' => '/second_hand_add/',
                 'role' => 'SECOND_HAND_LIST',
             ],

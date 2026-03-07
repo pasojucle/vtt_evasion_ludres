@@ -221,4 +221,18 @@ class BikeRideRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findYearlyPublics(): array
+    {
+        return $this->createQueryBuilder('br')
+            ->join('br.bikeRideType', 'brt')
+            ->andWhere(
+                (new Expr())->eq('brt.public', ':isPublic'),
+                (new Expr())->gte('br.startAt', ':firstJan')
+            )
+            ->setParameter('isPublic', true)
+            ->setParameter('firstJan', new DateTime('January 1st')->format(DateTime::ATOM))
+            ->getQuery()
+            ->getResult();
+    }
 }
