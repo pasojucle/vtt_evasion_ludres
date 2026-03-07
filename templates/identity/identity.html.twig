@@ -30,7 +30,7 @@
     {% else %}
         {{ first_block }}
     {% endif %}
-    <div class="form-row">
+    <div class="form-row" data-id="birth-place" data-form-modifier-target="container">
         {% if identity.birthCommune is defined %}
             {{ form_row(identity.birthCommune) }}
             {{ form_row(identity.birthPlace) }}
@@ -38,7 +38,7 @@
             {{ form_row(identity.foreignBorn) }}
         {% endif %}
     </div>
-    <div id="categoryContainer">
+    <div data-id="category-container" data-form-modifier-target="container">
         <div class="form-group">
             {{ form_row(identity.mobile) }}
             {% if identity.phone is defined %}
@@ -59,16 +59,16 @@
             <div class="form-group">{{ form_row(identity.email) }}</div>
         {% endif %}
     </div>
-    <div id="address-container-{{ identity.vars.name}}">
-    {% if identity.otherAddress is defined %}
-        <div class="form-group">
-            <div class="inputGroup long check">
-                {{ form_widget(identity.otherAddress)}}
-                {{ form_label(identity.otherAddress)}}
+    <div id="address-container-{{ identity.vars.name}}" data-form-modifier-target="container">
+        {% if identity.otherAddress is defined %}
+            <div class="form-group">
+                <div class="inputGroup long check">
+                    {{ form_widget(identity.otherAddress)}}
+                    {{ form_label(identity.otherAddress)}}
+                </div>
             </div>
-        </div>
-    {% endif %}
-        <div {% if gardian is defined %}id="address-container-{{ gardian }}"{% endif %} class="address-group">
+        {% endif %}
+        <div {% if gardian is defined %}id="address-container-{{ gardian }}" data-form-modifier-target="container"{% endif %} class="address-group">
             {% if identity.address is defined %}
                 <div class="form-group">{{ form_row(identity.address.street) }}</div>
                 <div class="form-group">

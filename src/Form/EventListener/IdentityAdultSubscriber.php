@@ -52,40 +52,35 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
         /**@var Identity $identity */
         $identity = $event->getData();
         $form = $event->getForm();
-        $disabled = $this->haspreviousLicence($identity->getUser());
-        $row_class = 'form-group';
+        $isYearly = $form->getConfig()->getOption('is_yearly');
         $foreignBorn = !$identity->getBirthCommune()?->getPostalCode() && $identity->getId();
-        list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
-        $options = $form->getConfig()->getOptions();
-        $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
-        $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
         $form
             ->add('name', TextType::class, [
                 'label' => 'Nom',
                 'row_attr' => [
-                    'class' => $row_class,
+                    'class' => 'form-group',
                 ],
                 'constraints' => [
                     new NotNull(),
                     new NotBlank(),
                     new UniqueMember()
                 ],
-                'attr' => ($disabled)
+                'attr' => ($isYearly)
                     ? ['data-constraint' => '']
                     : ['data-constraint' => 'app-UniqueMember', ],
-                'disabled' => $disabled,
+                'disabled' => $isYearly,
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
                 'row_attr' => [
-                    'class' => $row_class,
+                    'class' => 'form-group',
                 ],
                 'constraints' => [
                     new NotNull(),
                     new NotBlank(),
                     new UniqueMember()
                 ],
-                'attr' => $disabled
+                'attr' => $isYearly
                     ? ['data-constraint' => '', 'autocomplete' => 'off']
                     : [
                         'data-constraint' => 'app-UniqueMember',
@@ -93,10 +88,9 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                         'data-alert-route' => 'unique_member',
                         'autocomplete' => 'off',
                     ],
-                'disabled' => $disabled,
+                'disabled' => $isYearly,
             ])
             ->add('address', AddressType::class, [
-                'row_class' => '',
                 'required' => true,
             ])
             ->add('phone', TextType::class, [
@@ -114,6 +108,75 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'class' => 'phone-number',
                 ],
             ])
+            ->add('foreignBorn', CheckboxType::class, [
+                'label' => 'Je suis né à l\'étranger',
+                'mapped' => false,
+                'required' => false,
+                'row_attr' => [
+                    'class' => 'form-group-inline',
+                ],
+                'attr' => [
+                    'data-action' => 'click->form-modifier#change',
+                    'data-container-id' => 'birth-place'
+                ],
+                'data' => $foreignBorn,
+            ])
+            ->add('pictureFile', FileType::class, [
+                'label' => 'Photo d\'itentité',
+                'mapped' => false,
+                'required' => false,
+                'block_prefix' => 'custom_file',
+                'attr' => [
+                    'accept' => '.bmp,.jpeg,.jpg,.png',
+                ],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/bmp',
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
+                    ]),
+                ],
+            ])
+            ->add('schoolTestingRegistration', HiddenType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new SchoolTestingRegistration(),
+                ],
+            ])
+            ;
+
+        $options = $form->getConfig()->getOptions();
+        $this->modifier($form, $options['category'], $foreignBorn);
+    }
+
+    public function preSubmit(FormEvent $event): void
+    {
+        $data = $event->getData();
+        if ($data) {
+            $birthDate = (array_key_exists('birthDate', $data)) ? new dateTime($data['birthDate']) : null;
+            $category = ($birthDate) ? $this->licenceService->getCategoryByBirthDate($birthDate) : LicenceCategoryEnum::ADULT;
+            $foreignBorn = array_key_exists('foreignBorn', $data);
+            dump($data);
+            $this->modifier($event->getForm(), $category, $foreignBorn);
+        }
+    }
+
+    private function modifier(FormInterface $form, LicenceCategoryEnum $category, bool $foreignBorn): void
+    {
+        dump($foreignBorn);
+        $isYearly = $form->getConfig()->getOption('is_yearly');
+        dump($isYearly);
+        $hidden = LicenceCategoryEnum::ADULT !== $category;
+        $class = ($hidden) ? 'hidden' : 'form-group-inline';
+        list($birthCommuneClass, $birthPlaceClass) = $this->getBirthPlaceClasses($foreignBorn);
+        dump(sprintf('%s - %s', $birthCommuneClass, $birthPlaceClass));
+        $dateMax = (new DateTime())->sub(new DateInterval('P5Y'));
+        $dateMin = (new DateTime())->sub(new DateInterval('P80Y'));
+        $form
             ->add('birthDate', DateType::class, [
                 'label' => 'Date de naissance',
                 'attr' => [
@@ -125,15 +188,15 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                     'autocomplete' => 'off',
                     'data-constraint' => 'app-BirthDate;app-SchoolTestingRegistration',
                     'data-extra-param-name' => 'isYearly',
-                    'data-extra-value' => $identity->getUser()->getLastLicence()->getState()->isYearly() ? 1 : 0,
+                    'data-extra-value' => (int) $isYearly,
                     'data-alert-route' => 'registration_scholl_testing_disabled',
-                    'class' => 'form-modifier',
-                    'data-modifier' => 'categoryContainer'
+                    'data-action' => 'change->form-modifier#change',
+                    'data-container-id' => 'category-container'
                 ],
                 'row_attr' => [
-                    'class' => $row_class,
+                    'class' => 'form-group',
                 ],
-                'disabled' => $disabled,
+                'disabled' => $isYearly,
                 'constraints' => [
                     new BirthDate(),
                 ],
@@ -168,65 +231,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 ],
                 'required' => $foreignBorn,
             ])
-            ->add('foreignBorn', CheckboxType::class, [
-                'label' => 'Je suis né à l\'étranger',
-                'mapped' => false,
-                'required' => false,
-                'row_attr' => [
-                    'class' => 'form-group-inline',
-                ],
-                'attr' => [
-                    'class' => 'foreign-born',
-                ],
-                'data' => $foreignBorn,
-            ])
-            ->add('pictureFile', FileType::class, [
-                'label' => 'Photo d\'itentité',
-                'mapped' => false,
-                'required' => false,
-                'block_prefix' => 'custom_file',
-                'attr' => [
-                    'accept' => '.bmp,.jpeg,.jpg,.png',
-                ],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '1024k',
-                        'mimeTypes' => [
-                            'image/bmp',
-                            'image/jpeg',
-                            'image/png',
-                        ],
-                        'mimeTypesMessage' => 'Format image bmp, jpeg ou png autorisé',
-                    ]),
-                ],
-            ])
-            ->add('schoolTestingRegistration', HiddenType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new SchoolTestingRegistration(),
-                ],
-            ])
-            ;
-    
-
-        $this->modifier($form, $options['category']);
-    }
-
-    public function preSubmit(FormEvent $event): void
-    {
-        $data = $event->getData();
-        if ($data) {
-            $birthDate = (array_key_exists('birthDate', $data)) ? new dateTime($data['birthDate']) : null;
-            $category = ($birthDate) ? $this->licenceService->getCategoryByBirthDate($birthDate) : LicenceCategoryEnum::ADULT;
-            $this->modifier($event->getForm(), $category);
-        }
-    }
-
-    private function modifier(FormInterface $form, LicenceCategoryEnum $category): void
-    {
-        $hidden = LicenceCategoryEnum::ADULT !== $category;
-        $class = ($hidden) ? 'hidden' : 'form-group-inline';
-        $form
             ->add('email', EmailType::class, [
                 'label' => LicenceCategoryEnum::SCHOOL === $category
                     ? '<p>Adresse mail (de l\'enfant)<br> Le mail de contact avec le club sera celui du parent</p>'
@@ -296,11 +300,6 @@ class IdentityAdultSubscriber implements EventSubscriberInterface
                 'required' => !$hidden,
             ])
         ;
-    }
-
-    private function haspreviousLicence(?User $user): bool
-    {
-        return true === $user->getLastLicence()?->getState()->isYearly();
     }
 
     private function getBirthPlaceClasses(bool $foreignBorn): array
